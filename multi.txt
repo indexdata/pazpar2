@@ -1,0 +1,220 @@
+ 950876489,CONNECTED ,   0.001341, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876489,CONNECTED ,   0.001592, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876489,CONNECTED ,   0.001684, bagel.indexdata.dk/Marc, , 0, 0
+ 950876489,CONNECTED ,   0.001911, bagel.indexdata.dk/gils, , 0, 0
+ 950876489,CONNECTED ,   0.002035, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876489,INIT      ,   0.009192, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876489,INIT      ,   0.024619, bagel.indexdata.dk/Marc, , 0, 0
+ 950876489,INIT      ,   0.026139, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876489,INIT      ,   0.046127, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876489,FAILED    ,   0.046881, bagel.indexdata.dk/Marc, search error, 0, 0
+ 950876489,FINISHED  ,   0.047016, bagel.indexdata.dk/Marc, , 0, 0
+ 950876489,FAILED    ,   0.060261, muffin.indexdata.dk:9002/E97, search error, 0, 0
+ 950876489,FINISHED  ,   0.060485, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876489,INIT      ,   0.064298, bagel.indexdata.dk/gils, , 0, 0
+ 950876489,SEARCH    ,   0.083986, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876489,FINISHED  ,   0.084146, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876489,FAILED    ,   0.088662, ximum.indexdata.dk:9999/resolutions, search error, 0, 0
+ 950876489,FINISHED  ,   0.088829, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876489,SEARCH    ,   0.090702, bagel.indexdata.dk/gils, , 9, 0
+ 950876489,PRESENT   ,   0.126084, bagel.indexdata.dk/gils, failed, 0, 0
+ 950876489,FINISHED  ,   0.126188, bagel.indexdata.dk/gils, , 0, 0
+ 950876489,COMPLETE  ,   0.126206, (all), , 0, 0
+ 950876492,CONNECTED ,   0.000596, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876492,CONNECTED ,   0.000838, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876492,CONNECTED ,   0.000930, bagel.indexdata.dk/Marc, , 0, 0
+ 950876492,CONNECTED ,   0.001110, bagel.indexdata.dk/gils, , 0, 0
+ 950876492,CONNECTED ,   0.001257, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876492,INIT      ,   0.008360, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876492,INIT      ,   0.018452, bagel.indexdata.dk/Marc, , 0, 0
+ 950876492,INIT      ,   0.024710, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876492,FAILED    ,   0.040495, bagel.indexdata.dk/Marc, search error, 0, 0
+ 950876492,FINISHED  ,   0.040674, bagel.indexdata.dk/Marc, , 0, 0
+ 950876492,INIT      ,   0.048323, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876492,INIT      ,   0.058978, bagel.indexdata.dk/gils, , 0, 0
+ 950876492,FAILED    ,   0.060665, muffin.indexdata.dk:9002/E97, search error, 0, 0
+ 950876492,FINISHED  ,   0.060778, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876492,SEARCH    ,   0.085355, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876492,FINISHED  ,   0.085575, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876492,SEARCH    ,   0.085628, bagel.indexdata.dk/gils, , 9, 0
+ 950876492,FAILED    ,   0.087761, ximum.indexdata.dk:9999/resolutions, search error, 0, 0
+ 950876492,FINISHED  ,   0.087854, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876492,PRESENT   ,   0.120268, bagel.indexdata.dk/gils, failed, 0, 0
+ 950876492,FINISHED  ,   0.120381, bagel.indexdata.dk/gils, , 0, 0
+ 950876492,COMPLETE  ,   0.120399, (all), , 0, 0
+ 950876494,CONNECTED ,   0.000545, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876494,CONNECTED ,   0.000790, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876494,CONNECTED ,   0.000881, bagel.indexdata.dk/Marc, , 0, 0
+ 950876494,CONNECTED ,   0.001021, bagel.indexdata.dk/gils, , 0, 0
+ 950876494,CONNECTED ,   0.001220, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876494,INIT      ,   0.008265, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876494,INIT      ,   0.019415, bagel.indexdata.dk/Marc, , 0, 0
+ 950876494,INIT      ,   0.023800, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876494,FAILED    ,   0.041508, bagel.indexdata.dk/Marc, search error, 0, 0
+ 950876494,FINISHED  ,   0.041694, bagel.indexdata.dk/Marc, , 0, 0
+ 950876494,INIT      ,   0.046970, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876494,FAILED    ,   0.050530, muffin.indexdata.dk:9002/E97, search error, 0, 0
+ 950876494,FINISHED  ,   0.050647, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876494,INIT      ,   0.058910, bagel.indexdata.dk/gils, , 0, 0
+ 950876494,SEARCH    ,   0.070817, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876494,FINISHED  ,   0.070987, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876494,SEARCH    ,   0.085523, bagel.indexdata.dk/gils, , 9, 0
+ 950876494,FAILED    ,   0.086797, ximum.indexdata.dk:9999/resolutions, search error, 0, 0
+ 950876494,FINISHED  ,   0.086904, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876494,PRESENT   ,   0.121230, bagel.indexdata.dk/gils, failed, 0, 0
+ 950876494,FINISHED  ,   0.121337, bagel.indexdata.dk/gils, , 0, 0
+ 950876494,COMPLETE  ,   0.121355, (all), , 0, 0
+ 950876496,CONNECTED ,   0.000778, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876496,CONNECTED ,   0.001021, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876496,CONNECTED ,   0.001168, bagel.indexdata.dk/Marc, , 0, 0
+ 950876496,CONNECTED ,   0.001307, bagel.indexdata.dk/gils, , 0, 0
+ 950876496,CONNECTED ,   0.001470, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876496,INIT      ,   0.008356, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876496,INIT      ,   0.018489, bagel.indexdata.dk/Marc, , 0, 0
+ 950876496,INIT      ,   0.025407, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876496,FAILED    ,   0.040572, bagel.indexdata.dk/Marc, search error, 0, 0
+ 950876496,FINISHED  ,   0.040706, bagel.indexdata.dk/Marc, , 0, 0
+ 950876496,INIT      ,   0.045839, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876496,INIT      ,   0.057905, bagel.indexdata.dk/gils, , 0, 0
+ 950876496,FAILED    ,   0.058305, muffin.indexdata.dk:9002/E97, search error, 0, 0
+ 950876496,FINISHED  ,   0.058395, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876496,SEARCH    ,   0.082661, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876496,FINISHED  ,   0.082791, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876496,SEARCH    ,   0.085132, bagel.indexdata.dk/gils, , 9, 0
+ 950876496,FAILED    ,   0.088815, ximum.indexdata.dk:9999/resolutions, search error, 0, 0
+ 950876496,FINISHED  ,   0.088918, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876496,PRESENT   ,   0.119781, bagel.indexdata.dk/gils, failed, 0, 0
+ 950876496,FINISHED  ,   0.119867, bagel.indexdata.dk/gils, , 0, 0
+ 950876496,COMPLETE  ,   0.119884, (all), , 0, 0
+ 950876498,CONNECTED ,   0.000566, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876498,CONNECTED ,   0.000812, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876498,CONNECTED ,   0.000903, bagel.indexdata.dk/Marc, , 0, 0
+ 950876498,CONNECTED ,   0.001005, bagel.indexdata.dk/gils, , 0, 0
+ 950876498,CONNECTED ,   0.001236, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876498,INIT      ,   0.008423, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876498,INIT      ,   0.018266, bagel.indexdata.dk/Marc, , 0, 0
+ 950876498,INIT      ,   0.025240, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876498,FAILED    ,   0.041354, bagel.indexdata.dk/Marc, search error, 0, 0
+ 950876498,FINISHED  ,   0.041536, bagel.indexdata.dk/Marc, , 0, 0
+ 950876498,INIT      ,   0.047206, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876498,FAILED    ,   0.052106, muffin.indexdata.dk:9002/E97, search error, 0, 0
+ 950876498,FINISHED  ,   0.052232, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876498,INIT      ,   0.058767, bagel.indexdata.dk/gils, , 0, 0
+ 950876498,SEARCH    ,   0.076203, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876498,FINISHED  ,   0.076352, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876498,SEARCH    ,   0.085108, bagel.indexdata.dk/gils, , 9, 0
+ 950876498,FAILED    ,   0.085488, ximum.indexdata.dk:9999/resolutions, search error, 0, 0
+ 950876498,FINISHED  ,   0.085584, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876498,PRESENT   ,   0.134660, bagel.indexdata.dk/gils, failed, 0, 0
+ 950876498,FINISHED  ,   0.134770, bagel.indexdata.dk/gils, , 0, 0
+ 950876498,COMPLETE  ,   0.134788, (all), , 0, 0
+ 950876500,CONNECTED ,   0.001486, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876500,CONNECTED ,   0.001957, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876500,CONNECTED ,   0.002047, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876500,CONNECTED ,   0.002151, bagel.indexdata.dk/Marc, , 0, 0
+ 950876500,CONNECTED ,   0.002239, bagel.indexdata.dk/gils, , 0, 0
+ 950876500,INIT      ,   0.008435, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876500,INIT      ,   0.019691, bagel.indexdata.dk/Marc, , 0, 0
+ 950876500,INIT      ,   0.026277, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876500,FAILED    ,   0.041745, bagel.indexdata.dk/Marc, search error, 0, 0
+ 950876500,FINISHED  ,   0.041963, bagel.indexdata.dk/Marc, , 0, 0
+ 950876500,INIT      ,   0.045740, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876500,FAILED    ,   0.057801, muffin.indexdata.dk:9002/E97, search error, 0, 0
+ 950876500,FINISHED  ,   0.057956, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876500,INIT      ,   0.059066, bagel.indexdata.dk/gils, , 0, 0
+ 950876500,SEARCH    ,   0.082227, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876500,FINISHED  ,   0.082353, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876500,SEARCH    ,   0.086360, bagel.indexdata.dk/gils, , 9, 0
+ 950876500,FAILED    ,   0.087483, ximum.indexdata.dk:9999/resolutions, search error, 0, 0
+ 950876500,FINISHED  ,   0.087572, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876500,PRESENT   ,   0.140876, bagel.indexdata.dk/gils, failed, 0, 0
+ 950876500,FINISHED  ,   0.140986, bagel.indexdata.dk/gils, , 0, 0
+ 950876500,COMPLETE  ,   0.141004, (all), , 0, 0
+ 950876502,CONNECTED ,   0.000538, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876502,CONNECTED ,   0.000788, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876502,CONNECTED ,   0.000878, bagel.indexdata.dk/Marc, , 0, 0
+ 950876502,CONNECTED ,   0.001104, bagel.indexdata.dk/gils, , 0, 0
+ 950876502,CONNECTED ,   0.001210, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876502,INIT      ,   0.008454, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876502,INIT      ,   0.018353, bagel.indexdata.dk/Marc, , 0, 0
+ 950876502,INIT      ,   0.024693, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876502,FAILED    ,   0.040460, bagel.indexdata.dk/Marc, search error, 0, 0
+ 950876502,FINISHED  ,   0.040658, bagel.indexdata.dk/Marc, , 0, 0
+ 950876502,INIT      ,   0.045000, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876502,FAILED    ,   0.060012, muffin.indexdata.dk:9002/E97, search error, 0, 0
+ 950876502,FINISHED  ,   0.060171, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876502,INIT      ,   0.069047, bagel.indexdata.dk/gils, , 0, 0
+ 950876502,SEARCH    ,   0.083532, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876502,FINISHED  ,   0.083687, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876502,FAILED    ,   0.087489, ximum.indexdata.dk:9999/resolutions, search error, 0, 0
+ 950876502,FINISHED  ,   0.087666, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876502,SEARCH    ,   0.095443, bagel.indexdata.dk/gils, , 9, 0
+ 950876502,PRESENT   ,   0.131127, bagel.indexdata.dk/gils, failed, 0, 0
+ 950876502,FINISHED  ,   0.131228, bagel.indexdata.dk/gils, , 0, 0
+ 950876502,COMPLETE  ,   0.131246, (all), , 0, 0
+ 950876505,CONNECTED ,   0.000569, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876505,CONNECTED ,   0.000819, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876505,CONNECTED ,   0.000908, bagel.indexdata.dk/Marc, , 0, 0
+ 950876505,CONNECTED ,   0.001122, bagel.indexdata.dk/gils, , 0, 0
+ 950876505,CONNECTED ,   0.001227, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876505,INIT      ,   0.008352, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876505,INIT      ,   0.024935, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876505,INIT      ,   0.033138, bagel.indexdata.dk/Marc, , 0, 0
+ 950876505,INIT      ,   0.042941, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876505,FAILED    ,   0.056214, bagel.indexdata.dk/Marc, search error, 0, 0
+ 950876505,FINISHED  ,   0.056397, bagel.indexdata.dk/Marc, , 0, 0
+ 950876505,FAILED    ,   0.057998, muffin.indexdata.dk:9002/E97, search error, 0, 0
+ 950876505,FINISHED  ,   0.058145, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876505,INIT      ,   0.073656, bagel.indexdata.dk/gils, , 0, 0
+ 950876505,SEARCH    ,   0.082495, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876505,FINISHED  ,   0.082632, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876505,FAILED    ,   0.088327, ximum.indexdata.dk:9999/resolutions, search error, 0, 0
+ 950876505,FINISHED  ,   0.088488, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876505,SEARCH    ,   0.100023, bagel.indexdata.dk/gils, , 9, 0
+ 950876505,PRESENT   ,   0.135071, bagel.indexdata.dk/gils, failed, 0, 0
+ 950876505,FINISHED  ,   0.135178, bagel.indexdata.dk/gils, , 0, 0
+ 950876505,COMPLETE  ,   0.135196, (all), , 0, 0
+ 950876507,CONNECTED ,   0.000567, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876507,CONNECTED ,   0.000813, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876507,CONNECTED ,   0.000902, bagel.indexdata.dk/Marc, , 0, 0
+ 950876507,CONNECTED ,   0.001112, bagel.indexdata.dk/gils, , 0, 0
+ 950876507,CONNECTED ,   0.001218, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876507,INIT      ,   0.008370, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876507,INIT      ,   0.016265, bagel.indexdata.dk/Marc, , 0, 0
+ 950876507,INIT      ,   0.026364, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876507,FAILED    ,   0.038337, bagel.indexdata.dk/Marc, search error, 0, 0
+ 950876507,FINISHED  ,   0.038532, bagel.indexdata.dk/Marc, , 0, 0
+ 950876507,INIT      ,   0.045492, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876507,INIT      ,   0.055726, bagel.indexdata.dk/gils, , 0, 0
+ 950876507,FAILED    ,   0.059609, muffin.indexdata.dk:9002/E97, search error, 0, 0
+ 950876507,FINISHED  ,   0.059735, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876507,SEARCH    ,   0.082128, bagel.indexdata.dk/gils, , 9, 0
+ 950876507,SEARCH    ,   0.083731, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876507,FINISHED  ,   0.083835, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876507,FAILED    ,   0.104254, ximum.indexdata.dk:9999/resolutions, search error, 0, 0
+ 950876507,FINISHED  ,   0.104440, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876507,PRESENT   ,   0.118206, bagel.indexdata.dk/gils, failed, 0, 0
+ 950876507,FINISHED  ,   0.118315, bagel.indexdata.dk/gils, , 0, 0
+ 950876507,COMPLETE  ,   0.118333, (all), , 0, 0
+ 950876509,CONNECTED ,   0.003709, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876509,CONNECTED ,   0.004189, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876509,CONNECTED ,   0.004281, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876509,CONNECTED ,   0.004387, bagel.indexdata.dk/Marc, , 0, 0
+ 950876509,CONNECTED ,   0.004512, bagel.indexdata.dk/gils, , 0, 0
+ 950876509,INIT      ,   0.008799, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876509,INIT      ,   0.028480, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876509,INIT      ,   0.032066, bagel.indexdata.dk/Marc, , 0, 0
+ 950876509,INIT      ,   0.045047, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876509,FAILED    ,   0.055137, bagel.indexdata.dk/Marc, search error, 0, 0
+ 950876509,FINISHED  ,   0.055310, bagel.indexdata.dk/Marc, , 0, 0
+ 950876509,FAILED    ,   0.056695, muffin.indexdata.dk:9002/E97, search error, 0, 0
+ 950876509,FINISHED  ,   0.056838, muffin.indexdata.dk:9002/E97, , 0, 0
+ 950876509,INIT      ,   0.072675, bagel.indexdata.dk/gils, , 0, 0
+ 950876509,SEARCH    ,   0.081390, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876509,FINISHED  ,   0.081532, muffin.indexdata.dk:8888/Default, , 0, 0
+ 950876509,FAILED    ,   0.087422, ximum.indexdata.dk:9999/resolutions, search error, 0, 0
+ 950876509,FINISHED  ,   0.087590, ximum.indexdata.dk:9999/resolutions, , 0, 0
+ 950876509,SEARCH    ,   0.099116, bagel.indexdata.dk/gils, , 9, 0
+ 950876509,PRESENT   ,   0.134118, bagel.indexdata.dk/gils, failed, 0, 0
+ 950876509,FINISHED  ,   0.134221, bagel.indexdata.dk/gils, , 0, 0
+ 950876509,COMPLETE  ,   0.134239, (all), , 0, 0

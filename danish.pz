@@ -1,0 +1,21 @@
+target cosmos.dnlb.dk:9909/DNL01
+target odin.dtv.dk:210/DTV01
+target dvjb1.kvl.dk:9909/dvj01
+target hermes.lib.cbs.dk:2100/S
+target a800.hha.dk:9909/hba01
+target z3950.kb.dk:2100/kgl01
+target hans.ruc.dk:2210/S
+target a500.aub.auc.dk:9909/AUB01
+target z3950.dbc.dk:213/def1forsk
+target z3950.dbc.dk:213/def1total
+target z3950.dbc.dk:213/danbibv2
+target hcb.bibnet.dk:2100/S
+target z3950.bibsys.no:2100/BIBSYS
+target z3950.libris.kb.se:210/libr
+target bagel.indexdata.dk/gils
+target www.deff.dk:2100/Default
+target www.deff.dk:2102/Default
+connect
+init
+search @attr 1=4 danmarks
+present

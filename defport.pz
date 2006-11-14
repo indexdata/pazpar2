@@ -1,0 +1,5 @@
+target www.deff.dk:2102/Default
+connect
+init
+search @attr 1=4 danmarks
+present

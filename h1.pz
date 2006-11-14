@@ -1,0 +1,9 @@
+target bagel.indexdata.dk/gils
+#target bagel.indexdata.dk:2100/Default
+#target unknown.indexdata.dk
+target localhost:9999/Default
+connect
+wait reset
+init
+search @attr 1=4 utah
+present 2

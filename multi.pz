@@ -1,0 +1,9 @@
+target bagel.indexdata.dk/gils
+target bagel.indexdata.dk/Marc
+target muffin.indexdata.dk:8888/Default
+target muffin.indexdata.dk:9002/E97
+target ximum.indexdata.dk:9999/resolutions
+connect
+init
+search @attr 1=4 utah
+present
