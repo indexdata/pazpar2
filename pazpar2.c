@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.1 2006-11-14 20:44:38 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.1.1.1 2006-11-14 20:44:38 quinn Exp $ */
 
 
 #define PAZPAR2_VERSION "0.1"

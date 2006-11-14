@@ -1,6 +1,6 @@
 # ParaZ. Copyright (C) 2000-2004, Index Data ApS
 # All rights reserved.
-# $Id: Makefile,v 1.1 2006-11-14 20:44:38 quinn Exp $
+# $Id: Makefile,v 1.1.1.1 2006-11-14 20:44:38 quinn Exp $
 
 SHELL=/bin/sh
 

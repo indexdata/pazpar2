@@ -1,4 +1,4 @@
-/* $Id: util.c,v 1.1 2006-11-14 20:44:38 quinn Exp $ */
+/* $Id: util.c,v 1.1.1.1 2006-11-14 20:44:38 quinn Exp $ */
 
 #include <stdio.h>
 #include <stdlib.h>

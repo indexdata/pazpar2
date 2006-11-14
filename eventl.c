@@ -6,7 +6,7 @@
  */
 
 /*
- * $Id: eventl.c,v 1.1 2006-11-14 20:44:37 quinn Exp $
+ * $Id: eventl.c,v 1.1.1.1 2006-11-14 20:44:37 quinn Exp $
  * Based on revision YAZ' server/eventl.c 1.29.
  */
 

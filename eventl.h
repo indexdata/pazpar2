@@ -4,8 +4,8 @@
  * Sebastian Hammer, Adam Dickmeiss
  *
  * $Log: eventl.h,v $
- * Revision 1.1  2006-11-14 20:44:38  quinn
- * Initial revision
+ * Revision 1.1.1.1  2006-11-14 20:44:38  quinn
+ * PazPar2
  *
  * Revision 1.1.1.1  2000/02/23 14:40:18  heikki
  * Original import to cvs
