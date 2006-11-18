@@ -1,13 +1,11 @@
-/* $Id: util.c,v 1.1 2006-11-14 20:44:38 quinn Exp $ */
+/* $Id: util.c,v 1.2 2006-11-18 05:00:38 quinn Exp $ */
 
-#include <stdio.h>
 #include <stdlib.h>
-
-extern char *myname;
+#include <yaz/yaz-util.h>
 
 void die(char *string, char *add)
 {
-    fprintf(stderr, "%s: %s (%s)\n", myname, string, add ? add : "");
+    yaz_log(YLOG_FATAL, "Fatal error: %s (%s)", string, add ? add : "");
     abort();
 }
 

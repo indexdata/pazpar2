@@ -1,4 +1,4 @@
-/* $Id: command.c,v 1.1 2006-11-14 20:44:37 quinn Exp $ */
+/* $Id: command.c,v 1.2 2006-11-18 05:00:38 quinn Exp $ */
 
 #include <stdio.h>
 #include <sys/socket.h>
@@ -82,6 +82,37 @@ static int cmd_hitsbytarget(struct command_session *s, char **argv, int argc)
     return 1;
 }
 
+static int cmd_show(struct command_session *s, char **argv, int argc)
+{
+    struct record **recs;
+    int num = 10;
+    int i;
+
+    if (argc == 2)
+        num = atoi(argv[1]);
+
+    recs = show(s->psession, 0, &num);
+
+    for (i = 0; i < num; i++)
+    {
+        int rc;
+        struct record *cnode;
+        struct record *r = recs[i];
+
+        command_puts(s, r->merge_key);
+        for (rc = 1, cnode = r->next_cluster; cnode; cnode = cnode->next_cluster, rc++)
+            ;
+        if (rc > 1)
+        {
+            char buf[256];
+            sprintf(buf, " (%d records)", rc);
+            command_puts(s, buf);
+        }
+        command_puts(s, "\n");
+    }
+    return 1;
+}
+
 static int cmd_stat(struct command_session *s, char **argv, int argc)
 {
     char buf[1024];
@@ -139,9 +170,10 @@ static struct {
 } cmd_array[] = {
     {"quit", cmd_quit},
     {"load", cmd_load},
-    {"search", cmd_search},
+    {"find", cmd_search},
     {"ht", cmd_hitsbytarget},
     {"stat", cmd_stat},
+    {"show", cmd_show},
     {0,0}
 };
 

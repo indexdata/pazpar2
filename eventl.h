@@ -4,8 +4,11 @@
  * Sebastian Hammer, Adam Dickmeiss
  *
  * $Log: eventl.h,v $
- * Revision 1.1  2006-11-14 20:44:38  quinn
- * Initial revision
+ * Revision 1.2  2006-11-18 05:00:38  quinn
+ * Added record retrieval, etc.
+ *
+ * Revision 1.1.1.1  2006/11/14 20:44:38  quinn
+ * PazPar2
  *
  * Revision 1.1.1.1  2000/02/23 14:40:18  heikki
  * Original import to cvs
@@ -65,7 +68,7 @@ typedef struct iochan
 #define EVENT_EXCEPT    0x04
 #define EVENT_TIMEOUT   0x08
 #define EVENT_WORK      0x10
-int force_event;
+    int force_event;
     IOC_CALLBACK fun;
     void *data;
     int destroyed;
@@ -93,4 +96,5 @@ int force_event;
 
 IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags);
 int event_loop(IOCHAN *iochans);
+
 #endif

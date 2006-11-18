@@ -3,21 +3,26 @@
 
 #include <yaz/pquery.h>
 
-struct session {
-    struct target *targets;
-    YAZ_PQF_Parser pqf_parser;
-    int requestid; 
-    char query[1024];
-    NMEM nmem;
-};
-
 struct record {
     struct target *target;
     int target_offset;
     char *buf;
     char *merge_key;
     struct record *next_cluster;
-    struct record *head_cluster;
+};
+
+struct session {
+    struct target *targets;
+    YAZ_PQF_Parser pqf_parser;
+    int requestid; 
+    char query[1024];
+    NMEM nmem;
+    WRBUF wrbuf;
+    struct record **recheap;
+    int recheap_size;
+    int recheap_max;
+    int recheap_scratch;
+    yaz_marc_t yaz_marc;
 };
 
 struct statistics {
@@ -45,6 +50,7 @@ struct session *new_session();
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
 void search(struct session *s, char *query);
+struct record **show(struct session *s, int start, int *num);
 
 #endif
 
