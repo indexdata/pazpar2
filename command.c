@@ -1,4 +1,4 @@
-/* $Id: command.c,v 1.2 2006-11-18 05:00:38 quinn Exp $ */
+/* $Id: command.c,v 1.3 2006-11-20 19:46:40 quinn Exp $ */
 
 #include <stdio.h>
 #include <sys/socket.h>
@@ -351,6 +351,7 @@ void command_init(int port)
     int l;
     struct protoent *p;
     struct sockaddr_in myaddr;
+    int one = 1;
 
     yaz_log(YLOG_LOG, "Command port is %d", port);
     if (!(p = getprotobyname("tcp"))) {
@@ -358,13 +359,17 @@ void command_init(int port)
     }
     if ((l = socket(PF_INET, SOCK_STREAM, p->p_proto)) < 0)
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "socket");
+    if (setsockopt(l, SOL_SOCKET, SO_REUSEADDR, (char*)
+                    &one, sizeof(one)) < 0)
+        abort();
+
     bzero(&myaddr, sizeof myaddr);
     myaddr.sin_family = AF_INET;
     myaddr.sin_addr.s_addr = INADDR_ANY;
-    myaddr.sin_port = port;
+    myaddr.sin_port = htons(port);
     if (bind(l, (struct sockaddr *) &myaddr, sizeof myaddr) < 0) 
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "bind");
-    if (listen(l, 5) < 0) 
+    if (listen(l, SOMAXCONN) < 0) 
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "listen");
 
     c = iochan_create(l, command_accept, EVENT_INPUT | EVENT_EXCEPT);
