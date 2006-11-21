@@ -47,6 +47,7 @@ struct hitsbytarget {
 
 struct hitsbytarget *hitsbytarget(struct session *s, int *count);
 struct session *new_session();
+void session_destroy(struct session *s);
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
 void search(struct session *s, char *query);

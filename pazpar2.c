@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.2 2006-11-18 05:00:38 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.3 2006-11-21 18:46:43 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,6 +20,7 @@
 #include "pazpar2.h"
 #include "eventl.h"
 #include "command.h"
+#include "http.h"
 
 #define PAZPAR2_VERSION "0.1"
 #define MAX_DATABASES 512
@@ -847,6 +848,11 @@ struct session *new_session()
     return session;
 }
 
+void session_destroy(struct session *s)
+{
+    // FIXME do some shit here!!!!
+}
+
 struct hitsbytarget *hitsbytarget(struct session *s, int *count)
 {
     static struct hitsbytarget res[1000]; // FIXME MM
@@ -930,7 +936,7 @@ int main(int argc, char **argv)
 
     yaz_log_init(YLOG_DEFAULT_LEVEL|YLOG_DEBUG, "pazpar2", 0);
 
-    while ((ret = options("c:", argv, argc, &arg)) != -2)
+    while ((ret = options("c:h:", argv, argc, &arg)) != -2)
     {
 	switch (ret) {
 	    case 0:
@@ -938,6 +944,9 @@ int main(int argc, char **argv)
 	    case 'c':
 		command_init(atoi(arg));
 		break;
+            case 'h':
+                http_init(atoi(arg));
+                break;
 	    default:
 		fprintf(stderr, "Usage: pazpar2 -d comport");
 		exit(1);
