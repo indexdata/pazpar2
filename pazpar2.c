@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.3 2006-11-21 18:46:43 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.4 2006-11-24 20:29:07 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -21,6 +21,9 @@
 #include "eventl.h"
 #include "command.h"
 #include "http.h"
+#include "termlists.h"
+#include "reclists.h"
+#include "relevance.h"
 
 #define PAZPAR2_VERSION "0.1"
 #define MAX_DATABASES 512
@@ -80,6 +83,7 @@ static struct parameters {
     struct timeval base_time;
     int toget;
     int chunk;
+    void *ccl_filter;
 } global_parameters = 
 {
     30,
@@ -88,7 +92,8 @@ static struct parameters {
     PAZPAR2_VERSION,
     {0,0},
     100,
-    MAX_CHUNK
+    MAX_CHUNK,
+    0
 };
 
 
@@ -289,7 +294,11 @@ const char *find_subfield(const char *field, char subfield)
             p++;
         if (*p == '\t' && *(++p) == subfield) {
             if (*(++p) == ' ')
-                return ++p;
+            {
+                while (isspace(*p))
+                    p++;
+                return p;
+            }
         }
     }
     return 0;
@@ -358,6 +367,7 @@ char *extract_mergekey(struct session *s, const char *rec)
     return out;
 }
 
+#ifdef RECHEAP
 static void push_record(struct session *s, struct record *r)
 {
     int p;
@@ -387,12 +397,14 @@ static struct record *top_record(struct session *s)
 
 static struct record *pop_record(struct session *s)
 {
-    struct record *res = s->recheap[0];
+    struct record *res;
     int p = 0;
     int lastnonleaf = (s->recheap_max - 1) >> 1;
 
     if (s->recheap_max < 0)
         return 0;
+
+    res = s->recheap[0];
 
     s->recheap[p] = s->recheap[s->recheap_max--];
 
@@ -472,6 +484,36 @@ static void rewind_recheap(struct session *s)
     }
 }
 
+#endif
+
+// FIXME needs to be generalized. Should flexibly generate X lists per search
+static void extract_subject(struct session *s, const char *rec)
+{
+    const char *field, *subfield;
+
+    while ((field = find_field(rec, "650")))
+    {
+        rec = field + 1; // Crude way to cause a loop through repeating fields
+        if ((subfield = find_subfield(field, 'a')))
+        {
+            char *e, *ef;
+            char buf[1024];
+            int len;
+
+            ef = index(subfield, '\n');
+            if ((e = index(subfield, '\t')) && e < ef)
+                ef = e;
+            while (ef > subfield && !isalpha(*(ef - 1)) && *(ef - 1) != ')')
+                ef--;
+            len = ef - subfield;
+            assert(len < 1023);
+            memcpy(buf, subfield, len);
+            buf[len] = '\0';
+            termlist_insert(s->termlist, buf);
+        }
+    }
+}
+
 struct record *ingest_record(struct target *t, char *buf, int len)
 {
     struct session *s = t->session;
@@ -490,6 +532,8 @@ struct record *ingest_record(struct target *t, char *buf, int len)
 
     res = nmem_malloc(s->nmem, sizeof(struct record));
 
+    extract_subject(s, recbuf);
+
     res->merge_key = extract_mergekey(s, recbuf);
     if (!res->merge_key)
         return 0;
@@ -500,7 +544,7 @@ struct record *ingest_record(struct target *t, char *buf, int len)
 
     yaz_log(YLOG_DEBUG, "Key: %s", res->merge_key);
 
-    push_record(s, res);
+    reclist_insert(s->reclist, res);
 
     return res;
 }
@@ -812,20 +856,12 @@ void search(struct session *s, char *query)
     }
     if (live_channels)
     {
+        const char *t[] = { "aa", "ab", 0 };
         int maxrecs = live_channels * global_parameters.toget;
-        if (!s->recheap_size)
-        {
-            s->recheap = xmalloc(maxrecs * sizeof(struct record *));
-            s->recheap_size = maxrecs;
-        }
-        else if (s->recheap_size < maxrecs)
-        {
-            s->recheap = xrealloc(s->recheap, maxrecs * sizeof(struct record*));
-            s->recheap_size = maxrecs;
-        }
+        s->termlist = termlist_create(s->nmem, maxrecs, 15);
+        s->reclist = reclist_create(s->nmem, maxrecs);
+        relevance_create(s->nmem, t, 1000);
     }
-    s->recheap_max = -1;
-    s->recheap_scratch = -1;
 }
 
 struct session *new_session() 
@@ -834,6 +870,8 @@ struct session *new_session()
 
     yaz_log(YLOG_DEBUG, "New pazpar2 session");
     
+    session->termlist = 0;
+    session->reclist = 0;
     session->requestid = -1;
     session->targets = 0;
     session->pqf_parser = yaz_pqf_create();
@@ -842,8 +880,6 @@ struct session *new_session()
     session->yaz_marc = yaz_marc_create();
     yaz_marc_subfield_str(session->yaz_marc, "\t");
     session->wrbuf = wrbuf_alloc();
-    session->recheap = 0;
-    session->recheap_size = 0;
 
     return session;
 }
@@ -877,6 +913,11 @@ struct hitsbytarget *hitsbytarget(struct session *s, int *count)
     return res;
 }
 
+struct termlist_score **termlist(struct session *s, int *num)
+{
+    return termlist_highscore(s->termlist, num);
+}
+
 struct record **show(struct session *s, int start, int *num)
 {
     struct record **recs = nmem_malloc(s->nmem, *num * sizeof(struct record *));
@@ -884,16 +925,16 @@ struct record **show(struct session *s, int start, int *num)
 
     // FIXME -- skip initial records
 
+    reclist_rewind(s->reclist);
     for (i = 0; i < *num; i++)
     {
-        recs[i] = read_recheap(s);
+        recs[i] = reclist_read_record(s->reclist);
         if (!recs[i])
         {
             *num = i;
             break;
         }
     }
-    rewind_recheap(s);
     return recs;
 }
 
@@ -926,6 +967,11 @@ void statistics(struct session *s, struct statistics *stat)
     stat->num_connections = i;
 }
 
+static void *load_cclfile(const char *fn)
+{
+    return 0;
+}
+
 int main(int argc, char **argv)
 {
     int ret;
@@ -936,7 +982,7 @@ int main(int argc, char **argv)
 
     yaz_log_init(YLOG_DEFAULT_LEVEL|YLOG_DEBUG, "pazpar2", 0);
 
-    while ((ret = options("c:h:", argv, argc, &arg)) != -2)
+    while ((ret = options("c:h:p:C:", argv, argc, &arg)) != -2)
     {
 	switch (ret) {
 	    case 0:
@@ -944,8 +990,14 @@ int main(int argc, char **argv)
 	    case 'c':
 		command_init(atoi(arg));
 		break;
+            case 'C':
+                global_parameters.ccl_filter = load_cclfile(arg);
+                break;
             case 'h':
                 http_init(atoi(arg));
+                break;
+            case 'p':
+                http_set_proxyaddr(arg);
                 break;
 	    default:
 		fprintf(stderr, "Usage: pazpar2 -d comport");

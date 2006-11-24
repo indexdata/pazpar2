@@ -2,6 +2,7 @@
 #define PAZPAR2_H
 
 #include <yaz/pquery.h>
+#include "termlists.h"
 
 struct record {
     struct target *target;
@@ -18,10 +19,8 @@ struct session {
     char query[1024];
     NMEM nmem;
     WRBUF wrbuf;
-    struct record **recheap;
-    int recheap_size;
-    int recheap_max;
-    int recheap_scratch;
+    struct termlist *termlist;
+    struct reclist *reclist;
     yaz_marc_t yaz_marc;
 };
 
@@ -52,6 +51,7 @@ int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
 void search(struct session *s, char *query);
 struct record **show(struct session *s, int start, int *num);
+struct termlist_score **termlist(struct session *s, int *num);
 
 #endif
 
