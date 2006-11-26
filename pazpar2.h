@@ -1,14 +1,19 @@
 #ifndef PAZPAR2_H
 #define PAZPAR2_H
 
+struct record;
+
 #include <yaz/pquery.h>
 #include "termlists.h"
+#include "relevance.h"
 
 struct record {
     struct target *target;
     int target_offset;
     char *buf;
     char *merge_key;
+    int relevance;
+    int *term_frequency_vec;
     struct record *next_cluster;
 };
 
@@ -20,6 +25,7 @@ struct session {
     NMEM nmem;
     WRBUF wrbuf;
     struct termlist *termlist;
+    struct relevance *relevance;
     struct reclist *reclist;
     yaz_marc_t yaz_marc;
 };

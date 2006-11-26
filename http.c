@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.2 2006-11-24 20:29:07 quinn Exp $
+ * $Id: http.c,v 1.3 2006-11-26 05:15:43 quinn Exp $
  */
 
 #include <stdio.h>
@@ -394,10 +394,8 @@ static void http_destroy(IOCHAN i)
 {
     struct http_channel *s = iochan_getdata(i);
 
-    yaz_log(YLOG_DEBUG, "Destroying http channel");
     if (s->proxy)
     {
-        yaz_log(YLOG_DEBUG, "Destroying Proxy channel");
         if (s->proxy->iochan)
         {
             close(iochan_getfd(s->proxy->iochan));
@@ -429,8 +427,6 @@ static int http_proxy(struct http_request *rq)
     struct http_header *hp;
     struct http_buf *requestbuf;
 
-    yaz_log(YLOG_DEBUG, "Proxy request");
-
     if (!p) // This is a new connection. Create a proxy channel
     {
         int sock;
@@ -438,7 +434,6 @@ static int http_proxy(struct http_request *rq)
         int one = 1;
         int flags;
 
-        yaz_log(YLOG_DEBUG, "Creating a new proxy channel");
         if (!(pe = getprotobyname("tcp"))) {
             abort();
         }
@@ -500,13 +495,10 @@ static void http_io(IOCHAN i, int event)
         struct http_buf *htbuf;
 
         case EVENT_INPUT:
-            yaz_log(YLOG_DEBUG, "HTTP Input event");
-
             htbuf = http_buf_create();
             res = read(iochan_getfd(i), htbuf->buf, HTTP_BUF_SIZE -1);
             if (res <= 0 && errno != EAGAIN)
             {
-                yaz_log(YLOG_WARN|YLOG_ERRNO, "HTTP read");
                 http_buf_destroy(htbuf);
                 http_destroy(i);
                 return;
@@ -519,11 +511,7 @@ static void http_io(IOCHAN i, int event)
             }
 
             if ((reqlen = request_check(hc->iqueue)) <= 2)
-            {
-                yaz_log(YLOG_DEBUG, "We don't have a complete HTTP request yet");
                 return;
-            }
-            yaz_log(YLOG_DEBUG, "We think we have a complete HTTP request (len %d)", reqlen);
 
             nmem_reset(hc->nmem);
             if (!(request = http_parse_request(hc, &hc->iqueue, reqlen)))
@@ -552,7 +540,6 @@ static void http_io(IOCHAN i, int event)
                     return;
                 }
                 http_buf_enqueue(&hc->oqueue, hb);
-                yaz_log(YLOG_DEBUG, "Response ready");
                 iochan_setflags(i, EVENT_OUTPUT); // Turns off input selecting
             }
             if (hc->iqueue)
@@ -564,7 +551,6 @@ static void http_io(IOCHAN i, int event)
             break;
 
         case EVENT_OUTPUT:
-            yaz_log(YLOG_DEBUG, "HTTP output event");
             if (hc->oqueue)
             {
                 struct http_buf *wb = hc->oqueue;
@@ -575,7 +561,6 @@ static void http_io(IOCHAN i, int event)
                     http_destroy(i);
                     return;
                 }
-                yaz_log(YLOG_DEBUG, "HTTP Wrote %d octets", res);
                 if (res == wb->len)
                 {
                     hc->oqueue = hc->oqueue->next;
@@ -587,10 +572,8 @@ static void http_io(IOCHAN i, int event)
                     wb->offset += res;
                 }
                 if (!hc->oqueue) {
-                    yaz_log(YLOG_DEBUG, "Writing finished");
                     if (!strcmp(hc->version, "1.0"))
                     {
-                        yaz_log(YLOG_DEBUG, "Closing 1.0 connection");
                         http_destroy(i);
                         return;
                     }
@@ -620,10 +603,8 @@ static void proxy_io(IOCHAN pi, int event)
         struct http_buf *htbuf;
 
         case EVENT_INPUT:
-            yaz_log(YLOG_DEBUG, "Proxy input event");
             htbuf = http_buf_create();
             res = read(iochan_getfd(pi), htbuf->buf, HTTP_BUF_SIZE -1);
-            yaz_log(YLOG_DEBUG, "Proxy read %d bytes.", res);
             if (res == 0 || (res < 0 && errno != EINPROGRESS))
             {
                 if (hc->oqueue)
@@ -650,7 +631,6 @@ static void proxy_io(IOCHAN pi, int event)
             iochan_setflag(hc->iochan, EVENT_OUTPUT);
             break;
         case EVENT_OUTPUT:
-            yaz_log(YLOG_DEBUG, "Proxy output event");
             if (!(htbuf = pc->oqueue))
             {
                 iochan_clearflag(pi, EVENT_OUTPUT);

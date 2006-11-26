@@ -1,5 +1,5 @@
 /*
- * $Id: reclists.c,v 1.1 2006-11-24 20:29:07 quinn Exp $
+ * $Id: reclists.c,v 1.2 2006-11-26 05:15:43 quinn Exp $
  */
 
 #include <assert.h>
@@ -13,20 +13,6 @@ struct reclist_bucket
 {
     struct record *record;
     struct reclist_bucket *next;
-};
-
-struct reclist
-{
-    struct reclist_bucket **hashtable;
-    int hashtable_size;
-    int hashmask;
-
-    struct record **flatlist;
-    int flatlist_size;
-    int num_records;
-    int pointer;
-
-    NMEM nmem;
 };
 
 struct record *reclist_read_record(struct reclist *l)
@@ -81,10 +67,11 @@ struct reclist *reclist_create(NMEM nmem, int numrecs)
     return res;
 }
 
-void reclist_insert(struct reclist *l, struct record  *record)
+struct record *reclist_insert(struct reclist *l, struct record  *record)
 {
     unsigned int bucket;
     struct reclist_bucket **p;
+    struct record *head;
 
     bucket = hash(record->merge_key) & l->hashmask;
     for (p = &l->hashtable[bucket]; *p; p = &(*p)->next)
@@ -96,6 +83,7 @@ void reclist_insert(struct reclist *l, struct record  *record)
             yaz_log(YLOG_LOG, "Found a matching record: %s", record->merge_key);
             record->next_cluster = existing->next_cluster;
             existing->next_cluster = record;
+            head = existing;
             break;
         }
     }
@@ -109,7 +97,9 @@ void reclist_insert(struct reclist *l, struct record  *record)
         new->next = 0;
         *p = new;
         l->flatlist[l->num_records++] = record;
+        head = record;
     }
+    return head;
 }
 
 

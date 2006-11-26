@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.4 2006-11-24 20:29:07 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.5 2006-11-26 05:15:43 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -16,6 +16,7 @@
 #include <yaz/readconf.h>
 #include <yaz/pquery.h>
 #include <yaz/yaz-util.h>
+#include <yaz/ccl.h>
 
 #include "pazpar2.h"
 #include "eventl.h"
@@ -83,7 +84,7 @@ static struct parameters {
     struct timeval base_time;
     int toget;
     int chunk;
-    void *ccl_filter;
+    CCL_bibset ccl_filter;
 } global_parameters = 
 {
     30,
@@ -514,10 +515,18 @@ static void extract_subject(struct session *s, const char *rec)
     }
 }
 
+static void pull_relevance_keys(struct session *s, struct record *head,  struct record *rec)
+{
+    relevance_newrec(s->relevance, head);
+    relevance_countwords(s->relevance, head, rec->merge_key, strlen(rec->merge_key));
+    relevance_donerecord(s->relevance, head);
+}
+
 struct record *ingest_record(struct target *t, char *buf, int len)
 {
     struct session *s = t->session;
     struct record *res;
+    struct record *head;
     const char *recbuf;
 
     wrbuf_rewind(s->wrbuf);
@@ -541,10 +550,11 @@ struct record *ingest_record(struct target *t, char *buf, int len)
     res->target = t;
     res->next_cluster = 0;
     res->target_offset = -1;
+    res->term_frequency_vec = 0;
 
-    yaz_log(YLOG_DEBUG, "Key: %s", res->merge_key);
+    head = reclist_insert(s->reclist, res);
 
-    reclist_insert(s->reclist, res);
+    pull_relevance_keys(s, head, res);
 
     return res;
 }
@@ -583,7 +593,6 @@ void ingest_records(struct target *t, Z_Records *r)
         rec = ingest_record(t, buf, len);
         if (!rec)
             continue;
-        yaz_log(YLOG_DEBUG, "Ingested a fooking record");
     }
 }
 
@@ -599,10 +608,6 @@ static void do_presentResponse(IOCHAN i, Z_APDU *a)
             yaz_log(YLOG_WARN, "Non-surrogate diagnostic");
             t->diagnostic = *recs->u.nonSurrogateDiagnostic->condition;
             t->state = Error;
-        }
-        else
-        {
-            yaz_log(YLOG_DEBUG, "Got Records!");
         }
     }
 
@@ -697,7 +702,6 @@ static void handler(IOCHAN i, int event)
                     t->state = Failed;
                     return;
                 }
-                yaz_log(YLOG_DEBUG, "Successfully decoded %d oct PDU", len);
                 switch (a->which)
                 {
                     case Z_APDU_initResponse:
@@ -856,11 +860,11 @@ void search(struct session *s, char *query)
     }
     if (live_channels)
     {
-        const char *t[] = { "aa", "ab", 0 };
+        const char *p[] = { query, 0 };
         int maxrecs = live_channels * global_parameters.toget;
         s->termlist = termlist_create(s->nmem, maxrecs, 15);
         s->reclist = reclist_create(s->nmem, maxrecs);
-        relevance_create(s->nmem, t, 1000);
+        s->relevance = relevance_create(s->nmem, p, maxrecs);
     }
 }
 
@@ -925,15 +929,17 @@ struct record **show(struct session *s, int start, int *num)
 
     // FIXME -- skip initial records
 
-    reclist_rewind(s->reclist);
+    relevance_prepare_read(s->relevance, s->reclist);
     for (i = 0; i < *num; i++)
     {
-        recs[i] = reclist_read_record(s->reclist);
-        if (!recs[i])
+        struct record *r = reclist_read_record(s->reclist);
+        if (!r)
         {
             *num = i;
             break;
         }
+        recs[i] = r;
+        yaz_log(YLOG_DEBUG, "%d: %s%s", r->relevance, r->merge_key, r->next_cluster ? " (cluster)": "");
     }
     return recs;
 }
@@ -967,9 +973,15 @@ void statistics(struct session *s, struct statistics *stat)
     stat->num_connections = i;
 }
 
-static void *load_cclfile(const char *fn)
+static CCL_bibset load_cclfile(const char *fn)
 {
-    return 0;
+    CCL_bibset res = ccl_qual_mk();
+    if (ccl_qual_fname(res, fn) < 0)
+    {
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "%s", fn);
+        exit(1);
+    }
+    return res;
 }
 
 int main(int argc, char **argv)
@@ -1005,6 +1017,9 @@ int main(int argc, char **argv)
 	}
 	    
     }
+
+    if (!global_parameters.ccl_filter)
+        load_cclfile("default.bib");
 
     event_loop(&channel_list);
 
