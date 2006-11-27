@@ -61,7 +61,7 @@ void session_destroy(struct session *s);
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
 char *search(struct session *s, char *query);
-struct record **show(struct session *s, int start, int *num);
+struct record **show(struct session *s, int start, int *num, int *total, int *sumhits);
 struct termlist_score **termlist(struct session *s, int *num);
 
 #endif

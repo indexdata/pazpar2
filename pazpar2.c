@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.6 2006-11-27 14:35:15 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.7 2006-11-27 19:44:26 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -575,7 +575,8 @@ static void extract_subject(struct session *s, const char *rec)
             assert(len < 1023);
             memcpy(buf, subfield, len);
             buf[len] = '\0';
-            termlist_insert(s->termlist, buf);
+            if (*buf)
+                termlist_insert(s->termlist, buf);
         }
     }
 }
@@ -1078,14 +1079,23 @@ struct termlist_score **termlist(struct session *s, int *num)
     return termlist_highscore(s->termlist, num);
 }
 
-struct record **show(struct session *s, int start, int *num)
+struct record **show(struct session *s, int start, int *num, int *total, int *sumhits)
 {
     struct record **recs = nmem_malloc(s->nmem, *num * sizeof(struct record *));
     int i;
 
-    // FIXME -- skip initial records
-
     relevance_prepare_read(s->relevance, s->reclist);
+
+    *total = s->reclist->num_records;
+    *sumhits = s->total_hits;
+
+    for (i = 0; i < start; i++)
+        if (!reclist_read_record(s->reclist))
+        {
+            *num = 0;
+            return 0;
+        }
+
     for (i = 0; i < *num; i++)
     {
         struct record *r = reclist_read_record(s->reclist);

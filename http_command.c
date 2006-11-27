@@ -1,7 +1,7 @@
 /*
  * stat->num_hits = s->total_hits;
  * stat->num_records = s->total_records;
- * $Id: http_command.c,v 1.3 2006-11-27 14:35:15 quinn Exp $
+ * $Id: http_command.c,v 1.4 2006-11-27 19:44:26 quinn Exp $
  */
 
 #include <stdio.h>
@@ -190,6 +190,8 @@ static void cmd_show(struct http_request *rq, struct http_response *rs)
     char *num = http_argbyname(rq, "num");
     int startn = 0;
     int numn = 20;
+    int total;
+    int total_hits;
     int i;
 
     if (!s)
@@ -200,10 +202,14 @@ static void cmd_show(struct http_request *rq, struct http_response *rs)
     if (num)
         numn = atoi(num);
 
-    rl = show(s->psession, startn, &numn);
+    rl = show(s->psession, startn, &numn, &total, &total_hits);
 
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, "<show>\n<status>OK</status>\n");
+    wrbuf_printf(c->wrbuf, "<merged>%d</merged>\n", total);
+    wrbuf_printf(c->wrbuf, "<total>%d</total>\n", total_hits);
+    wrbuf_printf(c->wrbuf, "<start>%d</start>\n", startn);
+    wrbuf_printf(c->wrbuf, "<num>%d</num>\n", numn);
 
     for (i = 0; i < numn; i++)
     {
