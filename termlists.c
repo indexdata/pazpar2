@@ -1,5 +1,5 @@
 /*
- * $Id: termlists.c,v 1.1 2006-11-24 20:29:07 quinn Exp $
+ * $Id: termlists.c,v 1.2 2006-11-27 14:35:15 quinn Exp $
  */
 
 #include <stdlib.h>
@@ -124,7 +124,6 @@ void termlist_insert(struct termlist *tl, const char *term)
     {
         if (!strcmp(term, (*p)->term.term))
         {
-            yaz_log(YLOG_LOG, "Found a matching term: %s", term);
             (*p)->term.frequency++;
             update_highscore(tl, &((*p)->term));
             break;
@@ -132,7 +131,6 @@ void termlist_insert(struct termlist *tl, const char *term)
     }
     if (!*p) // We made it to the end of the bucket without finding match
     {
-        yaz_log(YLOG_DEBUG, "Added a new term: %s", term);
         struct termlist_bucket *new = nmem_malloc(tl->nmem,
                 sizeof(struct termlist_bucket));
         new->term.term = nmem_strdup(tl->nmem, term);

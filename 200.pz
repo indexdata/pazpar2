@@ -41,7 +41,6 @@ target ns1.gbs.spb.ru:212/nrdf
 target ns1.gbs.spb.ru:212/plain
 target ns1.gbs.spb.ru:212/rdftest
 target opac.sbn.it:3950/nopac
-target proxy2.lib.tpu.ru:2100/prd
 target publib.cbx.ru:210/serial
 target rs6000.nshpl.library.ns.ca:210/AVR
 target rs6000.nshpl.library.ns.ca:210/CBR
@@ -182,9 +181,6 @@ target opac.sbn.it:2100/nopac
 target opac.shu.ac.uk:210/INNOPAC
 target opac.unifi.it:210/OPAC
 target opac.utmem.edu:210/INNOPAC
-target proxy2.lib.tpu.ru:2100/book
-target proxy2.lib.tpu.ru:2100/demo
-target proxy2.lib.tpu.ru:2100/tpu
 target rebiun.crue.org:210/absysREBIUN
 target rs6000.nshpl.library.ns.ca:210/ECR
 target ruslan.ksu.ru:210/eres

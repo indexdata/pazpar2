@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.5 2006-11-26 05:15:43 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.6 2006-11-27 14:35:15 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,6 +17,7 @@
 #include <yaz/pquery.h>
 #include <yaz/yaz-util.h>
 #include <yaz/ccl.h>
+#include <yaz/yaz-ccl.h>
 
 #include "pazpar2.h"
 #include "eventl.h"
@@ -29,6 +30,8 @@
 #define PAZPAR2_VERSION "0.1"
 #define MAX_DATABASES 512
 #define MAX_CHUNK 10
+
+static void target_destroy(IOCHAN i);
 
 struct target
 {
@@ -47,6 +50,7 @@ struct target
     int setno;
     int requestid;                              // ID of current outstanding request
     int diagnostic;
+    IOCHAN iochan;
     enum target_state
     {
 	No_connection,
@@ -57,6 +61,7 @@ struct target
         Presenting,
         Error,
 	Idle,
+        Stopped,
         Failed
     } state;
 };
@@ -146,11 +151,7 @@ static void send_init(IOCHAN i)
 	t->state = Initializing;
     }
     else
-    {
-	iochan_destroy(i);
-	t->state = Failed;
-	cs_close(t->link);
-    }
+        target_destroy(i);
 }
 
 static void send_search(IOCHAN i)
@@ -158,14 +159,20 @@ static void send_search(IOCHAN i)
     struct target *t = iochan_getdata(i);
     struct session *s = t->session;
     Z_APDU *a = zget_APDU(t->odr_out, Z_APDU_searchRequest);
-    int ndb;
+    int ndb, cerror, cpos;
     char **databaselist;
     Z_Query *zquery;
+    struct ccl_rpn_node *cn;
 
     yaz_log(YLOG_DEBUG, "Sending search");
+
+    cn = ccl_find_str(global_parameters.ccl_filter, s->query, &cerror, &cpos);
+    if (!cn)
+        return;
     a->u.searchRequest->query = zquery = odr_malloc(t->odr_out, sizeof(Z_Query));
     zquery->which = Z_Query_type_1;
-    zquery->u.type_1 = p_query_rpn(t->odr_out, PROTO_Z3950, s->query);
+    zquery->u.type_1 = ccl_rpn_query(t->odr_out, cn);
+    ccl_rpn_delete(cn);
 
     for (ndb = 0; *t->databases[ndb]; ndb++)
 	;
@@ -185,9 +192,8 @@ static void send_search(IOCHAN i)
     }
     else
     {
-	iochan_destroy(i);
-	t->state = Failed;
-	cs_close(t->link);
+        target_destroy(i);
+        return;
     }
     odr_reset(t->odr_out);
 }
@@ -210,6 +216,9 @@ static void send_present(IOCHAN i)
 
     a->u.presentRequest->resultSetId = "Default";
 
+    a->u.presentRequest->preferredRecordSyntax = yaz_oidval_to_z3950oid(t->odr_out,
+            CLASS_RECSYN, VAL_USMARC);
+
     if (send_apdu(t, a) >= 0)
     {
 	iochan_setflags(i, EVENT_INPUT);
@@ -217,9 +226,8 @@ static void send_present(IOCHAN i)
     }
     else
     {
-	iochan_destroy(i);
-	t->state = Failed;
-	cs_close(t->link);
+        target_destroy(i);
+        return;
     }
     odr_reset(t->odr_out);
 }
@@ -236,11 +244,7 @@ static void do_initResponse(IOCHAN i, Z_APDU *a)
 	t->state = Idle;
     }
     else
-    {
-	t->state = Failed;
-	iochan_destroy(i);
-	cs_close(t->link);
-    }
+        target_destroy(i);
 }
 
 static void do_searchResponse(IOCHAN i, Z_APDU *a)
@@ -254,6 +258,7 @@ static void do_searchResponse(IOCHAN i, Z_APDU *a)
     {
 	t->hits = *r->resultCount;
         t->state = Idle;
+        t->session->total_hits += t->hits;
     }
     else
     {          /*"FAILED"*/
@@ -277,10 +282,15 @@ const char *find_field(const char *rec, const char *field)
 
     while (*line)
     {
+        const char *eol;
+
         if (!strncmp(line, field, 3) && line[3] == ' ')
             return line;
-        while (*(line++) != '\n')
-            ;
+        while (*line && *line != '\n')
+            line++;
+        if (!(eol = strchr(line, '\n')))
+            return 0;
+        line = eol + 1;
     }
     return 0;
 }
@@ -303,6 +313,59 @@ const char *find_subfield(const char *field, char subfield)
         }
     }
     return 0;
+}
+
+// Extract 245 $a $b 100 $a
+char *extract_title(struct session *s, const char *rec)
+{
+    const char *field, *subfield;
+    char *e, *ef;
+    unsigned char *obuf, *p;
+
+    wrbuf_rewind(s->wrbuf);
+
+    if (!(field = find_field(rec, "245")))
+        return 0;
+    if (!(subfield = find_subfield(field, 'a')))
+        return 0;
+    ef = index(subfield, '\n');
+    if ((e = index(subfield, '\t')) && e < ef)
+        ef = e;
+    if (ef)
+    {
+        wrbuf_write(s->wrbuf, subfield, ef - subfield);
+        if ((subfield = find_subfield(field, 'b'))) 
+        {
+            ef = index(subfield, '\n');
+            if ((e = index(subfield, '\t')) && e < ef)
+                ef = e;
+            if (ef)
+            {
+                wrbuf_putc(s->wrbuf, ' ');
+                wrbuf_write(s->wrbuf, subfield, ef - subfield);
+            }
+        }
+    }
+    if ((field = find_field(rec, "100")))
+    {
+        if ((subfield = find_subfield(field, 'a')))
+        {
+            ef = index(subfield, '\n');
+            if ((e = index(subfield, '\t')) && e < ef)
+                ef = e;
+            if (ef)
+            {
+                wrbuf_puts(s->wrbuf, ", by ");
+                wrbuf_write(s->wrbuf, subfield, ef - subfield);
+            }
+        }
+    }
+    wrbuf_putc(s->wrbuf, '\0');
+    obuf = nmem_strdup(s->nmem, wrbuf_buf(s->wrbuf));
+    for (p = obuf; *p; p++)
+        if (*p == '&' || *p == '<' || *p > 122 || *p < ' ')
+            *p = ' ';
+    return obuf;
 }
 
 // Extract 245 $a $b 100 $a
@@ -502,6 +565,8 @@ static void extract_subject(struct session *s, const char *rec)
             int len;
 
             ef = index(subfield, '\n');
+            if (!ef)
+                return;
             if ((e = index(subfield, '\t')) && e < ef)
                 ef = e;
             while (ef > subfield && !isalpha(*(ef - 1)) && *(ef - 1) != ')')
@@ -515,10 +580,32 @@ static void extract_subject(struct session *s, const char *rec)
     }
 }
 
+static void pull_relevance_field(struct session *s, struct record *head, const char *rec,
+        char *field, int mult)
+{
+    const char *fb;
+    while ((fb = find_field(rec, field)))
+    {
+        char *ffield = strchr(fb, '\t');
+        if (!ffield)
+            return;
+        char *eol = strchr(ffield, '\n');
+        if (!eol)
+            return;
+        relevance_countwords(s->relevance, head, ffield, eol - ffield, mult);
+        rec = field + 1; // Crude way to cause a loop through repeating fields
+    }
+}
+
 static void pull_relevance_keys(struct session *s, struct record *head,  struct record *rec)
 {
     relevance_newrec(s->relevance, head);
-    relevance_countwords(s->relevance, head, rec->merge_key, strlen(rec->merge_key));
+    pull_relevance_field(s, head, rec->buf, "100", 2);
+    pull_relevance_field(s, head, rec->buf, "245", 4);
+    //pull_relevance_field(s, head, rec->buf, "530", 1);
+    pull_relevance_field(s, head, rec->buf, "630", 1);
+    pull_relevance_field(s, head, rec->buf, "650", 1);
+    pull_relevance_field(s, head, rec->buf, "700", 1);
     relevance_donerecord(s->relevance, head);
 }
 
@@ -540,13 +627,14 @@ struct record *ingest_record(struct target *t, char *buf, int len)
     recbuf = wrbuf_buf(s->wrbuf);
 
     res = nmem_malloc(s->nmem, sizeof(struct record));
+    res->buf = nmem_strdup(s->nmem, recbuf);
 
-    extract_subject(s, recbuf);
+    extract_subject(s, res->buf);
 
-    res->merge_key = extract_mergekey(s, recbuf);
+    res->title = extract_title(s, res->buf);
+    res->merge_key = extract_mergekey(s, res->buf);
     if (!res->merge_key)
         return 0;
-    res->buf = nmem_strdupn(s->nmem, recbuf, wrbuf_len(s->wrbuf));
     res->target = t;
     res->next_cluster = 0;
     res->target_offset = -1;
@@ -555,6 +643,8 @@ struct record *ingest_record(struct target *t, char *buf, int len)
     head = reclist_insert(s->reclist, res);
 
     pull_relevance_keys(s, head, res);
+
+    s->total_records++;
 
     return res;
 }
@@ -643,9 +733,8 @@ static void handler(IOCHAN i, int event)
 	else
 	{
 	    yaz_log(YLOG_WARN|YLOG_ERRNO, "ERROR %s connect\n", t->hostport);
-	    cs_close(t->link);
-	    t->state = Failed;
-	    iochan_destroy(i);
+            target_destroy(i);
+            return;
 	}
     }
 
@@ -657,9 +746,7 @@ static void handler(IOCHAN i, int event)
 	if (getsockopt(cs_fileno(t->link), SOL_SOCKET, SO_ERROR, &errcode,
 	    &errlen) < 0 || errcode != 0)
 	{
-	    cs_close(t->link);
-	    iochan_destroy(i);
-	    t->state = Failed;
+            target_destroy(i);
 	    return;
 	}
 	else
@@ -675,16 +762,12 @@ static void handler(IOCHAN i, int event)
 
 	if (len < 0)
 	{
-	    cs_close(t->link);
-	    iochan_destroy(i);
-	    t->state = Failed;
+            target_destroy(i);
 	    return;
 	}
 	if (len == 0)
 	{
-	    cs_close(t->link);
-	    iochan_destroy(i);
-	    t->state = Failed;
+            target_destroy(i);
 	    return;
 	}
 	else if (len > 1)
@@ -697,9 +780,7 @@ static void handler(IOCHAN i, int event)
                 odr_setbuf(t->odr_in, t->ibuf, len, 0);
                 if (!z_APDU(t->odr_in, &a, 0, 0))
                 {
-                    cs_close(t->link);
-                    iochan_destroy(i);
-                    t->state = Failed;
+                    target_destroy(i);
                     return;
                 }
                 switch (a->which)
@@ -715,16 +796,17 @@ static void handler(IOCHAN i, int event)
                         break;
                     default:
                         yaz_log(YLOG_WARN, "Unexpected result from server");
-                        cs_close(t->link);
-                        iochan_destroy(i);
-                        t->state = Failed;
+                        target_destroy(i);
                         return;
                 }
                 // if (cs_more(t->link))
                 //    iochan_setevent(i, EVENT_INPUT);
             }
             else  // we throw away response and go to idle mode
+            {
+                yaz_log(YLOG_DEBUG, "Ignoring result to previous operation");
                 t->state = Idle;
+            }
 	}
 	/* if len==1 we do nothing but wait for more input */
     }
@@ -735,7 +817,7 @@ static void handler(IOCHAN i, int event)
 
     if (t->state == Idle)
     {
-        if (t->requestid != s->requestid) {
+        if (t->requestid != s->requestid && *s->query) {
             send_search(i);
         }
         else if (t->hits > 0 && t->records < global_parameters.toget &&
@@ -743,6 +825,32 @@ static void handler(IOCHAN i, int event)
             send_present(i);
         }
     }
+}
+
+static void target_destroy(IOCHAN i)
+{
+    struct target *t = iochan_getdata(i);
+    struct session *s = t->session;
+    struct target **p;
+    assert(iochan_getfun(i) == handler);
+
+    yaz_log(YLOG_DEBUG, "Destroying target");
+
+    if (t->ibuf)
+        xfree(t->ibuf);
+    cs_close(t->link);
+    if (t->odr_in)
+        odr_destroy(t->odr_in);
+    if (t->odr_out)
+        odr_destroy(t->odr_out);
+    for (p = &s->targets; *p; p = &(*p)->next)
+        if (*p == t)
+        {
+            *p = (*p)->next;
+            break;
+        }
+    xfree(t);
+    iochan_destroy(i);
 }
 
 int load_targets(struct session *s, const char *fn)
@@ -757,6 +865,10 @@ int load_targets(struct session *s, const char *fn)
         return -1;
     }
 
+    while (s->targets)
+        target_destroy(s->targets->iochan);
+
+    s->query[0] = '\0';
     target_p = &s->targets;
     while (fgets(line, 255, f))
     {
@@ -812,7 +924,8 @@ int load_targets(struct session *s, const char *fn)
 	    target->state = Failed;
 	    continue;
 	}
-	new = iochan_create(cs_fileno(target->link), handler, 0);
+	target->iochan = new = iochan_create(cs_fileno(target->link), handler, 0);
+        assert(new);
 	iochan_setdata(new, target);
 	iochan_setevent(new, EVENT_EXCEPT);
 	new->next = channel_list;
@@ -823,7 +936,42 @@ int load_targets(struct session *s, const char *fn)
     return 0;
 }
 
-void search(struct session *s, char *query)
+static void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
+{
+    switch (n->kind)
+    {
+        case CCL_RPN_AND:
+        case CCL_RPN_OR:
+        case CCL_RPN_NOT:
+        case CCL_RPN_PROX:
+            pull_terms(nmem, n->u.p[0], termlist, num);
+            pull_terms(nmem, n->u.p[1], termlist, num);
+            break;
+        case CCL_RPN_TERM:
+            termlist[(*num)++] = nmem_strdup(nmem, n->u.t.term);
+            break;
+        default: // NOOP
+            break;
+    }
+}
+
+// Extract terms from query into null-terminated termlist
+static int extract_terms(NMEM nmem, char *query, char **termlist)
+{
+    int error, pos;
+    struct ccl_rpn_node *n;
+    int num = 0;
+
+    n = ccl_find_str(global_parameters.ccl_filter, query, &error, &pos);
+    if (!n)
+        return -1;
+    pull_terms(nmem, n, termlist, &num);
+    termlist[num] = 0;
+    ccl_rpn_delete(n);
+    return 0;
+}
+
+char *search(struct session *s, char *query)
 {
     IOCHAN c;
     int live_channels = 0;
@@ -860,12 +1008,18 @@ void search(struct session *s, char *query)
     }
     if (live_channels)
     {
-        const char *p[] = { query, 0 };
+        char *p[512];
         int maxrecs = live_channels * global_parameters.toget;
         s->termlist = termlist_create(s->nmem, maxrecs, 15);
         s->reclist = reclist_create(s->nmem, maxrecs);
-        s->relevance = relevance_create(s->nmem, p, maxrecs);
+        extract_terms(s->nmem, query, p);
+        s->relevance = relevance_create(s->nmem, (const char **) p, maxrecs);
+        s->total_records = s->total_hits = 0;
     }
+    else
+        return "NOTARGETS";
+
+    return 0;
 }
 
 struct session *new_session() 
@@ -874,6 +1028,8 @@ struct session *new_session()
 
     yaz_log(YLOG_DEBUG, "New pazpar2 session");
     
+    session->total_hits = 0;
+    session->total_records = 0;
     session->termlist = 0;
     session->reclist = 0;
     session->requestid = -1;
@@ -939,7 +1095,6 @@ struct record **show(struct session *s, int start, int *num)
             break;
         }
         recs[i] = r;
-        yaz_log(YLOG_DEBUG, "%d: %s%s", r->relevance, r->merge_key, r->next_cluster ? " (cluster)": "");
     }
     return recs;
 }
@@ -969,6 +1124,8 @@ void statistics(struct session *s, struct statistics *stat)
             default: break;
         }
     }
+    stat->num_hits = s->total_hits;
+    stat->num_records = s->total_records;
 
     stat->num_connections = i;
 }
@@ -1019,7 +1176,7 @@ int main(int argc, char **argv)
     }
 
     if (!global_parameters.ccl_filter)
-        load_cclfile("default.bib");
+        global_parameters.ccl_filter = load_cclfile("default.bib");
 
     event_loop(&channel_list);
 

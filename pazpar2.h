@@ -12,6 +12,7 @@ struct record {
     int target_offset;
     char *buf;
     char *merge_key;
+    char *title;
     int relevance;
     int *term_frequency_vec;
     struct record *next_cluster;
@@ -27,6 +28,8 @@ struct session {
     struct termlist *termlist;
     struct relevance *relevance;
     struct reclist *reclist;
+    int total_hits;
+    int total_records;
     yaz_marc_t yaz_marc;
 };
 
@@ -40,6 +43,8 @@ struct statistics {
     int num_idle;
     int num_failed;
     int num_error;
+    int num_hits;
+    int num_records;
 };
 
 struct hitsbytarget {
@@ -55,7 +60,7 @@ struct session *new_session();
 void session_destroy(struct session *s);
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
-void search(struct session *s, char *query);
+char *search(struct session *s, char *query);
 struct record **show(struct session *s, int start, int *num);
 struct termlist_score **termlist(struct session *s, int *num);
 

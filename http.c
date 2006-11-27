@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.3 2006-11-26 05:15:43 quinn Exp $
+ * $Id: http.c,v 1.4 2006-11-27 14:35:15 quinn Exp $
  */
 
 #include <stdio.h>
@@ -157,6 +157,28 @@ static int http_buf_read(struct http_buf **b, char *buf, int len)
     return rd;
 }
 
+void static urldecode(char *i, char *o)
+{
+    while (*i)
+    {
+        if (*i == '+')
+        {
+            *(o++) = ' ';
+            i++;
+        }
+        else if (*i == '%')
+        {
+            i++;
+            sscanf(i, "%2hhx", o);
+            i += 2;
+            o++;
+        }
+        else
+            *(o++) = *(i++);
+    }
+    *o = '\0';
+}
+
 void http_addheader(struct http_response *r, const char *name, const char *value)
 {
     struct http_channel *c = r->channel;
@@ -284,6 +306,7 @@ struct http_request *http_parse_request(struct http_channel *c, struct http_buf 
             a = nmem_malloc(c->nmem, sizeof(struct http_argument));
             *(equal++) = '\0';
             a->name = nmem_strdup(c->nmem, p2);
+            urldecode(equal, equal);
             a->value = nmem_strdup(c->nmem, equal);
             a->next = r->arguments;
             r->arguments = a;

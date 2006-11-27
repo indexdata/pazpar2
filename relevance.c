@@ -1,5 +1,5 @@
 /*
- * $Id: relevance.c,v 1.2 2006-11-26 05:15:43 quinn Exp $
+ * $Id: relevance.c,v 1.3 2006-11-27 14:35:15 quinn Exp $
  */
 
 #include <ctype.h>
@@ -136,7 +136,7 @@ void relevance_newrec(struct relevance *r, struct record *rec)
 // FIXME. The definition of a word is crude here.. should support
 // some form of localization mechanism?
 void relevance_countwords(struct relevance *r, struct record *head,
-        const char *words, int len)
+        const char *words, int len, int multiplier)
 {
     while (len)
     {
@@ -155,7 +155,7 @@ void relevance_countwords(struct relevance *r, struct record *head,
         {
             words += skipped;
             len -= skipped;
-            head->term_frequency_vec[res]++;
+            head->term_frequency_vec[res] += multiplier;
         }
         else
         {

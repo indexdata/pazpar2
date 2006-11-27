@@ -1,5 +1,7 @@
 /*
- * $Id: http_command.c,v 1.2 2006-11-24 20:29:07 quinn Exp $
+ * stat->num_hits = s->total_hits;
+ * stat->num_records = s->total_records;
+ * $Id: http_command.c,v 1.3 2006-11-27 14:35:15 quinn Exp $
  */
 
 #include <stdio.h>
@@ -67,7 +69,7 @@ static void error(struct http_response *rs, char *code, char *msg, char *txt)
     rs->payload = nmem_strdup(c->nmem, tmp);
 }
 
-int  make_sessionid()
+int make_sessionid()
 {
     struct timeval t;
     int res;
@@ -100,6 +102,11 @@ static struct http_session *locate_session(struct http_request *rq, struct http_
     return 0;
 }
 
+static void cmd_exit(struct http_request *rq, struct http_response *rs)
+{
+    yaz_log(YLOG_WARN, "exit");
+    exit(0);
+}
 
 static void cmd_init(struct http_request *rq, struct http_response *rs)
 {
@@ -204,7 +211,7 @@ static void cmd_show(struct http_request *rq, struct http_response *rs)
         struct record *p;
 
         wrbuf_puts(c->wrbuf, "<hit>\n");
-        wrbuf_printf(c->wrbuf, "<merge_key>%s</merge_key>\n", rl[i]->merge_key);
+        wrbuf_printf(c->wrbuf, "<title>%s</title>\n", rl[i]->title);
         for (ccount = 1, p = rl[i]->next_cluster; p;  p = p->next_cluster, ccount++)
             ;
         if (ccount > 1)
@@ -220,6 +227,7 @@ static void cmd_search(struct http_request *rq, struct http_response *rs)
 {
     struct http_session *s = locate_session(rq, rs);
     char *query = http_argbyname(rq, "query");
+    char *res;
 
     if (!s)
         return;
@@ -228,13 +236,41 @@ static void cmd_search(struct http_request *rq, struct http_response *rs)
         error(rs, "417", "Must supply query", 0);
         return;
     }
-    search(s->psession, query);
+    res = search(s->psession, query);
+    if (res)
+    {
+        error(rs, "417", res, res);
+        return;
+    }
     rs->payload = "<search><status>OK</status></search>";
 }
 
 
 static void cmd_stat(struct http_request *rq, struct http_response *rs)
 {
+    struct http_session *s = locate_session(rq, rs);
+    struct http_channel *c = rq->channel;
+    struct statistics stat;
+
+    if (!s)
+        return;
+
+    statistics(s->psession, &stat);
+
+    wrbuf_rewind(c->wrbuf);
+    wrbuf_puts(c->wrbuf, "<stat>");
+    wrbuf_printf(c->wrbuf, "<hits>%d</hits>\n", stat.num_hits);
+    wrbuf_printf(c->wrbuf, "<records>%d</records>\n", stat.num_records);
+    wrbuf_printf(c->wrbuf, "<unconnected>%d</unconnected>\n", stat.num_no_connection);
+    wrbuf_printf(c->wrbuf, "<connecting>%d</connecting>\n", stat.num_connecting);
+    wrbuf_printf(c->wrbuf, "<initializing>%d</initializing>\n", stat.num_initializing);
+    wrbuf_printf(c->wrbuf, "<searching>%d</searching>\n", stat.num_searching);
+    wrbuf_printf(c->wrbuf, "<presenting>%d</presenting>\n", stat.num_presenting);
+    wrbuf_printf(c->wrbuf, "<idle>%d</idle>\n", stat.num_idle);
+    wrbuf_printf(c->wrbuf, "<failed>%d</failed>\n", stat.num_failed);
+    wrbuf_printf(c->wrbuf, "<error>%d</error>\n", stat.num_error);
+    wrbuf_puts(c->wrbuf, "</stat>");
+    rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
 }
 
 static void cmd_load(struct http_request *rq, struct http_response *rs)
@@ -266,6 +302,7 @@ struct {
     { "show", cmd_show },
     { "search", cmd_search },
     { "termlist", cmd_termlist },
+    { "exit", cmd_exit },
     {0,0}
 };
 

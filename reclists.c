@@ -1,5 +1,5 @@
 /*
- * $Id: reclists.c,v 1.2 2006-11-26 05:15:43 quinn Exp $
+ * $Id: reclists.c,v 1.3 2006-11-27 14:35:15 quinn Exp $
  */
 
 #include <assert.h>
@@ -80,7 +80,6 @@ struct record *reclist_insert(struct reclist *l, struct record  *record)
         if (!strcmp(record->merge_key, (*p)->record->merge_key))
         {
             struct record *existing = (*p)->record;
-            yaz_log(YLOG_LOG, "Found a matching record: %s", record->merge_key);
             record->next_cluster = existing->next_cluster;
             existing->next_cluster = record;
             head = existing;
@@ -89,7 +88,6 @@ struct record *reclist_insert(struct reclist *l, struct record  *record)
     }
     if (!*p) // We made it to the end of the bucket without finding match
     {
-        yaz_log(YLOG_DEBUG, "Added a new record: %s", record->merge_key);
         struct reclist_bucket *new = nmem_malloc(l->nmem,
                 sizeof(struct reclist_bucket));
         new->record = record;
