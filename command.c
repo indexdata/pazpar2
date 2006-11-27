@@ -1,4 +1,4 @@
-/* $Id: command.c,v 1.3 2006-11-20 19:46:40 quinn Exp $ */
+/* $Id: command.c,v 1.4 2006-11-27 19:50:25 quinn Exp $ */
 
 #include <stdio.h>
 #include <sys/socket.h>
@@ -86,12 +86,13 @@ static int cmd_show(struct command_session *s, char **argv, int argc)
 {
     struct record **recs;
     int num = 10;
+    int merged, total;
     int i;
 
     if (argc == 2)
         num = atoi(argv[1]);
 
-    recs = show(s->psession, 0, &num);
+    recs = show(s->psession, 0, &num, &merged, &total);
 
     for (i = 0; i < num; i++)
     {
