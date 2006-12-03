@@ -1,4 +1,4 @@
-/* $Id: command.c,v 1.4 2006-11-27 19:50:25 quinn Exp $ */
+/* $Id: command.c,v 1.5 2006-12-03 06:43:24 quinn Exp $ */
 
 #include <stdio.h>
 #include <sys/socket.h>
@@ -44,6 +44,7 @@ static int cmd_quit(struct command_session *s, char **argv, int argc)
     return 0;
 }
 
+#ifdef GAGA
 static int cmd_load(struct command_session *s, char **argv, int argc)
 {
     if (argc != 2) {
@@ -53,6 +54,7 @@ static int cmd_load(struct command_session *s, char **argv, int argc)
         command_puts(s, "Failed to open file\n");
     return 1;
 }
+#endif
 
 static int cmd_search(struct command_session *s, char **argv, int argc)
 {
@@ -75,8 +77,8 @@ static int cmd_hitsbytarget(struct command_session *s, char **argv, int argc)
     {
         char buf[1024];
 
-        sprintf(buf, "%s: %d (%d records, diag=%d, state=%s)\n", ht[i].id, ht[i].hits,
-            ht[i].records, ht[i].diagnostic, ht[i].state);
+        sprintf(buf, "%s: %d (%d records, diag=%d, state=%s conn=%d)\n", ht[i].id, ht[i].hits,
+            ht[i].records, ht[i].diagnostic, ht[i].state, ht[i].connected);
         command_puts(s, buf);
     }
     return 1;
@@ -120,7 +122,7 @@ static int cmd_stat(struct command_session *s, char **argv, int argc)
     struct statistics stat;
 
     statistics(s->psession, &stat);
-    sprintf(buf, "Number of connections: %d\n", stat.num_connections);
+    sprintf(buf, "Number of connections: %d\n", stat.num_clients);
     command_puts(s, buf);
     if (stat.num_no_connection)
     {
@@ -170,7 +172,9 @@ static struct {
     int (*fun)(struct command_session *s, char *argv[], int argc);
 } cmd_array[] = {
     {"quit", cmd_quit},
+#ifdef GAGA
     {"load", cmd_load},
+#endif
     {"find", cmd_search},
     {"ht", cmd_hitsbytarget},
     {"stat", cmd_stat},

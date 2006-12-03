@@ -1,7 +1,7 @@
 /*
  * stat->num_hits = s->total_hits;
  * stat->num_records = s->total_records;
- * $Id: http_command.c,v 1.4 2006-11-27 19:44:26 quinn Exp $
+ * $Id: http_command.c,v 1.5 2006-12-03 06:43:24 quinn Exp $
  */
 
 #include <stdio.h>
@@ -267,6 +267,7 @@ static void cmd_stat(struct http_request *rq, struct http_response *rs)
     wrbuf_puts(c->wrbuf, "<stat>");
     wrbuf_printf(c->wrbuf, "<hits>%d</hits>\n", stat.num_hits);
     wrbuf_printf(c->wrbuf, "<records>%d</records>\n", stat.num_records);
+    wrbuf_printf(c->wrbuf, "<clients>%d</clients>\n", stat.num_clients);
     wrbuf_printf(c->wrbuf, "<unconnected>%d</unconnected>\n", stat.num_no_connection);
     wrbuf_printf(c->wrbuf, "<connecting>%d</connecting>\n", stat.num_connecting);
     wrbuf_printf(c->wrbuf, "<initializing>%d</initializing>\n", stat.num_initializing);
@@ -279,6 +280,7 @@ static void cmd_stat(struct http_request *rq, struct http_response *rs)
     rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
 }
 
+#ifdef GAGA
 static void cmd_load(struct http_request *rq, struct http_response *rs)
 {
     struct http_session *s = locate_session(rq, rs);
@@ -296,6 +298,7 @@ static void cmd_load(struct http_request *rq, struct http_response *rs)
     else
         rs->payload = "<load><status>OK</status></load>";
 }
+#endif
 
 struct {
     char *name;
@@ -303,7 +306,9 @@ struct {
 } commands[] = {
     { "init", cmd_init },
     { "stat", cmd_stat },
+#ifdef GAGA
     { "load", cmd_load },
+#endif
     { "bytarget", cmd_bytarget },
     { "show", cmd_show },
     { "search", cmd_search },
