@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.9 2006-12-04 02:27:02 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.10 2006-12-04 03:31:24 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1307,6 +1307,7 @@ int main(int argc, char **argv)
 {
     int ret;
     char *arg;
+    int setport = 0;
 
     if (signal(SIGPIPE, SIG_IGN) < 0)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "signal");
@@ -1316,16 +1317,16 @@ int main(int argc, char **argv)
     while ((ret = options("c:h:p:C:s:", argv, argc, &arg)) != -2)
     {
 	switch (ret) {
-	    case 0:
-		break;
 	    case 'c':
 		command_init(atoi(arg));
+                setport++;
 		break;
-            case 'C':
-                global_parameters.ccl_filter = load_cclfile(arg);
-                break;
             case 'h':
                 http_init(atoi(arg));
+                setport++;
+                break;
+            case 'C':
+                global_parameters.ccl_filter = load_cclfile(arg);
                 break;
             case 'p':
                 http_set_proxyaddr(arg);
@@ -1334,9 +1335,20 @@ int main(int argc, char **argv)
                 load_simpletargets(arg);
                 break;
 	    default:
-		fprintf(stderr, "Usage: pazpar2 -d comport");
+		fprintf(stderr, "Usage: pazpar2\n"
+                        "    -h httpport             (REST)\n"
+                        "    -c cmdport              (telnet-style)\n"
+                        "    -C cclconfig\n"
+                        "    -s simpletargetfile\n"
+                        "    -p hostname[:portno]    (HTTP proxy)\n");
 		exit(1);
 	}
+    }
+
+    if (!setport)
+    {
+        fprintf(stderr, "Set command port with -h or -c\n");
+        exit(1);
     }
 
     global_parameters.ccl_filter = load_cclfile("default.bib");
