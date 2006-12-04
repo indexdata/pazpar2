@@ -1,7 +1,5 @@
 /*
- * stat->num_hits = s->total_hits;
- * stat->num_records = s->total_records;
- * $Id: http_command.c,v 1.5 2006-12-03 06:43:24 quinn Exp $
+ * $Id: http_command.c,v 1.6 2006-12-04 02:27:02 quinn Exp $
  */
 
 #include <stdio.h>

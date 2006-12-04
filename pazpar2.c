@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.8 2006-12-03 06:43:24 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.9 2006-12-04 02:27:02 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -29,11 +29,12 @@
 #include "relevance.h"
 
 #define PAZPAR2_VERSION "0.1"
-#define MAX_CHUNK 10
+#define MAX_CHUNK 15
 
 static void client_fatal(struct client *cl);
 static void connection_destroy(struct connection *co);
 static int client_prep_connection(struct client *cl);
+static void ingest_records(struct client *cl, Z_Records *r);
 
 IOCHAN channel_list = 0;  // Master list of connections we're listening to.
 
@@ -151,6 +152,7 @@ static void send_search(IOCHAN i)
     char **databaselist;
     Z_Query *zquery;
     struct ccl_rpn_node *cn;
+    int ssub = 0, lslb = 100000, mspn = 10;
 
     yaz_log(YLOG_DEBUG, "Sending search");
 
@@ -169,6 +171,12 @@ static void send_search(IOCHAN i)
     for (ndb = 0; *db->databases[ndb]; ndb++)
 	databaselist[ndb] = db->databases[ndb];
 
+    a->u.presentRequest->preferredRecordSyntax =
+            yaz_oidval_to_z3950oid(global_parameters.odr_out,
+            CLASS_RECSYN, VAL_USMARC);
+    a->u.searchRequest->smallSetUpperBound = &ssub;
+    a->u.searchRequest->largeSetLowerBound = &lslb;
+    a->u.searchRequest->mediumSetPresentNumber = &mspn;
     a->u.searchRequest->resultSetName = "Default";
     a->u.searchRequest->databaseNames = databaselist;
     a->u.searchRequest->num_databaseNames = ndb;
@@ -246,8 +254,14 @@ static void do_searchResponse(IOCHAN i, Z_APDU *a)
     if (*r->searchStatus)
     {
 	cl->hits = *r->resultCount;
-        cl->state = Client_Idle;
         se->total_hits += cl->hits;
+        if (r->presentStatus && !*r->presentStatus && r->records)
+        {
+            yaz_log(YLOG_DEBUG, "Records in search response");
+            cl->records += *r->numberOfRecordsReturned;
+            ingest_records(cl, r->records);
+        }
+        cl->state = Client_Idle;
     }
     else
     {          /*"FAILED"*/
@@ -594,7 +608,7 @@ static void pull_relevance_keys(struct session *s, struct record *head,  struct 
     relevance_donerecord(s->relevance, head);
 }
 
-struct record *ingest_record(struct client *cl, char *buf, int len)
+static struct record *ingest_record(struct client *cl, char *buf, int len)
 {
     struct session *se = cl->session;
     struct record *res;
@@ -634,7 +648,7 @@ struct record *ingest_record(struct client *cl, char *buf, int len)
     return res;
 }
 
-void ingest_records(struct client *cl, Z_Records *r)
+static void ingest_records(struct client *cl, Z_Records *r)
 {
     struct record *rec;
     Z_NamePlusRecordList *rlist;
