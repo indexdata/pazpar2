@@ -1,0 +1,96 @@
+
+Webservice requests are any that refer to filename "search.pz2". Arguments
+are GET-style parameters. Argument 'command' is required and specifies
+command.
+
+Commands:
+
+init
+
+Initializes a session. Returns session ID to be used in subsequent requests. Example:
+
+search.pz2?command=init
+
+Response example:
+
+<init>
+  <status>OK</status>
+  <session>2044502273</session>
+</init>
+
+search
+
+Launches a search, parameters:
+
+session
+query
+
+Example:
+
+search.pz2?session=2044502273&command=search&query=computer
+
+Response example:
+
+<search>
+  <status>OK</status>
+</search>
+
+stat
+
+Provides status of ongoing search. Parameters:
+
+session
+
+Example:
+
+search.pz2?session=2044502273&command=stat
+
+Output:
+
+<stat>
+  <hits>7</hits>                   -- Total hitcount
+  <records>7</records>             -- Total number of records fetched
+  <clients>1</clients>             -- Total number of associated clients
+  <unconnected>0</unconnected>     -- Number of disconnected clients
+  <connecting>0</connecting>       -- Number of clients in connecting state
+  <initializing>0</initializing>   -- Number of clients initializing
+  <searching>0</searching>         -- ... searching
+  <presenting>0</presenting>       -- ... presenting
+  <idle>1</idle>                   -- ... idle (not doing anything)
+  <failed>0</failed>               -- ... Connection failed
+  <error>0</error>                 -- ... Error was produced somewhere
+</stat>
+
+show
+
+Shows records retrieved
+
+parameters:
+
+session
+start      -- 0-indexed!!
+num        -- default=20
+
+Example:
+
+search.pz2?session=2044502273&command=show&start=0&num=2
+
+Output:
+
+<show>
+  <status>OK</status>
+  <merged>6</merged>
+  <total>7</total>
+  <start>0</start>
+  <num>2</num>
+  <hit>
+    <title>How to program a computer, by Jack Collins</title>
+    <count>2</count> <!-- Number of merged records -->
+  </hit>
+  <hit>
+    <title>
+  Computer processing of dynamic images from an Anger scintillation camera :
+  the proceedings of a workshop /
+    </title>
+  </hit>
+</show>
