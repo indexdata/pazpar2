@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.10 2006-12-04 03:31:24 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.11 2006-12-08 21:40:58 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -359,11 +359,11 @@ char *extract_title(struct session *s, const char *rec)
         }
     }
     wrbuf_putc(s->wrbuf, '\0');
-    obuf = nmem_strdup(s->nmem, wrbuf_buf(s->wrbuf));
+    obuf = (unsigned char*) nmem_strdup(s->nmem, wrbuf_buf(s->wrbuf));
     for (p = obuf; *p; p++)
         if (*p == '&' || *p == '<' || *p > 122 || *p < ' ')
             *p = ' ';
-    return obuf;
+    return (char*) obuf;
 }
 
 // Extract 245 $a $b 100 $a

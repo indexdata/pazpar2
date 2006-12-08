@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.4 2006-11-27 14:35:15 quinn Exp $
+ * $Id: http.c,v 1.5 2006-12-08 21:40:58 quinn Exp $
  */
 
 #include <stdio.h>
@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <netdb.h>
 #include <errno.h>
+#include <assert.h>
 
 #include <yaz/yaz-util.h>
 #include <yaz/comstack.h>
@@ -26,12 +27,15 @@
 #include "http_command.h"
 
 static void proxy_io(IOCHAN i, int event);
+static struct http_channel *http_create(void);
+static void http_destroy(IOCHAN i);
 
 extern IOCHAN channel_list;
 
 static struct sockaddr_in *proxy_addr = 0; // If this is set, we proxy normal HTTP requests
 static char proxy_url[256] = "";
 static struct http_buf *http_buf_freelist = 0;
+static struct http_channel *http_channel_freelist = 0;
 
 static struct http_buf *http_buf_create()
 {
@@ -108,6 +112,7 @@ static void http_buf_enqueue(struct http_buf **queue, struct http_buf *b)
 
 static struct http_buf *http_buf_bywrbuf(WRBUF wrbuf)
 {
+    // Heavens to Betsy (buf)!
     return http_buf_bybuf(wrbuf_buf(wrbuf), wrbuf_len(wrbuf));
 }
 
@@ -371,7 +376,7 @@ static struct http_buf *http_serialize_response(struct http_channel *c,
     wrbuf_printf(c->wrbuf, "HTTP/1.1 %s %s\r\n", r->code, r->msg);
     for (h = r->headers; h; h = h->next)
         wrbuf_printf(c->wrbuf, "%s: %s\r\n", h->name, h->value);
-    wrbuf_printf(c->wrbuf, "Content-length: %d\r\n", r->payload ? strlen(r->payload) : 0);
+    wrbuf_printf(c->wrbuf, "Content-length: %d\r\n", r->payload ? (int) strlen(r->payload) : 0);
     wrbuf_printf(c->wrbuf, "Content-type: text/xml\r\n");
     wrbuf_puts(c->wrbuf, "\r\n");
 
@@ -411,30 +416,6 @@ static struct http_buf *http_serialize_request(struct http_request *r)
     return http_buf_bywrbuf(c->wrbuf);
 }
 
-
-// Cleanup
-static void http_destroy(IOCHAN i)
-{
-    struct http_channel *s = iochan_getdata(i);
-
-    if (s->proxy)
-    {
-        if (s->proxy->iochan)
-        {
-            close(iochan_getfd(s->proxy->iochan));
-            iochan_destroy(s->proxy->iochan);
-        }
-        http_buf_destroy_queue(s->proxy->oqueue);
-        xfree(s->proxy);
-    }
-    http_buf_destroy_queue(s->iqueue);
-    http_buf_destroy_queue(s->oqueue);
-    nmem_destroy(s->nmem);
-    wrbuf_free(s->wrbuf, 1);
-    xfree(s);
-    close(iochan_getfd(i));
-    iochan_destroy(i);
-}
 
 static int http_weshouldproxy(struct http_request *rq)
 {
@@ -506,11 +487,27 @@ static int http_proxy(struct http_request *rq)
     return 0;
 }
 
+void http_send_response(struct http_channel *ch)
+{
+    struct http_response *rs = ch->response;
+    assert(rs);
+    struct http_buf *hb = http_serialize_response(ch, rs);
+    if (!hb)
+    {
+        yaz_log(YLOG_WARN, "Failed to serialize HTTP response");
+        http_destroy(ch->iochan);
+    }
+    else
+    {
+        http_buf_enqueue(&ch->oqueue, hb);
+        iochan_setflag(ch->iochan, EVENT_OUTPUT);
+        ch->state = Http_Idle;
+    }
+}
+
 static void http_io(IOCHAN i, int event)
 {
     struct http_channel *hc = iochan_getdata(i);
-    struct http_request *request;
-    struct http_response *response;
 
     switch (event)
     {
@@ -533,37 +530,29 @@ static void http_io(IOCHAN i, int event)
                 http_buf_enqueue(&hc->iqueue, htbuf);
             }
 
+            if (hc->state == Http_Busy)
+                return;
+
             if ((reqlen = request_check(hc->iqueue)) <= 2)
                 return;
 
             nmem_reset(hc->nmem);
-            if (!(request = http_parse_request(hc, &hc->iqueue, reqlen)))
+            if (!(hc->request = http_parse_request(hc, &hc->iqueue, reqlen)))
             {
                 yaz_log(YLOG_WARN, "Failed to parse request");
                 http_destroy(i);
                 return;
             }
-            yaz_log(YLOG_LOG, "Request: %s %s v %s", request->method,  request->path,
-                    request->http_version);
-            if (http_weshouldproxy(request))
-                http_proxy(request);
+            hc->response = 0;
+            yaz_log(YLOG_LOG, "Request: %s %s v %s", hc->request->method,
+                    hc->request->path, hc->request->http_version);
+            if (http_weshouldproxy(hc->request))
+                http_proxy(hc->request);
             else
             {
-                struct http_buf *hb;
                 // Execute our business logic!
-                response = http_command(request);
-                if (!response)
-                {
-                    http_destroy(i);
-                    return;
-                }
-                if (!(hb =  http_serialize_response(hc, response)))
-                {
-                    http_destroy(i);
-                    return;
-                }
-                http_buf_enqueue(&hc->oqueue, hb);
-                iochan_setflags(i, EVENT_OUTPUT); // Turns off input selecting
+                hc->state = Http_Busy;
+                http_command(hc);
             }
             if (hc->iqueue)
             {
@@ -601,7 +590,11 @@ static void http_io(IOCHAN i, int event)
                         return;
                     }
                     else
-                        iochan_setflags(i, EVENT_INPUT); // Turns off output flag
+                    {
+                        iochan_clearflag(i, EVENT_OUTPUT);
+                        if (hc->iqueue)
+                            iochan_setevent(hc->iochan, EVENT_INPUT);
+                    }
                 }
             }
 
@@ -688,6 +681,53 @@ static void proxy_io(IOCHAN pi, int event)
     }
 }
 
+// Cleanup channel
+static void http_destroy(IOCHAN i)
+{
+    struct http_channel *s = iochan_getdata(i);
+
+    if (s->proxy)
+    {
+        if (s->proxy->iochan)
+        {
+            close(iochan_getfd(s->proxy->iochan));
+            iochan_destroy(s->proxy->iochan);
+        }
+        http_buf_destroy_queue(s->proxy->oqueue);
+        xfree(s->proxy);
+    }
+    s->next = http_channel_freelist;
+    http_channel_freelist = s;
+    close(iochan_getfd(i));
+    iochan_destroy(i);
+}
+
+static struct http_channel *http_create(void)
+{
+    struct http_channel *r = http_channel_freelist;
+
+    if (r)
+    {
+        http_channel_freelist = r->next;
+        nmem_reset(r->nmem);
+        wrbuf_rewind(r->wrbuf);
+    }
+    else
+    {
+        r = xmalloc(sizeof(struct http_channel));
+        r->nmem = nmem_create();
+        r->wrbuf = wrbuf_alloc();
+    }
+    r->proxy = 0;
+    r->iochan = 0;
+    r->iqueue = r->oqueue = 0;
+    r->state = Http_Idle;
+    r->request = 0;
+    r->response = 0;
+    return r;
+}
+
+
 /* Accept a new command connection */
 static void http_accept(IOCHAN i, int event)
 {
@@ -713,12 +753,8 @@ static void http_accept(IOCHAN i, int event)
     yaz_log(YLOG_LOG, "New command connection");
     c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT);
 
-    ch = xmalloc(sizeof(*ch));
-    ch->proxy = 0;
-    ch->nmem = nmem_create();
-    ch->wrbuf = wrbuf_alloc();
+    ch = http_create();
     ch->iochan = c;
-    ch->iqueue = ch->oqueue = 0;
     iochan_setdata(c, ch);
 
     c->next = channel_list;

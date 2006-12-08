@@ -1,5 +1,5 @@
 /*
- * $Id: reclists.c,v 1.3 2006-11-27 14:35:15 quinn Exp $
+ * $Id: reclists.c,v 1.4 2006-12-08 21:40:58 quinn Exp $
  */
 
 #include <assert.h>
@@ -73,7 +73,7 @@ struct record *reclist_insert(struct reclist *l, struct record  *record)
     struct reclist_bucket **p;
     struct record *head;
 
-    bucket = hash(record->merge_key) & l->hashmask;
+    bucket = hash((unsigned char*) record->merge_key) & l->hashmask;
     for (p = &l->hashtable[bucket]; *p; p = &(*p)->next)
     {
         // We found a matching record. Merge them

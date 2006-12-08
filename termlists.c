@@ -1,5 +1,5 @@
 /*
- * $Id: termlists.c,v 1.2 2006-11-27 14:35:15 quinn Exp $
+ * $Id: termlists.c,v 1.3 2006-12-08 21:40:58 quinn Exp $
  */
 
 #include <stdlib.h>
@@ -119,7 +119,7 @@ void termlist_insert(struct termlist *tl, const char *term)
     unsigned int bucket;
     struct termlist_bucket **p;
 
-    bucket = hash(term) & tl->hashmask;
+    bucket = hash((unsigned char *)term) & tl->hashmask;
     for (p = &tl->hashtable[bucket]; *p; p = &(*p)->next)
     {
         if (!strcmp(term, (*p)->term.term))

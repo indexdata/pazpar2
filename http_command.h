@@ -3,6 +3,6 @@
 
 #include "http.h"
 
-struct http_response *http_command(struct http_request *r);
+void http_command(struct http_channel *c);
 
 #endif

@@ -18,8 +18,16 @@ struct http_channel
     struct http_buf *oqueue;
     char version[10];
     struct http_proxy *proxy;
+    enum
+    {
+        Http_Idle,
+        Http_Busy      // Don't process new HTTP requests
+    } state;
     NMEM nmem;
     WRBUF wrbuf;
+    struct http_request *request;
+    struct http_response *response;
+    struct http_channel *next; // for freelist
 };
 
 struct http_proxy //  attached to iochan for proxy connection
@@ -68,6 +76,7 @@ void http_addheader(struct http_response *r, const char *name, const char *value
 char *http_argbyname(struct http_request *r, char *name);
 char *http_headerbyname(struct http_request *r, char *name);
 struct http_response *http_create_response(struct http_channel *c);
+void http_send_response(struct http_channel *c);
 
 /*
  * Local variables:

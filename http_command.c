@@ -1,5 +1,5 @@
-/*
- * $Id: http_command.c,v 1.6 2006-12-04 02:27:02 quinn Exp $
+/*_response(c, rs);
+ * $Id: http_command.c,v 1.7 2006-12-08 21:40:58 quinn Exp $
  */
 
 #include <stdio.h>
@@ -65,6 +65,7 @@ static void error(struct http_response *rs, char *code, char *msg, char *txt)
     strcpy(rs->code, code);
     sprintf(tmp, "<error code=\"general\">%s</error>", txt);
     rs->payload = nmem_strdup(c->nmem, tmp);
+    http_send_response(c);
 }
 
 int make_sessionid()
@@ -100,30 +101,33 @@ static struct http_session *locate_session(struct http_request *rq, struct http_
     return 0;
 }
 
-static void cmd_exit(struct http_request *rq, struct http_response *rs)
+static void cmd_exit(struct http_channel *c)
 {
     yaz_log(YLOG_WARN, "exit");
     exit(0);
 }
 
-static void cmd_init(struct http_request *rq, struct http_response *rs)
+static void cmd_init(struct http_channel *c)
 {
     int sesid;
     char buf[1024];
     struct http_session *s = http_session_create();
+    struct http_response *rs = c->response;
 
     // FIXME create a pazpar2 session
     yaz_log(YLOG_DEBUG, "HTTP Session init");
     sesid = make_sessionid();
     s->session_id = sesid;
     sprintf(buf, "<init><status>OK</status><session>%d</session></init>", sesid);
-    rs->payload = nmem_strdup(rq->channel->nmem, buf);
+    rs->payload = nmem_strdup(c->nmem, buf);
+    http_send_response(c);
 }
 
-static void cmd_termlist(struct http_request *rq, struct http_response *rs)
+static void cmd_termlist(struct http_channel *c)
 {
+    struct http_response *rs = c->response;
+    struct http_request *rq = c->request;
     struct http_session *s = locate_session(rq, rs);
-    struct http_channel *c = rq->channel;
     struct termlist_score **p;
     int len;
     int i;
@@ -144,13 +148,15 @@ static void cmd_termlist(struct http_request *rq, struct http_response *rs)
         }
     wrbuf_puts(c->wrbuf, "</termlist>");
     rs->payload = nmem_strdup(rq->channel->nmem, wrbuf_buf(c->wrbuf));
+    http_send_response(c);
 }
 
 
-static void cmd_bytarget(struct http_request *rq, struct http_response *rs)
+static void cmd_bytarget(struct http_channel *c)
 {
+    struct http_response *rs = c->response;
+    struct http_request *rq = c->request;
     struct http_session *s = locate_session(rq, rs);
-    struct http_channel *c = rq->channel;
     struct hitsbytarget *ht;
     int count, i;
 
@@ -177,12 +183,14 @@ static void cmd_bytarget(struct http_request *rq, struct http_response *rs)
 
     wrbuf_puts(c->wrbuf, "</bytarget>");
     rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
+    http_send_response(c);
 }
 
-static void cmd_show(struct http_request *rq, struct http_response *rs)
+static void cmd_show(struct http_channel *c)
 {
+    struct http_request *rq = c->request;
+    struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
-    struct http_channel *c = rq->channel;
     struct record **rl;
     char *start = http_argbyname(rq, "start");
     char *num = http_argbyname(rq, "num");
@@ -225,10 +233,13 @@ static void cmd_show(struct http_request *rq, struct http_response *rs)
 
     wrbuf_puts(c->wrbuf, "</show>\n");
     rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
+    http_send_response(c);
 }
 
-static void cmd_search(struct http_request *rq, struct http_response *rs)
+static void cmd_search(struct http_channel *c)
 {
+    struct http_request *rq = c->request;
+    struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
     char *query = http_argbyname(rq, "query");
     char *res;
@@ -247,13 +258,15 @@ static void cmd_search(struct http_request *rq, struct http_response *rs)
         return;
     }
     rs->payload = "<search><status>OK</status></search>";
+    http_send_response(c);
 }
 
 
-static void cmd_stat(struct http_request *rq, struct http_response *rs)
+static void cmd_stat(struct http_channel *c)
 {
+    struct http_request *rq = c->request;
+    struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
-    struct http_channel *c = rq->channel;
     struct statistics stat;
 
     if (!s)
@@ -276,31 +289,13 @@ static void cmd_stat(struct http_request *rq, struct http_response *rs)
     wrbuf_printf(c->wrbuf, "<error>%d</error>\n", stat.num_error);
     wrbuf_puts(c->wrbuf, "</stat>");
     rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
+    http_send_response(c);
 }
 
-#ifdef GAGA
-static void cmd_load(struct http_request *rq, struct http_response *rs)
-{
-    struct http_session *s = locate_session(rq, rs);
-    char *fn = http_argbyname(rq, "name");
-
-    if (!s)
-        return;
-    if (!fn)
-    {
-        error(rs, "417", "Must suppply name", 0);
-        return;
-    }
-    if (load_targets(s->psession, fn) < 0)
-        error(rs, "417", "Failed to find targets", "Possibly wrong filename");
-    else
-        rs->payload = "<load><status>OK</status></load>";
-}
-#endif
 
 struct {
     char *name;
-    void (*fun)(struct http_request *rq, struct http_response *rs);
+    void (*fun)(struct http_channel *c);
 } commands[] = {
     { "init", cmd_init },
     { "stat", cmd_stat },
@@ -315,28 +310,28 @@ struct {
     {0,0}
 };
 
-struct http_response *http_command(struct http_request *rq)
+void http_command(struct http_channel *c)
 {
-    char *command = http_argbyname(rq, "command");
-    struct http_channel *c = rq->channel;
+    char *command = http_argbyname(c->request, "command");
     struct http_response *rs = http_create_response(c);
     int i;
 
+    c->response = rs;
     if (!command)
     {
         error(rs, "417", "Must supply command", 0);
-        return rs;
+        return;
     }
     for (i = 0; commands[i].name; i++)
         if (!strcmp(commands[i].name, command))
         {
-            (*commands[i].fun)(rq, rs);
+            (*commands[i].fun)(c);
             break;
         }
     if (!commands[i].name)
         error(rs, "417", "Unknown command", 0);
 
-    return rs;
+    return;
 }
 
 /*
