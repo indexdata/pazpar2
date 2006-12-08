@@ -1,0 +1,24 @@
+Short term: 
+
+Structured target profiles -- Zeerex.
+Normalization of records -- test if libXSLT is fast enough to:
+  -- Extract Subject headings, titles, dates, authors for facets and display
+  -- Merge keys for relevance ranking, etc.
+  -- Also normalize to UTF-8.
+Implement timeout of sessions, so they don't sit there forever (simple).
+Sort by title, date, author. Parameter to 'show' webservice command.
+Additional facets. At least do 'author'.. think about making it general.
+Support for 'blocking' requests, at least for record display before first records
+   are retrieved (to reduce polling).
+Implement detection of 'search complete', so client knows when to stop polling.
+Full record retrieval.
+
+Longer term:
+
+Server-specific CCL-mapping (simple)
+Networked mechanism to control configuration
+Target selection by metadata -- 'subject', 'location', 'library
+	type' -- should be totally generic to support requirements of
+	different projects.
+
+Nice to have:
