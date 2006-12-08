@@ -1,0 +1,17 @@
+How to use this:
+
+Usage: pazpar2 -h listen-port -p host-to-proxy -s targetfile
+
+The host-to-proxy is the webserver where the user interface script
+lives. It is used both for domain-name lookup and the contents of
+the Host: header in rerquests that are proxied, so it's important
+that the hostname is recognized by the webserver.
+
+There are a few main target files:
+
+test.pz: Single target, localhost:9999/Default -- use with
+yaz-ztest or a local Zebra test.
+
+bibs.pz: A small set of serious catalogs in the US and Canada.
+
+many.pz: Obscenely many catalogs.
