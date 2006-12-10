@@ -1,11 +1,13 @@
 Short term: 
 
-Structured target profiles -- Zeerex.
+Structured target profiles -- Zeerex?
 Normalization of records -- test if libXSLT is fast enough to:
   -- Extract Subject headings, titles, dates, authors for facets and display
   -- Merge keys for relevance ranking, etc.
   -- Also normalize to UTF-8.
 Implement timeout of sessions, so they don't sit there forever (simple).
+Factor Z39.50 stuff out from pazpar2.c to separate file to make room for
+   later SRU implementation.
 Sort by title, date, author. Parameter to 'show' webservice command.
 Additional facets. At least do 'author'.. think about making it general.
 Support for 'blocking' requests, at least for record display before first records
