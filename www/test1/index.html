@@ -1,0 +1,343 @@
+<html>
+
+<head>
+<style type="text/css">
+
+</style>
+
+<script>
+var xmlHttp
+var xinitSession;
+var xloadTargets;
+var xsearch;
+var xshow;
+var xstat;
+var xtermlist;
+var session = false;
+var targetsloaded = false;
+var shown;
+var searchtimer;
+var showtimer;
+var termtimer;
+var stattimer;
+var startrec;
+
+function GetXmlHttpObject()
+{ 
+    var objXMLHttp=null
+    if (window.XMLHttpRequest)
+      {
+      objXMLHttp=new XMLHttpRequest()
+      }
+    else if (window.ActiveXObject)
+      {
+      objXMLHttp=new ActiveXObject("Microsoft.XMLHTTP")
+      }
+    return objXMLHttp
+} 
+
+function session_started()
+{
+    if (xinitSession.readyState != 4)
+	return;
+    var xml = xinitSession.responseXML;
+    var sesid = xml.getElementsByTagName("session")[0].childNodes[0].nodeValue;
+    document.getElementById("status").innerHTML = "Live";
+    session = sesid;
+}
+
+function start_session()
+{
+    xinitSession = GetXmlHttpObject();
+    var url="search.pz2?";
+    url += "command=init";
+    xinitSession.onreadystatechange=session_started;
+    xinitSession.open("GET", url);
+    xinitSession.send(null);
+}
+
+function targets_loaded()
+{
+    if (xloadTargets.readyState != 4)
+	return;
+    var xml = xloadTargets.responseXML;
+    var error = xml.getElementsByTagName("error");
+    if (error[0])
+    {
+	var msg = error[0].childNodes[0].nodeValue;
+	alert(msg);
+	return;
+    }
+    document.getElementById("targetstatus").innerHTML = "Targets loaded";
+}
+
+function load_targets()
+{
+    var fn = document.getElementById("targetfilename").value;
+    clearTimeout(termtimer);
+    clearTimeout(searchtimer);
+    clearTimeout(stattimer);
+    clearTimeout(showtimer);
+    document.getElementById("stat").innerHTML = "";
+    if (!fn)
+    {
+	alert("Please enter a target definition file name");
+	return;
+    }
+    var url="search.pz2?" +
+    	"command=load" +
+	"&session=" + session +
+	"&name=" + fn;
+    document.getElementById("targetstatus").innerHTML = "Loading targets...";
+    xloadTargets = GetXmlHttpObject();
+    xloadTargets.onreadystatechange=targets_loaded;
+    xloadTargets.open("GET", url);
+    xloadTargets.send(null);
+}
+
+function show_records()
+{
+    if (xshow.readyState != 4)
+	return;
+    var i;
+    var xml = xshow.responseXML;
+    var body = document.getElementById("body");
+    var hits = xml.getElementsByTagName("hit");
+    if (!hits[0])
+    {
+	body.innerHTML = "No records yet";
+	searchtimer = setTimeout(check_search, 250);
+    }
+    else
+    {
+
+	var total = Number(xml.getElementsByTagName('total')[0].childNodes[0].nodeValue);
+	var merged = Number(xml.getElementsByTagName('merged')[0].childNodes[0].nodeValue);
+	var start = Number(xml.getElementsByTagName('start')[0].childNodes[0].nodeValue);
+	var num = Number(xml.getElementsByTagName('num')[0].childNodes[0].nodeValue);
+	body.innerHTML = '<b>Records : ';
+	body.innerHTML += (start + 1) + ' to ' + (start + num) +
+		' of ' + merged + ' (total hits: ' + total + ')</b>';
+
+	if (start + num < merged)
+	    body.innerHTML += ' <a href="" ' +
+		'onclick="startrec=' + (start + 20) +
+		';check_search(); return false;">Next</a>';
+
+	if (start > 0)
+	    body.innerHTML += ' <a href="" ' +
+		'onclick="startrec=' + (start - 20) +
+		';check_search(); return false;">Previous</a>';
+
+	body.innerHTML += '<br/>';
+	for (i = 0; i < hits.length; i++)
+	{
+	    body.innerHTML += '<p>';
+	    body.innerHTML += (i + start + 1) + ': ';
+	    var mk = hits[i].getElementsByTagName("title");
+	    if (mk[0])
+		body.innerHTML += mk[0].childNodes[0].nodeValue;
+	    body.innerHTML += '</p>';
+	}
+	shown++;
+	if (shown < 5)
+	    searchtimer = setTimeout(check_search, 400);
+	else if (shown < 10)
+	    searchtimer = setTimeout(check_search, 1000);
+	else
+	    searchtimer = setTimeout(check_search, 4000);
+    }
+}
+
+function check_search()
+{
+    clearTimeout(searchtimer);
+    var url = "search.pz2?" +
+        "command=show" +
+	"&start=" + startrec +
+	"&session=" + session;
+    xshow = GetXmlHttpObject();
+    xshow.onreadystatechange=show_records;
+    xshow.open("GET", url);
+    xshow.send(null);
+}
+
+function show_termlist()
+{
+    if (xtermlist.readyState != 4)
+	return;
+    var i;
+    var xml = xtermlist.responseXML;
+    var body = document.getElementById("termlist");
+    var hits = xml.getElementsByTagName("term");
+    if (!hits[0])
+    {
+	termtimer = (check_termlist, 1000);
+    }
+    else
+    {
+	body.innerHTML = "<b>Limit results:</b><br>";
+	for (i = 0; i < hits.length; i++)
+	{
+	    var namen = hits[i].getElementsByTagName("name");
+	    if (namen[0])
+		body.innerHTML += namen[0].childNodes[0].nodeValue;
+	    /*
+	    body.innerHTML += ' (';
+	    var freqn = hits[i].getElementsByTagName("frequency");
+	    if (freqn[0])
+		body.innerHTML += freqn[0].childNodes[0].nodeValue;
+	    body.innerHTML += ')<br>';
+	    */
+	    body.innerHTML += '<br>';
+	}
+	termtimer = setTimeout(check_termlist, 2000);
+    }
+}
+
+
+function check_termlist()
+{
+    var url = "search.pz2?" +
+        "command=termlist" +
+	"&session=" + session;
+    xtermlist = GetXmlHttpObject();
+    xtermlist.onreadystatechange=show_termlist;
+    xtermlist.open("GET", url);
+    xtermlist.send(null);
+}
+
+function show_stat()
+{
+    if (xstat.readyState != 4)
+	return;
+    var i;
+    var xml = xstat.responseXML;
+    var body = document.getElementById("stat");
+    var nodes = xml.childNodes[0].childNodes;
+    if (!nodes[0])
+    {
+	stattimer  = setTimeout(check_stat, 500);
+    }
+    else
+    {
+	body.innerHTML = "(";
+	for (i = 0; i < nodes.length; i++)
+	{
+	    if (nodes[i].nodeType != 1)
+		continue;
+	    var value = nodes[i].childNodes[0].nodeValue;
+	    if (value == 0)
+		continue;
+	    var name = nodes[i].nodeName;
+	    body.innerHTML += ' ' + name + '=' + value;
+	}
+	body.innerHTML += ')';
+	stattimer = setTimeout(check_stat, 2000);
+    }
+}
+
+function check_stat()
+{
+    var url = "search.pz2?" +
+        "command=stat" +
+	"&session=" + session;
+    xstat = GetXmlHttpObject();
+    xstat.onreadystatechange=show_stat;
+    xstat.open("GET", url);
+    xstat.send(null);
+}
+
+function search_started()
+{
+    if (xsearch.readyState != 4)
+	return;
+    var xml = xsearch.responseXML;
+    var error = xml.getElementsByTagName("error");
+    if (error[0])
+    {
+	var msg = error[0].childNodes[0].nodeValue;
+	alert(msg);
+	return;
+    }
+    searchtimer = setTimeout(check_search, 250);
+    termtimer = setTimeout(check_termlist, 1000);
+    stattimer = setTimeout(check_stat, 1000);
+}
+
+function start_search()
+{
+    clearTimeout(termtimer);
+    clearTimeout(searchtimer);
+    clearTimeout(stattimer);
+    clearTimeout(showtimer);
+    if (!targets_loaded)
+    {
+	alert("Please load targets first");
+	return;
+    }
+    var query = escape(document.getElementById('query').value);
+    var url = "search.pz2?" +
+        "command=search" +
+	"&session=" + session +
+	"&query=" + query;
+    xsearch = GetXmlHttpObject();
+    xsearch.onreadystatechange=search_started;
+    xsearch.open("GET", url);
+    xsearch.send(null);
+    document.getElementById("termlist").innerHTML = '';
+    document.getElementById("body").innerHTML = '';
+    shown = 0;
+    startrec = 0;
+}
+
+</script>
+</head>
+
+<body onload="start_session();">
+
+<table width="100%" border="1" cellpadding="5">
+    <tr>
+	<td width="250" height="100" align="center">
+	    <font size="+2"><b>MasterKey mk I</b></font>
+	</td>
+
+	<td>
+	    <form onsubmit="start_search(); return false;">
+		<b>Search:</b> <input id="query" type="text" size="50"/>
+		<input type="submit" value="Go"/>
+	    </form>
+
+	<td>
+    </tr>
+
+    <tr>
+	<td valign="top" id="termlist">&nbsp;</td>
+
+	<td valign="top" id="body">
+	Funky search prototype.<br><br><br><br>
+	<td>
+    </tr>
+
+    <tr>
+	<td>
+	&nbsp;
+	    <!-- 
+	    <form onsubmit="load_targets(); return false;">
+		Target file:<br/>
+		<input type="text" id="targetfilename" size="20"/>
+		<input type="submit"  value="load" />
+	    </form>
+	    -->
+	</td>
+
+	<td>
+	    Status: <span id="status">Initializing</span> <span id="targetstatus"></span><br/><span id="stat"></span>
+	</td>
+
+    </tr>
+
+</table>
+
+</body>
+</html>
