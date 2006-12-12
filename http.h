@@ -21,7 +21,7 @@ struct http_channel
     enum
     {
         Http_Idle,
-        Http_Busy      // Don't process new HTTP requests
+        Http_Busy      // Don't process new HTTP requests while we're busy
     } state;
     NMEM nmem;
     WRBUF wrbuf;

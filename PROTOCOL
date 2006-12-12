@@ -18,6 +18,23 @@ Response example:
   <session>2044502273</session>
 </init>
 
+ping
+
+Keeps a session alive. An idle session will time out after one minute. The
+ping command can be used to keep the session alive absent other activity. It
+is suggested that any browser client have a simple alarm handler which
+sends a ping every 50 seconds or so once a session has been initialized.
+
+Example:
+
+search.pz?command=ping&session=2044502273
+
+Response example:
+
+<ping>
+  <status>OK</status>
+</ping>
+
 search
 
 Launches a search, parameters:

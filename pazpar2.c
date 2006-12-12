@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.11 2006-12-08 21:40:58 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.12 2006-12-12 02:36:24 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,8 +17,6 @@
 #include <yaz/readconf.h>
 #include <yaz/pquery.h>
 #include <yaz/yaz-util.h>
-#include <yaz/ccl.h>
-#include <yaz/yaz-ccl.h>
 
 #include "pazpar2.h"
 #include "eventl.h"
@@ -57,25 +55,14 @@ static char *client_states[] = {
     "Client_Stopped"
 };
 
-static struct parameters {
-    int timeout;		/* operations timeout, in seconds */
-    char implementationId[128];
-    char implementationName[128];
-    char implementationVersion[128];
-    int target_timeout; // seconds
-    int toget;
-    int chunk;
-    CCL_bibset ccl_filter;
-    yaz_marc_t yaz_marc;
-    ODR odr_out;
-    ODR odr_in;
-} global_parameters = 
+struct parameters global_parameters = 
 {
     30,
     "81",
     "Index Data PazPar2 (MasterKey)",
     PAZPAR2_VERSION,
     600, // 10 minutes
+    60,
     100,
     MAX_CHUNK,
     0,
@@ -1121,7 +1108,7 @@ void client_destroy(struct client *c)
             cc->next = c->next;
     }
     if (c->connection)
-        connection_destroy(c->connection);
+        connection_release(c->connection);
     c->next = client_freelist;
     client_freelist = c;
 }
@@ -1182,6 +1169,15 @@ char *search(struct session *se, char *query)
     return 0;
 }
 
+void destroy_session(struct session *s)
+{
+    yaz_log(YLOG_LOG, "Destroying session");
+    while (s->clients)
+        client_destroy(s->clients);
+    nmem_destroy(s->nmem);
+    wrbuf_free(s->wrbuf, 1);
+}
+
 struct session *new_session() 
 {
     struct session *session = xmalloc(sizeof(*session));
@@ -1201,11 +1197,6 @@ struct session *new_session()
     select_targets(session);
 
     return session;
-}
-
-void session_destroy(struct session *s)
-{
-    // FIXME do some shit here!!!!
 }
 
 struct hitsbytarget *hitsbytarget(struct session *se, int *count)

@@ -7,6 +7,8 @@ struct record;
 
 #include <yaz/comstack.h>
 #include <yaz/pquery.h>
+#include <yaz/ccl.h>
+#include <yaz/yaz-ccl.h>
 #include "termlists.h"
 #include "relevance.h"
 #include "eventl.h"
@@ -124,10 +126,25 @@ struct hitsbytarget {
     int connected;
 };
 
+struct parameters {
+    int timeout;		/* operations timeout, in seconds */
+    char implementationId[128];
+    char implementationName[128];
+    char implementationVersion[128];
+    int target_timeout; // seconds
+    int session_timeout;
+    int toget;
+    int chunk;
+    CCL_bibset ccl_filter;
+    yaz_marc_t yaz_marc;
+    ODR odr_out;
+    ODR odr_in;
+};
+
 struct hitsbytarget *hitsbytarget(struct session *s, int *count);
 int select_targets(struct session *se);
 struct session *new_session();
-void session_destroy(struct session *s);
+void destroy_session(struct session *s);
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
 char *search(struct session *s, char *query);

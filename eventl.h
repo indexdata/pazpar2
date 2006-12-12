@@ -4,7 +4,10 @@
  * Sebastian Hammer, Adam Dickmeiss
  *
  * $Log: eventl.h,v $
- * Revision 1.2  2006-11-18 05:00:38  quinn
+ * Revision 1.3  2006-12-12 02:36:24  quinn
+ * Implemented session timeout; ping command
+ *
+ * Revision 1.2  2006/11/18 05:00:38  quinn
  * Added record retrieval, etc.
  *
  * Revision 1.1.1.1  2006/11/14 20:44:38  quinn
@@ -93,6 +96,7 @@ typedef struct iochan
 #define iochan_setevent(i, e) ((i)->force_event = (e))
 #define iochan_getnext(i) ((i)->next)
 #define iochan_settimeout(i, t) ((i)->max_idle = (t), (i)->last_event = time(0))
+#define iochan_activity(i) ((i)->last_event = time(0))
 
 IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags);
 int event_loop(IOCHAN *iochans);

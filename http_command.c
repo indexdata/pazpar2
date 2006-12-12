@@ -1,5 +1,5 @@
 /*_response(c, rs);
- * $Id: http_command.c,v 1.7 2006-12-08 21:40:58 quinn Exp $
+ * $Id: http_command.c,v 1.8 2006-12-12 02:36:24 quinn Exp $
  */
 
 #include <stdio.h>
@@ -20,7 +20,11 @@
 #include "http.h"
 #include "http_command.h"
 
+extern struct parameters global_parameters;
+extern IOCHAN channel_list;
+
 struct http_session {
+    IOCHAN timeout_iochan;     // NOTE: This is NOT associated with a socket
     struct session *psession;
     int session_id;
     int timestamp;
@@ -28,6 +32,14 @@ struct http_session {
 };
 
 static struct http_session *session_list = 0;
+
+void http_session_destroy(struct http_session *s);
+
+static void session_timeout(IOCHAN i, int event)
+{
+    struct http_session *s = iochan_getdata(i);
+    http_session_destroy(s);
+}
 
 struct http_session *http_session_create()
 {
@@ -37,6 +49,11 @@ struct http_session *http_session_create()
     r->timestamp = 0;
     r->next = session_list;
     session_list = r;
+    r->timeout_iochan = iochan_create(-1, session_timeout, 0);
+    iochan_setdata(r->timeout_iochan, r);
+    iochan_settimeout(r->timeout_iochan, global_parameters.session_timeout);
+    r->timeout_iochan->next = channel_list;
+    channel_list = r->timeout_iochan;
     return r;
 }
 
@@ -50,7 +67,8 @@ void http_session_destroy(struct http_session *s)
             *p = (*p)->next;
             break;
         }
-    session_destroy(s->psession);
+    iochan_destroy(s->timeout_iochan);
+    destroy_session(s->psession);
     xfree(s);
 }
 
@@ -96,7 +114,10 @@ static struct http_session *locate_session(struct http_request *rq, struct http_
     id = atoi(session);
     for (p = session_list; p; p = p->next)
         if (id == p->session_id)
+        {
+            iochan_activity(p->timeout_iochan);
             return p;
+        }
     error(rs, "417", "Session does not exist, or it has expired", 0);
     return 0;
 }
@@ -106,6 +127,7 @@ static void cmd_exit(struct http_channel *c)
     yaz_log(YLOG_WARN, "exit");
     exit(0);
 }
+
 
 static void cmd_init(struct http_channel *c)
 {
@@ -236,6 +258,17 @@ static void cmd_show(struct http_channel *c)
     http_send_response(c);
 }
 
+static void cmd_ping(struct http_channel *c)
+{
+    struct http_request *rq = c->request;
+    struct http_response *rs = c->response;
+    struct http_session *s = locate_session(rq, rs);
+    if (!s)
+        return;
+    rs->payload = "<ping><status>OK</status></ping>";
+    http_send_response(c);
+}
+
 static void cmd_search(struct http_channel *c)
 {
     struct http_request *rq = c->request;
@@ -299,14 +332,12 @@ struct {
 } commands[] = {
     { "init", cmd_init },
     { "stat", cmd_stat },
-#ifdef GAGA
-    { "load", cmd_load },
-#endif
     { "bytarget", cmd_bytarget },
     { "show", cmd_show },
     { "search", cmd_search },
     { "termlist", cmd_termlist },
     { "exit", cmd_exit },
+    { "ping", cmd_ping },
     {0,0}
 };
 

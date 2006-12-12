@@ -6,7 +6,7 @@
  */
 
 /*
- * $Id: eventl.c,v 1.1 2006-11-14 20:44:37 quinn Exp $
+ * $Id: eventl.c,v 1.2 2006-12-12 02:36:24 quinn Exp $
  * Based on revision YAZ' server/eventl.c 1.29.
  */
 
@@ -63,6 +63,8 @@ int event_loop(IOCHAN *iochans)
 	max = 0;
     	for (p = *iochans; p; p = p->next)
     	{
+            if (p->fd < 0)
+                continue;
 	    if (p->force_event)
 		timeout = &nullto;        /* polling select */
 	    if (p->flags & EVENT_INPUT)
@@ -87,6 +89,14 @@ int event_loop(IOCHAN *iochans)
 	    time_t now = time(0);
 
 	    p->force_event = 0;
+	    if (!p->destroyed && ((p->max_idle && now - p->last_event >
+	        p->max_idle) || force_event == EVENT_TIMEOUT))
+	    {
+	        p->last_event = now;
+	        (*p->fun)(p, EVENT_TIMEOUT);
+	    }
+            if (p->fd < 0)
+                continue;
 	    if (!p->destroyed && (FD_ISSET(p->fd, &in) ||
 		force_event == EVENT_INPUT))
 	    {
@@ -104,12 +114,6 @@ int event_loop(IOCHAN *iochans)
 	    {
 		p->last_event = now;
 	    	(*p->fun)(p, EVENT_EXCEPT);
-	    }
-	    if (!p->destroyed && ((p->max_idle && now - p->last_event >
-	        p->max_idle) || force_event == EVENT_TIMEOUT))
-	    {
-	        p->last_event = now;
-	        (*p->fun)(p, EVENT_TIMEOUT);
 	    }
 	}
 	for (p = *iochans; p; p = nextp)
@@ -140,3 +144,11 @@ int event_loop(IOCHAN *iochans)
     while (*iochans);
     return 0;
 }
+
+/*
+ * Local variables:
+ * c-basic-offset: 4
+ * indent-tabs-mode: nil
+ * End:
+ * vim: shiftwidth=4 tabstop=8 expandtab
+ */
