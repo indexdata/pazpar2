@@ -162,6 +162,14 @@ function check_search()
     xshow.send(null);
 }
 
+
+function refine_query (obj) {
+    var query_cell = document.getElementById('query');
+
+    query_cell.value += ' and su=' + obj.innerHTML;
+    start_search();
+}
+
 function show_termlist()
 {
     if (xtermlist.readyState != 4)
@@ -181,7 +189,9 @@ function show_termlist()
 	{
 	    var namen = hits[i].getElementsByTagName("name");
 	    if (namen[0])
-		body.innerHTML += namen[0].childNodes[0].nodeValue;
+		body.innerHTML += '<a href="#" onclick="refine_query(this)">' +
+                                  namen[0].childNodes[0].nodeValue +
+                                  '</a>';
 	    /*
 	    body.innerHTML += ' (';
 	    var freqn = hits[i].getElementsByTagName("frequency");
