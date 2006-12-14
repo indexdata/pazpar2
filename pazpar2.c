@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.12 2006-12-12 02:36:24 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.13 2006-12-14 14:58:03 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -736,12 +736,14 @@ static void handler(IOCHAN i, int event)
 
 	if (len < 0)
 	{
-            client_fatal(cl);
+            yaz_log(YLOG_WARN|YLOG_ERRNO, "Error reading from Z server");
+            connection_destroy(co);
 	    return;
 	}
         else if (len == 0)
 	{
-            client_fatal(cl);
+            yaz_log(YLOG_WARN, "EOF reading from Z server");
+            connection_destroy(co);
 	    return;
 	}
 	else if (len > 1) // We discard input if we have no connection
@@ -1113,6 +1115,12 @@ void client_destroy(struct client *c)
     client_freelist = c;
 }
 
+void session_set_watch(struct session *s, int what, session_watchfun fun, void *data)
+{
+    s->watchlist[what].fun = fun;
+    s->watchlist[what].data = data;
+}
+
 // This should be extended with parameters to control selection criteria
 // Associates a set of clients with a session;
 int select_targets(struct session *se)
@@ -1180,6 +1188,7 @@ void destroy_session(struct session *s)
 
 struct session *new_session() 
 {
+    int i;
     struct session *session = xmalloc(sizeof(*session));
 
     yaz_log(YLOG_DEBUG, "New pazpar2 session");
@@ -1193,6 +1202,11 @@ struct session *new_session()
     session->query[0] = '\0';
     session->nmem = nmem_create();
     session->wrbuf = wrbuf_alloc();
+    for (i = 0; i <= SESSION_WATCH_MAX; i++)
+    {
+        session->watchlist[i].data = 0;
+        session->watchlist[i].fun = 0;
+    }
 
     select_targets(session);
 

@@ -89,6 +89,11 @@ struct client {
     struct client *next;
 };
 
+#define SESSION_WATCH_RECORDS   0
+#define SESSION_WATCH_MAX       0
+
+typedef void (*session_watchfun)(void *data);
+
 // End-user session
 struct session {
     struct client *clients;
@@ -99,6 +104,10 @@ struct session {
     struct termlist *termlist;
     struct relevance *relevance;
     struct reclist *reclist;
+    struct {
+        void *data;
+        session_watchfun fun;
+    } watchlist[SESSION_WATCH_MAX + 1];
     int total_hits;
     int total_records;
 };
@@ -150,6 +159,7 @@ void statistics(struct session *s, struct statistics *stat);
 char *search(struct session *s, char *query);
 struct record **show(struct session *s, int start, int *num, int *total, int *sumhits);
 struct termlist_score **termlist(struct session *s, int *num);
+void session_set_watch(struct session *s, int what, session_watchfun fun, void *data);
 
 #endif
 
