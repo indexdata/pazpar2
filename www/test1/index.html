@@ -103,7 +103,7 @@ function show_records()
     var xml = xshow.responseXML;
     var body = document.getElementById("body");
     var hits = xml.getElementsByTagName("hit");
-    if (!hits[0])
+    if (!hits[0]) // We should never get here with blocking operations
     {
 	body.innerHTML = "No records yet";
 	searchtimer = setTimeout(check_search, 250);
@@ -141,12 +141,12 @@ function show_records()
 	}
 	shown++;
 	if (shown < 5)
-	    searchtimer = setTimeout(check_search, 400);
-	else if (shown < 10)
 	    searchtimer = setTimeout(check_search, 1000);
 	else
-	    searchtimer = setTimeout(check_search, 4000);
+	    searchtimer = setTimeout(check_search, 2000);
     }
+    if (!termtimer)
+	termtimer = setTimeout(check_termlist, 1000);
 }
 
 function check_search()
@@ -155,7 +155,8 @@ function check_search()
     var url = "search.pz2?" +
         "command=show" +
 	"&start=" + startrec +
-	"&session=" + session;
+	"&session=" + session +
+	"&block=1";
     xshow = GetXmlHttpObject();
     xshow.onreadystatechange=show_records;
     xshow.open("GET", url);
@@ -270,17 +271,20 @@ function search_started()
 	alert(msg);
 	return;
     }
-    searchtimer = setTimeout(check_search, 250);
-    termtimer = setTimeout(check_termlist, 1000);
+    check_search();
     stattimer = setTimeout(check_stat, 1000);
 }
 
 function start_search()
 {
     clearTimeout(termtimer);
+    termtimer = 0;
     clearTimeout(searchtimer);
+    searchtimer = 0;
     clearTimeout(stattimer);
+    stattimer = 0;
     clearTimeout(showtimer);
+    showtimer = 0;
     if (!targets_loaded)
     {
 	alert("Please load targets first");

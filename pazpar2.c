@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.13 2006-12-14 14:58:03 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.14 2006-12-17 13:42:47 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -33,8 +33,9 @@ static void client_fatal(struct client *cl);
 static void connection_destroy(struct connection *co);
 static int client_prep_connection(struct client *cl);
 static void ingest_records(struct client *cl, Z_Records *r);
+void session_alert_watch(struct session *s, int what);
 
-IOCHAN channel_list = 0;  // Master list of connections we're listening to.
+IOCHAN channel_list = 0;  // Master list of connections we're handling events to
 
 static struct connection *connection_freelist = 0;
 static struct client *client_freelist = 0;
@@ -638,6 +639,7 @@ static struct record *ingest_record(struct client *cl, char *buf, int len)
 static void ingest_records(struct client *cl, Z_Records *r)
 {
     struct record *rec;
+    struct session *s = cl->session;
     Z_NamePlusRecordList *rlist;
     int i;
 
@@ -669,6 +671,8 @@ static void ingest_records(struct client *cl, Z_Records *r)
         if (!rec)
             continue;
     }
+    if (s->watchlist[SESSION_WATCH_RECORDS].fun && rlist->num_records)
+        session_alert_watch(s, SESSION_WATCH_RECORDS);
 }
 
 static void do_presentResponse(IOCHAN i, Z_APDU *a)
@@ -1119,6 +1123,15 @@ void session_set_watch(struct session *s, int what, session_watchfun fun, void *
 {
     s->watchlist[what].fun = fun;
     s->watchlist[what].data = data;
+}
+
+void session_alert_watch(struct session *s, int what)
+{
+    if (!s->watchlist[what].fun)
+        return;
+    (*s->watchlist[what].fun)(s->watchlist[what].data);
+    s->watchlist[what].fun = 0;
+    s->watchlist[what].data = 0;
 }
 
 // This should be extended with parameters to control selection criteria

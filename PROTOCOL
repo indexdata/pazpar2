@@ -87,6 +87,11 @@ parameters:
 session
 start      -- 0-indexed!!
 num        -- default=20
+block      -- 0 or 1
+
+If block is set, the command will hang until there are records ready
+to display. Use this to show first records rapidly without requiring rapid
+polling.
 
 Example:
 

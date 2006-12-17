@@ -1,5 +1,5 @@
-/*_response(c, rs);
- * $Id: http_command.c,v 1.8 2006-12-12 02:36:24 quinn Exp $
+/*
+ * $Id: http_command.c,v 1.9 2006-12-17 13:42:47 quinn Exp $
  */
 
 #include <stdio.h>
@@ -26,7 +26,7 @@ extern IOCHAN channel_list;
 struct http_session {
     IOCHAN timeout_iochan;     // NOTE: This is NOT associated with a socket
     struct session *psession;
-    int session_id;
+    unsigned int session_id;
     int timestamp;
     struct http_session *next;
 };
@@ -86,17 +86,17 @@ static void error(struct http_response *rs, char *code, char *msg, char *txt)
     http_send_response(c);
 }
 
-int make_sessionid()
+unsigned int make_sessionid()
 {
     struct timeval t;
-    int res;
+    unsigned int res;
     static int seq = 0;
 
     seq++;
     if (gettimeofday(&t, 0) < 0)
         abort();
     res = t.tv_sec;
-    res = (res << 8) | (seq & 0xff);
+    res = ((res << 8) | (seq & 0xff)) & ((unsigned int) (1 << 31) - 1);
     return res;
 }
 
@@ -104,7 +104,7 @@ static struct http_session *locate_session(struct http_request *rq, struct http_
 {
     struct http_session *p;
     char *session = http_argbyname(rq, "session");
-    int id;
+    unsigned int id;
 
     if (!session)
     {
@@ -131,16 +131,15 @@ static void cmd_exit(struct http_channel *c)
 
 static void cmd_init(struct http_channel *c)
 {
-    int sesid;
+    unsigned int sesid;
     char buf[1024];
     struct http_session *s = http_session_create();
     struct http_response *rs = c->response;
 
-    // FIXME create a pazpar2 session
     yaz_log(YLOG_DEBUG, "HTTP Session init");
     sesid = make_sessionid();
     s->session_id = sesid;
-    sprintf(buf, "<init><status>OK</status><session>%d</session></init>", sesid);
+    sprintf(buf, "<init><status>OK</status><session>%u</session></init>", sesid);
     rs->payload = nmem_strdup(c->nmem, buf);
     http_send_response(c);
 }
@@ -208,7 +207,7 @@ static void cmd_bytarget(struct http_channel *c)
     http_send_response(c);
 }
 
-static void cmd_show(struct http_channel *c)
+static void show_records(struct http_channel *c)
 {
     struct http_request *rq = c->request;
     struct http_response *rs = c->response;
@@ -256,6 +255,36 @@ static void cmd_show(struct http_channel *c)
     wrbuf_puts(c->wrbuf, "</show>\n");
     rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
     http_send_response(c);
+}
+
+static void show_records_ready(void *data)
+{
+    struct http_channel *c = (struct http_channel *) data;
+
+    show_records(c);
+}
+
+static void cmd_show(struct http_channel *c)
+{
+    struct http_request *rq = c->request;
+    struct http_response *rs = c->response;
+    struct http_session *s = locate_session(rq, rs);
+    char *block = http_argbyname(rq, "block");
+
+    if (!s)
+        return;
+
+    if (block)
+    {
+        if (!s->psession->reclist || !s->psession->reclist->num_records)
+        {
+            session_set_watch(s->psession, SESSION_WATCH_RECORDS, show_records_ready, c);
+            yaz_log(YLOG_DEBUG, "Blocking on cmd_show");
+            return;
+        }
+    }
+
+    show_records(c);
 }
 
 static void cmd_ping(struct http_channel *c)

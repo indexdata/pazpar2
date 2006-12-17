@@ -9,8 +9,6 @@ Factor Z39.50 stuff out from pazpar2.c to separate file to make room for
    later SRU implementation.
 Sort by title, date, author. Parameter to 'show' webservice command.
 Additional facets. At least do 'author'.. think about making it general. -- libxml
-Support for 'blocking' requests, at least for record display before first records
-   are retrieved (to reduce polling).
 Implement detection of 'search complete', so client knows when to stop polling.
 Full record retrieval. -- libxml
 Implement hitsbytarget function to emulate traditional LOT-style U/I
