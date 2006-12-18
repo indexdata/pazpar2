@@ -166,8 +166,10 @@ function check_search()
 
 function refine_query (obj) {
     var query_cell = document.getElementById('query');
-
-    query_cell.value += ' and su=' + obj.innerHTML;
+    var subject = obj.innerHTML;
+    
+    subject = subject.replace(/[\(\)]/g, '');
+    query_cell.value += ' and su=(' + subject + ')';
     start_search();
 }
 
