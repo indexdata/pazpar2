@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.14 2006-12-17 13:42:47 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.15 2006-12-18 14:37:21 sondberg Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -976,7 +976,7 @@ void load_simpletargets(const char *fn)
             continue;
         url = line + 7;
         url[strlen(url) - 1] = '\0';
-        yaz_log(LOG_DEBUG, "Target: %s", url);
+        yaz_log(YLOG_DEBUG, "Target: %s", url);
         if ((db = strchr(url, '/')))
             *(db++) = '\0';
         else
