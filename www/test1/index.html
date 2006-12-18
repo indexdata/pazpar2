@@ -175,13 +175,15 @@ function show_termlist()
 {
     if (xtermlist.readyState != 4)
 	return;
+
     var i;
     var xml = xtermlist.responseXML;
     var body = document.getElementById("termlist");
     var hits = xml.getElementsByTagName("term");
     if (!hits[0])
     {
-	termtimer = (check_termlist, 1000);
+	termtimer = setTimeout(check_termlist, 1000);
+        
     }
     else
     {
