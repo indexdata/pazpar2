@@ -71,7 +71,7 @@ struct http_response
 };
 
 void http_set_proxyaddr(char *url);
-void http_init(int port);
+void http_init(const char *addr);
 void http_addheader(struct http_response *r, const char *name, const char *value);
 char *http_argbyname(struct http_request *r, char *name);
 char *http_headerbyname(struct http_request *r, char *name);

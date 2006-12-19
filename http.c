@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.5 2006-12-08 21:40:58 quinn Exp $
+ * $Id: http.c,v 1.6 2006-12-19 04:49:34 quinn Exp $
  */
 
 #include <stdio.h>
@@ -761,16 +761,45 @@ static void http_accept(IOCHAN i, int event)
     channel_list = c;
 }
 
-/* Create a http-channel listener */
-void http_init(int port)
+/* Create a http-channel listener, syntax [host:]port */
+void http_init(const char *addr)
 {
     IOCHAN c;
     int l;
     struct protoent *p;
     struct sockaddr_in myaddr;
     int one = 1;
+    const char *pp;
+    int port;
 
-    yaz_log(YLOG_LOG, "HTTP port is %d", port);
+    yaz_log(YLOG_LOG, "HTTP listener is %s", addr);
+
+    bzero(&myaddr, sizeof myaddr);
+    myaddr.sin_family = AF_INET;
+    pp = strchr(addr, ':');
+    if (pp)
+    {
+        int len = pp - addr;
+        char hostname[128];
+        struct hostent *he;
+
+        strncpy(hostname, addr, len);
+        hostname[len] = '\0';
+        if (!(he = gethostbyname(hostname)))
+        {
+            yaz_log(YLOG_FATAL, "Unable to resolve '%s'", hostname);
+            exit(1);
+        }
+        memcpy(&myaddr.sin_addr.s_addr, he->h_addr_list[0], he->h_length);
+        port = atoi(pp + 1);
+    }
+    else
+    {
+        port = atoi(addr);
+        myaddr.sin_addr.s_addr = INADDR_ANY;
+    }
+    myaddr.sin_port = htons(port);
+
     if (!(p = getprotobyname("tcp"))) {
         abort();
     }
@@ -780,10 +809,6 @@ void http_init(int port)
                     &one, sizeof(one)) < 0)
         abort();
 
-    bzero(&myaddr, sizeof myaddr);
-    myaddr.sin_family = AF_INET;
-    myaddr.sin_addr.s_addr = INADDR_ANY;
-    myaddr.sin_port = htons(port);
     if (bind(l, (struct sockaddr *) &myaddr, sizeof myaddr) < 0) 
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "bind");
     if (listen(l, SOMAXCONN) < 0) 

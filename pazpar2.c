@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.16 2006-12-18 16:29:57 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.17 2006-12-19 04:49:34 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1336,7 +1336,7 @@ int main(int argc, char **argv)
     if (signal(SIGPIPE, SIG_IGN) < 0)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "signal");
 
-    yaz_log_init(YLOG_DEFAULT_LEVEL|YLOG_DEBUG, "pazpar2", 0);
+    yaz_log_init(YLOG_DEFAULT_LEVEL, "pazpar2", 0);
 
     while ((ret = options("c:h:p:C:s:", argv, argc, &arg)) != -2)
     {
@@ -1346,7 +1346,7 @@ int main(int argc, char **argv)
                 setport++;
 		break;
             case 'h':
-                http_init(atoi(arg));
+                http_init(arg);
                 setport++;
                 break;
             case 'C':
@@ -1360,7 +1360,7 @@ int main(int argc, char **argv)
                 break;
 	    default:
 		fprintf(stderr, "Usage: pazpar2\n"
-                        "    -h httpport             (REST)\n"
+                        "    -h [host:]port          (REST protocol listener)\n"
                         "    -c cmdport              (telnet-style)\n"
                         "    -C cclconfig\n"
                         "    -s simpletargetfile\n"
