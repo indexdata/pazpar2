@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.6 2006-12-19 04:49:34 quinn Exp $
+ * $Id: http.c,v 1.1 2006-12-20 20:47:16 quinn Exp $
  */
 
 #include <stdio.h>

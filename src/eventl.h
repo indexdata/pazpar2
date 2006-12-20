@@ -4,7 +4,10 @@
  * Sebastian Hammer, Adam Dickmeiss
  *
  * $Log: eventl.h,v $
- * Revision 1.3  2006-12-12 02:36:24  quinn
+ * Revision 1.1  2006-12-20 20:47:16  quinn
+ * Reorganized source tree
+ *
+ * Revision 1.3  2006/12/12 02:36:24  quinn
  * Implemented session timeout; ping command
  *
  * Revision 1.2  2006/11/18 05:00:38  quinn

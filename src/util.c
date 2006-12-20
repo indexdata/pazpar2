@@ -1,4 +1,4 @@
-/* $Id: util.c,v 1.2 2006-11-18 05:00:38 quinn Exp $ */
+/* $Id: util.c,v 1.1 2006-12-20 20:47:16 quinn Exp $ */
 
 #include <stdlib.h>
 #include <yaz/yaz-util.h>

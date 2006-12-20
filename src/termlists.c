@@ -1,5 +1,5 @@
 /*
- * $Id: termlists.c,v 1.3 2006-12-08 21:40:58 quinn Exp $
+ * $Id: termlists.c,v 1.1 2006-12-20 20:47:16 quinn Exp $
  */
 
 #include <stdlib.h>

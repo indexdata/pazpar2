@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.17 2006-12-19 04:49:34 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.1 2006-12-20 20:47:16 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>

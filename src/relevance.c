@@ -1,5 +1,5 @@
 /*
- * $Id: relevance.c,v 1.3 2006-11-27 14:35:15 quinn Exp $
+ * $Id: relevance.c,v 1.1 2006-12-20 20:47:16 quinn Exp $
  */
 
 #include <ctype.h>
