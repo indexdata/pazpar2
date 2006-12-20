@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.1 2006-12-20 20:47:16 quinn Exp $
+ * $Id: http_command.c,v 1.2 2006-12-20 22:19:35 adam Exp $
  */
 
 #include <stdio.h>
@@ -213,6 +213,7 @@ static void show_records(struct http_channel *c)
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
     struct record **rl;
+    NMEM nmem_show;
     char *start = http_argbyname(rq, "start");
     char *num = http_argbyname(rq, "num");
     int startn = 0;
@@ -229,7 +230,8 @@ static void show_records(struct http_channel *c)
     if (num)
         numn = atoi(num);
 
-    rl = show(s->psession, startn, &numn, &total, &total_hits);
+    nmem_show = nmem_create();
+    rl = show(s->psession, startn, &numn, &total, &total_hits, nmem_show);
 
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, "<show>\n<status>OK</status>\n");
@@ -255,6 +257,7 @@ static void show_records(struct http_channel *c)
     wrbuf_puts(c->wrbuf, "</show>\n");
     rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
     http_send_response(c);
+    nmem_destroy(nmem_show);
 }
 
 static void show_records_ready(void *data)

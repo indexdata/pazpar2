@@ -1,4 +1,4 @@
-/* $Id: command.c,v 1.1 2006-12-20 20:47:16 quinn Exp $ */
+/* $Id: command.c,v 1.2 2006-12-20 22:19:35 adam Exp $ */
 
 #include <stdio.h>
 #include <sys/socket.h>
@@ -90,11 +90,12 @@ static int cmd_show(struct command_session *s, char **argv, int argc)
     int num = 10;
     int merged, total;
     int i;
+    NMEM nmem_show = nmem_create();
 
     if (argc == 2)
         num = atoi(argv[1]);
 
-    recs = show(s->psession, 0, &num, &merged, &total);
+    recs = show(s->psession, 0, &num, &merged, &total, nmem_show);
 
     for (i = 0; i < num; i++)
     {
@@ -113,6 +114,7 @@ static int cmd_show(struct command_session *s, char **argv, int argc)
         }
         command_puts(s, "\n");
     }
+    nmem_destroy(nmem_show);
     return 1;
 }
 

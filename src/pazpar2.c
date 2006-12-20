@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.1 2006-12-20 20:47:16 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.2 2006-12-20 22:19:35 adam Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -153,10 +153,10 @@ static void send_search(IOCHAN i)
     zquery->u.type_1 = ccl_rpn_query(global_parameters.odr_out, cn);
     ccl_rpn_delete(cn);
 
-    for (ndb = 0; *db->databases[ndb]; ndb++)
+    for (ndb = 0; db->databases[ndb]; ndb++)
 	;
     databaselist = odr_malloc(global_parameters.odr_out, sizeof(char*) * ndb);
-    for (ndb = 0; *db->databases[ndb]; ndb++)
+    for (ndb = 0; db->databases[ndb]; ndb++)
 	databaselist[ndb] = db->databases[ndb];
 
     a->u.presentRequest->preferredRecordSyntax =
@@ -1038,8 +1038,10 @@ void load_simpletargets(const char *fn)
         strcpy(database->url, url);
         strcat(database->url, "/");
         strcat(database->url, db);
-        strcpy(database->databases[0], db);
-        *database->databases[1] = '\0';
+        
+        database->databases = xmalloc(2 * sizeof(char *));
+        database->databases[0] = xstrdup(db);
+        database->databases[1] = 0;
         database->errors = 0;
         database->next = databases;
         databases = database;
@@ -1257,9 +1259,22 @@ struct termlist_score **termlist(struct session *s, int *num)
     return termlist_highscore(s->termlist, num);
 }
 
-struct record **show(struct session *s, int start, int *num, int *total, int *sumhits)
+void report_nmem_stats(void)
 {
-    struct record **recs = nmem_malloc(s->nmem, *num * sizeof(struct record *));
+    size_t in_use, is_free;
+
+    nmem_get_memory_in_use(&in_use);
+    nmem_get_memory_free(&is_free);
+
+    yaz_log(YLOG_LOG, "nmem stat: use=%ld free=%ld", 
+            (long) in_use, (long) is_free);
+}
+
+struct record **show(struct session *s, int start, int *num, int *total,
+                     int *sumhits, NMEM nmem_show)
+{
+    struct record **recs = nmem_malloc(nmem_show, *num 
+                                       * sizeof(struct record *));
     int i;
 
     relevance_prepare_read(s->relevance, s->reclist);

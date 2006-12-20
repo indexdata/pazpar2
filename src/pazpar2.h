@@ -13,8 +13,6 @@ struct record;
 #include "relevance.h"
 #include "eventl.h"
 
-#define MAX_DATABASES 512
-
 struct record {
     struct client *client;
     int target_offset;
@@ -40,7 +38,7 @@ struct host {
 struct database {
     struct host *host;
     char *url;
-    char databases[MAX_DATABASES][128];
+    char **databases;
     int errors;
     struct database *next;
 };
@@ -157,7 +155,7 @@ void destroy_session(struct session *s);
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
 char *search(struct session *s, char *query);
-struct record **show(struct session *s, int start, int *num, int *total, int *sumhits);
+struct record **show(struct session *s, int start, int *num, int *total, int *sumhits, NMEM nmem_show);
 struct termlist_score **termlist(struct session *s, int *num);
 void session_set_watch(struct session *s, int what, session_watchfun fun, void *data);
 
