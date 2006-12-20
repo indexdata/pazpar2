@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.2 2006-12-20 22:19:35 adam Exp $ */;
+/* $Id: pazpar2.c,v 1.3 2006-12-20 23:28:37 adam Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1021,6 +1021,8 @@ void load_simpletargets(const char *fn)
             if ((res = getaddrinfo(url, port, &hints, &addrinfo)))
             {
                 yaz_log(YLOG_WARN, "Failed to resolve %s: %s", url, gai_strerror(res));
+                xfree(host->hostport);
+                xfree(host);
                 continue;
             }
             assert(addrinfo->ai_family == PF_INET);
