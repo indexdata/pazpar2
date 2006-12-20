@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.1 2006-12-20 20:47:16 quinn Exp $
+ * $Id: http.c,v 1.2 2006-12-20 23:31:24 adam Exp $
  */
 
 #include <stdio.h>
@@ -517,7 +517,12 @@ static void http_io(IOCHAN i, int event)
         case EVENT_INPUT:
             htbuf = http_buf_create();
             res = read(iochan_getfd(i), htbuf->buf, HTTP_BUF_SIZE -1);
-            if (res <= 0 && errno != EAGAIN)
+            if (res == -1 && errno == EAGAIN)
+            {
+                http_buf_destroy(htbuf);
+                return;
+            }
+            if (res <= 0)
             {
                 http_buf_destroy(htbuf);
                 http_destroy(i);
@@ -532,7 +537,6 @@ static void http_io(IOCHAN i, int event)
 
             if (hc->state == Http_Busy)
                 return;
-
             if ((reqlen = request_check(hc->iqueue)) <= 2)
                 return;
 
