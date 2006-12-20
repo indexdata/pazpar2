@@ -1,5 +1,5 @@
 /*
- * $Id: relevance.c,v 1.1 2006-12-20 20:47:16 quinn Exp $
+ * $Id: relevance.c,v 1.2 2006-12-20 22:18:33 adam Exp $
  */
 
 #include <ctype.h>
@@ -236,6 +236,7 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
     }
     qsort(reclist->flatlist, reclist->num_records, sizeof(struct record*), comp);
     reclist->pointer = 0;
+    xfree(idfvec);
 }
 
 /*
