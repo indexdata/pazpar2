@@ -57,6 +57,7 @@ struct http_request
     char http_version[20];
     char method[20];
     char *path;
+    char *search;
     struct http_header *headers;
     struct http_argument *arguments;
 };

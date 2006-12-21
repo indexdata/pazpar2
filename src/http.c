@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.2 2006-12-20 23:31:24 adam Exp $
+ * $Id: http.c,v 1.3 2006-12-21 04:16:25 quinn Exp $
  */
 
 #include <stdio.h>
@@ -263,6 +263,7 @@ struct http_request *http_parse_request(struct http_channel *c, struct http_buf 
     if (http_buf_read(queue, buf, len) < len)
         return 0;
 
+    r->search = "";
     r->channel = c;
     r->arguments = 0;
     r->headers = 0;
@@ -293,6 +294,7 @@ struct http_request *http_parse_request(struct http_channel *c, struct http_buf 
     r->path = nmem_strdup(c->nmem, buf);
     if (p2)
     {
+        r->search = nmem_strdup(c->nmem, p2);
         // Parse Arguments
         while (*p2)
         {
@@ -548,8 +550,11 @@ static void http_io(IOCHAN i, int event)
                 return;
             }
             hc->response = 0;
-            yaz_log(YLOG_LOG, "Request: %s %s v %s", hc->request->method,
-                    hc->request->path, hc->request->http_version);
+            yaz_log(YLOG_LOG, "Request: %s %s%s%s v %s", hc->request->method,
+                    hc->request->path,
+                    *hc->request->search ? "?" : "",
+                    hc->request->search,
+                    hc->request->http_version);
             if (http_weshouldproxy(hc->request))
                 http_proxy(hc->request);
             else
