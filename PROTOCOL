@@ -1,7 +1,8 @@
 
 Webservice requests are any that refer to filename "search.pz2". Arguments
 are GET-style parameters. Argument 'command' is required and specifies
-command.
+command. Any request not recognized as a webservice request as described,
+are forwarded to the HTTP server specified in option -p.
 
 Commands:
 
