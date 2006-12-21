@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.3 2006-12-20 23:28:37 adam Exp $ */;
+/* $Id: pazpar2.c,v 1.4 2006-12-21 04:27:48 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -715,7 +715,7 @@ static void handler(IOCHAN i, int event)
         se = cl->session;
     else
     {
-        yaz_log(YLOG_WARN, "Destroying orphan connection (fix me?)");
+        yaz_log(YLOG_WARN, "Destroying orphan connection");
         connection_destroy(co);
         return;
     }
