@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.3 2006-12-21 04:16:25 quinn Exp $
+ * $Id: http.c,v 1.4 2006-12-21 04:27:17 quinn Exp $
  */
 
 #include <stdio.h>
@@ -550,11 +550,10 @@ static void http_io(IOCHAN i, int event)
                 return;
             }
             hc->response = 0;
-            yaz_log(YLOG_LOG, "Request: %s %s%s%s v %s", hc->request->method,
+            yaz_log(YLOG_LOG, "Request: %s %s%s%s", hc->request->method,
                     hc->request->path,
                     *hc->request->search ? "?" : "",
-                    hc->request->search,
-                    hc->request->http_version);
+                    hc->request->search);
             if (http_weshouldproxy(hc->request))
                 http_proxy(hc->request);
             else
@@ -759,7 +758,7 @@ static void http_accept(IOCHAN i, int event)
     if (fcntl(s, F_SETFL, flags | O_NONBLOCK) < 0)
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl2");
 
-    yaz_log(YLOG_LOG, "New command connection");
+    yaz_log(YLOG_DEBUG, "New command connection");
     c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT);
 
     ch = http_create();
