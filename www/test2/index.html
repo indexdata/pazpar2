@@ -6,7 +6,7 @@
 var xinitSession
 var args = Array();
 var searchstring;
-var session;
+var session = 0;
 var asearch;
 var shown = 0;
 
@@ -130,6 +130,30 @@ function start_session()
     SendXmlHttpObject(xinitSession = GetXmlHttpObject(), url, session_started);
 }
 
+function ping_session()
+{
+    if (!session)
+	return;
+    var url = "search.pz2?command=ping&session=" + session;
+    SendXmlHttpObject(xpingSession = GetXmlHttpObject(), url, session_pinged);
+}
+
+function session_pinged()
+{
+    if (xpingSession.readyState != 4)
+	return;
+    var xml = xpingSession.responseXML;
+    var error = xml.getElementsByTagName("error");
+    if (error[0])
+    {
+	var msg = error[0].childNodes[0].nodeValue;
+	alert(msg);
+	location = "?";
+	return;
+    }
+    setTimeout(ping_session, 50000);
+}
+
 function start()
 {
     splitargs();
@@ -142,6 +166,7 @@ function start()
 	document.searchform.elements['session'].value = session;
 	check_query_start();
     }
+    setTimeout(ping_session, 50000);
 }
 
 // Utility
