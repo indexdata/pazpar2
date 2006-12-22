@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.4 2006-12-21 04:27:48 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.5 2006-12-22 04:43:11 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,6 +17,7 @@
 #include <yaz/readconf.h>
 #include <yaz/pquery.h>
 #include <yaz/yaz-util.h>
+#include <yaz/nmem.h>
 
 #include "pazpar2.h"
 #include "eventl.h"
@@ -66,6 +67,7 @@ struct parameters global_parameters =
     60,
     100,
     MAX_CHUNK,
+    0,
     0,
     0,
     0,
@@ -675,6 +677,17 @@ static void ingest_records(struct client *cl, Z_Records *r)
         session_alert_watch(s, SESSION_WATCH_RECORDS);
 }
 
+xsltStylesheetPtr load_stylesheet(const char *fname)
+{
+    xsltStylesheetPtr ret;
+    if (!(ret = xsltParseStylesheetFile((const xmlChar *) fname)))
+    {
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to load stylesheet %s", fname);
+        exit(1);
+    }
+    return ret;
+}
+
 static void do_presentResponse(IOCHAN i, Z_APDU *a)
 {
     struct connection *co = iochan_getdata(i);
@@ -1261,6 +1274,9 @@ struct termlist_score **termlist(struct session *s, int *num)
     return termlist_highscore(s->termlist, num);
 }
 
+#ifdef REPORT_NMEM
+// conditional compilation by SH: This lead to a warning with currently installed
+// YAZ header files on us1
 void report_nmem_stats(void)
 {
     size_t in_use, is_free;
@@ -1271,6 +1287,7 @@ void report_nmem_stats(void)
     yaz_log(YLOG_LOG, "nmem stat: use=%ld free=%ld", 
             (long) in_use, (long) is_free);
 }
+#endif
 
 struct record **show(struct session *s, int start, int *num, int *total,
                      int *sumhits, NMEM nmem_show)
@@ -1355,7 +1372,7 @@ int main(int argc, char **argv)
 
     yaz_log_init(YLOG_DEFAULT_LEVEL, "pazpar2", 0);
 
-    while ((ret = options("c:h:p:C:s:", argv, argc, &arg)) != -2)
+    while ((ret = options("x:c:h:p:C:s:", argv, argc, &arg)) != -2)
     {
 	switch (ret) {
 	    case 'c':
@@ -1375,6 +1392,9 @@ int main(int argc, char **argv)
             case 's':
                 load_simpletargets(arg);
                 break;
+            case 'x':
+                global_parameters.xsl = load_stylesheet(arg);
+                break;
 	    default:
 		fprintf(stderr, "Usage: pazpar2\n"
                         "    -h [host:]port          (REST protocol listener)\n"
@@ -1392,7 +1412,9 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    global_parameters.ccl_filter = load_cclfile("default.bib");
+    if (!global_parameters.xsl)
+        global_parameters.xsl = load_stylesheet("../etc/default.xsl");
+    global_parameters.ccl_filter = load_cclfile("../etc/default.bib");
     global_parameters.yaz_marc = yaz_marc_create();
     yaz_marc_subfield_str(global_parameters.yaz_marc, "\t");
     global_parameters.odr_in = odr_createmem(ODR_DECODE);

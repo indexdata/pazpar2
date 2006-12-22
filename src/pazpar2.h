@@ -5,10 +5,14 @@ struct record;
 
 #include <netdb.h>
 
+#include <libxslt/xsltutils.h>
+#include <libxslt/transform.h>
+
 #include <yaz/comstack.h>
 #include <yaz/pquery.h>
 #include <yaz/ccl.h>
 #include <yaz/yaz-ccl.h>
+
 #include "termlists.h"
 #include "relevance.h"
 #include "eventl.h"
@@ -146,6 +150,7 @@ struct parameters {
     yaz_marc_t yaz_marc;
     ODR odr_out;
     ODR odr_in;
+    xsltStylesheetPtr xsl;
 };
 
 struct hitsbytarget *hitsbytarget(struct session *s, int *count);
