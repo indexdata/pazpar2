@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.5 2006-12-22 04:43:11 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.6 2006-12-27 21:11:10 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -26,6 +26,7 @@
 #include "termlists.h"
 #include "reclists.h"
 #include "relevance.h"
+#include "config.h"
 
 #define PAZPAR2_VERSION "0.1"
 #define MAX_CHUNK 15
@@ -1372,9 +1373,13 @@ int main(int argc, char **argv)
 
     yaz_log_init(YLOG_DEFAULT_LEVEL, "pazpar2", 0);
 
-    while ((ret = options("x:c:h:p:C:s:", argv, argc, &arg)) != -2)
+    while ((ret = options("f:x:c:h:p:C:s:", argv, argc, &arg)) != -2)
     {
 	switch (ret) {
+            case 'f':
+                if (!read_config(arg))
+                    exit(1);
+                break;
 	    case 'c':
 		command_init(atoi(arg));
                 setport++;
@@ -1397,6 +1402,7 @@ int main(int argc, char **argv)
                 break;
 	    default:
 		fprintf(stderr, "Usage: pazpar2\n"
+                        "    -f configfile\n"
                         "    -h [host:]port          (REST protocol listener)\n"
                         "    -c cmdport              (telnet-style)\n"
                         "    -C cclconfig\n"
