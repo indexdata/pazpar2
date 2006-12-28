@@ -338,8 +338,8 @@ function session_restore (session)
     for (i = 1; i < fields.length; i++)
     {
         var pair = fields[i].split(/=/);
-        var key = pair[0];
-        var value = pair[1];
+        var key = pair.shift();
+        var value = pair.join('=');
         var cell = document.getElementById(key);
 
         cell.value = value;
