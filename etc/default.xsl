@@ -6,7 +6,7 @@
 
   <xsl:template match="*">
     <pz:record>
-      <xsl:match-templates/>
+      <xsl:apply-templates/>
     </pz:record>
   </xsl:template>
 
