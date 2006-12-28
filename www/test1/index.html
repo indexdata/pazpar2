@@ -306,9 +306,60 @@ function start_search()
     xsearch.send(null);
     document.getElementById("termlist").innerHTML = '';
     document.getElementById("body").innerHTML = '';
+    update_history();
     shown = 0;
     startrec = 0;
 }
+
+
+function session_encode ()
+{
+    var session_cells = Array('query');
+    var i;
+    var session = '';
+
+    for (i = 0; i < session_cells.length; i++)
+    {
+        var name = session_cells[i];
+        var value = escape(document.getElementById(name).value);
+        session += '&' + name + '=' + value;
+    }
+
+    return session;
+}
+
+
+function session_decode (session)
+{
+    
+}
+
+
+function session_read ()
+{
+    var ses = document.location.href;
+    return ses.replace(/.*#/, '');
+}
+
+
+function session_store (new_value)
+{
+    var location = document.location.href;
+
+    location = location.replace(/#.*$/, '');
+    location += '#' + new_value;
+    document.location.href = location;
+}
+
+
+function update_history () {
+    var session = session_encode();
+    session_store(session);
+}
+
+
+        
+    
 
 </script>
 </head>
