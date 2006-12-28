@@ -21,6 +21,8 @@ var showtimer;
 var termtimer;
 var stattimer;
 var startrec;
+var session_cells = Array('query');
+var old_session = session_read();
 
 function GetXmlHttpObject()
 { 
@@ -314,7 +316,6 @@ function start_search()
 
 function session_encode ()
 {
-    var session_cells = Array('query');
     var i;
     var session = '';
 
@@ -329,37 +330,63 @@ function session_encode ()
 }
 
 
-function session_decode (session)
+function session_restore (session)
 {
+    var fields = session.split(/&/);
+    var i;
+
+    for (i = 1; i < fields.length; i++)
+    {
+        var pair = fields[i].split(/=/);
+        var key = pair[0];
+        var value = pair[1];
+        var cell = document.getElementById(key);
+
+        cell.value = value;
+    }
     
 }
 
 
 function session_read ()
 {
-    var ses = document.location.href;
-    return ses.replace(/.*#/, '');
+    var ses = window.location.hash.replace(/^#/, '');
+    return ses;
 }
 
 
 function session_store (new_value)
 {
-    var location = document.location.href;
-
-    location = location.replace(/#.*$/, '');
-    location += '#' + new_value;
-    document.location.href = location;
+    window.location.hash = '#' + new_value;
 }
 
 
-function update_history () {
+function update_history ()
+{
     var session = session_encode();
     session_store(session);
+    old_session= session;
 }
 
 
+function session_check ()
+{
+    var session = session_read();
+
+    clearInterval(url_surveillence);
+
+    if ( session != old_session )
+    {
+        session_restore(session);
+        start_search();
         
+    }
     
+    url_surveillence = setInterval(session_check, 200);
+}
+        
+
+var url_surveillence = setInterval(session_check, 200);
 
 </script>
 </head>
