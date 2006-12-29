@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.1 2006-12-29 10:22:09 sondberg Exp $
+/* $Id: search.js,v 1.2 2006-12-29 10:29:46 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -20,6 +20,15 @@ var stattimer;
 var startrec;
 var session_cells = Array('query');
 var old_session = session_read();
+var url_surveillence;
+
+
+function initialize ()
+{
+    start_session();
+    session_check();
+}
+
 
 function GetXmlHttpObject()
 { 
@@ -53,6 +62,8 @@ function start_session()
     xinitSession.onreadystatechange=session_started;
     xinitSession.open("GET", url);
     xinitSession.send(null);
+    
+    //url_surveillence = setInterval(session_check, 200);
 }
 
 function targets_loaded()
@@ -197,13 +208,6 @@ function show_termlist()
 		body.innerHTML += '<a href="#" onclick="refine_query(this)">' +
                                   namen[0].childNodes[0].nodeValue +
                                   '</a>';
-	    /*
-	    body.innerHTML += ' (';
-	    var freqn = hits[i].getElementsByTagName("frequency");
-	    if (freqn[0])
-		body.innerHTML += freqn[0].childNodes[0].nodeValue;
-	    body.innerHTML += ')<br>';
-	    */
 	    body.innerHTML += '<br>';
 	}
 	termtimer = setTimeout(check_termlist, 2000);
@@ -381,7 +385,3 @@ function session_check ()
     
     url_surveillence = setInterval(session_check, 200);
 }
-        
-
-var url_surveillence = setInterval(session_check, 200);
-
