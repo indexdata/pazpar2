@@ -1,17 +1,8 @@
-<html>
+/* $Id: search.js,v 1.1 2006-12-29 10:22:09 sondberg Exp $
+ * ---------------------------------------------------
+ * Javascript container
+ */
 
-<!-- $Id: index2.html,v 1.1 2006-12-14 14:57:27 sondberg Exp $
-
-     Anders's experimentation with coping with the back button/bookmarking
-     issues in Ajax applications
--->
-
-<head>
-<style type="text/css">
-
-</style>
-
-<script>
 var xmlHttp
 var xinitSession;
 var xloadTargets;
@@ -27,27 +18,8 @@ var showtimer;
 var termtimer;
 var stattimer;
 var startrec;
-var browser_session = new Array();
-
-
-function session_register (obj) {
-    browser_session.push(obj);
-}
-
-
-function session_update () {
-    var serialize = '';
-    
-    for (i = 0; i < browser_session.length; i++) {
-        var cell = browser_session[i];
-        serialize += cell.id + '=' + cell.value + '&';
-    }
-
-    alert(serialize);
-
-    window.session_iframe.location = window.location + '#' + serialize;
-}
-
+var session_cells = Array('query');
+var old_session = session_read();
 
 function GetXmlHttpObject()
 { 
@@ -81,9 +53,6 @@ function start_session()
     xinitSession.onreadystatechange=session_started;
     xinitSession.open("GET", url);
     xinitSession.send(null);
-    
-    session_register(document.getElementById('query'));
-    window.session_iframe = document.getElementById('session_iframe');
 }
 
 function targets_loaded()
@@ -133,7 +102,7 @@ function show_records()
     var xml = xshow.responseXML;
     var body = document.getElementById("body");
     var hits = xml.getElementsByTagName("hit");
-    if (!hits[0])
+    if (!hits[0]) // We should never get here with blocking operations
     {
 	body.innerHTML = "No records yet";
 	searchtimer = setTimeout(check_search, 250);
@@ -171,12 +140,12 @@ function show_records()
 	}
 	shown++;
 	if (shown < 5)
-	    searchtimer = setTimeout(check_search, 400);
-	else if (shown < 10)
 	    searchtimer = setTimeout(check_search, 1000);
 	else
-	    searchtimer = setTimeout(check_search, 4000);
+	    searchtimer = setTimeout(check_search, 2000);
     }
+    if (!termtimer)
+	termtimer = setTimeout(check_termlist, 1000);
 }
 
 function check_search()
@@ -185,7 +154,9 @@ function check_search()
     var url = "search.pz2?" +
         "command=show" +
 	"&start=" + startrec +
-	"&session=" + session;
+	"&num=15" +
+	"&session=" + session +
+	"&block=1";
     xshow = GetXmlHttpObject();
     xshow.onreadystatechange=show_records;
     xshow.open("GET", url);
@@ -195,8 +166,10 @@ function check_search()
 
 function refine_query (obj) {
     var query_cell = document.getElementById('query');
-
-    query_cell.value += ' and su=' + obj.innerHTML;
+    var subject = obj.innerHTML;
+    
+    subject = subject.replace(/[\(\)]/g, '');
+    query_cell.value += ' and su=(' + subject + ')';
     start_search();
 }
 
@@ -204,13 +177,15 @@ function show_termlist()
 {
     if (xtermlist.readyState != 4)
 	return;
+
     var i;
     var xml = xtermlist.responseXML;
     var body = document.getElementById("termlist");
     var hits = xml.getElementsByTagName("term");
     if (!hits[0])
     {
-	termtimer = (check_termlist, 1000);
+	termtimer = setTimeout(check_termlist, 1000);
+        
     }
     else
     {
@@ -300,18 +275,20 @@ function search_started()
 	alert(msg);
 	return;
     }
-    searchtimer = setTimeout(check_search, 250);
-    termtimer = setTimeout(check_termlist, 1000);
+    check_search();
     stattimer = setTimeout(check_stat, 1000);
 }
 
 function start_search()
 {
-    session_update();
     clearTimeout(termtimer);
+    termtimer = 0;
     clearTimeout(searchtimer);
+    searchtimer = 0;
     clearTimeout(stattimer);
+    stattimer = 0;
     clearTimeout(showtimer);
+    showtimer = 0;
     if (!targets_loaded)
     {
 	alert("Please load targets first");
@@ -328,61 +305,83 @@ function start_search()
     xsearch.send(null);
     document.getElementById("termlist").innerHTML = '';
     document.getElementById("body").innerHTML = '';
+    update_history();
     shown = 0;
     startrec = 0;
 }
 
 
+function session_encode ()
+{
+    var i;
+    var session = '';
+
+    for (i = 0; i < session_cells.length; i++)
+    {
+        var name = session_cells[i];
+        var value = escape(document.getElementById(name).value);
+        session += '&' + name + '=' + value;
+    }
+
+    return session;
+}
 
 
-</script>
-</head>
+function session_restore (session)
+{
+    var fields = session.split(/&/);
+    var i;
 
-<body onload="start_session();">
+    for (i = 1; i < fields.length; i++)
+    {
+        var pair = fields[i].split(/=/);
+        var key = pair.shift();
+        var value = pair.join('=');
+        var cell = document.getElementById(key);
 
-<table width="100%" border="1" cellpadding="5">
-    <tr>
-	<td width="250" height="100" align="center">
-	    <font size="+2"><b>MasterKey mk I</b></font>
-	</td>
+        cell.value = value;
+    }
+    
+}
 
-	<td>
-	    <form onsubmit="start_search(); return false;">
-		<b>Search:</b> <input id="query" type="text" size="50"/>
-		<input type="submit" value="Go"/>
-	    </form>
 
-	<td>
-    </tr>
+function session_read ()
+{
+    var ses = window.location.hash.replace(/^#/, '');
+    return ses;
+}
 
-    <tr>
-	<td valign="top" id="termlist">&nbsp;</td>
 
-	<td valign="top" id="body">
-	Funky search prototype.<br><br><br><br>
-	<td>
-    </tr>
+function session_store (new_value)
+{
+    window.location.hash = '#' + new_value;
+}
 
-    <tr>
-	<td>
-	&nbsp;
-	    <!-- 
-	    <form onsubmit="load_targets(); return false;">
-		Target file:<br/>
-		<input type="text" id="targetfilename" size="20"/>
-		<input type="submit"  value="load" />
-	    </form>
-	    -->
-	</td>
 
-	<td>
-	    Status: <span id="status">Initializing</span> <span id="targetstatus"></span><br/><span id="stat"></span>
-	</td>
+function update_history ()
+{
+    var session = session_encode();
+    session_store(session);
+    old_session = session;
+}
 
-    </tr>
 
-</table>
-<iframe id="session_iframe"/>
+function session_check ()
+{
+    var session = session_read();
 
-</body>
-</html>
+    clearInterval(url_surveillence);
+
+    if ( session != unescape(old_session) )
+    {
+        session_restore(session);
+        start_search();
+        
+    }
+    
+    url_surveillence = setInterval(session_check, 200);
+}
+        
+
+var url_surveillence = setInterval(session_check, 200);
+
