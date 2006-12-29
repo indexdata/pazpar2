@@ -365,7 +365,7 @@ function update_history ()
 {
     var session = session_encode();
     session_store(session);
-    old_session= session;
+    old_session = session;
 }
 
 
@@ -375,7 +375,7 @@ function session_check ()
 
     clearInterval(url_surveillence);
 
-    if ( session != old_session )
+    if ( session != unescape(old_session) )
     {
         session_restore(session);
         start_search();
