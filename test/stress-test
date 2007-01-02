@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: stress-test,v 1.1 2007-01-02 13:30:52 sondberg Exp $
+# $Id: stress-test,v 1.2 2007-01-02 14:11:02 sondberg Exp $
 # -------------------------------------------------
 # Simulate a search/retrieve session
 
@@ -12,7 +12,7 @@ my $url = 'http://test.indexdata.dk:8001/~sondberg/pazpar2/www/search.pz2';
 my $parser = new XML::LibXML;
 my $ua = new LWP::UserAgent;
 my $session_id = get_session($ua);
-my $debug = 1;
+my $debug = 0;
 my @terms = qw(water mineral computer java texas energy xml pirsig clinton
                management environment dinosaur houston washington);
 
@@ -25,11 +25,13 @@ while (1) {
     if (start_search($session_id, $ua, $term)) {
         print STDERR "Success...\n";
 
-        foreach (1..10) {
-            sleep(1);
-
-            if (fetch_records($session_id, $ua)) {
-                print STDERR "Fetched...\n";
+        foreach my $p (0..4) {
+            foreach (1..10) {
+                sleep(1);
+                
+                if (fetch_records($session_id, $ua, $p * 20)) {
+                    print STDERR "Fetched...\n";
+                }
             }
         }
     }
@@ -53,8 +55,8 @@ sub check_status {
 
 
 sub fetch_records {
-    my ($sid, $ua) = @_;
-    my $uri = $url . '?session=' . $sid . '&command=show';
+    my ($sid, $ua, $offset) = @_;
+    my $uri = $url . '?session=' . $sid . '&command=show&start=' . $offset;
     my $response = $ua->get($uri);
 
     if ($response->is_success) {
