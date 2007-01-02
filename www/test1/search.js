@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.2 2006-12-29 10:29:46 sondberg Exp $
+/* $Id: search.js,v 1.3 2007-01-02 11:02:50 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -17,8 +17,7 @@ var searchtimer;
 var showtimer;
 var termtimer;
 var stattimer;
-var startrec;
-var session_cells = Array('query');
+var session_cells = Array('query', 'startrec', 'action_type');
 var old_session = session_read();
 var url_surveillence;
 
@@ -105,6 +104,12 @@ function load_targets()
     xloadTargets.send(null);
 }
 
+
+function update_action (new_action) {
+    document.search.action_type.value = new_action;
+}
+
+
 function show_records()
 {
     if (xshow.readyState != 4)
@@ -131,13 +136,15 @@ function show_records()
 
 	if (start + num < merged)
 	    body.innerHTML += ' <a href="" ' +
-		'onclick="startrec=' + (start + 20) +
-		';check_search(); return false;">Next</a>';
+		'onclick="document.search.startrec.value=' + (start + 20) +
+                ";update_action('page')" +
+		';check_search(); update_history(); return false;">Next</a>';
 
 	if (start > 0)
 	    body.innerHTML += ' <a href="" ' +
-		'onclick="startrec=' + (start - 20) +
-		';check_search(); return false;">Previous</a>';
+		'onclick="document.search.startrec.value=' + (start - 20) +
+                ";update_action('page')" +
+		';check_search(); update_history();return false;">Previous</a>';
 
 	body.innerHTML += '<br/>';
 	for (i = 0; i < hits.length; i++)
@@ -164,7 +171,7 @@ function check_search()
     clearTimeout(searchtimer);
     var url = "search.pz2?" +
         "command=show" +
-	"&start=" + startrec +
+	"&start=" + document.search.startrec.value +
 	"&num=15" +
 	"&session=" + session +
 	"&block=1";
@@ -311,7 +318,7 @@ function start_search()
     document.getElementById("body").innerHTML = '';
     update_history();
     shown = 0;
-    startrec = 0;
+    document.search.startrec.value = 0;
 }
 
 
@@ -373,14 +380,22 @@ function update_history ()
 function session_check ()
 {
     var session = session_read();
+    var action = document.search.action_type.value;
 
     clearInterval(url_surveillence);
 
     if ( session != unescape(old_session) )
     {
         session_restore(session);
-        start_search();
-        
+
+        if (action == 'search') {
+            start_search();
+        } else if (action == 'page') {
+            check_search();
+        } else {
+            alert('Unregocnized action_type: ' + action);
+            return;
+        }
     }
     
     url_surveillence = setInterval(session_check, 200);
