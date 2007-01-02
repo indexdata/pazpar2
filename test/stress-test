@@ -1,0 +1,128 @@
+#!/usr/bin/perl -w
+
+# $Id: stress-test,v 1.1 2007-01-02 13:30:52 sondberg Exp $
+# -------------------------------------------------
+# Simulate a search/retrieve session
+
+use LWP::UserAgent;
+use XML::LibXML;
+use strict;
+
+my $url = 'http://test.indexdata.dk:8001/~sondberg/pazpar2/www/search.pz2';
+my $parser = new XML::LibXML;
+my $ua = new LWP::UserAgent;
+my $session_id = get_session($ua);
+my $debug = 1;
+my @terms = qw(water mineral computer java texas energy xml pirsig clinton
+               management environment dinosaur houston washington);
+
+
+while (1) {
+    my $term = get_random_term(@terms);
+    
+    print STDERR "Search for: '", $term, "'\n";
+    
+    if (start_search($session_id, $ua, $term)) {
+        print STDERR "Success...\n";
+
+        foreach (1..10) {
+            sleep(1);
+
+            if (fetch_records($session_id, $ua)) {
+                print STDERR "Fetched...\n";
+            }
+        }
+    }
+}
+
+
+sub get_random_term {
+    my (@terms) = @_;
+
+    return $terms[int rand($#terms)];
+}
+
+
+sub check_status {
+    my ($root) = @_;
+    my ($status_node) = $root->getElementsByTagName('status');
+    my $status = $status_node->textContent;
+
+    return ($status eq 'OK');
+}
+
+
+sub fetch_records {
+    my ($sid, $ua) = @_;
+    my $uri = $url . '?session=' . $sid . '&command=show';
+    my $response = $ua->get($uri);
+
+    if ($response->is_success) {
+        my $root = get_dom($response);
+
+        if (check_status($root)) {
+            if ($debug) {
+                my (@hits) = $root->getElementsByTagName('hit');
+
+                foreach my $h (@hits) {
+                    my ($title) = $h->getElementsByTagName('title');
+                    print STDERR "Title: '", $title->textContent, "'\n";
+                }
+            }
+
+            return 1;
+        } else {
+            die($0 . ': Unable to fetch records, wrong status');
+        }
+    } else {
+        die($0 . ': Unable to fetch records');
+    }
+}
+    
+
+
+sub start_search {
+    my ($sid, $ua, $term) = @_;
+    my $uri = $url . '?session=' . $sid . '&command=search&query=' . $term;
+    my $response = $ua->get($uri);
+
+    if ($response->is_success) {
+        my $root = get_dom($response);
+
+        if (check_status($root)) {
+            return 1;
+        } else {
+            die($0 . ': Unable to search');
+        }
+    } else {
+        die($0 . ': Unable to perform search');
+    }
+}
+
+
+sub get_dom {
+    my ($resp) = @_;
+    my $doc = $parser->parse_string($resp->content);
+
+    return $doc->documentElement();
+}
+
+
+sub get_session {
+    my ($ua) = @_;
+    my $response = $ua->get($url . '?command=init');
+
+    if ($response->is_success) {
+        my $root = get_dom($response);
+
+        if (check_status($root)) {
+            my ($ses_node) = $root->getElementsByTagName('session');
+            return $ses_node->textContent;
+        } else {
+            die($0 . ':Unable to get session, wrong status'); 
+        }
+    } else {
+        die($0 . ': Unable to get session id');
+    }
+}
+
