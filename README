@@ -19,3 +19,19 @@ slow.pz: Single target, localhost:9999/Slow -- triggers a slow
 bibs.pz: A small set of serious catalogs in the US and Canada.
 
 many.pz: Obscenely many catalogs.
+
+Example:
+
+Testing against ztest with Apache running on localhost port 80, pazpar
+running on 8000. DocumentRoot in /var/www.
+
+Fire up yaz-ztest
+	yaz-ztest
+
+Fire up pazpar2
+	sudo cp -a www/* /var/www
+	cd etc
+	../src/pazpar2 -h 8000 -p localhost:80 -s test.pz -x marc21.xsl
+
+Fire up your browser:
+	http://localhost:8000/test1/index.html
