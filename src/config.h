@@ -1,6 +1,10 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include <libxslt/xslt.h>
+#include <libxslt/transform.h>
+#include <libxslt/xsltutils.h>
+
 struct conf_termlist
 {
     char *name;
@@ -26,8 +30,37 @@ struct conf_queryprofile
 {
 };
 
+struct conf_retrievalmap
+{
+    enum {
+        Map_xslt
+    } type;
+    char *charset;
+    char *format;
+    xsltStylesheet *stylesheet;
+    struct conf_retrievalmap *next;
+};
+
 struct conf_retrievalprofile
 {
+    char *requestsyntax;
+    enum {
+        Nativesyn_xml,
+        Nativesyn_iso2709
+    } native_syntax;
+    enum {
+        Nativeform_na,
+        Nativeform_marc21,
+    } native_format;
+    char *native_encoding;
+    enum {
+        Nativemapto_na,
+        Nativemapto_marcxml,
+        Nativemapto_marcxchange
+    } native_mapto;
+    yaz_marc_t yaz_marc;
+    struct conf_retrievalmap *maplist;
+    struct conf_retrievalprofile *next;
 };
 
 struct conf_config

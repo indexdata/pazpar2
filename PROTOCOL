@@ -117,3 +117,37 @@ Output:
     </title>
   </hit>
 </show>
+
+termlist
+
+Retrieves term list(s)
+
+parameters:
+
+session
+name       -- comma-separated list of termlist names (default "subject")
+
+Example:
+
+search.pz2?session=2044502273&command=termlist&name=author,subject
+
+Output:
+
+<termlist>
+  <list name="author">
+    <term>
+      <name>Donald Knuth</name>
+      <frequency>10</frequency>
+    </term>
+    <term>
+      <name>Robert Pirsig</name>
+      <frequency>2</frequency>
+    </term>
+  </list>
+  <list name="subject">
+    <term>
+      <name>Computer programming</name>
+      <frequency>10</frequency>
+    </term>
+  </list>
+</termlist>

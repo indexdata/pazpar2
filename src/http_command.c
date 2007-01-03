@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.2 2006-12-20 22:19:35 adam Exp $
+ * $Id: http_command.c,v 1.3 2007-01-03 06:23:44 quinn Exp $
  */
 
 #include <stdio.h>
@@ -152,21 +152,44 @@ static void cmd_termlist(struct http_channel *c)
     struct termlist_score **p;
     int len;
     int i;
+    char *name = http_argbyname(rq, "name");
 
     if (!s)
         return;
+
+    if (!name)
+        name = "subject";
+    if (strlen(name) > 255)
+        return;
+
     wrbuf_rewind(c->wrbuf);
 
     wrbuf_puts(c->wrbuf, "<termlist>");
-    p = termlist(s->psession, &len);
-    if (p)
-        for (i = 0; i < len; i++)
-        {
-            wrbuf_puts(c->wrbuf, "\n<term>");
-            wrbuf_printf(c->wrbuf, "<name>%s</name>", p[i]->term);
-            wrbuf_printf(c->wrbuf, "<frequency>%d</frequency>", p[i]->frequency);
-            wrbuf_puts(c->wrbuf, "</term>");
-        }
+    while (*name)
+    {
+        char tname[256];
+        char *tp;
+
+        if (!(tp = strchr(name, ',')))
+            tp = name + strlen(name);
+        strncpy(tname, name, tp - name);
+        tname[tp - name] = '\0';
+
+        p = termlist(s->psession, tname, &len);
+        wrbuf_printf(c->wrbuf, "\n<list name=\"%s\">\n", tname);
+        if (p)
+            for (i = 0; i < len; i++)
+            {
+                wrbuf_puts(c->wrbuf, "\n<term>");
+                wrbuf_printf(c->wrbuf, "<name>%s</name>", p[i]->term);
+                wrbuf_printf(c->wrbuf, "<frequency>%d</frequency>", p[i]->frequency);
+                wrbuf_puts(c->wrbuf, "</term>");
+            }
+        wrbuf_puts(c->wrbuf, "\n</list>");
+        name = tp;
+        if (*name == ',')
+            name++;
+    }
     wrbuf_puts(c->wrbuf, "</termlist>");
     rs->payload = nmem_strdup(rq->channel->nmem, wrbuf_buf(c->wrbuf));
     http_send_response(c);

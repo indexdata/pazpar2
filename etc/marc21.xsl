@@ -8,18 +8,20 @@
   <xsl:template match="/marc:record">
     <pz:record>
 
-      <pz:metadata type="title">
-	<xsl:value-of select="marc:datafield[@tag='245']/marc:subfield[@code='a']"/>
-	<xsl:value-of select="marc:datafield[@tag='245']/marc:subfield[@code='b']"/>
-      </pz:metadata>
-
-      <pz:mergekey>
+      <xsl:attribute name="mergekey">
         <xsl:text>title </xsl:text>
 	<xsl:value-of select="marc:datafield[@tag='245']/marc:subfield[@code='a']"/>
 	<xsl:value-of select="marc:datafield[@tag='245']/marc:subfield[@code='b']"/>
 	<xsl:text> author </xsl:text>
 	<xsl:value-of select="marc:datafield[@tag='100']/marc:subfield[@code='a']"/>
-      </pz:mergekey>
+      </xsl:attribute>
+
+
+      <pz:metadata type="title">
+	<xsl:value-of select="marc:datafield[@tag='245']/marc:subfield[@code='a']"/>
+	<xsl:text> </xsl:text>
+	<xsl:value-of select="marc:datafield[@tag='245']/marc:subfield[@code='b']"/>
+      </pz:metadata>
 
       <xsl:for-each select="marc:datafield[@tag='650']">
 	<pz:facet type="subject">

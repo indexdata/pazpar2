@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.6 2006-12-27 21:11:10 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.7 2007-01-03 06:23:44 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -35,6 +35,7 @@ static void client_fatal(struct client *cl);
 static void connection_destroy(struct connection *co);
 static int client_prep_connection(struct client *cl);
 static void ingest_records(struct client *cl, Z_Records *r);
+static struct conf_retrievalprofile *database_retrieval_profile(struct database *db);
 void session_alert_watch(struct session *s, int what);
 
 IOCHAN channel_list = 0;  // Master list of connections we're handling events to
@@ -60,6 +61,7 @@ static char *client_states[] = {
 
 struct parameters global_parameters = 
 {
+    0,
     30,
     "81",
     "Index Data PazPar2 (MasterKey)",
@@ -68,7 +70,6 @@ struct parameters global_parameters =
     60,
     100,
     MAX_CHUNK,
-    0,
     0,
     0,
     0,
@@ -270,275 +271,29 @@ static void do_searchResponse(IOCHAN i, Z_APDU *a)
     }
 }
 
-const char *find_field(const char *rec, const char *field)
+char *normalize_mergekey(char *buf)
 {
-    char lbuf[5];
-    char *line;
-
-    lbuf[0] = '\n';
-    strcpy(lbuf + 1, field);
-
-    if ((line = strstr(rec, lbuf)))
-        return ++line;
-    else
-        return 0;
-}
-
-const char *find_subfield(const char *field, char subfield)
-{
-    const char *p = field;
-
-    while (*p && *p != '\n')
-    {
-        while (*p != '\n' && *p != '\t')
-            p++;
-        if (*p == '\t' && *(++p) == subfield) {
-            if (*(++p) == ' ')
-            {
-                while (isspace(*p))
-                    p++;
-                return p;
-            }
-        }
-    }
-    return 0;
-}
-
-// Extract 245 $a $b 100 $a
-char *extract_title(struct session *s, const char *rec)
-{
-    const char *field, *subfield;
-    char *e, *ef;
-    unsigned char *obuf, *p;
-
-    wrbuf_rewind(s->wrbuf);
-
-    if (!(field = find_field(rec, "245")))
-        return 0;
-    if (!(subfield = find_subfield(field, 'a')))
-        return 0;
-    ef = index(subfield, '\n');
-    if ((e = index(subfield, '\t')) && e < ef)
-        ef = e;
-    if (ef)
-    {
-        wrbuf_write(s->wrbuf, subfield, ef - subfield);
-        if ((subfield = find_subfield(field, 'b'))) 
-        {
-            ef = index(subfield, '\n');
-            if ((e = index(subfield, '\t')) && e < ef)
-                ef = e;
-            if (ef)
-            {
-                wrbuf_putc(s->wrbuf, ' ');
-                wrbuf_write(s->wrbuf, subfield, ef - subfield);
-            }
-        }
-    }
-    if ((field = find_field(rec, "100")))
-    {
-        if ((subfield = find_subfield(field, 'a')))
-        {
-            ef = index(subfield, '\n');
-            if ((e = index(subfield, '\t')) && e < ef)
-                ef = e;
-            if (ef)
-            {
-                wrbuf_puts(s->wrbuf, ", by ");
-                wrbuf_write(s->wrbuf, subfield, ef - subfield);
-            }
-        }
-    }
-    wrbuf_putc(s->wrbuf, '\0');
-    obuf = (unsigned char*) nmem_strdup(s->nmem, wrbuf_buf(s->wrbuf));
-    for (p = obuf; *p; p++)
-        if (*p == '&' || *p == '<' || *p > 122 || *p < ' ')
-            *p = ' ';
-    return (char*) obuf;
-}
-
-// Extract 245 $a $b 100 $a
-char *extract_mergekey(struct session *s, const char *rec)
-{
-    const char *field, *subfield;
-    char *e, *ef;
-    char *out, *p, *pout;
-
-    wrbuf_rewind(s->wrbuf);
-
-    if (!(field = find_field(rec, "245")))
-        return 0;
-    if (!(subfield = find_subfield(field, 'a')))
-        return 0;
-    ef = index(subfield, '\n');
-    if ((e = index(subfield, '\t')) && e < ef)
-        ef = e;
-    if (ef)
-    {
-        wrbuf_write(s->wrbuf, subfield, ef - subfield);
-        if ((subfield = find_subfield(field, 'b'))) 
-        {
-            ef = index(subfield, '\n');
-            if ((e = index(subfield, '\t')) && e < ef)
-                ef = e;
-            if (ef)
-            {
-                wrbuf_puts(s->wrbuf, " field "); 
-                wrbuf_write(s->wrbuf, subfield, ef - subfield);
-            }
-        }
-    }
-    if ((field = find_field(rec, "100")))
-    {
-        if ((subfield = find_subfield(field, 'a')))
-        {
-            ef = index(subfield, '\n');
-            if ((e = index(subfield, '\t')) && e < ef)
-                ef = e;
-            if (ef)
-            {
-                wrbuf_puts(s->wrbuf, " field "); 
-                wrbuf_write(s->wrbuf, subfield, ef - subfield);
-            }
-        }
-    }
-    wrbuf_putc(s->wrbuf, '\0');
-    p = wrbuf_buf(s->wrbuf);
-    out = pout = nmem_malloc(s->nmem, strlen(p) + 1);
+    char *p = buf, *pout = buf;
 
     while (*p)
     {
-        while (isalnum(*p))
-            *(pout++) = tolower(*(p++));
         while (*p && !isalnum(*p))
             p++;
-        *(pout++) = ' ';
+        while (isalnum(*p))
+            *(pout++) = tolower(*(p++));
+        if (*p)
+            *(pout++) = ' ';
+        while (*p && !isalnum(*p))
+            p++;
     }
-    if (out != pout)
-        *(--pout) = '\0';
+    if (buf != pout)
+        *pout = '\0';
 
-    return out;
+    return buf;
 }
 
-#ifdef RECHEAP
-static void push_record(struct session *s, struct record *r)
-{
-    int p;
-    assert(s->recheap_max + 1 < s->recheap_size);
 
-    s->recheap[p = ++s->recheap_max] = r;
-    while (p > 0)
-    {
-        int parent = (p - 1) >> 1;
-        if (strcmp(s->recheap[p]->merge_key, s->recheap[parent]->merge_key) < 0)
-        {
-            struct record *tmp;
-            tmp = s->recheap[parent];
-            s->recheap[parent] = s->recheap[p];
-            s->recheap[p] = tmp;
-            p = parent;
-        }
-        else
-            break;
-    }
-}
-
-static struct record *top_record(struct session *s)
-{
-    return s-> recheap_max >= 0 ?  s->recheap[0] : 0;
-}
-
-static struct record *pop_record(struct session *s)
-{
-    struct record *res;
-    int p = 0;
-    int lastnonleaf = (s->recheap_max - 1) >> 1;
-
-    if (s->recheap_max < 0)
-        return 0;
-
-    res = s->recheap[0];
-
-    s->recheap[p] = s->recheap[s->recheap_max--];
-
-    while (p <= lastnonleaf)
-    {
-        int right = (p + 1) << 1;
-        int left = right - 1;
-        int min = left;
-
-        if (right < s->recheap_max &&
-                strcmp(s->recheap[right]->merge_key, s->recheap[left]->merge_key) < 0)
-            min = right;
-        if (strcmp(s->recheap[min]->merge_key, s->recheap[p]->merge_key) < 0)
-        {
-            struct record *tmp = s->recheap[min];
-            s->recheap[min] = s->recheap[p];
-            s->recheap[p] = tmp;
-            p = min;
-        }
-        else
-            break;
-    }
-    return res;
-}
-
-// Like pop_record but collapses identical (merge_key) records
-// The heap will contain multiple independent matching records and possibly
-// one cluster, created the last time the list was scanned
-static struct record *pop_mrecord(struct session *s)
-{
-    struct record *this;
-    struct record *next;
-
-    if (!(this = pop_record(s)))
-        return 0;
-
-    // Collapse identical records
-    while ((next = top_record(s)))
-    {
-        struct record *p, *tmpnext;
-        if (strcmp(this->merge_key, next->merge_key))
-            break;
-        // Absorb record (and clustersiblings) into a supercluster
-        for (p = next; p; p = tmpnext) {
-            tmpnext = p->next_cluster;
-            p->next_cluster = this->next_cluster;
-            this->next_cluster = p;
-        }
-
-        pop_record(s);
-    }
-    return this;
-}
-
-// Reads records in sort order. Store records in top of heapspace until rewind is called.
-static struct record *read_recheap(struct session *s)
-{
-    struct record *r = pop_mrecord(s);
-
-    if (r)
-    {
-        if (s->recheap_scratch < 0)
-            s->recheap_scratch = s->recheap_size;
-        s->recheap[--s->recheap_scratch] = r;
-    }
-
-    return r;
-}
-
-// Return records to heap after read
-static void rewind_recheap(struct session *s)
-{
-    while (s->recheap_scratch >= 0) {
-        push_record(s, s->recheap[s->recheap_scratch++]);
-        if (s->recheap_scratch >= s->recheap_size)
-            s->recheap_scratch = -1;
-    }
-}
-
-#endif
-
+#ifdef GAGA
 // FIXME needs to be generalized. Should flexibly generate X lists per search
 static void extract_subject(struct session *s, const char *rec)
 {
@@ -564,76 +319,159 @@ static void extract_subject(struct session *s, const char *rec)
             assert(len < 1023);
             memcpy(buf, subfield, len);
             buf[len] = '\0';
+#ifdef FIXME
             if (*buf)
                 termlist_insert(s->termlist, buf);
+#endif
         }
     }
 }
+#endif
 
-static void pull_relevance_field(struct session *s, struct record *head, const char *rec,
-        char *field, int mult)
+static void add_facet(struct session *s, const char *type, const char *value)
 {
-    const char *fb;
-    while ((fb = find_field(rec, field)))
+    int i;
+
+    for (i = 0; i < s->num_termlists; i++)
+        if (!strcmp(s->termlists[i].name, type))
+            break;
+    if (i == s->num_termlists)
     {
-        char *ffield = strchr(fb, '\t');
-        if (!ffield)
-            return;
-        char *eol = strchr(ffield, '\n');
-        if (!eol)
-            return;
-        relevance_countwords(s->relevance, head, ffield, eol - ffield, mult);
-        rec = field + 1; // Crude way to cause a loop through repeating fields
+        if (i == SESSION_MAX_TERMLISTS)
+        {
+            yaz_log(YLOG_FATAL, "Too many termlists");
+            exit(1);
+        }
+        s->termlists[i].name = nmem_strdup(s->nmem, type);
+        s->termlists[i].termlist = termlist_create(s->nmem, s->expected_maxrecs, 15);
+        s->num_termlists = i + 1;
     }
+    termlist_insert(s->termlists[i].termlist, value);
 }
 
-static void pull_relevance_keys(struct session *s, struct record *head,  struct record *rec)
+static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
 {
-    relevance_newrec(s->relevance, head);
-    pull_relevance_field(s, head, rec->buf, "100", 2);
-    pull_relevance_field(s, head, rec->buf, "245", 4);
-    //pull_relevance_field(s, head, rec->buf, "530", 1);
-    pull_relevance_field(s, head, rec->buf, "630", 1);
-    pull_relevance_field(s, head, rec->buf, "650", 1);
-    pull_relevance_field(s, head, rec->buf, "700", 1);
-    relevance_donerecord(s->relevance, head);
-}
+    struct conf_retrievalprofile *rprofile = cl->database->rprofile;
+    struct conf_retrievalmap *m;
+    xmlNode *res;
+    xmlDoc *rdoc;
 
-static struct record *ingest_record(struct client *cl, char *buf, int len)
-{
-    struct session *se = cl->session;
-    struct record *res;
-    struct record *head;
-    const char *recbuf;
-
-    wrbuf_rewind(se->wrbuf);
-    yaz_marc_xml(global_parameters.yaz_marc, YAZ_MARC_LINE);
-    if (yaz_marc_decode_wrbuf(global_parameters.yaz_marc, buf, len, se->wrbuf) < 0)
+    // First normalize to XML
+    if (rprofile->native_syntax == Nativesyn_iso2709)
     {
-        yaz_log(YLOG_WARN, "Failed to decode MARC record");
+        char *buf;
+        int len;
+        if (rec->which != Z_External_octet)
+        {
+            yaz_log(YLOG_WARN, "Unexpected external branch, probably BER");
+            return 0;
+        }
+        buf = (char*) rec->u.octet_aligned->buf;
+        len = rec->u.octet_aligned->len;
+        if (yaz_marc_read_iso2709(rprofile->yaz_marc, buf, len) < 0)
+        {
+            yaz_log(YLOG_WARN, "Failed to decode MARC");
+            return 0;
+        }
+        if (yaz_marc_write_xml(rprofile->yaz_marc, &res,
+                    "http://www.loc.gov/MARC21/slim", 0, 0) < 0)
+        {
+            yaz_log(YLOG_WARN, "Failed to encode as XML");
+            return 0;
+        }
+        rdoc = xmlNewDoc("1.0");
+        xmlDocSetRootElement(rdoc, res);
+    }
+    else
+    {
+        yaz_log(YLOG_FATAL, "Unknown native_syntax in normalize_record");
+        exit(1);
+    }
+    for (m = rprofile->maplist; m; m = m->next)
+    {
+        xmlDoc *new;
+        if (m->type != Map_xslt)
+        {
+            yaz_log(YLOG_WARN, "Unknown map type");
+            return 0;
+        }
+        if (!(new = xsltApplyStylesheet(m->stylesheet, rdoc, 0)))
+        {
+            yaz_log(YLOG_WARN, "XSLT transformation failed");
+            return 0;
+        }
+        xmlFreeDoc(rdoc);
+        rdoc = new;
+    }
+    if (global_parameters.dump_records)
+    {
+        fprintf(stderr, "Record:\n----------------\n");
+        xmlDocFormatDump(stderr, rdoc, 1);
+    }
+    return rdoc;
+}
+
+static struct record *ingest_record(struct client *cl, Z_External *rec)
+{
+    xmlDoc *xdoc = normalize_record(cl, rec);
+    xmlNode *root, *n;
+    struct record *res, *head;
+    struct session *se = cl->session;
+    xmlChar *mergekey, *mergekey_norm;
+
+    if (!xdoc)
+        return 0;
+
+    root = xmlDocGetRootElement(xdoc);
+    if (!(mergekey = xmlGetProp(root, "mergekey")))
+    {
+        yaz_log(YLOG_WARN, "No mergekey found in record");
         return 0;
     }
-    wrbuf_putc(se->wrbuf, '\0');
-    recbuf = wrbuf_buf(se->wrbuf);
 
     res = nmem_malloc(se->nmem, sizeof(struct record));
-    res->buf = nmem_strdup(se->nmem, recbuf);
-
-    extract_subject(se, res->buf);
-
-    res->title = extract_title(se, res->buf);
-    res->merge_key = extract_mergekey(se, res->buf);
-    if (!res->merge_key)
-        return 0;
-    res->client = cl;
     res->next_cluster = 0;
     res->target_offset = -1;
     res->term_frequency_vec = 0;
+    res->title = "Unknown";
+    res->relevance = 0;
+
+    mergekey_norm = nmem_strdup(se->nmem, (char*) mergekey);
+    xmlFree(mergekey);
+    res->merge_key = normalize_mergekey(mergekey_norm);
 
     head = reclist_insert(se->reclist, res);
+    relevance_newrec(se->relevance, head);
 
-    pull_relevance_keys(se, head, res);
+    for (n = root->children; n; n = n->next)
+    {
+        if (n->type != XML_ELEMENT_NODE)
+            continue;
+        if (!strcmp(n->name, "facet"))
+        {
+            xmlChar *type = xmlGetProp(n, "type");
+            xmlChar *value = xmlNodeListGetString(xdoc, n->children, 0);
+            add_facet(se, type, value);
+            relevance_countwords(se->relevance, head, value, 1);
+            xmlFree(type);
+            xmlFree(value);
+        }
+        else if (!strcmp(n->name, "metadata"))
+        {
+            xmlChar *type = xmlGetProp(n, "type"), *value;
+            if (!strcmp(type, "title"))
+                res->title = nmem_strdup(se->nmem,
+                        value = xmlNodeListGetString(xdoc, n->children, 0));
 
+            relevance_countwords(se->relevance, head, value, 4);
+            xmlFree(type);
+            xmlFree(value);
+        }
+        else
+            yaz_log(YLOG_WARN, "Unexpected element %s in internal record", n->name);
+    }
+
+    relevance_donerecord(se->relevance, head);
     se->total_records++;
 
     return res;
@@ -652,41 +490,19 @@ static void ingest_records(struct client *cl, Z_Records *r)
     for (i = 0; i < rlist->num_records; i++)
     {
         Z_NamePlusRecord *npr = rlist->records[i];
-        Z_External *e;
-        char *buf;
-        int len;
 
         if (npr->which != Z_NamePlusRecord_databaseRecord)
         {
             yaz_log(YLOG_WARN, "Unexpected record type, probably diagnostic");
             continue;
         }
-        e = npr->u.databaseRecord;
-        if (e->which != Z_External_octet)
-        {
-            yaz_log(YLOG_WARN, "Unexpected external branch, probably BER");
-            continue;
-        }
-        buf = (char*) e->u.octet_aligned->buf;
-        len = e->u.octet_aligned->len;
 
-        rec = ingest_record(cl, buf, len);
+        rec = ingest_record(cl, npr->u.databaseRecord);
         if (!rec)
             continue;
     }
     if (s->watchlist[SESSION_WATCH_RECORDS].fun && rlist->num_records)
         session_alert_watch(s, SESSION_WATCH_RECORDS);
-}
-
-xsltStylesheetPtr load_stylesheet(const char *fname)
-{
-    xsltStylesheetPtr ret;
-    if (!(ret = xsltParseStylesheetFile((const xmlChar *) fname)))
-    {
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to load stylesheet %s", fname);
-        exit(1);
-    }
-    return ret;
 }
 
 static void do_presentResponse(IOCHAN i, Z_APDU *a)
@@ -975,6 +791,8 @@ static int client_prep_connection(struct client *cl)
         return 0;
 }
 
+// This function will most likely vanish when a proper target profile mechanism is
+// introduced.
 void load_simpletargets(const char *fn)
 {
     FILE *f = fopen(fn, "r");
@@ -1059,6 +877,8 @@ void load_simpletargets(const char *fn)
         database->databases[0] = xstrdup(db);
         database->databases[1] = 0;
         database->errors = 0;
+        database->qprofile = 0;
+        database->rprofile = database_retrieval_profile(database);
         database->next = databases;
         databases = database;
 
@@ -1158,6 +978,21 @@ void session_alert_watch(struct session *s, int what)
     s->watchlist[what].data = 0;
 }
 
+// This needs to be extended with selection criteria
+static struct conf_retrievalprofile *database_retrieval_profile(struct database *db)
+{
+    if (!config)
+    {
+        yaz_log(YLOG_FATAL, "Must load configuration (-f)");
+        exit(1);
+    }
+    if (!config->retrievalprofiles)
+    {
+        yaz_log(YLOG_FATAL, "No retrieval profiles defined");
+    }
+    return config->retrievalprofiles;
+}
+
 // This should be extended with parameters to control selection criteria
 // Associates a set of clients with a session;
 int select_targets(struct session *se)
@@ -1202,11 +1037,12 @@ char *search(struct session *se, char *query)
     {
         char *p[512];
         int maxrecs = live_channels * global_parameters.toget;
-        se->termlist = termlist_create(se->nmem, maxrecs, 15);
+        se->num_termlists = 0;
         se->reclist = reclist_create(se->nmem, maxrecs);
         extract_terms(se->nmem, query, p);
         se->relevance = relevance_create(se->nmem, (const char **) p, maxrecs);
         se->total_records = se->total_hits = 0;
+        se->expected_maxrecs = maxrecs;
     }
     else
         return "NOTARGETS";
@@ -1232,10 +1068,11 @@ struct session *new_session()
     
     session->total_hits = 0;
     session->total_records = 0;
-    session->termlist = 0;
+    session->num_termlists = 0;
     session->reclist = 0;
     session->requestid = -1;
     session->clients = 0;
+    session->expected_maxrecs = 0;
     session->query[0] = '\0';
     session->nmem = nmem_create();
     session->wrbuf = wrbuf_alloc();
@@ -1270,9 +1107,14 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count)
     return res;
 }
 
-struct termlist_score **termlist(struct session *s, int *num)
+struct termlist_score **termlist(struct session *s, const char *name, int *num)
 {
-    return termlist_highscore(s->termlist, num);
+    int i;
+
+    for (i = 0; i < s->num_termlists; i++)
+        if (!strcmp(s->termlists[i].name, name))
+            return termlist_highscore(s->termlists[i].termlist, num);
+    return 0;
 }
 
 #ifdef REPORT_NMEM
@@ -1373,7 +1215,7 @@ int main(int argc, char **argv)
 
     yaz_log_init(YLOG_DEFAULT_LEVEL, "pazpar2", 0);
 
-    while ((ret = options("f:x:c:h:p:C:s:", argv, argc, &arg)) != -2)
+    while ((ret = options("f:x:c:h:p:C:s:d", argv, argc, &arg)) != -2)
     {
 	switch (ret) {
             case 'f':
@@ -1397,8 +1239,8 @@ int main(int argc, char **argv)
             case 's':
                 load_simpletargets(arg);
                 break;
-            case 'x':
-                global_parameters.xsl = load_stylesheet(arg);
+            case 'd':
+                global_parameters.dump_records = 1;
                 break;
 	    default:
 		fprintf(stderr, "Usage: pazpar2\n"
@@ -1418,8 +1260,6 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    if (!global_parameters.xsl)
-        global_parameters.xsl = load_stylesheet("../etc/default.xsl");
     global_parameters.ccl_filter = load_cclfile("../etc/default.bib");
     global_parameters.yaz_marc = yaz_marc_create();
     yaz_marc_subfield_str(global_parameters.yaz_marc, "\t");

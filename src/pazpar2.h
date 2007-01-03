@@ -16,11 +16,13 @@ struct record;
 #include "termlists.h"
 #include "relevance.h"
 #include "eventl.h"
+#include "config.h"
+
+struct client;
 
 struct record {
     struct client *client;
     int target_offset;
-    char *buf;
     char *merge_key;
     char *title;
     int relevance;
@@ -44,10 +46,11 @@ struct database {
     char *url;
     char **databases;
     int errors;
+    struct conf_queryprofile *qprofile;
+    struct conf_retrievalprofile *rprofile;
     struct database *next;
 };
 
-struct client;
 
 // Represents a physical, reusable  connection to a remote Z39.50 host
 struct connection {
@@ -94,7 +97,15 @@ struct client {
 #define SESSION_WATCH_RECORDS   0
 #define SESSION_WATCH_MAX       0
 
+#define SESSION_MAX_TERMLISTS 10
+
 typedef void (*session_watchfun)(void *data);
+
+struct named_termlist
+{
+    char *name;
+    struct termlist *termlist;
+};
 
 // End-user session
 struct session {
@@ -103,13 +114,15 @@ struct session {
     char query[1024];
     NMEM nmem;          // Nmem for each operation (i.e. search)
     WRBUF wrbuf;        // Wrbuf for scratch(i.e. search)
-    struct termlist *termlist;
+    int num_termlists;
+    struct named_termlist termlists[SESSION_MAX_TERMLISTS];
     struct relevance *relevance;
     struct reclist *reclist;
     struct {
         void *data;
         session_watchfun fun;
     } watchlist[SESSION_WATCH_MAX + 1];
+    int expected_maxrecs;
     int total_hits;
     int total_records;
 };
@@ -138,6 +151,7 @@ struct hitsbytarget {
 };
 
 struct parameters {
+    int dump_records;
     int timeout;		/* operations timeout, in seconds */
     char implementationId[128];
     char implementationName[128];
@@ -150,7 +164,6 @@ struct parameters {
     yaz_marc_t yaz_marc;
     ODR odr_out;
     ODR odr_in;
-    xsltStylesheetPtr xsl;
 };
 
 struct hitsbytarget *hitsbytarget(struct session *s, int *count);
@@ -161,7 +174,7 @@ int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
 char *search(struct session *s, char *query);
 struct record **show(struct session *s, int start, int *num, int *total, int *sumhits, NMEM nmem_show);
-struct termlist_score **termlist(struct session *s, int *num);
+struct termlist_score **termlist(struct session *s, const char *name, int *num);
 void session_set_watch(struct session *s, int what, session_watchfun fun, void *data);
 
 #endif

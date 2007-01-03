@@ -1,5 +1,5 @@
 /*
- * $Id: relevance.c,v 1.2 2006-12-20 22:18:33 adam Exp $
+ * $Id: relevance.c,v 1.3 2007-01-03 06:23:44 quinn Exp $
  */
 
 #include <ctype.h>
@@ -67,16 +67,16 @@ static void word_trie_addterm(NMEM nmem, struct word_trie *n, const char *term, 
 
 #define raw_char(c) (((c) >= 'a' && (c) <= 'z') ? (c) - 'a' : -1)
 
-static int word_trie_match(struct word_trie *t, const char *word, int len, int *skipped)
+static int word_trie_match(struct word_trie *t, const char *word, int *skipped)
 {
     int c = raw_char(tolower(*word));
 
-    if (!len)
+    if (!*word)
         return 0;
 
-    word++; len--;
+    word++;
     (*skipped)++;
-    if (!len || raw_char(*word) < 0)
+    if (!*word || raw_char(*word) < 0)
     {
         if (t->list[c].termno > 0)
             return t->list[c].termno;
@@ -87,7 +87,7 @@ static int word_trie_match(struct word_trie *t, const char *word, int len, int *
     {
         if (t->list[c].child)
         {
-            return word_trie_match(t->list[c].child, word, len, skipped);
+            return word_trie_match(t->list[c].child, word, skipped);
         }
         else
             return 0;
@@ -136,34 +136,27 @@ void relevance_newrec(struct relevance *r, struct record *rec)
 // FIXME. The definition of a word is crude here.. should support
 // some form of localization mechanism?
 void relevance_countwords(struct relevance *r, struct record *head,
-        const char *words, int len, int multiplier)
+        const char *words, int multiplier)
 {
-    while (len)
+    while (*words)
     {
         char c;
         int res;
         int skipped;
-        while (len && (c = raw_char(tolower(*words))) < 0)
-        {
+        while (*words && (c = raw_char(tolower(*words))) < 0)
             words++;
-            len--;
-        }
-        if (!len)
+        if (!*words)
             return;
         skipped = 0;
-        if ((res = word_trie_match(r->wt, words, len, &skipped)))
+        if ((res = word_trie_match(r->wt, words, &skipped)))
         {
             words += skipped;
-            len -= skipped;
             head->term_frequency_vec[res] += multiplier;
         }
         else
         {
-            while (len && (c = raw_char(tolower(*words))) >= 0)
-            {
+            while (*words && (c = raw_char(tolower(*words))) >= 0)
                 words++;
-                len--;
-            }
         }
         head->term_frequency_vec[0]++;
     }
