@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.7 2007-01-03 06:23:44 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.8 2007-01-03 16:59:32 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -778,13 +778,16 @@ static int client_prep_connection(struct client *cl)
     if (co)
     {
         if (co->state == Conn_Connecting)
+        {
             cl->state = Client_Connecting;
+            iochan_setflag(co->iochan, EVENT_OUTPUT);
+        }
         else if (co->state == Conn_Open)
         {
             if (cl->state == Client_Error || cl->state == Client_Disconnected)
                 cl->state = Client_Idle;
+            iochan_setflag(co->iochan, EVENT_OUTPUT);
         }
-        iochan_setflag(co->iochan, EVENT_OUTPUT);
         return 1;
     }
     else
