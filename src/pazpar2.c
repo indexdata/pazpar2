@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.11 2007-01-04 07:27:29 adam Exp $ */;
+/* $Id: pazpar2.c,v 1.12 2007-01-04 07:38:36 adam Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -455,21 +455,28 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
         {
             xmlChar *type = xmlGetProp(n, "type");
             xmlChar *value = xmlNodeListGetString(xdoc, n->children, 0);
-            add_facet(se, type, value);
-            relevance_countwords(se->relevance, head, value, 1);
+            if (type && value)
+            {
+                add_facet(se, type, value);
+                relevance_countwords(se->relevance, head, value, 1);
+            }
             xmlFree(type);
             xmlFree(value);
         }
         else if (!strcmp(n->name, "metadata"))
         {
             xmlChar *type = xmlGetProp(n, "type"), *value;
-            if (!strcmp(type, "title"))
-                res->title = nmem_strdup(se->nmem,
-                        value = xmlNodeListGetString(xdoc, n->children, 0));
-
-            relevance_countwords(se->relevance, head, value, 4);
+            if (type && !strcmp(type, "title"))
+            {
+                xmlChar *value = xmlNodeListGetString(xdoc, n->children, 0);
+                if (value)
+                {
+                    res->title = nmem_strdup(se->nmem, value);
+                    relevance_countwords(se->relevance, head, value, 4);
+                    xmlFree(value);
+                }
+            }
             xmlFree(type);
-            xmlFree(value);
         }
         else
             yaz_log(YLOG_WARN, "Unexpected element %s in internal record", n->name);
