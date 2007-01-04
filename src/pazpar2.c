@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.12 2007-01-04 07:38:36 adam Exp $ */;
+/* $Id: pazpar2.c,v 1.13 2007-01-04 20:00:58 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -465,7 +465,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
         }
         else if (!strcmp(n->name, "metadata"))
         {
-            xmlChar *type = xmlGetProp(n, "type"), *value;
+            xmlChar *type = xmlGetProp(n, "type");
             if (type && !strcmp(type, "title"))
             {
                 xmlChar *value = xmlNodeListGetString(xdoc, n->children, 0);

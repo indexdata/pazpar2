@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.5 2007-01-04 02:53:37 quinn Exp $
+ * $Id: http_command.c,v 1.6 2007-01-04 20:00:58 quinn Exp $
  */
 
 #include <stdio.h>
@@ -144,6 +144,34 @@ static void cmd_init(struct http_channel *c)
     http_send_response(c);
 }
 
+// Compares two hitsbytarget nodes by hitcount
+static int cmp_ht(const void *p1, const void *p2)
+{
+    const struct hitsbytarget *h1 = p1;
+    const struct hitsbytarget *h2 = p2;
+    return h2->hits - h1->hits;
+}
+
+// This implements functionality somewhat similar to 'bytarget', but in a termlist form
+static void targets_termlist(WRBUF wrbuf, struct session *se)
+{
+    struct hitsbytarget *ht;
+    int count, i;
+
+    if (!(ht = hitsbytarget(se, &count)))
+        return;
+    qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht);
+    for (i = 0; i < count && i < 15; i++)
+    {
+        wrbuf_puts(wrbuf, "\n<term>\n");
+        wrbuf_printf(wrbuf, "<name>%s</name>\n", ht[i].id);
+        wrbuf_printf(wrbuf, "<frequency>%d</frequency>\n", ht[i].hits);
+        wrbuf_printf(wrbuf, "<state>%s</state>\n", ht[i].state);
+        wrbuf_printf(wrbuf, "<diagnostic>%d</diagnostic>\n", ht[i].diagnostic);
+        wrbuf_puts(wrbuf, "\n</term>\n");
+    }
+}
+
 static void cmd_termlist(struct http_channel *c)
 {
     struct http_response *rs = c->response;
@@ -177,16 +205,21 @@ static void cmd_termlist(struct http_channel *c)
         strncpy(tname, name, tp - name);
         tname[tp - name] = '\0';
 
-        p = termlist(s->psession, tname, &len);
         wrbuf_printf(c->wrbuf, "\n<list name=\"%s\">\n", tname);
-        if (p)
-            for (i = 0; i < len; i++)
-            {
-                wrbuf_puts(c->wrbuf, "\n<term>");
-                wrbuf_printf(c->wrbuf, "<name>%s</name>", p[i]->term);
-                wrbuf_printf(c->wrbuf, "<frequency>%d</frequency>", p[i]->frequency);
-                wrbuf_puts(c->wrbuf, "</term>");
-            }
+        if (!strcmp(tname, "xtargets"))
+            targets_termlist(c->wrbuf, s->psession);
+        else
+        {
+            p = termlist(s->psession, tname, &len);
+            if (p)
+                for (i = 0; i < len; i++)
+                {
+                    wrbuf_puts(c->wrbuf, "\n<term>");
+                    wrbuf_printf(c->wrbuf, "<name>%s</name>", p[i]->term);
+                    wrbuf_printf(c->wrbuf, "<frequency>%d</frequency>", p[i]->frequency);
+                    wrbuf_puts(c->wrbuf, "</term>");
+                }
+        }
         wrbuf_puts(c->wrbuf, "\n</list>");
         name = tp;
         if (*name == ',')

@@ -136,21 +136,33 @@ search.pz2?session=2044502273&command=termlist&name=author,subject
 Output:
 
 <termlist>
-  <activeclients>3</activeclients>
-  <list name="author">
-    <term>
-      <name>Donald Knuth</name>
-      <frequency>10</frequency>
-    </term>
-    <term>
-      <name>Robert Pirsig</name>
-      <frequency>2</frequency>
-    </term>
-  </list>
-  <list name="subject">
-    <term>
-      <name>Computer programming</name>
-      <frequency>10</frequency>
-    </term>
-  </list>
+<activeclients>3</activeclients>
+<list name="author">
+<term>
+<name>Donald Knuth</name>
+<frequency>10</frequency>
+</term>
+<term>
+<name>Robert Pirsig</name>
+<frequency>2</frequency>
+</term>
+</list>
+<list name="subject">
+<term>
+<name>Computer programming</name>
+<frequency>10</frequency>
+</term>
+</list>
 </termlist>
+
+For the special termlist name "xtargets", results are returned about the targets
+which have returned the most hits. The 'term' subtree has additional elements,
+specifically a state and diagnostic field (in the example below, a target ID is
+returned in place of 'name'. This may or may not change later.
+
+<term>
+<name>library2.mcmaster.ca</name>
+<frequency>11734</frequency>
+<state>Client_Idle</state>
+<diagnostic>0</diagnostic>
+</term>
