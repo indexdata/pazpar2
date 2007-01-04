@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.9 2007-01-04 02:35:42 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.10 2007-01-04 03:16:14 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -470,6 +470,8 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
         else
             yaz_log(YLOG_WARN, "Unexpected element %s in internal record", n->name);
     }
+
+    xmlFreeDoc(xdoc);
 
     relevance_donerecord(se->relevance, head);
     se->total_records++;
