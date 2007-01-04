@@ -102,6 +102,7 @@ Output:
 
 <show>
   <status>OK</status>
+  <activeclients>3</activeclients>
   <merged>6</merged>
   <total>7</total>
   <start>0</start>
@@ -134,6 +135,7 @@ search.pz2?session=2044502273&command=termlist&name=author,subject
 Output:
 
 <termlist>
+  <activeclients>3</activeclients>
   <list name="author">
     <term>
       <name>Donald Knuth</name>

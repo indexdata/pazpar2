@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.3 2007-01-03 06:23:44 quinn Exp $
+ * $Id: http_command.c,v 1.4 2007-01-04 02:35:42 quinn Exp $
  */
 
 #include <stdio.h>
@@ -153,6 +153,7 @@ static void cmd_termlist(struct http_channel *c)
     int len;
     int i;
     char *name = http_argbyname(rq, "name");
+    int status = session_active_clients(s->psession);
 
     if (!s)
         return;
@@ -165,6 +166,7 @@ static void cmd_termlist(struct http_channel *c)
     wrbuf_rewind(c->wrbuf);
 
     wrbuf_puts(c->wrbuf, "<termlist>");
+    wrbuf_printf(c->wrbuf, "\n<activeclients>%d</activeclients>", status);
     while (*name)
     {
         char tname[256];
@@ -230,7 +232,7 @@ static void cmd_bytarget(struct http_channel *c)
     http_send_response(c);
 }
 
-static void show_records(struct http_channel *c)
+static void show_records(struct http_channel *c, int active)
 {
     struct http_request *rq = c->request;
     struct http_response *rs = c->response;
@@ -248,6 +250,10 @@ static void show_records(struct http_channel *c)
     if (!s)
         return;
 
+    // We haven't counted clients yet if we're called on a block release
+    if (active < 0)
+        active = session_active_clients(s->psession);
+
     if (start)
         startn = atoi(start);
     if (num)
@@ -258,6 +264,7 @@ static void show_records(struct http_channel *c)
 
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, "<show>\n<status>OK</status>\n");
+    wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", active);
     wrbuf_printf(c->wrbuf, "<merged>%d</merged>\n", total);
     wrbuf_printf(c->wrbuf, "<total>%d</total>\n", total_hits);
     wrbuf_printf(c->wrbuf, "<start>%d</start>\n", startn);
@@ -287,7 +294,7 @@ static void show_records_ready(void *data)
 {
     struct http_channel *c = (struct http_channel *) data;
 
-    show_records(c);
+    show_records(c, -1);
 }
 
 static void cmd_show(struct http_channel *c)
@@ -296,13 +303,14 @@ static void cmd_show(struct http_channel *c)
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
     char *block = http_argbyname(rq, "block");
+    int status = session_active_clients(s->psession);
 
     if (!s)
         return;
 
     if (block)
     {
-        if (!s->psession->reclist || !s->psession->reclist->num_records)
+        if (status && (!s->psession->reclist || !s->psession->reclist->num_records))
         {
             session_set_watch(s->psession, SESSION_WATCH_RECORDS, show_records_ready, c);
             yaz_log(YLOG_DEBUG, "Blocking on cmd_show");
@@ -310,7 +318,7 @@ static void cmd_show(struct http_channel *c)
         }
     }
 
-    show_records(c);
+    show_records(c, status);
 }
 
 static void cmd_ping(struct http_channel *c)

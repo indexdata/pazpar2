@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.8 2007-01-03 16:59:32 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.9 2007-01-04 02:35:42 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1015,6 +1015,21 @@ int select_targets(struct session *se)
         c++;
     }
     return c;
+}
+
+int session_active_clients(struct session *s)
+{
+    struct client *c;
+    int res = 0;
+
+    for (c = s->clients; c; c = c->next)
+        if (c->connection && (c->state == Client_Connecting ||
+                    c->state == Client_Initializing ||
+                    c->state == Client_Searching ||
+                    c->state == Client_Presenting))
+            res++;
+
+    return res;
 }
 
 char *search(struct session *se, char *query)
