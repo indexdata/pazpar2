@@ -1,12 +1,12 @@
 # ParaZ. Copyright (C) 2000-2004, Index Data ApS
 # All rights reserved.
-# $Id: Makefile,v 1.6 2007-01-04 02:35:42 quinn Exp $
+# $Id: Makefile,v 1.7 2007-01-04 19:04:34 quinn Exp $
 
 SHELL=/bin/sh
 
 CC=gcc
 
-YAZCONF=yaz/yaz-config
+YAZCONF=yaz-config
 YAZLIBS=`$(YAZCONF) --libs`
 YAZCFLAGS=`$(YAZCONF) --cflags`
 
