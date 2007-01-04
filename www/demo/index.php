@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: index.php,v 1.1 2007-01-04 14:11:55 sondberg Exp $
+/* $Id: index.php,v 1.2 2007-01-04 14:39:06 sondberg Exp $
  * --------------------------------------------------------------------
  * Keystone retreiver main page
  */
@@ -9,7 +9,7 @@ include('includes.phpi');
 
 insert_header();
 
-echo "<h3>Welcome to front-page!</h3>";
+echo "<h3>Enter your search!</h3>";
 
 insert_footer();
 
