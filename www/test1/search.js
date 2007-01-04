@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.6 2007-01-04 20:00:58 quinn Exp $
+/* $Id: search.js,v 1.7 2007-01-04 22:03:56 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -20,6 +20,7 @@ var stattimer;
 var session_cells = Array('query', 'startrec', 'action_type');
 var old_session = session_read();
 var url_surveillence;
+var recstoshow = 15;
 
 
 function initialize ()
@@ -169,13 +170,13 @@ function show_records()
 
 	if (start + num < merged)
 	    body.innerHTML += ' <a href="" ' +
-		'onclick="document.search.startrec.value=' + (start + 20) +
+		'onclick="document.search.startrec.value=' + (start + recstoshow) +
                 ";update_action('page')" +
 		';check_search(); update_history(); return false;">Next</a>';
 
 	if (start > 0)
 	    body.innerHTML += ' <a href="" ' +
-		'onclick="document.search.startrec.value=' + (start - 20) +
+		'onclick="document.search.startrec.value=' + (start - recstoshow) +
                 ";update_action('page')" +
 		';check_search(); update_history();return false;">Previous</a>';
 
@@ -208,7 +209,7 @@ function check_search()
     var url = "search.pz2?" +
         "command=show" +
 	"&start=" + document.search.startrec.value +
-	"&num=15" +
+	"&num=" + recstoshow +
 	"&session=" + session +
 	"&block=1";
     xshow = GetXmlHttpObject();
