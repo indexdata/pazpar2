@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.4 2007-01-04 02:53:37 quinn Exp $
+/* $Id: search.js,v 1.5 2007-01-04 03:06:40 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -43,6 +43,13 @@ function GetXmlHttpObject()
     return objXMLHttp
 } 
 
+function SendXmlHttpObject(obj, url, handler)
+{
+    obj.onreadystatechange=handler;
+    obj.open("GET", url);
+    obj.send(null);
+}
+
 function session_started()
 {
     if (xinitSession.readyState != 4)
@@ -51,6 +58,7 @@ function session_started()
     var sesid = xml.getElementsByTagName("session")[0].childNodes[0].nodeValue;
     document.getElementById("status").innerHTML = "Live";
     session = sesid;
+    setTimeout(ping_session, 50000);
 }
 
 function start_session()
@@ -63,6 +71,30 @@ function start_session()
     xinitSession.send(null);
     
     //url_surveillence = setInterval(session_check, 200);
+}
+
+function ping_session()
+{
+    if (!session)
+	return;
+    var url = "search.pz2?command=ping&session=" + session;
+    SendXmlHttpObject(xpingSession = GetXmlHttpObject(), url, session_pinged);
+}
+
+function session_pinged()
+{
+    if (xpingSession.readyState != 4)
+	return;
+    var xml = xpingSession.responseXML;
+    var error = xml.getElementsByTagName("error");
+    if (error[0])
+    {
+	var msg = error[0].childNodes[0].nodeValue;
+	alert(msg);
+	location = "?";
+	return;
+    }
+    setTimeout(ping_session, 50000);
 }
 
 function targets_loaded()
