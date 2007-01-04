@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.10 2007-01-04 03:16:14 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.11 2007-01-04 07:27:29 adam Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -18,6 +18,11 @@
 #include <yaz/pquery.h>
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>
+
+#define USE_TIMING 0
+#if USE_TIMING
+#include <yaz/timing.h>
+#endif
 
 #include "pazpar2.h"
 #include "eventl.h"
@@ -75,7 +80,6 @@ struct parameters global_parameters =
     0,
     0
 };
-
 
 static int send_apdu(struct client *c, Z_APDU *a)
 {
@@ -481,6 +485,9 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
 
 static void ingest_records(struct client *cl, Z_Records *r)
 {
+#if USE_TIMING
+    yaz_timing_t t = yaz_timing_create();
+#endif
     struct record *rec;
     struct session *s = cl->session;
     Z_NamePlusRecordList *rlist;
@@ -505,6 +512,14 @@ static void ingest_records(struct client *cl, Z_Records *r)
     }
     if (s->watchlist[SESSION_WATCH_RECORDS].fun && rlist->num_records)
         session_alert_watch(s, SESSION_WATCH_RECORDS);
+
+#if USE_TIMING
+    yaz_timing_stop(t);
+    yaz_log(YLOG_LOG, "ingest_records %6.5f %3.2f %3.2f", 
+            yaz_timing_get_real(t), yaz_timing_get_user(t),
+            yaz_timing_get_sys(t));
+    yaz_timing_destroy(&t);
+#endif
 }
 
 static void do_presentResponse(IOCHAN i, Z_APDU *a)
@@ -1158,7 +1173,9 @@ struct record **show(struct session *s, int start, int *num, int *total,
     struct record **recs = nmem_malloc(nmem_show, *num 
                                        * sizeof(struct record *));
     int i;
-
+#if USE_TIMING    
+    yaz_timing_t t = yaz_timing_create();
+#endif
     relevance_prepare_read(s->relevance, s->reclist);
 
     *total = s->reclist->num_records;
@@ -1168,7 +1185,8 @@ struct record **show(struct session *s, int start, int *num, int *total,
         if (!reclist_read_record(s->reclist))
         {
             *num = 0;
-            return 0;
+            recs = 0;
+            break;
         }
 
     for (i = 0; i < *num; i++)
@@ -1181,6 +1199,13 @@ struct record **show(struct session *s, int start, int *num, int *total,
         }
         recs[i] = r;
     }
+#if USE_TIMING
+    yaz_timing_stop(t);
+    yaz_log(YLOG_LOG, "show %6.5f %3.2f %3.2f", 
+            yaz_timing_get_real(t), yaz_timing_get_user(t),
+            yaz_timing_get_sys(t));
+    yaz_timing_destroy(&t);
+#endif
     return recs;
 }
 
