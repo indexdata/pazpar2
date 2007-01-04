@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.13 2007-01-04 20:00:58 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.14 2007-01-04 22:04:25 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -11,6 +11,7 @@
 #include <ctype.h>
 #include <assert.h>
 
+#include <yaz/marcdisp.h>
 #include <yaz/comstack.h>
 #include <yaz/tcpip.h>
 #include <yaz/proto.h>
@@ -1159,9 +1160,7 @@ struct termlist_score **termlist(struct session *s, const char *name, int *num)
     return 0;
 }
 
-#ifdef REPORT_NMEM
-// conditional compilation by SH: This lead to a warning with currently installed
-// YAZ header files on us1
+#ifdef MISSING_HEADERS
 void report_nmem_stats(void)
 {
     size_t in_use, is_free;
