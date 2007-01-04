@@ -1,16 +1,9 @@
 Short term: 
 
+Pull more metadata from records. Figure out how this relates to record retrieval
 Structured target profiles -- Zeerex?  -- requires libxml
-Normalization of records -- test if libXSLT is fast enough to:
-  -- Extract Subject headings, titles, dates, authors for facets and display
-  -- Merge keys for relevance ranking, etc.
-  -- Also normalize to UTF-8.
 Sort by title, date, author. Parameter to 'show' webservice command.
-Additional facets. At least do 'author'.. think about making it general. -- libxml
-Implement detection of 'search complete', so client knows when to stop polling.
 Full record retrieval. -- libxml
-Implement hitsbytarget function to emulate traditional LOT-style U/I
-  -- Begs a 'limit by target' type of function...  ??
 
 Longer term:
 
