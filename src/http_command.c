@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.4 2007-01-04 02:35:42 quinn Exp $
+ * $Id: http_command.c,v 1.5 2007-01-04 02:53:37 quinn Exp $
  */
 
 #include <stdio.h>
@@ -364,6 +364,7 @@ static void cmd_stat(struct http_channel *c)
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
     struct statistics stat;
+    int clients = session_active_clients(s->psession);
 
     if (!s)
         return;
@@ -372,6 +373,7 @@ static void cmd_stat(struct http_channel *c)
 
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, "<stat>");
+    wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", clients);
     wrbuf_printf(c->wrbuf, "<hits>%d</hits>\n", stat.num_hits);
     wrbuf_printf(c->wrbuf, "<records>%d</records>\n", stat.num_records);
     wrbuf_printf(c->wrbuf, "<clients>%d</clients>\n", stat.num_clients);

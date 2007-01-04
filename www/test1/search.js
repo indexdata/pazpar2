@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.3 2007-01-02 11:02:50 sondberg Exp $
+/* $Id: search.js,v 1.4 2007-01-04 02:53:37 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -130,6 +130,7 @@ function show_records()
 	var merged = Number(xml.getElementsByTagName('merged')[0].childNodes[0].nodeValue);
 	var start = Number(xml.getElementsByTagName('start')[0].childNodes[0].nodeValue);
 	var num = Number(xml.getElementsByTagName('num')[0].childNodes[0].nodeValue);
+	var clients = Number(xml.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue);
 	body.innerHTML = '<b>Records : ';
 	body.innerHTML += (start + 1) + ' to ' + (start + num) +
 		' of ' + merged + ' (total hits: ' + total + ')</b>';
@@ -157,10 +158,13 @@ function show_records()
 	    body.innerHTML += '</p>';
 	}
 	shown++;
-	if (shown < 5)
-	    searchtimer = setTimeout(check_search, 1000);
-	else
-	    searchtimer = setTimeout(check_search, 2000);
+	if (clients > 0)
+	{
+	    if (shown < 5)
+		searchtimer = setTimeout(check_search, 1000);
+	    else
+		searchtimer = setTimeout(check_search, 2000);
+	}
     }
     if (!termtimer)
 	termtimer = setTimeout(check_termlist, 1000);
@@ -200,6 +204,8 @@ function show_termlist()
     var xml = xtermlist.responseXML;
     var body = document.getElementById("termlist");
     var hits = xml.getElementsByTagName("term");
+    var clients =
+	Number(xml.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue);
     if (!hits[0])
     {
 	termtimer = setTimeout(check_termlist, 1000);
@@ -217,7 +223,8 @@ function show_termlist()
                                   '</a>';
 	    body.innerHTML += '<br>';
 	}
-	termtimer = setTimeout(check_termlist, 2000);
+	if (clients > 0)
+	    termtimer = setTimeout(check_termlist, 2000);
     }
 }
 
@@ -241,6 +248,8 @@ function show_stat()
     var xml = xstat.responseXML;
     var body = document.getElementById("stat");
     var nodes = xml.childNodes[0].childNodes;
+    var clients =
+	Number(xml.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue);
     if (!nodes[0])
     {
 	stattimer  = setTimeout(check_stat, 500);
@@ -259,7 +268,8 @@ function show_stat()
 	    body.innerHTML += ' ' + name + '=' + value;
 	}
 	body.innerHTML += ')';
-	stattimer = setTimeout(check_stat, 2000);
+	if (clients > 0)
+	    stattimer = setTimeout(check_stat, 2000);
     }
 }
 
