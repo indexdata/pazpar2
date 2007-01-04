@@ -1,0 +1,72 @@
+<?php
+
+/* $Id: page_segments.phpi,v 1.1 2007-01-04 14:11:55 sondberg Exp $
+ * ---------------------------------------------------
+ * Page segments 
+ */
+
+
+function insert_header () {
+    echo <<<END_OF_HEADER
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">  
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>Keystone Retriever</title>
+    <link rel="author" href="http://www.indexdata.dk" />
+    <link href="css/styles.css" rel="stylesheet" type="text/css"
+          media="screen, all" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="topbar">
+        <a href=".">
+          <img id="logo" src="gfx/logo.gif" width="155" height="36"
+               alt="Keystone Retriever" />
+        </a>
+        <div class="topmenu">
+          <a href="about.php" class="topmenu">ABOUT</a>
+          <a href="help.php" class="topmenu">HELP</a>
+        </div>
+      </div>
+      <div class="search">  
+        <span>ENTER SEARCH TERM:</span>
+        <div>
+            <input type="text" class="search" tabindex="1" maxlength="255"
+                   value="" />
+            <input type="submit" class="button" value="Search" />
+        </div>
+      </div>
+      <div class="main">
+        <div class="leftbar">
+          <b>Limit search results</b><br />
+          Narrow your search by using the keywords below:<br />
+          <br />
+          <a href="#" class="unselected">Subject</a>
+          <a href="#">Subject 1</a>
+          <a href="#">Subject 2</a>
+          <a href="#"> Subject 3</a>
+          <br />
+          <a href="#" class="selected">Author</a>
+          <br />
+          <a href="#" class="selected">Institution</a>
+          <br />
+          <a href="#" class="unselected">Date</a>
+          <a href="#">Date 1</a>
+          <a href="#">Date 2</a>
+          <a href="#">Date 3</a>
+        </div>
+        <div class="content">
+END_OF_HEADER;
+}
+
+
+function insert_footer () {
+echo <<<END_OF_FOOTER
+        </div>
+        <div class="clear"></div>
+      </div>
+    </div>
+  </body>
+</html>
+END_OF_FOOTER;
+}

@@ -1,0 +1,11 @@
+<?php
+
+/* $Id: includes.phpi,v 1.1 2007-01-04 14:11:55 sondberg Exp $
+ * ---------------------------------------------------
+ * Include all that's needed by the php scripts
+ */
+
+require('settings.phpi');
+require('page_segments.phpi');
+
+?>
