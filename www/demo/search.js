@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.1 2007-01-05 11:30:13 sondberg Exp $
+/* $Id: search.js,v 1.2 2007-01-05 13:31:10 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -21,10 +21,12 @@ var session_cells = Array('query', 'startrec', 'action_type');
 var old_session = session_read();
 var url_surveillence;
 var recstoshow = 15;
-var cur_termlist = "subject";
+var facet_list;
+var cur_facet = 0;
 
 function initialize ()
 {
+    facet_list = get_available_facets();
     start_session();
     session_check();
 }
@@ -231,35 +233,7 @@ function refine_query (obj) {
     start_search();
 }
 
-function set_termlist(termlist)
-{
-    cur_termlist = termlist;
-    check_termlist();
-    if (termtimer)
-    {
-	clearTimeout(termtimer);
-	termtimer = 0;
-    }
-}
 
-function show_termlistoptions(body)
-{
-    var opts = Array(
-        Array('subject', 'Subject'),
-	Array('author', 'Author')
-    );
-
-    for (i in opts)
-    {
-	if (opts[i][0] == cur_termlist)
-	    body.innerHTML += opts[i][1];
-	else
-	    body.innerHTML += '<a href="" onclick="set_termlist(\'' + opts[i][0] +
-		'\'); return false">' + opts[i][1] + '</a>';
-	body.innerHTML += ' ';
-    }
-    body.innerHTML += '<p>';
-}
 
 function show_termlist()
 {
@@ -268,10 +242,16 @@ function show_termlist()
 
     var i;
     var xml = xtermlist.responseXML;
-    var body = document.getElementById("termlist");
+    var body = facet_list[cur_facet][1];
     var hits = xml.getElementsByTagName("term");
     var clients =
 	Number(xml.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue);
+
+    cur_facet++;
+
+    if (cur_facet >= facet_list.length)
+        cur_facet = 0;
+
     if (!hits[0])
     {
 	termtimer = setTimeout(check_termlist, 1000);
@@ -279,8 +259,8 @@ function show_termlist()
     else
     {
 	body.innerHTML = "<b>Limit results:</b><br>";
-	show_termlistoptions(body);
-	for (i = 0; i < hits.length; i++)
+	
+        for (i = 0; i < hits.length; i++)
 	{
 	    var namen = hits[i].getElementsByTagName("name");
 	    if (namen[0])
@@ -296,10 +276,11 @@ function show_termlist()
 
 function check_termlist()
 {
+    var facet_name = facet_list[cur_facet][0];
     var url = "search.pz2?" +
         "command=termlist" +
 	"&session=" + session +
-	"&name=" + cur_termlist;
+	"&name=" + facet_name;
     xtermlist = GetXmlHttpObject();
     xtermlist.onreadystatechange=show_termlist;
     xtermlist.open("GET", url);
@@ -390,7 +371,7 @@ function start_search()
     xsearch.onreadystatechange=search_started;
     xsearch.open("GET", url);
     xsearch.send(null);
-    document.getElementById("termlist").innerHTML = '';
+//    document.getElementById("termlist").innerHTML = '';
     document.getElementById("body").innerHTML = '';
     update_history();
     shown = 0;
@@ -475,6 +456,25 @@ function session_check ()
     }
     
     url_surveillence = setInterval(session_check, 200);
+}
+
+
+function get_available_facets () {
+    var facet_container = document.getElementById('termlists');
+    var facet_cells = facet_container.childNodes;
+    var facets = Array();
+    var i;
+
+    for (i = 0; i < facet_cells.length; i++) {
+        var cell = facet_cells.item(i);
+
+        if (cell.className == 'facet') {
+            var facet_name = cell.id.replace(/^facet_([^_]+)_terms$/, "$1");
+            facets.push(Array(facet_name, cell));
+        }
+    }
+
+    return facets;
 }
 
 

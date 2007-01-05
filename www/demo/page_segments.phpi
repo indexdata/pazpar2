@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: page_segments.phpi,v 1.5 2007-01-05 11:30:13 sondberg Exp $
+/* $Id: page_segments.phpi,v 1.6 2007-01-05 13:31:10 sondberg Exp $
  * ---------------------------------------------------
  * Page segments 
  */
@@ -43,31 +43,22 @@ function insert_header () {
         </div>
       </div>
       <div class="main">
-        <div class="leftbar" id="termlist2">
+        <div class="leftbar" id="termlists">
           <b>Limit search results</b><br />
           Narrow your search by using the keywords below:<br />
           <br />
           <a id="facet_subject" href="#" class="selected"
              onclick="toggle_facet(this)">Subject</a>
-          <div id="facet_subject_terms" style="display: none;">None</div>
+          <div id="facet_subject_terms" class="facet"
+               style="display: none;">None</div>
           
           <br />
 
           <a id="facet_author" href="#" class="selected"
              onclick="toggle_facet(this)">Author</a>
-          <div id="facet_author_terms" style="display: none;">None</div>
+          <div id="facet_author_terms" class="facet"
+               style="display: none;">None</div>
           
-          <br />
-
-          <a id="facet_institution" href="#" class="selected"
-             onclick="toggle_facet(this)">Institution</a>
-          <div id="facet_institution_terms" style="display: none;">None</div>
-
-          <br />
-
-          <a id="facet_date" href="#" class="selected"
-             onclick="toggle_facet(this)">Date</a>
-          <div id="facet_date_terms" style="display: none;">None</div>
         </div>
         <div class="content" id="body">
 END_OF_HEADER;
