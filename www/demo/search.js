@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.2 2007-01-05 13:31:10 sondberg Exp $
+/* $Id: search.js,v 1.3 2007-01-05 13:33:47 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -202,7 +202,7 @@ function show_records()
 	}
     }
     if (!termtimer)
-	termtimer = setTimeout(check_termlist, 1000);
+	termtimer = setTimeout(check_termlist, 500);
 }
 
 function check_search()
@@ -254,7 +254,7 @@ function show_termlist()
 
     if (!hits[0])
     {
-	termtimer = setTimeout(check_termlist, 1000);
+	termtimer = setTimeout(check_termlist, 500);
     }
     else
     {
@@ -270,7 +270,7 @@ function show_termlist()
 	    body.innerHTML += '<br>';
 	}
 	if (clients > 0)
-	    termtimer = setTimeout(check_termlist, 2000);
+	    termtimer = setTimeout(check_termlist, 1000);
     }
 }
 
