@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.4 2007-01-05 13:45:35 sondberg Exp $
+/* $Id: search.js,v 1.5 2007-01-05 13:53:33 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -488,7 +488,7 @@ function toggle_facet (obj) {
 
     if (obj.className == 'selected') {
         obj.className = 'unselected';
-        container.style.display = 'block';
+        container.style.display = 'inline';
     } else {
         obj.className = 'selected';
         container.style.display = 'none';
