@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: page_segments.phpi,v 1.2 2007-01-04 14:39:42 sondberg Exp $
+/* $Id: page_segments.phpi,v 1.3 2007-01-05 09:46:30 sondberg Exp $
  * ---------------------------------------------------
  * Page segments 
  */
@@ -15,8 +15,9 @@ function insert_header () {
     <link rel="author" href="http://www.indexdata.dk" />
     <link href="css/styles.css" rel="stylesheet" type="text/css"
           media="screen, all" />
+    <script type="text/javascript" src="search.js"></script>
   </head>
-  <body>
+  <body onload="initialize();">
     <div class="container">
       <div class="topbar">
         <a href=".">
@@ -31,13 +32,17 @@ function insert_header () {
       <div class="search">  
         <span>ENTER SEARCH TERM:</span>
         <div>
-            <input type="text" class="search" tabindex="1" maxlength="255"
-                   value="" />
+          <form name="search" onsubmit="start_search(); return false;">
+            <input id="query" type="text" class="search" tabindex="1"
+                  maxlength="255" value="" />
             <input type="submit" class="button" value="Search" />
+            <input type="hidden" name="action_type" id="action_type"
+                   value="search"/>
+          </form>
         </div>
       </div>
       <div class="main">
-        <div class="leftbar">
+        <div class="leftbar" id="termlist">
           <b>Limit search results</b><br />
           Narrow your search by using the keywords below:<br />
           <br />
@@ -54,18 +59,20 @@ function insert_header () {
           <a id="facet_date_title" href="#" class="selected">Date</a>
           <div id="facet_date_terms"></div>
         </div>
-        <div class="content">
+        <div class="content" id="body">
 END_OF_HEADER;
 }
 
 
 function insert_footer () {
-echo <<<END_OF_FOOTER
+    global $show_status;
+    
+    echo '</div>
+          <div style="display: ', ($show_status == 1 ? 'block' : 'none'),
+          ';">Status: <span id="status"></div>
+          <div class="clear"></div>
         </div>
-        <div class="clear"></div>
       </div>
-    </div>
-  </body>
-</html>
-END_OF_FOOTER;
+    </body>
+  </html>';
 }

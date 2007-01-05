@@ -1,9 +1,12 @@
 <?php
 
-/* $Id: settings.phpi,v 1.1 2007-01-04 14:11:55 sondberg Exp $
+/* $Id: settings.phpi,v 1.2 2007-01-05 09:46:30 sondberg Exp $
  * -------------------------------------------------
  * Global settings for the Keystone Retriever
  */
+
+
+$show_status = 1;
 
 
 ?>
