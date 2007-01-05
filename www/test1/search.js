@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.7 2007-01-04 22:03:56 quinn Exp $
+/* $Id: search.js,v 1.8 2007-01-05 02:12:51 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -21,7 +21,7 @@ var session_cells = Array('query', 'startrec', 'action_type');
 var old_session = session_read();
 var url_surveillence;
 var recstoshow = 15;
-
+var cur_termlist = "subject";
 
 function initialize ()
 {
@@ -221,11 +221,44 @@ function check_search()
 
 function refine_query (obj) {
     var query_cell = document.getElementById('query');
-    var subject = obj.innerHTML;
+    var term = obj.innerHTML;
     
-    subject = subject.replace(/[\(\)]/g, '');
-    query_cell.value += ' and su=(' + subject + ')';
+    term = term.replace(/[\(\)]/g, '');
+    if (cur_termlist == 'subject')
+	query_cell.value += ' and su=(' + term + ')';
+    else if (cur_termlist == 'author')
+	query_cell.value += ' and au=(' + term + ')';
     start_search();
+}
+
+function set_termlist(termlist)
+{
+    cur_termlist = termlist;
+    check_termlist();
+    if (termtimer)
+    {
+	clearTimeout(termtimer);
+	termtimer = 0;
+    }
+}
+
+function show_termlistoptions(body)
+{
+    var opts = Array(
+        Array('subject', 'Subject'),
+	Array('author', 'Author')
+    );
+
+    for (i in opts)
+    {
+	if (opts[i][0] == cur_termlist)
+	    body.innerHTML += opts[i][1];
+	else
+	    body.innerHTML += '<a href="" onclick="set_termlist(\'' + opts[i][0] +
+		'\'); return false">' + opts[i][1] + '</a>';
+	body.innerHTML += ' ';
+    }
+    body.innerHTML += '<p>';
 }
 
 function show_termlist()
@@ -242,11 +275,11 @@ function show_termlist()
     if (!hits[0])
     {
 	termtimer = setTimeout(check_termlist, 1000);
-        
     }
     else
     {
 	body.innerHTML = "<b>Limit results:</b><br>";
+	show_termlistoptions(body);
 	for (i = 0; i < hits.length; i++)
 	{
 	    var namen = hits[i].getElementsByTagName("name");
@@ -266,7 +299,7 @@ function check_termlist()
     var url = "search.pz2?" +
         "command=termlist" +
 	"&session=" + session +
-	"&name=" + "subject";
+	"&name=" + cur_termlist;
     xtermlist = GetXmlHttpObject();
     xtermlist.onreadystatechange=show_termlist;
     xtermlist.open("GET", url);
