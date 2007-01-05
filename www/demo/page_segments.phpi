@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: page_segments.phpi,v 1.3 2007-01-05 09:46:30 sondberg Exp $
+/* $Id: page_segments.phpi,v 1.4 2007-01-05 10:05:19 sondberg Exp $
  * ---------------------------------------------------
  * Page segments 
  */
@@ -36,6 +36,7 @@ function insert_header () {
             <input id="query" type="text" class="search" tabindex="1"
                   maxlength="255" value="" />
             <input type="submit" class="button" value="Search" />
+            <input type="hidden" name="startrec" id="startrec"/>
             <input type="hidden" name="action_type" id="action_type"
                    value="search"/>
           </form>
@@ -69,7 +70,9 @@ function insert_footer () {
     
     echo '</div>
           <div style="display: ', ($show_status == 1 ? 'block' : 'none'),
-          ';">Status: <span id="status"></div>
+          ';">Status: <span id="status">Initializing</span>
+          <span id="stat"></span>
+          </div>
           <div class="clear"></div>
         </div>
       </div>
