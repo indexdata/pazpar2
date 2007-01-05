@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.14 2007-01-04 22:04:25 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.15 2007-01-05 20:33:05 adam Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -431,6 +431,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
     if (!(mergekey = xmlGetProp(root, "mergekey")))
     {
         yaz_log(YLOG_WARN, "No mergekey found in record");
+        xmlFreeDoc(xdoc);
         return 0;
     }
 
@@ -446,6 +447,12 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
     res->merge_key = normalize_mergekey(mergekey_norm);
 
     head = reclist_insert(se->reclist, res);
+    if (!head)
+    {
+        /* no room for record */
+        xmlFreeDoc(xdoc);
+        return 0;
+    }
     relevance_newrec(se->relevance, head);
 
     for (n = root->children; n; n = n->next)

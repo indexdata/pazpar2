@@ -1,5 +1,5 @@
 /*
- * $Id: reclists.c,v 1.1 2006-12-20 20:47:16 quinn Exp $
+ * $Id: reclists.c,v 1.2 2007-01-05 20:33:05 adam Exp $
  */
 
 #include <assert.h>
@@ -71,7 +71,7 @@ struct record *reclist_insert(struct reclist *l, struct record  *record)
 {
     unsigned int bucket;
     struct reclist_bucket **p;
-    struct record *head;
+    struct record *head = 0;
 
     bucket = hash((unsigned char*) record->merge_key) & l->hashmask;
     for (p = &l->hashtable[bucket]; *p; p = &(*p)->next)
@@ -86,14 +86,18 @@ struct record *reclist_insert(struct reclist *l, struct record  *record)
             break;
         }
     }
-    if (!*p) // We made it to the end of the bucket without finding match
+    if (!head && l->num_records < l->flatlist_size)
     {
-        struct reclist_bucket *new = nmem_malloc(l->nmem,
-                sizeof(struct reclist_bucket));
+        struct reclist_bucket *new =
+            nmem_malloc(l->nmem, sizeof(struct reclist_bucket));
+        
+        assert(!*p);
+        
         new->record = record;
         record->next_cluster = 0;
         new->next = 0;
         *p = new;
+        assert(l->num_records < l->flatlist_size);
         l->flatlist[l->num_records++] = record;
         head = record;
     }
