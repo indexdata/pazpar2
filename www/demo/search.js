@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.3 2007-01-05 13:33:47 sondberg Exp $
+/* $Id: search.js,v 1.4 2007-01-05 13:45:35 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -258,7 +258,7 @@ function show_termlist()
     }
     else
     {
-	body.innerHTML = "<b>Limit results:</b><br>";
+	body.innerHTML = '';
 	
         for (i = 0; i < hits.length; i++)
 	{
@@ -267,8 +267,8 @@ function show_termlist()
 		body.innerHTML += '<a href="#" onclick="refine_query(this)">' +
                                   namen[0].childNodes[0].nodeValue +
                                   '</a>';
-	    body.innerHTML += '<br>';
 	}
+
 	if (clients > 0)
 	    termtimer = setTimeout(check_termlist, 1000);
     }
