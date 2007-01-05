@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.5 2007-01-05 13:53:33 sondberg Exp $
+/* $Id: search.js,v 1.6 2007-01-05 14:56:05 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -145,6 +145,11 @@ function update_action (new_action) {
 }
 
 
+function make_pager (hits, offset, max) {
+    return '<a href="#" class="select">1</a> <a href="#">Next</a>';
+}
+
+
 function show_records()
 {
     if (xshow.readyState != 4)
@@ -166,10 +171,15 @@ function show_records()
 	var start = Number(xml.getElementsByTagName('start')[0].childNodes[0].nodeValue);
 	var num = Number(xml.getElementsByTagName('num')[0].childNodes[0].nodeValue);
 	var clients = Number(xml.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue);
-	body.innerHTML = '<b>Records : ';
-	body.innerHTML += (start + 1) + ' to ' + (start + num) +
-		' of ' + merged + ' (total hits: ' + total + ')</b>';
+	body.innerHTML = '<div class="pages">' +
+                         make_pager(merged, start, 20) +
+                         '</div>';
+                         
+	body.innerHTML += '<div class="results">Records : ' + (start + 1) +
+                          ' to ' + (start + num) + ' of ' + merged +
+                          ' (total hits: ' + total + ')</div><br/><br/>';
 
+/*
 	if (start + num < merged)
 	    body.innerHTML += ' <a href="" ' +
 		'onclick="document.search.startrec.value=' + (start + recstoshow) +
@@ -183,15 +193,22 @@ function show_records()
 		';check_search(); update_history();return false;">Previous</a>';
 
 	body.innerHTML += '<br/>';
+*/
+        body.innerHTML += '<div class="records">';
+
 	for (i = 0; i < hits.length; i++)
 	{
-	    body.innerHTML += '<p>';
-	    body.innerHTML += (i + start + 1) + ': ';
 	    var mk = hits[i].getElementsByTagName("title");
-	    if (mk[0])
-		body.innerHTML += mk[0].childNodes[0].nodeValue;
-	    body.innerHTML += '</p>';
+
+	    body.innerHTML += '<a href="#" class="record">';
+
+	    if (mk[0]) {
+                var field = mk[0].childNodes[0].nodeValue;
+            }
+	    body.innerHTML += field + '</a>';
 	}
+
+        body.innerHTML += '</div>';
 	shown++;
 	if (clients > 0)
 	{
