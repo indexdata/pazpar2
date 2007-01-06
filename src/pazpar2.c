@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.15 2007-01-05 20:33:05 adam Exp $ */;
+/* $Id: pazpar2.c,v 1.16 2007-01-06 03:02:47 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -199,6 +199,8 @@ static void send_present(IOCHAN i)
     int start = cl->records + 1;
 
     toget = global_parameters.chunk;
+    if (toget > global_parameters.toget - cl->records)
+        toget = global_parameters.toget - cl->records;
     if (toget > cl->hits - cl->records)
 	toget = cl->hits - cl->records;
 
