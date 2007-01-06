@@ -1,9 +1,6 @@
 Short term: 
 
-Pull more metadata from records. Figure out how this relates to record retrieval
-Structured target profiles -- Zeerex?
-Sort by title, date, author. Parameter to 'show' webservice command.
-Full record retrieval. -- libxml
+(moved to Bugzilla)
 
 Longer term:
 
