@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.4 2006-12-21 04:27:17 quinn Exp $
+ * $Id: http.c,v 1.5 2007-01-06 04:54:58 quinn Exp $
  */
 
 #include <stdio.h>
@@ -19,7 +19,6 @@
 #include <yaz/comstack.h>
 #include <netdb.h>
 
-#include "command.h"
 #include "util.h"
 #include "eventl.h"
 #include "pazpar2.h"

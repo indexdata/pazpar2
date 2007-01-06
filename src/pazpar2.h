@@ -20,11 +20,25 @@ struct record;
 
 struct client;
 
+struct record_metadata
+{
+    union
+    {
+        char *text;
+        struct {
+            int first;
+            int last;
+        } year_range;
+        int year;
+    } interpretation;
+};
+
 struct record {
     struct client *client;
+    char *title;
     int target_offset;
     char *merge_key;
-    char *title;
+    struct record_metadata *md;
     int relevance;
     int *term_frequency_vec;
     struct record *next_cluster;

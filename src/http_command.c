@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.6 2007-01-04 20:00:58 quinn Exp $
+ * $Id: http_command.c,v 1.7 2007-01-06 04:54:58 quinn Exp $
  */
 
 #include <stdio.h>
@@ -13,7 +13,6 @@
 
 #include <yaz/yaz-util.h>
 
-#include "command.h"
 #include "util.h"
 #include "eventl.h"
 #include "pazpar2.h"

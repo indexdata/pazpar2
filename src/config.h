@@ -11,9 +11,37 @@ struct conf_termlist
     struct conf_termlist *next;
 };
 
+// Describes known metadata elements and how they are to be manipulated
+struct conf_metadata 
+{
+    char *name;  // The name of this element. Output by normalization stylesheet
+    int brief;   // Is this element to be returned in the brief format?
+    enum
+    {
+        Metadata_type_generic,          // Generic text field
+        Metadata_type_integer,          // Integer type
+        Metadata_type_year              // A year
+    } type;
+    enum
+    {
+        Metadata_sortkey_no,            // This is not to be used as a sortkey
+        Metadata_sortkey_numeric,       // Standard numerical sorting
+        Metadata_sortkey_range,         // Range sorting (pick lowest or highest)
+        Metadata_sortkey_skiparticle    // Skip leading article when sorting
+    } sortkey;
+    enum
+    {
+        Metadata_merge_no,              // Don't merge
+        Metadata_merge_unique,          // Include unique elements in merged block
+        Metadata_merge_longest,         // Include the longest (strlen) value
+        Metadata_merge_range            // Store value as a range of lowest-highest
+    } merge;
+};
+
 struct conf_service
 {
     struct conf_termlist *termlists;
+    struct conf_metadata *metadata;
 };
 
 struct conf_server

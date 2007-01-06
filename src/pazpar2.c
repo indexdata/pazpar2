@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.16 2007-01-06 03:02:47 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.17 2007-01-06 04:54:58 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -27,7 +27,6 @@
 
 #include "pazpar2.h"
 #include "eventl.h"
-#include "command.h"
 #include "http.h"
 #include "termlists.h"
 #include "reclists.h"
@@ -1275,17 +1274,13 @@ int main(int argc, char **argv)
 
     yaz_log_init(YLOG_DEFAULT_LEVEL, "pazpar2", 0);
 
-    while ((ret = options("f:x:c:h:p:C:s:d", argv, argc, &arg)) != -2)
+    while ((ret = options("f:x:h:p:C:s:d", argv, argc, &arg)) != -2)
     {
 	switch (ret) {
             case 'f':
                 if (!read_config(arg))
                     exit(1);
                 break;
-	    case 'c':
-		command_init(atoi(arg));
-                setport++;
-		break;
             case 'h':
                 http_init(arg);
                 setport++;
@@ -1306,7 +1301,6 @@ int main(int argc, char **argv)
 		fprintf(stderr, "Usage: pazpar2\n"
                         "    -f configfile\n"
                         "    -h [host:]port          (REST protocol listener)\n"
-                        "    -c cmdport              (telnet-style)\n"
                         "    -C cclconfig\n"
                         "    -s simpletargetfile\n"
                         "    -p hostname[:portno]    (HTTP proxy)\n");
@@ -1316,7 +1310,7 @@ int main(int argc, char **argv)
 
     if (!setport)
     {
-        fprintf(stderr, "Set command port with -h or -c\n");
+        fprintf(stderr, "Set command port with -h\n");
         exit(1);
     }
 
