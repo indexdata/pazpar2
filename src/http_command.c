@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.7 2007-01-06 04:54:58 quinn Exp $
+ * $Id: http_command.c,v 1.8 2007-01-06 05:32:23 quinn Exp $
  */
 
 #include <stdio.h>
@@ -180,10 +180,12 @@ static void cmd_termlist(struct http_channel *c)
     int len;
     int i;
     char *name = http_argbyname(rq, "name");
-    int status = session_active_clients(s->psession);
+    int status;
 
     if (!s)
         return;
+
+    status = session_active_clients(s->psession);
 
     if (!name)
         name = "subject";
@@ -335,10 +337,12 @@ static void cmd_show(struct http_channel *c)
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
     char *block = http_argbyname(rq, "block");
-    int status = session_active_clients(s->psession);
+    int status;
 
     if (!s)
         return;
+
+    status = session_active_clients(s->psession);
 
     if (block)
     {
@@ -396,11 +400,12 @@ static void cmd_stat(struct http_channel *c)
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
     struct statistics stat;
-    int clients = session_active_clients(s->psession);
+    int clients;
 
     if (!s)
         return;
 
+    clients = session_active_clients(s->psession);
     statistics(s->psession, &stat);
 
     wrbuf_rewind(c->wrbuf);
