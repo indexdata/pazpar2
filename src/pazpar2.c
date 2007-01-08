@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.17 2007-01-06 04:54:58 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.18 2007-01-08 12:43:41 adam Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -20,6 +20,10 @@
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>
 
+#if HAVE_CONFIG_H
+#include "cconfig.h"
+#endif
+
 #define USE_TIMING 0
 #if USE_TIMING
 #include <yaz/timing.h>
@@ -33,7 +37,6 @@
 #include "relevance.h"
 #include "config.h"
 
-#define PAZPAR2_VERSION "0.1"
 #define MAX_CHUNK 15
 
 static void client_fatal(struct client *cl);
@@ -70,7 +73,7 @@ struct parameters global_parameters =
     30,
     "81",
     "Index Data PazPar2 (MasterKey)",
-    PAZPAR2_VERSION,
+    VERSION,
     600, // 10 minutes
     60,
     100,

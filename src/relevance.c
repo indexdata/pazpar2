@@ -1,10 +1,14 @@
 /*
- * $Id: relevance.c,v 1.3 2007-01-03 06:23:44 quinn Exp $
+ * $Id: relevance.c,v 1.4 2007-01-08 12:43:41 adam Exp $
  */
 
 #include <ctype.h>
 #include <math.h>
 #include <stdlib.h>
+
+#if HAVE_CONFIG_H
+#include <cconfig.h>
+#endif
 
 #include "relevance.h"
 #include "pazpar2.h"

@@ -1,10 +1,14 @@
 /*
- * $Id: termlists.c,v 1.1 2006-12-20 20:47:16 quinn Exp $
+ * $Id: termlists.c,v 1.2 2007-01-08 12:43:41 adam Exp $
  */
 
 #include <stdlib.h>
 #include <string.h>
 #include <yaz/yaz-util.h>
+
+#if HAVE_CONFIG_H
+#include <cconfig.h>
+#endif
 
 #include "termlists.h"
 

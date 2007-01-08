@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.3 2007-01-03 06:23:44 quinn Exp $ */
+/* $Id: config.c,v 1.4 2007-01-08 12:43:41 adam Exp $ */
 
 #include <string.h>
 
@@ -7,6 +7,10 @@
 #include <libxslt/xslt.h>
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
+
+#if HAVE_CONFIG_H
+#include <cconfig.h>
+#endif
 
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>

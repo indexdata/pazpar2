@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.8 2007-01-06 05:32:23 quinn Exp $
+ * $Id: http_command.c,v 1.9 2007-01-08 12:43:41 adam Exp $
  */
 
 #include <stdio.h>
@@ -10,6 +10,10 @@
 #include <strings.h>
 #include <ctype.h>
 #include <sys/time.h>
+
+#if HAVE_CONFIG_H
+#include <cconfig.h>
+#endif
 
 #include <yaz/yaz-util.h>
 

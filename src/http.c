@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.5 2007-01-06 04:54:58 quinn Exp $
+ * $Id: http.c,v 1.6 2007-01-08 12:43:41 adam Exp $
  */
 
 #include <stdio.h>
@@ -14,6 +14,10 @@
 #include <netdb.h>
 #include <errno.h>
 #include <assert.h>
+
+#if HAVE_CONFIG_H
+#include <cconfig.h>
+#endif
 
 #include <yaz/yaz-util.h>
 #include <yaz/comstack.h>

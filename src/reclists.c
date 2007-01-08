@@ -1,8 +1,12 @@
 /*
- * $Id: reclists.c,v 1.2 2007-01-05 20:33:05 adam Exp $
+ * $Id: reclists.c,v 1.3 2007-01-08 12:43:41 adam Exp $
  */
 
 #include <assert.h>
+
+#if HAVE_CONFIG_H
+#include <cconfig.h>
+#endif
 
 #include <yaz/yaz-util.h>
 

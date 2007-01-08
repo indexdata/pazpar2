@@ -6,12 +6,17 @@
  */
 
 /*
- * $Id: eventl.c,v 1.1 2006-12-20 20:47:16 quinn Exp $
+ * $Id: eventl.c,v 1.2 2007-01-08 12:43:41 adam Exp $
  * Based on revision YAZ' server/eventl.c 1.29.
  */
 
 #include <stdio.h>
 #include <assert.h>
+
+#if HAVE_CONFIG_H
+#include <cconfig.h>
+#endif
+
 #ifdef WIN32
 #include <winsock.h>
 #else
