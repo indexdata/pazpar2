@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.18 2007-01-08 12:43:41 adam Exp $ */;
+/* $Id: pazpar2.c,v 1.19 2007-01-08 18:32:35 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -67,8 +67,10 @@ static char *client_states[] = {
     "Client_Stopped"
 };
 
+// Note: Some things in this structure will eventually move to configuration
 struct parameters global_parameters = 
 {
+    0,
     0,
     30,
     "81",
@@ -358,6 +360,8 @@ static void add_facet(struct session *s, const char *type, const char *value)
     termlist_insert(s->termlists[i].termlist, value);
 }
 
+int yaz_marc_write_xml();
+
 static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
 {
     struct conf_retrievalprofile *rprofile = cl->database->rprofile;
@@ -424,9 +428,13 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
 {
     xmlDoc *xdoc = normalize_record(cl, rec);
     xmlNode *root, *n;
-    struct record *res, *head;
+    struct record *res;
+    struct record_cluster *cluster;
     struct session *se = cl->session;
     xmlChar *mergekey, *mergekey_norm;
+    xmlChar *type;
+    xmlChar *value;
+    struct conf_service *service = global_parameters.server->service;
 
     if (!xdoc)
         return 0;
@@ -440,55 +448,109 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
     }
 
     res = nmem_malloc(se->nmem, sizeof(struct record));
-    res->next_cluster = 0;
+    res->next = 0;
     res->target_offset = -1;
     res->term_frequency_vec = 0;
-    res->title = "Unknown";
+    res->metadata = nmem_malloc(se->nmem,
+            sizeof(struct record_metadata*) * service->num_metadata);
+    bzero(res->metadata, sizeof(struct record_metadata*) * service->num_metadata);
     res->relevance = 0;
 
     mergekey_norm = nmem_strdup(se->nmem, (char*) mergekey);
     xmlFree(mergekey);
-    res->merge_key = normalize_mergekey(mergekey_norm);
+    normalize_mergekey(mergekey_norm);
 
-    head = reclist_insert(se->reclist, res);
-    if (!head)
+    cluster = reclist_insert(se->reclist, res, mergekey_norm);
+    if (!cluster)
     {
         /* no room for record */
         xmlFreeDoc(xdoc);
         return 0;
     }
-    relevance_newrec(se->relevance, head);
+    relevance_newrec(se->relevance, cluster);
 
+    type = value = 0;
     for (n = root->children; n; n = n->next)
     {
+        if (type)
+            xmlFree(type);
+        if (value)
+            xmlFree(value);
+        type = value = 0;
+
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "facet"))
+        if (!strcmp(n->name, "metadata"))
         {
-            xmlChar *type = xmlGetProp(n, "type");
-            xmlChar *value = xmlNodeListGetString(xdoc, n->children, 0);
-            if (type && value)
-            {
-                add_facet(se, type, value);
-                relevance_countwords(se->relevance, head, value, 1);
-            }
-            xmlFree(type);
-            xmlFree(value);
-        }
-        else if (!strcmp(n->name, "metadata"))
-        {
-            xmlChar *type = xmlGetProp(n, "type");
-            if (type && !strcmp(type, "title"))
-            {
-                xmlChar *value = xmlNodeListGetString(xdoc, n->children, 0);
-                if (value)
+            type = xmlGetProp(n, "type");
+            value = xmlNodeListGetString(xdoc, n->children, 0);
+            struct conf_metadata *md = 0;
+            struct record_metadata **wheretoput, *newm;
+            int imeta;
+
+            // First, find out what field we're looking at
+            for (imeta = 0; imeta < service->num_metadata; imeta++)
+                if (!strcmp(type, service->metadata[imeta].name))
                 {
-                    res->title = nmem_strdup(se->nmem, value);
-                    relevance_countwords(se->relevance, head, value, 4);
-                    xmlFree(value);
+                    md = &service->metadata[imeta];
+                    break;
+                }
+            if (!md)
+            {
+                yaz_log(YLOG_WARN, "Ignoring unknown metadata element: %s", type);
+                continue;
+            }
+
+            // Find out where we are putting it
+            if (md->merge == Metadata_merge_no)
+                wheretoput = &res->metadata[imeta];
+            else
+                wheretoput = &cluster->metadata[imeta];
+            
+            // Put it there
+            newm = nmem_malloc(se->nmem, sizeof(struct record_metadata));
+            newm->next = 0;
+            if (md->type == Metadata_type_generic)
+            {
+                newm->data.text = nmem_strdup(se->nmem, value);
+            }
+            else
+            {
+                yaz_log(YLOG_WARN, "Unknown type in metadata element %s", type);
+                continue;
+            }
+            if (md->merge == Metadata_merge_unique)
+            {
+                struct record_metadata *mnode;
+                for (mnode = *wheretoput; mnode; mnode = mnode->next)
+                    if (!strcmp(mnode->data.text, mnode->data.text))
+                        break;
+                if (!mnode)
+                {
+                    newm->next = *wheretoput;
+                    *wheretoput = newm;
                 }
             }
+            else if (md->merge == Metadata_merge_longest)
+            {
+                if (!*wheretoput ||
+                        strlen(newm->data.text) > strlen((*wheretoput)->data.text))
+                *wheretoput = newm;
+            }
+            else if (md->merge == Metadata_merge_all || md->merge == Metadata_merge_no)
+            {
+                newm->next = *wheretoput;
+                *wheretoput = newm;
+            }
+            else
+                yaz_log(YLOG_WARN, "Don't know how to merge on element name %s", md->name);
+
+            relevance_countwords(se->relevance, cluster, value, 4);
+            if (md->termlist)
+                add_facet(se, type, value);
             xmlFree(type);
+            xmlFree(value);
+            type = value = 0;
         }
         else
             yaz_log(YLOG_WARN, "Unexpected element %s in internal record", n->name);
@@ -496,7 +558,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
 
     xmlFreeDoc(xdoc);
 
-    relevance_donerecord(se->relevance, head);
+    relevance_donerecord(se->relevance, cluster);
     se->total_records++;
 
     return res;
@@ -1184,11 +1246,11 @@ void report_nmem_stats(void)
 }
 #endif
 
-struct record **show(struct session *s, int start, int *num, int *total,
+struct record_cluster **show(struct session *s, int start, int *num, int *total,
                      int *sumhits, NMEM nmem_show)
 {
-    struct record **recs = nmem_malloc(nmem_show, *num 
-                                       * sizeof(struct record *));
+    struct record_cluster **recs = nmem_malloc(nmem_show, *num 
+                                       * sizeof(struct record_cluster *));
     int i;
 #if USE_TIMING    
     yaz_timing_t t = yaz_timing_create();
@@ -1208,7 +1270,7 @@ struct record **show(struct session *s, int start, int *num, int *total,
 
     for (i = 0; i < *num; i++)
     {
-        struct record *r = reclist_read_record(s->reclist);
+        struct record_cluster *r = reclist_read_record(s->reclist);
         if (!r)
         {
             *num = i;
@@ -1310,6 +1372,13 @@ int main(int argc, char **argv)
 		exit(1);
 	}
     }
+
+    if (!config)
+    {
+        yaz_log(YLOG_FATAL, "Load config with -f");
+        exit(1);
+    }
+    global_parameters.server = config->servers;
 
     if (!setport)
     {

@@ -7,7 +7,7 @@ struct reclist
     int hashtable_size;
     int hashmask;
 
-    struct record **flatlist;
+    struct record_cluster **flatlist;
     int flatlist_size;
     int num_records;
     int pointer;
@@ -16,8 +16,9 @@ struct reclist
 };
 
 struct reclist *reclist_create(NMEM, int numrecs);
-struct record * reclist_insert(struct reclist *tl, struct record  *record);
-struct record *reclist_read_record(struct reclist *l);
+struct record_cluster *reclist_insert(struct reclist *tl, struct record  *record,
+		char *merg_key);
+struct record_cluster *reclist_read_record(struct reclist *l);
 void reclist_rewind(struct reclist *l);
 
 #endif

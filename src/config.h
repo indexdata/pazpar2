@@ -5,17 +5,12 @@
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
 
-struct conf_termlist
-{
-    char *name;
-    struct conf_termlist *next;
-};
-
 // Describes known metadata elements and how they are to be manipulated
 struct conf_metadata 
 {
     char *name;  // The name of this element. Output by normalization stylesheet
     int brief;   // Is this element to be returned in the brief format?
+    int termlist;// Is this field to be treated as a termlist for browsing?
     enum
     {
         Metadata_type_generic,          // Generic text field
@@ -34,13 +29,14 @@ struct conf_metadata
         Metadata_merge_no,              // Don't merge
         Metadata_merge_unique,          // Include unique elements in merged block
         Metadata_merge_longest,         // Include the longest (strlen) value
-        Metadata_merge_range            // Store value as a range of lowest-highest
+        Metadata_merge_range,           // Store value as a range of lowest-highest
+        Metadata_merge_all              // Just include all elements found
     } merge;
 };
 
 struct conf_service
 {
-    struct conf_termlist *termlists;
+    int num_metadata;
     struct conf_metadata *metadata;
 };
 

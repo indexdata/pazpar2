@@ -1,7 +1,6 @@
 How to use this:
 
-Usage: pazpar2 -h [listen-host:]listen-port -p host-to-proxy -s targetfile \
-               -x normalization-stylesheet
+Usage: pazpar2 -f configfile -h [listen-host:]listen-port -p host-to-proxy -s targetfile
 
 The host-to-proxy is the webserver where the user interface script
 lives. It is used both for domain-name lookup and the contents of

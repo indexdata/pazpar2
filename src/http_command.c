@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.9 2007-01-08 12:43:41 adam Exp $
+ * $Id: http_command.c,v 1.10 2007-01-08 18:32:35 quinn Exp $
  */
 
 #include <stdio.h>
@@ -275,7 +275,7 @@ static void show_records(struct http_channel *c, int active)
     struct http_request *rq = c->request;
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
-    struct record **rl;
+    struct record_cluster **rl;
     NMEM nmem_show;
     char *start = http_argbyname(rq, "start");
     char *num = http_argbyname(rq, "num");
@@ -312,10 +312,34 @@ static void show_records(struct http_channel *c, int active)
     {
         int ccount;
         struct record *p;
+        struct record_cluster *rec = rl[i];
+        struct conf_service *service = global_parameters.server->service;
+        int imeta;
 
         wrbuf_puts(c->wrbuf, "<hit>\n");
-        wrbuf_printf(c->wrbuf, "<title>%s</title>\n", rl[i]->title);
-        for (ccount = 1, p = rl[i]->next_cluster; p;  p = p->next_cluster, ccount++)
+        for (imeta = 0; imeta < service->num_metadata; imeta++)
+        {
+            struct conf_metadata *cmd = &service->metadata[imeta];
+            struct record_metadata *md;
+            if (!rec->metadata[imeta])
+                continue;
+            if (!cmd->brief)
+                continue;
+            for (md = rec->metadata[imeta]; md; md = md->next)
+            {
+                wrbuf_printf(c->wrbuf, "<md-%s>", cmd->name);
+                switch (cmd->type)
+                {
+                    case Metadata_type_generic:
+                        wrbuf_puts(c->wrbuf, md->data.text);
+                        break;
+                    default:
+                        wrbuf_puts(c->wrbuf, "[Can't represent]");
+                }
+                wrbuf_printf(c->wrbuf, "</md-%s>", cmd->name);
+            }
+        }
+        for (ccount = 0, p = rl[i]->records; p;  p = p->next, ccount++)
             ;
         if (ccount > 1)
             wrbuf_printf(c->wrbuf, "<count>%d</count>\n", ccount);

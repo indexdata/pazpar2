@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.4 2007-01-08 12:43:41 adam Exp $ */
+/* $Id: config.c,v 1.5 2007-01-08 18:32:35 quinn Exp $ */
 
 #include <string.h>
 
@@ -30,25 +30,125 @@ static struct conf_service *parse_service(xmlNode *node)
 {
     xmlNode *n;
     struct conf_service *r = nmem_malloc(nmem, sizeof(struct conf_service));
+    int num_metadata = 0;
+    int md_node = 0;
 
-    r->termlists = 0;
+    // Allocate array of conf metadata structs, if necessary
+    for (n = node->children; n; n = n->next)
+        if (n->type == XML_ELEMENT_NODE && !strcmp(n->name, "metadata"))
+            num_metadata++;
+    if (num_metadata)
+        r->metadata = nmem_malloc(nmem, sizeof(struct conf_metadata) * num_metadata);
+    r->num_metadata = num_metadata;
 
     for (n = node->children; n; n = n->next)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "termlist"))
+        if (!strcmp(n->name, "metadata"))
         {
-            struct conf_termlist *tl = nmem_malloc(nmem, sizeof(struct conf_termlist));
+            struct conf_metadata *md = &r->metadata[md_node];
             xmlChar *name = xmlGetProp(n, "name");
+            xmlChar *brief = xmlGetProp(n, "brief");
+            xmlChar *sortkey = xmlGetProp(n, "sortkey");
+            xmlChar *merge = xmlGetProp(n, "merge");
+            xmlChar *type = xmlGetProp(n, "type");
+            xmlChar *termlist = xmlGetProp(n, "termlist");
+
             if (!name)
             {
-                yaz_log(YLOG_WARN, "Missing name attribute in termlist");
-                continue;
+                yaz_log(YLOG_FATAL, "Must specify name in metadata element");
+                return 0;
             }
-            tl->name = nmem_strdup(nmem, name);
-            tl->next = r->termlists;
-            r->termlists = tl;
+            md->name = nmem_strdup(nmem, name);
+            if (brief)
+            {
+                if (!strcmp(brief, "yes"))
+                    md->brief = 1;
+                else if (strcmp(brief, "no"))
+                {
+                    yaz_log(YLOG_FATAL, "metadata/brief must be yes or no");
+                    return 0;
+                }
+            }
+            else
+                md->brief = 0;
+
+            if (termlist)
+            {
+                if (!strcmp(termlist, "yes"))
+                    md->termlist = 1;
+                else if (strcmp(termlist, "no"))
+                {
+                    yaz_log(YLOG_FATAL, "metadata/termlist must be yes or no");
+                    return 0;
+                }
+            }
+            else
+                md->termlist = 0;
+
+            if (type)
+            {
+                if (!strcmp(type, "generic"))
+                    md->type = Metadata_type_generic;
+                else if (!strcmp(type, "integer"))
+                    md->type = Metadata_type_integer;
+                else if (!strcmp(type, "year"))
+                    md->type = Metadata_type_year;
+                else
+                {
+                    yaz_log(YLOG_FATAL, "Unknown value for metadata/type: %s", type);
+                    return 0;
+                }
+            }
+            md->type = Metadata_type_generic;
+
+            if (sortkey)
+            {
+                if (!strcmp(sortkey, "no"))
+                    md->sortkey = Metadata_sortkey_no;
+                else if (!strcmp(sortkey, "numeric"))
+                    md->sortkey = Metadata_sortkey_numeric;
+                else if (!strcmp(sortkey, "range"))
+                    md->sortkey = Metadata_sortkey_range;
+                else if (!strcmp(sortkey, "skiparticle"))
+                    md->sortkey = Metadata_sortkey_skiparticle;
+                else
+                {
+                    yaz_log(YLOG_FATAL, "Unknown sortkey in metadata element: %s", sortkey);
+                    return 0;
+                }
+            }
+            else
+                md->sortkey = Metadata_sortkey_no;
+
+            if (merge)
+            {
+                if (!strcmp(merge, "no"))
+                    md->merge = Metadata_merge_no;
+                else if (!strcmp(merge, "unique"))
+                    md->merge = Metadata_merge_unique;
+                else if (!strcmp(merge, "longest"))
+                    md->merge = Metadata_merge_longest;
+                else if (!strcmp(merge, "range"))
+                    md->merge = Metadata_merge_range;
+                else if (!strcmp(merge, "all"))
+                    md->merge = Metadata_merge_all;
+                else
+                {
+                    yaz_log(YLOG_FATAL, "Unknown value for metadata/merge: %s", merge);
+                    return 0;
+                }
+            }
+            else
+                md->merge = Metadata_merge_no;
+
+            xmlFree(name);
+            xmlFree(brief);
+            xmlFree(sortkey);
+            xmlFree(merge);
+            xmlFree(termlist);
+            md_node++;
         }
         else
         {
@@ -83,6 +183,8 @@ static struct conf_server *parse_server(xmlNode *node)
                 r->port = atoi(port);
             if (host)
                 r->host = nmem_strdup(nmem, host);
+            xmlFree(port);
+            xmlFree(host);
         }
         else if (!strcmp(n->name, "proxy"))
         {
@@ -92,6 +194,8 @@ static struct conf_server *parse_server(xmlNode *node)
                 r->proxy_port = atoi(port);
             if (host)
                 r->proxy_host = nmem_strdup(nmem, host);
+            xmlFree(port);
+            xmlFree(host);
         }
         else if (!strcmp(n->name, "service"))
         {
@@ -204,6 +308,10 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
                     return 0;
                 }
             }
+            xmlFree(name);
+            xmlFree(format);
+            xmlFree(encoding);
+            xmlFree(mapto);
         }
         else if (!strcmp(n->name, "map"))
         {
@@ -234,6 +342,10 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
             }
             *rm = m;
             rm = &m->next;
+            xmlFree(type);
+            xmlFree(charset);
+            xmlFree(format);
+            xmlFree(stylesheet);
         }
         else
         {

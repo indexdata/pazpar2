@@ -109,14 +109,14 @@ Output:
   <start>0</start>
   <num>2</num>
   <hit>
-    <title>How to program a computer, by Jack Collins</title>
+    <md-title>How to program a computer, by Jack Collins</md-title>
     <count>2</count> <!-- Number of merged records -->
   </hit>
   <hit>
-    <title>
+    <md-title>
   Computer processing of dynamic images from an Anger scintillation camera :
   the proceedings of a workshop /
-    </title>
+    </md-title>
   </hit>
 </show>
 

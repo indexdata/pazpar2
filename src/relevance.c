@@ -1,5 +1,5 @@
 /*
- * $Id: relevance.c,v 1.4 2007-01-08 12:43:41 adam Exp $
+ * $Id: relevance.c,v 1.5 2007-01-08 18:32:35 quinn Exp $
  */
 
 #include <ctype.h>
@@ -127,7 +127,7 @@ struct relevance *relevance_create(NMEM nmem, const char **terms, int numrecs)
     return res;
 }
 
-void relevance_newrec(struct relevance *r, struct record *rec)
+void relevance_newrec(struct relevance *r, struct record_cluster *rec)
 {
     if (!rec->term_frequency_vec)
     {
@@ -139,7 +139,7 @@ void relevance_newrec(struct relevance *r, struct record *rec)
 
 // FIXME. The definition of a word is crude here.. should support
 // some form of localization mechanism?
-void relevance_countwords(struct relevance *r, struct record *head,
+void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
         const char *words, int multiplier)
 {
     while (*words)
@@ -155,23 +155,23 @@ void relevance_countwords(struct relevance *r, struct record *head,
         if ((res = word_trie_match(r->wt, words, &skipped)))
         {
             words += skipped;
-            head->term_frequency_vec[res] += multiplier;
+            cluster->term_frequency_vec[res] += multiplier;
         }
         else
         {
             while (*words && (c = raw_char(tolower(*words))) >= 0)
                 words++;
         }
-        head->term_frequency_vec[0]++;
+        cluster->term_frequency_vec[0]++;
     }
 }
 
-void relevance_donerecord(struct relevance *r, struct record *head)
+void relevance_donerecord(struct relevance *r, struct record_cluster *cluster)
 {
     int i;
 
     for (i = 1; i < r->vec_len; i++)
-        if (head->term_frequency_vec[i] > 0)
+        if (cluster->term_frequency_vec[i] > 0)
             r->doc_frequency_vec[i]++;
 
     r->doc_frequency_vec[0]++;
@@ -218,7 +218,7 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
     for (i = 0; i < reclist->num_records; i++)
     {
         int t;
-        struct record *rec = reclist->flatlist[i];
+        struct record_cluster *rec = reclist->flatlist[i];
         float relevance;
         relevance = 0;
         for (t = 1; t < rel->vec_len; t++)

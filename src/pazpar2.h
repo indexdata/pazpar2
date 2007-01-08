@@ -20,28 +20,33 @@ struct record;
 
 struct client;
 
-struct record_metadata
-{
-    union
-    {
+struct record_metadata {
+    union {
         char *text;
         struct {
-            int first;
-            int last;
-        } year_range;
-        int year;
-    } interpretation;
+            int year1;
+            int year2;
+        } year;
+    } data;
+    struct record_metadata *next; // next item of this name
 };
 
 struct record {
     struct client *client;
-    char *title;
     int target_offset;
-    char *merge_key;
-    struct record_metadata *md;
+    struct record_metadata **metadata; // Array mirrors list of metadata fields in config
     int relevance;
     int *term_frequency_vec;
-    struct record *next_cluster;
+    struct record *next;
+};
+
+struct record_cluster
+{
+    struct record_metadata **metadata; // Array mirrors list of metadata fields in config
+    char *merge_key;
+    int relevance;
+    int *term_frequency_vec;
+    struct record *records;
 };
 
 struct connection;
@@ -165,6 +170,7 @@ struct hitsbytarget {
 };
 
 struct parameters {
+    struct conf_server *server;
     int dump_records;
     int timeout;		/* operations timeout, in seconds */
     char implementationId[128];
@@ -187,7 +193,7 @@ void destroy_session(struct session *s);
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
 char *search(struct session *s, char *query);
-struct record **show(struct session *s, int start, int *num, int *total,
+struct record_cluster **show(struct session *s, int start, int *num, int *total,
                      int *sumhits, NMEM nmem_show);
 struct termlist_score **termlist(struct session *s, const char *name, int *num);
 void session_set_watch(struct session *s, int what, session_watchfun fun, void *data);

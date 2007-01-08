@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.8 2007-01-05 02:12:51 quinn Exp $
+/* $Id: search.js,v 1.9 2007-01-08 18:32:35 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -185,7 +185,7 @@ function show_records()
 	{
 	    body.innerHTML += '<p>';
 	    body.innerHTML += (i + start + 1) + ': ';
-	    var mk = hits[i].getElementsByTagName("title");
+	    var mk = hits[i].getElementsByTagName("md-title");
 	    if (mk[0])
 		body.innerHTML += mk[0].childNodes[0].nodeValue;
 	    body.innerHTML += '</p>';

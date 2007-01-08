@@ -9,10 +9,10 @@
 struct relevance;
 
 struct relevance *relevance_create(NMEM nmem, const char **terms, int numrecs);
-void relevance_newrec(struct relevance *r, struct record *rec);
-void relevance_countwords(struct relevance *r, struct record *rec,
+void relevance_newrec(struct relevance *r, struct record_cluster *cluster);
+void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
         const char *words, int multiplier);
-void relevance_donerecord(struct relevance *r, struct record *rec);
+void relevance_donerecord(struct relevance *r, struct record_cluster *cluster);
 
 void relevance_prepare_read(struct relevance *rel, struct reclist *rec);
 

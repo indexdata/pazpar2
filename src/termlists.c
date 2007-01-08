@@ -1,5 +1,5 @@
 /*
- * $Id: termlists.c,v 1.2 2007-01-08 12:43:41 adam Exp $
+ * $Id: termlists.c,v 1.3 2007-01-08 18:32:35 quinn Exp $
  */
 
 #include <stdlib.h>
@@ -88,7 +88,7 @@ static void update_highscore(struct termlist *tl, struct termlist_score *t)
     int smallest;
     int me = -1;
 
-    if (t->frequency < tl->highscore_min)
+    if (tl->highscore_num > tl->highscore_size && t->frequency < tl->highscore_min)
         return;
 
     smallest = 0;
@@ -101,6 +101,8 @@ static void update_highscore(struct termlist *tl, struct termlist_score *t)
     }
     if (tl->highscore_num)
         tl->highscore_min = tl->highscore[smallest]->frequency;
+    if (t->frequency < tl->highscore_min)
+        tl->highscore_min = t->frequency;
     if (me >= 0)
         return;
     if (tl->highscore_num < tl->highscore_size)

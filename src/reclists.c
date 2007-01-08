@@ -1,5 +1,5 @@
 /*
- * $Id: reclists.c,v 1.3 2007-01-08 12:43:41 adam Exp $
+ * $Id: reclists.c,v 1.4 2007-01-08 18:32:35 quinn Exp $
  */
 
 #include <assert.h>
@@ -13,13 +13,15 @@
 #include "pazpar2.h"
 #include "reclists.h"
 
+extern struct parameters global_parameters;
+
 struct reclist_bucket
 {
-    struct record *record;
+    struct record_cluster *record;
     struct reclist_bucket *next;
 };
 
-struct record *reclist_read_record(struct reclist *l)
+struct record_cluster *reclist_read_record(struct reclist *l)
 {
     if (l->pointer < l->num_records)
         return l->flatlist[l->pointer++];
@@ -65,47 +67,58 @@ struct reclist *reclist_create(NMEM nmem, int numrecs)
     res->hashmask = hashsize - 1; // Creates a bitmask
 
     res->num_records = 0;
-    res->flatlist = nmem_malloc(nmem, numrecs * sizeof(struct record*));
+    res->flatlist = nmem_malloc(nmem, numrecs * sizeof(struct record_cluster*));
     res->flatlist_size = numrecs;
 
     return res;
 }
 
-struct record *reclist_insert(struct reclist *l, struct record  *record)
+// Insert a record. Return record cluster (newly formed or pre-existing)
+struct record_cluster *reclist_insert(struct reclist *l, struct record  *record,
+        char *merge_key)
 {
     unsigned int bucket;
     struct reclist_bucket **p;
-    struct record *head = 0;
+    struct record_cluster *cluster = 0;
+    struct conf_service *service = global_parameters.server->service;
 
-    bucket = hash((unsigned char*) record->merge_key) & l->hashmask;
+    bucket = hash((unsigned char*) merge_key) & l->hashmask;
     for (p = &l->hashtable[bucket]; *p; p = &(*p)->next)
     {
         // We found a matching record. Merge them
-        if (!strcmp(record->merge_key, (*p)->record->merge_key))
+        if (!strcmp(merge_key, (*p)->record->merge_key))
         {
-            struct record *existing = (*p)->record;
-            record->next_cluster = existing->next_cluster;
-            existing->next_cluster = record;
-            head = existing;
+            struct record_cluster *existing = (*p)->record;
+            record->next = existing->records;
+            existing->records = record;
+            cluster = existing;
             break;
         }
     }
-    if (!head && l->num_records < l->flatlist_size)
+    if (!cluster && l->num_records < l->flatlist_size)
     {
         struct reclist_bucket *new =
             nmem_malloc(l->nmem, sizeof(struct reclist_bucket));
+        struct record_cluster *newc =
+            nmem_malloc(l->nmem, sizeof(struct record_cluster));
         
-        assert(!*p);
-        
-        new->record = record;
-        record->next_cluster = 0;
+        record->next = 0;
+        new->record = newc;
         new->next = 0;
+        newc->records = record;
+        newc->merge_key = merge_key;
+        newc->relevance = 0;
+        newc->term_frequency_vec = 0;
+        newc->metadata = 0;
+        newc->metadata = nmem_malloc(l->nmem,
+                sizeof(struct record_metadata*) * service->num_metadata);
+        bzero(newc->metadata, sizeof(struct record_metadata*) * service->num_metadata);
+
         *p = new;
-        assert(l->num_records < l->flatlist_size);
-        l->flatlist[l->num_records++] = record;
-        head = record;
+        l->flatlist[l->num_records++] = newc;
+        cluster = newc;
     }
-    return head;
+    return cluster;
 }
 
 
