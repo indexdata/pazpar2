@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.5 2007-01-08 18:32:35 quinn Exp $ */
+/* $Id: config.c,v 1.6 2007-01-08 19:39:12 quinn Exp $ */
 
 #include <string.h>
 
@@ -54,6 +54,7 @@ static struct conf_service *parse_service(xmlNode *node)
             xmlChar *merge = xmlGetProp(n, "merge");
             xmlChar *type = xmlGetProp(n, "type");
             xmlChar *termlist = xmlGetProp(n, "termlist");
+            xmlChar *rank = xmlGetProp(n, "rank");
 
             if (!name)
             {
@@ -86,6 +87,11 @@ static struct conf_service *parse_service(xmlNode *node)
             }
             else
                 md->termlist = 0;
+
+            if (rank)
+                md->rank = atoi(rank);
+            else
+                md->rank = 1;
 
             if (type)
             {
@@ -148,6 +154,7 @@ static struct conf_service *parse_service(xmlNode *node)
             xmlFree(sortkey);
             xmlFree(merge);
             xmlFree(termlist);
+            xmlFree(rank);
             md_node++;
         }
         else

@@ -1,5 +1,5 @@
 /*
- * $Id: relevance.c,v 1.5 2007-01-08 18:32:35 quinn Exp $
+ * $Id: relevance.c,v 1.6 2007-01-08 19:39:12 quinn Exp $
  */
 
 #include <ctype.h>
@@ -194,8 +194,8 @@ static int comp(const void *p1, const void *p2)
 #else
 static int comp(const void *p1, const void *p2)
 {
-    struct record **r1 = (struct record **) p1;
-    struct record **r2 = (struct record **) p2;
+    struct record_cluster **r1 = (struct record_cluster **) p1;
+    struct record_cluster **r2 = (struct record_cluster **) p2;
     return (*r2)->relevance - (*r1)->relevance;
 }
 #endif

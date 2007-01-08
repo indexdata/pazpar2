@@ -11,6 +11,7 @@ struct conf_metadata
     char *name;  // The name of this element. Output by normalization stylesheet
     int brief;   // Is this element to be returned in the brief format?
     int termlist;// Is this field to be treated as a termlist for browsing?
+    int rank;    // Rank factor. 0 means don't use this field for ranking, 1 is default
     enum
     {
         Metadata_type_generic,          // Generic text field

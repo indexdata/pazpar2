@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.19 2007-01-08 18:32:35 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.20 2007-01-08 19:39:12 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -545,7 +545,8 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             else
                 yaz_log(YLOG_WARN, "Don't know how to merge on element name %s", md->name);
 
-            relevance_countwords(se->relevance, cluster, value, 4);
+            if (md->rank)
+                relevance_countwords(se->relevance, cluster, value, md->rank);
             if (md->termlist)
                 add_facet(se, type, value);
             xmlFree(type);
