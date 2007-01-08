@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.11 2007-01-08 19:39:12 quinn Exp $
+ * $Id: http_command.c,v 1.12 2007-01-08 19:41:56 quinn Exp $
  */
 
 #include <stdio.h>
@@ -316,7 +316,6 @@ static void show_records(struct http_channel *c, int active)
         struct conf_service *service = global_parameters.server->service;
         int imeta;
 
-        yaz_log(YLOG_LOG, "Record, rank=%d", rec->relevance);
         wrbuf_puts(c->wrbuf, "<hit>\n");
         for (imeta = 0; imeta < service->num_metadata; imeta++)
         {
