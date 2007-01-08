@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.6 2007-01-05 14:56:05 sondberg Exp $
+/* $Id: search.js,v 1.7 2007-01-08 11:13:07 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -199,13 +199,15 @@ function show_records()
 	for (i = 0; i < hits.length; i++)
 	{
 	    var mk = hits[i].getElementsByTagName("title");
-
-	    body.innerHTML += '<a href="#" class="record">';
+            var html = '<a href="#" class="record">';
+            var field = '';
 
 	    if (mk[0]) {
-                var field = mk[0].childNodes[0].nodeValue;
+                field = mk[0].childNodes[0].nodeValue;
             }
-	    body.innerHTML += field + '</a>';
+
+	    html += field + '</a>';
+            body.innerHTML += html;
 	}
 
         body.innerHTML += '</div>';
