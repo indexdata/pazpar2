@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.7 2007-01-08 11:13:07 sondberg Exp $
+/* $Id: search.js,v 1.8 2007-01-08 14:51:35 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -21,6 +21,7 @@ var session_cells = Array('query', 'startrec', 'action_type');
 var old_session = session_read();
 var url_surveillence;
 var recstoshow = 15;
+var page_window = 5;  // Number of pages prior to and after the current page
 var facet_list;
 var cur_facet = 0;
 
@@ -146,7 +147,37 @@ function update_action (new_action) {
 
 
 function make_pager (hits, offset, max) {
-    return '<a href="#" class="select">1</a> <a href="#">Next</a>';
+    var html = '';
+    var off;
+
+    for (off = offset - page_window * max;
+         off < hits && off < (offset + page_window * max); 
+         off += max) {
+
+        var class = '';
+        
+        if (off < 0)
+            off = 0; 
+            
+        var p = off / max + 1;
+
+        if ((offset >= off) && (offset < (off + max)))
+            class = ' class="select"';
+
+        html += '<a href="#" ' + class +
+                'onclick="update_offset(' + off + ')">' + p + '</a>\n';
+    }
+
+    return html;
+}
+
+
+function update_offset (offset) {
+    document.search.startrec.value = offset;
+    update_action('page');
+    check_search();
+    update_history();
+    return false;
 }
 
 
@@ -172,7 +203,7 @@ function show_records()
 	var num = Number(xml.getElementsByTagName('num')[0].childNodes[0].nodeValue);
 	var clients = Number(xml.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue);
 	body.innerHTML = '<div class="pages">' +
-                         make_pager(merged, start, 20) +
+                         make_pager(merged, start, recstoshow) +
                          '</div>';
                          
 	body.innerHTML += '<div class="results">Records : ' + (start + 1) +
