@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.21 2007-01-09 18:06:28 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.22 2007-01-09 22:06:49 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -478,18 +478,15 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
 
     res = nmem_malloc(se->nmem, sizeof(struct record));
     res->next = 0;
-    res->target_offset = -1;
-    res->term_frequency_vec = 0;
     res->metadata = nmem_malloc(se->nmem,
             sizeof(struct record_metadata*) * service->num_metadata);
     bzero(res->metadata, sizeof(struct record_metadata*) * service->num_metadata);
-    res->relevance = 0;
 
     mergekey_norm = nmem_strdup(se->nmem, (char*) mergekey);
     xmlFree(mergekey);
     normalize_mergekey(mergekey_norm);
 
-    cluster = reclist_insert(se->reclist, res, mergekey_norm);
+    cluster = reclist_insert(se->reclist, res, mergekey_norm, &se->total_merged);
     if (!cluster)
     {
         /* no room for record */
@@ -1215,7 +1212,7 @@ char *search(struct session *se, char *query)
         se->reclist = reclist_create(se->nmem, maxrecs);
         extract_terms(se->nmem, query, p);
         se->relevance = relevance_create(se->nmem, (const char **) p, maxrecs);
-        se->total_records = se->total_hits = 0;
+        se->total_records = se->total_hits = se->total_merged = 0;
         se->expected_maxrecs = maxrecs;
     }
     else
@@ -1303,6 +1300,17 @@ void report_nmem_stats(void)
             (long) in_use, (long) is_free);
 }
 #endif
+
+struct record_cluster *show_single(struct session *s, int id)
+{
+    struct record_cluster *r;
+
+    reclist_rewind(s->reclist);
+    while ((r = reclist_read_record(s->reclist)))
+        if (r->recid == id)
+            return r;
+    return 0;
+}
 
 struct record_cluster **show(struct session *s, int start, int *num, int *total,
                      int *sumhits, NMEM nmem_show)

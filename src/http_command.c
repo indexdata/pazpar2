@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.13 2007-01-09 18:06:28 quinn Exp $
+ * $Id: http_command.c,v 1.14 2007-01-09 22:06:49 quinn Exp $
  */
 
 #include <stdio.h>
@@ -270,6 +270,69 @@ static void cmd_bytarget(struct http_channel *c)
     http_send_response(c);
 }
 
+static void write_metadata(WRBUF w, struct conf_service *service,
+        struct record_metadata **ml, int full)
+{
+    int imeta;
+
+    for (imeta = 0; imeta < service->num_metadata; imeta++)
+    {
+        struct conf_metadata *cmd = &service->metadata[imeta];
+        struct record_metadata *md;
+        if (!cmd->brief && !full)
+            continue;
+        for (md = ml[imeta]; md; md = md->next)
+        {
+            wrbuf_printf(w, "<md-%s>", cmd->name);
+            switch (cmd->type)
+            {
+                case Metadata_type_generic:
+                    wrbuf_puts(w, md->data.text);
+                    break;
+                case Metadata_type_year:
+                    wrbuf_printf(w, "%d", md->data.year.year1);
+                    if (md->data.year.year1 != md->data.year.year2)
+                        wrbuf_printf(w, "-%d", md->data.year.year2);
+                    break;
+                default:
+                    wrbuf_puts(w, "[can't represent]");
+            }
+            wrbuf_printf(w, "</md-%s>", cmd->name);
+        }
+    }
+}
+
+static void cmd_record(struct http_channel *c)
+{
+    struct http_response *rs = c->response;
+    struct http_request *rq = c->request;
+    struct http_session *s = locate_session(rq, rs);
+    struct record_cluster *rec;
+    struct conf_service *service = global_parameters.server->service;
+    char *idstr = http_argbyname(rq, "id");
+    int id;
+
+    if (!s)
+        return;
+    if (!idstr)
+    {
+        error(rs, "417", "Must supply id", 0);
+        return;
+    }
+    wrbuf_rewind(c->wrbuf);
+    id = atoi(idstr);
+    if (!(rec = show_single(s->psession, id)))
+    {
+        error(rs, "500", "Record missing", 0);
+        return;
+    }
+    wrbuf_puts(c->wrbuf, "<record>\n");
+    write_metadata(c->wrbuf, service, rec->metadata, 1);
+    wrbuf_puts(c->wrbuf, "</record>\n");
+    rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
+    http_send_response(c);
+}
+
 static void show_records(struct http_channel *c, int active)
 {
     struct http_request *rq = c->request;
@@ -314,40 +377,14 @@ static void show_records(struct http_channel *c, int active)
         struct record *p;
         struct record_cluster *rec = rl[i];
         struct conf_service *service = global_parameters.server->service;
-        int imeta;
 
         wrbuf_puts(c->wrbuf, "<hit>\n");
-        for (imeta = 0; imeta < service->num_metadata; imeta++)
-        {
-            struct conf_metadata *cmd = &service->metadata[imeta];
-            struct record_metadata *md;
-            if (!rec->metadata[imeta])
-                continue;
-            if (!cmd->brief)
-                continue;
-            for (md = rec->metadata[imeta]; md; md = md->next)
-            {
-                wrbuf_printf(c->wrbuf, "<md-%s>", cmd->name);
-                switch (cmd->type)
-                {
-                    case Metadata_type_generic:
-                        wrbuf_puts(c->wrbuf, md->data.text);
-                        break;
-                    case Metadata_type_year:
-                        wrbuf_printf(c->wrbuf, "%d", md->data.year.year1);
-                        if (md->data.year.year1 != md->data.year.year2)
-                            wrbuf_printf(c->wrbuf, "-%d", md->data.year.year2);
-                        break;
-                    default:
-                        wrbuf_puts(c->wrbuf, "[Can't represent]");
-                }
-                wrbuf_printf(c->wrbuf, "</md-%s>", cmd->name);
-            }
-        }
+        write_metadata(c->wrbuf, service, rec->metadata, 0);
         for (ccount = 0, p = rl[i]->records; p;  p = p->next, ccount++)
             ;
         if (ccount > 1)
             wrbuf_printf(c->wrbuf, "<count>%d</count>\n", ccount);
+        wrbuf_printf(c->wrbuf, "<recid>%d</recid>\n", rec->recid);
         wrbuf_puts(c->wrbuf, "</hit>\n");
     }
 
@@ -473,6 +510,7 @@ struct {
     { "termlist", cmd_termlist },
     { "exit", cmd_exit },
     { "ping", cmd_ping },
+    { "record", cmd_record },
     {0,0}
 };
 

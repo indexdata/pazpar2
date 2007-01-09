@@ -17,7 +17,7 @@ struct reclist
 
 struct reclist *reclist_create(NMEM, int numrecs);
 struct record_cluster *reclist_insert(struct reclist *tl, struct record  *record,
-		char *merg_key);
+		char *merge_key, int *total);
 struct record_cluster *reclist_read_record(struct reclist *l);
 void reclist_rewind(struct reclist *l);
 

@@ -33,11 +33,8 @@ struct record_metadata {
 
 struct record {
     struct client *client;
-    int target_offset;
     struct record_metadata **metadata; // Array mirrors list of metadata fields in config
-    int relevance;
-    int *term_frequency_vec;
-    struct record *next;
+    struct record *next;  // Next in cluster of merged records
 };
 
 struct record_cluster
@@ -46,6 +43,7 @@ struct record_cluster
     char *merge_key;
     int relevance;
     int *term_frequency_vec;
+    int recid; // Set-specific ID for this record
     struct record *records;
 };
 
@@ -144,6 +142,7 @@ struct session {
     int expected_maxrecs;
     int total_hits;
     int total_records;
+    int total_merged;
 };
 
 struct statistics {
@@ -195,6 +194,7 @@ void statistics(struct session *s, struct statistics *stat);
 char *search(struct session *s, char *query);
 struct record_cluster **show(struct session *s, int start, int *num, int *total,
                      int *sumhits, NMEM nmem_show);
+struct record_cluster *show_single(struct session *s, int id);
 struct termlist_score **termlist(struct session *s, const char *name, int *num);
 void session_set_watch(struct session *s, int what, session_watchfun fun, void *data);
 int session_active_clients(struct session *s);

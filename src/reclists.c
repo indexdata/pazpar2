@@ -1,5 +1,5 @@
 /*
- * $Id: reclists.c,v 1.4 2007-01-08 18:32:35 quinn Exp $
+ * $Id: reclists.c,v 1.5 2007-01-09 22:06:49 quinn Exp $
  */
 
 #include <assert.h>
@@ -75,7 +75,7 @@ struct reclist *reclist_create(NMEM nmem, int numrecs)
 
 // Insert a record. Return record cluster (newly formed or pre-existing)
 struct record_cluster *reclist_insert(struct reclist *l, struct record  *record,
-        char *merge_key)
+        char *merge_key, int *total)
 {
     unsigned int bucket;
     struct reclist_bucket **p;
@@ -109,6 +109,7 @@ struct record_cluster *reclist_insert(struct reclist *l, struct record  *record,
         newc->merge_key = merge_key;
         newc->relevance = 0;
         newc->term_frequency_vec = 0;
+        newc->recid = (*total)++;
         newc->metadata = 0;
         newc->metadata = nmem_malloc(l->nmem,
                 sizeof(struct record_metadata*) * service->num_metadata);
