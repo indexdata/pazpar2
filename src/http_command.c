@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.14 2007-01-09 22:06:49 quinn Exp $
+ * $Id: http_command.c,v 1.15 2007-01-09 22:27:10 quinn Exp $
  */
 
 #include <stdio.h>
@@ -327,6 +327,7 @@ static void cmd_record(struct http_channel *c)
         return;
     }
     wrbuf_puts(c->wrbuf, "<record>\n");
+    wrbuf_printf(c->wrbuf, "<recid>%d</recid>", rec->recid);
     write_metadata(c->wrbuf, service, rec->metadata, 1);
     wrbuf_puts(c->wrbuf, "</record>\n");
     rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
