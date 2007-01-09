@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.20 2007-01-08 19:39:12 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.21 2007-01-09 18:06:28 quinn Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -424,6 +424,35 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
     return rdoc;
 }
 
+// Extract what appears to be years from buf, storing highest and
+// lowest values.
+static int extract_years(const char *buf, int *first, int *last)
+{
+    *first = -1;
+    *last = -1;
+    while (*buf)
+    {
+        const char *e;
+        int len;
+
+        while (*buf && !isdigit(*buf))
+            buf++;
+        len = 0;
+        for (e = buf; *e && isdigit(*e); e++)
+            len++;
+        if (len == 4)
+        {
+            int value = atoi(buf);
+            if (*first < 0 || value < *first)
+                *first = value;
+            if (*last < 0 || value > *last)
+                *last = value;
+        }
+        buf = e;
+    }
+    return *first;
+}
+
 static struct record *ingest_record(struct client *cl, Z_External *rec)
 {
     xmlDoc *xdoc = normalize_record(cl, rec);
@@ -487,6 +516,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             struct conf_metadata *md = 0;
             struct record_metadata **wheretoput, *newm;
             int imeta;
+            int first, last;
 
             // First, find out what field we're looking at
             for (imeta = 0; imeta < service->num_metadata; imeta++)
@@ -514,9 +544,19 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             {
                 newm->data.text = nmem_strdup(se->nmem, value);
             }
+            else if (md->type == Metadata_type_year)
+            {
+                if (extract_years(value, &first, &last) < 0)
+                    continue;
+            }
             else
             {
                 yaz_log(YLOG_WARN, "Unknown type in metadata element %s", type);
+                continue;
+            }
+            if (md->type == Metadata_type_year && md->merge != Metadata_merge_range)
+            {
+                yaz_log(YLOG_WARN, "Only range merging supported for years");
                 continue;
             }
             if (md->merge == Metadata_merge_unique)
@@ -541,6 +581,23 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             {
                 newm->next = *wheretoput;
                 *wheretoput = newm;
+            }
+            else if (md->merge == Metadata_merge_range)
+            {
+                assert(md->type == Metadata_type_year);
+                if (!*wheretoput)
+                {
+                    *wheretoput = newm;
+                    (*wheretoput)->data.year.year1 = first;
+                    (*wheretoput)->data.year.year2 = last;
+                }
+                else
+                {
+                    if (first < (*wheretoput)->data.year.year1)
+                        (*wheretoput)->data.year.year1 = first;
+                    if (last > (*wheretoput)->data.year.year2)
+                        (*wheretoput)->data.year.year2 = last;
+                }
             }
             else
                 yaz_log(YLOG_WARN, "Don't know how to merge on element name %s", md->name);

@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.12 2007-01-08 19:41:56 quinn Exp $
+ * $Id: http_command.c,v 1.13 2007-01-09 18:06:28 quinn Exp $
  */
 
 #include <stdio.h>
@@ -332,6 +332,11 @@ static void show_records(struct http_channel *c, int active)
                 {
                     case Metadata_type_generic:
                         wrbuf_puts(c->wrbuf, md->data.text);
+                        break;
+                    case Metadata_type_year:
+                        wrbuf_printf(c->wrbuf, "%d", md->data.year.year1);
+                        if (md->data.year.year1 != md->data.year.year2)
+                            wrbuf_printf(c->wrbuf, "-%d", md->data.year.year2);
                         break;
                     default:
                         wrbuf_puts(c->wrbuf, "[Can't represent]");

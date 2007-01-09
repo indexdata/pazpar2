@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.6 2007-01-08 19:39:12 quinn Exp $ */
+/* $Id: config.c,v 1.7 2007-01-09 18:06:28 quinn Exp $ */
 
 #include <string.h>
 
@@ -91,7 +91,7 @@ static struct conf_service *parse_service(xmlNode *node)
             if (rank)
                 md->rank = atoi(rank);
             else
-                md->rank = 1;
+                md->rank = 0;
 
             if (type)
             {
@@ -107,7 +107,8 @@ static struct conf_service *parse_service(xmlNode *node)
                     return 0;
                 }
             }
-            md->type = Metadata_type_generic;
+            else
+                md->type = Metadata_type_generic;
 
             if (sortkey)
             {
