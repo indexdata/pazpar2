@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.24 2007-01-10 10:15:04 adam Exp $ */
+/* $Id: pazpar2.c,v 1.25 2007-01-10 10:48:27 adam Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -859,7 +859,8 @@ static struct connection *connection_create(struct client *cl)
 
     if (!(addr = cs_straddr(link, cl->database->host->ipport)))
     {
-        yaz_log(YLOG_WARN|YLOG_ERRNO, "Lookup of IP address failed?");
+        yaz_log(YLOG_WARN|YLOG_ERRNO, "Lookup of IP address %s failed?", 
+	    cl->database->host->ipport);
         return 0;
     }
 
@@ -1015,7 +1016,7 @@ void load_simpletargets(const char *fn)
             }
             assert(addrinfo->ai_family == PF_INET);
             memcpy(addrbuf, &((struct sockaddr_in*)addrinfo->ai_addr)->sin_addr.s_addr, 4);
-            sprintf(ipport, "%hhd.%hhd.%hhd.%hhd:%s",
+            sprintf(ipport, "%u.%u.%u.%u:%s",
                     addrbuf[0], addrbuf[1], addrbuf[2], addrbuf[3], port);
             host->ipport = xstrdup(ipport);
             freeaddrinfo(addrinfo);
