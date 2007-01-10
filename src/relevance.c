@@ -1,5 +1,5 @@
 /*
- * $Id: relevance.c,v 1.6 2007-01-08 19:39:12 quinn Exp $
+ * $Id: relevance.c,v 1.7 2007-01-10 10:04:23 adam Exp $
  */
 
 #include <ctype.h>
@@ -121,7 +121,7 @@ struct relevance *relevance_create(NMEM nmem, const char **terms, int numrecs)
         ;
     res->vec_len = ++i;
     res->doc_frequency_vec = nmem_malloc(nmem, res->vec_len * sizeof(int));
-    bzero(res->doc_frequency_vec, res->vec_len * sizeof(int));
+    memset(res->doc_frequency_vec, 0, res->vec_len * sizeof(int));
     res->nmem = nmem;
     res->wt = build_word_trie(nmem, terms);
     return res;
@@ -132,7 +132,7 @@ void relevance_newrec(struct relevance *r, struct record_cluster *rec)
     if (!rec->term_frequency_vec)
     {
         rec->term_frequency_vec = nmem_malloc(r->nmem, r->vec_len * sizeof(int));
-        bzero(rec->term_frequency_vec, r->vec_len * sizeof(int));
+        memset(rec->term_frequency_vec, 0, r->vec_len * sizeof(int));
     }
 }
 

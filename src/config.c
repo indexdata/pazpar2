@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.7 2007-01-09 18:06:28 quinn Exp $ */
+/* $Id: config.c,v 1.8 2007-01-10 10:04:23 adam Exp $ */
 
 #include <string.h>
 
@@ -328,7 +328,7 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
             xmlChar *charset = xmlGetProp(n, "charset");
             xmlChar *format = xmlGetProp(n, "format");
             xmlChar *stylesheet = xmlGetProp(n, "stylesheet");
-            bzero(m, sizeof(*m));
+            memset(m, 0, sizeof(*m));
             if (type)
             {
                 if (!strcmp(type, "xslt"))

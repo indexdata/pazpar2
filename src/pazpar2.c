@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.22 2007-01-09 22:06:49 quinn Exp $ */;
+/* $Id: pazpar2.c,v 1.23 2007-01-10 10:04:23 adam Exp $ */;
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -480,7 +480,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
     res->next = 0;
     res->metadata = nmem_malloc(se->nmem,
             sizeof(struct record_metadata*) * service->num_metadata);
-    bzero(res->metadata, sizeof(struct record_metadata*) * service->num_metadata);
+    memset(res->metadata, 0, sizeof(struct record_metadata*) * service->num_metadata);
 
     mergekey_norm = nmem_strdup(se->nmem, (char*) mergekey);
     xmlFree(mergekey);
@@ -1359,7 +1359,7 @@ void statistics(struct session *se, struct statistics *stat)
     struct client *cl;
     int count = 0;
 
-    bzero(stat, sizeof(*stat));
+    memset(stat, 0, sizeof(*stat));
     for (cl = se->clients; cl; cl = cl->next)
     {
         if (!cl->connection)

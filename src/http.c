@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.7 2007-01-10 09:35:57 adam Exp $
+ * $Id: http.c,v 1.8 2007-01-10 10:04:23 adam Exp $
  */
 
 #include <stdio.h>
@@ -787,7 +787,7 @@ void http_init(const char *addr)
 
     yaz_log(YLOG_LOG, "HTTP listener is %s", addr);
 
-    bzero(&myaddr, sizeof myaddr);
+    memset(&myaddr, 0, sizeof myaddr);
     myaddr.sin_family = AF_INET;
     pp = strchr(addr, ':');
     if (pp)

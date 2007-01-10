@@ -1,5 +1,5 @@
 /*
- * $Id: termlists.c,v 1.3 2007-01-08 18:32:35 quinn Exp $
+ * $Id: termlists.c,v 1.4 2007-01-10 10:04:23 adam Exp $
  */
 
 #include <stdlib.h>
@@ -69,7 +69,7 @@ struct termlist *termlist_create(NMEM nmem, int numterms, int highscore_size)
         hashsize <<= 1;
     res = nmem_malloc(nmem, sizeof(struct termlist));
     res->hashtable = nmem_malloc(nmem, hashsize * sizeof(struct termlist_bucket*));
-    bzero(res->hashtable, hashsize * sizeof(struct termlist_bucket*));
+    memset(res->hashtable, 0, hashsize * sizeof(struct termlist_bucket*));
     res->hashtable_size = hashsize;
     res->nmem = nmem;
     res->hashmask = hashsize - 1; // Creates a bitmask

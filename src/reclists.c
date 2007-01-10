@@ -1,5 +1,5 @@
 /*
- * $Id: reclists.c,v 1.5 2007-01-09 22:06:49 quinn Exp $
+ * $Id: reclists.c,v 1.6 2007-01-10 10:04:23 adam Exp $
  */
 
 #include <assert.h>
@@ -61,7 +61,7 @@ struct reclist *reclist_create(NMEM nmem, int numrecs)
         hashsize <<= 1;
     res = nmem_malloc(nmem, sizeof(struct reclist));
     res->hashtable = nmem_malloc(nmem, hashsize * sizeof(struct reclist_bucket*));
-    bzero(res->hashtable, hashsize * sizeof(struct reclist_bucket*));
+    memset(res->hashtable, 0, hashsize * sizeof(struct reclist_bucket*));
     res->hashtable_size = hashsize;
     res->nmem = nmem;
     res->hashmask = hashsize - 1; // Creates a bitmask
@@ -113,7 +113,7 @@ struct record_cluster *reclist_insert(struct reclist *l, struct record  *record,
         newc->metadata = 0;
         newc->metadata = nmem_malloc(l->nmem,
                 sizeof(struct record_metadata*) * service->num_metadata);
-        bzero(newc->metadata, sizeof(struct record_metadata*) * service->num_metadata);
+        memset(newc->metadata, 0, sizeof(struct record_metadata*) * service->num_metadata);
 
         *p = new;
         l->flatlist[l->num_records++] = newc;
