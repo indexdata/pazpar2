@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.9 2007-01-10 08:14:11 sondberg Exp $
+/* $Id: search.js,v 1.10 2007-01-10 09:19:05 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -73,8 +73,6 @@ function start_session()
     xinitSession.onreadystatechange=session_started;
     xinitSession.open("GET", url);
     xinitSession.send(null);
-    
-    //url_surveillence = setInterval(session_check, 200);
 }
 
 function ping_session()
