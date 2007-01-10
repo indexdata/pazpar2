@@ -8,10 +8,10 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2-man.xml,v 1.1 2007-01-10 05:46:43 quinn Exp $ -->
+<!-- $Id: pazpar2.xml,v 1.1 2007-01-10 09:44:20 adam Exp $ -->
 <refentry id="pazpar2">
  <refentryinfo>
-  <productname>Pazpar2</productname>
+  <productname>pazpar2</productname>
   <productnumber>&version;</productnumber>
  </refentryinfo>
  <refmeta>
@@ -20,7 +20,7 @@
  </refmeta>
  
  <refnamediv>
-  <refname>Pazpar2</refname>
+  <refname>pazpar2</refname>
   <refpurpose>High-performance, user-interface independtent  metasearching
 	  middleware</refpurpose>
  </refnamediv>
@@ -41,6 +41,7 @@
  </refsect1> 
 
  <refsect1><title>FILES</title>
+ </refsect1>
 </refentry>
 
 <!-- Keep this comment at the end of the file

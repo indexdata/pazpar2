@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src 
+SUBDIRS = src doc
 
 EXTRA_DIST = README PROTOCOL m4/yaz.m4 
 

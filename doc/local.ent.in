@@ -1,0 +1,4 @@
+<!-- $Id: local.ent.in,v 1.1 2007-01-10 09:44:20 adam Exp $ -->
+<!-- Modified by configure. Do not edit. Use pazpar2.ent insteas -->
+<!ENTITY version "@VERSION@">
+<!ENTITY prefix "@prefix@">

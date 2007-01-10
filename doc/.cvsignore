@@ -1,0 +1,16 @@
+Makefile
+Makefile.in
+*.html
+pazpar2.tex
+pazpar2.aux
+pazpar2.log
+pazpar2.out
+pazpar2.pdf
+*.tkl
+manpage.links
+manpage.refs
+pazpar2.1
+local.ent
+htmlhelp.hhp
+toc.hhc
+manref.xml

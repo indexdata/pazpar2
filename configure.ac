@@ -26,6 +26,11 @@ YAZ_DOC
 AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
+	doc/Makefile
+	doc/local.ent
+	doc/common/Makefile
+	doc/common/print.dsl
+
 ])
 
 AC_OUTPUT
