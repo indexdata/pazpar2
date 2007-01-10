@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.12 2007-01-10 11:41:34 sondberg Exp $
+/* $Id: search.js,v 1.13 2007-01-10 11:42:17 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -329,7 +329,7 @@ function show_termlist()
 	    if (namen[0])
                 var refine_cell = create_element('a',
                                     namen[0].childNodes[0].nodeValue);
-                refine_cell.setAttribute('href', '#hejsa');
+                refine_cell.setAttribute('href', '#');
                 refine_cell.setAttribute('onclick', 'refine_query(this)');
                 body.appendChild(refine_cell);
 
