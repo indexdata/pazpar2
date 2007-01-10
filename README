@@ -30,7 +30,7 @@ Fire up yaz-ztest
 Fire up pazpar2
 	sudo cp -a www/* /var/www
 	cd etc
-	../src/pazpar2 -f pazpar2.cfg -h 8000 -p localhost:80 -s test.pz 
+	../src/pazpar2 -f pazpar2.cfg -h 8000 -p localhost -s test.pz 
 
 Fire up your browser:
 	http://localhost:8000/test1/index.html
