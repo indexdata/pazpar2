@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.10 2007-01-10 09:19:05 sondberg Exp $
+/* $Id: search.js,v 1.11 2007-01-10 09:50:57 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -147,9 +147,14 @@ function update_action (new_action) {
 function make_pager (hits, offset, max) {
     var html = '';
     var off;
+    var start_offset = offset - page_window * max;
 
-    for (off = offset - page_window * max;
-         off < hits && off < (offset + page_window * max); 
+    if (start_offset < 0) {
+        start_offset = 0;
+    }
+
+    for (off = start_offset;
+         off < hits && off < (start_offset + 2 * page_window * max); 
          off += max) {
 
         var class = '';
