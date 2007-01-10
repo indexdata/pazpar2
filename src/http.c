@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.6 2007-01-08 12:43:41 adam Exp $
+ * $Id: http.c,v 1.7 2007-01-10 09:35:57 adam Exp $
  */
 
 #include <stdio.h>
@@ -92,10 +92,10 @@ static struct http_buf *http_buf_bybuf(char *b, int len)
 
     while (len)
     {
-        *p = http_buf_create();
         int tocopy = len;
         if (tocopy > HTTP_BUF_SIZE)
             tocopy = HTTP_BUF_SIZE;
+        *p = http_buf_create();
         memcpy((*p)->buf, b, tocopy);
         (*p)->len = tocopy;
         len -= tocopy;
@@ -375,9 +375,9 @@ struct http_request *http_parse_request(struct http_channel *c, struct http_buf 
 static struct http_buf *http_serialize_response(struct http_channel *c,
         struct http_response *r)
 {
-    wrbuf_rewind(c->wrbuf);
     struct http_header *h;
 
+    wrbuf_rewind(c->wrbuf);
     wrbuf_printf(c->wrbuf, "HTTP/1.1 %s %s\r\n", r->code, r->msg);
     for (h = r->headers; h; h = h->next)
         wrbuf_printf(c->wrbuf, "%s: %s\r\n", h->name, h->value);
@@ -395,10 +395,10 @@ static struct http_buf *http_serialize_response(struct http_channel *c,
 static struct http_buf *http_serialize_request(struct http_request *r)
 {
     struct http_channel *c = r->channel;
-    wrbuf_rewind(c->wrbuf);
     struct http_header *h;
     struct http_argument *a;
 
+    wrbuf_rewind(c->wrbuf);
     wrbuf_printf(c->wrbuf, "%s %s", r->method, r->path);
 
     if (r->arguments)
@@ -495,8 +495,10 @@ static int http_proxy(struct http_request *rq)
 void http_send_response(struct http_channel *ch)
 {
     struct http_response *rs = ch->response;
+    struct http_buf *hb;
+
     assert(rs);
-    struct http_buf *hb = http_serialize_response(ch, rs);
+    hb = http_serialize_response(ch, rs);
     if (!hb)
     {
         yaz_log(YLOG_WARN, "Failed to serialize HTTP response");
