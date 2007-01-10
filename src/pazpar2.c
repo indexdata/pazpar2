@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.23 2007-01-10 10:04:23 adam Exp $ */;
+/* $Id: pazpar2.c,v 1.24 2007-01-10 10:15:04 adam Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1400,7 +1400,7 @@ int main(int argc, char **argv)
     char *arg;
     int setport = 0;
 
-    if (signal(SIGPIPE, SIG_IGN) < 0)
+    if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "signal");
 
     yaz_log_init(YLOG_DEFAULT_LEVEL, "pazpar2", 0);
