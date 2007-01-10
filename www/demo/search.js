@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.14 2007-01-10 12:15:46 sondberg Exp $
+/* $Id: search.js,v 1.15 2007-01-10 12:20:51 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -197,6 +197,12 @@ function create_element (name, cdata) {
 }
 
 
+function clear_cell (cell) {
+    while (cell.hasChildNodes())
+        cell.removeChild(cell.firstChild);
+}
+
+
 function show_records()
 {
     if (xshow.readyState != 4)
@@ -205,8 +211,8 @@ function show_records()
     var xml = xshow.responseXML;
     var body = document.getElementById("body");
     var hits = xml.getElementsByTagName("hit");
-    
-    body.innerHTML = '';
+
+    clear_cell(body);
 
     if (!hits[0]) // We should never get here with blocking operations
     {
