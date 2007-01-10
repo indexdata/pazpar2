@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.8 2007-01-10 10:04:23 adam Exp $ */
+/* $Id: config.c,v 1.9 2007-01-10 10:15:23 adam Exp $ */
 
 #include <string.h>
 
@@ -421,7 +421,7 @@ int read_config(const char *fname)
         yaz_log(YLOG_FATAL, "Failed to read %s", fname);
         exit(1);
     }
-    if ((p = rindex(fname, '/')))
+    if ((p = strrchr(fname, '/')))
     {
         int len = p - fname;
         strncpy(confdir, fname, len);
