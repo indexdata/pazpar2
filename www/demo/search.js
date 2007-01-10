@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.11 2007-01-10 09:50:57 sondberg Exp $
+/* $Id: search.js,v 1.12 2007-01-10 11:41:34 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -148,6 +148,9 @@ function make_pager (hits, offset, max) {
     var html = '';
     var off;
     var start_offset = offset - page_window * max;
+    var div_elem = document.createElement('div');
+    
+    div_elem.className = 'pages';
 
     if (start_offset < 0) {
         start_offset = 0;
@@ -156,22 +159,23 @@ function make_pager (hits, offset, max) {
     for (off = start_offset;
          off < hits && off < (start_offset + 2 * page_window * max); 
          off += max) {
-
-        var class = '';
         
-        if (off < 0)
-            off = 0; 
-            
         var p = off / max + 1;
+        var page_elem = create_element('a', p);
+        var newline_node = document.createTextNode('\n');
 
-        if ((offset >= off) && (offset < (off + max)))
-            class = ' class="select"';
+        if ((offset >= off) && (offset < (off + max))) {
+            page_elem.className = 'select';
+        }
 
-        html += '<a href="#" ' + class +
-                'onclick="update_offset(' + off + ')">' + p + '</a>\n';
+        page_elem.setAttribute('href', '#');
+        page_elem.setAttribute('onclick', 'update_offset(' + off + ')');
+
+        div_elem.appendChild(page_elem);
+        div_elem.appendChild(newline_node);
     }
 
-    return html;
+    return div_elem;
 }
 
 
@@ -184,6 +188,15 @@ function update_offset (offset) {
 }
 
 
+function create_element (name, cdata) {
+    var elem_node = document.createElement(name);
+    var text_node = document.createTextNode(cdata);
+    elem_node.appendChild(text_node);
+
+    return elem_node;
+}
+
+
 function show_records()
 {
     if (xshow.readyState != 4)
@@ -192,6 +205,9 @@ function show_records()
     var xml = xshow.responseXML;
     var body = document.getElementById("body");
     var hits = xml.getElementsByTagName("hit");
+    
+    body.innerHTML = '';
+
     if (!hits[0]) // We should never get here with blocking operations
     {
 	body.innerHTML = "No records yet";
@@ -205,46 +221,40 @@ function show_records()
 	var start = Number(xml.getElementsByTagName('start')[0].childNodes[0].nodeValue);
 	var num = Number(xml.getElementsByTagName('num')[0].childNodes[0].nodeValue);
 	var clients = Number(xml.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue);
-	body.innerHTML = '<div class="pages">' +
-                         make_pager(merged, start, recstoshow) +
-                         '</div>';
-                         
-	body.innerHTML += '<div class="results">Records : ' + (start + 1) +
-                          ' to ' + (start + num) + ' of ' + merged +
-                          ' (total hits: ' + total + ')</div><br/><br/>';
+        var pager = make_pager(merged, start,recstoshow);
+        var break_node1 = document.createElement('br');
+        var break_node2 = document.createElement('br');
+        var record_container = document.createElement('div');
+        var interval = create_element('div', 'Records : ' + (start + 1) +
+                                             ' to ' + (start + num) + ' of ' +
+                                             merged + ' (total hits: ' +
+                                             total + ')');
+        interval.className = 'results';
+        record_container.className = 'records';
 
-/*
-	if (start + num < merged)
-	    body.innerHTML += ' <a href="" ' +
-		'onclick="document.search.startrec.value=' + (start + recstoshow) +
-                ";update_action('page')" +
-		';check_search(); update_history(); return false;">Next</a>';
-
-	if (start > 0)
-	    body.innerHTML += ' <a href="" ' +
-		'onclick="document.search.startrec.value=' + (start - recstoshow) +
-                ";update_action('page')" +
-		';check_search(); update_history();return false;">Previous</a>';
-
-	body.innerHTML += '<br/>';
-*/
-        body.innerHTML += '<div class="records">';
+        body.appendChild(pager);
+        body.appendChild(interval);
+        body.appendChild(break_node1);
+        body.appendChild(break_node2);
+        body.appendChild(record_container);
 
 	for (i = 0; i < hits.length; i++)
 	{
 	    var mk = hits[i].getElementsByTagName("md-title");
-            var html = '<a href="#" class="record">';
             var field = '';
 
 	    if (mk[0]) {
                 field = mk[0].childNodes[0].nodeValue;
+            } else {
+                field = 'N/A';
             }
-
-	    html += field + '</a>';
-            body.innerHTML += html;
+            
+            var record_cell = create_element('a', field);
+            record_cell.setAttribute('href', '#');
+            record_cell.className = 'record';
+            record_container.appendChild(record_cell);
 	}
 
-        body.innerHTML += '</div>';
 	shown++;
 	if (clients > 0)
 	{
@@ -317,9 +327,17 @@ function show_termlist()
 	{
 	    var namen = hits[i].getElementsByTagName("name");
 	    if (namen[0])
+                var refine_cell = create_element('a',
+                                    namen[0].childNodes[0].nodeValue);
+                refine_cell.setAttribute('href', '#hejsa');
+                refine_cell.setAttribute('onclick', 'refine_query(this)');
+                body.appendChild(refine_cell);
+
+                /*
 		body.innerHTML += '<a href="#" onclick="refine_query(this)">' +
                                   namen[0].childNodes[0].nodeValue +
                                   '</a>';
+                */
 	}
 
 	if (clients > 0)
