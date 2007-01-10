@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.16 2007-01-10 13:28:09 sondberg Exp $
+/* $Id: search.js,v 1.17 2007-01-10 13:39:41 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -181,6 +181,7 @@ function make_pager (hits, offset, max) {
 
 
 function update_offset (offset) {
+    clearTimeout(searchtimer);
     document.search.startrec.value = offset;
     update_action('page');
     check_search();
