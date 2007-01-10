@@ -53,6 +53,7 @@ struct conf_server
 
 struct conf_queryprofile
 {
+    int dummy;
 };
 
 struct conf_retrievalmap
