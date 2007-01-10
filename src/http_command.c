@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.15 2007-01-09 22:27:10 quinn Exp $
+ * $Id: http_command.c,v 1.16 2007-01-10 10:17:50 adam Exp $
  */
 
 #include <stdio.h>
@@ -99,7 +99,7 @@ unsigned int make_sessionid()
     if (gettimeofday(&t, 0) < 0)
         abort();
     res = t.tv_sec;
-    res = ((res << 8) | (seq & 0xff)) & ((unsigned int) (1 << 31) - 1);
+    res = ((res << 8) | (seq & 0xff)) & ((1U << 31) - 1);
     return res;
 }
 
