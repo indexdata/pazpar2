@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.8 2007-01-10 10:04:23 adam Exp $
+ * $Id: http.c,v 1.9 2007-01-10 11:56:10 adam Exp $
  */
 
 #include <stdio.h>
@@ -18,6 +18,8 @@
 #if HAVE_CONFIG_H
 #include <cconfig.h>
 #endif
+
+#include <netinet/in.h>
 
 #include <yaz/yaz-util.h>
 #include <yaz/comstack.h>

@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.25 2007-01-10 10:48:27 adam Exp $ */
+/* $Id: pazpar2.c,v 1.26 2007-01-10 11:56:10 adam Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -28,6 +28,8 @@
 #if USE_TIMING
 #include <yaz/timing.h>
 #endif
+
+#include <netinet/in.h>
 
 #include "pazpar2.h"
 #include "eventl.h"
