@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.13 2007-01-10 11:42:17 sondberg Exp $
+/* $Id: search.js,v 1.14 2007-01-10 12:15:46 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -332,12 +332,6 @@ function show_termlist()
                 refine_cell.setAttribute('href', '#');
                 refine_cell.setAttribute('onclick', 'refine_query(this)');
                 body.appendChild(refine_cell);
-
-                /*
-		body.innerHTML += '<a href="#" onclick="refine_query(this)">' +
-                                  namen[0].childNodes[0].nodeValue +
-                                  '</a>';
-                */
 	}
 
 	if (clients > 0)
@@ -442,7 +436,6 @@ function start_search()
     xsearch.onreadystatechange=search_started;
     xsearch.open("GET", url);
     xsearch.send(null);
-//    document.getElementById("termlist").innerHTML = '';
     document.getElementById("body").innerHTML = '';
     update_history();
     shown = 0;
