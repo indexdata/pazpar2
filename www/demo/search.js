@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.8 2007-01-08 14:51:35 sondberg Exp $
+/* $Id: search.js,v 1.9 2007-01-10 08:14:11 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -229,7 +229,7 @@ function show_records()
 
 	for (i = 0; i < hits.length; i++)
 	{
-	    var mk = hits[i].getElementsByTagName("title");
+	    var mk = hits[i].getElementsByTagName("md-title");
             var html = '<a href="#" class="record">';
             var field = '';
 
