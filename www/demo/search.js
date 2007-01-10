@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.15 2007-01-10 12:20:51 sondberg Exp $
+/* $Id: search.js,v 1.16 2007-01-10 13:28:09 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -60,7 +60,7 @@ function session_started()
 	return;
     var xml = xinitSession.responseXML;
     var sesid = xml.getElementsByTagName("session")[0].childNodes[0].nodeValue;
-    document.getElementById("status").innerHTML = "Live";
+    assign_text(document.getElementById("status"), 'Live');
     session = sesid;
     setTimeout(ping_session, 50000);
 }
@@ -111,7 +111,8 @@ function targets_loaded()
 	alert(msg);
 	return;
     }
-    document.getElementById("targetstatus").innerHTML = "Targets loaded";
+
+    assign_text(document.getElementById("targetstatus"), 'Targets loaded');
 }
 
 function load_targets()
@@ -121,7 +122,7 @@ function load_targets()
     clearTimeout(searchtimer);
     clearTimeout(stattimer);
     clearTimeout(showtimer);
-    document.getElementById("stat").innerHTML = "";
+    clear_cell(document.getElementById("stat"));
     if (!fn)
     {
 	alert("Please enter a target definition file name");
@@ -131,7 +132,7 @@ function load_targets()
     	"command=load" +
 	"&session=" + session +
 	"&name=" + fn;
-    document.getElementById("targetstatus").innerHTML = "Loading targets...";
+    assign_text(document.getElementById("targetstatus"), 'Loading targets...');
     xloadTargets = GetXmlHttpObject();
     xloadTargets.onreadystatechange=targets_loaded;
     xloadTargets.open("GET", url);
@@ -203,6 +204,18 @@ function clear_cell (cell) {
 }
 
 
+function append_text(cell, text) {
+    text_node = document.createTextNode(text);
+    cell.appendChild(text_node);
+}
+
+
+function assign_text (cell, text) {
+    clear_cell(cell);
+    append_text(cell, text);
+}
+
+
 function show_records()
 {
     if (xshow.readyState != 4)
@@ -216,7 +229,7 @@ function show_records()
 
     if (!hits[0]) // We should never get here with blocking operations
     {
-	body.innerHTML = "No records yet";
+	assign_text(body, 'No records yet');
 	searchtimer = setTimeout(check_search, 250);
     }
     else
@@ -327,7 +340,7 @@ function show_termlist()
     }
     else
     {
-	body.innerHTML = '';
+	clear_cell(body);
 	
         for (i = 0; i < hits.length; i++)
 	{
@@ -374,7 +387,7 @@ function show_stat()
     }
     else
     {
-	body.innerHTML = "(";
+	assign_text(body, '(');
 	for (i = 0; i < nodes.length; i++)
 	{
 	    if (nodes[i].nodeType != 1)
@@ -383,9 +396,10 @@ function show_stat()
 	    if (value == 0)
 		continue;
 	    var name = nodes[i].nodeName;
-	    body.innerHTML += ' ' + name + '=' + value;
+	    append_text(body, ' ' + name + '=' + value);
 	}
-	body.innerHTML += ')';
+
+        append_text(body, ')');
 	if (clients > 0)
 	    stattimer = setTimeout(check_stat, 2000);
     }
@@ -442,7 +456,7 @@ function start_search()
     xsearch.onreadystatechange=search_started;
     xsearch.open("GET", url);
     xsearch.send(null);
-    document.getElementById("body").innerHTML = '';
+    clear_cell(document.getElementById("body"));
     update_history();
     shown = 0;
     document.search.startrec.value = 0;
