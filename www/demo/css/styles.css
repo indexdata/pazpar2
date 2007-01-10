@@ -164,7 +164,6 @@ background-image: url(../gfx/arrow_right.gif);
 background-position: 7px 6px;
 background-repeat: no-repeat;
 display: block;
-height: 20px;
 line-height: 20px;
 margin-bottom: 5px;
 }
@@ -175,7 +174,6 @@ background-image: url(../gfx/arrow_down.gif);
 background-position: 7px 8px;
 background-repeat: no-repeat;
 font-weight: bold;
-height: 20px;
 line-height: 20px;
 background-color: #e7ecf4;
 display: block;
