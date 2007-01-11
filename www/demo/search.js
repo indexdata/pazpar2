@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.18 2007-01-11 10:18:38 sondberg Exp $
+/* $Id: search.js,v 1.19 2007-01-11 11:14:16 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -170,7 +170,10 @@ function make_pager (hits, offset, max) {
         }
 
         page_elem.setAttribute('href', '#');
-        page_elem.setAttribute('onclick', 'update_offset(' + off + ')');
+        page_elem.setAttribute('off', off);
+        page_elem.onclick = function () {
+            update_offset(this.getAttribute('off'));
+        };
 
         div_elem.appendChild(page_elem);
         div_elem.appendChild(newline_node);
