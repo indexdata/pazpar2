@@ -232,12 +232,14 @@ a.unselected {
 background-image: url(../gfx/minus.gif);
 background-position: 0px 2px;
 background-repeat: no-repeat;
+cursor: pointer;
 }
 
 a.selected {
 background-image: url(../gfx/plus.gif);
 background-position: 0px 2px;
 background-repeat: no-repeat;
+cursor: pointer;
 }
 
 span.green {
