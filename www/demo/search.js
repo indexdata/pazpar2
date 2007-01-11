@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.17 2007-01-10 13:39:41 sondberg Exp $
+/* $Id: search.js,v 1.18 2007-01-11 10:18:38 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -163,7 +163,7 @@ function make_pager (hits, offset, max) {
         
         var p = off / max + 1;
         var page_elem = create_element('a', p);
-        var newline_node = document.createTextNode('\n');
+        var newline_node = document.createTextNode(' ');
 
         if ((offset >= off) && (offset < (off + max))) {
             page_elem.className = 'select';
