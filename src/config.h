@@ -12,6 +12,7 @@ struct conf_metadata
     int brief;   // Is this element to be returned in the brief format?
     int termlist;// Is this field to be treated as a termlist for browsing?
     int rank;    // Rank factor. 0 means don't use this field for ranking, 1 is default
+                 // values >1  give additional significance to a field
     enum
     {
         Metadata_type_generic,          // Generic text field
@@ -23,7 +24,8 @@ struct conf_metadata
         Metadata_sortkey_no,            // This is not to be used as a sortkey
         Metadata_sortkey_numeric,       // Standard numerical sorting
         Metadata_sortkey_range,         // Range sorting (pick lowest or highest)
-        Metadata_sortkey_skiparticle    // Skip leading article when sorting
+        Metadata_sortkey_skiparticle,   // Skip leading article when sorting
+        Metadata_sortkey_string
     } sortkey;
     enum
     {

@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.17 2007-01-11 10:03:01 sondberg Exp $
+ * $Id: http_command.c,v 1.18 2007-01-11 17:14:06 quinn Exp $
  */
 
 #include <stdio.h>
@@ -17,6 +17,7 @@
 
 #include <yaz/yaz-util.h>
 
+#include "config.h"
 #include "util.h"
 #include "eventl.h"
 #include "pazpar2.h"
@@ -498,6 +499,15 @@ static void cmd_stat(struct http_channel *c)
     http_send_response(c);
 }
 
+static void cmd_info(struct http_channel *c)
+{
+    struct http_request *rq = c->request;
+    struct http_response *rs = c->response;
+    struct http_session *s = locate_session(rq, rs);
+
+    if (!s)
+        return;
+}
 
 struct {
     char *name;
@@ -512,6 +522,7 @@ struct {
     { "exit", cmd_exit },
     { "ping", cmd_ping },
     { "record", cmd_record },
+    { "info", cmd_info },
     {0,0}
 };
 

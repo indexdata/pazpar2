@@ -3,7 +3,7 @@
 
 <server>
   <listen port="9004"/>
-  <proxy host="localhost" port="80"/>
+  <proxy host="us1.indexdata.com"/>
 
   <service>
     <metadata name="title" brief="yes" sortkey="skiparticle" merge="longest" rank="6"/>

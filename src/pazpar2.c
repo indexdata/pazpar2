@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.26 2007-01-10 11:56:10 adam Exp $ */
+/* $Id: pazpar2.c,v 1.27 2007-01-11 17:14:06 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -72,6 +72,8 @@ static char *client_states[] = {
 // Note: Some things in this structure will eventually move to configuration
 struct parameters global_parameters = 
 {
+    "",
+    "",
     0,
     0,
     30,
@@ -1397,11 +1399,53 @@ static CCL_bibset load_cclfile(const char *fn)
     return res;
 }
 
+static void start_http_listener(void)
+{
+    char hp[128] = "";
+    struct conf_server *ser = global_parameters.server;
+
+    if (*global_parameters.listener_override)
+        strcpy(hp, global_parameters.listener_override);
+    else
+    {
+        strcpy(hp, ser->host ? ser->host : "");
+        if (ser->port)
+        {
+            if (*hp)
+                strcat(hp, ":");
+            sprintf(hp + strlen(hp), "%d", ser->port);
+        }
+    }
+    http_init(hp);
+}
+
+static void start_proxy(void)
+{
+    char hp[128] = "";
+    struct conf_server *ser = global_parameters.server;
+
+    if (*global_parameters.proxy_override)
+        strcpy(hp, global_parameters.proxy_override);
+    else if (ser->proxy_host || ser->proxy_port)
+    {
+        strcpy(hp, ser->proxy_host ? ser->proxy_host : "");
+        if (ser->proxy_port)
+        {
+            if (*hp)
+                strcat(hp, ":");
+            sprintf(hp + strlen(hp), "%d", ser->proxy_port);
+        }
+    }
+    else
+        return;
+
+    http_set_proxyaddr(hp);
+}
+
 int main(int argc, char **argv)
 {
     int ret;
     char *arg;
-    int setport = 0;
 
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "signal");
@@ -1416,14 +1460,13 @@ int main(int argc, char **argv)
                     exit(1);
                 break;
             case 'h':
-                http_init(arg);
-                setport++;
+                strcpy(global_parameters.listener_override, arg);
                 break;
             case 'C':
                 global_parameters.ccl_filter = load_cclfile(arg);
                 break;
             case 'p':
-                http_set_proxyaddr(arg);
+                strcpy(global_parameters.proxy_override, arg);
                 break;
             case 's':
                 load_simpletargets(arg);
@@ -1449,12 +1492,8 @@ int main(int argc, char **argv)
     }
     global_parameters.server = config->servers;
 
-    if (!setport)
-    {
-        fprintf(stderr, "Set command port with -h\n");
-        exit(1);
-    }
-
+    start_http_listener();
+    start_proxy();
     global_parameters.ccl_filter = load_cclfile("../etc/default.bib");
     global_parameters.yaz_marc = yaz_marc_create();
     yaz_marc_subfield_str(global_parameters.yaz_marc, "\t");
