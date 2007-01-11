@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.19 2007-01-11 11:14:16 sondberg Exp $
+/* $Id: search.js,v 1.20 2007-01-11 12:47:19 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -308,14 +308,17 @@ function check_search()
 
 
 function refine_query (obj) {
+    var term = obj.getAttribute('term');
+    var cur_termlist = obj.getAttribute('facet');
     var query_cell = document.getElementById('query');
-    var term = obj.innerHTML;
     
     term = term.replace(/[\(\)]/g, '');
+    
     if (cur_termlist == 'subject')
 	query_cell.value += ' and su=(' + term + ')';
     else if (cur_termlist == 'author')
 	query_cell.value += ' and au=(' + term + ')';
+
     start_search();
 }
 
@@ -329,6 +332,7 @@ function show_termlist()
     var i;
     var xml = xtermlist.responseXML;
     var body = facet_list[cur_facet][1];
+    var facet_name = facet_list[cur_facet][0];
     var hits = xml.getElementsByTagName("term");
     var clients =
 	Number(xml.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue);
@@ -350,10 +354,15 @@ function show_termlist()
 	{
 	    var namen = hits[i].getElementsByTagName("name");
 	    if (namen[0])
-                var refine_cell = create_element('a',
-                                    namen[0].childNodes[0].nodeValue);
+                var term = namen[0].childNodes[0].nodeValue;
+                var refine_cell = create_element('a', term);
                 refine_cell.setAttribute('href', '#');
-                refine_cell.setAttribute('onclick', 'refine_query(this)');
+                refine_cell.setAttribute('term', term);
+                refine_cell.setAttribute('facet', facet_name);
+                refine_cell.onclick = function () {
+                    refine_query(this);
+                    return false;
+                };
                 body.appendChild(refine_cell);
 	}
 
