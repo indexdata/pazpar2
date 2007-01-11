@@ -144,13 +144,9 @@ font: bold 11px verdana;
 }
 
 
-a {
+a, a:visited {
 color: #5d82b7;
 text-decoration: none;
-}
-
-a:visited {
-color: #a0689d;
 }
 
 a:hover {
