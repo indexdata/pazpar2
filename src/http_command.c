@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.16 2007-01-10 10:17:50 adam Exp $
+ * $Id: http_command.c,v 1.17 2007-01-11 10:03:01 sondberg Exp $
  */
 
 #include <stdio.h>
@@ -522,6 +522,10 @@ void http_command(struct http_channel *c)
     int i;
 
     c->response = rs;
+
+    http_addheader(rs, "Expires", "Thu, 19 Nov 1981 08:52:00 GMT");
+    http_addheader(rs, "Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0");
+
     if (!command)
     {
         error(rs, "417", "Must supply command", 0);
