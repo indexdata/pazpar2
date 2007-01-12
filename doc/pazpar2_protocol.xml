@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_protocol.xml,v 1.1 2007-01-12 14:54:58 adam Exp $ -->
+<!-- $Id: pazpar2_protocol.xml,v 1.2 2007-01-12 15:21:04 adam Exp $ -->
 <refentry id="pazpar2_protocol">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -29,7 +29,10 @@
    Webservice requests are any that refer to filename "search.pz2". Arguments
    are GET-style parameters. Argument 'command' is required and specifies
    command. Any request not recognized as a webservice request as described,
-   are forwarded to the HTTP server specified in option -p.
+   are forwarded to the HTTP server specified in configuration.
+   This way, the webserver can host the user interface (itself dynamic
+   or static HTML), and AJAX-style calls can be used from JS to interact
+   with the search logic. 
   </para>
   <para>
    Each command is described in sub sections to follow.
