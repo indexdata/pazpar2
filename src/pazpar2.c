@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.27 2007-01-11 17:14:06 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.28 2007-01-12 23:37:15 adam Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -512,13 +512,13 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             continue;
         if (!strcmp(n->name, "metadata"))
         {
-            type = xmlGetProp(n, "type");
-            value = xmlNodeListGetString(xdoc, n->children, 0);
             struct conf_metadata *md = 0;
             struct record_metadata **wheretoput, *newm;
             int imeta;
             int first, last;
 
+            type = xmlGetProp(n, "type");
+            value = xmlNodeListGetString(xdoc, n->children, 0);
             // First, find out what field we're looking at
             for (imeta = 0; imeta < service->num_metadata; imeta++)
                 if (!strcmp(type, service->metadata[imeta].name))
