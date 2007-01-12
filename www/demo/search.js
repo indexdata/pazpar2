@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.21 2007-01-11 13:31:31 sondberg Exp $
+/* $Id: search.js,v 1.22 2007-01-12 20:11:51 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -20,7 +20,7 @@ var stattimer;
 var session_cells = Array('query', 'startrec', 'action_type');
 var old_session = session_read();
 var url_surveillence;
-var recstoshow = 15;
+var recstoshow = 20;
 var page_window = 5;  // Number of pages prior to and after the current page
 var facet_list;
 var cur_facet = 0;
