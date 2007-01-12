@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.1 2007-01-12 14:54:58 adam Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.2 2007-01-12 15:31:30 adam Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -31,15 +31,19 @@
  </refsynopsisdiv>
  
  <refsect1><title>DESCRIPTION</title>
+  <para></para>
  </refsect1>
  
  <refsect1><title>OPTIONS</title>
+  <para></para>
  </refsect1>
 
  <refsect1><title>EXAMPLES</title>
+  <para></para>
  </refsect1> 
 
  <refsect1><title>FILES</title>
+  <para></para>
  </refsect1>
 </refentry>
 

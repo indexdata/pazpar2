@@ -9,7 +9,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: book.xml,v 1.2 2007-01-12 14:54:58 adam Exp $ -->
+<!-- $Id: book.xml,v 1.3 2007-01-12 15:31:30 adam Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -123,11 +123,13 @@
  
  <reference id="reference">
   <title>Reference</title>
-    <para>
-     The material in this chapter is drawn directly from the individual
-     manual entries.
-    </para>
-    &manref;
+  <partintro>
+   <para>
+    The material in this chapter is drawn directly from the individual
+    manual entries.
+   </para>
+  </partintro>
+  &manref;
  </reference>
 </book>
 
