@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.20 2007-01-12 23:24:05 adam Exp $
+ * $Id: http_command.c,v 1.21 2007-01-12 23:41:35 quinn Exp $
  */
 
 #include <stdio.h>
@@ -506,7 +506,7 @@ static void cmd_info(struct http_channel *c)
     struct http_response *rs = c->response;
 
     wrbuf_rewind(c->wrbuf);
-    wrbuf_puts(c->wrbuf, "<stat>\n");
+    wrbuf_puts(c->wrbuf, "<info>\n");
     wrbuf_printf(c->wrbuf, " <version>\n");
     wrbuf_printf(c->wrbuf, "  <pazpar2>%s</pazpar2>\n", VERSION);
 
@@ -515,7 +515,7 @@ static void cmd_info(struct http_channel *c)
                  YAZ_VERSION, yaz_version_str);
     wrbuf_printf(c->wrbuf, " </version>\n");
     
-    wrbuf_puts(c->wrbuf, "</stat>");
+    wrbuf_puts(c->wrbuf, "</info>");
     rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
     http_send_response(c);
 }
