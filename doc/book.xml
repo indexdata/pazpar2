@@ -9,10 +9,10 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: book.xml,v 1.1 2007-01-10 09:44:20 adam Exp $ -->
+<!-- $Id: book.xml,v 1.2 2007-01-12 14:54:58 adam Exp $ -->
 <book id="book">
  <bookinfo>
-  <title>pazpar2 - User's Guide and Reference</title>
+  <title>Pazpar2 - User's Guide and Reference</title>
   <author>
    <firstname>Sebastian</firstname><surname>Hammer</surname>
   </author>
@@ -22,11 +22,11 @@
   </copyright>
   <abstract>
    <simpara>
-    pazpar2 - High-performance, user-interface 
+    Pazpar2 - High-performance, user-interface 
     user-interface independtent metasearching middleware.
    </simpara>
    <simpara>
-    This document is a guide and reference to pazpar version &version;.
+    This document is a guide and reference to Pazpar version &version;.
    </simpara>
    <simpara>
     <inlinemediaobject>
@@ -45,19 +45,19 @@
   <title>Introduction</title>
   
   <para>
-   <ulink url="&url.pazpar2;">pazpar2</ulink> is.. To be written.
+   <ulink url="&url.pazpar2;">Pazpar2</ulink> is.. To be written.
   </para>
  </chapter>
 
  <chapter id="license">
-  <title>pazpar2 License</title>
+  <title>Pazpar2 License</title>
   <para>To be decided and written.</para>
  </chapter>
  
  <chapter id="installation">
   <title>Installation</title>
   <para>
-   pazpar2 depends on the following tools/libraries:
+   Pazpar2 depends on the following tools/libraries:
    <variablelist>
     <varlistentry><term><ulink url="&url.yaz;">YAZ</ulink></term>
      <listitem>
@@ -70,7 +70,7 @@
    </variablelist>
   </para>
   <para>
-   In order to compile pazpar2 an ANSI C compiler is
+   In order to compile Pazpar2 an ANSI C compiler is
    required. The requirements should be the same as for YAZ.
   </para>
 
@@ -78,14 +78,14 @@
    <title>Installation on Unix (from Source)</title>
    <para>
     Here is a quick step-by-step guide on how to compile the
-    tools that pazpar2 uses. Only few systems have none of the required
+    tools that Pazpar2 uses. Only few systems have none of the required
     tools binary packages. If, for example, Libxml2/libxslt are already
-    installed as development packages use those (and omit compilation).
+    installed as development packages use these.
    </para>
    
    <para>
     Ensure that the development libraries + header files are
-    available on your system before compiling pazpar2. For installation
+    available on your system before compiling Pazpar2. For installation
     of YAZ, refer to the YAZ installation chapter.
    </para>
    <screen>
@@ -101,7 +101,7 @@
   <section id="installation.debian">
    <title>Installation on Debian GNU/Linux</title>
    <para>
-    All dependencies for pazpar2 are available as 
+    All dependencies for Pazpar2 are available as 
     <ulink url="&url.debian;">Debian</ulink>
     packages for the sarge (stable in 2005) and etch (testing in 2005)
     distributions.
@@ -115,14 +115,14 @@
    </screen>
    <para>
     With these packages installed, the usual configure + make
-    procedure can be used for pazpar2 as outlined in
+    procedure can be used for Pazpar2 as outlined in
     <xref linkend="installation.unix"/>.
    </para>
   </section>
  </chapter>
  
- <reference id="refguide">
-  <title>Reference guide</title>
+ <reference id="reference">
+  <title>Reference</title>
     <para>
      The material in this chapter is drawn directly from the individual
      manual entries.

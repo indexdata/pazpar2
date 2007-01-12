@@ -9,7 +9,7 @@ pazpar2.pdf
 *.tkl
 manpage.links
 manpage.refs
-pazpar2.1
+*.[0-8]
 local.ent
 htmlhelp.hhp
 toc.hhc
