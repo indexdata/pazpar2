@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.19 2007-01-12 23:07:54 adam Exp $
+ * $Id: http_command.c,v 1.20 2007-01-12 23:24:05 adam Exp $
  */
 
 #include <stdio.h>
@@ -501,7 +501,7 @@ static void cmd_stat(struct http_channel *c)
 
 static void cmd_info(struct http_channel *c)
 {
-    char yaz_version_str[8];
+    char yaz_version_str[20];
     struct http_request *rq = c->request;
     struct http_response *rs = c->response;
 
