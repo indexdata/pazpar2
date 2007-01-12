@@ -5,7 +5,19 @@
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
 
+enum conf_sortkey_types
+{
+    Metadata_sortkey_no,            // This is not to be used as a sortkey
+    Metadata_sortkey_numeric,       // Standard numerical sorting
+    Metadata_sortkey_range,         // Range sorting (pick lowest or highest)
+    Metadata_sortkey_skiparticle,   // Skip leading article when sorting
+    Metadata_sortkey_string
+};
+
 // Describes known metadata elements and how they are to be manipulated
+// An array of these structure provides a 'map' against which discovered metadata
+// elements are matched. It also governs storage, to minimize number of cycles needed
+// at various tages of processing
 struct conf_metadata 
 {
     char *name;  // The name of this element. Output by normalization stylesheet
@@ -19,14 +31,7 @@ struct conf_metadata
         Metadata_type_integer,          // Integer type
         Metadata_type_year              // A year
     } type;
-    enum
-    {
-        Metadata_sortkey_no,            // This is not to be used as a sortkey
-        Metadata_sortkey_numeric,       // Standard numerical sorting
-        Metadata_sortkey_range,         // Range sorting (pick lowest or highest)
-        Metadata_sortkey_skiparticle,   // Skip leading article when sorting
-        Metadata_sortkey_string
-    } sortkey;
+    enum conf_sortkey_types sortkey;
     enum
     {
         Metadata_merge_no,              // Don't merge
@@ -37,10 +42,19 @@ struct conf_metadata
     } merge;
 };
 
+// Controls sorting
+struct conf_sortkey
+{
+    char *name;
+    enum conf_sortkey_types type;
+};
+
 struct conf_service
 {
     int num_metadata;
     struct conf_metadata *metadata;
+    int num_sortkeys;
+    struct conf_sortkey *sortkeys;
 };
 
 struct conf_server

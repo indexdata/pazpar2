@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.9 2007-01-10 10:15:23 adam Exp $ */
+/* $Id: config.c,v 1.10 2007-01-12 15:08:44 quinn Exp $ */
 
 #include <string.h>
 
@@ -30,16 +30,27 @@ static struct conf_service *parse_service(xmlNode *node)
 {
     xmlNode *n;
     struct conf_service *r = nmem_malloc(nmem, sizeof(struct conf_service));
-    int num_metadata = 0;
     int md_node = 0;
 
+    r->num_sortkeys = r->num_metadata = 0;
     // Allocate array of conf metadata structs, if necessary
     for (n = node->children; n; n = n->next)
         if (n->type == XML_ELEMENT_NODE && !strcmp(n->name, "metadata"))
-            num_metadata++;
-    if (num_metadata)
-        r->metadata = nmem_malloc(nmem, sizeof(struct conf_metadata) * num_metadata);
-    r->num_metadata = num_metadata;
+        {
+            xmlChar *sortkey = xmlGetProp(n, "sortkey");
+            r->num_metadata++;
+            if (sortkey && strcmp(sortkey, "no"))
+                r->num_sortkeys++;
+            xmlFree(sortkey);
+        }
+    if (r->num_metadata)
+        r->metadata = nmem_malloc(nmem, sizeof(struct conf_metadata) * r->num_metadata);
+    else
+        r->metadata = 0;
+    if (r->num_sortkeys)
+        r->sortkeys = nmem_malloc(nmem, sizeof(struct conf_sortkey) * r->num_sortkeys);
+    else
+        r->sortkeys = 0;
 
     for (n = node->children; n; n = n->next)
     {
