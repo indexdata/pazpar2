@@ -9,7 +9,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: book.xml,v 1.3 2007-01-12 15:31:30 adam Exp $ -->
+<!-- $Id: book.xml,v 1.4 2007-01-13 05:48:41 quinn Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -22,8 +22,9 @@
   </copyright>
   <abstract>
    <simpara>
-    Pazpar2 - High-performance, user-interface 
-    user-interface independtent metasearching middleware.
+    Pazpar2 - High-performance, user-interface independent, metasearching
+	  middleware featuring record merging, relevance ranking, and faceted search
+	  results.
    </simpara>
    <simpara>
     This document is a guide and reference to Pazpar version &version;.
@@ -43,10 +44,46 @@
 
  <chapter id="introduction">
   <title>Introduction</title>
-  
   <para>
-   <ulink url="&url.pazpar2;">Pazpar2</ulink> is.. To be written.
+    Pazpar2 is a stand-alone package which implements
+    the best we know to do in terms of the core metasearching
+    functionality; that is, searching a number of databases in parallel,
+    merging, and analyzing the results. Additional functionality such as
+    user management, attractive displays are expected to be implemented by
+    applications that use pazpar2. Pazpar2 is user interface independent.
+    Its functionality is exposed through a simple REST-style webservice API,
+    designed to be simple to use from an Ajax-anbled browser, from a
+    higher-level server-side language like PHP or Java, or even from a Flash
+    application.
   </para>
+  <para>
+    Once you launch a search in pazpar2, the operation continues behind the
+    scenes. Pazpar2 connects to servers, carries out searches, and
+    retrieves, deduplicates, and stores results internally. Your application
+    code may periodically inquire about the status of an ongoing operation,
+    and ask to see records or other result set facets.
+  </para>
+  <para>
+    Pazpar2 is designed to be highly configurable. Incoming records are
+    normalized to XML/UTF-8, and then further normalized using XSLT to a
+    simple internal representation that is suitable for analysis. By
+    providing XSLT stylesheets for different kinds of result records, you
+    can tune pazpar2 to work against different kinds of information
+    retrieval servers. Finally, metadata is extracted, in a configurable
+    way, from this internal record, to support display, merging, ranking,
+    result set facets, and sorting. Pazpar2 is not bound to a specific model
+    of metadata, such as DublinCore or MARC -- by providing the right
+    configuration, it can work with a number of different kinds of data in
+    support of many different applications.
+  </para>
+  <para>
+    Pazpar2 is designed to be efficient and scalable. You can set it up to
+    search several hundred targets in parallel, or you can use it to support
+    hundreds of concurrent users. It is implemented with the same attention
+    to performance and economy that we use in our indexing engines, so that
+    you can focus on building your application. You can devote all of your
+    attention to usability and let pazpar2 do what it does best -- search.
+   </para>
  </chapter>
 
  <chapter id="license">
