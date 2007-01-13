@@ -3,7 +3,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = src doc
 
-EXTRA_DIST = README PROTOCOL m4/yaz.m4 
+EXTRA_DIST = README m4/yaz.m4 
 
 dist-hook:
 	if test -x /usr/bin/cvs2cl -a -d CVS; then cvs2cl ; fi
