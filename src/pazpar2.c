@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.28 2007-01-12 23:37:15 adam Exp $ */
+/* $Id: pazpar2.c,v 1.29 2007-01-14 17:34:31 adam Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -423,7 +423,11 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
     if (global_parameters.dump_records)
     {
         fprintf(stderr, "Record:\n----------------\n");
+#if LIBXML_VERSION >= 20600
         xmlDocFormatDump(stderr, rdoc, 1);
+#else
+        xmlDocDump(stderr, rdoc);
+#endif
     }
     return rdoc;
 }

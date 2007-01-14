@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.10 2007-01-12 15:08:44 quinn Exp $ */
+/* $Id: config.c,v 1.11 2007-01-14 17:34:31 adam Exp $ */
 
 #include <string.h>
 
@@ -418,7 +418,7 @@ static struct conf_config *parse_config(xmlNode *root)
 
 int read_config(const char *fname)
 {
-    xmlDoc *doc = xmlReadFile(fname, NULL, 0);
+    xmlDoc *doc = xmlParseFile(fname);
     const char *p;
 
     if (!nmem)  // Initialize
