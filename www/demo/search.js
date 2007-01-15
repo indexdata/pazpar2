@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.24 2007-01-15 19:01:29 quinn Exp $
+/* $Id: search.js,v 1.25 2007-01-15 22:05:37 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -260,14 +260,18 @@ function show_records()
             var title = '';
 	    var an = hits[i].getElementsByTagName("md-author");
 	    var author = '';
+	    var cn = hits[i].getElementsByTagName("count");
+	    var count = 1;
 
 	    if (tn[0]) {
                 title = tn[0].childNodes[0].nodeValue;
             } else {
                 title = 'N/A';
             }
-	    if (an[0])
+	    if (an[0] && an[0].childNodes[0])
 		    author = an[0].childNodes[0].nodeValue;
+	    if (cn[0])
+		count = Number(cn[0].childNodes[0].nodeValue);
             
 	    var record_div = document.createElement('div');
 	    record_div.className = 'record';
@@ -280,6 +284,9 @@ function show_records()
 		record_div.appendChild(document.createTextNode(', by '));
 		record_div.appendChild(document.createTextNode(author));
 	    }
+	    if (count > 1)
+		record_div.appendChild(document.createTextNode(
+			' (' + count + ')'));
 	    record_container.appendChild(record_div);
 	}
 
@@ -359,9 +366,11 @@ function show_termlist()
         for (i = 0; i < hits.length; i++)
 	{
 	    var namen = hits[i].getElementsByTagName("name");
+	    var freqn = hits[i].getElementsByTagName("frequency");
 	    if (namen[0])
                 var term = namen[0].childNodes[0].nodeValue;
-                var refine_cell = create_element('a', term);
+		var freq = freqn[0].childNodes[0].nodeValue;
+                var refine_cell = create_element('a', term + ' (' + freq + ')');
                 refine_cell.setAttribute('href', '#');
                 refine_cell.setAttribute('term', term);
                 refine_cell.setAttribute('facet', facet_name);
