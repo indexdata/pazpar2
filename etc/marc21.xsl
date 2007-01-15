@@ -11,7 +11,6 @@
       <xsl:attribute name="mergekey">
         <xsl:text>title </xsl:text>
 	<xsl:value-of select="marc:datafield[@tag='245']/marc:subfield[@code='a']"/>
-	<xsl:value-of select="marc:datafield[@tag='245']/marc:subfield[@code='b']"/>
 	<xsl:text> author </xsl:text>
 	<xsl:value-of select="marc:datafield[@tag='100']/marc:subfield[@code='a']"/>
       </xsl:attribute>
