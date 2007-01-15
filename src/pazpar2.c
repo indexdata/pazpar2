@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.31 2007-01-15 05:40:24 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.32 2007-01-15 16:56:51 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -364,6 +364,8 @@ static void add_facet(struct session *s, const char *type, const char *value)
 {
     int i;
 
+    if (!*value)
+        return;
     for (i = 0; i < s->num_termlists; i++)
         if (!strcmp(s->termlists[i].name, type))
             break;

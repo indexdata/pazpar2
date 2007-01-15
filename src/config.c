@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.12 2007-01-15 04:34:28 quinn Exp $ */
+/* $Id: config.c,v 1.13 2007-01-15 16:56:51 quinn Exp $ */
 
 #include <string.h>
 
@@ -291,13 +291,16 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
                 yaz_log(YLOG_WARN, "Missing name in 'nativesyntax' element");
                 return 0;
             }
+            if (encoding)
+                r->native_encoding = encoding;
             if (!strcmp(name, "iso2709"))
             {
                 r->native_syntax = Nativesyn_iso2709;
                 // Set a few defaults, too
                 r->native_format = Nativeform_marc21;
                 r->native_mapto = Nativemapto_marcxml;
-                r->native_encoding = "marc-8";
+                if (!r->native_encoding)
+                    r->native_encoding = "marc-8";
                 setup_marc(r);
             }
             else if (!strcmp(name, "xml"))
@@ -317,8 +320,6 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
                     return 0;
                 }
             }
-            if (encoding)
-                r->native_encoding = encoding;
             if (mapto)
             {
                 if (!strcmp(mapto, "marcxml"))
