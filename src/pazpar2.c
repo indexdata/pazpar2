@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.30 2007-01-15 04:34:28 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.31 2007-01-15 05:40:24 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -611,7 +611,6 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
                         normalize_mergekey(s,
                                 (sk->type == Metadata_sortkey_skiparticle));
                         cluster->sortkeys[md->sortkey_offset]->text = s;
-                        yaz_log(YLOG_LOG, "SK Longest: %s", s);
                     }
                 }
             }
@@ -644,11 +643,13 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
                         sdata->number.max = last;
                     }
                 }
+#ifdef GAGA
                 if (sk)
                 {
                     union data_types *sdata = cluster->sortkeys[md->sortkey_offset];
                     yaz_log(YLOG_LOG, "SK range: %d-%d", sdata->number.min, sdata->number.max);
                 }
+#endif
             }
             else
                 yaz_log(YLOG_WARN, "Don't know how to merge on element name %s", md->name);

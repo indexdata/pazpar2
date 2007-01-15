@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.10 2007-01-15 04:34:29 quinn Exp $
+/* $Id: search.js,v 1.11 2007-01-15 05:40:24 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -211,7 +211,7 @@ function check_search()
 	"&start=" + document.search.startrec.value +
 	"&num=" + recstoshow +
 	"&session=" + session +
-	"&sort=title:1" +
+	"&sort=relevance" +
 	"&block=1";
     xshow = GetXmlHttpObject();
     xshow.onreadystatechange=show_records;
