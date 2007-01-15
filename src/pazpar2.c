@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.32 2007-01-15 16:56:51 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.33 2007-01-15 19:17:27 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -569,7 +569,12 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             newm->next = 0;
             if (md->type == Metadata_type_generic)
             {
+                char *p;
                 newm->data.text = nmem_strdup(se->nmem, value);
+                for (p = newm->data.text + strlen(newm->data.text) - 1;
+                        p > newm->data.text && strchr(" ,/.", *p); p--)
+                    *p = '\0';
+
             }
             else if (md->type == Metadata_type_year)
             {
