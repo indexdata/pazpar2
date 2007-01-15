@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.11 2007-01-14 17:34:31 adam Exp $ */
+/* $Id: config.c,v 1.12 2007-01-15 04:34:28 quinn Exp $ */
 
 #include <string.h>
 
@@ -31,9 +31,10 @@ static struct conf_service *parse_service(xmlNode *node)
     xmlNode *n;
     struct conf_service *r = nmem_malloc(nmem, sizeof(struct conf_service));
     int md_node = 0;
+    int sk_node = 0;
 
     r->num_sortkeys = r->num_metadata = 0;
-    // Allocate array of conf metadata structs, if necessary
+    // Allocate array of conf metadata and sortkey tructs, if necessary
     for (n = node->children; n; n = n->next)
         if (n->type == XML_ELEMENT_NODE && !strcmp(n->name, "metadata"))
         {
@@ -108,8 +109,6 @@ static struct conf_service *parse_service(xmlNode *node)
             {
                 if (!strcmp(type, "generic"))
                     md->type = Metadata_type_generic;
-                else if (!strcmp(type, "integer"))
-                    md->type = Metadata_type_integer;
                 else if (!strcmp(type, "year"))
                     md->type = Metadata_type_year;
                 else
@@ -120,25 +119,6 @@ static struct conf_service *parse_service(xmlNode *node)
             }
             else
                 md->type = Metadata_type_generic;
-
-            if (sortkey)
-            {
-                if (!strcmp(sortkey, "no"))
-                    md->sortkey = Metadata_sortkey_no;
-                else if (!strcmp(sortkey, "numeric"))
-                    md->sortkey = Metadata_sortkey_numeric;
-                else if (!strcmp(sortkey, "range"))
-                    md->sortkey = Metadata_sortkey_range;
-                else if (!strcmp(sortkey, "skiparticle"))
-                    md->sortkey = Metadata_sortkey_skiparticle;
-                else
-                {
-                    yaz_log(YLOG_FATAL, "Unknown sortkey in metadata element: %s", sortkey);
-                    return 0;
-                }
-            }
-            else
-                md->sortkey = Metadata_sortkey_no;
 
             if (merge)
             {
@@ -160,6 +140,30 @@ static struct conf_service *parse_service(xmlNode *node)
             }
             else
                 md->merge = Metadata_merge_no;
+
+            if (sortkey && strcmp(sortkey, "no"))
+            {
+                struct conf_sortkey *sk = &r->sortkeys[sk_node];
+                if (md->merge == Metadata_merge_no)
+                {
+                    yaz_log(YLOG_FATAL, "Can't specify sortkey on a non-merged field");
+                    return 0;
+                }
+                if (!strcmp(sortkey, "numeric"))
+                    sk->type = Metadata_sortkey_numeric;
+                else if (!strcmp(sortkey, "skiparticle"))
+                    sk->type = Metadata_sortkey_skiparticle;
+                else
+                {
+                    yaz_log(YLOG_FATAL, "Unknown sortkey in metadata element: %s", sortkey);
+                    return 0;
+                }
+                sk->name = md->name;
+                md->sortkey_offset = sk_node;
+                sk_node++;
+            }
+            else
+                md->sortkey_offset = -1;
 
             xmlFree(name);
             xmlFree(brief);

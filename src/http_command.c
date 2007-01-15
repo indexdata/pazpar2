@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.21 2007-01-12 23:41:35 quinn Exp $
+ * $Id: http_command.c,v 1.22 2007-01-15 04:34:28 quinn Exp $
  */
 
 #include <stdio.h>
@@ -291,9 +291,9 @@ static void write_metadata(WRBUF w, struct conf_service *service,
                     wrbuf_puts(w, md->data.text);
                     break;
                 case Metadata_type_year:
-                    wrbuf_printf(w, "%d", md->data.year.year1);
-                    if (md->data.year.year1 != md->data.year.year2)
-                        wrbuf_printf(w, "-%d", md->data.year.year2);
+                    wrbuf_printf(w, "%d", md->data.number.min);
+                    if (md->data.number.min != md->data.number.max)
+                        wrbuf_printf(w, "-%d", md->data.number.max);
                     break;
                 default:
                     wrbuf_puts(w, "[can't represent]");
@@ -341,9 +341,10 @@ static void show_records(struct http_channel *c, int active)
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
     struct record_cluster **rl;
-    NMEM nmem_show;
+    struct reclist_sortparms *sp;
     char *start = http_argbyname(rq, "start");
     char *num = http_argbyname(rq, "num");
+    char *sort = http_argbyname(rq, "sort");
     int startn = 0;
     int numn = 20;
     int total;
@@ -361,9 +362,15 @@ static void show_records(struct http_channel *c, int active)
         startn = atoi(start);
     if (num)
         numn = atoi(num);
+    if (!sort)
+        sort = "relevance";
+    if (!(sp = reclist_parse_sortparms(c->nmem, sort)))
+    {
+        error(rs, "500", "Bad sort parameters", 0);
+        return;
+    }
 
-    nmem_show = nmem_create();
-    rl = show(s->psession, startn, &numn, &total, &total_hits, nmem_show);
+    rl = show(s->psession, sp, startn, &numn, &total, &total_hits, c->nmem);
 
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, "<show>\n<status>OK</status>\n");
@@ -393,7 +400,6 @@ static void show_records(struct http_channel *c, int active)
     wrbuf_puts(c->wrbuf, "</show>\n");
     rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
     http_send_response(c);
-    nmem_destroy(nmem_show);
 }
 
 static void show_records_ready(void *data)
@@ -502,7 +508,6 @@ static void cmd_stat(struct http_channel *c)
 static void cmd_info(struct http_channel *c)
 {
     char yaz_version_str[20];
-    struct http_request *rq = c->request;
     struct http_response *rs = c->response;
 
     wrbuf_rewind(c->wrbuf);

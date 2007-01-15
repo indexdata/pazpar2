@@ -15,31 +15,36 @@ struct record;
 
 #include "termlists.h"
 #include "relevance.h"
+#include "reclists.h"
 #include "eventl.h"
 #include "config.h"
 
 struct client;
 
+union data_types {
+    char *text;
+    struct {
+        int min;
+        int max;
+    } number;
+};
+
 struct record_metadata {
-    union {
-        char *text;
-        struct {
-            int year1;
-            int year2;
-        } year;
-    } data;
+    union data_types data;
     struct record_metadata *next; // next item of this name
 };
 
 struct record {
     struct client *client;
     struct record_metadata **metadata; // Array mirrors list of metadata fields in config
+    union data_types **sortkeys;       // Array mirrors list of sortkey fields in config
     struct record *next;  // Next in cluster of merged records
 };
 
 struct record_cluster
 {
     struct record_metadata **metadata; // Array mirrors list of metadata fields in config
+    union data_types **sortkeys;
     char *merge_key;
     int relevance;
     int *term_frequency_vec;
@@ -194,8 +199,8 @@ void destroy_session(struct session *s);
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
 char *search(struct session *s, char *query);
-struct record_cluster **show(struct session *s, int start, int *num, int *total,
-                     int *sumhits, NMEM nmem_show);
+struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, int start,
+        int *num, int *total, int *sumhits, NMEM nmem_show);
 struct record_cluster *show_single(struct session *s, int id);
 struct termlist_score **termlist(struct session *s, const char *name, int *num);
 void session_set_watch(struct session *s, int what, session_watchfun fun, void *data);

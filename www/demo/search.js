@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.22 2007-01-12 20:11:51 quinn Exp $
+/* $Id: search.js,v 1.23 2007-01-15 04:34:29 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -24,12 +24,15 @@ var recstoshow = 20;
 var page_window = 5;  // Number of pages prior to and after the current page
 var facet_list;
 var cur_facet = 0;
+var cur_sort = "relevance";
+var searched = 0;
 
 function initialize ()
 {
     facet_list = get_available_facets();
     start_session();
     session_check();
+    set_sort();
 }
 
 
@@ -98,47 +101,6 @@ function session_pinged()
     }
     setTimeout(ping_session, 50000);
 }
-
-function targets_loaded()
-{
-    if (xloadTargets.readyState != 4)
-	return;
-    var xml = xloadTargets.responseXML;
-    var error = xml.getElementsByTagName("error");
-    if (error[0])
-    {
-	var msg = error[0].childNodes[0].nodeValue;
-	alert(msg);
-	return;
-    }
-
-    assign_text(document.getElementById("targetstatus"), 'Targets loaded');
-}
-
-function load_targets()
-{
-    var fn = document.getElementById("targetfilename").value;
-    clearTimeout(termtimer);
-    clearTimeout(searchtimer);
-    clearTimeout(stattimer);
-    clearTimeout(showtimer);
-    clear_cell(document.getElementById("stat"));
-    if (!fn)
-    {
-	alert("Please enter a target definition file name");
-	return;
-    }
-    var url="search.pz2?" +
-    	"command=load" +
-	"&session=" + session +
-	"&name=" + fn;
-    assign_text(document.getElementById("targetstatus"), 'Loading targets...');
-    xloadTargets = GetXmlHttpObject();
-    xloadTargets.onreadystatechange=targets_loaded;
-    xloadTargets.open("GET", url);
-    xloadTargets.send(null);
-}
-
 
 function update_action (new_action) {
     document.search.action_type.value = new_action;
@@ -219,6 +181,37 @@ function assign_text (cell, text) {
     append_text(cell, text);
 }
 
+function set_sort_opt(n, opt, str)
+{
+    var txt = document.createTextNode(str);
+    if (opt == cur_sort)
+	n.appendChild(txt);
+    else
+    {
+	var a = document.createElement('a');
+	a.appendChild(txt);
+	a.setAttribute('href', "");
+	a.setAttribute('onclick', "set_sort('" + opt + "'); return false");
+	n.appendChild(a);
+    }
+}
+
+function set_sort(sort)
+{
+    if (sort && sort != cur_sort)
+    {
+	cur_sort = sort;
+	if (searched)
+	    check_search();
+    }
+
+    var t = document.getElementById("sortselect");
+    clear_cell(t);
+    t.appendChild(document.createTextNode("Sort results by: "));
+    set_sort_opt(t, 'relevance', 'Relevance');
+    t.appendChild(document.createTextNode(" or "));
+    set_sort_opt(t, 'title:1', 'Title');
+}
 
 function show_records()
 {
@@ -238,7 +231,6 @@ function show_records()
     }
     else
     {
-
 	var total = Number(xml.getElementsByTagName('total')[0].childNodes[0].nodeValue);
 	var merged = Number(xml.getElementsByTagName('merged')[0].childNodes[0].nodeValue);
 	var start = Number(xml.getElementsByTagName('start')[0].childNodes[0].nodeValue);
@@ -252,6 +244,7 @@ function show_records()
                                              ' to ' + (start + num) + ' of ' +
                                              merged + ' (total hits: ' +
                                              total + ')');
+	searched = 1;
         interval.className = 'results';
         record_container.className = 'records';
 
@@ -299,6 +292,7 @@ function check_search()
 	"&start=" + document.search.startrec.value +
 	"&num=" + recstoshow +
 	"&session=" + session +
+	"&sort=" + cur_sort +
 	"&block=1";
     xshow = GetXmlHttpObject();
     xshow.onreadystatechange=show_records;
@@ -455,11 +449,6 @@ function start_search()
     stattimer = 0;
     clearTimeout(showtimer);
     showtimer = 0;
-    if (!targets_loaded)
-    {
-	alert("Please load targets first");
-	return;
-    }
     var query = escape(document.getElementById('query').value);
     var url = "search.pz2?" +
         "command=search" +
@@ -474,7 +463,6 @@ function start_search()
     shown = 0;
     document.search.startrec.value = 0;
 }
-
 
 function session_encode ()
 {

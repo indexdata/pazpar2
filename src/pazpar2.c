@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.29 2007-01-14 17:34:31 adam Exp $ */
+/* $Id: pazpar2.c,v 1.30 2007-01-15 04:34:28 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -286,9 +286,26 @@ static void do_searchResponse(IOCHAN i, Z_APDU *a)
     }
 }
 
-char *normalize_mergekey(char *buf)
+char *normalize_mergekey(char *buf, int skiparticle)
 {
     char *p = buf, *pout = buf;
+
+    if (skiparticle)
+    {
+        char firstword[64];
+        char articles[] = "the den der die des an a "; // must end in space
+
+        while (*p && !isalnum(*p))
+            p++;
+        pout = firstword;
+        while (*p && *p != ' ' && pout - firstword < 62)
+            *(pout++) = tolower(*(p++));
+        *(pout++) = ' ';
+        *(pout++) = '\0';
+        if (!strstr(articles, firstword))
+            p = buf;
+        pout = buf;
+    }
 
     while (*p)
     {
@@ -492,7 +509,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
 
     mergekey_norm = nmem_strdup(se->nmem, (char*) mergekey);
     xmlFree(mergekey);
-    normalize_mergekey(mergekey_norm);
+    normalize_mergekey(mergekey_norm, 0);
 
     cluster = reclist_insert(se->reclist, res, mergekey_norm, &se->total_merged);
     if (!cluster)
@@ -517,6 +534,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
         if (!strcmp(n->name, "metadata"))
         {
             struct conf_metadata *md = 0;
+            struct conf_sortkey *sk = 0;
             struct record_metadata **wheretoput, *newm;
             int imeta;
             int first, last;
@@ -528,6 +546,8 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
                 if (!strcmp(type, service->metadata[imeta].name))
                 {
                     md = &service->metadata[imeta];
+                    if (md->sortkey_offset >= 0)
+                        sk = &service->sortkeys[md->sortkey_offset];
                     break;
                 }
             if (!md)
@@ -580,7 +600,20 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             {
                 if (!*wheretoput ||
                         strlen(newm->data.text) > strlen((*wheretoput)->data.text))
-                *wheretoput = newm;
+                {
+                    *wheretoput = newm;
+                    if (sk)
+                    {
+                        char *s = nmem_strdup(se->nmem, newm->data.text);
+                        if (!cluster->sortkeys[md->sortkey_offset])
+                            cluster->sortkeys[md->sortkey_offset] = 
+                                nmem_malloc(se->nmem, sizeof(union data_types));
+                        normalize_mergekey(s,
+                                (sk->type == Metadata_sortkey_skiparticle));
+                        cluster->sortkeys[md->sortkey_offset]->text = s;
+                        yaz_log(YLOG_LOG, "SK Longest: %s", s);
+                    }
+                }
             }
             else if (md->merge == Metadata_merge_all || md->merge == Metadata_merge_no)
             {
@@ -593,15 +626,28 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
                 if (!*wheretoput)
                 {
                     *wheretoput = newm;
-                    (*wheretoput)->data.year.year1 = first;
-                    (*wheretoput)->data.year.year2 = last;
+                    (*wheretoput)->data.number.min = first;
+                    (*wheretoput)->data.number.max = last;
+                    if (sk)
+                        cluster->sortkeys[md->sortkey_offset] = &newm->data;
                 }
                 else
                 {
-                    if (first < (*wheretoput)->data.year.year1)
-                        (*wheretoput)->data.year.year1 = first;
-                    if (last > (*wheretoput)->data.year.year2)
-                        (*wheretoput)->data.year.year2 = last;
+                    if (first < (*wheretoput)->data.number.min)
+                        (*wheretoput)->data.number.min = first;
+                    if (last > (*wheretoput)->data.number.max)
+                        (*wheretoput)->data.number.max = last;
+                    if (sk)
+                    {
+                        union data_types *sdata = cluster->sortkeys[md->sortkey_offset];
+                        sdata->number.min = first;
+                        sdata->number.max = last;
+                    }
+                }
+                if (sk)
+                {
+                    union data_types *sdata = cluster->sortkeys[md->sortkey_offset];
+                    yaz_log(YLOG_LOG, "SK range: %d-%d", sdata->number.min, sdata->number.max);
                 }
             }
             else
@@ -1321,16 +1367,24 @@ struct record_cluster *show_single(struct session *s, int id)
     return 0;
 }
 
-struct record_cluster **show(struct session *s, int start, int *num, int *total,
-                     int *sumhits, NMEM nmem_show)
+struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, int start,
+        int *num, int *total, int *sumhits, NMEM nmem_show)
 {
     struct record_cluster **recs = nmem_malloc(nmem_show, *num 
                                        * sizeof(struct record_cluster *));
+    struct reclist_sortparms *spp;
     int i;
 #if USE_TIMING    
     yaz_timing_t t = yaz_timing_create();
 #endif
-    relevance_prepare_read(s->relevance, s->reclist);
+
+    for (spp = sp; spp; spp = spp->next)
+        if (spp->type == Metadata_sortkey_relevance)
+        {
+            relevance_prepare_read(s->relevance, s->reclist);
+            break;
+        }
+    reclist_sort(s->reclist, sp);
 
     *total = s->reclist->num_records;
     *sumhits = s->total_hits;

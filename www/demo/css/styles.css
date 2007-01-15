@@ -75,6 +75,12 @@ right: 788px;
 top: 30px;
 }
 
+div.search span.sort {
+position: absolute;
+right: 500;
+top: 50;
+}
+
 div.search div {
 position: absolute;
 left: 225px;

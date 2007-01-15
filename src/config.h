@@ -5,13 +5,12 @@
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
 
-enum conf_sortkey_types
+enum conf_sortkey_type
 {
-    Metadata_sortkey_no,            // This is not to be used as a sortkey
+    Metadata_sortkey_relevance,
     Metadata_sortkey_numeric,       // Standard numerical sorting
-    Metadata_sortkey_range,         // Range sorting (pick lowest or highest)
     Metadata_sortkey_skiparticle,   // Skip leading article when sorting
-    Metadata_sortkey_string
+    Metadata_sortkey_string         // Flat string
 };
 
 // Describes known metadata elements and how they are to be manipulated
@@ -25,13 +24,14 @@ struct conf_metadata
     int termlist;// Is this field to be treated as a termlist for browsing?
     int rank;    // Rank factor. 0 means don't use this field for ranking, 1 is default
                  // values >1  give additional significance to a field
+    int sortkey_offset; // -1 if it's not a sortkey, otherwise index
+                        // into service/record_cluster->sortkey array
     enum
     {
         Metadata_type_generic,          // Generic text field
-        Metadata_type_integer,          // Integer type
-        Metadata_type_year              // A year
+        Metadata_type_number,           // A number
+        Metadata_type_year              // A number
     } type;
-    enum conf_sortkey_types sortkey;
     enum
     {
         Metadata_merge_no,              // Don't merge
@@ -46,9 +46,12 @@ struct conf_metadata
 struct conf_sortkey
 {
     char *name;
-    enum conf_sortkey_types type;
+    enum conf_sortkey_type type;
 };
 
+// It is conceivable that there will eventually be several 'services' offered
+// from one server, with separate configuration -- possibly more than one services
+// associated with the same port. For now, however, only a single service is possible.
 struct conf_service
 {
     int num_metadata;

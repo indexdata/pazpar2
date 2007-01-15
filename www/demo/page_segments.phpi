@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: page_segments.phpi,v 1.9 2007-01-12 20:11:51 quinn Exp $
+/* $Id: page_segments.phpi,v 1.10 2007-01-15 04:34:29 quinn Exp $
  * ---------------------------------------------------
  * Page segments 
  */
@@ -40,6 +40,8 @@ function insert_header () {
             <input type="hidden" name="action_type" id="action_type"
                    value="search"/>
           </form>
+	  <p>
+          <class class="sort" id="sortselect"></class>
         </div>
       </div>
       <div class="main">

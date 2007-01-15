@@ -1,5 +1,5 @@
 /*
- * $Id: relevance.c,v 1.7 2007-01-10 10:04:23 adam Exp $
+ * $Id: relevance.c,v 1.8 2007-01-15 04:34:28 quinn Exp $
  */
 
 #include <ctype.h>
@@ -177,6 +177,7 @@ void relevance_donerecord(struct relevance *r, struct record_cluster *cluster)
     r->doc_frequency_vec[0]++;
 }
 
+#ifdef GAGA
 #ifdef FLOAT_REL
 static int comp(const void *p1, const void *p2)
 {
@@ -199,8 +200,9 @@ static int comp(const void *p1, const void *p2)
     return (*r2)->relevance - (*r1)->relevance;
 }
 #endif
+#endif
 
-// Prepare for a relevance-sorted read of up to num entries
+// Prepare for a relevance-sorted read
 void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
 {
     int i;
@@ -231,7 +233,9 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
         }
         rec->relevance = (int) (relevance * 100000);
     }
+#ifdef GAGA
     qsort(reclist->flatlist, reclist->num_records, sizeof(struct record*), comp);
+#endif
     reclist->pointer = 0;
     xfree(idfvec);
 }
