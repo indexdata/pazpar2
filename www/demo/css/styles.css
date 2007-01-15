@@ -159,7 +159,7 @@ a:hover {
 text-decoration: underline;
 }
 
-a.record {
+div.record {
 padding-left: 27px;
 background-image: url(../gfx/arrow_right.gif);
 background-position: 7px 6px;
@@ -169,7 +169,10 @@ line-height: 20px;
 margin-bottom: 5px;
 }
 
-div.records a.select {
+a.record {
+}
+
+div.records a.selected{
 padding-left: 27px;
 background-image: url(../gfx/arrow_down.gif);
 background-position: 7px 8px;

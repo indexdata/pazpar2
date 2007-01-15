@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.23 2007-01-15 04:34:29 quinn Exp $
+/* $Id: search.js,v 1.24 2007-01-15 19:01:29 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -256,19 +256,31 @@ function show_records()
 
 	for (i = 0; i < hits.length; i++)
 	{
-	    var mk = hits[i].getElementsByTagName("md-title");
-            var field = '';
+	    var tn = hits[i].getElementsByTagName("md-title");
+            var title = '';
+	    var an = hits[i].getElementsByTagName("md-author");
+	    var author = '';
 
-	    if (mk[0]) {
-                field = mk[0].childNodes[0].nodeValue;
+	    if (tn[0]) {
+                title = tn[0].childNodes[0].nodeValue;
             } else {
-                field = 'N/A';
+                title = 'N/A';
             }
+	    if (an[0])
+		    author = an[0].childNodes[0].nodeValue;
             
-            var record_cell = create_element('a', field);
+	    var record_div = document.createElement('div');
+	    record_div.className = 'record';
+
+            var record_cell = create_element('a', title);
             record_cell.setAttribute('href', '#');
-            record_cell.className = 'record';
-            record_container.appendChild(record_cell);
+            record_div.appendChild(record_cell);
+	    if (author)
+	    {
+		record_div.appendChild(document.createTextNode(', by '));
+		record_div.appendChild(document.createTextNode(author));
+	    }
+	    record_container.appendChild(record_div);
 	}
 
 	shown++;
