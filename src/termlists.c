@@ -1,9 +1,10 @@
 /*
- * $Id: termlists.c,v 1.4 2007-01-10 10:04:23 adam Exp $
+ * $Id: termlists.c,v 1.5 2007-01-15 19:01:15 quinn Exp $
  */
 
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <yaz/yaz-util.h>
 
 #if HAVE_CONFIG_H
@@ -124,11 +125,19 @@ void termlist_insert(struct termlist *tl, const char *term)
 {
     unsigned int bucket;
     struct termlist_bucket **p;
+    char buf[256], *cp;
 
-    bucket = hash((unsigned char *)term) & tl->hashmask;
+    if (strlen(term) > 255)
+        return;
+    strcpy(buf, term);
+    for (cp = buf + strlen(buf) - 1; cp > buf &&
+            (*cp == ',' || *cp == '.' || *cp == ' '); cp--)
+        *cp = '\0';
+
+    bucket = hash((unsigned char *)buf) & tl->hashmask;
     for (p = &tl->hashtable[bucket]; *p; p = &(*p)->next)
     {
-        if (!strcmp(term, (*p)->term.term))
+        if (!strcmp(buf, (*p)->term.term))
         {
             (*p)->term.frequency++;
             update_highscore(tl, &((*p)->term));
@@ -139,7 +148,7 @@ void termlist_insert(struct termlist *tl, const char *term)
     {
         struct termlist_bucket *new = nmem_malloc(tl->nmem,
                 sizeof(struct termlist_bucket));
-        new->term.term = nmem_strdup(tl->nmem, term);
+        new->term.term = nmem_strdup(tl->nmem, buf);
         new->term.frequency = 1;
         new->next = 0;
         *p = new;
