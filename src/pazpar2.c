@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.36 2007-01-16 05:29:48 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.37 2007-01-16 18:44:25 adam Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -491,8 +491,8 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
     struct record_cluster *cluster;
     struct session *se = cl->session;
     xmlChar *mergekey, *mergekey_norm;
-    xmlChar *type;
-    xmlChar *value;
+    xmlChar *type = 0;
+    xmlChar *value = 0;
     struct conf_service *service = global_parameters.server->service;
 
     if (!xdoc)
@@ -525,7 +525,6 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
     }
     relevance_newrec(se->relevance, cluster);
 
-    type = value = 0;
     for (n = root->children; n; n = n->next)
     {
         if (type)
@@ -546,6 +545,10 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
 
             type = xmlGetProp(n, "type");
             value = xmlNodeListGetString(xdoc, n->children, 0);
+
+            if (!type || !value)
+                continue;
+
             // First, find out what field we're looking at
             for (imeta = 0; imeta < service->num_metadata; imeta++)
                 if (!strcmp(type, service->metadata[imeta].name))
@@ -669,6 +672,10 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
         else
             yaz_log(YLOG_WARN, "Unexpected element %s in internal record", n->name);
     }
+    if (type)
+        xmlFree(type);
+    if (value)
+        xmlFree(value);
 
     xmlFreeDoc(xdoc);
 
