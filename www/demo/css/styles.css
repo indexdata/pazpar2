@@ -10,7 +10,7 @@ font: 11px verdana, arial, sans-serif;
 
 div.container {
 position: relative;
-width: 995px;
+width: 972px;
 background-color: #ffffff;
 color: #002863;
 margin-left: auto;
@@ -25,18 +25,17 @@ border: none;
 div.topbar {
 background-color: #002863;
 color: #ffffff;
-height: 105px;
+height: 90px;
 position: absolute;
 left: 0px;
 top: 0px;
 width: 100%;
-border-bottom: 5px solid #335382;
 }
 
 #logo {
 position: relative;
-left: 71px;
-top: 44px;
+left: 30px;
+top: 34px;
 }
 
 div.topmenu {
@@ -44,46 +43,21 @@ position: absolute;
 right: 0px;
 top: 64px;
 text-align: right;
-width: 729px;
+width: 700px;
 padding-top: 4px;
 padding-right: 35px;
-border-top: 1px solid #335382;
 height: 25px;
 }
 
 div.topmenu a {
 color: #ffffff;
 font: bold 11px verdana, arial, sans-serif;
-padding-left: 41px;
-}
-
-
-div.search {
-position: relative;
-top: 110px;
-left: 0px;
-width: 100%;
-height: 90px;
-background-color: #ffffff;
-color: #002863;
-font-weight: bold;
-}
-
-div.search span {
-position: absolute;
-right: 788px;
-top: 30px;
-}
-
-div.search span.sort {
-position: absolute;
-right: 500px;
-top: 50px;
+padding-left: 5px;
 }
 
 div.search div {
 position: absolute;
-left: 225px;
+left: 224px;
 top: 25px;
 }
 
@@ -101,12 +75,11 @@ div.main {
 width: 100%;
 height: 100%;
 background-color: #ffffff;
-background-image: url(../gfx/background.gif);
 background-position: top left;
 background-repeat: repeat-y;
 color: #002863;
 position: relative;
-top: 100px;
+top: 90px;
 left: 0px;
 }
 
@@ -116,26 +89,26 @@ clear: both;
 
 div.leftbar {
 float: left;
-width: 167px;
-padding-left: 23px;
+width: 200px;
+padding-left: 17px;
 padding-top: 15px;
-padding-right: 20px;
+padding-right: 7px;
 padding-bottom: 30px;
 margin-right: 17px;
-border-top: 1px solid #c5cedc;
 color: #000000;
 height: 100%;
+background-color: #f0f0f0;
 }
 
 div.content {
 float: right;
-width: 733px;
-padding-right: 35px;
+width: 692px;
+padding-left: 0px;
+padding-right: 35px; /*35px; */
 padding-top: 15px;
 padding-bottom: 30px;
 background-color: #ffffff;
 color: #002863;
-border-top: 1px solid #c5cedc;
 height: 100%;
 }
 
@@ -160,7 +133,7 @@ text-decoration: underline;
 }
 
 div.record {
-padding-left: 27px;
+padding-left: 22px;
 background-image: url(../gfx/arrow_right.gif);
 background-position: 7px 6px;
 background-repeat: no-repeat;
@@ -173,7 +146,7 @@ a.record {
 }
 
 div.records a.selected{
-padding-left: 27px;
+padding-left: 17px;
 background-image: url(../gfx/arrow_down.gif);
 background-position: 7px 8px;
 background-repeat: no-repeat;
