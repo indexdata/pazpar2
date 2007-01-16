@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.27 2007-01-16 05:29:48 quinn Exp $
+/* $Id: search.js,v 1.28 2007-01-16 15:02:35 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -27,6 +27,8 @@ var facet_list;
 var cur_facet = 0;
 var cur_sort = "relevance";
 var searched = 0;
+var cur_id = -1;
+var cur_rec = 0;
 
 function initialize ()
 {
@@ -35,7 +37,6 @@ function initialize ()
     session_check();
     set_sort();
 }
-
 
 function GetXmlHttpObject()
 { 
@@ -230,30 +231,8 @@ function displayname(name)
 	return name;
 }
 
-function show_details()
+function paint_details(body, xml)
 {
-    if (xfetchDetails.readyState != 4)
-	return;
-    var xml = xfetchDetails.responseXML;
-    var error = xml.getElementsByTagName("error");
-    if (error[0])
-    {
-	var msg = error[0].childNodes[0].nodeValue;
-	alert(msg);
-	location = "?";
-	return;
-    }
-
-    // This is some ugly display code. Replace with your own ting o'beauty
-
-    var idn = xml.getElementsByTagName('recid');
-    if (!idn[0])
-	return;
-    var id = idn[0].childNodes[0].nodeValue;
-
-    var body = document.getElementById('rec_' + id);
-    if (!body)
-	return;
     clear_cell(body);
     //body.appendChild(document.createElement('br'));
     var nodes = xml.childNodes[0].childNodes;
@@ -285,12 +264,49 @@ function show_details()
     body.style.display = 'inline';
 }
 
+function show_details()
+{
+    if (xfetchDetails.readyState != 4)
+	return;
+    var xml = xfetchDetails.responseXML;
+    var error = xml.getElementsByTagName("error");
+    if (error[0])
+    {
+	var msg = error[0].childNodes[0].nodeValue;
+	alert(msg);
+	location = "?";
+	return;
+    }
+
+    // This is some ugly display code. Replace with your own ting o'beauty
+
+    var idn = xml.getElementsByTagName('recid');
+    if (!idn[0])
+	return;
+    var id = idn[0].childNodes[0].nodeValue;
+    cur_id = id;
+    cur_rec = xml;
+
+    var body = document.getElementById('rec_' + id);
+    if (!body)
+	return;
+    paint_details(body, xml);
+}
+
 function fetch_details(id)
 {
-    var node = document.getElementById('rec_' + id);
-    if (node && node.style.display == 'inline')
+    cur_id = -1;
+    var nodes = document.getElementsByName('listrecord');
+    var i;
+    for (i = 0; i < nodes.length; i++)
     {
-	node.style.display = 'none';
+	var dets = nodes[i].getElementsByTagName('div');
+	if (dets[0])
+	    dets[0].style.display = 'none';
+    }
+    if (id == cur_id)
+    {
+	cur_id = -1;
 	return;
     }
     if (!session)
@@ -365,6 +381,7 @@ function show_records()
             
 	    var record_div = document.createElement('div');
 	    record_div.className = 'record';
+	    record_div.setAttribute('name', 'listrecord');
 
             var record_cell = create_element('a', title);
             record_cell.setAttribute('href', '#');
@@ -379,10 +396,12 @@ function show_records()
 		record_div.appendChild(document.createTextNode(
 			' (' + count + ')'));
 	    var det_div = document.createElement('div');
-	    det_div.style.display = 'none';
+	    if (id == cur_id)
+		paint_details(det_div, cur_rec);
+	    else
+		det_div.style.display = 'none';
 	    det_div.setAttribute('id', 'rec_' + id);
-	    det_div.appendChild(document.createElement('br'));
-	    det_div.appendChild(document.createTextNode('Hugo'));
+	    det_div.setAttribute('name', 'details');
 	    record_div.appendChild(det_div);
 	    record_container.appendChild(record_div);
 	}
@@ -567,6 +586,7 @@ function start_search()
     stattimer = 0;
     clearTimeout(showtimer);
     showtimer = 0;
+    cur_id = -1;
     var query = escape(document.getElementById('query').value);
     var url = "search.pz2?" +
         "command=search" +

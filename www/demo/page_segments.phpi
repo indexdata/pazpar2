@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: page_segments.phpi,v 1.11 2007-01-15 19:01:29 quinn Exp $
+/* $Id: page_segments.phpi,v 1.12 2007-01-16 15:02:35 quinn Exp $
  * ---------------------------------------------------
  * Page segments 
  */
@@ -21,7 +21,7 @@ function insert_header () {
     <div class="container">
       <div class="topbar">
         <a href=".">
-          <img id="logo" src="gfx/logo2.png" width="155" height="36"
+          <img id="logo" src="gfx/logo3.png" width="155" height="36"
                alt="Keystone Retriever" />
         </a>
         <div class="topmenu">
