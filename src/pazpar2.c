@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.38 2007-01-16 19:42:20 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.39 2007-01-16 23:42:10 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -517,6 +517,9 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
     normalize_mergekey(mergekey_norm, 0);
 
     cluster = reclist_insert(se->reclist, res, mergekey_norm, &se->total_merged);
+    if (global_parameters.dump_records)
+        yaz_log(YLOG_LOG, "Cluster id %d from %s (#%d)", cluster->recid,
+                cl->database->url, cl->records);
     if (!cluster)
     {
         /* no room for record */
@@ -702,6 +705,7 @@ static void ingest_records(struct client *cl, Z_Records *r)
     {
         Z_NamePlusRecord *npr = rlist->records[i];
 
+        cl->records++;
         if (npr->which != Z_NamePlusRecord_databaseRecord)
         {
             yaz_log(YLOG_WARN, "Unexpected record type, probably diagnostic");
@@ -743,7 +747,6 @@ static void do_presentResponse(IOCHAN i, Z_APDU *a)
     if (!*r->presentStatus && cl->state != Client_Error)
     {
         yaz_log(YLOG_DEBUG, "Good Present response");
-        cl->records += *r->numberOfRecordsReturned;
         ingest_records(cl, r->records);
         cl->state = Client_Idle;
     }
