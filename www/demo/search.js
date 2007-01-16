@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.29 2007-01-16 18:19:50 quinn Exp $
+/* $Id: search.js,v 1.30 2007-01-16 19:21:05 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -95,12 +95,7 @@ function session_pinged()
     var xml = xpingSession.responseXML;
     var error = xml.getElementsByTagName("error");
     if (error[0])
-    {
-	var msg = error[0].childNodes[0].nodeValue;
-	alert(msg);
 	location = "?";
-	return;
-    }
     setTimeout(ping_session, 50000);
 }
 
@@ -231,6 +226,20 @@ function displayname(name)
 	return name;
 }
 
+function  paint_details_tr(name, dn)
+{
+    //emit a table row
+    var dname = displayname(name);
+    var ln = create_element('b', dname);
+    var tln = document.createElement('td');
+    tln.setAttribute('width', 70);
+    tln.appendChild(ln);
+    var tr = document.createElement('tr');
+    tr.appendChild(tln);
+    tr.appendChild(dn);
+    return tr;
+}
+
 function paint_details(body, xml)
 {
     clear_cell(body);
@@ -239,6 +248,8 @@ function paint_details(body, xml)
     var i;
     var table = document.createElement('table');
     table.setAttribute('cellpadding', 2);
+    var dn = 0;
+    var lastname = '';
     for (i = 0; i < nodes.length; i++)
     {
 	if (nodes[i].nodeType != 1)
@@ -246,18 +257,28 @@ function paint_details(body, xml)
 	var name = nodes[i].nodeName;
 	if (name == 'recid' || name == 'md-title')
 	    continue;
-	name = displayname(name);
+	if (name != lastname)
+	{
+	    if (dn)
+	    {
+		var tr = paint_details_tr(lastname, dn);
+		table.appendChild(tr);
+	    }
+	    dn = document.createElement('td');
+	    lastname = name;
+	}
+
 	if (!nodes[i].childNodes[0])
 		continue;
 	var value = nodes[i].childNodes[0].nodeValue;
-	var lbl = create_element('b', name );
-	var lbln = document.createElement('td');
-	lbln.setAttribute('width', 70);
-	lbln.appendChild(lbl);
-	var val = create_element('td', value);
-	var tr = document.createElement('tr');
-	tr.appendChild(lbln);
-	tr.appendChild(val);
+	if (dn.childNodes[0])
+	    value = '; ' + value;
+	var nv = document.createTextNode(value);
+	dn.appendChild(nv);
+    }
+    if (dn)
+    {
+	var tr = paint_details_tr(lastname, dn);
 	table.appendChild(tr);
     }
     body.appendChild(table);
