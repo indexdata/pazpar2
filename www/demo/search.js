@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.26 2007-01-16 03:38:50 quinn Exp $
+/* $Id: search.js,v 1.27 2007-01-16 05:29:48 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -268,6 +268,8 @@ function show_details()
 	if (name == 'recid' || name == 'md-title')
 	    continue;
 	name = displayname(name);
+	if (!nodes[i].childNodes[0])
+		continue;
 	var value = nodes[i].childNodes[0].nodeValue;
 	var lbl = create_element('b', name );
 	var lbln = document.createElement('td');

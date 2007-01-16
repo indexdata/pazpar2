@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.35 2007-01-16 03:38:49 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.36 2007-01-16 05:29:48 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -646,12 +646,6 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
                         (*wheretoput)->data.number.min = first;
                     if (last > (*wheretoput)->data.number.max)
                         (*wheretoput)->data.number.max = last;
-                    if (sk)
-                    {
-                        union data_types *sdata = cluster->sortkeys[md->sortkey_offset];
-                        sdata->number.min = first;
-                        sdata->number.max = last;
-                    }
                 }
 #ifdef GAGA
                 if (sk)
