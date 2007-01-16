@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.37 2007-01-16 18:44:25 adam Exp $ */
+/* $Id: pazpar2.c,v 1.38 2007-01-16 19:42:20 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1550,7 +1550,8 @@ int main(int argc, char **argv)
                         "    -h [host:]port          (REST protocol listener)\n"
                         "    -C cclconfig\n"
                         "    -s simpletargetfile\n"
-                        "    -p hostname[:portno]    (HTTP proxy)\n");
+                        "    -p hostname[:portno]    (HTTP proxy)\n"
+                        "    -d                      (show internal records)\n");
 		exit(1);
 	}
     }

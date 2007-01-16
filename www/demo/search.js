@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.31 2007-01-16 19:24:44 quinn Exp $
+/* $Id: search.js,v 1.32 2007-01-16 19:42:20 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -226,6 +226,16 @@ function displayname(name)
 	return name;
 }
 
+function hyperlink_field(name)
+{
+    if (name == 'md-author')
+	return 'au';
+    else if (name == 'md-subject')
+	return 'su';
+    else
+	return 0;
+}
+
 function  paint_details_tr(name, dn)
 {
     //emit a table row
@@ -243,6 +253,7 @@ function  paint_details_tr(name, dn)
 
 function paint_details(body, xml)
 {
+    // This is some ugly display code. Replace with your own ting o'beauty
     clear_cell(body);
     //body.appendChild(document.createElement('br'));
     var nodes = xml.childNodes[0].childNodes;
@@ -273,8 +284,19 @@ function paint_details(body, xml)
 		continue;
 	var value = nodes[i].childNodes[0].nodeValue;
 	if (dn.childNodes[0])
-	    value = '; ' + value;
-	var nv = document.createTextNode(value);
+	    dn.appendChild(document.createTextNode('; '));
+	var hyl = hyperlink_field(name);
+	var nv;
+	if (hyl)
+	{
+	    nv = create_element('a', value);
+	    nv.setAttribute('href', '#');
+	    nv.setAttribute('term', value);
+	    nv.setAttribute('searchfield', hyl);
+	    nv.onclick = function() { hyperlink_search(this); return false; };
+	}
+	else
+	    nv = document.createTextNode(value);
 	dn.appendChild(nv);
     }
     if (dn)
@@ -300,8 +322,6 @@ function show_details()
 	return;
     }
 
-    // This is some ugly display code. Replace with your own ting o'beauty
-
     var idn = xml.getElementsByTagName('recid');
     if (!idn[0])
 	return;
@@ -315,8 +335,9 @@ function show_details()
     paint_details(body, xml);
 }
 
-function hyperlink_search(field, obj)
+function hyperlink_search(obj)
 {
+    var field = obj.getAttribute('searchfield');
     var term = obj.getAttribute('term');
     var queryfield  = document.getElementById('query');
     queryfield.value = field + '=' + term;
@@ -423,7 +444,8 @@ function show_records()
 		var al = create_element('a', author);
 		al.setAttribute('href', '#');
 		al.setAttribute('term', author);
-		al.onclick = function() { hyperlink_search('au', this); return false; };
+		al.setAttribute('searchfield', 'au');
+		al.onclick = function() { hyperlink_search(this); return false; };
 		record_div.appendChild(al);
 	    }
 	    if (count > 1)
