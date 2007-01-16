@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.32 2007-01-16 19:42:20 quinn Exp $
+/* $Id: search.js,v 1.33 2007-01-16 23:44:07 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -222,6 +222,8 @@ function displayname(name)
 	return 'ISBN';
     else if (name == 'md-publisher')
 	return 'Publisher';
+    else if (name == 'md-url')
+	return 'URL';
     else
 	return name;
 }
@@ -232,6 +234,8 @@ function hyperlink_field(name)
 	return 'au';
     else if (name == 'md-subject')
 	return 'su';
+    else if (name == 'md-url')
+	return 'URL';
     else
 	return 0;
 }
@@ -290,10 +294,18 @@ function paint_details(body, xml)
 	if (hyl)
 	{
 	    nv = create_element('a', value);
-	    nv.setAttribute('href', '#');
-	    nv.setAttribute('term', value);
-	    nv.setAttribute('searchfield', hyl);
-	    nv.onclick = function() { hyperlink_search(this); return false; };
+	    if (hyl == 'URL')
+	    {
+		nv.setAttribute('href', value);
+		nv.setAttribute('target', '_blank');
+	    }
+	    else
+	    {
+		nv.setAttribute('href', '#');
+		nv.setAttribute('term', value);
+		nv.setAttribute('searchfield', hyl);
+		nv.onclick = function() { hyperlink_search(this); return false; };
+	    }
 	}
 	else
 	    nv = document.createTextNode(value);
@@ -435,7 +447,7 @@ function show_records()
 	    record_div.setAttribute('name', 'listrecord');
 
             var record_cell = create_element('a', title);
-            record_cell.setAttribute('href', '#');
+            record_cell.setAttribute('href', '#' + id);
 	    record_cell.setAttribute('onclick', 'fetch_details(' + id + '); return false');
             record_div.appendChild(record_cell);
 	    if (author)
