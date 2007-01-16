@@ -7,6 +7,7 @@
 
   <service>
     <metadata name="title" brief="yes" sortkey="skiparticle" merge="longest" rank="6"/>
+    <metadata name="isbn" merge="unique"/>
     <metadata name="date" brief="yes" sortkey="numeric" type="year" merge="range"/>
     <metadata name="author" brief="yes" termlist="yes" merge="longest" rank="2"/>
     <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
@@ -20,7 +21,7 @@
 
 <retrievalprofile>
   <requestsyntax>marc21</requestsyntax>
-  <nativesyntax name="iso2709" format="marc21" encoding="marc-8" mapto="marcxml"/>
+  <nativesyntax name="iso2709" format="marc21" encoding="marc8s" mapto="marcxml"/>
   <map type="xslt" stylesheet="marc21.xsl"/>
 </retrievalprofile>
 

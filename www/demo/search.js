@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.25 2007-01-15 22:05:37 quinn Exp $
+/* $Id: search.js,v 1.26 2007-01-16 03:38:50 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -10,6 +10,7 @@ var xsearch;
 var xshow;
 var xstat;
 var xtermlist;
+var xfetchDetails;
 var session = false;
 var targetsloaded = false;
 var shown;
@@ -213,6 +214,91 @@ function set_sort(sort)
     set_sort_opt(t, 'title:1', 'Title');
 }
 
+function displayname(name)
+{
+    if (name == 'md-author')
+	return 'Author';
+    else if (name == 'md-subject')
+	return 'Subject';
+    else if (name == 'md-date')
+	return 'Date';
+    else if (name == 'md-isbn')
+	return 'ISBN';
+    else if (name == 'md-publisher')
+	return 'Publisher';
+    else
+	return name;
+}
+
+function show_details()
+{
+    if (xfetchDetails.readyState != 4)
+	return;
+    var xml = xfetchDetails.responseXML;
+    var error = xml.getElementsByTagName("error");
+    if (error[0])
+    {
+	var msg = error[0].childNodes[0].nodeValue;
+	alert(msg);
+	location = "?";
+	return;
+    }
+
+    // This is some ugly display code. Replace with your own ting o'beauty
+
+    var idn = xml.getElementsByTagName('recid');
+    if (!idn[0])
+	return;
+    var id = idn[0].childNodes[0].nodeValue;
+
+    var body = document.getElementById('rec_' + id);
+    if (!body)
+	return;
+    clear_cell(body);
+    //body.appendChild(document.createElement('br'));
+    var nodes = xml.childNodes[0].childNodes;
+    var i;
+    var table = document.createElement('table');
+    table.setAttribute('cellpadding', 2);
+    for (i = 0; i < nodes.length; i++)
+    {
+	if (nodes[i].nodeType != 1)
+	    continue;
+	var name = nodes[i].nodeName;
+	if (name == 'recid' || name == 'md-title')
+	    continue;
+	name = displayname(name);
+	var value = nodes[i].childNodes[0].nodeValue;
+	var lbl = create_element('b', name );
+	var lbln = document.createElement('td');
+	lbln.setAttribute('width', 70);
+	lbln.appendChild(lbl);
+	var val = create_element('td', value);
+	var tr = document.createElement('tr');
+	tr.appendChild(lbln);
+	tr.appendChild(val);
+	table.appendChild(tr);
+    }
+    body.appendChild(table);
+    body.style.display = 'inline';
+}
+
+function fetch_details(id)
+{
+    var node = document.getElementById('rec_' + id);
+    if (node && node.style.display == 'inline')
+    {
+	node.style.display = 'none';
+	return;
+    }
+    if (!session)
+	return;
+    var url = "search.pz2?session=" + session +
+        "&command=record" +
+	"&id=" + id;
+    SendXmlHttpObject(xfetchDetails = GetXmlHttpObject(), url, show_details);
+}
+
 function show_records()
 {
     if (xshow.readyState != 4)
@@ -262,6 +348,7 @@ function show_records()
 	    var author = '';
 	    var cn = hits[i].getElementsByTagName("count");
 	    var count = 1;
+	    var idn = hits[i].getElementsByTagName("recid");
 
 	    if (tn[0]) {
                 title = tn[0].childNodes[0].nodeValue;
@@ -272,12 +359,14 @@ function show_records()
 		    author = an[0].childNodes[0].nodeValue;
 	    if (cn[0])
 		count = Number(cn[0].childNodes[0].nodeValue);
+	    var id = idn[0].childNodes[0].nodeValue;
             
 	    var record_div = document.createElement('div');
 	    record_div.className = 'record';
 
             var record_cell = create_element('a', title);
             record_cell.setAttribute('href', '#');
+	    record_cell.setAttribute('onclick', 'fetch_details(' + id + '); return false');
             record_div.appendChild(record_cell);
 	    if (author)
 	    {
@@ -287,6 +376,12 @@ function show_records()
 	    if (count > 1)
 		record_div.appendChild(document.createTextNode(
 			' (' + count + ')'));
+	    var det_div = document.createElement('div');
+	    det_div.style.display = 'none';
+	    det_div.setAttribute('id', 'rec_' + id);
+	    det_div.appendChild(document.createElement('br'));
+	    det_div.appendChild(document.createTextNode('Hugo'));
+	    record_div.appendChild(det_div);
 	    record_container.appendChild(record_div);
 	}
 

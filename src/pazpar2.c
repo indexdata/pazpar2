@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.34 2007-01-15 20:01:53 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.35 2007-01-16 03:38:49 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -515,7 +515,6 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
     mergekey_norm = nmem_strdup(se->nmem, (char*) mergekey);
     xmlFree(mergekey);
     normalize_mergekey(mergekey_norm, 0);
-    yaz_log(YLOG_LOG, "MK: '%s'", mergekey_norm);
 
     cluster = reclist_insert(se->reclist, res, mergekey_norm, &se->total_merged);
     if (!cluster)
@@ -599,7 +598,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             {
                 struct record_metadata *mnode;
                 for (mnode = *wheretoput; mnode; mnode = mnode->next)
-                    if (!strcmp(mnode->data.text, mnode->data.text))
+                    if (!strcmp(mnode->data.text, newm->data.text))
                         break;
                 if (!mnode)
                 {

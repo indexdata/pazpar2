@@ -21,6 +21,12 @@
 	<xsl:value-of select="marc:datafield[@tag='245']/marc:subfield[@code='b']"/>
       </pz:metadata>
 
+      <xsl:for-each select="marc:datafield[@tag='020']">
+        <pz:metadata type="isbn">
+	  <xsl:value-of select="marc:subfield[@code='a']"/>
+	</pz:metadata>
+      </xsl:for-each>
+
       <xsl:for-each select="marc:datafield[@tag='260']">
         <pz:metadata type="date">
 	  <xsl:value-of select="marc:subfield[@code='c']"/>
