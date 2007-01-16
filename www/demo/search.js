@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.28 2007-01-16 15:02:35 quinn Exp $
+/* $Id: search.js,v 1.29 2007-01-16 18:19:50 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -293,6 +293,14 @@ function show_details()
     paint_details(body, xml);
 }
 
+function hyperlink_search(field, obj)
+{
+    var term = obj.getAttribute('term');
+    var queryfield  = document.getElementById('query');
+    queryfield.value = field + '=' + term;
+    start_search();
+}
+
 function fetch_details(id)
 {
     cur_id = -1;
@@ -390,7 +398,11 @@ function show_records()
 	    if (author)
 	    {
 		record_div.appendChild(document.createTextNode(', by '));
-		record_div.appendChild(document.createTextNode(author));
+		var al = create_element('a', author);
+		al.setAttribute('href', '#');
+		al.setAttribute('term', author);
+		al.onclick = function() { hyperlink_search('au', this); return false; };
+		record_div.appendChild(al);
 	    }
 	    if (count > 1)
 		record_div.appendChild(document.createTextNode(
