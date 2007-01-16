@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.30 2007-01-16 19:21:05 quinn Exp $
+/* $Id: search.js,v 1.31 2007-01-16 19:24:44 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -233,6 +233,7 @@ function  paint_details_tr(name, dn)
     var ln = create_element('b', dname);
     var tln = document.createElement('td');
     tln.setAttribute('width', 70);
+    tln.setAttribute('valign', 'top');
     tln.appendChild(ln);
     var tr = document.createElement('tr');
     tr.appendChild(tln);
