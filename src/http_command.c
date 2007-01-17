@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.23 2007-01-17 14:21:29 quinn Exp $
+ * $Id: http_command.c,v 1.24 2007-01-17 15:27:34 quinn Exp $
  */
 
 #include <stdio.h>
@@ -165,7 +165,7 @@ static void targets_termlist(WRBUF wrbuf, struct session *se, int num)
     if (!(ht = hitsbytarget(se, &count)))
         return;
     qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht);
-    for (i = 0; i < count && i < num; i++)
+    for (i = 0; i < count && i < num && ht[i].hits > 0; i++)
     {
         wrbuf_puts(wrbuf, "\n<term>\n");
         wrbuf_printf(wrbuf, "<name>%s</name>\n", ht[i].id);
