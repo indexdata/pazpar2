@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.36 2007-01-17 14:21:29 quinn Exp $
+/* $Id: search.js,v 1.37 2007-01-17 15:31:46 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -96,7 +96,8 @@ function session_pinged()
     var error = xml.getElementsByTagName("error");
     if (error[0])
 	location = "?";
-    setTimeout(ping_session, 50000);
+    else
+        setTimeout(ping_session, 50000);
 }
 
 function update_action (new_action) {
