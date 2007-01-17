@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: page_segments.phpi,v 1.17 2007-01-17 14:12:03 quinn Exp $
+/* $Id: page_segments.phpi,v 1.18 2007-01-17 14:25:37 quinn Exp $
  * ---------------------------------------------------
  * Page segments 
  */
@@ -67,6 +67,13 @@ function insert_header () {
 	  <a id="facet_date" class="selected"
              onclick="toggle_facet(this)">Date</a>
           <span id="facet_date_terms" class="facet"
+               style="display: none;"></span>
+
+          <br />
+
+	  <a id="facet_xtargets" class="selected"
+             onclick="toggle_facet(this)">Targets</a>
+          <span id="facet_xtargets_terms" class="facet"
                style="display: none;"></span>
 	    
           
