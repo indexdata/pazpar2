@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: page_segments.phpi,v 1.16 2007-01-17 13:48:29 quinn Exp $
+/* $Id: page_segments.phpi,v 1.17 2007-01-17 14:12:03 quinn Exp $
  * ---------------------------------------------------
  * Page segments 
  */
@@ -54,13 +54,21 @@ function insert_header () {
              onclick="toggle_facet(this)">Subject</a>
           <span id="facet_subject_terms" class="facet"
                style="display: block;"></span>
-          
+
           <br />
 
           <a id="facet_author" class="unselected"
              onclick="toggle_facet(this)">Author</a>
           <span id="facet_author_terms" class="facet"
                style="display: block;"></span>
+
+          <br />
+
+	  <a id="facet_date" class="selected"
+             onclick="toggle_facet(this)">Date</a>
+          <span id="facet_date_terms" class="facet"
+               style="display: none;"></span>
+	    
           
         </div>
         <div class="content" id="body">

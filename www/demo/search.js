@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.34 2007-01-17 02:15:12 quinn Exp $
+/* $Id: search.js,v 1.35 2007-01-17 14:12:03 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -516,6 +516,8 @@ function refine_query (obj) {
 	query_cell.value += ' and su=(' + term + ')';
     else if (cur_termlist == 'author')
 	query_cell.value += ' and au=(' + term + ')';
+    else if (cur_termlist == 'date')
+	query_cell.value += ' and date=' + term;
 
     start_search();
 }
