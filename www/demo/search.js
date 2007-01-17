@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.37 2007-01-17 15:31:46 quinn Exp $
+/* $Id: search.js,v 1.38 2007-01-17 17:24:44 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -24,7 +24,6 @@ var url_surveillence;
 var recstoshow = 20;
 var page_window = 5;  // Number of pages prior to and after the current page
 var facet_list;
-var cur_facet = 0;
 var cur_sort = "relevance";
 var searched = 0;
 var cur_id = -1;
@@ -523,69 +522,72 @@ function refine_query (obj) {
     start_search();
 }
 
+function clear_termlists()
+{
+    var i;
+    for (i = 0; i < facet_list.length; i++)
+	clear_cell(facet_list[i][1]);
+}
 
-
-function show_termlist()
+function show_termlists()
 {
     if (xtermlist.readyState != 4)
 	return;
 
     var i;
     var xml = xtermlist.responseXML;
-    var body = facet_list[cur_facet][1];
-    var facet_name = facet_list[cur_facet][0];
-    var hits = xml.getElementsByTagName("term");
     var clients =
 	Number(xml.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue);
+    var lists = xml.getElementsByTagName("list");
 
-    cur_facet++;
-
-    if (cur_facet >= facet_list.length)
-        cur_facet = 0;
-
-    if (!hits[0])
+    for (i = 0; i < lists.length; i++)
     {
-	termtimer = setTimeout(check_termlist, 500);
-    }
-    else
-    {
+	var listname = lists[i].getAttribute('name');
+	var body = document.getElementById('facet_' + listname + '_terms');
+	if (body.style.display == 'none')
+	    continue;
 	clear_cell(body);
-	
-        for (i = 0; i < hits.length; i++)
+	var terms = lists[i].getElementsByTagName('term');
+	var t;
+        for (t = 0; t < terms.length; t++)
 	{
-	    var namen = hits[i].getElementsByTagName("name");
-	    var freqn = hits[i].getElementsByTagName("frequency");
+	    var namen = terms[t].getElementsByTagName("name");
+	    var freqn = terms[t].getElementsByTagName("frequency");
 	    if (namen[0])
                 var term = namen[0].childNodes[0].nodeValue;
 		var freq = freqn[0].childNodes[0].nodeValue;
                 var refine_cell = create_element('a', term + ' (' + freq + ')');
                 refine_cell.setAttribute('href', '#');
                 refine_cell.setAttribute('term', term);
-                refine_cell.setAttribute('facet', facet_name);
+                refine_cell.setAttribute('facet', listname);
                 refine_cell.onclick = function () {
                     refine_query(this);
                     return false;
                 };
                 body.appendChild(refine_cell);
 	}
-
-	if (clients > 0)
-	    termtimer = setTimeout(check_termlist, 1000);
     }
+    if (clients > 0)
+	termtimer = setTimeout(check_termlist, 1000);
 }
 
 function check_termlist()
 {
-    var facet_name = facet_list[cur_facet][0];
+    var facet_names = '';
+    var i;
+    for (i = 0; i < facet_list.length; i++)
+	if (facet_list[i][1].style.display != 'none')
+	{
+	    if (facet_names)
+		facet_names += ',';
+	    facet_names += facet_list[i][0];
+	}
     var url = "search.pz2?" +
         "command=termlist" +
 	"&session=" + session +
-	"&name=" + facet_name +
+	"&name=" + facet_names +
 	"&num=12";
-    xtermlist = GetXmlHttpObject();
-    xtermlist.onreadystatechange=show_termlist;
-    xtermlist.open("GET", url);
-    xtermlist.send(null);
+    SendXmlHttpObject(xtermlist = GetXmlHttpObject(), url, show_termlists);
 }
 
 function show_stat()
@@ -660,6 +662,7 @@ function start_search()
     clearTimeout(showtimer);
     showtimer = 0;
     cur_id = -1;
+    clear_termlists();
     var query = escape(document.getElementById('query').value);
     var url = "search.pz2?" +
         "command=search" +
@@ -785,6 +788,7 @@ function toggle_facet (obj) {
     if (obj.className == 'selected') {
         obj.className = 'unselected';
         container.style.display = 'inline';
+	check_termlist();
     } else {
         obj.className = 'selected';
         container.style.display = 'none';
