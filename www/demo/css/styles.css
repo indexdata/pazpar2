@@ -5,7 +5,7 @@ overflow-y: scroll;
 html, body {
 background-color: #5d82b7;
 color: #002863;
-font: 11px verdana, arial, sans-serif;
+font: 12px verdana, arial, sans-serif;
 }
 
 div.container {
@@ -25,7 +25,7 @@ border: none;
 div.topbar {
 background-color: #002863;
 color: #ffffff;
-height: 90px;
+height: 6em;
 position: absolute;
 left: 0px;
 top: 0px;
@@ -35,15 +35,14 @@ width: 100%;
 #logo {
 position: relative;
 left: 30px;
-top: 34px;
+top: 24px;
 }
 
 div.topmenu {
 position: absolute;
 right: 0px;
-top: 64px;
+top: 50px;
 text-align: right;
-width: 700px;
 padding-top: 4px;
 padding-right: 35px;
 height: 25px;
@@ -51,23 +50,29 @@ height: 25px;
 
 div.topmenu a {
 color: #ffffff;
-font: bold 11px verdana, arial, sans-serif;
+font: bold verdana, arial, sans-serif;
 padding-left: 5px;
 }
 
 div.search div {
 position: absolute;
 left: 224px;
-top: 25px;
+top: 18px;
 }
 
 input.search {
 background-color: #f0f0f0;
 color: #002863;
 border: 1px solid #a5acb2;
-height: 17px;
-line-height: 17px;
 width: 420px;
+}
+
+
+input.button {
+background-color: #5d82b7;
+color: #ffffff;
+border: 2px solid #5d82b7;
+font: bold verdana;
 }
 
 
@@ -79,7 +84,7 @@ background-position: top left;
 background-repeat: repeat-y;
 color: #002863;
 position: relative;
-top: 90px;
+top: 6em;
 left: 0px;
 }
 
@@ -104,22 +109,12 @@ div.content {
 float: right;
 width: 692px;
 padding-left: 0px;
-padding-right: 35px; /*35px; */
+padding-right: 35px;
 padding-top: 15px;
 padding-bottom: 30px;
 background-color: #ffffff;
 color: #002863;
 height: 100%;
-}
-
-
-input.button {
-background-color: #5d82b7;
-color: #ffffff;
-border: none;
-line-height: 19px;
-height: 19px;
-font: bold 11px verdana;
 }
 
 
@@ -133,27 +128,14 @@ text-decoration: underline;
 }
 
 div.record {
-padding-left: 22px;
-background-image: url(../gfx/arrow_right.gif);
-background-position: 7px 6px;
-background-repeat: no-repeat;
+padding-left: 2em;
 display: block;
-line-height: 20px;
-margin-bottom: 5px;
+line-height: 1.4em;
+margin-bottom: 8px;
+text-indent: -2em;
 }
 
 a.record {
-}
-
-div.records a.selected{
-padding-left: 17px;
-background-image: url(../gfx/arrow_down.gif);
-background-position: 7px 8px;
-background-repeat: no-repeat;
-font-weight: bold;
-line-height: 20px;
-background-color: #e7ecf4;
-display: block;
 }
 
 div.results {
@@ -207,7 +189,8 @@ font-weight: bold;
 
 div.leftbar a {
 display: block;
-padding-left: 20px;
+padding-left: 2.2em;
+text-indent: -1em;
 }
 
 a.unselected {

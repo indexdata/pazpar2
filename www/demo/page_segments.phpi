@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: page_segments.phpi,v 1.13 2007-01-16 21:43:35 adam Exp $
+/* $Id: page_segments.phpi,v 1.14 2007-01-17 09:38:50 adam Exp $
  * ---------------------------------------------------
  * Page segments 
  */
@@ -25,21 +25,20 @@ function insert_header () {
                alt="Keystone Retriever" />
         </a>
 
-      <div class="search">  
-        <div>
-          <form name="search" onsubmit="start_search(); return false;">
-            <input id="query" type="text" class="search" tabindex="1"
-                  maxlength="255" value="" />
-            <input type="submit" class="button" value="Search" />
-            <input type="hidden" name="startrec" id="startrec"/>
-            <input type="hidden" name="action_type" id="action_type"
-                   value="search"/>
-          </form>
-	  <p>
-	  <p>
-          <class class="sort" id="sortselect"></class>
+        <div class="search">  
+          <div>
+            <form name="search" onsubmit="start_search(); return false;">
+              <input id="query" type="text" class="search" tabindex="1"
+                    maxlength="255" value="" />
+              <input type="submit" class="button" value="Search" />
+              <input type="hidden" name="startrec" id="startrec"/>
+              <input type="hidden" name="action_type" id="action_type"
+                     value="search"/>
+            </form>
+	    <p>
+            <class class="sort" id="sortselect"></class>
+          </div>
         </div>
-      </div>
 
         <div class="topmenu">
           <a href="about.php" class="topmenu">ABOUT</a>
