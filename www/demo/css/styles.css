@@ -5,7 +5,8 @@ overflow-y: scroll;
 html, body {
 background-color: #5d82b7;
 color: #002863;
-font: 12px verdana, arial, sans-serif;
+font-family: verdana, arial, sans-serif;
+font-size: small;
 }
 
 div.container {
@@ -41,7 +42,7 @@ top: 24px;
 div.topmenu {
 position: absolute;
 right: 0px;
-top: 50px;
+top: 40px;
 text-align: right;
 padding-top: 4px;
 padding-right: 35px;
@@ -50,7 +51,7 @@ height: 25px;
 
 div.topmenu a {
 color: #ffffff;
-font: bold verdana, arial, sans-serif;
+font-weight: bold;
 padding-left: 5px;
 }
 
@@ -72,7 +73,6 @@ input.button {
 background-color: #5d82b7;
 color: #ffffff;
 border: 2px solid #5d82b7;
-font: bold verdana;
 }
 
 
@@ -132,7 +132,16 @@ padding-left: 2em;
 display: block;
 line-height: 1.4em;
 margin-bottom: 8px;
+margin-top: 0px;
 text-indent: -2em;
+/*
+border-style: none;
+border-top-style: solid;
+border-width: 1px;
+border-color: #f0f0f0;
+*/
+}
+
 }
 
 a.record {
