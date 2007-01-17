@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.22 2007-01-15 04:34:28 quinn Exp $
+ * $Id: http_command.c,v 1.23 2007-01-17 14:21:29 quinn Exp $
  */
 
 #include <stdio.h>
@@ -157,7 +157,7 @@ static int cmp_ht(const void *p1, const void *p2)
 }
 
 // This implements functionality somewhat similar to 'bytarget', but in a termlist form
-static void targets_termlist(WRBUF wrbuf, struct session *se)
+static void targets_termlist(WRBUF wrbuf, struct session *se, int num)
 {
     struct hitsbytarget *ht;
     int count, i;
@@ -165,7 +165,7 @@ static void targets_termlist(WRBUF wrbuf, struct session *se)
     if (!(ht = hitsbytarget(se, &count)))
         return;
     qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht);
-    for (i = 0; i < count && i < 15; i++)
+    for (i = 0; i < count && i < num; i++)
     {
         wrbuf_puts(wrbuf, "\n<term>\n");
         wrbuf_printf(wrbuf, "<name>%s</name>\n", ht[i].id);
@@ -185,6 +185,8 @@ static void cmd_termlist(struct http_channel *c)
     int len;
     int i;
     char *name = http_argbyname(rq, "name");
+    char *nums = http_argbyname(rq, "num");
+    int num = 15;
     int status;
 
     if (!s)
@@ -196,6 +198,8 @@ static void cmd_termlist(struct http_channel *c)
         name = "subject";
     if (strlen(name) > 255)
         return;
+    if (nums)
+        num = atoi(nums);
 
     wrbuf_rewind(c->wrbuf);
 
@@ -213,12 +217,12 @@ static void cmd_termlist(struct http_channel *c)
 
         wrbuf_printf(c->wrbuf, "\n<list name=\"%s\">\n", tname);
         if (!strcmp(tname, "xtargets"))
-            targets_termlist(c->wrbuf, s->psession);
+            targets_termlist(c->wrbuf, s->psession, num);
         else
         {
             p = termlist(s->psession, tname, &len);
             if (p)
-                for (i = 0; i < len; i++)
+                for (i = 0; i < len && i < num; i++)
                 {
                     wrbuf_puts(c->wrbuf, "\n<term>");
                     wrbuf_printf(c->wrbuf, "<name>%s</name>", p[i]->term);

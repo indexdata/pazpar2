@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.35 2007-01-17 14:12:03 quinn Exp $
+/* $Id: search.js,v 1.36 2007-01-17 14:21:29 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -579,7 +579,8 @@ function check_termlist()
     var url = "search.pz2?" +
         "command=termlist" +
 	"&session=" + session +
-	"&name=" + facet_name;
+	"&name=" + facet_name +
+	"&num=12";
     xtermlist = GetXmlHttpObject();
     xtermlist.onreadystatechange=show_termlist;
     xtermlist.open("GET", url);
