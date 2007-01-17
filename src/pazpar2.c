@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.40 2007-01-17 14:01:19 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.41 2007-01-17 15:32:39 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -673,6 +673,11 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
                     char year[64];
                     sprintf(year, "%d", last);
                     add_facet(se, type, year);
+                    if (first != last)
+                    {
+                        sprintf(year, "%d", first);
+                        add_facet(se, type, year);
+                    }
                 }
                 else
                     add_facet(se, type, value);
