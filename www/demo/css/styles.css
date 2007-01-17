@@ -26,7 +26,7 @@ border: none;
 div.topbar {
 background-color: #002863;
 color: #ffffff;
-height: 6em;
+height: 7em;
 position: absolute;
 left: 0px;
 top: 0px;
@@ -84,7 +84,7 @@ background-position: top left;
 background-repeat: repeat-y;
 color: #002863;
 position: relative;
-top: 6em;
+top: 7em;
 left: 0px;
 }
 
