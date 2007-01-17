@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.33 2007-01-16 23:44:07 quinn Exp $
+/* $Id: search.js,v 1.34 2007-01-17 02:15:12 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -341,6 +341,15 @@ function show_details()
     cur_id = id;
     cur_rec = xml;
 
+    var nodes = document.getElementsByName('listrecord');
+    var i;
+    for (i = 0; i < nodes.length; i++)
+    {
+	var dets = nodes[i].getElementsByTagName('div');
+	if (dets[0])
+	    dets[0].style.display = 'none';
+    }
+
     var body = document.getElementById('rec_' + id);
     if (!body)
 	return;
@@ -359,14 +368,6 @@ function hyperlink_search(obj)
 function fetch_details(id)
 {
     cur_id = -1;
-    var nodes = document.getElementsByName('listrecord');
-    var i;
-    for (i = 0; i < nodes.length; i++)
-    {
-	var dets = nodes[i].getElementsByTagName('div');
-	if (dets[0])
-	    dets[0].style.display = 'none';
-    }
     if (id == cur_id)
     {
 	cur_id = -1;
