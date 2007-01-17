@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.39 2007-01-16 23:42:10 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.40 2007-01-17 14:01:19 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -667,7 +667,16 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             if (md->rank)
                 relevance_countwords(se->relevance, cluster, value, md->rank);
             if (md->termlist)
-                add_facet(se, type, value);
+            {
+                if (md->type == Metadata_type_year)
+                {
+                    char year[64];
+                    sprintf(year, "%d", last);
+                    add_facet(se, type, year);
+                }
+                else
+                    add_facet(se, type, value);
+            }
             xmlFree(type);
             xmlFree(value);
             type = value = 0;
