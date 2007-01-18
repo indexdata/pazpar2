@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: page_segments.phpi,v 1.18 2007-01-17 14:25:37 quinn Exp $
+/* $Id: page_segments.phpi,v 1.19 2007-01-18 14:22:25 quinn Exp $
  * ---------------------------------------------------
  * Page segments 
  */
@@ -50,6 +50,7 @@ function insert_header () {
           <b>Limit search results</b><br />
           Narrow your search by using the keywords below:<br />
           <br />
+
           <a id="facet_subject" class="unselected"
              onclick="toggle_facet(this)">Subject</a>
           <span id="facet_subject_terms" class="facet"

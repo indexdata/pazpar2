@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.41 2007-01-17 15:32:39 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.42 2007-01-18 14:22:25 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -265,7 +265,6 @@ static void do_searchResponse(IOCHAN i, Z_APDU *a)
         if (r->presentStatus && !*r->presentStatus && r->records)
         {
             yaz_log(YLOG_DEBUG, "Records in search response");
-            cl->records += *r->numberOfRecordsReturned;
             ingest_records(cl, r->records);
         }
         cl->state = Client_Idle;
@@ -426,6 +425,17 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
         yaz_log(YLOG_FATAL, "Unknown native_syntax in normalize_record");
         exit(1);
     }
+
+    if (global_parameters.dump_records)
+    {
+        fprintf(stderr, "Input Record (normalized):\n----------------\n");
+#if LIBXML_VERSION >= 20600
+        xmlDocFormatDump(stderr, rdoc, 1);
+#else
+        xmlDocDump(stderr, rdoc);
+#endif
+    }
+
     for (m = rprofile->maplist; m; m = m->next)
     {
         xmlDoc *new;
