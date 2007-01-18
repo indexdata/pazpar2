@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.42 2007-01-18 18:11:19 quinn Exp $
+/* $Id: search.js,v 1.43 2007-01-18 19:32:06 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -228,6 +228,8 @@ function displayname(name)
 	return '@';
     else if (name == 'md-id')
 	return 'Local ID';
+    else if (name == 'md-lccn')
+	return 'LCCN';
     else if (name == 'recid')
 	return '@';
     else if (name == 'location')
@@ -313,6 +315,16 @@ function paint_data_elements(target, node)
 		nv.setAttribute('searchfield', hyl);
 		nv.onclick = function() { hyperlink_search(this); return false; };
 	    }
+	}
+	else if (name == 'md-lccn')
+	{
+	    nv = document.createElement('span');
+	    nv.appendChild(document.createTextNode(value + ' '));
+	    var link = create_element('a', 'Show title in LoC');
+		link.setAttribute('target', '_blank');
+		link.setAttribute('href', 'http://catalog.loc.gov/cgi-bin/Pwebrecon.cgi?DB=local&CNT=10&CMD=10+records+per+page&CMD=lccn+' + value);
+	    nv.appendChild(link);
+
 	}
 	else
 	    nv = document.createTextNode(value);
