@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.43 2007-01-18 16:21:23 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.44 2007-01-18 18:11:19 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1060,19 +1060,24 @@ void load_simpletargets(const char *fn)
     while (fgets(line, 255, f))
     {
         char *url, *db;
+        char *name;
         struct host *host;
         struct database *database;
 
         if (strncmp(line, "target ", 7))
             continue;
+        line[strlen(line) - 1] = '\0';
+
+        if ((name = strchr(line, ';')))
+            *(name++) = '\0';
+
         url = line + 7;
-        url[strlen(url) - 1] = '\0';
-        yaz_log(YLOG_DEBUG, "Target: %s", url);
         if ((db = strchr(url, '/')))
             *(db++) = '\0';
         else
             db = "Default";
 
+        yaz_log(YLOG_LOG, "Target: %s, '%s'", url, db);
         for (host = hosts; host; host = host->next)
             if (!strcmp(url, host->hostport))
                 break;
@@ -1125,6 +1130,10 @@ void load_simpletargets(const char *fn)
         strcpy(database->url, url);
         strcat(database->url, "/");
         strcat(database->url, db);
+        if (name)
+            database->name = xstrdup(name);
+        else
+            database->name = 0;
         
         database->databases = xmalloc(2 * sizeof(char *));
         database->databases[0] = xstrdup(db);
@@ -1363,7 +1372,8 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count)
     *count = 0;
     for (cl = se->clients; cl; cl = cl->next)
     {
-        strcpy(res[*count].id, cl->database->host->hostport);
+        res[*count].id = cl->database->url;
+        res[*count].name = cl->database->name;
         res[*count].hits = cl->hits;
         res[*count].records = cl->records;
         res[*count].diagnostic = cl->diagnostic;

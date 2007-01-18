@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.25 2007-01-18 16:21:23 quinn Exp $
+ * $Id: http_command.c,v 1.26 2007-01-18 18:11:19 quinn Exp $
  */
 
 #include <stdio.h>
@@ -168,7 +168,7 @@ static void targets_termlist(WRBUF wrbuf, struct session *se, int num)
     for (i = 0; i < count && i < num && ht[i].hits > 0; i++)
     {
         wrbuf_puts(wrbuf, "\n<term>\n");
-        wrbuf_printf(wrbuf, "<name>%s</name>\n", ht[i].id);
+        wrbuf_printf(wrbuf, "<name>%s</name>\n", ht[i].name);
         wrbuf_printf(wrbuf, "<frequency>%d</frequency>\n", ht[i].hits);
         wrbuf_printf(wrbuf, "<state>%s</state>\n", ht[i].state);
         wrbuf_printf(wrbuf, "<diagnostic>%d</diagnostic>\n", ht[i].diagnostic);
@@ -309,7 +309,9 @@ static void write_metadata(WRBUF w, struct conf_service *service,
 
 static void write_subrecord(struct record *r, WRBUF w, struct conf_service *service)
 {
-    wrbuf_printf(w, "<location id=\"%s\">\n", r->client->database->url);
+    wrbuf_printf(w, "<location id=\"%s\" name=\"%s\">\n",
+            r->client->database->url,
+            r->client->database->name ? r->client->database->name : "");
     write_metadata(w, service, r->metadata, 1);
     wrbuf_puts(w, "</location>\n");
 }

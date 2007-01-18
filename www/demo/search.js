@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.41 2007-01-18 17:42:39 quinn Exp $
+/* $Id: search.js,v 1.42 2007-01-18 18:11:19 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -329,7 +329,12 @@ function paint_subrecord(node)
 {
     var table = document.createElement('table');
     var zurl = node.getAttribute('id');
-    var tr = paint_details_tr('Source', document.createTextNode(zurl));
+    var name = node.getAttribute('name');
+    var tr;
+    if (name)
+	tr = paint_details_tr('Source', document.createTextNode(name));
+    else
+	tr = paint_details_tr('Source', document.createTextNode(zurl));
     table.appendChild(tr);
     paint_data_elements(table, node);
     return table;

@@ -66,6 +66,7 @@ struct host {
 struct database {
     struct host *host;
     char *url;
+    char *name;
     char **databases;
     int errors;
     struct conf_queryprofile *qprofile;
@@ -165,7 +166,8 @@ struct statistics {
 };
 
 struct hitsbytarget {
-    char id[256];
+    char *id;
+    char *name;
     int hits;
     int diagnostic;
     int records;
