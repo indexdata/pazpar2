@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.24 2007-01-17 15:27:34 quinn Exp $
+ * $Id: http_command.c,v 1.25 2007-01-18 16:21:23 quinn Exp $
  */
 
 #include <stdio.h>
@@ -307,12 +307,20 @@ static void write_metadata(WRBUF w, struct conf_service *service,
     }
 }
 
+static void write_subrecord(struct record *r, WRBUF w, struct conf_service *service)
+{
+    wrbuf_printf(w, "<location id=\"%s\">\n", r->client->database->url);
+    write_metadata(w, service, r->metadata, 1);
+    wrbuf_puts(w, "</location>\n");
+}
+
 static void cmd_record(struct http_channel *c)
 {
     struct http_response *rs = c->response;
     struct http_request *rq = c->request;
     struct http_session *s = locate_session(rq, rs);
     struct record_cluster *rec;
+    struct record *r;
     struct conf_service *service = global_parameters.server->service;
     char *idstr = http_argbyname(rq, "id");
     int id;
@@ -334,6 +342,8 @@ static void cmd_record(struct http_channel *c)
     wrbuf_puts(c->wrbuf, "<record>\n");
     wrbuf_printf(c->wrbuf, "<recid>%d</recid>", rec->recid);
     write_metadata(c->wrbuf, service, rec->metadata, 1);
+    for (r = rec->records; r; r = r->next)
+        write_subrecord(r, c->wrbuf, service);
     wrbuf_puts(c->wrbuf, "</record>\n");
     rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
     http_send_response(c);

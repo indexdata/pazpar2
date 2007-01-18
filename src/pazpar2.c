@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.42 2007-01-18 14:22:25 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.43 2007-01-18 16:21:23 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -518,6 +518,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
 
     res = nmem_malloc(se->nmem, sizeof(struct record));
     res->next = 0;
+    res->client = cl;
     res->metadata = nmem_malloc(se->nmem,
             sizeof(struct record_metadata*) * service->num_metadata);
     memset(res->metadata, 0, sizeof(struct record_metadata*) * service->num_metadata);
@@ -588,11 +589,13 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             newm->next = 0;
             if (md->type == Metadata_type_generic)
             {
-                char *p;
-                newm->data.text = nmem_strdup(se->nmem, value);
-                for (p = newm->data.text + strlen(newm->data.text) - 1;
-                        p > newm->data.text && strchr(" ,/.", *p); p--)
-                    *p = '\0';
+                char *p, *pe;
+                for (p = value; *p && isspace(*p); p++)
+                    ;
+                for (pe = p + strlen(p) - 1;
+                        pe > p && strchr(" ,/.:([", *pe); pe--)
+                    *pe = '\0';
+                newm->data.text = nmem_strdup(se->nmem, p);
 
             }
             else if (md->type == Metadata_type_year)

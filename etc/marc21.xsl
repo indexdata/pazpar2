@@ -15,7 +15,7 @@
 	<xsl:value-of select="marc:datafield[@tag='100']/marc:subfield[@code='a']"/>
       </xsl:attribute>
 
-      <pz:metadata name="id">
+      <pz:metadata type="id">
         <xsl:value-of select="marc:controlfield[@tag='001']"/>
       </pz:metadata>
 

@@ -2,7 +2,6 @@ target amicus.nlc-bnc.ca/NL
 target melvyl.cdlib.org/cdl90
 target z3950.loc.gov:7090/voyager
 target library2.mcmaster.ca/MORRIS
-target melvyl.cdlib.org/CDL90
 target info.library.mun.ca:2200/innopac
 target 137.122.27.60:210/innopac
 target z3950.rlg.org/BIB

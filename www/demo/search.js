@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.38 2007-01-17 17:24:44 quinn Exp $
+/* $Id: search.js,v 1.39 2007-01-18 16:21:23 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -224,6 +224,14 @@ function displayname(name)
 	return 'Publisher';
     else if (name == 'md-url')
 	return 'URL';
+    else if (name == 'md-title')
+	return '@';
+    else if (name == 'md-id')
+	return 'Local ID';
+    else if (name == 'recid')
+	return '@';
+    else if (name == 'location')
+	return '@';
     else
 	return name;
 }
@@ -246,7 +254,7 @@ function  paint_details_tr(name, dn)
     var dname = displayname(name);
     var ln = create_element('b', dname);
     var tln = document.createElement('td');
-    tln.setAttribute('width', 70);
+    tln.setAttribute('width', 90);
     tln.setAttribute('valign', 'top');
     tln.appendChild(ln);
     var tr = document.createElement('tr');
@@ -255,17 +263,12 @@ function  paint_details_tr(name, dn)
     return tr;
 }
 
-function paint_details(body, xml)
+function paint_data_elements(target, node)
 {
-    // This is some ugly display code. Replace with your own ting o'beauty
-    clear_cell(body);
-    //body.appendChild(document.createElement('br'));
-    var nodes = xml.childNodes[0].childNodes;
-    var i;
-    var table = document.createElement('table');
-    table.setAttribute('cellpadding', 2);
+    var nodes = node.childNodes;
     var dn = 0;
     var lastname = '';
+    var i;
     for (i = 0; i < nodes.length; i++)
     {
 	if (nodes[i].nodeType != 1)
@@ -273,17 +276,21 @@ function paint_details(body, xml)
 	var name = nodes[i].nodeName;
 	if (name == 'recid' || name == 'md-title')
 	    continue;
-	if (name != lastname)
+	if (name != lastname && lastname != 'location') 
 	{
 	    if (dn)
 	    {
 		var tr = paint_details_tr(lastname, dn);
-		table.appendChild(tr);
+		target.appendChild(tr);
 	    }
 	    dn = document.createElement('td');
 	    lastname = name;
 	}
-
+	if (name == 'location')
+	{
+	    target.appendChild(paint_details_tr('Location', paint_subrecord(nodes[i])));
+	    continue;
+	}
 	if (!nodes[i].childNodes[0])
 		continue;
 	var value = nodes[i].childNodes[0].nodeValue;
@@ -311,11 +318,29 @@ function paint_details(body, xml)
 	    nv = document.createTextNode(value);
 	dn.appendChild(nv);
     }
-    if (dn)
+    if (dn && lastname != 'location')
     {
 	var tr = paint_details_tr(lastname, dn);
-	table.appendChild(tr);
+	target.appendChild(tr);
     }
+}
+
+function paint_subrecord(node)
+{
+    var table = document.createElement('table');
+    var zurl = node.getAttribute('id');
+    var tr = paint_details_tr('Source', document.createTextNode(zurl));
+    paint_data_elements(table, node);
+    table.appendChild(tr);
+    return table;
+}
+
+function paint_details(body, xml)
+{
+    clear_cell(body);
+    var table = document.createElement('table');
+    table.setAttribute('cellpadding', 2);
+    paint_data_elements(table, xml.childNodes[0]);
     body.appendChild(table);
     body.style.display = 'inline';
 }
