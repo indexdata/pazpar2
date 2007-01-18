@@ -14,6 +14,7 @@
     <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
     <metadata name="url" merge="unique"/>
     <metadata name="id"/>
+    <metadata name="lccn" merge="unique"/>
   </service>
 </server>
 
