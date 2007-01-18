@@ -7,11 +7,13 @@
 
   <service>
     <metadata name="title" brief="yes" sortkey="skiparticle" merge="longest" rank="6"/>
-    <metadata name="isbn" merge="unique"/>
-    <metadata name="date" brief="yes" sortkey="numeric" type="year" merge="range"/>
+    <metadata name="isbn"/>
+    <metadata name="date" brief="yes" sortkey="numeric" type="year" merge="range"
+	    termlist="yes"/>
     <metadata name="author" brief="yes" termlist="yes" merge="longest" rank="2"/>
     <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
     <metadata name="url" merge="unique"/>
+    <metadata name="id"/>
   </service>
 </server>
 
