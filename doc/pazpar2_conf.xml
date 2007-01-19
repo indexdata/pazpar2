@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.4 2007-01-19 19:08:00 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.5 2007-01-19 19:12:16 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -313,18 +313,9 @@
 
   </refsect1>
  
- <refsect1><title>OPTIONS</title>
-  <para></para>
- </refsect1>
-
  <refsect1><title>EXAMPLES</title>
   <para></para>
  </refsect1> 
-
- <refsect1><title>FILES</title>
-  <para></para>
- </refsect1>
-</refentry>
 
 <!-- Keep this comment at the end of the file
 Local variables:
