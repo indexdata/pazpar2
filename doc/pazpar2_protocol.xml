@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_protocol.xml,v 1.2 2007-01-12 15:21:04 adam Exp $ -->
+<!-- $Id: pazpar2_protocol.xml,v 1.3 2007-01-19 18:28:08 quinn Exp $ -->
 <refentry id="pazpar2_protocol">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -27,12 +27,13 @@
  <refsect1><title>DESCRIPTION</title>
   <para>
    Webservice requests are any that refer to filename "search.pz2". Arguments
-   are GET-style parameters. Argument 'command' is required and specifies
-   command. Any request not recognized as a webservice request as described,
-   are forwarded to the HTTP server specified in configuration.
-   This way, the webserver can host the user interface (itself dynamic
-   or static HTML), and AJAX-style calls can be used from JS to interact
-   with the search logic. 
+   are GET-style parameters. Argument 'command' is always required and specifies
+   the operation to perform. Any request not recognized as a webservice
+   request is forwarded to the HTTP server specified in the configuration
+   using the proxy setting.
+   This way, a regular webserver can host the user interface (itself dynamic
+   or static HTML), and AJAX-style calls can be used from JS (or any other client-based
+   scripting environment) to interact with the search logic in pazpar2. 
   </para>
   <para>
    Each command is described in sub sections to follow.
@@ -108,7 +109,7 @@
    <para>
     Example:
     <screen><![CDATA[
-search.pz2?session=2044502273&command=search&query=computer
+search.pz2?session=2044502273&command=search&query=computer+science
 ]]>
      </screen>
     Response:
@@ -123,7 +124,7 @@ search.pz2?session=2044502273&command=search&query=computer
   <refsect2 id="command-stat">
    <title>stat</title>
    <para>
-    Provides status of ongoing search. Parameters:
+    Provides status information about an ongoing search. Parameters:
 
     <variablelist>
      <varlistentry>
@@ -147,7 +148,7 @@ search.pz2?session=2044502273&command=stat
 <stat>
   <activeclients>3</activeclients>
   <hits>7</hits>                   -- Total hitcount
-  <records>7</records>             -- Total number of records fetched
+  <records>7</records>             -- Total number of records fetched in last query
   <clients>1</clients>             -- Total number of associated clients
   <unconnected>0</unconnected>     -- Number of disconnected clients
   <connecting>0</connecting>       -- Number of clients in connecting state
@@ -180,7 +181,7 @@ search.pz2?session=2044502273&command=stat
       <term>start</term>
       <listitem>
        <para>First record to show - 0-indexed.</para>
-      </listitem>
+      </listitem
      </varlistentry>
      
      <varlistentry>
@@ -196,33 +197,47 @@ search.pz2?session=2044502273&command=stat
       <term>block</term>
       <listitem>
        <para>
-	If block is set, the command will hang until there are records ready
+	If block is set to 1, the command will hang until there are records ready
 	to display. Use this to show first records rapidly without
 	requiring rapid polling.
        </para>
       </listitem>
      </varlistentry>
 
+     <varlistentry>
+       <term>sort</term>
+       <listitem>
+         <para>
+	   Specifies sort criteria. The argument is a comma-separated list
+	   (no whitespace allowed) of sort fields, with the highest-priority
+	   field first. A sort field may be followed by a colon followed by
+	   the number '0' or '1', indicating whether results should be sorted in
+	   increasing or decreasing order according to that field. 0==Decreasing is
+	   the default.
+	 </para>
+	</listitem>
+      </varlistentry>
+
     </variablelist>
    </para>
    <para>
     Example:
     <screen><![CDATA[
-search.pz2?session=2044502273&command=show&start=0&num=2
+search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
 ]]></screen>
     Output:
     <screen><![CDATA[
 <show>
   <status>OK</status>
-  <activeclients>3</activeclients>
-  <merged>6</merged>
-  <total>7</total>
-  <start>0</start>
-  <num>2</num>
+  <activeclients>3</activeclients>     -- How many clients are still working
+  <merged>6</merged>                   -- Number of merged records
+  <total>7</total>                     -- Total of all hitcounts
+  <start>0</start>                     -- The start number you requested
+  <num>2</num>                         -- Number of records retrieved
   <hit>
     <md-title>How to program a computer, by Jack Collins</md-title>
-    <count>2</count> <!-- Number of merged records -->
-    <recid>6</recid>
+    <count>2</count>                   -- Number of merged records 
+    <recid>6</recid>                   -- Record ID for this record
   </hit>
   <hit>
     <md-title>
@@ -242,6 +257,15 @@ search.pz2?session=2044502273&command=show&start=0&num=2
     Retrieves a detailed record. Parameters:
 
     <variablelist>
+     <varlistentry>
+      <term>session</term>
+      <listitem>
+       <para>
+	Session ID
+	</para>
+      </listitem>
+     </varlistentry>
+
      <varlistentry>
       <term>id</term>
       <listitem>
@@ -326,12 +350,59 @@ Output:
     <screen><![CDATA[
 <term>
   <name>library2.mcmaster.ca</name>
-  <frequency>11734</frequency>
-  <state>Client_Idle</state>
-  <diagnostic>0</diagnostic>
+  <frequency>11734</frequency>         -- Number of hits
+  <state>Client_Idle</state>           -- See the description of 'bytarget' below
+  <diagnostic>0</diagnostic>           -- Z39.50 diagnostic codes
 </term>
 ]]></screen>
     </para>
+  </refsect2>
+
+
+  <refsect2 id="command-bytarget">
+   <title>bytarget</title>
+   <para>
+    Returns information about the status of each active client. Parameters:
+
+    <variablelist>
+     <varlistentry>
+      <term>session</term>
+      <listitem>
+       <para>
+          Session Id.
+	</para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </para>
+   <para> 
+    Example:
+    <screen><![CDATA[
+search.pz2?session=605047297&command=record&id=3
+]]></screen>
+
+    Example output:
+    
+    <screen><![CDATA[
+<bytarget>
+  <status>OK</status>
+  <target>
+    <id>z3950.loc.gov/voyager/</id>
+    <hits>10000</hits>
+    <diagnostic>0</diagnostic>
+    <records>65</records>
+    <state>Client_Presenting</state>
+  </target>
+  <!-- ... more target nodes below as necessary -->
+</bytarget>
+    <screen><![CDATA[
+]]></screen>
+
+   The following client states are defined: Client_Connecting,
+   Client_Connected, Client_Idle, Client_Initializing, Client_Searching,
+   Client_Searching, Client_Presenting, Client_Error, Client_Failed,
+   Client_Disconnected, Client_Stopped.
+   </para>
   </refsect2>
 
  </refsect1>

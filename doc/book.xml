@@ -9,165 +9,369 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: book.xml,v 1.4 2007-01-13 05:48:41 quinn Exp $ -->
+<!-- $Id: book.xml,v 1.5 2007-01-19 18:28:08 quinn Exp $ -->
 <book id="book">
- <bookinfo>
-  <title>Pazpar2 - User's Guide and Reference</title>
-  <author>
-   <firstname>Sebastian</firstname><surname>Hammer</surname>
-  </author>
-  <copyright>
-   <year>&copyright-year;</year>
-   <holder>Index Data</holder>
-  </copyright>
-  <abstract>
-   <simpara>
-    Pazpar2 - High-performance, user-interface independent, metasearching
-	  middleware featuring record merging, relevance ranking, and faceted search
-	  results.
-   </simpara>
-   <simpara>
-    This document is a guide and reference to Pazpar version &version;.
-   </simpara>
-   <simpara>
-    <inlinemediaobject>
-     <imageobject>
-      <imagedata fileref="common/id.png" format="PNG"/>
-     </imageobject>
-     <imageobject>
-      <imagedata fileref="common/id.eps" format="EPS"/>
-     </imageobject>
-    </inlinemediaobject>
-   </simpara>
-  </abstract>
- </bookinfo>
+  <bookinfo>
+   <title>Pazpar2 - User's Guide and Reference</title>
+   <author>
+    <firstname>Sebastian</firstname><surname>Hammer</surname>
+   </author>
+   <copyright>
+    <year>&copyright-year;</year>
+    <holder>Index Data</holder>
+   </copyright>
+   <abstract>
+    <simpara>
+       Pazpar2 is a high-performance, user interface-independent, data
+       model-independent metasearching
+       middleware featuring merging, relevance ranking, record sorting, 
+       and faceted results.
+    </simpara>
+    <simpara>
+     This document is a guide and reference to Pazpar version &version;.
+    </simpara>
+    <simpara>
+     <inlinemediaobject>
+      <imageobject>
+       <imagedata fileref="common/id.png" format="PNG"/>
+      </imageobject>
+      <imageobject>
+       <imagedata fileref="common/id.eps" format="EPS"/>
+      </imageobject>
+     </inlinemediaobject>
+    </simpara>
+   </abstract>
+  </bookinfo>
 
- <chapter id="introduction">
-  <title>Introduction</title>
-  <para>
-    Pazpar2 is a stand-alone package which implements
-    the best we know to do in terms of the core metasearching
-    functionality; that is, searching a number of databases in parallel,
-    merging, and analyzing the results. Additional functionality such as
-    user management, attractive displays are expected to be implemented by
-    applications that use pazpar2. Pazpar2 is user interface independent.
-    Its functionality is exposed through a simple REST-style webservice API,
-    designed to be simple to use from an Ajax-anbled browser, from a
-    higher-level server-side language like PHP or Java, or even from a Flash
-    application.
-  </para>
-  <para>
-    Once you launch a search in pazpar2, the operation continues behind the
-    scenes. Pazpar2 connects to servers, carries out searches, and
-    retrieves, deduplicates, and stores results internally. Your application
-    code may periodically inquire about the status of an ongoing operation,
-    and ask to see records or other result set facets.
-  </para>
-  <para>
-    Pazpar2 is designed to be highly configurable. Incoming records are
-    normalized to XML/UTF-8, and then further normalized using XSLT to a
-    simple internal representation that is suitable for analysis. By
-    providing XSLT stylesheets for different kinds of result records, you
-    can tune pazpar2 to work against different kinds of information
-    retrieval servers. Finally, metadata is extracted, in a configurable
-    way, from this internal record, to support display, merging, ranking,
-    result set facets, and sorting. Pazpar2 is not bound to a specific model
-    of metadata, such as DublinCore or MARC -- by providing the right
-    configuration, it can work with a number of different kinds of data in
-    support of many different applications.
-  </para>
-  <para>
-    Pazpar2 is designed to be efficient and scalable. You can set it up to
-    search several hundred targets in parallel, or you can use it to support
-    hundreds of concurrent users. It is implemented with the same attention
-    to performance and economy that we use in our indexing engines, so that
-    you can focus on building your application. You can devote all of your
-    attention to usability and let pazpar2 do what it does best -- search.
+  <chapter id="introduction">
+   <title>Introduction</title>
+   <para>
+     Pazpar2 is a stand-alone metasearch client with a webservice API, designed
+     to be used either from a browser-based client (JavaScript, Flash, Java,
+     etc.), from from server-side code, or any combination of the two.
+     Pazpar2 is a highly optimized client designed to
+     search many resources in parallel. It implements record merging,
+     relevance-ranking and sorting by arbitrary data content, and facet
+     analysis for browsing purposes. It is designed to be data model
+     independent, and is capable of working with MARC, DublinCore, or any
+     other XML-structured response format -- XSLT is used to normalize and extract
+     data from retrieval records for display and analysis. It can be used
+     against any server which supports the Z39.50 protocol. Proprietary
+     backend modules can be used to support a large number of other protocols
+     (please contact Index Data for further information about this).
    </para>
- </chapter>
+   <para>
+      Additional functionality such as
+     user management, attractive displays are expected to be implemented by
+     applications that use pazpar2. Pazpar2 is user interface independent.
+     Its functionality is exposed through a simple REST-style webservice API,
+     designed to be simple to use from an Ajax-enbled browser, Flash
+     animation, Java applet, etc., or from a higher-level server-side language
+     like PHP or Java. Because session information can be shared between
+     browser-based logic and your server-side scripting, there is tremendous
+     flexibility in how you implement your business logic on top of pazpar2.
+   </para>
+   <para>
+     Once you launch a search in pazpar2, the operation continues behind the
+     scenes. Pazpar2 connects to servers, carries out searches, and
+     retrieves, deduplicates, and stores results internally. Your application
+     code may periodically inquire about the status of an ongoing operation,
+     and ask to see records or other result set facets. Result become
+     available immediately, and it is easy to build end-user interfaces which
+     feel extremely responsive, even when searching more than 100 servers
+     concurrently.
+   </para>
+   <para>
+     Pazpar2 is designed to be highly configurable. Incoming records are
+     normalized to XML/UTF-8, and then further normalized using XSLT to a
+     simple internal representation that is suitable for analysis. By
+     providing XSLT stylesheets for different kinds of result records, you
+     can tune pazpar2 to work against different kinds of information
+     retrieval servers. Finally, metadata is extracted, in a configurable
+     way, from this internal record, to support display, merging, ranking,
+     result set facets, and sorting. Pazpar2 is not bound to a specific model
+     of metadata, such as DublinCore or MARC -- by providing the right
+     configuration, it can work with a number of different kinds of data in
+     support of many different applications.
+   </para>
+   <para>
+     Pazpar2 is designed to be efficient and scalable. You can set it up to
+     search several hundred targets in parallel, or you can use it to support
+     hundreds of concurrent users. It is implemented with the same attention
+     to performance and economy that we use in our indexing engines, so that
+     you can focus on building your application, without worrying about the
+     details of metasearch logic. You can devote all of your attention to
+     usability and let pazpar2 do what it does best -- metasearch.
+    </para>
+    <para>
+      If you wish to connect to commercial or other databases which do not
+      support open standards, please contact Index Data. We have a licensing
+      agreement with a third party vendor which will enable pazpar2 to access
+      thousands of online databases, in addition the vast number of catalogs
+      and online services that support the Z39.50 protocol.
+    </para>
+    <para>
+      Pazpar2 is our attempt to re-think the traditional paradigms for
+      implementing and deploying metasearch logic, with an uncompromising
+      approach to performance, and attempting to make maximum use of the
+      capabilities of modern browsers. The demo user interface that
+      accompanies the distribution is but one example. If you think of new
+      ways of using pazpar2, we hope you'll share them with us, and if we
+      can provide assistance with regards to training, design, programming,
+      integration with different backends, hosting, or support, please don't
+      hesitate to contact us. If you'd like to see functionality in pazpar2
+      that is not there today, please don't hesitate to contact us. It may
+      already be in our development pipeline, or there might be a
+      possibility for you to help out by sponsoring development time or
+      code. Either way, get in touch and we will give you straight answers.
+    </para>
+    <para>
+      Enjoy!
+    </para>
+  </chapter>
 
- <chapter id="license">
-  <title>Pazpar2 License</title>
-  <para>To be decided and written.</para>
- </chapter>
- 
- <chapter id="installation">
-  <title>Installation</title>
-  <para>
-   Pazpar2 depends on the following tools/libraries:
-   <variablelist>
-    <varlistentry><term><ulink url="&url.yaz;">YAZ</ulink></term>
-     <listitem>
+
+  <chapter id="license">
+   <title>Pazpar2 License</title>
+   <para>To be decided and written.</para>
+  </chapter>
+  
+  <chapter id="installation">
+   <title>Installation</title>
+   <para>
+    Pazpar2 depends on the following tools/libraries:
+    <variablelist>
+     <varlistentry><term><ulink url="&url.yaz;">YAZ</ulink></term>
+      <listitem>
+       <para>
+	The popular Z39.50 toolkit for the C language. YAZ must be
+	compiled with Libxml2/Libxslt support.
+       </para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </para>
+   <para>
+    In order to compile Pazpar2 an ANSI C compiler is
+    required. The requirements should be the same as for YAZ.
+   </para>
+
+   <section id="installation.unix">
+    <title>Installation on Unix (from Source)</title>
+    <para>
+     Here is a quick step-by-step guide on how to compile the
+     tools that Pazpar2 uses. Only few systems have none of the required
+     tools binary packages. If, for example, Libxml2/libxslt are already
+     installed as development packages use these.
+    </para>
+    
+    <para>
+     Ensure that the development libraries + header files are
+     available on your system before compiling Pazpar2. For installation
+     of YAZ, refer to the YAZ installation chapter.
+    </para>
+    <screen>
+     gunzip -c pazpar2-version.tar.gz|tar xf -
+     cd pazpar2-version
+     ./configure
+     make
+     su
+     make install
+    </screen>
+   </section>
+
+   <section id="installation.debian">
+    <title>Installation on Debian GNU/Linux</title>
+    <para>
+     All dependencies for Pazpar2 are available as 
+     <ulink url="&url.debian;">Debian</ulink>
+     packages for the sarge (stable in 2005) and etch (testing in 2005)
+     distributions.
+    </para>
+    <para>
+     The procedures for Debian based systems, such as
+     <ulink url="&url.ubuntu;">Ubuntu</ulink> is probably similar
+    </para>
+    <screen>
+     apt-get install libyaz-dev
+    </screen>
+    <para>
+     With these packages installed, the usual configure + make
+     procedure can be used for Pazpar2 as outlined in
+     <xref linkend="installation.unix"/>.
+    </para>
+   </section>
+  </chapter>
+
+  <chapter id="using">
+    <title>Using pazpar2</title>
+    <para>
+      This chapter provides a general introduction to the use and deployment of pazpar2.
+    </para>
+
+    <section id="architecture">
+      <title>Pazpar2 and your systems architecture</title>
       <para>
-       The popular Z39.50 toolkit for the C language. YAZ must be
-       compiled with Libxml2/Libxslt support.
+	Pazpar2 is designed to provide asynchronous, behind-the-scenes
+	metasearching functionality to your application, exposing this
+	functionality using a simple webservice API that can be accessed
+	from any number of development environments. In particular, it is
+	possible to combine pazpar2 either with your server-side dynamic
+	website scripting, with scripting or code running in the browser, or
+	with any combination of the two. Pazpar2 is an excellent tool for
+	building advanced, Ajax-based user interfaces for metasearch
+	functionality, but it isn't a requirement -- you can choose to use
+	pazpar2 entirely as a backend to your regular server-side scripting.
+	When you do use pazpar2 in conjunction
+	with browser scripting (JavaScript/Ajax, Flash, applets, etc.), there are
+	special considerations.
       </para>
-     </listitem>
-    </varlistentry>
-   </variablelist>
-  </para>
-  <para>
-   In order to compile Pazpar2 an ANSI C compiler is
-   required. The requirements should be the same as for YAZ.
-  </para>
 
-  <section id="installation.unix">
-   <title>Installation on Unix (from Source)</title>
-   <para>
-    Here is a quick step-by-step guide on how to compile the
-    tools that Pazpar2 uses. Only few systems have none of the required
-    tools binary packages. If, for example, Libxml2/libxslt are already
-    installed as development packages use these.
-   </para>
-   
-   <para>
-    Ensure that the development libraries + header files are
-    available on your system before compiling Pazpar2. For installation
-    of YAZ, refer to the YAZ installation chapter.
-   </para>
-   <screen>
-    gunzip -c pazpar2-version.tar.gz|tar xf -
-    cd pazpar2-version
-    ./configure
-    make
-    su
-    make install
-   </screen>
-  </section>
+      <para>
+        Pazpar2 implements a simple but efficient HTTP server, and it is
+	designed to interact directly with scripting running in the browser
+	for the best possible performance, and to limit overhead when
+	several browser clients generate numerous webservice requests.
+	However, it is still desirable to use a conventional webserver,
+	such as Apache, to serve up graphics, HTML documents, and
+	server-side scripting. Because the security sandbox environment of
+	most browser-side programming environments only allows communication
+	with the server from which the enclosing HTML page or object
+	originated, pazpar2 is designed so that it can act as a transparent
+	proxy in front of an existing webserver (see <xref
+	linkend="pazpar2_conf"/> for details). In this mode, all regular
+	HTTP requests are transparently passed through to your webserver,
+	while pazpar2 only intercepts search-related webservice requests.
+      </para>
 
-  <section id="installation.debian">
-   <title>Installation on Debian GNU/Linux</title>
-   <para>
-    All dependencies for Pazpar2 are available as 
-    <ulink url="&url.debian;">Debian</ulink>
-    packages for the sarge (stable in 2005) and etch (testing in 2005)
-    distributions.
-   </para>
-   <para>
-    The procedures for Debian based systems, such as
-    <ulink url="&url.ubuntu;">Ubuntu</ulink> is probably similar
-   </para>
-   <screen>
-    apt-get install libyaz-dev
-   </screen>
-   <para>
-    With these packages installed, the usual configure + make
-    procedure can be used for Pazpar2 as outlined in
-    <xref linkend="installation.unix"/>.
-   </para>
-  </section>
- </chapter>
- 
- <reference id="reference">
-  <title>Reference</title>
-  <partintro>
-   <para>
-    The material in this chapter is drawn directly from the individual
-    manual entries.
-   </para>
-  </partintro>
-  &manref;
- </reference>
+      <para>
+        If you want to expose your combined service on port 80, you can
+	either run your regular webserver on a different port, a different
+	server, or a different IP address associated with the same server.
+      </para>
+
+      <para>
+        Sometimes, it may be necessary to implement functionality on your
+	regular webserver that makes use of search results, for example to
+	implement data import functionality, emailing results, history
+	lists, personal citation lists, interlibrary loan functionality
+	,etc. Fortunately, it is simple to exchange information between
+	pazpar2, your browser scripting, and backend server-side scripting.
+	You can send a session ID and possibly a record ID from your browser
+	code to your server code, and from there use pazpar2s webservice API
+	to access result sets or individual records. You could even 'hide'
+	all of pazpar2s functionality between your own API implemented on
+	the server-side, and access that from the browser or elsewhere. The
+	possibilities are just about endless.
+      </para>
+    </section>
+
+    <section id="data_model">
+      <title>Your data model</title>
+      <para>
+        Pazpar2 does not have a preconceived model of what makes up a data
+	model. There are no assumption that records have specific fields or
+	that they are organized in any particular way. The only assumption
+	is that data comes packaged in a form that the software can work
+	with (presently, that means XML or MARC), and that you can provide
+	the necessary information to massage it into pazpar2's internal
+	record abstraction.
+      </para>
+
+      <para>
+        Handling retrieval records in pazpar2 is a two-step process. First,
+	you decide which data elements of the source record you are
+	interested in, and you specify any desired massaging or combining of
+	elements using an XSLT stylesheet (MARC records are automatically
+	normalized to MARCXML before this step). If desired, you can run
+	multiple XSLT stylesheets in series to accomplish this, but the
+	output of the last one should be a representation of the record in a
+	schema that pazpar2 understands.
+      </para>
+
+      <para>
+        The intermediate, internal representation of the record looks like
+	this:
+	<screen><![CDATA[
+<record   xmlns="http://www.indexdata.com/pazpar2/1.0"
+	  mergekey="title The Shining author King, Stephen">
+
+    <metadata type="title">The Shining</metadata>
+
+    <metadata type="author">King, Stephen</metadata>
+
+    <metadata type="kind">ebook</metadata>
+
+    <!-- ... and so on -->
+</record>
+]]></screen>
+
+        As you can see, there isn't much to it. There are really only a few
+	important elements to this file.
+      </para>
+
+      <para>
+        Elements should belong to the namespace
+	http://www.indexdata.com/pazpar2/1.0. If the root node contains the
+	attribute 'mergekey', then every record that generates the same
+	merge key (normalized for case differences, white space, and
+	truncation) will be joined into a cluster. In other words, you
+	decide how records are merged. If you don't include a merge key,
+	records are never merged. The 'metadata' elements provide the meat
+	of the elements -- the content. the 'type' attribute is used to
+	match each element against processing rules that determine what
+	happens to the data element next.
+      </para>
+
+      <para>
+        The next processing step is the extraction of metadata from the
+	intermediate representation of the record. This is governed by the
+	'metadata' elements in the 'service' section of the configuration
+	file. See <xref linkend="config-server"/> for details. The metadata
+	in the retrieval record ultimately drives merging, sorting, ranking,
+	the extraction of browse facets, and display, all configurable.
+      </para>
+    </section>
+
+    <section id="client">
+      <title>Client development</title>
+      <para>
+        You can use pazpar2 from any environment that allows you to use
+	webservices. The initial goal of the software was to support
+	Ajax-based applications, but there literally are no limits to what
+	you can do. You can use pazpar2 from Javascript, Flash, Java, etc.,
+	on the browser side, and from any development environment on the
+	server side, and you can pass session tokens and record IDs freely
+	around between these environments to build sophisticated applications.
+	Use your imagination.
+      </para>
+
+      <para>
+        The webservice API of pazpar2 is described in detail in <xref
+	linkend="pazpar2_protocol"/>.
+      </para>
+
+      <para>
+        In brief, you use the 'init' command to create a session, a
+	temporary workspace which carries information about the current
+	search. You start a new search using the 'search' command. Once the
+	search has been started, you can follow its progress using the
+	'stat', 'bytarget', 'termlist', or 'show' commands. Detailed records
+	can be fetched using the 'record' command.
+      </para>
+    </section>
+  </chapter> <!-- Using pazpar2 -->
+
+  <reference id="reference">
+   <title>Reference</title>
+   <partintro>
+    <para>
+     The material in this chapter is drawn directly from the individual
+     manual entries.
+    </para>
+   </partintro>
+   &manref;
+  </reference>
 </book>
 
  <!-- Keep this comment at the end of the file
