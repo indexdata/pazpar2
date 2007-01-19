@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.44 2007-01-18 18:11:19 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.45 2007-01-19 21:16:11 adam Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -384,8 +384,6 @@ static void add_facet(struct session *s, const char *type, const char *value)
     }
     termlist_insert(s->termlists[i].termlist, value);
 }
-
-int yaz_marc_write_xml();
 
 static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
 {
