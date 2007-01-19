@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.3 2007-01-19 18:28:08 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.4 2007-01-19 19:08:00 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -113,109 +113,112 @@
 
 	    <variablelist> <!-- Level 2 -->
 	      <varlistentry><term>metadata</term>
-		<para>
-		  One of these elements is required for every data element in
-		  the internal representation of the record (see
-		  <xref linkend="data_model"/>. It governs
-		  subsequent processing as pertains to sorting, relevance
-		  ranking, merging, and display of data elements. It supports
-		  the following attributes:
-		</para>
+	        <listitem>
+		  <para>
+		    One of these elements is required for every data element in
+		    the internal representation of the record (see
+		    <xref linkend="data_model"/>. It governs
+		    subsequent processing as pertains to sorting, relevance
+		    ranking, merging, and display of data elements. It supports
+		    the following attributes:
+		  </para>
 
-		<variablelist> <!-- level 3 -->
-		  <varlistentry><term>name</term>
-		    <listentry>
-		      <para>
-			This is the name of the data element. It is matched
-			against the 'type' attribute of the 'metadata' element
-			in the normalized record. A warning is produced if
-			metdata elements with an unknown name are found in the
-			normalized record. This name is also used to represent
-			data elements in the records returned by the
-			webservice API, and to name sort lists and browse
-			facets.
-		      </para>
-		    </listentry>
-		  </varlistentry>
+		  <variablelist> <!-- level 3 -->
+		    <varlistentry><term>name</term>
+		      <listitem>
+			<para>
+			  This is the name of the data element. It is matched
+			  against the 'type' attribute of the 'metadata' element
+			  in the normalized record. A warning is produced if
+			  metdata elements with an unknown name are found in the
+			  normalized record. This name is also used to represent
+			  data elements in the records returned by the
+			  webservice API, and to name sort lists and browse
+			  facets.
+			</para>
+		      </listitem>
+		    </varlistentry>
 
-		  <varlistentry><term>type</term>
-		   <listentry>
-		      <para>
-			The type of data element. This value governs any
-			normalization or special processing that might take
-			place on an element. Possible values are 'generic'
-			(basic string), 'year' (a range is computed if
-			multiple years are found in the record). Note: This
-			list is likely to increase in the future.
-		      </para>
-		    </listentry>
-		  </varlistentry>
+		    <varlistentry><term>type</term>
+		     <listitem>
+			<para>
+			  The type of data element. This value governs any
+			  normalization or special processing that might take
+			  place on an element. Possible values are 'generic'
+			  (basic string), 'year' (a range is computed if
+			  multiple years are found in the record). Note: This
+			  list is likely to increase in the future.
+			</para>
+		      </listitem>
+		    </varlistentry>
 
-		  <varlistentry><term>brief</term>
-		    <listentry>
-		      <para>
-			If this is set to 'yes', then the data element is
-			includes in brief records in the webservice API. Note
-			that this only makes sense for metadata elements that
-			are merged (see below). The default value is 'no'.
-		      </para>
-		    </listentry>
-		  </varlistentry>
+		    <varlistentry><term>brief</term>
+		      <listitem>
+			<para>
+			  If this is set to 'yes', then the data element is
+			  includes in brief records in the webservice API. Note
+			  that this only makes sense for metadata elements that
+			  are merged (see below). The default value is 'no'.
+			</para>
+		      </listitem>
+		    </varlistentry>
 
-		  <varlistentry><term>sortkey</term>
-		    <listentry>
-		      <para>
-			Specifies that this data element is to be used for
-			sorting. The possible values are 'numeric' (numeric
-			value), 'skiparticle' (string; skip common, leading
-			articles), and 'no' (no sorting). The default value is
-			'no'.
-		      </para>
-		    </listentry>
-		  </varlistentry>
+		    <varlistentry><term>sortkey</term>
+		      <listitem>
+			<para>
+			  Specifies that this data element is to be used for
+			  sorting. The possible values are 'numeric' (numeric
+			  value), 'skiparticle' (string; skip common, leading
+			  articles), and 'no' (no sorting). The default value is
+			  'no'.
+			</para>
+		      </listitem>
+		    </varlistentry>
 
-		  <varlistentry><term>rank</term>
-		    <listentry>
-		      <para>
-			Specifies that this element is to be used to help rank
-			records against the user's query (when ranking is
-			requested). The value is an integer, used as a
-			multiplier against the basic TF*IDF score. A value of
-			1 is the base, higher values give additional weight to
-			elements of this type. The default is '0', which
-			excludes this element from the rank calculation.
-		      </para>
-		    </listentry>
-		  </varlistentry>
+		    <varlistentry><term>rank</term>
+		      <listitem>
+			<para>
+			  Specifies that this element is to be used to help rank
+			  records against the user's query (when ranking is
+			  requested). The value is an integer, used as a
+			  multiplier against the basic TF*IDF score. A value of
+			  1 is the base, higher values give additional weight to
+			  elements of this type. The default is '0', which
+			  excludes this element from the rank calculation.
+			</para>
+		      </listitem>
+		    </varlistentry>
 
-		  <varlistentry><term>termlist</term>
-		    <listentry>
-		      <para>
-			Specifies that this element is to be used as a
-			termlist, or browse facet. Values are tabulated from
-			incoming records, and a highscore of values (with
-			their associated frequency) is made available to the
-			client through the webservice API. The possible values
-			are 'yes' and 'no' (default).
-		      </para>
-		    </listentry>
-		  </varlistentry>
+		    <varlistentry><term>termlist</term>
+		      <listitem>
+			<para>
+			  Specifies that this element is to be used as a
+			  termlist, or browse facet. Values are tabulated from
+			  incoming records, and a highscore of values (with
+			  their associated frequency) is made available to the
+			  client through the webservice API. The possible values
+			  are 'yes' and 'no' (default).
+			</para>
+		      </listitem>
+		    </varlistentry>
 
-		  <varlistentry><term>merge</term>
-		    <listentry>
-		      <para>
-			This governs whether, and how elements are extracted
-			from individual records and merged into cluster
-			records. The possible values are: 'unique' (include
-			all unique elements), 'longest' (include only the
-			longest element (strlen), 'range' (calculate a range
-			of values across al matching records), 'all' (include
-			all elements), or 'no' (don't merge; this is the
-			default);
-		      </para>
-		    </listentry>
-		  </varlistentry>
-		</variablelist> <!-- attributes to metadata -->
+		    <varlistentry><term>merge</term>
+		      <listitem>
+			<para>
+			  This governs whether, and how elements are extracted
+			  from individual records and merged into cluster
+			  records. The possible values are: 'unique' (include
+			  all unique elements), 'longest' (include only the
+			  longest element (strlen), 'range' (calculate a range
+			  of values across al matching records), 'all' (include
+			  all elements), or 'no' (don't merge; this is the
+			  default);
+			</para>
+		      </listitem>
+		    </varlistentry>
+		  </variablelist> <!-- attributes to metadata -->
+
+		</listitem>
 	      </varlistentry>
 	    </variablelist>     <!-- Data elements in service directive -->
 	  </listitem>
@@ -232,7 +235,7 @@
       </para>
     </refsect2>
 
-    <refsect2 id="config-retrievalprofile">
+    <refsect2 id="config_retrievalprofile">
       <para>
 	Note: In the present version, there is a single retrieval
 	profile. However, in a future release, it will be possible to
