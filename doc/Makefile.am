@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.2 2007-01-12 14:54:58 adam Exp $
+## $Id: Makefile.am,v 1.3 2007-01-19 21:50:01 adam Exp $
 docdir=$(datadir)/doc/@PACKAGE@
 
 SUBDIRS = common
@@ -41,12 +41,12 @@ index.tkl: $(XMLFILES)
 	$(TKL_COMPILE) $(MAINXML)
 
 pazpar2.pdf: $(XMLFILES)
+	rm -f pazpar2.pdf
+	dblatex $(MAINXML) && mv book.pdf pazpar2.pdf
+
+jade-check: $(XMLFILES)
 	jade -E14 -D $(srcdir) -d common/print.dsl -t tex $(srcdir)/common/xml.dcl $(MAINXML)
-	rm -f pazpar2.tex
-	mv book.tex pazpar2.tex
-	pdfjadetex pazpar2.tex >/dev/null
-	pdfjadetex pazpar2.tex >/dev/null
-	pdfjadetex pazpar2.tex >/dev/null
+	touch jade-check
 
 manref.xml: $(XMLMAN) $(srcdir)/common/stripref.xsl
 	rm -f manref.xml

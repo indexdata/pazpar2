@@ -9,40 +9,41 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: book.xml,v 1.5 2007-01-19 18:28:08 quinn Exp $ -->
+<!-- $Id: book.xml,v 1.6 2007-01-19 21:50:02 adam Exp $ -->
 <book id="book">
-  <bookinfo>
-   <title>Pazpar2 - User's Guide and Reference</title>
-   <author>
-    <firstname>Sebastian</firstname><surname>Hammer</surname>
-   </author>
-   <copyright>
-    <year>&copyright-year;</year>
-    <holder>Index Data</holder>
-   </copyright>
-   <abstract>
-    <simpara>
-       Pazpar2 is a high-performance, user interface-independent, data
-       model-independent metasearching
-       middleware featuring merging, relevance ranking, record sorting, 
-       and faceted results.
-    </simpara>
-    <simpara>
-     This document is a guide and reference to Pazpar version &version;.
-    </simpara>
-    <simpara>
-     <inlinemediaobject>
-      <imageobject>
-       <imagedata fileref="common/id.png" format="PNG"/>
-      </imageobject>
-      <imageobject>
-       <imagedata fileref="common/id.eps" format="EPS"/>
-      </imageobject>
-     </inlinemediaobject>
-    </simpara>
-   </abstract>
+ <bookinfo>
+  <title>Pazpar2 - User's Guide and Reference</title>
+  <author>
+   <firstname>Sebastian</firstname><surname>Hammer</surname>
+  </author>
+  <releaseinfo>&version;</releaseinfo>
+  <copyright>
+   <year>&copyright-year;</year>
+   <holder>Index Data</holder>
+  </copyright>
+  <abstract>
+   <simpara>
+    Pazpar2 is a high-performance, user interface-independent, data
+    model-independent metasearching
+    middleware featuring merging, relevance ranking, record sorting, 
+    and faceted results.
+   </simpara>
+   <simpara>
+    This document is a guide and reference to Pazpar version &version;.
+   </simpara>
+   <simpara>
+    <inlinemediaobject>
+     <imageobject>
+      <imagedata fileref="common/id.png" format="PNG"/>
+   </imageobject>
+    <imageobject>
+     <imagedata fileref="common/id.eps" format="EPS"/>
+   </imageobject>
+   </inlinemediaobject>
+   </simpara>
+  </abstract>
   </bookinfo>
-
+ 
   <chapter id="introduction">
    <title>Introduction</title>
    <para>
@@ -362,16 +363,16 @@
     </section>
   </chapter> <!-- Using pazpar2 -->
 
-  <reference id="reference">
-   <title>Reference</title>
-   <partintro>
-    <para>
-     The material in this chapter is drawn directly from the individual
-     manual entries.
-    </para>
-   </partintro>
-   &manref;
-  </reference>
+ <reference id="reference">
+  <title>Reference</title>
+  <partintro>
+   <para>
+    The material in this chapter is drawn directly from the individual
+    manual entries.
+   </para>
+  </partintro>
+  &manref;
+ </reference>
 </book>
 
  <!-- Keep this comment at the end of the file
