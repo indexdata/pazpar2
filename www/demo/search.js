@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.43 2007-01-18 19:32:06 quinn Exp $
+/* $Id: search.js,v 1.44 2007-01-20 20:11:36 sondberg Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -33,7 +33,6 @@ function initialize ()
 {
     facet_list = get_available_facets();
     start_session();
-    session_check();
     set_sort();
 }
 
