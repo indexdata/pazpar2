@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.45 2007-01-19 21:16:11 adam Exp $ */
+/* $Id: pazpar2.c,v 1.46 2007-01-26 19:30:51 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -176,7 +176,7 @@ static void send_search(IOCHAN i)
     for (ndb = 0; db->databases[ndb]; ndb++)
 	databaselist[ndb] = db->databases[ndb];
 
-    a->u.presentRequest->preferredRecordSyntax =
+    a->u.searchRequest->preferredRecordSyntax =
             yaz_oidval_to_z3950oid(global_parameters.odr_out,
             CLASS_RECSYN, VAL_USMARC);
     a->u.searchRequest->smallSetUpperBound = &ssub;
