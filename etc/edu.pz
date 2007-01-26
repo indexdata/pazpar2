@@ -42,4 +42,5 @@ target yulib001.mc.yu.edu:1111/DEFAULT;Yeshiva U
 target z3950.fcla.edu:210/CF;Florida CLA
 target z3950.library.wisc.edu:210/madison;U of Wisconsin
 target us1v1.indexdata.com/ruprime;Reference Universe
-target us1v1.indexdata.com/pdx;Public Documents Metafile
+target us1v1.indexdata.com/pdx;Public Documents Masterfile
+target us1.indexdata.com:9001/Default;Open Content Alliance
