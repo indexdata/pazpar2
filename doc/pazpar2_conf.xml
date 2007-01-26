@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.6 2007-01-19 21:50:02 adam Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.7 2007-01-26 18:53:55 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -313,8 +313,39 @@
 
   </refsect1>
  
- <refsect1><title>EXAMPLES</title>
-  <para></para>
+ <refsect1><title>EXAMPLE</title>
+  <para>Below is a working example configuration:
+  <screen><![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<pazpar2 xmlns="http://www.indexdata.com/pazpar2/1.0">
+
+<server>
+  <listen port="9004"/>
+  <proxy host="us1.indexdata.com"/>
+
+  <service>
+    <metadata name="title" brief="yes" sortkey="skiparticle" merge="longest" rank="6"/>
+    <metadata name="isbn" merge="unique"/>
+    <metadata name="date" brief="yes" sortkey="numeric" type="year" merge="range"
+	    termlist="yes"/>
+    <metadata name="author" brief="yes" termlist="yes" merge="longest" rank="2"/>
+    <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
+    <metadata name="url" merge="unique"/>
+  </service>
+</server>
+
+<queryprofile/>  <!-- Like a CCL profile++ . Can optionally refer to XSLT to 
+       convert ZeeRex into queryprofile. Multiple profiles can exist.  -->
+
+<retrievalprofile>
+  <requestsyntax>marc21</requestsyntax>
+  <nativesyntax name="iso2709" format="marc21" encoding="marc8s" mapto="marcxml"/>
+  <map type="xslt" stylesheet="marc21.xsl"/>
+</retrievalprofile>
+
+</pazpar2>
+]]></screen>
+   </para>
  </refsect1> 
 </refentry>
 <!-- Keep this comment at the end of the file
