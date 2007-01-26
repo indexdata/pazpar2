@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.45 2007-01-26 18:50:11 quinn Exp $
+/* $Id: search.js,v 1.46 2007-01-26 23:24:01 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -419,7 +419,7 @@ function hyperlink_search(obj)
     var field = obj.getAttribute('searchfield');
     var term = obj.getAttribute('term');
     var queryfield  = document.getElementById('query');
-    queryfield.value = field + '=' + term;
+    queryfield.value = field + '="' + term + '"';
     start_search();
 }
 
