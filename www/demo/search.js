@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.44 2007-01-20 20:11:36 sondberg Exp $
+/* $Id: search.js,v 1.45 2007-01-26 18:50:11 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -33,6 +33,7 @@ function initialize ()
 {
     facet_list = get_available_facets();
     start_session();
+    //session_check();
     set_sort();
 }
 
@@ -153,8 +154,7 @@ function update_offset (offset) {
 
 function create_element (name, cdata) {
     var elem_node = document.createElement(name);
-    var text_node = document.createTextNode(cdata);
-    elem_node.appendChild(text_node);
+    elem_node.innerHTML = cdata;
 
     return elem_node;
 }
@@ -187,7 +187,8 @@ function set_sort_opt(n, opt, str)
 	var a = document.createElement('a');
 	a.appendChild(txt);
 	a.setAttribute('href', "");
-	a.setAttribute('onclick', "set_sort('" + opt + "'); return false");
+	a.setAttribute('id', opt);
+	a.onclick = function() { set_sort(this.getAttribute('id')); return false; };
 	n.appendChild(a);
     }
 }
@@ -255,13 +256,21 @@ function  paint_details_tr(name, dn)
     var dname = displayname(name);
     var ln = create_element('b', dname);
     var tln = document.createElement('td');
-    tln.setAttribute('width', 90);
-    tln.setAttribute('valign', 'top');
+    tln.width = '90';
+    tln.vAlign = 'top';
     tln.appendChild(ln);
     var tr = document.createElement('tr');
     tr.appendChild(tln);
     tr.appendChild(dn);
     return tr;
+}
+
+function cleanurl(v)
+{
+    var v1 = v;
+    var v2 = v1.replace(/\?.*$/, "");
+    var v3 = v2.replace(/http:\/\//, "");
+    return v3;
 }
 
 function paint_data_elements(target, node)
@@ -289,7 +298,9 @@ function paint_data_elements(target, node)
 	}
 	if (name == 'location')
 	{
-	    target.appendChild(paint_details_tr('Location', paint_subrecord(nodes[i])));
+	    dn = document.createElement('td');
+	    dn.appendChild(paint_subrecord(nodes[i]));
+	    target.appendChild(paint_details_tr('Location', dn)); 
 	    continue;
 	}
 	if (!nodes[i].childNodes[0])
@@ -301,15 +312,15 @@ function paint_data_elements(target, node)
 	var nv;
 	if (hyl)
 	{
-	    nv = create_element('a', value);
+	    nv = create_element('a', cleanurl(value));
 	    if (hyl == 'URL')
 	    {
-		nv.setAttribute('href', value);
-		nv.setAttribute('target', '_blank');
+		nv.href = value;
+		nv.target = '_blank';
 	    }
 	    else
 	    {
-		nv.setAttribute('href', '#');
+		nv.href = '#';
 		nv.setAttribute('term', value);
 		nv.setAttribute('searchfield', hyl);
 		nv.onclick = function() { hyperlink_search(this); return false; };
@@ -339,15 +350,19 @@ function paint_data_elements(target, node)
 function paint_subrecord(node)
 {
     var table = document.createElement('table');
+    var tbody = document.createElement('tbody');
     var zurl = node.getAttribute('id');
     var name = node.getAttribute('name');
     var tr;
+    var td;
     if (name)
-	tr = paint_details_tr('Source', document.createTextNode(name));
+	td = create_element('td', name);
     else
-	tr = paint_details_tr('Source', document.createTextNode(zurl));
-    table.appendChild(tr);
-    paint_data_elements(table, node);
+	td = create_element('td', zurl);
+    tr = paint_details_tr('Source', td);
+    tbody.appendChild(tr);
+    paint_data_elements(tbody, node);
+    table.appendChild(tbody);
     return table;
 }
 
@@ -355,8 +370,10 @@ function paint_details(body, xml)
 {
     clear_cell(body);
     var table = document.createElement('table');
+    var tbody = document.createElement('tbody');
     table.setAttribute('cellpadding', 2);
-    paint_data_elements(table, xml.childNodes[0]);
+    paint_data_elements(tbody, xml.childNodes[0]);
+    table.appendChild(tbody);
     body.appendChild(table);
     body.style.display = 'inline';
 }
@@ -473,7 +490,7 @@ function show_records()
 	    var count = 1;
 	    var idn = hits[i].getElementsByTagName("recid");
 
-	    if (tn[0]) {
+	    if (tn[0] && tn[0].childNodes[0]) {
                 title = tn[0].childNodes[0].nodeValue;
             } else {
                 title = 'N/A';
@@ -490,7 +507,9 @@ function show_records()
 
             var record_cell = create_element('a', title);
             record_cell.setAttribute('href', '#' + id);
-	    record_cell.setAttribute('onclick', 'fetch_details(' + id + '); return false');
+	    record_cell.setAttribute('id', id);
+	    //record_cell.onclick = function() { fetch_details(this.getAttribute('id')); return false; }
+	    record_cell.onclick = function() { fetch_details(this.getAttribute('id')); return false; };
             record_div.appendChild(record_cell);
 	    if (author)
 	    {
@@ -554,11 +573,11 @@ function refine_query (obj) {
     term = term.replace(/[\(\)]/g, '');
     
     if (cur_termlist == 'subject')
-	query_cell.value += ' and su=' + term;
+	query_cell.value += ' and su="' + term + '"';
     else if (cur_termlist == 'author')
-	query_cell.value += ' and au=' + term;
+	query_cell.value += ' and au="' + term + '"';
     else if (cur_termlist == 'date')
-	query_cell.value += ' and date=' + term;
+	query_cell.value += ' and date="' + term + '"';
 
     start_search();
 }
