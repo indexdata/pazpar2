@@ -1,4 +1,4 @@
-/* $Id: zeerex.c,v 1.1 2007-01-29 03:19:25 quinn Exp $ */
+/* $Id: zeerex.c,v 1.2 2007-01-31 20:25:23 adam Exp $ */
 
 #include <string.h>
 
@@ -389,7 +389,7 @@ static struct zr_configInfo *configInfo(NMEM m, xmlNode *node)
     return r;
 }
 
-static struct zr_index *index(NMEM m, xmlNode *node)
+static struct zr_index *parse_index(NMEM m, xmlNode *node)
 {
     xmlNode *n;
     struct zr_index *r = nmem_malloc(m, sizeof(*r));
@@ -450,7 +450,7 @@ static struct zr_indexInfo *indexInfo(NMEM m , xmlNode *node)
         }
         else if (!strcmp(n->name, "index"))
         {
-            struct zr_index *new = index(m, n);
+            struct zr_index *new = parse_index(m, n);
             if (!new)
                 return 0;
             new->next = r->indexes;
