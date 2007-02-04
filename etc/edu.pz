@@ -44,3 +44,5 @@ target z3950.library.wisc.edu:210/madison;U of Wisconsin
 target us1v1.indexdata.com/ruprime;Reference Universe
 target us1v1.indexdata.com/pdx;Public Documents Masterfile
 target us1.indexdata.com:9001/Default;Open Content Alliance
+target econtent.indexdata.com:210/oca-americana;OCA American Libraries
+target econtent.indexdata.com:210/oaister;OAIster
