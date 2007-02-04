@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.46 2007-01-26 19:30:51 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.47 2007-02-04 21:48:21 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1603,7 +1603,8 @@ int main(int argc, char **argv)
 
     start_http_listener();
     start_proxy();
-    global_parameters.ccl_filter = load_cclfile("../etc/default.bib");
+    if (!global_parameters.ccl_filter)
+        global_parameters.ccl_filter = load_cclfile("../etc/default.bib");
     global_parameters.yaz_marc = yaz_marc_create();
     yaz_marc_subfield_str(global_parameters.yaz_marc, "\t");
     global_parameters.odr_in = odr_createmem(ODR_DECODE);
