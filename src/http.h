@@ -35,6 +35,7 @@ struct http_proxy //  attached to iochan for proxy connection
     IOCHAN iochan;
     struct http_channel *channel;
     struct http_buf *oqueue;
+    int first_response;
 };
 
 struct http_header
@@ -71,11 +72,11 @@ struct http_response
     char *payload;
 };
 
-void http_set_proxyaddr(char *url);
+void http_set_proxyaddr(char *url, char *baseurl);
 void http_init(const char *addr);
 void http_addheader(struct http_response *r, const char *name, const char *value);
 char *http_argbyname(struct http_request *r, char *name);
-char *http_headerbyname(struct http_request *r, char *name);
+char *http_headerbyname(struct http_header *r, char *name);
 struct http_response *http_create_response(struct http_channel *c);
 void http_send_response(struct http_channel *c);
 

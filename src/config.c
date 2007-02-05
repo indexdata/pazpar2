@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.13 2007-01-15 16:56:51 quinn Exp $ */
+/* $Id: config.c,v 1.14 2007-02-05 16:15:41 quinn Exp $ */
 
 #include <string.h>
 
@@ -191,6 +191,7 @@ static struct conf_server *parse_server(xmlNode *node)
     r->port = 0;
     r->proxy_host = 0;
     r->proxy_port = 0;
+    r->myurl = 0;
     r->service = 0;
     r->next = 0;
 
@@ -213,12 +214,21 @@ static struct conf_server *parse_server(xmlNode *node)
         {
             xmlChar *port = xmlGetProp(n, "port");
             xmlChar *host = xmlGetProp(n, "host");
+            xmlChar *myurl = xmlGetProp(n, "myurl");
             if (port)
                 r->proxy_port = atoi(port);
             if (host)
                 r->proxy_host = nmem_strdup(nmem, host);
+            if (myurl)
+                r->myurl = nmem_strdup(nmem, myurl);
+            else
+            {
+                yaz_log(YLOG_FATAL, "Must specify @myurl for proxy");
+                return 0;
+            }
             xmlFree(port);
             xmlFree(host);
+            xmlFree(myurl);
         }
         else if (!strcmp(n->name, "service"))
         {

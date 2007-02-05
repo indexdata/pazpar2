@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.47 2007-02-04 21:48:21 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.48 2007-02-05 16:15:41 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1547,7 +1547,7 @@ static void start_proxy(void)
     else
         return;
 
-    http_set_proxyaddr(hp);
+    http_set_proxyaddr(hp, ser->myurl ? ser->myurl : "");
 }
 
 int main(int argc, char **argv)

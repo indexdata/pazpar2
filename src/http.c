@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.9 2007-01-10 11:56:10 adam Exp $
+ * $Id: http.c,v 1.10 2007-02-05 16:15:41 quinn Exp $
  */
 
 #include <stdio.h>
@@ -39,6 +39,7 @@ extern IOCHAN channel_list;
 
 static struct sockaddr_in *proxy_addr = 0; // If this is set, we proxy normal HTTP requests
 static char proxy_url[256] = "";
+static char myurl[256] = "";
 static struct http_buf *http_buf_freelist = 0;
 static struct http_channel *http_channel_freelist = 0;
 
@@ -210,12 +211,11 @@ char *http_argbyname(struct http_request *r, char *name)
     return 0;
 }
 
-char *http_headerbyname(struct http_request *r, char *name)
+char *http_headerbyname(struct http_header *h, char *name)
 {
-    struct http_header *p;
-    for (p = r->headers; p; p = p->next)
-        if (!strcmp(p->name, name))
-            return p->value;
+    for (; h; h = h->next)
+        if (!strcmp(h->name, name))
+            return h->value;
     return 0;
 }
 
@@ -230,16 +230,10 @@ struct http_response *http_create_response(struct http_channel *c)
     return r;
 }
 
-// Check if we have a complete request. Return 0 or length (including trailing newline)
-// FIXME: Does not deal gracefully with requests carrying payload
-// but this is kind of OK since we will reject anything other than an empty GET
-static int request_check(struct http_buf *queue)
+// Check if buf contains a package (minus payload)
+static int package_check(const char *buf)
 {
-    char tmp[4096];
     int len = 0;
-    char *buf = tmp;
-
-    http_buf_peek(queue, tmp, 4096);
     while (*buf) // Check if we have a sequence of lines terminated by an empty line
     {
         char *b = strstr(buf, "\r\n");
@@ -253,6 +247,69 @@ static int request_check(struct http_buf *queue)
         buf = b + 2;
     }
     return 0;
+}
+
+// Check if we have a request. Return 0 or length
+// (including trailing CRNL) FIXME: Does not deal gracefully with requests
+// carrying payload but this is kind of OK since we will reject anything
+// other than an empty GET
+static int request_check(struct http_buf *queue)
+{
+    char tmp[4096];
+
+    http_buf_peek(queue, tmp, 4096);
+    return package_check(tmp);
+}
+
+struct http_response *http_parse_response_buf(struct http_channel *c, const char *buf, int len)
+{
+    char tmp[4096];
+    struct http_response *r = http_create_response(c);
+    char *p, *p2;
+    struct http_header **hp = &r->headers;
+
+    if (len >= 4096)
+        return 0;
+    memcpy(tmp, buf, len);
+    for (p = tmp; *p && *p != ' '; p++) // Skip HTTP version
+        ;
+    p++;
+    // Response code
+    for (p2 = p; *p2 && *p2 != ' ' && p2 - p < 3; p2++)
+        r->code[p2 - p] = *p2;
+    if (!(p = strstr(tmp, "\r\n")))
+        return 0;
+    p += 2;
+    while (*p)
+    {
+        if (!(p2 = strstr(p, "\r\n")))
+            return 0;
+        if (p == p2) // End of headers
+            break;
+        else
+        {
+            struct http_header *h = *hp = nmem_malloc(c->nmem, sizeof(*h));
+            char *value = strchr(p, ':');
+            if (!value)
+                return 0;
+            *(value++) = '\0';
+            h->name = nmem_strdup(c->nmem, p);
+            while (isspace(*value))
+                value++;
+            if (value >= p2)  // Empty header;
+            {
+                h->value = "";
+                p = p2 + 2;
+                continue;
+            }
+            *p2 = '\0';
+            h->value = nmem_strdup(c->nmem, value);
+            h->next = 0;
+            hp = &h->next;
+            p = p2 + 2;
+        }
+    }
+    return r;
 }
 
 struct http_request *http_parse_request(struct http_channel *c, struct http_buf **queue,
@@ -373,7 +430,6 @@ struct http_request *http_parse_request(struct http_channel *c, struct http_buf 
     return r;
 }
 
-
 static struct http_buf *http_serialize_response(struct http_channel *c,
         struct http_response *r)
 {
@@ -383,8 +439,12 @@ static struct http_buf *http_serialize_response(struct http_channel *c,
     wrbuf_printf(c->wrbuf, "HTTP/1.1 %s %s\r\n", r->code, r->msg);
     for (h = r->headers; h; h = h->next)
         wrbuf_printf(c->wrbuf, "%s: %s\r\n", h->name, h->value);
-    wrbuf_printf(c->wrbuf, "Content-length: %d\r\n", r->payload ? (int) strlen(r->payload) : 0);
-    wrbuf_printf(c->wrbuf, "Content-type: text/xml\r\n");
+    if (r->payload)
+    {
+        wrbuf_printf(c->wrbuf, "Content-length: %d\r\n", r->payload ?
+                (int) strlen(r->payload) : 0);
+        wrbuf_printf(c->wrbuf, "Content-type: text/xml\r\n");
+    }
     wrbuf_puts(c->wrbuf, "\r\n");
 
     if (r->payload)
@@ -470,6 +530,7 @@ static int http_proxy(struct http_request *rq)
         p = xmalloc(sizeof(struct http_proxy));
         p->oqueue = 0;
         p->channel = c;
+        p->first_response = 1;
         c->proxy = p;
         // We will add EVENT_OUTPUT below
         p->iochan = iochan_create(sock, proxy_io, EVENT_INPUT);
@@ -622,6 +683,23 @@ static void http_io(IOCHAN i, int event)
     }
 }
 
+// If this hostname contains our proxy host as a prefix, replace with myurl
+static char *sub_hostname(struct http_channel *c, char *buf)
+{
+    char tmp[1024];
+    if (strlen(buf) > 1023)
+        return buf;
+    if (strncmp(buf, "http://", 7))
+        return buf;
+    if (!strncmp(buf + 7, proxy_url, strlen(proxy_url)))
+    {
+        strcpy(tmp, myurl);
+        strcat(tmp, buf + strlen(proxy_url) + 7);
+        return nmem_strdup(c->nmem, tmp);
+    }
+    return buf;
+}
+
 // Handles I/O on a client connection to a backend web server (proxy mode)
 static void proxy_io(IOCHAN pi, int event)
 {
@@ -657,7 +735,41 @@ static void proxy_io(IOCHAN pi, int event)
             {
                 htbuf->buf[res] = '\0';
                 htbuf->len = res;
-                http_buf_enqueue(&hc->oqueue, htbuf);
+                int offset = 0;
+                if (pc->first_response) // Check if this is a redirect
+                {
+                    int len;
+                    if ((len = package_check(htbuf->buf)))
+                    {
+                        struct http_response *res = http_parse_response_buf(hc, htbuf->buf, len);
+                        if (res)
+                        {
+                            struct http_header *h;
+                            for (h = res->headers; h; h = h->next)
+                                if (!strcmp(h->name, "Location"))
+                                {
+                                    // We found a location header. Rewrite it.
+                                    struct http_buf *buf;
+                                    h->value = sub_hostname(hc, h->value);
+                                    buf = http_serialize_response(hc, res);
+                                    http_buf_enqueue(&hc->oqueue, buf);
+                                    offset = len;
+                                    break;
+                                }
+                        }
+                    }
+                    pc->first_response = 0;
+                }
+                // Write any remaining payload
+                if (htbuf->len - offset > 0)
+                {
+                    if (offset > 0)
+                    {
+                        memmove(htbuf->buf, htbuf->buf + offset, htbuf->len - offset);
+                        htbuf->len -= offset;
+                    }
+                    http_buf_enqueue(&hc->oqueue, htbuf + offset);
+                }
             }
             iochan_setflag(hc->iochan, EVENT_OUTPUT);
             break;
@@ -834,12 +946,13 @@ void http_init(const char *addr)
     channel_list = c;
 }
 
-void http_set_proxyaddr(char *host)
+void http_set_proxyaddr(char *host, char *base_url)
 {
     char *p;
     int port;
     struct hostent *he;
 
+    strcpy(myurl, base_url);
     strcpy(proxy_url, host);
     p = strchr(host, ':');
     yaz_log(YLOG_DEBUG, "Proxying for %s", host);
