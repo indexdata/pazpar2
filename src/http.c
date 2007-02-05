@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.10 2007-02-05 16:15:41 quinn Exp $
+ * $Id: http.c,v 1.11 2007-02-05 16:35:18 quinn Exp $
  */
 
 #include <stdio.h>
@@ -734,8 +734,8 @@ static void proxy_io(IOCHAN pi, int event)
             else
             {
                 htbuf->buf[res] = '\0';
+                htbuf->offset = 0;
                 htbuf->len = res;
-                int offset = 0;
                 if (pc->first_response) // Check if this is a redirect
                 {
                     int len;
@@ -752,8 +752,9 @@ static void proxy_io(IOCHAN pi, int event)
                                     struct http_buf *buf;
                                     h->value = sub_hostname(hc, h->value);
                                     buf = http_serialize_response(hc, res);
+                                    yaz_log(YLOG_LOG, "Proxy rewrite");
                                     http_buf_enqueue(&hc->oqueue, buf);
-                                    offset = len;
+                                    htbuf->offset = len;
                                     break;
                                 }
                         }
@@ -761,15 +762,8 @@ static void proxy_io(IOCHAN pi, int event)
                     pc->first_response = 0;
                 }
                 // Write any remaining payload
-                if (htbuf->len - offset > 0)
-                {
-                    if (offset > 0)
-                    {
-                        memmove(htbuf->buf, htbuf->buf + offset, htbuf->len - offset);
-                        htbuf->len -= offset;
-                    }
-                    http_buf_enqueue(&hc->oqueue, htbuf + offset);
-                }
+                if (htbuf->len - htbuf->offset > 0)
+                    http_buf_enqueue(&hc->oqueue, htbuf);
             }
             iochan_setflag(hc->iochan, EVENT_OUTPUT);
             break;
