@@ -55,6 +55,12 @@
 	</pz:metadata>
       </xsl:for-each>
 
+      <xsl:for-each select="marc:datafield[@tag='520']">
+        <pz:metadata type="description">
+	  <xsl:value-of select="marc:subfield[@code='a']"/>
+	</pz:metadata>
+      </xsl:for-each>
+
       <xsl:for-each select="marc:datafield[@tag='700']">
 	<pz:metadata type="author">
 	  <xsl:value-of select="marc:subfield[@code='a']"/>
