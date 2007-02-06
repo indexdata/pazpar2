@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.46 2007-01-26 23:24:01 quinn Exp $
+/* $Id: search.js,v 1.47 2007-02-06 23:22:49 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -228,6 +228,8 @@ function displayname(name)
 	return '@';
     else if (name == 'md-id')
 	return 'Local ID';
+    else if (name == 'md-description')
+	return 'Description';
     else if (name == 'md-lccn')
 	return 'LCCN';
     else if (name == 'recid')
