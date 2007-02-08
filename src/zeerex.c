@@ -1,4 +1,4 @@
-/* $Id: zeerex.c,v 1.2 2007-01-31 20:25:23 adam Exp $ */
+/* $Id: zeerex.c,v 1.3 2007-02-08 19:26:33 adam Exp $ */
 
 #include <string.h>
 
@@ -203,9 +203,9 @@ static struct zr_implementation *implementation(NMEM m, xmlNode *node)
 
 struct zr_databaseInfo *databaseInfo(NMEM m, xmlNode *node)
 {
+    xmlNode *n;
     struct zr_databaseInfo *r = nmem_malloc(m, sizeof(*r));
     memset(r, 0, sizeof(*r));
-    xmlNode *n;
 
     r->title = findlangstr(m, node, "title");
     r->description = findlangstr(m, node, "description");
@@ -489,9 +489,9 @@ static struct zr_recordSyntax *recordSyntax(NMEM m, xmlNode *node)
 {
     xmlNode *n;
     struct zr_recordSyntax *r = nmem_malloc(m, sizeof(*r));
-    memset(r, 0, sizeof(*r));
     struct zr_elementSet **elementp = &r->elementSets;
 
+    memset(r, 0, sizeof(*r));
     r->name = attrtostr(m, node, "name");
     r->identifier = attrtostr(m, node, "identifier");
     for (n = node->children; n; n = n->next)
@@ -517,9 +517,9 @@ static struct zr_recordInfo *recordInfo(NMEM m, xmlNode *node)
 {
     xmlNode *n;
     struct zr_recordInfo *r = nmem_malloc(m, sizeof(*r));
-    memset(r, 0, sizeof(*r));
     struct zr_recordSyntax **syntaxp = &r->recordSyntaxes;
 
+    memset(r, 0, sizeof(*r));
     for (n = node->children; n; n = n->next)
     {
         if (n->type != XML_ELEMENT_NODE)
@@ -558,9 +558,9 @@ static struct zr_schemaInfo *schemaInfo(NMEM m, xmlNode *node)
 {
     xmlNode *n;
     struct zr_schemaInfo *r = nmem_malloc(m, sizeof(*r));
-    memset(r, 0, sizeof(*r));
     struct zr_schema **schemap = &r->schemas;
 
+    memset(r, 0, sizeof(*r));
     for (n = node->children; n; n = n->next)
     {
         if (n->type != XML_ELEMENT_NODE)
