@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.47 2007-02-06 23:22:49 quinn Exp $
+/* $Id: search.js,v 1.48 2007-02-08 02:08:47 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -338,6 +338,15 @@ function paint_data_elements(target, node)
 	    nv.appendChild(link);
 
 	}
+	else if (name == 'md-isbn')
+	{
+	    nv = document.createElement('span');
+	    nv.appendChild(document.createTextNode(value + ' '));
+	    var link = create_element('a', 'search OpenWorldCat');
+		link.setAttribute('target', '_blank');
+		link.setAttribute('href', 'http://www.worldcat.org/search?q=isbn%3A' + value);
+	    nv.appendChild(link);
+
 	else
 	    nv = document.createTextNode(value);
 	dn.appendChild(nv);
