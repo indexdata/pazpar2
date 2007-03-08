@@ -3,17 +3,27 @@ if(typeof window.pz2 == "undefined") {
 window.undefined = window.undefined;
 
 var pz2 = function(callbackArr, autoInit, keepAlive) {
-    // 
-    if ( callbackArr == null )
-        return null;
-
     //for convenience
     myself = this;
+
+    // at least one callback required
+    if ( !callbackArr )
+        throw new Error("Callback parameters array has to be suplied when instantiating a class");   
+    
+    // function callbacks
+    myself.statCallback = callbackArr.onstat;
+    myself.showCallback = callbackArr.onshow;
+    myself.termlistCallback = callbackArr.onterm;
+    myself.recordCallback = callbackArr.onrecord || null;
+
+    // termlist keys
+    myself.termKeys = callbackArr.termlist || "subject";
     
     myself.pz2String = "search.pz2";
-    myself.sessionID;
-    myself.initStatus = 0;
-    myself.pingStatus = 0;
+    myself.sessionID = null;
+    myself.initStatusOK = false;
+    myself.pingStatusOK = false;
+    myself.searchStatusOK = false;
     myself.keepAlive = 50000;
 
     if ( keepAlive < myself.keepAlive )
@@ -21,22 +31,26 @@ var pz2 = function(callbackArr, autoInit, keepAlive) {
 
     // for sorting
     myself.currentSort = "relevance";
-    myself.sortKeywords = [ "relevance", "title", "author" ];
-    
-    // function callbacks
-    myself.statCallback = callbackArr.onstat;
-    myself.showCallback = callbackArr.onshow;
-    myself.termlistCallback = callbackArr.onterm;
+    // where are we?
+    myself.currentStart = 0;
+    myself.currentNum = 20;
 
     //timers
     myself.statTime = 2000;
-    myself.statTimer;
+    myself.statTimer = null;
     myself.termTime = 1000;
-    myself.termTimer;
+    myself.termTimer = null;
     myself.showTime = 1000;
-    myself.showTimer;
+    myself.showTimer = null;
 
-    if (autoInit == true)
+    // error handling
+    $(document).ajaxError( 
+    function (request, settings, exception) {
+        if ( settings.responseXML && settings.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue)
+            throw new Error( settings.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue);
+    });
+
+    if (autoInit !== false)
         myself.init(myself.keepAlive);
 }
 pz2.prototype = {
@@ -45,24 +59,25 @@ pz2.prototype = {
         $.get( myself.pz2String,
             { command: "init" },
             function(data) {
-                if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" )
-                    myself.initStatus = 1;
-                myself.sessionID = data.getElementsByTagName("session")[0].childNodes[0].nodeValue;
-                setTimeout(myself.ping, myself.keepAlive);
+                if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
+                    myself.initStatusOK = true;
+                    myself.sessionID = data.getElementsByTagName("session")[0].childNodes[0].nodeValue;
+                    setTimeout(myself.ping, myself.keepAlive);
+                }
             }
         );
     },
     // no need to ping explicitly
     ping: function() {
-        if( !myself.initStatus )
+        if( !myself.initStatusOK )
             return;
             // session is not initialized code here
         $.get( myself.pz2String,
             { command: "ping", session: myself.sessionID },
             function(data) {
                 if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
-                    myself.pingStatus = 1;
-                    setTimeout(myself.ping, myself.keepAlive);
+                    myself.pingStatusOK = true;
+                    setTimeout("myself.ping()", myself.keepAlive);
                 }
                 else
                     location = "?";
@@ -73,19 +88,19 @@ pz2.prototype = {
         clearTimeout(myself.statTimer);
         clearTimeout(myself.showTimer);
         clearTimeout(myself.termTimer);
-        if( !myself.initStatus )
+        if( !myself.initStatusOK )
             return;
         $.get( myself.pz2String,
             { command: "search", session: myself.sessionID, query: query },
             function(data) {
                 if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
-                    myself.searchStatus = 1;
+                    myself.searchStatusOK = true;
                     //piggyback search
                     myself.show(0, num, sort)
                     if ( myself.statCallback )
-                        myself.statTimer = setTimeout(myself.stat, myself.statTime / 2);
+                        myself.statTimer = setTimeout("myself.stat()", myself.statTime / 2);
                     if ( myself.termlistCallback )
-                        myself.termTimer = setTimeout(myself.termlist, myself.termTime / 2);
+                        myself.termTimer = setTimeout("myself.termlist()", myself.termTime / 2);
                 }
                 else
                     location = "?";
@@ -93,8 +108,8 @@ pz2.prototype = {
         );
     },
     // callback, not to be called explicitly
-    stat: function() {
-        if( !myself.searchStatus )
+    stat: function(test) {
+        if( !myself.searchStatusOK )
             return;
         $.get( myself.pz2String,
             { command: "stat", session: myself.sessionID },
@@ -115,10 +130,10 @@ pz2.prototype = {
                     }
                     myself.statCallback(stat);
                     if (activeClients > 0)
-                        myself.statTimer = setTimeout(myself.stat, myself.statTime); 
+                        myself.statTimer = setTimeout("myself.stat()", myself.statTime); 
                 }
                 else
-                    myself.statTimer = setTimeout(myself.stat, myself.statTime / 4)
+                    myself.statTimer = setTimeout("myself.stat()", myself.statTime / 4)
                     //location = "?";
                     // some error handling
             }
@@ -127,12 +142,18 @@ pz2.prototype = {
     //callback not to be called explicitly
     show: function(start, num, sort) {
         clearTimeout(myself.showTimer);
-        if( !myself.searchStatus )
+        if( !myself.searchStatusOK )
             return;
-        if ( myself.sortKeywords.some( function(element, index, arr) { if (element == sort) return true; else return false; } ) )
+        
+        if( sort !== undefined )
             myself.currentSort = sort;
+        if( start !== undefined )
+            myself.currentStart = Number( start );
+        if( num !== undefined )
+            myself.currentNum = Number( num );
+        
         $.get( myself.pz2String,
-            { "command": "show", "session": myself.sessionID, "start": start, "num": num, "sort": myself.currentSort, "block": 1 },
+            { "command": "show", "session": myself.sessionID, "start": myself.currentStart, "num": myself.currentNum, "sort": myself.currentSort, "block": 1 },
             function(data) {
                 if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
                     var activeClients = Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue );
@@ -141,27 +162,66 @@ pz2.prototype = {
                     "merged": Number( data.getElementsByTagName("merged")[0].childNodes[0].nodeValue ),
                     "total": Number( data.getElementsByTagName("total")[0].childNodes[0].nodeValue ),
                     "start": Number( data.getElementsByTagName("start")[0].childNodes[0].nodeValue ),
-                    "num": Number( data.getElementsByTagName("num")[0].childNodes[0].nodeValue )
+                    "num": Number( data.getElementsByTagName("num")[0].childNodes[0].nodeValue ),
+                    "hits": []
                     }
+
+                    var hits = data.getElementsByTagName("hit");
+                    var hit = new Array();
+                    for (i = 0; i < hits.length; i++) {
+                        show.hits[i] = new Array();
+                        for ( j = 0; j < hits[i].childNodes.length; j++) {
+                            if ( hits[i].childNodes[j].nodeType == Node.ELEMENT_NODE ) {
+                                var nodeName = hits[i].childNodes[j].nodeName;
+                                var nodeText = hits[i].childNodes[j].firstChild.nodeValue;
+                                show.hits[i][nodeName] = nodeText;
+                            }
+                        }
+                    }
+
                     //TODO include records
                     myself.showCallback(show);
                     if (activeClients > 0)
-                        myself.showTimer = setTimeout("myself.show(" + start + "," + num + "," + sort + ")", myself.showTime);
+                        myself.showTimer = setTimeout("myself.show()", myself.showTime);
                 }
                 else
-                    myself.showTimer = setTimeout("myself.show(" + start + "," + num + "," + sort + ")", myself.showTime / 4);
+                    myself.showTimer = setTimeout("myself.show()", myself.showTime / 4);
                     // location = "?";
                     // some error handling
             }
         );
     },
     record: function(id) {
-    },
-    termlist: function(name) {
-        if( !myself.searchStatus )
+        if( !myself.searchStatusOK )
             return;
         $.get( myself.pz2String,
-            { "command": "termlist", "session": myself.sessionID, "name": "author" },
+            { "command": "record", "session": myself.sessionID, "id": id },
+            function(data) {
+                var recordNode;
+                var record = new Array();
+                if ( recordNode = data.getElementsByTagName("record")[0] ) {
+                    for ( i = 0; i < recordNode.childNodes.length; i++) {
+                        if ( recordNode.childNodes[i].nodeType == Node.ELEMENT_NODE ) {
+                            var nodeName = recordNode.childNodes[i].nodeName;
+                            var nodeText = recordNode.childNodes[i].firstChild.nodeValue;
+                            record[nodeName] = nodeText;
+                        }
+                    }
+                    myself.recordCallback(record);
+                }
+                else
+                    alert("");
+                    //location = "?";
+                    // some error handling
+            }
+        );
+        
+    },
+    termlist: function() {
+        if( !myself.searchStatusOK )
+            return;
+        $.get( myself.pz2String,
+            { "command": "termlist", "session": myself.sessionID, "name": myself.termKeys },
             function(data) {
                 if ( data.getElementsByTagName("termlist") ) {
                     var termList = { "activeclients": Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue ) }
@@ -182,10 +242,10 @@ pz2.prototype = {
                     }
                     myself.termlistCallback(termList);
                     if (termList["activeclients"] > 0)
-                        myself.termTimer = setTimeout("myself.termlist(" + name + ")" , myself.termTime); 
+                        myself.termTimer = setTimeout("myself.termlist()", myself.termTime); 
                 }
                 else
-                    myself.termTimer = setTimeout("myself.termlist(" + name + ")" , myself.termTime / 4); 
+                    myself.termTimer = setTimeout("myself.termlist()", myself.termTime / 4); 
                     //location = "?";
                     // some error handling
             }

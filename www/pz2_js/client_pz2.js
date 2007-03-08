@@ -1,11 +1,22 @@
 function init() {
-    my_paz = new pz2( { "onshow": my_onshow, "onstat": my_onstat, "onterm": my_onterm }, true );
+    my_paz = new pz2( { "onshow": my_onshow,
+                        "onstat": my_onstat,
+                        "onterm": my_onterm,
+                        "termlist": "subject,author",
+                        "onrecord": my_onrecord } );
 }
 
 function my_onshow(data) {
     var body = document.getElementById("body");
-
-    body.innerHTML = '<div>active clients: ' + data.activeclients + '</div>' +
+    body.innerHTML = "";
+    for ( i = 0; i < data.hits.length; i++) {
+        var hit = data.hits[i];
+        body.innerHTML += '<div id="' + hit.recid + '" onclick="my_paz.record(this.id)"><span>' + i + 
+                          '. </span><span><b>' + hit["md-title"] +
+                          ' </b></span> by <span><i>' + hit["md-author"] + '</i></span></div>';
+    }
+    body.innerHTML += "<hr/>";
+    body.innerHTML += '<div>active clients: ' + data.activeclients + '</div>' +
                      '<div>merged: ' + data.merged + '</div>' +
                      '<div>total: ' + data.total + '</div>' +
                      '<div>start: ' + data.start + '</div>' +
@@ -14,7 +25,6 @@ function my_onshow(data) {
 
 function my_onstat(data) {
     var stat = document.getElementById("stat");
-
     stat.innerHTML = '<div>active clients: ' + data.activeclients + '</div>' +
                      '<div>hits: ' + data.hits + '</div>' +
                      '<div>records: ' + data.records + '</div>' +
@@ -24,9 +34,23 @@ function my_onstat(data) {
 
 function my_onterm(data) {
     var termlist = document.getElementById("termlist");
-    
     termlist.innerHTML = "";
+    termlist.innerHTML  += "<div><b> --Author-- </b></div>";
     for ( i = 0; i < data.author.length; i++ ) {
         termlist.innerHTML += '<div><span>' + data.author[i].name + ' </span><span> (' + data.author[i].freq + ')</span></div>';
     }
+    termlist.innerHTML += "<hr/>";
+    termlist.innerHTML += "<div><b> --Subject-- </b></div>";
+    for ( i = 0; i < data.subject.length; i++ ) {
+        termlist.innerHTML += '<div><span>' + data.subject[i].name + ' </span><span> (' + data.subject[i].freq + ')</span></div>';
+    }
+}
+
+function my_onrecord(data) {
+    recordDiv = document.getElementById(data.recid);
+    recordDiv.innerHTML = "<table><tr><td><b>Ttle</b> : </td><td>" + data["md-title"] +
+                            "</td></tr><tr><td><b>Date</b> : </td><td>" + data["md-date"] +
+                            "</td></tr><tr><td><b>Author</b> : </td><td>" + data["md-author"] +
+                            "</td></tr><tr><td><b>Subject</b> : </td><td>" + data["md-subject"] + "</td></tr>";
+
 }

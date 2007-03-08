@@ -6,11 +6,11 @@
   <script type="text/javascript" src="jquery.js"></script>
  </head>
 <body onload="init();">
- <table width="100%" border="1" cellpadding="5">
+ <table width="100%" border="0" cellpadding="5" cellspacing="3">
   <tr>
    <td width="250" height="100" align="center"><b>pz2.js test</b></td>
    <td>
-    <form name="search" onsubmit="my_paz.search(this.query.value, 10); return false;">
+    <form name="search" onsubmit="my_paz.search(this.query.value, 15, 'title'); return false;">
      <b>Search:</b>
      <input id="query" type="text" size="50"/>
      <input type="submit" value="Go"/>
@@ -18,16 +18,12 @@
    <td>
   </tr>
   <tr>
-   <td valign="top" id="termlist">&nbsp;</td>
-   <td valign="top" id="body">Show results:<td>
+   <td valign="top"><b>TERMLISTS:</b><div id="termlist"></div></td>
+   <td valign="top"><b>RESULS:</b><hr/><div id="body"><div><td>
   </tr>
   <tr>
-   <td>
-   &nbsp;
-   </td>
-   <td id="stat">
-    Status:
-   </td>
+   <td>&nbsp;</td>
+   <td valign="top"><b>STATUS:<b><div id="stat"></div></td>
   </tr>
  </table>
 </body>
