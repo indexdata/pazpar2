@@ -3,6 +3,7 @@ function init() {
                         "onstat": my_onstat,
                         "onterm": my_onterm,
                         "termlist": "subject,author",
+                        "onbytarget": my_onbytarget,
                         "onrecord": my_onrecord } );
 }
 
@@ -51,6 +52,19 @@ function my_onrecord(data) {
     recordDiv.innerHTML = "<table><tr><td><b>Ttle</b> : </td><td>" + data["md-title"] +
                             "</td></tr><tr><td><b>Date</b> : </td><td>" + data["md-date"] +
                             "</td></tr><tr><td><b>Author</b> : </td><td>" + data["md-author"] +
-                            "</td></tr><tr><td><b>Subject</b> : </td><td>" + data["md-subject"] + "</td></tr>";
+                            "</td></tr><tr><td><b>Subject</b> : </td><td>" + data["md-subject"] + "</td></tr></table>";
 
+}
+
+function my_onbytarget(data) {
+    targetDiv = document.getElementById("bytarget");
+    targetDiv.innerHTML = "<tr><td>ID</td><td>Hits</td><td>Diag</td><td>Rec</td><td>State</td></tr>";
+    
+    for ( i = 0; i < data.length; i++ ) {
+        targetDiv.innerHTML += "<tr><td><b>" + data[i].id +
+                               "</b></td><td>" + data[i].hits +
+                               "</td><td>" + data[i].diagnostic +
+                               "</td><td>" + data[i].records +
+                               "</td><td>" + data[i].state + "</td></tr>";
+    }
 }
