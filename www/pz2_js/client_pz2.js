@@ -4,14 +4,19 @@
 // then register the form submit event with the pz2.search function
 
 my_paz = new pz2( { "onshow": my_onshow,
+                    "showtime": 500,            //each timer (show, stat, term, bytarget) can be specified this way
                     "onstat": my_onstat,
                     "onterm": my_onterm,
                     "termlist": "subject,author",
                     "onbytarget": my_onbytarget,
                     "onrecord": my_onrecord } );
 
-// wait until the DOM is rady (could have been defined in the HTML)
-$(document).ready( function() { document.search.onsubmit = onFormSubmitEventHandler; } );
+// wait until the DOM is ready (could have been defined in the HTML)
+$(document).ready( function() { 
+                    document.search.onsubmit = onFormSubmitEventHandler;
+                    document.getElementById("next").onclick = pagerNext;
+                    document.getElementById("prev").onclick = pagerPrev;
+                    } );
 
 function onFormSubmitEventHandler() {
     my_paz.search(document.search.query.value, 15, 'relevance');
@@ -82,4 +87,12 @@ function my_onbytarget(data) {
                                "</td><td>" + data[i].records +
                                "</td><td>" + data[i].state + "</td></tr>";
     }
+}
+
+function pagerNext() {
+    my_paz.showNext();
+}
+
+function pagerPrev() {
+    my_paz.showPrev();
 }

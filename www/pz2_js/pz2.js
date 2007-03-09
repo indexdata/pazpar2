@@ -1,24 +1,27 @@
-/* prevent execution of more than once */
+// check for jQuery
+if(typeof window.jQuery == "undefined")
+    throw new Error("pz2.js requires jQuery library");
+// prevent execution of more than once
 if(typeof window.pz2 == "undefined") {
 window.undefined = window.undefined;
 
-var pz2 = function(callbackArr, autoInit, keepAlive) {
+var pz2 = function(paramArray) {
     //for convenience
     __myself = this;
 
     // at least one callback required
-    if ( !callbackArr )
-        throw new Error("Callback parameters array has to be suplied when instantiating a class");   
+    if ( !paramArray )
+        throw new Error("An array with parameters has to be suplied when instantiating a class");   
     
     // function callbacks
-    __myself.statCallback = callbackArr.onstat || null;
-    __myself.showCallback = callbackArr.onshow || null;
-    __myself.termlistCallback = callbackArr.onterm || null;
-    __myself.recordCallback = callbackArr.onrecord || null;
-    __myself.bytargetCallback = callbackArr.onbytarget || null;
+    __myself.statCallback = paramArray.onstat || null;
+    __myself.showCallback = paramArray.onshow || null;
+    __myself.termlistCallback = paramArray.onterm || null;
+    __myself.recordCallback = paramArray.onrecord || null;
+    __myself.bytargetCallback = paramArray.onbytarget || null;
 
     // termlist keys
-    __myself.termKeys = callbackArr.termlist || "subject";
+    __myself.termKeys = paramArray.termlist || "subject";
     
     // some configurational stuff
     __myself.pz2String = "search.pz2";
@@ -29,8 +32,8 @@ var pz2 = function(callbackArr, autoInit, keepAlive) {
     __myself.pingStatusOK = false;
     __myself.searchStatusOK = false;
 
-    if ( keepAlive < __myself.keepAlive )
-        __myself.keepAlive = keepAlive;
+    if ( paramArray.keepAlive < __myself.keepAlive )
+        __myself.keepAlive = paramArray.keepAlive;
 
     // for sorting
     __myself.currentSort = "relevance";
@@ -44,13 +47,13 @@ var pz2 = function(callbackArr, autoInit, keepAlive) {
     __myself.currQuery = null;
 
     //timers
-    __myself.statTime = 2000;
+    __myself.statTime = paramArray.stattime || 2000;
     __myself.statTimer = null;
-    __myself.termTime = 1000;
+    __myself.termTime = paramArray.termtime || 1000;
     __myself.termTimer = null;
-    __myself.showTime = 1000;
+    __myself.showTime = paramArray.showtime || 1000;
     __myself.showTimer = null;
-    __myself.bytargetTime = 1000;
+    __myself.bytargetTime = paramArray.bytargettime || 1000;
     __myself.bytargetTimer = null;
 
     // active clients, updated by stat and show
@@ -65,7 +68,7 @@ var pz2 = function(callbackArr, autoInit, keepAlive) {
     });
     
     // auto init session?
-    if (autoInit !== false)
+    if (paramArray.autoInit !== false)
         __myself.init(__myself.keepAlive);
 }
 pz2.prototype = {
@@ -354,6 +357,20 @@ pz2.prototype = {
                     __myself.bytargetTimer = setTimeout("__myself.bytarget()", __myself.bytargetTime / 4);
             }
         );
+    },
+    // just for testing, probably shouldn't be here
+    showNext: function(page)
+    {
+        var step = page || 1;
+        __myself.show( ( step * __myself.currentNum ) + __myself.currentStart );     
+    },
+    showPrev: function(page)
+    {
+        if (__myself.currentStart == 0 )
+            return false;
+        var step = page || 1;
+        var newStart = __myself.currentStart - (step * __myself.currentNum );
+        __myself.show( newStart > 0 ? newStart : 0 );
     }
 };
 }
