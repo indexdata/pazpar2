@@ -1,12 +1,25 @@
-function init() {
-    my_paz = new pz2( { "onshow": my_onshow,
-                        "onstat": my_onstat,
-                        "onterm": my_onterm,
-                        "termlist": "subject,author",
-                        "onbytarget": my_onbytarget,
-                        "onrecord": my_onrecord } );
-}
+// very simple client that shows a basic usage of the pz2.js
 
+// create a parameters array and pass it to the pz2's constructor
+// then register the form submit event with the pz2.search function
+
+my_paz = new pz2( { "onshow": my_onshow,
+                    "onstat": my_onstat,
+                    "onterm": my_onterm,
+                    "termlist": "subject,author",
+                    "onbytarget": my_onbytarget,
+                    "onrecord": my_onrecord } );
+
+// wait until the DOM is rady (could have been defined in the HTML)
+$(document).ready( function() { document.search.onsubmit = onFormSubmitEventHandler; } );
+
+function onFormSubmitEventHandler() {
+    my_paz.search(document.search.query.value, 15, 'relevance');
+    return false;
+}
+//
+// pz2.js event handlers:
+//
 function my_onshow(data) {
     var body = document.getElementById("body");
     body.innerHTML = "";
@@ -48,11 +61,13 @@ function my_onterm(data) {
 }
 
 function my_onrecord(data) {
+    details = data;
     recordDiv = document.getElementById(data.recid);
     recordDiv.innerHTML = "<table><tr><td><b>Ttle</b> : </td><td>" + data["md-title"] +
                             "</td></tr><tr><td><b>Date</b> : </td><td>" + data["md-date"] +
                             "</td></tr><tr><td><b>Author</b> : </td><td>" + data["md-author"] +
-                            "</td></tr><tr><td><b>Subject</b> : </td><td>" + data["md-subject"] + "</td></tr></table>";
+                            "</td></tr><tr><td><b>Subject</b> : </td><td>" + data["md-subject"] + 
+                            "</td></tr><tr><td><b>Location</b> : </td><td>" + data["location"][0].name + "</td></tr></table>";
 
 }
 

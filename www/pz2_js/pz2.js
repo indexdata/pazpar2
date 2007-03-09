@@ -254,7 +254,23 @@ pz2.prototype = {
                         if ( recordNode.childNodes[i].nodeType == Node.ELEMENT_NODE ) {
                             var nodeName = recordNode.childNodes[i].nodeName;
                             var nodeText = recordNode.childNodes[i].firstChild.nodeValue;
-                            record[nodeName] = nodeText;
+                            record[nodeName] = nodeText;                            
+                        }
+                    }
+                    // the location is hard coded
+                    var locationNodes = recordNode.getElementsByTagName("location");
+                    record["location"] = new Array();
+                    for ( i = 0; i < locationNodes.length; i++ ) {
+                        record["location"][i] = {
+                            "id": locationNodes[i].getAttribute("id"),
+                            "name": locationNodes[i].getAttribute("name")
+                        };
+                        for ( j = 0; j < locationNodes[i].childNodes.length; j++) {
+                            if ( locationNodes[i].childNodes[j].nodeType == Node.ELEMENT_NODE ) {
+                                var nodeName = locationNodes[i].childNodes[j].nodeName;
+                                var nodeText = locationNodes[i].childNodes[j].firstChild.nodeValue;
+                                record["location"][i][nodeName] = nodeText;                            
+                            }
                         }
                     }
                     __myself.recordCallback(record);
