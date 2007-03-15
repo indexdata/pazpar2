@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.11 2007-02-05 16:35:18 quinn Exp $
+ * $Id: http.c,v 1.12 2007-03-15 16:50:56 quinn Exp $
  */
 
 #include <stdio.h>
@@ -168,7 +168,8 @@ static int http_buf_read(struct http_buf **b, char *buf, int len)
     return rd;
 }
 
-void static urldecode(char *i, char *o)
+// Buffers may overlap.
+static void urldecode(char *i, char *o)
 {
     while (*i)
     {
@@ -186,6 +187,23 @@ void static urldecode(char *i, char *o)
         }
         else
             *(o++) = *(i++);
+    }
+    *o = '\0';
+}
+
+// Warning: Buffers may not overlap
+void urlencode(const char *i, char *o)
+{
+    while (*i)
+    {
+        if (strchr(" /:", *i))
+        {
+            sprintf(o, "%%%.2X", (int) *i);
+            o += 3;
+        }
+        else
+            *(o++) = *i;
+        i++;
     }
     *o = '\0';
 }

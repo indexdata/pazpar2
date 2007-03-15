@@ -69,11 +69,11 @@ struct database {
     char *name;
     char **databases;
     int errors;
+    struct zr_explain *explain;
     struct conf_queryprofile *qprofile;
     struct conf_retrievalprofile *rprofile;
     struct database *next;
 };
-
 
 // Represents a physical, reusable  connection to a remote Z39.50 host
 struct connection {

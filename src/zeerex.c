@@ -1,4 +1,6 @@
-/* $Id: zeerex.c,v 1.3 2007-02-08 19:26:33 adam Exp $ */
+/* $Id: zeerex.c,v 1.4 2007-03-15 16:50:56 quinn Exp $ */
+
+// Reads Zeerex records into a set of structures
 
 #include <string.h>
 
@@ -12,7 +14,7 @@
 // Replace this with something that will take a callback
 static void fail(const char *s, xmlNode *n)
 {
-    yaz_log(YLOG_WARN, "Zeerex Err '%s' in elem '%s/%s'", s, n->parent->name, n->name);
+    yaz_log(YLOG_WARN, "Zeerex Err '%s'; elem '%s/%s'", s, n->parent->name, n->name);
 }
 
 // returns an nmem-allocated string if attr is present, or null
@@ -107,6 +109,16 @@ static Zr_langstr *findlangstr(NMEM m, xmlNode *node, const char *name)
     return res;
 }
 
+const char *zr_langstr(Zr_langstr *s, const char *lang)
+{
+    Zr_langstr *p;
+    for (p = s; p; p = p->next)
+        if ((!lang && p->primary == Zr_bool_true) ||
+                (lang && p->lang && !strcmp(lang, p->lang)))
+            return p->str;
+    return s->str;
+}
+
 static struct zr_authentication *authentication(NMEM m, xmlNode *node)
 {
     xmlNode *n;
@@ -141,10 +153,10 @@ static struct zr_serverInfo *serverInfo(NMEM m, xmlNode *node)
     struct zr_serverInfo *r = nmem_malloc(m, sizeof(*r));
     memset(r, 0, sizeof(*r));
 
-    r->protocol = attrtostr(m, n, "protocol");
-    r->version = attrtostr(m, n, "version");
-    r->transport = attrtostr(m, n, "transport");
-    r->method = attrtostr(m, n, "method");
+    r->protocol = attrtostr(m, node, "protocol");
+    r->version = attrtostr(m, node, "version");
+    r->transport = attrtostr(m, node, "transport");
+    r->method = attrtostr(m, node, "method");
     for (n = node->children; n; n = n->next)
     {
         if (n->type != XML_ELEMENT_NODE)
@@ -155,9 +167,11 @@ static struct zr_serverInfo *serverInfo(NMEM m, xmlNode *node)
             r->port = valuetoint(n);
         else if (!strcmp(n->name, "database"))
             r->database = valuetostr(m, n);
-        else if (!strcmp(n->name, "authentication") && !(r->authentication =
-                        authentication(m, n)))
-            return 0;
+        else if (!strcmp(n->name, "authentication"))
+        {
+            if (!(r->authentication = authentication(m, n)))
+                return 0;
+        }
         else
         {
             fail("Unexpected element", n);
@@ -237,15 +251,17 @@ struct zr_databaseInfo *databaseInfo(NMEM m, xmlNode *node)
                 }
             }
         }
-        else if (!strcmp(n->name, "implementation") &&
-                !(r->implementation = implementation(m, n)))
-            return 0;
+        else if (!strcmp(n->name, "implementation")) 
+        {
+            if (!(r->implementation = implementation(m, n)))
+                return 0;
+        }
         else if (!strcmp(n->name, "links"))
         {
             xmlNode *n2;
             for (n2 = n->children; n2; n2 = n2->next)
             {
-                if (!n2->type != XML_ELEMENT_NODE)
+                if (n2->type != XML_ELEMENT_NODE)
                     continue;
                 if (!strcmp(n2->name, "link"))
                     continue;
@@ -278,7 +294,7 @@ struct zr_metaInfo *metaInfo(NMEM m, xmlNode *node)
 
     for (n = node->children; n; n = n->next)
     {
-        if (!n->type == XML_ELEMENT_NODE)
+        if (n->type != XML_ELEMENT_NODE)
             continue;
         if (!strcmp(n->name, "dateModified"))
             r->dateModified = valuetostr(m, n);
@@ -403,6 +419,8 @@ static struct zr_index *parse_index(NMEM m, xmlNode *node)
 
     for (n = node->children; n; n = n->next)
     {
+        if (n->type != XML_ELEMENT_NODE)
+            continue;
         if (!strcmp(n->name, "map"))
         {
             struct zr_map *new = map(m, n);
@@ -411,8 +429,11 @@ static struct zr_index *parse_index(NMEM m, xmlNode *node)
             new->next = r->maps;
             r->maps = new;
         }
-        else if (!strcmp(n->name, "configInfo") && !(r->configInfo = configInfo(m, n)))
-            return 0;
+        else if (!strcmp(n->name, "configInfo"))
+        {
+            if (!(r->configInfo = configInfo(m, n)))
+                return 0;
+        }
         else if (strcmp(n->name, "title"))
         {
             fail("Unknown child element", n);
@@ -464,8 +485,11 @@ static struct zr_indexInfo *indexInfo(NMEM m , xmlNode *node)
             new->next = r->sortKeywords;
             r->sortKeywords = new;
         }
-        else if (!strcmp(n->name, "sortKeyword") && !(r->configInfo = configInfo(m, n)))
-            return 0;
+        else if (!strcmp(n->name, "sortKeyword"))
+        {
+            if (!(r->configInfo = configInfo(m, n)))
+                return 0;
+        }
         else
         {
             fail("Unknown child element", n);
@@ -590,23 +614,46 @@ static struct zr_explain *explain(NMEM m, xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "serverInfo") && !(r->serverInfo = serverInfo(m, n)))
-            return 0;
-        else if (!strcmp(n->name, "databaseInfo") && !(r->databaseInfo = databaseInfo(m, n)))
-            return 0;
-        else if (!strcmp(n->name, "metaInfo") && !(r->metaInfo = metaInfo(m, n)))
-            return 0;
-        else if (!strcmp(n->name, "indexInfo") && !(r->indexInfo = indexInfo(m, n)))
-            return 0;
-        else if (!strcmp(n->name, "recordInfo") && !(r->recordInfo = recordInfo(m, n)))
-            return 0;
-        else if (!strcmp(n->name, "schemaInfo") && !(r->schemaInfo = schemaInfo(m, n)))
-            return 0;
-        else if (!strcmp(n->name, "configInfo") && !(r->configInfo = configInfo(m, n)))
-           return 0;
+        if (!strcmp(n->name, "serverInfo"))
+        {
+            if (!(r->serverInfo = serverInfo(m, n)))
+                return 0;
+        }
+        else if (!strcmp(n->name, "databaseInfo"))
+        {
+            if (!(r->databaseInfo = databaseInfo(m, n)))
+                return 0;
+        }
+        else if (!strcmp(n->name, "metaInfo"))
+        {
+            if (!(r->metaInfo = metaInfo(m, n)))
+                return 0;
+        }
+        else if (!strcmp(n->name, "indexInfo"))
+        {
+            if (!(r->indexInfo = indexInfo(m, n)))
+                return 0;
+        }
+        else if (!strcmp(n->name, "recordInfo"))
+        {
+            if (!(r->recordInfo = recordInfo(m, n)))
+                return 0;
+        }
+        else if (!strcmp(n->name, "schemaInfo"))
+        {
+            if (!(r->schemaInfo = schemaInfo(m, n)))
+                return 0;
+        }
+        else if (!strcmp(n->name, "configInfo"))
+        {
+            if (!(r->configInfo = configInfo(m, n)))
+               return 0;
+        }
+        else if (!strcmp(n->name, "status"))
+            continue;
         else
         {
-            fail("Unknown child element", n);
+            fail("Unknown child element of root node", n);
             return 0;
         }
     }

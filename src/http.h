@@ -79,6 +79,7 @@ char *http_argbyname(struct http_request *r, char *name);
 char *http_headerbyname(struct http_header *r, char *name);
 struct http_response *http_create_response(struct http_channel *c);
 void http_send_response(struct http_channel *c);
+void urlencode(const char *i, char *o);
 
 /*
  * Local variables:

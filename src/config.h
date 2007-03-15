@@ -109,10 +109,19 @@ struct conf_retrievalprofile
     struct conf_retrievalprofile *next;
 };
 
+struct conf_targetprofiles
+{
+    enum {
+        Targetprofiles_local
+    } type;
+    char *src;
+};
+
 struct conf_config
 {
     struct conf_server *servers;
     struct conf_queryprofile *queryprofiles;
+    struct conf_targetprofiles *targetprofiles;
     struct conf_retrievalprofile *retrievalprofiles;
 };
 

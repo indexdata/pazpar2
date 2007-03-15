@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.48 2007-02-05 16:15:41 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.49 2007-03-15 16:50:56 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -38,6 +38,7 @@
 #include "reclists.h"
 #include "relevance.h"
 #include "config.h"
+#include "database.h"
 
 #define MAX_CHUNK 15
 
@@ -52,9 +53,6 @@ IOCHAN channel_list = 0;  // Master list of connections we're handling events to
 
 static struct connection *connection_freelist = 0;
 static struct client *client_freelist = 0;
-
-static struct host *hosts = 0;  // The hosts we know about 
-static struct database *databases = 0; // The databases we know about
 
 static char *client_states[] = {
     "Client_Connecting",
@@ -1042,6 +1040,8 @@ static int client_prep_connection(struct client *cl)
         return 0;
 }
 
+#ifdef GAGA // Moved to database.c
+
 // This function will most likely vanish when a proper target profile mechanism is
 // introduced.
 void load_simpletargets(const char *fn)
@@ -1146,6 +1146,8 @@ void load_simpletargets(const char *fn)
     fclose(f);
 }
 
+#endif
+
 static void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
 {
     switch (n->kind)
@@ -1238,40 +1240,25 @@ void session_alert_watch(struct session *s, int what)
     s->watchlist[what].data = 0;
 }
 
-// This needs to be extended with selection criteria
-static struct conf_retrievalprofile *database_retrieval_profile(struct database *db)
+//callback for grep_databases
+static void select_targets_callback(void *context, struct database *db)
 {
-    if (!config)
-    {
-        yaz_log(YLOG_FATAL, "Must load configuration (-f)");
-        exit(1);
-    }
-    if (!config->retrievalprofiles)
-    {
-        yaz_log(YLOG_FATAL, "No retrieval profiles defined");
-    }
-    return config->retrievalprofiles;
+    struct session *se = (struct session*) context;
+    struct client *cl = client_create();
+    cl->database = db;
+    cl->session = se;
+    cl->next = se->clients;
+    se->clients = cl;
 }
 
 // This should be extended with parameters to control selection criteria
 // Associates a set of clients with a session;
 int select_targets(struct session *se)
 {
-    struct database *db;
-    int c = 0;
-
     while (se->clients)
         client_destroy(se->clients);
-    for (db = databases; db; db = db->next)
-    {
-        struct client *cl = client_create();
-        cl->database = db;
-        cl->session = se;
-        cl->next = se->clients;
-        se->clients = cl;
-        c++;
-    }
-    return c;
+
+    return grep_databases(se, select_targets_callback);
 }
 
 int session_active_clients(struct session *s)

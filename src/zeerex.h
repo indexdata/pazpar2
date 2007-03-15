@@ -1,6 +1,8 @@
 #ifndef ZEEREX_H
 #define ZEEREX_H
 
+// Structures representing a Zeerex record.
+
 typedef enum zr_bool
 {
     Zr_bool_unknown,
@@ -200,6 +202,7 @@ struct zr_explain
 
 struct zr_explain *zr_read_xml(NMEM m, xmlNode *n);
 struct zr_explain *zr_read_file(NMEM m, const char *fn);
+const char *zr_langstr(Zr_langstr *s, const char *lang);
 
 /*
  * Local variables:

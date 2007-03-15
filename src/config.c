@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.14 2007-02-05 16:15:41 quinn Exp $ */
+/* $Id: config.c,v 1.15 2007-03-15 16:50:56 quinn Exp $ */
 
 #include <string.h>
 
@@ -391,6 +391,41 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
     return r;
 }
 
+static struct conf_targetprofiles *parse_targetprofiles(xmlNode *node)
+{
+    struct conf_targetprofiles *r = nmem_malloc(nmem, sizeof(*r));
+    memset(r, 0, sizeof(*r));
+    xmlChar *type = xmlGetProp(node, "type");
+    xmlChar *src = xmlGetProp(node, "src");
+
+    if (type)
+    {
+        if (!strcmp(type, "local"))
+            r->type = Targetprofiles_local;
+        else
+        {
+            yaz_log(YLOG_FATAL, "Unknown targetprofile type");
+            return 0;
+        }
+    }
+    else
+    {
+        yaz_log(YLOG_FATAL, "Must specify type for targetprofile");
+        return 0;
+    }
+
+    if (src)
+        r->src = nmem_strdup(nmem, src);
+    else
+    {
+        yaz_log(YLOG_FATAL, "Must specify src in targetprofile");
+        return 0;
+    }
+    xmlFree(type);
+    xmlFree(src);
+    return r;
+}
+
 static struct conf_config *parse_config(xmlNode *root)
 {
     xmlNode *n;
@@ -400,6 +435,7 @@ static struct conf_config *parse_config(xmlNode *root)
     r->servers = 0;
     r->queryprofiles = 0;
     r->retrievalprofiles = 0;
+    r->targetprofiles = 0;
 
     for (n = root->children; n; n = n->next)
     {
@@ -421,6 +457,17 @@ static struct conf_config *parse_config(xmlNode *root)
             if (!(*rp = parse_retrievalprofile(n)))
                 return 0;
             rp = &(*rp)->next;
+        }
+        else if (!strcmp(n->name, "targetprofiles"))
+        {
+            // It would be fun to be able to fix this sometime
+            if (r->targetprofiles)
+            {
+                yaz_log(YLOG_FATAL, "Can't repeat targetprofiles");
+                return 0;
+            }
+            if (!(r->targetprofiles = parse_targetprofiles(n)))
+                return 0;
         }
         else
         {
