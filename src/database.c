@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.1 2007-03-15 16:55:34 quinn Exp $ */
+/* $Id: database.c,v 1.2 2007-03-16 09:34:55 adam Exp $ */
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -11,6 +11,11 @@
 #include "config.h"
 #include "http.h"
 #include "zeerex.h"
+
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <netinet/in.h>
 
 static struct host *hosts = 0;  // The hosts we know about 
 static struct database *databases = 0; // The databases we know about
