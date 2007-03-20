@@ -17,7 +17,7 @@ AC_PROG_CC
 
 AC_LANG(C)
 
-YAZ_INIT(libxml2,2.1.46)
+YAZ_INIT(libxml2,2.1.50)
 if test -z "$YAZLIB"; then
 	AC_MSG_ERROR([YAZ development libraries missing])
 fi

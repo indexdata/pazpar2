@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.50 2007-03-20 05:32:58 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.51 2007-03-20 07:27:51 adam Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1347,7 +1347,7 @@ void destroy_session(struct session *s)
     while (s->clients)
         client_destroy(s->clients);
     nmem_destroy(s->nmem);
-    wrbuf_free(s->wrbuf, 1);
+    wrbuf_destroy(s->wrbuf);
 }
 
 struct session *new_session() 

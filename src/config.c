@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.16 2007-03-20 03:42:53 quinn Exp $ */
+/* $Id: config.c,v 1.17 2007-03-20 07:27:51 adam Exp $ */
 
 #include <string.h>
 
@@ -36,11 +36,12 @@ static struct conf_service *parse_service(xmlNode *node)
     r->num_sortkeys = r->num_metadata = 0;
     // Allocate array of conf metadata and sortkey tructs, if necessary
     for (n = node->children; n; n = n->next)
-        if (n->type == XML_ELEMENT_NODE && !strcmp(n->name, "metadata"))
+        if (n->type == XML_ELEMENT_NODE && !strcmp((const char *)
+                                                   n->name, "metadata"))
         {
-            xmlChar *sortkey = xmlGetProp(n, "sortkey");
+            xmlChar *sortkey = xmlGetProp(n, (xmlChar *) "sortkey");
             r->num_metadata++;
-            if (sortkey && strcmp(sortkey, "no"))
+            if (sortkey && strcmp((const char *) sortkey, "no"))
                 r->num_sortkeys++;
             xmlFree(sortkey);
         }
@@ -57,7 +58,7 @@ static struct conf_service *parse_service(xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "metadata"))
+        if (!strcmp(n->name, (const char *) "metadata"))
         {
             struct conf_metadata *md = &r->metadata[md_node];
             xmlChar *name = xmlGetProp(n, "name");

@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.27 2007-03-20 05:32:58 quinn Exp $
+ * $Id: http_command.c,v 1.28 2007-03-20 07:27:51 adam Exp $
  */
 
 #include <stdio.h>
@@ -237,7 +237,7 @@ static void cmd_termlist(struct http_channel *c)
             name++;
     }
     wrbuf_puts(c->wrbuf, "</termlist>");
-    rs->payload = nmem_strdup(rq->channel->nmem, wrbuf_buf(c->wrbuf));
+    rs->payload = nmem_strdup(rq->channel->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
 }
 
@@ -272,7 +272,7 @@ static void cmd_bytarget(struct http_channel *c)
     }
 
     wrbuf_puts(c->wrbuf, "</bytarget>");
-    rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
+    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
 }
 
@@ -348,7 +348,7 @@ static void cmd_record(struct http_channel *c)
     for (r = rec->records; r; r = r->next)
         write_subrecord(r, c->wrbuf, service);
     wrbuf_puts(c->wrbuf, "</record>\n");
-    rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
+    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
 }
 
@@ -415,7 +415,7 @@ static void show_records(struct http_channel *c, int active)
     }
 
     wrbuf_puts(c->wrbuf, "</show>\n");
-    rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
+    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
 }
 
@@ -519,7 +519,7 @@ static void cmd_stat(struct http_channel *c)
     wrbuf_printf(c->wrbuf, "<failed>%d</failed>\n", stat.num_failed);
     wrbuf_printf(c->wrbuf, "<error>%d</error>\n", stat.num_error);
     wrbuf_puts(c->wrbuf, "</stat>");
-    rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
+    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
 }
 
@@ -539,7 +539,7 @@ static void cmd_info(struct http_channel *c)
     wrbuf_printf(c->wrbuf, " </version>\n");
     
     wrbuf_puts(c->wrbuf, "</info>");
-    rs->payload = nmem_strdup(c->nmem, wrbuf_buf(c->wrbuf));
+    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
 }
 
