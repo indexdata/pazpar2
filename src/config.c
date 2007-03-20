@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.15 2007-03-15 16:50:56 quinn Exp $ */
+/* $Id: config.c,v 1.16 2007-03-20 03:42:53 quinn Exp $ */
 
 #include <string.h>
 
@@ -394,9 +394,10 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
 static struct conf_targetprofiles *parse_targetprofiles(xmlNode *node)
 {
     struct conf_targetprofiles *r = nmem_malloc(nmem, sizeof(*r));
-    memset(r, 0, sizeof(*r));
     xmlChar *type = xmlGetProp(node, "type");
     xmlChar *src = xmlGetProp(node, "src");
+
+    memset(r, 0, sizeof(*r));
 
     if (type)
     {
