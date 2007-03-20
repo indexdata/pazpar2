@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.49 2007-03-15 16:50:56 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.50 2007-03-20 05:32:58 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -46,7 +46,7 @@ static void client_fatal(struct client *cl);
 static void connection_destroy(struct connection *co);
 static int client_prep_connection(struct client *cl);
 static void ingest_records(struct client *cl, Z_Records *r);
-static struct conf_retrievalprofile *database_retrieval_profile(struct database *db);
+//static struct conf_retrievalprofile *database_retrieval_profile(struct database *db);
 void session_alert_watch(struct session *s, int what);
 
 IOCHAN channel_list = 0;  // Master list of connections we're handling events to
@@ -1253,12 +1253,12 @@ static void select_targets_callback(void *context, struct database *db)
 
 // This should be extended with parameters to control selection criteria
 // Associates a set of clients with a session;
-int select_targets(struct session *se)
+int select_targets(struct session *se, struct database_criterion *crit)
 {
     while (se->clients)
         client_destroy(se->clients);
 
-    return grep_databases(se, select_targets_callback);
+    return grep_databases(se, crit, select_targets_callback);
 }
 
 int session_active_clients(struct session *s)
@@ -1276,22 +1276,51 @@ int session_active_clients(struct session *s)
     return res;
 }
 
-char *search(struct session *se, char *query)
+// parses crit1=val1,crit2=val2,...
+static struct database_criterion *parse_filter(NMEM m, const char *buf)
+{
+    struct database_criterion *res = 0;
+    char **values;
+    int num;
+    int i;
+
+    if (!buf || !*buf)
+        return 0;
+    nmem_strsplit(m, ",", buf,  &values, &num);
+    for (i = 0; i < num; i++)
+    {
+        struct database_criterion *new = nmem_malloc(m, sizeof(*new));
+        char *eq = strchr(values[i], '=');
+        if (!eq)
+        {
+            yaz_log(YLOG_WARN, "Missing equal-sign in filter");
+            return 0;
+        }
+        *(eq++) = '\0';
+        new->name = values[i];
+        new->value = eq;
+        new->next = res;
+        res = new;
+    }
+    return res;
+}
+
+char *search(struct session *se, char *query, char *filter)
 {
     int live_channels = 0;
     struct client *cl;
+    struct database_criterion *criteria;
 
     yaz_log(YLOG_DEBUG, "Search");
 
+    nmem_reset(se->nmem);
+    criteria = parse_filter(se->nmem, filter);
     strcpy(se->query, query);
     se->requestid++;
-    nmem_reset(se->nmem);
+    // Release any existing clients
+    select_targets(se, criteria);
     for (cl = se->clients; cl; cl = cl->next)
     {
-        cl->hits = -1;
-        cl->records = 0;
-        cl->diagnostic = 0;
-
         if (client_prep_connection(cl))
             live_channels++;
     }
@@ -1343,8 +1372,6 @@ struct session *new_session()
         session->watchlist[i].data = 0;
         session->watchlist[i].fun = 0;
     }
-
-    select_targets(session);
 
     return session;
 }

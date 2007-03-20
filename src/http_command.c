@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.26 2007-01-18 18:11:19 quinn Exp $
+ * $Id: http_command.c,v 1.27 2007-03-20 05:32:58 quinn Exp $
  */
 
 #include <stdio.h>
@@ -168,6 +168,7 @@ static void targets_termlist(WRBUF wrbuf, struct session *se, int num)
     for (i = 0; i < count && i < num && ht[i].hits > 0; i++)
     {
         wrbuf_puts(wrbuf, "\n<term>\n");
+        wrbuf_printf(wrbuf, "<id>%s</id>\n", ht[i].id);
         wrbuf_printf(wrbuf, "<name>%s</name>\n", ht[i].name);
         wrbuf_printf(wrbuf, "<frequency>%d</frequency>\n", ht[i].hits);
         wrbuf_printf(wrbuf, "<state>%s</state>\n", ht[i].state);
@@ -468,6 +469,7 @@ static void cmd_search(struct http_channel *c)
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
     char *query = http_argbyname(rq, "query");
+    char *filter = http_argbyname(rq, "filter");
     char *res;
 
     if (!s)
@@ -477,7 +479,7 @@ static void cmd_search(struct http_channel *c)
         error(rs, "417", "Must supply query", 0);
         return;
     }
-    res = search(s->psession, query);
+    res = search(s->psession, query, filter);
     if (res)
     {
         error(rs, "417", res, res);

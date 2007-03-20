@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.2 2007-03-16 09:34:55 adam Exp $ */
+/* $Id: database.c,v 1.3 2007-03-20 05:32:58 quinn Exp $ */
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -157,7 +157,7 @@ static struct database *load_database(const char *id)
     memset(db, 0, sizeof(*db));
     db->host = host;
     db->url = nmem_strdup(nmem, id);
-    db->name = dbname;
+    db->name = 0;
     db->databases = xmalloc(2 * sizeof(char *));
     db->databases[0] = nmem_strdup(nmem, dbname);
     db->databases[1] = 0;
@@ -185,17 +185,40 @@ struct database *find_database(const char *id, int new)
     return load_database(id);
 }
 
-// Needs to be extended with criteria
-// Cycles through databases, calling a handler function on each.
-int grep_databases(void *context, void (*fun)(void *context, struct database *db))
+static int match_criterion(struct database *db, struct database_criterion *c)
+{
+    if (!strcmp(c->name, "id"))
+        return (!strcmp(c->value, db->url));
+    else
+        return 0;
+}
+
+int database_match_criteria(struct database *db, struct database_criterion *cl)
+{
+    for (; cl; cl = cl->next)
+        if (!match_criterion(db, cl))
+            break;
+    if (cl) // one of the criteria failed to match -- skip this db
+        return 0;
+    else
+        return 1;
+}
+
+// Cycles through databases, calling a handler function on the ones for
+// which all criteria matched.
+int grep_databases(void *context, struct database_criterion *cl,
+        void (*fun)(void *context, struct database *db))
 {
     struct database *p;
     int i;
 
     for (p = databases; p; p = p->next)
     {
-        (*fun)(context, p);
-        i++;
+        if (database_match_criteria(p, cl))
+        {
+            (*fun)(context, p);
+            i++;
+        }
     }
     return i;
 }
@@ -217,6 +240,7 @@ void load_simpletargets(const char *fn)
     {
         char *url;
         char *name;
+        struct database *db;
 
         if (strncmp(line, "target ", 7))
             continue;
@@ -227,8 +251,10 @@ void load_simpletargets(const char *fn)
 
         url = line + 7;
 
-        if (!find_database(url, 0))
+        if (!(db = find_database(url, 0)))
             yaz_log(YLOG_WARN, "Unable to load database %s", url);
+        if (name && db)
+            db->name = nmem_strdup(nmem, name);
     }
     fclose(f);
 }

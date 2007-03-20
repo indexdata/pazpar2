@@ -75,6 +75,12 @@ struct database {
     struct database *next;
 };
 
+struct database_criterion {
+    char *name;
+    char *value;
+    struct database_criterion *next;
+};
+
 // Represents a physical, reusable  connection to a remote Z39.50 host
 struct connection {
     IOCHAN iochan;
@@ -195,12 +201,12 @@ struct parameters {
 };
 
 struct hitsbytarget *hitsbytarget(struct session *s, int *count);
-int select_targets(struct session *se);
+int select_targets(struct session *se, struct database_criterion *crit);
 struct session *new_session();
 void destroy_session(struct session *s);
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
-char *search(struct session *s, char *query);
+char *search(struct session *s, char *query, char *filter);
 struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, int start,
         int *num, int *total, int *sumhits, NMEM nmem_show);
 struct record_cluster *show_single(struct session *s, int id);
