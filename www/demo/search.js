@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.51 2007-03-20 05:34:00 quinn Exp $
+/* $Id: search.js,v 1.52 2007-03-20 21:36:39 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -525,7 +525,7 @@ function show_records()
             record_div.appendChild(record_cell);
 	    if (author)
 	    {
-		record_div.appendChild(document.createTextNode(', by '));
+		record_div.appendChild(document.createTextNode(' by '));
 		var al = create_element('a', author);
 		al.setAttribute('href', '#');
 		al.setAttribute('term', author);
