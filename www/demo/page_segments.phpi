@@ -1,6 +1,6 @@
 <?php
 
-/* $Id: page_segments.phpi,v 1.20 2007-01-26 18:50:11 quinn Exp $
+/* $Id: page_segments.phpi,v 1.21 2007-03-20 05:34:00 quinn Exp $
  * ---------------------------------------------------
  * Page segments 
  */
@@ -27,7 +27,7 @@ function insert_header () {
 
         <div class="search">  
           <div>
-            <form name="search" onsubmit="start_search(); return false;">
+            <form name="search" onsubmit="clear_filter(); start_search(); return false;">
               <input id="query" type="text" class="search" tabindex="1"
                     maxlength="255" value="" />
               <input type="submit" class="button" value="Search" />
@@ -51,6 +51,14 @@ function insert_header () {
           Narrow your search by using the keywords below:<br />
           <br />
 
+	  <a id="facet_xtargets" class="unselected"
+             onclick="toggle_facet(this)">Targets</a>
+          <span id="facet_xtargets_terms" class="facet"
+               style="display: block;"></span>
+
+	<br/>
+	    
+
           <a id="facet_subject" class="unselected"
              onclick="toggle_facet(this)">Subject</a>
           <span id="facet_subject_terms" class="facet"
@@ -58,10 +66,10 @@ function insert_header () {
 
           <br />
 
-          <a id="facet_author" class="unselected"
+          <a id="facet_author" class="selected"
              onclick="toggle_facet(this)">Author</a>
           <span id="facet_author_terms" class="facet"
-               style="display: block;"></span>
+               style="display: none;"></span>
 
           <br />
 
@@ -70,13 +78,6 @@ function insert_header () {
           <span id="facet_date_terms" class="facet"
                style="display: none;"></span>
 
-          <br />
-
-	  <a id="facet_xtargets" class="selected"
-             onclick="toggle_facet(this)">Targets</a>
-          <span id="facet_xtargets_terms" class="facet"
-               style="display: none;"></span>
-	    
           
         </div>
         <div class="content" id="body">

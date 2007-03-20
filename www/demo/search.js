@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.50 2007-03-20 05:23:06 quinn Exp $
+/* $Id: search.js,v 1.51 2007-03-20 05:34:00 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -28,12 +28,13 @@ var cur_sort = "relevance";
 var searched = 0;
 var cur_id = -1;
 var cur_rec = 0;
+var filter = '';
 
 function initialize ()
 {
     facet_list = get_available_facets();
     start_session();
-    //session_check();
+    session_check();
     set_sort();
 }
 
@@ -580,6 +581,7 @@ function refine_query (obj) {
     var term = obj.getAttribute('term');
     var cur_termlist = obj.getAttribute('facet');
     var query_cell = document.getElementById('query');
+    var id = obj.getAttribute('target_id');
     
     term = term.replace(/[\(\)]/g, '');
     
@@ -589,6 +591,8 @@ function refine_query (obj) {
 	query_cell.value += ' and au="' + term + '"';
     else if (cur_termlist == 'date')
 	query_cell.value += ' and date="' + term + '"';
+    else if (cur_termlist == 'xtargets')
+	filter ='id=' +  id;
 
     start_search();
 }
@@ -624,25 +628,24 @@ function show_termlists()
 	{
 	    var namen = terms[t].getElementsByTagName("name");
 	    var freqn = terms[t].getElementsByTagName("frequency");
+	    var idn = terms[t].getElementsByTagName("id");
 	    if (namen[0])
 	    {
                 var term = namen[0].childNodes[0].nodeValue;
 		var freq = freqn[0].childNodes[0].nodeValue;
-		var refine_cell;
-		if (listname != 'xtargets')
-		{
-		    refine_cell = create_element('a', term + ' (' + freq + ')');
-		    refine_cell.setAttribute('href', '#');
-		    refine_cell.setAttribute('term', term);
-		    refine_cell.setAttribute('facet', listname);
-		    refine_cell.onclick = function () {
-			refine_query(this);
-			return false;
-		    };
-		}
-		else
-		    refine_cell = create_element('div', term + ' (' + freq + ')');
-		body.appendChild(refine_cell);
+		var id;
+		if (idn[0])
+		    id = idn[0].childNodes[0].nodeValue;
+                var refine_cell = create_element('a', term + ' (' + freq + ')');
+                refine_cell.setAttribute('href', '#');
+                refine_cell.setAttribute('term', term);
+                refine_cell.setAttribute('facet', listname);
+		refine_cell.setAttribute('target_id', id);
+                refine_cell.onclick = function () {
+                    refine_query(this);
+                    return false;
+                };
+                body.appendChild(refine_cell);
 	    }
 	}
     }
@@ -730,6 +733,11 @@ function search_started()
     stattimer = setTimeout(check_stat, 1000);
 }
 
+function clear_filter()
+{
+    filter = '';
+}
+
 function start_search()
 {
     clearTimeout(termtimer);
@@ -746,7 +754,8 @@ function start_search()
     var url = "search.pz2?" +
         "command=search" +
 	"&session=" + session +
-	"&query=" + query;
+	"&query=" + query +
+	"&filter=" + escape(filter);
     xsearch = GetXmlHttpObject();
     xsearch.onreadystatechange=search_started;
     xsearch.open("GET", url);
