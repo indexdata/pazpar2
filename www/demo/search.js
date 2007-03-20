@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.49 2007-02-08 02:11:38 quinn Exp $
+/* $Id: search.js,v 1.50 2007-03-20 05:23:06 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -625,17 +625,25 @@ function show_termlists()
 	    var namen = terms[t].getElementsByTagName("name");
 	    var freqn = terms[t].getElementsByTagName("frequency");
 	    if (namen[0])
+	    {
                 var term = namen[0].childNodes[0].nodeValue;
 		var freq = freqn[0].childNodes[0].nodeValue;
-                var refine_cell = create_element('a', term + ' (' + freq + ')');
-                refine_cell.setAttribute('href', '#');
-                refine_cell.setAttribute('term', term);
-                refine_cell.setAttribute('facet', listname);
-                refine_cell.onclick = function () {
-                    refine_query(this);
-                    return false;
-                };
-                body.appendChild(refine_cell);
+		var refine_cell;
+		if (listname != 'xtargets')
+		{
+		    refine_cell = create_element('a', term + ' (' + freq + ')');
+		    refine_cell.setAttribute('href', '#');
+		    refine_cell.setAttribute('term', term);
+		    refine_cell.setAttribute('facet', listname);
+		    refine_cell.onclick = function () {
+			refine_query(this);
+			return false;
+		    };
+		}
+		else
+		    refine_cell = create_element('div', term + ' (' + freq + ')');
+		body.appendChild(refine_cell);
+	    }
 	}
     }
     if (clients > 0)

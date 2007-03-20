@@ -200,6 +200,12 @@ padding-left: 2.2em;
 text-indent: -1em;
 }
 
+div.leftbar div {
+display: block;
+padding-left: 2.2em;
+text-indent: -1em;
+}
+
 a.unselected {
 background-image: url(../gfx/minus.gif);
 background-position: 0px 2px;
