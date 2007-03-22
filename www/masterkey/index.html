@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">  
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <title>MasterKey Power Search</title>
+    <link rel="author" href="http://www.indexdata.dk" />
+    <link href="css/styles.css" rel="stylesheet" type="text/css" media="screen, all" />
+    <script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/pz2.js"></script>
+    <script type="text/javascript" src="js/client.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="topbar">
+        <a href="/"><img id="logo" src="gfx/logo.gif" width="206" height="37" alt="MasterKey Power Search" /></a>
+        <div class="topmenu">
+          <a href="index.html" class="topselect">FRONT PAGE</a>
+          <a href="about.html" class="topmenu">ABOUT</a>
+          <a href="help.html" class="topmenu">HELP</a>
+        </div>
+      <div class="bluebox"></div>
+      </div>
+      <div class="search">  
+        <span>ENTER SEARCH TERM:</span>
+      <form method="post" action="index.html" name="search">
+        <div>
+          <input type="text" name="query" class="search" tabindex="1" maxlength="255" value="" />
+          <input type="image" src="gfx/button.gif" class="button" />
+          <a href="#">Advanced search</a>
+        </div>
+      </form>
+      </div>
+      <div class="main">
+        <div class="leftbar" style="display: none">
+          <div class="head">
+            <div class="margin">
+              <h2>Limit search results</h2>
+              Narrow your search by using the keywords below:<br />
+            </div>
+          </div>
+          <div class="margin">
+            <div id="termlists"></div>
+          </div>
+        </div>
+        <div class="content" style="display: none">
+          <div class="results">
+            Sort results by:&nbsp;
+            <select name="sort">
+              <option value="relevance">Relevance</option>
+              <option value="title">Title</option>
+            </select>
+            <div class="showing"></div>
+            <div class="pages"></div>
+          </div>
+            <br />
+            <br />
+          <div class="records"></div>
+          <div class="bottom">
+            <div class="pages"></div>
+          </div>
+        </div>
+        <div class="clear"></div>
+        <div class="trailer"><img src="gfx/trailer.gif" width="360" height="6" alt="MasterKey" /></div>
+      </div>
+    </div>
+  </body>
+</html>
