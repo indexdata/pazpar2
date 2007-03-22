@@ -113,7 +113,7 @@ pz2.prototype = {
             }
         );
     },
-    search: function(query, num, sort)
+    search: function(query, num, sort, filter)
     {
         clearTimeout(__myself.statTimer);
         clearTimeout(__myself.showTimer);
@@ -127,9 +127,14 @@ pz2.prototype = {
             __myself.currQuery = query;
         else
             throw new Error("You need to supply query to the search command");
-        
+
+        if( filter !== undefined )
+            var searchParams = { "command": "search", "session": __myself.sessionID, "query": __myself.currQuery, "filter": filter };
+        else
+            var searchParams = { "command": "search", "session": __myself.sessionID, "query": __myself.currQuery };
+
         $.get( __myself.pz2String,
-            { "command": "search", "session": __myself.sessionID, "query": __myself.currQuery },
+            searchParams,
             function(data) {
                 if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
                     __myself.searchStatusOK = true;
@@ -309,6 +314,11 @@ pz2.prototype = {
                                 "name": terms[j].getElementsByTagName("name")[0].childNodes[0].nodeValue,
                                 "freq": terms[j].getElementsByTagName("frequency")[0].childNodes[0].nodeValue,
                             }
+
+                            var termIdNode = terms[j].getElementsByTagName("id");
+                            if(terms[j].getElementsByTagName("id").length)
+                                term["id"] = termIdNode[0].childNodes[0].nodeValue;
+
                             termList[listName][j] = term;
                         }
                     }
