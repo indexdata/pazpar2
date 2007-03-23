@@ -14,7 +14,9 @@ var my_paz = new pz2( { "onshow": my_onshow,
 var currentSort = 'relevance';
 var currentResultsPerPage = 20;
 var currentQuery = null;
-var currentDetailed = null;
+
+var currentDetailedId = null;
+var currentDetailedData = null;
 
 var termStartup = true;    //some things should be done only once
 
@@ -44,14 +46,31 @@ function my_onshow(data)
         var id = data.hits[i].recid;
         var count = data.hits[i].count || 1;
         
-        recsBody.append('<a href="#" class="result">'+(i+1)+'.</a>\n');
+        recsBody.append('<div class="resultNum">'+(i+1)+'.</a>');
         
         var recBody = $('<div class="record" id="rec_'+id+'></div>').appendTo(recsBody);
-        recBody.append('<a href="#">'+title+'</a>\n');
-
+        var aTitle = $('<a class="recTitle">'+title+'</a>').appendTo(recBody);
+        aTitle.click(function(){
+                        var clickedId = this.parentNode.id.split('_')[1];
+                        if(currentDetailedId == clickedId){
+                            $(this.parentNode.lastChild).remove();
+                            currentDetailedId = null;
+                            return;
+                        } else if (currentDetailedId != null) {
+                            $('#rec_'+currentDetailedId).children('.detail').remove();
+                        }
+                        currentDetailedId = clickedId;
+                        my_paz.record(currentDetailedId);
+                        });
+        
         if( author )
             recBody.append('<i> by </i>');
-            $('<a href="#" name="author">'+author+'</a>\n').click(function(){ refine(this.name, this.firstChild.nodeValue) }).appendTo(recBody);
+            $('<a name="author" class="recAuthor">'+author+'</a>\n').click(function(){ refine(this.name, this.firstChild.nodeValue) }).appendTo(recBody);
+
+        if( currentDetailedId == id ){
+            var detailBox = $('<div class="detail"></div>').appendTo(recBody);
+            drawDetailedRec(detailBox);
+        }
     }
 }
 
@@ -87,9 +106,7 @@ function my_onstat(data)
 
 function my_onterm(data)
 {
-    global = data;
     var termLists = $("#termlists");
-    //termLists.empty()
 
     if(termStartup)
     {
@@ -101,7 +118,7 @@ function my_onterm(data)
                 listName = "institution";
 
             var termList = $('<div class="termlist" id="term_'+key+'"/>').appendTo(termLists);
-            var termTitle = $('<div class="termTitle"><a href="#" class="unselected">'+listName+'</a></div>').appendTo(termList);
+            var termTitle = $('<div class="termTitle"><a class="unselected">'+listName+'</a></div>').appendTo(termList);
             termTitle.click(function(){
                                 if( this.firstChild.className == "selected" ){
                                     this.firstChild.className = "unselected";
@@ -119,12 +136,12 @@ function my_onterm(data)
             for(var i = 0; i < data[key].length; i++)
             {
                 if (key == "xtargets"){
-                    var listItem = $('<a href="#" class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name+
+                    var listItem = $('<a class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name+
                                 '<span> ('+data[key][i].freq+')</span></a>').appendTo(listEntries);
                     listItem.click(function(){ 
                         refine(this.name, this.attributes[0].nodeValue) });
                 } else {
-                    var listItem = $('<a href="#" class="sub" name="'+key+'">'+data[key][i].name+
+                    var listItem = $('<a class="sub" name="'+key+'">'+data[key][i].name+
                                     '<span> ('+data[key][i].freq+')</span></a>').appendTo(listEntries);
                     listItem.click(function(){ refine(this.name, this.firstChild.nodeValue) });
                 }
@@ -143,12 +160,12 @@ function my_onterm(data)
 
             for(var i = 0; i < data[key].length; i++){
                 if (key == "xtargets"){
-                    var listItem = $('<a href="#" class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name+
+                    var listItem = $('<a class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name+
                                 '<span> ('+data[key][i].freq+')</span></a>').appendTo(listEntries);
                     listItem.click(function(){ 
                         refine(this.name, this.attributes[0].nodeValue) });
                 } else {
-                    var listItem = $('<a href="#" class="sub" name="'+key+'">'+data[key][i].name+
+                    var listItem = $('<a class="sub" name="'+key+'">'+data[key][i].name+
                                     '<span> ('+data[key][i].freq+')</span></a>').appendTo(listEntries);
                     listItem.click(function(){ refine(this.name, this.firstChild.nodeValue) });
                 }
@@ -157,22 +174,10 @@ function my_onterm(data)
     }
 }
 
-/*
-    var termlist = document.getElementById("termlist");
-    termlist.innerHTML = "";
-    termlist.innerHTML  += "<div><b> --Author-- </b></div>";
-    for ( i = 0; i < data.author.length; i++ ) {
-        termlist.innerHTML += '<div><span>' + data.author[i].name + ' </span><span> (' + data.author[i].freq + ')</span></div>';
-    }
-    termlist.innerHTML += "<hr/>";
-    termlist.innerHTML += "<div><b> --Subject-- </b></div>";
-    for ( i = 0; i < data.subject.length; i++ ) {
-        termlist.innerHTML += '<div><span>' + data.subject[i].name + ' </span><span> (' + data.subject[i].freq + ')</span></div>';
-    }
-*/
-
 function my_onrecord(data)
 {
+    currentDetailedData = data;
+    drawDetailedRec();
     /*
     details = data;
     recordDiv = document.getElementById(data.recid);
@@ -183,6 +188,32 @@ function my_onrecord(data)
                             "</td></tr><tr><td><b>Location</b> : </td><td>" + data["location"][0].name + "</td></tr></table>";
                             */
 
+}
+
+function drawDetailedRec(detailBox)
+{
+    if( detailBox == undefined )
+        detailBox = $('<div class="detail"></div>').appendTo($('#rec_'+currentDetailedId));
+    
+    detailBox.append('Details:<hr/>');
+    var detailTable = $('<table></table>');
+    var recDate = currentDetailedData["md-date"];
+    var recSubject = currentDetailedData["md-subject"];
+    var recLocation = currentDetailedData["location"];
+
+    if( recDate )
+        detailTable.append('<tr><td class="item">Published:</td><td>'+recDate+'</td></tr>');
+    if( recSubject )
+        detailTable.append('<tr><td class="item">Subject:</td><td>'+recSubject+'</td></tr>');
+    if( recLocation )
+        detailTable.append('<tr><td class="item">Available at:</td><td>&nbsp;</td></tr>');
+
+    for(var i=0; i < recLocation.length; i++)
+    {
+        detailTable.append('<tr><td class="item">&nbsp;</td><td>'+recLocation[i].name+'</td></tr>');
+    }
+
+    detailTable.appendTo(detailBox);
 }
 
 function my_onbytarget(data)
