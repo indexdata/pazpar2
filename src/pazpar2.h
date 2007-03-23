@@ -75,9 +75,14 @@ struct database {
     struct database *next;
 };
 
+struct database_criterion_value {
+    char *value;
+    struct database_criterion_value *next;
+};
+
 struct database_criterion {
     char *name;
-    char *value;
+    struct database_criterion_value *values;
     struct database_criterion *next;
 };
 

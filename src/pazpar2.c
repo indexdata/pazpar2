@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.51 2007-03-20 07:27:51 adam Exp $ */
+/* $Id: pazpar2.c,v 1.52 2007-03-23 03:26:22 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1276,7 +1276,7 @@ int session_active_clients(struct session *s)
     return res;
 }
 
-// parses crit1=val1,crit2=val2,...
+// parses crit1=val1,crit2=val2|val3,...
 static struct database_criterion *parse_filter(NMEM m, const char *buf)
 {
     struct database_criterion *res = 0;
@@ -1289,6 +1289,9 @@ static struct database_criterion *parse_filter(NMEM m, const char *buf)
     nmem_strsplit(m, ",", buf,  &values, &num);
     for (i = 0; i < num; i++)
     {
+        char **subvalues;
+        int subnum;
+        int subi;
         struct database_criterion *new = nmem_malloc(m, sizeof(*new));
         char *eq = strchr(values[i], '=');
         if (!eq)
@@ -1298,7 +1301,15 @@ static struct database_criterion *parse_filter(NMEM m, const char *buf)
         }
         *(eq++) = '\0';
         new->name = values[i];
-        new->value = eq;
+        nmem_strsplit(m, "|", eq, &subvalues, &subnum);
+        new->values = 0;
+        for (subi = 0; subi < subnum; subi++)
+        {
+            struct database_criterion_value *newv = nmem_malloc(m, sizeof(*newv));
+            newv->value = subvalues[subi];
+            newv->next = new->values;
+            new->values = newv;
+        }
         new->next = res;
         res = new;
     }

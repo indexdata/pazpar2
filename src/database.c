@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.3 2007-03-20 05:32:58 quinn Exp $ */
+/* $Id: database.c,v 1.4 2007-03-23 03:26:22 quinn Exp $ */
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -185,10 +185,17 @@ struct database *find_database(const char *id, int new)
     return load_database(id);
 }
 
+// This will be generalized at some point
 static int match_criterion(struct database *db, struct database_criterion *c)
 {
     if (!strcmp(c->name, "id"))
-        return (!strcmp(c->value, db->url));
+    {
+        struct database_criterion_value *v;
+        for (v = c->values; v; v = v->next)
+            if (!strcmp(v->value, db->url))
+                return 1;
+        return 0;
+    }
     else
         return 0;
 }
