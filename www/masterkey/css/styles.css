@@ -30,8 +30,8 @@ font-weight: bold;
 h2 {
 font-size: 11px;
 margin: 0px;
-padding: 0px;
-line-height: 13px;
+padding-top: 3px;
+/*line-height: 13px;*/
 }
 
 select {
@@ -147,14 +147,14 @@ padding: 0px;
 width: 100%;
 height: 25px;
 background-color: #c1cbd9;
-font-size: 10px;
-margin-bottom: 3px;
+font-size: 11px;
+/*removed margin-bottom: 3px;*/
 color: #002863;
 }
 
 div.margin {
 padding-left: 13px;
-padding-top: 5px;
+padding-top: 2px;
 padding-right: 13px;
 }
 
@@ -240,6 +240,11 @@ a.close img {
 margin-top: 6px;
 }
 
+/*added*/
+div.records {
+    margin-top: 10px;
+}
+
 div.records a.select {
 float: left;
 width: 651px;
@@ -307,7 +312,12 @@ padding: 0px;
 margin: 0px;
 }
 
+div.sortBox{
+float: right;
+}
+
 div.showing {
+padding-top: 3px; /*added*/
 float: left;
 clear: left;
 }

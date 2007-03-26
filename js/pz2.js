@@ -49,9 +49,9 @@ var pz2 = function(paramArray) {
     //timers
     __myself.statTime = paramArray.stattime || 2000;
     __myself.statTimer = null;
-    __myself.termTime = paramArray.termtime || 1000;
+    __myself.termTime = paramArray.termtime || 2000;
     __myself.termTimer = null;
-    __myself.showTime = paramArray.showtime || 1000;
+    __myself.showTime = paramArray.showtime || 2000;
     __myself.showTimer = null;
     __myself.bytargetTime = paramArray.bytargettime || 1000;
     __myself.bytargetTimer = null;
@@ -143,7 +143,8 @@ pz2.prototype = {
                     if ( __myself.statCallback )
                         __myself.statTimer = setTimeout("__myself.stat()", __myself.statTime / 2);
                     if ( __myself.termlistCallback )
-                        __myself.termTimer = setTimeout("__myself.termlist()", __myself.termTime / 2);
+                        __myself.termlist();
+                        //__myself.termTimer = setTimeout("__myself.termlist()", __myself.termTime / 2);
                     if ( __myself.bytargetCallback )
                         __myself.bytargetTimer = setTimeout("__myself.bytarget()", __myself.bytargetTime / 2);
                 }
@@ -381,6 +382,11 @@ pz2.prototype = {
         var step = page || 1;
         var newStart = __myself.currentStart - (step * __myself.currentNum );
         __myself.show( newStart > 0 ? newStart : 0 );
+    },
+    showPage: function(pageNum)
+    {
+        //var page = pageNum || 1;
+        __myself.show(pageNum * __myself.currentNum);
     }
 };
 }

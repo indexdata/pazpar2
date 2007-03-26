@@ -14,6 +14,7 @@ var my_paz = new pz2( { "onshow": my_onshow,
 var currentSort = 'relevance';
 var currentResultsPerPage = 20;
 var currentQuery = null;
+var currentPage = 0;
 
 var currentDetailedId = null;
 var currentDetailedData = null;
@@ -27,6 +28,16 @@ $(document).ready( function() {
 
 function onFormSubmitEventHandler() {
     currentQuery = document.search.query.value;
+    $('#sort').change(function(){ 
+                    currentSort = this.value;
+                    currentPage = 0;
+                    my_paz.show(0, currentResultsPerPage, currentSort);
+                    });
+    $('#perpage').change(function(){ 
+                    currentResultsPerPage = this.value;
+                    currentPage = 0;
+                    my_paz.show(0, currentResultsPerPage, currentSort);
+                    });
     my_paz.search(document.search.query.value, 20, 'relevance');
     $('div.content').show();
     $("div.leftbar").show();    
@@ -37,6 +48,7 @@ function onFormSubmitEventHandler() {
 //
 function my_onshow(data)
 {
+    global = data;
     var recsBody = $('div.records');
     recsBody.empty();
     
@@ -46,9 +58,7 @@ function my_onshow(data)
         var id = data.hits[i].recid;
         var count = data.hits[i].count || 1;
         
-        recsBody.append('<div class="resultNum">'+(i+1)+'.</a>');
-        
-        var recBody = $('<div class="record" id="rec_'+id+'></div>').appendTo(recsBody);
+        var recBody = $('<div class="record" id="rec_'+id+'></div>');
         var aTitle = $('<a class="recTitle">'+title+'</a>').appendTo(recBody);
         aTitle.click(function(){
                         var clickedId = this.parentNode.id.split('_')[1];
@@ -71,7 +81,13 @@ function my_onshow(data)
             var detailBox = $('<div class="detail"></div>').appendTo(recBody);
             drawDetailedRec(detailBox);
         }
+
+        recsBody.append('<div class="resultNum">'+(currentPage*currentResultsPerPage+i+1)+'.</a>');
+        recsBody.append(recBody);
+
     }
+
+    drawPager(data.merged, data.total);    
 }
 
 /*
@@ -161,13 +177,14 @@ function my_onterm(data)
             for(var i = 0; i < data[key].length; i++){
                 if (key == "xtargets"){
                     var listItem = $('<a class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name+
-                                '<span> ('+data[key][i].freq+')</span></a>').appendTo(listEntries);
-                    listItem.click(function(){ 
-                        refine(this.name, this.attributes[0].nodeValue) });
+                                '<span> ('+data[key][i].freq+')</span></a>').click(function(){ 
+                                                                        refine(this.name, this.attributes[0].nodeValue) });
+                    listItem.appendTo(listEntries);
                 } else {
                     var listItem = $('<a class="sub" name="'+key+'">'+data[key][i].name+
-                                    '<span> ('+data[key][i].freq+')</span></a>').appendTo(listEntries);
-                    listItem.click(function(){ refine(this.name, this.firstChild.nodeValue) });
+                                    '<span> ('+data[key][i].freq+')</span></a>').click(function(){ 
+                                                                        refine(this.name, this.firstChild.nodeValue) });
+                    listItem.appendTo(listEntries);
                 }
             }         
         }
@@ -244,6 +261,60 @@ function refine(field, value)
         case "subject": query = ' and su="'+value+'"'; break;
         case "xtarget": filter = 'id='+value; break;
     }
-
+    
+    currentPage = 0;
     my_paz.search(currentQuery + query, currentResultsPerPage, currentSort, filter);    
+}
+
+function drawPager(max, hits)
+{
+    var firstOnPage = currentPage * currentResultsPerPage + 1;
+    var lastOnPage = (firstOnPage + currentResultsPerPage - 1) < max ? (firstOnPage + currentResultsPerPage - 1) : max;
+
+    var results = $('div.showing');
+    results.empty();
+    results.append('Displaying: <b>'+firstOnPage+'</b> to <b>'+lastOnPage+
+                            '</b> of <b>'+max+'</b>'); //(total hits: '+hits+')');
+    var pager = $('div.pages');
+    pager.empty();
+    
+    if ( currentPage > 0 ){
+        $('<a class="previous_active">Previous</a>').click(function() { my_paz.showPrev(1); currentPage--; }).appendTo(pager.eq(0));
+        $('<a class="previous_active">Previous</a>').click(function() { my_paz.showPrev(1); currentPage--; }).appendTo(pager.eq(1));
+    }
+    else
+        pager.append('<a class="previous_inactive">Previous</a>');
+
+    var numPages = Math.ceil(max / currentResultsPerPage);
+    
+    for(var i = 1; i <= numPages; i++)
+    {
+        if( i == (currentPage + 1) ){
+           $('<a class="select">'+i+'</a>').appendTo(pager);
+           continue;
+        }
+        var pageLink = $('<a class="page">'+i+'</a>');
+        var plClone = pageLink.clone();
+
+        pageLink.click(function() { 
+            my_paz.showPage(this.firstChild.nodeValue - 1);
+            currentPage = (this.firstChild.nodeValue - 1);
+            });
+
+        plClone.click(function() { 
+            my_paz.showPage(this.firstChild.nodeValue - 1);
+            currentPage = (this.firstChild.nodeValue - 1);
+            });
+
+        //nasty hack
+        pager.eq(0).append(pageLink);
+        pager.eq(1).append(plClone);
+    }
+
+    if ( currentPage < (numPages-1) ){
+        $('<a class="next_active">Next</a>').click(function() { my_paz.showNext(1); currentPage++; }).appendTo(pager.eq(0));
+        $('<a class="next_active">Next</a>').click(function() { my_paz.showNext(1); currentPage++; }).appendTo(pager.eq(1));
+    }
+    else
+        pager.append('<a class="next_inactive">Next</a>');
 }

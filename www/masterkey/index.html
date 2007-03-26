@@ -35,20 +35,28 @@
               <h2>Limit your search by:</h2>
             </div>
           </div>
-          <div class="margin">
+          <div class="margin" style="padding-top: 15px;">
             <div id="termlists"></div>
           </div>
         </div>
         <div class="content" style="display: none">
-          <div class="results">
-            Sort results by:&nbsp;
-            <select name="sort">
-              <option value="relevance">Relevance</option>
-              <option value="title">Title</option>
+          <div class="head"><div class="margin"><div class="sortBox">
+            Sort by&nbsp;
+            <select name="sort" id="sort">
+              <option value="relevance" selected="true">relevance</option>
+              <option value="title">title</option>
             </select>
-            <div class="showing">&nbsp;</div>
-            <div class="pages">&nbsp;</div>
+            &nbsp;and show&nbsp;
+            <select name="perpage" id="perpage">
+              <option value="15">15</option>
+              <option value="20" selected="true">20</option>
+              <option value="30">30</option>
+              <option value="50">50</option>
+            </select>
+            results per page.
           </div>
+            <div class="showing">&nbsp;</div></div></div>
+            <div class="bottom"><div class="pages">&nbsp;</div></div>
             <br />
             <br />
           <div class="records"></div>
