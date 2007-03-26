@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.52 2007-03-23 03:26:22 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.53 2007-03-26 14:00:21 marc Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -72,6 +72,7 @@ struct parameters global_parameters =
 {
     "",
     "",
+    "",
     0,
     0,
     30,
@@ -119,6 +120,7 @@ static int send_apdu(struct client *c, Z_APDU *a)
 
 static void send_init(IOCHAN i)
 {
+
     struct connection *co = iochan_getdata(i);
     struct client *cl = co->client;
     Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_initRequest);
@@ -134,6 +136,18 @@ static void send_init(IOCHAN i)
     ODR_MASK_SET(a->u.initRequest->protocolVersion, Z_ProtocolVersion_1);
     ODR_MASK_SET(a->u.initRequest->protocolVersion, Z_ProtocolVersion_2);
     ODR_MASK_SET(a->u.initRequest->protocolVersion, Z_ProtocolVersion_3);
+
+
+    /* add virtual host if tunneling through Z39.50 proxy */
+    
+    if (0 < strlen(global_parameters.zproxy_override) 
+        && 0 < strlen(cl->database->url))
+        yaz_oi_set_string_oidval(&a->u.initRequest->otherInfo, 
+                                 global_parameters.odr_out, VAL_PROXY,
+                                 1, cl->database->url);
+    
+
+
     if (send_apdu(cl, a) >= 0)
     {
 	iochan_setflags(i, EVENT_INPUT);
@@ -942,18 +956,40 @@ static struct connection *connection_create(struct client *cl)
     int res;
     void *addr;
 
-    yaz_log(YLOG_DEBUG, "Connection create %s", cl->database->url);
-    if (!(link = cs_create(tcpip_type, 0, PROTO_Z3950)))
-    {
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to create comstack");
-        exit(1);
-    }
 
-    if (!(addr = cs_straddr(link, cl->database->host->ipport)))
-    {
-        yaz_log(YLOG_WARN|YLOG_ERRNO, "Lookup of IP address %s failed?", 
-	    cl->database->host->ipport);
-        return 0;
+    if (!(link = cs_create(tcpip_type, 0, PROTO_Z3950)))
+        {
+            yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to create comstack");
+            exit(1);
+        }
+    
+    if (0 == strlen(global_parameters.zproxy_override)){
+        /* no Z39.50 proxy needed - direct connect */
+        yaz_log(YLOG_DEBUG, "Connection create %s", cl->database->url);
+        
+        if (!(addr = cs_straddr(link, cl->database->host->ipport)))
+            {
+                yaz_log(YLOG_WARN|YLOG_ERRNO, 
+                        "Lookup of IP address %s failed", 
+                        cl->database->host->ipport);
+                return 0;
+            }
+    
+    } else {
+        /* Z39.50 proxy connect */
+        yaz_log(YLOG_DEBUG, "Connection create %s proxy %s", 
+                cl->database->url, global_parameters.zproxy_override);
+
+        yaz_log(YLOG_LOG, "Connection cs_create_host %s proxy %s", 
+                cl->database->url, global_parameters.zproxy_override);
+        
+        if (!(addr = cs_straddr(link, global_parameters.zproxy_override)))
+            {
+                yaz_log(YLOG_WARN|YLOG_ERRNO, 
+                        "Lookup of IP address %s failed", 
+                        global_parameters.zproxy_override);
+                return 0;
+            }
     }
 
     res = cs_connect(link, addr);
@@ -1585,7 +1621,7 @@ int main(int argc, char **argv)
 
     yaz_log_init(YLOG_DEFAULT_LEVEL, "pazpar2", 0);
 
-    while ((ret = options("f:x:h:p:C:s:d", argv, argc, &arg)) != -2)
+    while ((ret = options("f:x:h:p:z:C:s:d", argv, argc, &arg)) != -2)
     {
 	switch (ret) {
             case 'f':
@@ -1601,6 +1637,9 @@ int main(int argc, char **argv)
             case 'p':
                 strcpy(global_parameters.proxy_override, arg);
                 break;
+            case 'z':
+                strcpy(global_parameters.zproxy_override, arg);
+                break;
             case 's':
                 load_simpletargets(arg);
                 break;
@@ -1614,6 +1653,7 @@ int main(int argc, char **argv)
                         "    -C cclconfig\n"
                         "    -s simpletargetfile\n"
                         "    -p hostname[:portno]    (HTTP proxy)\n"
+                        "    -z hostname[:portno]    (Z39.50 proxy)\n"
                         "    -d                      (show internal records)\n");
 		exit(1);
 	}
