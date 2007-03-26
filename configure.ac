@@ -24,6 +24,7 @@ fi
 YAZ_DOC
 
 AC_CONFIG_FILES([
+	Doxyfile
 	Makefile
 	src/Makefile
 	doc/Makefile
@@ -34,3 +35,35 @@ AC_CONFIG_FILES([
 ])
 
 AC_OUTPUT
+
+
+echo \
+"------------------------------------------------------------------------
+
+  Package:                    ${PACKAGE}
+  Version:                    ${VERSION}
+  Source code location:       ${srcdir}
+  C Preprocessor:             ${CPP}
+  C Preprocessor flags:       ${CPPFLAGS}
+  C Compiler:                 ${CC}
+  C Compiler flags:           ${CFLAGS}
+  Linker flags:               ${LDFLAGS}
+  Linked libs:                ${LIBS}
+  Host System Type:           ${host}
+  Install path:               ${prefix}
+  Automake:                   ${AUTOMAKE}
+  Archiver:                   ${AR}
+  Ranlib:                     ${RANLIB}
+  YAZ Version:                ${YAZVERSION}
+  YAZ Include:                ${YAZINC}
+  YAZ La Lib:                 ${YAZLALIB}
+  YAZ Lib:                    ${YAZLIB}
+  Bugreport:                  ${PACKAGE_BUGREPORT}
+
+------------------------------------------------------------------------"
+
+dnl Local Variables:
+dnl mode:shell-script
+dnl sh-indentation:2
+dnl sh-basic-offset: 4
+dnl End:

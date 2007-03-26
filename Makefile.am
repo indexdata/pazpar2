@@ -11,3 +11,17 @@ dist-hook:
 	cvs=`find $(distdir)/etc -name CVS -type d -print`; if test "$$cvs"; then rm -r $$cvs; fi
 	cp -r $(srcdir)/www $(distdir)
 	cvs=`find $(distdir)/www -name CVS -type d -print`; if test "$$cvs"; then rm -r $$cvs; fi
+
+
+cvs2cl:
+	cvs2cl
+
+
+dox:
+	doxygen
+
+showdox:
+	doxygen
+	galeon file:///`pwd`/$(top_srcdir)/dox/html/index.html &
+
+.PHONY: cvs2cl dox showdox
