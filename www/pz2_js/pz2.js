@@ -1,6 +1,23 @@
+//since explorer is flawed
+if (!window['Node']) {
+    window.Node = new Object();
+    Node.ELEMENT_NODE = 1;
+    Node.ATTRIBUTE_NODE = 2;
+    Node.TEXT_NODE = 3;
+    Node.CDATA_SECTION_NODE = 4;
+    Node.ENTITY_REFERENCE_NODE = 5;
+    Node.ENTITY_NODE = 6;
+    Node.PROCESSING_INSTRUCTION_NODE = 7;
+    Node.COMMENT_NODE = 8;
+    Node.DOCUMENT_NODE = 9;
+    Node.DOCUMENT_TYPE_NODE = 10;
+    Node.DOCUMENT_FRAGMENT_NODE = 11;
+    Node.NOTATION_NODE = 12;
+}
 // check for jQuery
-if(typeof window.jQuery == "undefined")
+if(typeof window.jQuery == "undefined"){
     throw new Error("pz2.js requires jQuery library");
+}
 // prevent execution of more than once
 if(typeof window.pz2 == "undefined") {
 window.undefined = window.undefined;
@@ -49,9 +66,9 @@ var pz2 = function(paramArray) {
     //timers
     __myself.statTime = paramArray.stattime || 2000;
     __myself.statTimer = null;
-    __myself.termTime = paramArray.termtime || 1000;
+    __myself.termTime = paramArray.termtime || 2000;
     __myself.termTimer = null;
-    __myself.showTime = paramArray.showtime || 1000;
+    __myself.showTime = paramArray.showtime || 2000;
     __myself.showTimer = null;
     __myself.bytargetTime = paramArray.bytargettime || 1000;
     __myself.bytargetTimer = null;
@@ -70,7 +87,7 @@ var pz2 = function(paramArray) {
     // auto init session?
     if (paramArray.autoInit !== false)
         __myself.init(__myself.keepAlive);
-}
+};
 pz2.prototype = {
     init: function(keepAlive) 
     {
@@ -88,7 +105,7 @@ pz2.prototype = {
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
                     // but the response was invalid, it should never occur
-                    setTimeout("__myself.init()", 1000)
+                    setTimeout("__myself.init()", 1000);
             }
         );
     },
@@ -109,7 +126,7 @@ pz2.prototype = {
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
                     // but the response was invalid, it should never occur
-                    setTimeout("__myself.ping()", 1000)
+                    setTimeout("__myself.ping()", 1000);
             }
         );
     },
@@ -139,11 +156,12 @@ pz2.prototype = {
                 if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
                     __myself.searchStatusOK = true;
                     //piggyback search
-                    __myself.show(0, num, sort)
+                    __myself.show(0, num, sort);
                     if ( __myself.statCallback )
                         __myself.statTimer = setTimeout("__myself.stat()", __myself.statTime / 2);
                     if ( __myself.termlistCallback )
-                        __myself.termTimer = setTimeout("__myself.termlist()", __myself.termTime / 2);
+                        __myself.termlist();
+                        //__myself.termTimer = setTimeout("__myself.termlist()", __myself.termTime / 2);
                     if ( __myself.bytargetCallback )
                         __myself.bytargetTimer = setTimeout("__myself.bytarget()", __myself.bytargetTime / 2);
                 }
@@ -178,7 +196,7 @@ pz2.prototype = {
                     "idle": Number( data.getElementsByTagName("idle")[0].childNodes[0].nodeValue ),
                     "failed": Number( data.getElementsByTagName("failed")[0].childNodes[0].nodeValue ),
                     "error": Number( data.getElementsByTagName("error")[0].childNodes[0].nodeValue )
-                    }
+                    };
                     __myself.statCallback(stat);
                     if (activeClients > 0)
                         __myself.statTimer = setTimeout("__myself.stat()", __myself.statTime); 
@@ -186,7 +204,7 @@ pz2.prototype = {
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
                     // but the response was invalid, it should never occur
-                    __myself.statTimer = setTimeout("__myself.stat()", __myself.statTime / 4)
+                    __myself.statTimer = setTimeout("__myself.stat()", __myself.statTime / 4);
             }
         );
     },
@@ -219,7 +237,7 @@ pz2.prototype = {
                     "start": Number( data.getElementsByTagName("start")[0].childNodes[0].nodeValue ),
                     "num": Number( data.getElementsByTagName("num")[0].childNodes[0].nodeValue ),
                     "hits": []
-                    }
+                    };
                     // parse all the first-level nodes for all <hit> tags
                     var hits = data.getElementsByTagName("hit");
                     var hit = new Array();
@@ -301,7 +319,7 @@ pz2.prototype = {
             { "command": "termlist", "session": __myself.sessionID, "name": __myself.termKeys },
             function(data) {
                 if ( data.getElementsByTagName("termlist") ) {
-                    var termList = { "activeclients": Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue ) }
+                    var termList = { "activeclients": Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue ) };
                     var termLists = data.getElementsByTagName("list");
                     //for each termlist
                     for (i = 0; i < termLists.length; i++) {
@@ -312,8 +330,8 @@ pz2.prototype = {
                         for (j = 0; j < terms.length; j++) { 
                             var term = {
                                 "name": terms[j].getElementsByTagName("name")[0].childNodes[0].nodeValue,
-                                "freq": terms[j].getElementsByTagName("frequency")[0].childNodes[0].nodeValue,
-                            }
+                                "freq": terms[j].getElementsByTagName("frequency")[0].childNodes[0].nodeValue
+                            };
 
                             var termIdNode = terms[j].getElementsByTagName("id");
                             if(terms[j].getElementsByTagName("id").length)
@@ -381,6 +399,11 @@ pz2.prototype = {
         var step = page || 1;
         var newStart = __myself.currentStart - (step * __myself.currentNum );
         __myself.show( newStart > 0 ? newStart : 0 );
+    },
+    showPage: function(pageNum)
+    {
+        //var page = pageNum || 1;
+        __myself.show(pageNum * __myself.currentNum);
     }
 };
 }
