@@ -74,7 +74,12 @@ struct http_response
 
 void http_set_proxyaddr(char *url, char *baseurl);
 void http_init(const char *addr);
-void http_addheader(struct http_response *r, const char *name, const char *value);
+void http_addheader(struct http_response *r, 
+                    const char *name, const char *value);
+struct http_header * http_header_append(struct http_channel *ch, 
+                                        struct http_header * hp, 
+                                        const char *name, 
+                                        const char *value);
 char *http_argbyname(struct http_request *r, char *name);
 char *http_headerbyname(struct http_header *r, char *name);
 struct http_response *http_create_response(struct http_channel *c);

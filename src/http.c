@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.12 2007-03-15 16:50:56 quinn Exp $
+ * $Id: http.c,v 1.13 2007-03-27 13:41:23 marc Exp $
  */
 
 #include <stdio.h>
@@ -25,6 +25,7 @@
 #include <yaz/comstack.h>
 #include <netdb.h>
 
+#include "cconfig.h"
 #include "util.h"
 #include "eventl.h"
 #include "pazpar2.h"
@@ -509,12 +510,35 @@ static int http_weshouldproxy(struct http_request *rq)
     return 0;
 }
 
+
+struct http_header * http_header_append(struct http_channel *ch, 
+                                        struct http_header * hp, 
+                                        const char *name, 
+                                        const char *value)
+{
+    struct http_header *hpnew = nmem_malloc(ch->nmem, sizeof *hpnew);
+
+    while (hp && hp->next)
+        hp = hp->next;
+
+     hpnew->name = nmem_strdup(ch->nmem, name);
+     hpnew->value = nmem_strdup(ch->nmem, value);
+     hpnew->next = 0;
+     hp->next = hpnew;
+     hp = hp->next;
+     return hpnew;
+}
+
+    
+
 static int http_proxy(struct http_request *rq)
 {
     struct http_channel *c = rq->channel;
     struct http_proxy *p = c->proxy;
     struct http_header *hp;
     struct http_buf *requestbuf;
+    //struct conf_server *ser = global_parameters.server;
+
 
     if (!p) // This is a new connection. Create a proxy channel
     {
@@ -538,7 +562,8 @@ static int http_proxy(struct http_request *rq)
             yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl");
         if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0)
             yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl2");
-        if (connect(sock, (struct sockaddr *) proxy_addr, sizeof(*proxy_addr)) < 0)
+        if (connect(sock, (struct sockaddr *) proxy_addr, 
+                    sizeof(*proxy_addr)) < 0)
             if (errno != EINPROGRESS)
             {
                 yaz_log(YLOG_WARN|YLOG_ERRNO, "Proxy connect");
@@ -567,6 +592,16 @@ static int http_proxy(struct http_request *rq)
         return -1;
     }
     hp->value = nmem_strdup(c->nmem, proxy_url);
+
+    // Add new header about paraz2 version, host, remote client address, etc. 
+        
+    hp = rq->headers;
+    hp = http_header_append(c, hp, PACKAGE_NAME "-version", PACKAGE_VERSION);
+    //hp = http_header_append(c, hp, PACKAGE_NAME "-server-host", ser->host);
+    //hp = http_header_append(c, hp, PACKAGE_NAME "-server-port", ser->port);
+    //hp = http_header_append(c, hp, PACKAGE_NAME "-remote-host", "blabla");
+    //hp = http_header_append(c, hp, PACKAGE_NAME "-remote-port", "blabla");
+
     requestbuf = http_serialize_request(rq);
     http_buf_enqueue(&p->oqueue, requestbuf);
     iochan_setflag(p->iochan, EVENT_OUTPUT);
