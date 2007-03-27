@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.8 2007-02-05 17:16:54 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.9 2007-03-27 11:25:57 marc Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -96,6 +96,21 @@
 	      application on a conventional webserver, while efficiently
 	      processing webservice requests for metasearch status, results,
 	      etc.
+	    </para>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
+	  <term>zproxy</term>
+	  <listitem>
+	    <para>
+	      If this item is given, pazpar2 will send all Z39.50
+	      packages through this Z39.50 proxy server.
+              At least one of the 'host' and 'post' attributes is required.
+              The 'host' attribute may contain both host name and port
+	      number, seperated by a colon ':', or only the host name.
+              An empty 'host' attribute sets the Z39.50 host address
+	      to 'localhost'.  
 	    </para>
 	  </listitem>
 	</varlistentry>
@@ -324,7 +339,11 @@
 
 <server>
   <listen port="9004"/>
-  <proxy host="us1.indexdata.com"/>
+  <proxy host="us1.indexdata.com" myurl="us1.indexdata.com"/>
+
+  <!-- <zproxy host="localhost" port="9000"/> -->
+  <!-- <zproxy host="localhost:9000"/> -->
+  <!-- <zproxy port="9000"/> -->
 
   <service>
     <metadata name="title" brief="yes" sortkey="skiparticle" merge="longest" rank="6"/>

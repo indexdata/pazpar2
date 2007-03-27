@@ -67,6 +67,8 @@ struct conf_server
     char *proxy_host;
     int proxy_port;
     char *myurl;
+    char *zproxy_host;
+    int zproxy_port;
     struct conf_service *service;
     struct conf_server *next;
 };

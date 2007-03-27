@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.53 2007-03-26 14:00:21 marc Exp $ */
+/* $Id: pazpar2.c,v 1.54 2007-03-27 11:25:57 marc Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,6 +17,7 @@
 #include <yaz/proto.h>
 #include <yaz/readconf.h>
 #include <yaz/pquery.h>
+#include <yaz/otherinfo.h>
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>
 
@@ -427,7 +428,7 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
             yaz_log(YLOG_WARN, "Failed to encode as XML");
             return 0;
         }
-        rdoc = xmlNewDoc("1.0");
+        rdoc = xmlNewDoc((xmlChar *) "1.0");
         xmlDocSetRootElement(rdoc, res);
     }
     else
@@ -519,7 +520,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
         return 0;
 
     root = xmlDocGetRootElement(xdoc);
-    if (!(mergekey = xmlGetProp(root, "mergekey")))
+    if (!(mergekey = xmlGetProp(root, (xmlChar *) "mergekey")))
     {
         yaz_log(YLOG_WARN, "No mergekey found in record");
         xmlFreeDoc(xdoc);
@@ -533,11 +534,12 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             sizeof(struct record_metadata*) * service->num_metadata);
     memset(res->metadata, 0, sizeof(struct record_metadata*) * service->num_metadata);
 
-    mergekey_norm = nmem_strdup(se->nmem, (char*) mergekey);
+    mergekey_norm = (xmlChar *) nmem_strdup(se->nmem, (char*) mergekey);
     xmlFree(mergekey);
-    normalize_mergekey(mergekey_norm, 0);
+    normalize_mergekey((char *) mergekey_norm, 0);
 
-    cluster = reclist_insert(se->reclist, res, mergekey_norm, &se->total_merged);
+    cluster = reclist_insert(se->reclist, res, (char *) mergekey_norm, 
+                             &se->total_merged);
     if (global_parameters.dump_records)
         yaz_log(YLOG_LOG, "Cluster id %d from %s (#%d)", cluster->recid,
                 cl->database->url, cl->records);
@@ -559,7 +561,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
 
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "metadata"))
+        if (!strcmp((const char *) n->name, "metadata"))
         {
             struct conf_metadata *md = 0;
             struct conf_sortkey *sk = 0;
@@ -567,7 +569,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             int imeta;
             int first, last;
 
-            type = xmlGetProp(n, "type");
+            type = xmlGetProp(n, (xmlChar *) "type");
             value = xmlNodeListGetString(xdoc, n->children, 0);
 
             if (!type || !value)
@@ -575,7 +577,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
 
             // First, find out what field we're looking at
             for (imeta = 0; imeta < service->num_metadata; imeta++)
-                if (!strcmp(type, service->metadata[imeta].name))
+                if (!strcmp((const char *) type, service->metadata[imeta].name))
                 {
                     md = &service->metadata[imeta];
                     if (md->sortkey_offset >= 0)
@@ -600,7 +602,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             if (md->type == Metadata_type_generic)
             {
                 char *p, *pe;
-                for (p = value; *p && isspace(*p); p++)
+                for (p = (char *) value; *p && isspace(*p); p++)
                     ;
                 for (pe = p + strlen(p) - 1;
                         pe > p && strchr(" ,/.:([", *pe); pe--)
@@ -610,7 +612,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             }
             else if (md->type == Metadata_type_year)
             {
-                if (extract_years(value, &first, &last) < 0)
+                if (extract_years((char *) value, &first, &last) < 0)
                     continue;
             }
             else
@@ -627,7 +629,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
             {
                 struct record_metadata *mnode;
                 for (mnode = *wheretoput; mnode; mnode = mnode->next)
-                    if (!strcmp(mnode->data.text, newm->data.text))
+                    if (!strcmp((const char *) mnode->data.text, newm->data.text))
                         break;
                 if (!mnode)
                 {
@@ -688,22 +690,23 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
                 yaz_log(YLOG_WARN, "Don't know how to merge on element name %s", md->name);
 
             if (md->rank)
-                relevance_countwords(se->relevance, cluster, value, md->rank);
+                relevance_countwords(se->relevance, cluster, 
+                                     (char *) value, md->rank);
             if (md->termlist)
             {
                 if (md->type == Metadata_type_year)
                 {
                     char year[64];
                     sprintf(year, "%d", last);
-                    add_facet(se, type, year);
+                    add_facet(se, (char *) type, year);
                     if (first != last)
                     {
                         sprintf(year, "%d", first);
-                        add_facet(se, type, year);
+                        add_facet(se, (char *) type, year);
                     }
                 }
                 else
-                    add_facet(se, type, value);
+                    add_facet(se, (char *) type, (char *) value);
             }
             xmlFree(type);
             xmlFree(value);
@@ -1113,7 +1116,7 @@ void load_simpletargets(const char *fn)
 
         yaz_log(YLOG_LOG, "Target: %s, '%s'", url, db);
         for (host = hosts; host; host = host->next)
-            if (!strcmp(url, host->hostport))
+            if (!strcmp((const char *) url, host->hostport))
                 break;
         if (!host)
         {
@@ -1449,7 +1452,7 @@ struct termlist_score **termlist(struct session *s, const char *name, int *num)
     int i;
 
     for (i = 0; i < s->num_termlists; i++)
-        if (!strcmp(s->termlists[i].name, name))
+        if (!strcmp((const char *) s->termlists[i].name, name))
             return termlist_highscore(s->termlists[i].termlist, num);
     return 0;
 }
@@ -1611,6 +1614,41 @@ static void start_proxy(void)
     http_set_proxyaddr(hp, ser->myurl ? ser->myurl : "");
 }
 
+static void start_zproxy(void)
+{
+    struct conf_server *ser = global_parameters.server;
+
+    if (*global_parameters.zproxy_override){
+        yaz_log(YLOG_LOG, "Z39.50 proxy %s", 
+                global_parameters.zproxy_override);
+        return;
+    }
+
+    else if (ser->zproxy_host || ser->zproxy_port)
+    {
+        char hp[128] = "";
+
+        strcpy(hp, ser->zproxy_host ? ser->zproxy_host : "");
+        if (ser->zproxy_port)
+        {
+            if (*hp)
+                strcat(hp, ":");
+            else
+                strcat(hp, "@:");
+
+            sprintf(hp + strlen(hp), "%d", ser->zproxy_port);
+        }
+        strcpy(global_parameters.zproxy_override, hp);
+        yaz_log(YLOG_LOG, "Z39.50 proxy %s", 
+                global_parameters.zproxy_override);
+
+    }
+    else
+        return;
+}
+
+
+
 int main(int argc, char **argv)
 {
     int ret;
@@ -1668,6 +1706,8 @@ int main(int argc, char **argv)
 
     start_http_listener();
     start_proxy();
+    start_zproxy();
+
     if (!global_parameters.ccl_filter)
         global_parameters.ccl_filter = load_cclfile("../etc/default.bib");
     global_parameters.yaz_marc = yaz_marc_create();

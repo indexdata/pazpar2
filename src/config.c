@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.17 2007-03-20 07:27:51 adam Exp $ */
+/* $Id: config.c,v 1.18 2007-03-27 11:25:57 marc Exp $ */
 
 #include <string.h>
 
@@ -58,28 +58,28 @@ static struct conf_service *parse_service(xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, (const char *) "metadata"))
+        if (!strcmp((const char *) n->name, (const char *) "metadata"))
         {
             struct conf_metadata *md = &r->metadata[md_node];
-            xmlChar *name = xmlGetProp(n, "name");
-            xmlChar *brief = xmlGetProp(n, "brief");
-            xmlChar *sortkey = xmlGetProp(n, "sortkey");
-            xmlChar *merge = xmlGetProp(n, "merge");
-            xmlChar *type = xmlGetProp(n, "type");
-            xmlChar *termlist = xmlGetProp(n, "termlist");
-            xmlChar *rank = xmlGetProp(n, "rank");
+            xmlChar *name = xmlGetProp(n, (xmlChar *) "name");
+            xmlChar *brief = xmlGetProp(n, (xmlChar *) "brief");
+            xmlChar *sortkey = xmlGetProp(n, (xmlChar *) "sortkey");
+            xmlChar *merge = xmlGetProp(n, (xmlChar *) "merge");
+            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
+            xmlChar *termlist = xmlGetProp(n, (xmlChar *) "termlist");
+            xmlChar *rank = xmlGetProp(n, (xmlChar *) "rank");
 
             if (!name)
             {
                 yaz_log(YLOG_FATAL, "Must specify name in metadata element");
                 return 0;
             }
-            md->name = nmem_strdup(nmem, name);
+            md->name = nmem_strdup(nmem, (const char *) name);
             if (brief)
             {
-                if (!strcmp(brief, "yes"))
+                if (!strcmp((const char *) brief, "yes"))
                     md->brief = 1;
-                else if (strcmp(brief, "no"))
+                else if (strcmp((const char *) brief, "no"))
                 {
                     yaz_log(YLOG_FATAL, "metadata/brief must be yes or no");
                     return 0;
@@ -90,9 +90,9 @@ static struct conf_service *parse_service(xmlNode *node)
 
             if (termlist)
             {
-                if (!strcmp(termlist, "yes"))
+                if (!strcmp((const char *) termlist, "yes"))
                     md->termlist = 1;
-                else if (strcmp(termlist, "no"))
+                else if (strcmp((const char *) termlist, "no"))
                 {
                     yaz_log(YLOG_FATAL, "metadata/termlist must be yes or no");
                     return 0;
@@ -102,15 +102,15 @@ static struct conf_service *parse_service(xmlNode *node)
                 md->termlist = 0;
 
             if (rank)
-                md->rank = atoi(rank);
+                md->rank = atoi((const char *) rank);
             else
                 md->rank = 0;
 
             if (type)
             {
-                if (!strcmp(type, "generic"))
+                if (!strcmp((const char *) type, "generic"))
                     md->type = Metadata_type_generic;
-                else if (!strcmp(type, "year"))
+                else if (!strcmp((const char *) type, "year"))
                     md->type = Metadata_type_year;
                 else
                 {
@@ -123,15 +123,15 @@ static struct conf_service *parse_service(xmlNode *node)
 
             if (merge)
             {
-                if (!strcmp(merge, "no"))
+                if (!strcmp((const char *) merge, "no"))
                     md->merge = Metadata_merge_no;
-                else if (!strcmp(merge, "unique"))
+                else if (!strcmp((const char *) merge, "unique"))
                     md->merge = Metadata_merge_unique;
-                else if (!strcmp(merge, "longest"))
+                else if (!strcmp((const char *) merge, "longest"))
                     md->merge = Metadata_merge_longest;
-                else if (!strcmp(merge, "range"))
+                else if (!strcmp((const char *) merge, "range"))
                     md->merge = Metadata_merge_range;
-                else if (!strcmp(merge, "all"))
+                else if (!strcmp((const char *) merge, "all"))
                     md->merge = Metadata_merge_all;
                 else
                 {
@@ -142,7 +142,7 @@ static struct conf_service *parse_service(xmlNode *node)
             else
                 md->merge = Metadata_merge_no;
 
-            if (sortkey && strcmp(sortkey, "no"))
+            if (sortkey && strcmp((const char *) sortkey, "no"))
             {
                 struct conf_sortkey *sk = &r->sortkeys[sk_node];
                 if (md->merge == Metadata_merge_no)
@@ -150,9 +150,9 @@ static struct conf_service *parse_service(xmlNode *node)
                     yaz_log(YLOG_FATAL, "Can't specify sortkey on a non-merged field");
                     return 0;
                 }
-                if (!strcmp(sortkey, "numeric"))
+                if (!strcmp((const char *) sortkey, "numeric"))
                     sk->type = Metadata_sortkey_numeric;
-                else if (!strcmp(sortkey, "skiparticle"))
+                else if (!strcmp((const char *) sortkey, "skiparticle"))
                     sk->type = Metadata_sortkey_skiparticle;
                 else
                 {
@@ -193,6 +193,8 @@ static struct conf_server *parse_server(xmlNode *node)
     r->proxy_host = 0;
     r->proxy_port = 0;
     r->myurl = 0;
+    r->zproxy_host = 0;
+    r->zproxy_port = 0;
     r->service = 0;
     r->next = 0;
 
@@ -200,28 +202,28 @@ static struct conf_server *parse_server(xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "listen"))
+        if (!strcmp((const char *) n->name, "listen"))
         {
-            xmlChar *port = xmlGetProp(n, "port");
-            xmlChar *host = xmlGetProp(n, "host");
+            xmlChar *port = xmlGetProp(n, (xmlChar *) "port");
+            xmlChar *host = xmlGetProp(n, (xmlChar *) "host");
             if (port)
-                r->port = atoi(port);
+                r->port = atoi((const char *) port);
             if (host)
-                r->host = nmem_strdup(nmem, host);
+                r->host = nmem_strdup(nmem, (const char *) host);
             xmlFree(port);
             xmlFree(host);
         }
-        else if (!strcmp(n->name, "proxy"))
+        else if (!strcmp((const char *) n->name, "proxy"))
         {
-            xmlChar *port = xmlGetProp(n, "port");
-            xmlChar *host = xmlGetProp(n, "host");
-            xmlChar *myurl = xmlGetProp(n, "myurl");
+            xmlChar *port = xmlGetProp(n, (xmlChar *) "port");
+            xmlChar *host = xmlGetProp(n, (xmlChar *) "host");
+            xmlChar *myurl = xmlGetProp(n, (xmlChar *) "myurl");
             if (port)
-                r->proxy_port = atoi(port);
+                r->proxy_port = atoi((const char *) port);
             if (host)
-                r->proxy_host = nmem_strdup(nmem, host);
+                r->proxy_host = nmem_strdup(nmem, (const char *) host);
             if (myurl)
-                r->myurl = nmem_strdup(nmem, myurl);
+                r->myurl = nmem_strdup(nmem, (const char *) myurl);
             else
             {
                 yaz_log(YLOG_FATAL, "Must specify @myurl for proxy");
@@ -231,7 +233,23 @@ static struct conf_server *parse_server(xmlNode *node)
             xmlFree(host);
             xmlFree(myurl);
         }
-        else if (!strcmp(n->name, "service"))
+        else if (!strcmp((const char *) n->name, "zproxy"))
+        {
+            xmlChar *port = 0;
+            xmlChar *host = 0;
+
+            port = xmlGetProp(n, (xmlChar *) "port");
+            host = xmlGetProp(n, (xmlChar *) "host");
+
+            if (port)
+                r->zproxy_port = atoi((const char *) port);
+            if (host)
+                r->zproxy_host = nmem_strdup(nmem, (const char *) host);
+
+            xmlFree(port);
+            xmlFree(host);
+        }
+        else if (!strcmp((const char *) n->name, "service"))
         {
             struct conf_service *s = parse_service(n);
             if (!s)
@@ -251,7 +269,7 @@ static xsltStylesheet *load_stylesheet(const char *fname)
 {
     char path[256];
     sprintf(path, "%s/%s", confdir, fname);
-    return xsltParseStylesheetFile(path);
+    return xsltParseStylesheetFile((xmlChar *) path);
 }
 
 static void setup_marc(struct conf_retrievalprofile *r)
@@ -285,26 +303,26 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "requestsyntax"))
+        if (!strcmp((const char *) n->name, "requestsyntax"))
         {
             xmlChar *content = xmlNodeGetContent(n);
             if (content)
-                r->requestsyntax = nmem_strdup(nmem, content);
+                r->requestsyntax = nmem_strdup(nmem, (const char *) content);
         }
-        else if (!strcmp(n->name, "nativesyntax"))
+        else if (!strcmp((const char *) n->name, "nativesyntax"))
         {
-            xmlChar *name = xmlGetProp(n, "name");
-            xmlChar *format = xmlGetProp(n, "format");
-            xmlChar *encoding = xmlGetProp(n, "encoding");
-            xmlChar *mapto = xmlGetProp(n, "mapto");
+            xmlChar *name = xmlGetProp(n, (xmlChar *) "name");
+            xmlChar *format = xmlGetProp(n, (xmlChar *) "format");
+            xmlChar *encoding = xmlGetProp(n, (xmlChar *) "encoding");
+            xmlChar *mapto = xmlGetProp(n, (xmlChar *) "mapto");
             if (!name)
             {
                 yaz_log(YLOG_WARN, "Missing name in 'nativesyntax' element");
                 return 0;
             }
             if (encoding)
-                r->native_encoding = encoding;
-            if (!strcmp(name, "iso2709"))
+                r->native_encoding = (char *) encoding;
+            if (!strcmp((const char *) name, "iso2709"))
             {
                 r->native_syntax = Nativesyn_iso2709;
                 // Set a few defaults, too
@@ -314,7 +332,7 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
                     r->native_encoding = "marc-8";
                 setup_marc(r);
             }
-            else if (!strcmp(name, "xml"))
+            else if (!strcmp((const char *) name, "xml"))
                 r->native_syntax = Nativesyn_xml;
             else
             {
@@ -323,7 +341,8 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
             }
             if (format)
             {
-                if (!strcmp(format, "marc21") || !strcmp(format, "usmarc"))
+                if (!strcmp((const char *) format, "marc21") 
+                    || !strcmp((const char *) format, "usmarc"))
                     r->native_format = Nativeform_marc21;
                 else
                 {
@@ -333,9 +352,9 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
             }
             if (mapto)
             {
-                if (!strcmp(mapto, "marcxml"))
+                if (!strcmp((const char *) mapto, "marcxml"))
                     r->native_mapto = Nativemapto_marcxml;
-                else if (!strcmp(mapto, "marcxchange"))
+                else if (!strcmp((const char *)mapto, "marcxchange"))
                     r->native_mapto = Nativemapto_marcxchange;
                 else
                 {
@@ -348,17 +367,17 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
             xmlFree(encoding);
             xmlFree(mapto);
         }
-        else if (!strcmp(n->name, "map"))
+        else if (!strcmp((const char *) n->name, "map"))
         {
             struct conf_retrievalmap *m = nmem_malloc(nmem, sizeof(struct conf_retrievalmap));
-            xmlChar *type = xmlGetProp(n, "type");
-            xmlChar *charset = xmlGetProp(n, "charset");
-            xmlChar *format = xmlGetProp(n, "format");
-            xmlChar *stylesheet = xmlGetProp(n, "stylesheet");
+            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
+            xmlChar *charset = xmlGetProp(n, (xmlChar *) "charset");
+            xmlChar *format = xmlGetProp(n, (xmlChar *) "format");
+            xmlChar *stylesheet = xmlGetProp(n, (xmlChar *) "stylesheet");
             memset(m, 0, sizeof(*m));
             if (type)
             {
-                if (!strcmp(type, "xslt"))
+                if (!strcmp((const char *) type, "xslt"))
                     m->type = Map_xslt;
                 else
                 {
@@ -367,12 +386,12 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
                 }
             }
             if (charset)
-                m->charset = nmem_strdup(nmem, charset);
+                m->charset = nmem_strdup(nmem, (const char *) charset);
             if (format)
-                m->format = nmem_strdup(nmem, format);
+                m->format = nmem_strdup(nmem, (const char *) format);
             if (stylesheet)
             {
-                if (!(m->stylesheet = load_stylesheet(stylesheet)))
+                if (!(m->stylesheet = load_stylesheet((char *) stylesheet)))
                     return 0;
             }
             *rm = m;
@@ -395,14 +414,14 @@ static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
 static struct conf_targetprofiles *parse_targetprofiles(xmlNode *node)
 {
     struct conf_targetprofiles *r = nmem_malloc(nmem, sizeof(*r));
-    xmlChar *type = xmlGetProp(node, "type");
-    xmlChar *src = xmlGetProp(node, "src");
+    xmlChar *type = xmlGetProp(node, (xmlChar *) "type");
+    xmlChar *src = xmlGetProp(node, (xmlChar *) "src");
 
     memset(r, 0, sizeof(*r));
 
     if (type)
     {
-        if (!strcmp(type, "local"))
+        if (!strcmp((const char *) type, "local"))
             r->type = Targetprofiles_local;
         else
         {
@@ -417,7 +436,7 @@ static struct conf_targetprofiles *parse_targetprofiles(xmlNode *node)
     }
 
     if (src)
-        r->src = nmem_strdup(nmem, src);
+        r->src = nmem_strdup(nmem, (const char *) src);
     else
     {
         yaz_log(YLOG_FATAL, "Must specify src in targetprofile");
@@ -443,7 +462,7 @@ static struct conf_config *parse_config(xmlNode *root)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "server"))
+        if (!strcmp((const char *) n->name, "server"))
         {
             struct conf_server *tmp = parse_server(n);
             if (!tmp)
@@ -451,16 +470,16 @@ static struct conf_config *parse_config(xmlNode *root)
             tmp->next = r->servers;
             r->servers = tmp;
         }
-        else if (!strcmp(n->name, "queryprofile"))
+        else if (!strcmp((const char *) n->name, "queryprofile"))
         {
         }
-        else if (!strcmp(n->name, "retrievalprofile"))
+        else if (!strcmp((const char *) n->name, "retrievalprofile"))
         {
             if (!(*rp = parse_retrievalprofile(n)))
                 return 0;
             rp = &(*rp)->next;
         }
-        else if (!strcmp(n->name, "targetprofiles"))
+        else if (!strcmp((const char *) n->name, "targetprofiles"))
         {
             // It would be fun to be able to fix this sometime
             if (r->targetprofiles)
