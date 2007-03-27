@@ -48,7 +48,6 @@ function onFormSubmitEventHandler() {
 //
 function my_onshow(data)
 {
-    global = data;
     var recsBody = $('div.records');
     recsBody.empty();
     
@@ -58,7 +57,7 @@ function my_onshow(data)
         var id = data.hits[i].recid;
         var count = data.hits[i].count || 1;
         
-        var recBody = $('<div class="record" id="rec_'+id+'></div>');
+        var recBody = $('<div class="record" id="rec_'+id+'"></div>');
         var aTitle = $('<a class="recTitle">'+title+'</a>').appendTo(recBody);
         aTitle.click(function(){
                         var clickedId = this.parentNode.id.split('_')[1];
