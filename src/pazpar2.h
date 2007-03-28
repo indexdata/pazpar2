@@ -190,6 +190,7 @@ struct parameters {
     char proxy_override[128];
     char listener_override[128];
     char zproxy_override[128];
+    char settings_path[128];
     struct conf_server *server;
     int dump_records;
     int timeout;		/* operations timeout, in seconds */

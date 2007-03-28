@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.54 2007-03-27 11:25:57 marc Exp $ */
+/* $Id: pazpar2.c,v 1.55 2007-03-28 04:33:41 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -40,6 +40,7 @@
 #include "relevance.h"
 #include "config.h"
 #include "database.h"
+#include "settings.h"
 
 #define MAX_CHUNK 15
 
@@ -71,6 +72,7 @@ static char *client_states[] = {
 // Note: Some things in this structure will eventually move to configuration
 struct parameters global_parameters = 
 {
+    "",
     "",
     "",
     "",
@@ -1659,7 +1661,7 @@ int main(int argc, char **argv)
 
     yaz_log_init(YLOG_DEFAULT_LEVEL, "pazpar2", 0);
 
-    while ((ret = options("f:x:h:p:z:C:s:d", argv, argc, &arg)) != -2)
+    while ((ret = options("t:f:x:h:p:z:C:s:d", argv, argc, &arg)) != -2)
     {
 	switch (ret) {
             case 'f':
@@ -1677,6 +1679,9 @@ int main(int argc, char **argv)
                 break;
             case 'z':
                 strcpy(global_parameters.zproxy_override, arg);
+                break;
+            case 't':
+                strcpy(global_parameters.settings_path, arg);
                 break;
             case 's':
                 load_simpletargets(arg);
@@ -1708,6 +1713,8 @@ int main(int argc, char **argv)
     start_proxy();
     start_zproxy();
 
+    if (*global_parameters.settings_path)
+        settings_read(global_parameters.settings_path);
     if (!global_parameters.ccl_filter)
         global_parameters.ccl_filter = load_cclfile("../etc/default.bib");
     global_parameters.yaz_marc = yaz_marc_create();
