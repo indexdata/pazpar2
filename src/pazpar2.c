@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.55 2007-03-28 04:33:41 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.56 2007-03-28 12:05:18 marc Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1020,7 +1020,7 @@ static struct connection *connection_create(struct client *cl)
     cl->connection = new;
     new->link = link;
 
-    new->iochan = iochan_create(cs_fileno(link), handler, 0);
+    new->iochan = iochan_create(cs_fileno(link), 0, handler, 0);
     iochan_setdata(new->iochan, new);
     new->iochan->next = channel_list;
     channel_list = new->iochan;

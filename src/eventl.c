@@ -6,7 +6,7 @@
  */
 
 /*
- * $Id: eventl.c,v 1.2 2007-01-08 12:43:41 adam Exp $
+ * $Id: eventl.c,v 1.3 2007-03-28 12:05:18 marc Exp $
  * Based on revision YAZ' server/eventl.c 1.29.
  */
 
@@ -17,11 +17,7 @@
 #include <cconfig.h>
 #endif
 
-#ifdef WIN32
-#include <winsock.h>
-#else
-#include <unistd.h>
-#endif
+
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
@@ -30,10 +26,13 @@
 #include <yaz/log.h>
 #include <yaz/comstack.h>
 #include <yaz/xmalloc.h>
-#include "eventl.h"
 #include <yaz/statserv.h>
 
-IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags)
+#include "eventl.h"
+
+
+IOCHAN iochan_create(int fd,  struct sockaddr_in *addr_in, 
+                     IOC_CALLBACK cb, int flags)
 {
     IOCHAN new_iochan;
 
@@ -41,6 +40,14 @@ IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags)
     	return 0;
     new_iochan->destroyed = 0;
     new_iochan->fd = fd;
+
+    if(addr_in){
+        new_iochan->addr_in.sin_family = addr_in->sin_family;
+        new_iochan->addr_in.sin_port = addr_in->sin_port;
+        new_iochan->addr_in.sin_addr = addr_in->sin_addr;
+        strncpy(new_iochan->addr_str, inet_ntoa(addr_in->sin_addr), 64);
+    }
+
     new_iochan->flags = flags;
     new_iochan->fun = cb;
     new_iochan->force_event = 0;

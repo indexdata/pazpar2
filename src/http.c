@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.13 2007-03-27 13:41:23 marc Exp $
+ * $Id: http.c,v 1.14 2007-03-28 12:05:18 marc Exp $
  */
 
 #include <stdio.h>
@@ -14,6 +14,7 @@
 #include <netdb.h>
 #include <errno.h>
 #include <assert.h>
+#include <string.h>
 
 #if HAVE_CONFIG_H
 #include <cconfig.h>
@@ -37,8 +38,10 @@ static struct http_channel *http_create(void);
 static void http_destroy(IOCHAN i);
 
 extern IOCHAN channel_list;
+//extern struct parameters global_parameters;
 
-static struct sockaddr_in *proxy_addr = 0; // If this is set, we proxy normal HTTP requests
+// If this is set, we proxy normal HTTP requests
+static struct sockaddr_in *proxy_addr = 0; 
 static char proxy_url[256] = "";
 static char myurl[256] = "";
 static struct http_buf *http_buf_freelist = 0;
@@ -516,17 +519,27 @@ struct http_header * http_header_append(struct http_channel *ch,
                                         const char *name, 
                                         const char *value)
 {
-    struct http_header *hpnew = nmem_malloc(ch->nmem, sizeof *hpnew);
+    struct http_header *hpnew = 0; 
+
+    if (!hp | !ch)
+        return 0;
 
     while (hp && hp->next)
         hp = hp->next;
 
-     hpnew->name = nmem_strdup(ch->nmem, name);
-     hpnew->value = nmem_strdup(ch->nmem, value);
-     hpnew->next = 0;
-     hp->next = hpnew;
-     hp = hp->next;
-     return hpnew;
+    if(name && strlen(name)&& value && strlen(value)){
+        hpnew = nmem_malloc(ch->nmem, sizeof *hpnew);
+        hpnew->name = nmem_strdup(ch->nmem, name);
+        hpnew->value = nmem_strdup(ch->nmem, value);
+        
+        hpnew->next = 0;
+        hp->next = hpnew;
+        hp = hp->next;
+        
+        return hpnew;
+    }
+
+    return hp;
 }
 
     
@@ -537,7 +550,8 @@ static int http_proxy(struct http_request *rq)
     struct http_proxy *p = c->proxy;
     struct http_header *hp;
     struct http_buf *requestbuf;
-    //struct conf_server *ser = global_parameters.server;
+    char server_host[64] = "";
+    char server_port[16] = "";
 
 
     if (!p) // This is a new connection. Create a proxy channel
@@ -576,13 +590,13 @@ static int http_proxy(struct http_request *rq)
         p->first_response = 1;
         c->proxy = p;
         // We will add EVENT_OUTPUT below
-        p->iochan = iochan_create(sock, proxy_io, EVENT_INPUT);
+        p->iochan = iochan_create(sock, 0, proxy_io, EVENT_INPUT);
         iochan_setdata(p->iochan, p);
         p->iochan->next = channel_list;
         channel_list = p->iochan;
     }
 
-    // Modify Host: header
+    // Modify Host: header, but getting the host and port info first
     for (hp = rq->headers; hp; hp = hp->next)
         if (!strcmp(hp->name, "Host"))
             break;
@@ -591,16 +605,37 @@ static int http_proxy(struct http_request *rq)
         yaz_log(YLOG_WARN, "Failed to find Host header in proxy");
         return -1;
     }
+    
+    {
+        char * colon = 0;
+        
+        if((colon = strchr(hp->value, ':'))){
+            int collen = colon - hp->value;
+            strncpy(server_host, hp->value, (collen < 64) ? collen : 64 );
+            strncpy(server_port, colon + 1, 16);
+        } else {
+            strncpy(server_host, hp->value, 64);
+            strncpy(server_port, hp->value, 16);
+        }
+    }
+  
     hp->value = nmem_strdup(c->nmem, proxy_url);
 
-    // Add new header about paraz2 version, host, remote client address, etc. 
-        
-    hp = rq->headers;
-    hp = http_header_append(c, hp, PACKAGE_NAME "-version", PACKAGE_VERSION);
-    //hp = http_header_append(c, hp, PACKAGE_NAME "-server-host", ser->host);
-    //hp = http_header_append(c, hp, PACKAGE_NAME "-server-port", ser->port);
-    //hp = http_header_append(c, hp, PACKAGE_NAME "-remote-host", "blabla");
-    //hp = http_header_append(c, hp, PACKAGE_NAME "-remote-port", "blabla");
+    // Add new header about paraz2 version, host, remote client address, etc.
+    {
+
+        hp = rq->headers;
+        hp = http_header_append(c, hp, 
+                                PACKAGE_NAME "-version", PACKAGE_VERSION);
+        hp = http_header_append(c, hp, 
+                                PACKAGE_NAME "-server-host", server_host);
+        //sprintf(server_port, "%d",  ser->port);
+        hp = http_header_append(c, hp, 
+                                PACKAGE_NAME "-server-port", server_port);
+        hp = http_header_append(c, hp, 
+                                PACKAGE_NAME "-remote-addr", 
+                                c->iochan->addr_str);
+    }
 
     requestbuf = http_serialize_request(rq);
     http_buf_enqueue(&p->oqueue, requestbuf);
@@ -925,7 +960,7 @@ static void http_accept(IOCHAN i, int event)
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl2");
 
     yaz_log(YLOG_DEBUG, "New command connection");
-    c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT);
+    c = iochan_create(s, &addr, http_io, EVENT_INPUT | EVENT_EXCEPT);
 
     ch = http_create();
     ch->iochan = c;
@@ -988,7 +1023,7 @@ void http_init(const char *addr)
     if (listen(l, SOMAXCONN) < 0) 
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "listen");
 
-    c = iochan_create(l, http_accept, EVENT_INPUT | EVENT_EXCEPT);
+    c = iochan_create(l, &myaddr, http_accept, EVENT_INPUT | EVENT_EXCEPT);
     c->next = channel_list;
     channel_list = c;
 }
