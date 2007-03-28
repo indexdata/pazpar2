@@ -21,11 +21,26 @@
       </div>
       <div class="search">  
       <form method="post" action="index.html" name="search">
-        <div>
+        <div class="simple">
           <input type="text" name="query" class="search" tabindex="1" maxlength="255" value="" />
           <input type="image" src="gfx/button.gif" class="button" />
-          <a >Advanced search</a>
+          <a id="advanced">Advanced search</a>
+          <!-- those are the fields that need to be inserted in the advanced view: however not nessesary
+          all at once, it may any combination of these. I would like the encapsulating box to grow while
+          the fields are inserted, preferably avoiding manipulations of the box height from javascript.
+          secondly the boxes need to be position to the right edge of the search input field-->
+          <!-- fields end-->
         </div>
+          <div class="advanced" style="display: none">
+          <!--Title: <input type="text" name="title" class="advSearch" tabindex="1" maxlength="255" value="" />
+          <br/>-->
+          Author: <input type="text" name="author" class="advSearch" tabindex="1" maxlength="255" value="" />
+          <br/>
+          Subject: <input type="text" name="subject" class="advSearch" tabindex="1" maxlength="255" value="" />
+          <br/>
+          Date: <input type="text" name="date" class="advSearch" tabindex="1" maxlength="255" value="" />
+          <br/>
+          </div>
       </form>
       </div>
       <div class="main">

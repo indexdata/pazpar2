@@ -99,11 +99,19 @@ left: 74px;
 top: 28px;
 }
 
-div.search div {
+div.search div.simple {
 position: absolute;
 left: 225px;
 top: 25px;
 }
+
+div.search div.advanced {
+position: absolute;
+right: 249px;
+top: 47px;
+text-align: right;
+}
+
 
 input.search {
 background-color: #ffffff;
@@ -113,6 +121,16 @@ height: 17px;
 line-height: 17px;
 width: 500px;
 margin-top: -1px;
+}
+
+input.advSearch {
+background-color: #ffffff;
+color: #000000;
+border: 1px solid #a5acb2;
+height: 17px;
+line-height: 17px;
+width: 400px;
+margin-top: 5px;
 }
 
 div.main {

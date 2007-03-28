@@ -1,3 +1,8 @@
+/*
+** $Id: pz2.js,v 1.4 2007-03-28 15:20:53 jakub Exp $
+** pz2.js - pazpar2's javascript client library.
+*/
+
 //since explorer is flawed
 if (!window['Node']) {
     window.Node = new Object();

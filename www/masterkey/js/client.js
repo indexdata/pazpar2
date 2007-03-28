@@ -1,8 +1,9 @@
-// very simple client that shows a basic usage of the pz2.js
+/*
+** $Id: client.js,v 1.5 2007-03-28 15:20:53 jakub Exp $
+** MasterKey - pazpar2's javascript client .
+*/
 
-// create a parameters array and pass it to the pz2's constructor
-// then register the form submit event with the pz2.search function
-
+/* start with creating pz2 object and passing it event handlers*/
 var my_paz = new pz2( { "onshow": my_onshow,
                     //"showtime": 1000,
                     //"onstat": my_onstat,
@@ -11,6 +12,7 @@ var my_paz = new pz2( { "onshow": my_onshow,
                     //"onbytarget": my_onbytarget,
                     "onrecord": my_onrecord } );
 
+/* some state variable */
 var currentSort = 'relevance';
 var currentResultsPerPage = 20;
 var currentQuery = null;
@@ -19,33 +21,54 @@ var currentPage = 0;
 var currentDetailedId = null;
 var currentDetailedData = null;
 
-var termStartup = true;    //some things should be done only once
+var termStartup = true;
+var advancedOn = false;
 
-// wait until the DOM is ready (could have been defined in the HTML)
+/* wait until the DOM is ready and register basic handlers */
 $(document).ready( function() { 
                     document.search.onsubmit = onFormSubmitEventHandler;
-                    } );
 
+                    document.search.query.value = '';
+                    document.search.title.value = '';
+                    document.search.author.value = '';
+                    document.search.subject.value = '';
+                    document.search.date.value = '';
+                    
+                    $('#advanced').click(toggleAdvanced);
+
+                    $('#sort').change(function(){ 
+                        currentSort = this.value;
+                        currentPage = 0;
+                        my_paz.show(0, currentResultsPerPage, currentSort);
+                    });
+                    
+                    $('#perpage').change(function(){ 
+                        currentResultsPerPage = this.value;
+                        currentPage = 0;
+                        my_paz.show(0, currentResultsPerPage, currentSort);
+                    });
+} );
+
+/* search button event handler */
 function onFormSubmitEventHandler() {
-    currentQuery = document.search.query.value;
-    $('#sort').change(function(){ 
-                    currentSort = this.value;
-                    currentPage = 0;
-                    my_paz.show(0, currentResultsPerPage, currentSort);
-                    });
-    $('#perpage').change(function(){ 
-                    currentResultsPerPage = this.value;
-                    currentPage = 0;
-                    my_paz.show(0, currentResultsPerPage, currentSort);
-                    });
-    my_paz.search(document.search.query.value, 20, 'relevance');
+    if(!loadQueryFromForm())
+        return false;
+    my_paz.search(currentQuery, currentResultsPerPage, currentSort);
     $('div.content').show();
-    $("div.leftbar").show();    
+    $("div.leftbar").show();
     return false;
 }
-//
-// pz2.js event handlers:
-//
+
+/*
+*********************************************************************************
+** pz2 Event Handlers ***********************************************************
+*********************************************************************************
+*/
+
+/*
+** data.hits["md-title"], data.hits["md-author"], data.hits.recid, data.hits.count
+** data.activeclients, data.merged, data.total, data.start, data.num 
+*/
 function my_onshow(data)
 {
     var recsBody = $('div.records');
@@ -83,42 +106,18 @@ function my_onshow(data)
 
         recsBody.append('<div class="resultNum">'+(currentPage*currentResultsPerPage+i+1)+'.</a>');
         recsBody.append(recBody);
-
     }
-
     drawPager(data.merged, data.total);    
 }
 
 /*
-
-    body.innerHTML = "";
-    for ( i = 0; i < data.hits.length; i++) {
-        var hit = data.hits[i];
-        body.innerHTML += '<div id="' + hit.recid + '" onclick="my_paz.record(this.id)"><span>' + i + 
-                          '. </span><span><b>' + hit["md-title"] +
-                          ' </b></span> by <span><i>' + hit["md-author"] + '</i></span></div>';
-    }
-    body.innerHTML += "<hr/>";
-    body.innerHTML += '<div>active clients: ' + data.activeclients + '</div>' +
-                     '<div>merged: ' + data.merged + '</div>' +
-                     '<div>total: ' + data.total + '</div>' +
-                     '<div>start: ' + data.start + '</div>' +
-                     '<div>num: ' + data.num + '</div>';
-}
+** data.activeclients, data.hits, data.records, data.clients, data.searching
 */
+function my_onstat(data){}
 
-function my_onstat(data)
-{
 /*
-    var stat = document.getElementById("stat");
-    stat.innerHTML = '<div>active clients: ' + data.activeclients + '</div>' +
-                     '<div>hits: ' + data.hits + '</div>' +
-                     '<div>records: ' + data.records + '</div>' +
-                     '<div>clients: ' + data.clients + '</div>' +
-                     '<div>searching: ' + data.searching + '</div>';
+** data[listname]: name, freq, [id]
 */
-}
-
 function my_onterm(data)
 {
     var termLists = $("#termlists");
@@ -130,7 +129,7 @@ function my_onterm(data)
                 continue;
             var listName = key;
             if (key == "xtargets")
-                listName = "institution";
+                listName = "resource";
 
             var termList = $('<div class="termlist" id="term_'+key+'"/>').appendTo(termLists);
             var termTitle = $('<div class="termTitle"><a class="unselected">'+listName+'</a></div>').appendTo(termList);
@@ -190,20 +189,38 @@ function my_onterm(data)
     }
 }
 
+/*
+** data["md-title"], data["md-date"], data["md-author"], data["md-subject"], data["location"][0].name
+*/
 function my_onrecord(data)
 {
     currentDetailedData = data;
     drawDetailedRec();
-    /*
-    details = data;
-    recordDiv = document.getElementById(data.recid);
-    recordDiv.innerHTML = "<table><tr><td><b>Ttle</b> : </td><td>" + data["md-title"] +
-                            "</td></tr><tr><td><b>Date</b> : </td><td>" + data["md-date"] +
-                            "</td></tr><tr><td><b>Author</b> : </td><td>" + data["md-author"] +
-                            "</td></tr><tr><td><b>Subject</b> : </td><td>" + data["md-subject"] + 
-                            "</td></tr><tr><td><b>Location</b> : </td><td>" + data["location"][0].name + "</td></tr></table>";
-                            */
+}
 
+/*
+** data[i].id, data[i].hits, data[i].diagnostic, data[i].records, data[i].state
+*/
+function my_onbytarget(data){}
+
+/*
+*********************************************************************************
+** HELPER FUNCTIONS *************************************************************
+*********************************************************************************
+*/
+function toggleAdvanced()
+{
+    if(advancedOn){
+        $("div.advanced").hide();
+        $("div.search").height(73);
+        advancedOn = false;
+        $("#advanced").text("Advanced search");
+    } else {
+        $("div.search").height(173);
+        $("div.advanced").show();
+        advancedOn = true;
+        $("#advanced").text("Simple search");
+    }
 }
 
 function drawDetailedRec(detailBox)
@@ -232,37 +249,69 @@ function drawDetailedRec(detailBox)
     detailTable.appendTo(detailBox);
 }
 
-function my_onbytarget(data)
-{
-    /*
-    targetDiv = document.getElementById("bytarget");
-    targetDiv.innerHTML = "<tr><td>ID</td><td>Hits</td><td>Diag</td><td>Rec</td><td>State</td></tr>";
-    
-    for ( i = 0; i < data.length; i++ ) {
-        targetDiv.innerHTML += "<tr><td><b>" + data[i].id +
-                               "</b></td><td>" + data[i].hits +
-                               "</td><td>" + data[i].diagnostic +
-                               "</td><td>" + data[i].records +
-                               "</td><td>" + data[i].state + "</td></tr>";
-    }
-    */
-}
-
 function refine(field, value)
 {
+    // for the time being
+    if(!advancedOn)
+        toggleAdvanced();
+
     var query = '';
     var filter = undefined;
     
     switch(field) {
-        case "author": query = ' and au="'+value+'"'; break;
-        case "title": query = ' and ti="'+value+'"'; break;
-        case "date": query = ' and date="'+value+'"'; break;
-        case "subject": query = ' and su="'+value+'"'; break;
+        case "author":  query = ' and au="'+value+'"';
+                        if(document.search.author.value != '') document.search.author.value+='; ';
+                        document.search.author.value += value; break;
+
+        case "title":   query = ' and ti="'+value+'"';
+                        //if(document.search.tile.value != '') document.search.title.value+='; ';
+                        //document.search.title.value += value; break;
+        
+        case "date":    query = ' and date="'+value+'"';
+                        if(document.search.date.value != '') document.search.date.value+='; ';
+                        document.search.date.value += value; break;
+        
+        case "subject": query = ' and su="'+value+'"';
+                        if(document.search.subject.value != '') document.search.subject.value+='; ';
+                        document.search.subject.value += value; break;
+        
         case "xtarget": filter = 'id='+value; break;
     }
-    
+
     currentPage = 0;
-    my_paz.search(currentQuery + query, currentResultsPerPage, currentSort, filter);    
+    currentQuery = currentQuery + query;
+    my_paz.search(currentQuery, currentResultsPerPage, currentSort, filter);    
+}
+
+function loadQueryFromForm()
+{
+    var query = new Array();
+
+    if( document.search.query.value !== '' ) query.push(document.search.query.value);    
+    if( document.search.author.value !== '' ) query.push(parseField(document.search.author.value, 'au'));
+    //if( document.search.title.value !== '' ) query.push(parseField(document.search.title.value, 'ti'));
+    if( document.search.date.value !== '' ) query.push(parseField(document.search.date.value, 'date'));
+    if( document.search.subject.value !== '' ) query.push(parseField(document.search.subject.value, 'su'));
+
+    if( query.length ) {
+        currentQuery = query.join(" and ");
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function parseField(inputString, field)
+{
+    var inputArr = inputString.split(';');
+    var outputArr = new Array();
+    for(var i=0; i < inputArr.length; i++){
+        if(inputArr[i].length < 3){
+            continue;
+        }
+        outputArr.push(field+'="'+inputArr[i]+'"');
+    }
+    return outputArr.join(" and ");
 }
 
 function drawPager(max, hits)
