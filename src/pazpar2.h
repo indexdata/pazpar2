@@ -72,6 +72,7 @@ struct database {
     struct zr_explain *explain;
     struct conf_queryprofile *qprofile;
     struct conf_retrievalprofile *rprofile;
+    struct setting **settings;
     struct database *next;
 };
 
