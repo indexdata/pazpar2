@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.15 2007-03-29 09:16:34 marc Exp $
+ * $Id: http.c,v 1.16 2007-03-29 15:23:17 quinn Exp $
  */
 
 #include <stdio.h>
@@ -813,6 +813,7 @@ static void proxy_io(IOCHAN pi, int event)
                 htbuf->buf[res] = '\0';
                 htbuf->offset = 0;
                 htbuf->len = res;
+#ifdef GAGA
                 if (pc->first_response) // Check if this is a redirect
                 {
                     int len;
@@ -838,6 +839,7 @@ static void proxy_io(IOCHAN pi, int event)
                     }
                     pc->first_response = 0;
                 }
+#endif
                 // Write any remaining payload
                 if (htbuf->len - htbuf->offset > 0)
                     http_buf_enqueue(&hc->oqueue, htbuf);
