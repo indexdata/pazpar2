@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.5 2007-03-28 15:20:53 jakub Exp $
+** $Id: client.js,v 1.6 2007-03-29 09:11:01 jakub Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -95,13 +95,18 @@ function my_onshow(data)
                         my_paz.record(currentDetailedId);
                         });
         
-        if( author )
+        if( author ) {
             recBody.append('<i> by </i>');
             $('<a name="author" class="recAuthor">'+author+'</a>\n').click(function(){ refine(this.name, this.firstChild.nodeValue) }).appendTo(recBody);
+        }
 
-        if( currentDetailedId == id ){
+        if( currentDetailedId == id ) {
             var detailBox = $('<div class="detail"></div>').appendTo(recBody);
             drawDetailedRec(detailBox);
+        }
+
+        if( count > 1 ) {
+            recBody.append('<span> ('+count+')</span>');
         }
 
         recsBody.append('<div class="resultNum">'+(currentPage*currentResultsPerPage+i+1)+'.</a>');
@@ -289,7 +294,7 @@ function loadQueryFromForm()
 
     if( document.search.query.value !== '' ) query.push(document.search.query.value);    
     if( document.search.author.value !== '' ) query.push(parseField(document.search.author.value, 'au'));
-    //if( document.search.title.value !== '' ) query.push(parseField(document.search.title.value, 'ti'));
+    if( document.search.title.value !== '' ) query.push(parseField(document.search.title.value, 'ti'));
     if( document.search.date.value !== '' ) query.push(parseField(document.search.date.value, 'date'));
     if( document.search.subject.value !== '' ) query.push(parseField(document.search.subject.value, 'su'));
 
@@ -322,7 +327,7 @@ function drawPager(max, hits)
     var results = $('div.showing');
     results.empty();
     results.append('Displaying: <b>'+firstOnPage+'</b> to <b>'+lastOnPage+
-                            '</b> of <b>'+max+'</b>'); //(total hits: '+hits+')');
+                            '</b> of <b>'+max+'</b> (total hits: '+hits+')');
     var pager = $('div.pages');
     pager.empty();
     
