@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.14 2007-03-28 12:05:18 marc Exp $
+ * $Id: http.c,v 1.15 2007-03-29 09:16:34 marc Exp $
  */
 
 #include <stdio.h>
@@ -38,7 +38,7 @@ static struct http_channel *http_create(void);
 static void http_destroy(IOCHAN i);
 
 extern IOCHAN channel_list;
-//extern struct parameters global_parameters;
+extern struct parameters global_parameters;
 
 // If this is set, we proxy normal HTTP requests
 static struct sockaddr_in *proxy_addr = 0; 
@@ -550,9 +550,9 @@ static int http_proxy(struct http_request *rq)
     struct http_proxy *p = c->proxy;
     struct http_header *hp;
     struct http_buf *requestbuf;
-    char server_host[64] = "";
+    char server_via[128] = "";
     char server_port[16] = "";
-
+    struct conf_server *ser = global_parameters.server;
 
     if (!p) // This is a new connection. Create a proxy channel
     {
@@ -596,7 +596,7 @@ static int http_proxy(struct http_request *rq)
         channel_list = p->iochan;
     }
 
-    // Modify Host: header, but getting the host and port info first
+    // Do _not_ modify Host: header, just checking it's existence
     for (hp = rq->headers; hp; hp = hp->next)
         if (!strcmp(hp->name, "Host"))
             break;
@@ -606,36 +606,25 @@ static int http_proxy(struct http_request *rq)
         return -1;
     }
     
-    {
-        char * colon = 0;
-        
-        if((colon = strchr(hp->value, ':'))){
-            int collen = colon - hp->value;
-            strncpy(server_host, hp->value, (collen < 64) ? collen : 64 );
-            strncpy(server_port, colon + 1, 16);
-        } else {
-            strncpy(server_host, hp->value, 64);
-            strncpy(server_port, hp->value, 16);
-        }
-    }
-  
-    hp->value = nmem_strdup(c->nmem, proxy_url);
-
     // Add new header about paraz2 version, host, remote client address, etc.
     {
-
         hp = rq->headers;
         hp = http_header_append(c, hp, 
                                 PACKAGE_NAME "-version", PACKAGE_VERSION);
         hp = http_header_append(c, hp, 
-                                PACKAGE_NAME "-server-host", server_host);
-        //sprintf(server_port, "%d",  ser->port);
+                                PACKAGE_NAME "-server-host", ser->myurl);
+        sprintf(server_port, "%d",  ser->port);
         hp = http_header_append(c, hp, 
                                 PACKAGE_NAME "-server-port", server_port);
+        sprintf(server_via,  "1.1 %s:%s (%s/%s)",  
+                ser->myurl, server_port, PACKAGE_NAME, PACKAGE_VERSION);
         hp = http_header_append(c, hp, 
-                                PACKAGE_NAME "-remote-addr", 
+                                "Via" , server_via);
+        //hp = http_header_append(c, hp,"Client-ip", 
+        //                        c->iochan->addr_str);
+        hp = http_header_append(c, hp,"X-Forwarded-For", 
                                 c->iochan->addr_str);
-    }
+      }
 
     requestbuf = http_serialize_request(rq);
     http_buf_enqueue(&p->oqueue, requestbuf);
