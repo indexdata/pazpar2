@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.4 2007-03-23 03:26:22 quinn Exp $ */
+/* $Id: database.c,v 1.5 2007-03-29 13:44:38 quinn Exp $ */
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -6,6 +6,8 @@
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "pazpar2.h"
 #include "config.h"
@@ -43,6 +45,7 @@ static struct conf_queryprofile *database_queryprofile(const char *id)
 
 static xmlDoc *get_explain_xml(const char *id)
 {
+    struct stat st;
     char *dir;
     char path[256];
     char ide[256];
@@ -59,8 +62,10 @@ static xmlDoc *get_explain_xml(const char *id)
     dir = config->targetprofiles->src;
     urlencode(id, ide);
     sprintf(path, "%s/%s", dir, ide);
-    yaz_log(YLOG_LOG, "Path: %s", path);
-    return xmlParseFile(path);
+    if (!stat(path, &st))
+        return xmlParseFile(path);
+    else
+        return 0;
 }
 
 // Create a new host structure for hostport
@@ -165,6 +170,7 @@ static struct database *load_database(const char *id)
     db->explain = explain;
     db->qprofile = query;
     db->rprofile = retrieval;
+    db->settings = 0;
     db->next = databases;
     databases = db;
 
@@ -185,6 +191,26 @@ struct database *find_database(const char *id, int new)
     return load_database(id);
 }
 
+static int match_zurl(const char *zurl, const char *pattern)
+{
+    if (!strcmp(pattern, "*"))
+        return 1;
+    else if (!strncmp(pattern, "*/", 2))
+    {
+        char *db = strchr(zurl, '/');
+        if (!db)
+            return 0;
+        if (!strcmp(pattern + 2, db))
+            return 1;
+        else
+            return 0;
+    }
+    else if (!strcmp(pattern, zurl))
+        return 1;
+    else
+        return 0;
+}
+
 // This will be generalized at some point
 static int match_criterion(struct database *db, struct database_criterion *c)
 {
@@ -192,7 +218,7 @@ static int match_criterion(struct database *db, struct database_criterion *c)
     {
         struct database_criterion_value *v;
         for (v = c->values; v; v = v->next)
-            if (!strcmp(v->value, db->url))
+            if (match_zurl(db->url, v->value))
                 return 1;
         return 0;
     }
