@@ -1,4 +1,4 @@
-// $Id: settings.c,v 1.2 2007-03-28 04:33:41 quinn Exp $
+// $Id: settings.c,v 1.3 2007-03-29 13:44:19 quinn Exp $
 // This module implements a generic system of settings (attribute-value) that can 
 // be associated with search targets. The system supports both default values,
 // per-target overrides, and per-user settings.
@@ -17,25 +17,18 @@
 #include <yaz/nmem.h>
 #include <yaz/log.h>
 
+#include "pazpar2.h"
+#include "database.h"
+#include "settings.h"
+
 static NMEM nmem = 0;
 
-#define PZ_PIGGYBACK    0 
-#define PZ_ELEMENTS     1
-#define PZ_SYNTAX       2
-
+// Used for initializing setting_dictionary with pazpar2-specific settings
 static char *hard_settings[] = {
     "pz:piggyback",
     "pz:elements",
     "pz::syntax",
     0
-};
-
-struct setting
-{
-    char *target;
-    char *name;
-    char *value;
-    char *user;
 };
 
 struct setting_dictionary
@@ -44,6 +37,23 @@ struct setting_dictionary
     int size;
     int num;
 };
+
+static struct setting_dictionary *dictionary = 0;
+
+int settings_offset(const char *name)
+{
+    int i;
+
+    for (i = 0; i < dictionary->num; i++)
+        if (!strcmp(name, dictionary->dict[i]))
+            return i;
+    return -1;
+}
+
+char *settings_name(int offset)
+{
+    return dictionary->dict[offset];
+}
 
 static int isdir(const char *path)
 {
@@ -57,12 +67,13 @@ static int isdir(const char *path)
     return st.st_mode & S_IFDIR;
 }
 
-static void read_settings_file(const char *path, void *context,
-        void (*fun)(void *context, struct setting *set))
+// Read settings from an XML file, calling handler function for each setting
+static void read_settings_file(const char *path,
+        void (*fun)(struct setting *set))
 {
     xmlDoc *doc = xmlParseFile(path);
     xmlNode *n;
-    //xmlChar *namea, *targeta, *valuea, *usera;
+    xmlChar *namea, *targeta, *valuea, *usera, *precedencea;
 
     if (!doc)
     {
@@ -70,16 +81,94 @@ static void read_settings_file(const char *path, void *context,
         exit(1);
     }
     n = xmlDocGetRootElement(doc);
-
+    namea = xmlGetProp(n, (xmlChar *) "name");
+    targeta = xmlGetProp(n, (xmlChar *) "target");
+    valuea = xmlGetProp(n, (xmlChar *) "value");
+    usera = xmlGetProp(n, (xmlChar *) "user");
+    precedencea = xmlGetProp(n, (xmlChar *) "precedence");
     for (n = n->children; n; n = n->next)
     {
-        fprintf(stderr, "Node name: %s\n", n->name);
+        if (n->type != XML_ELEMENT_NODE)
+            continue;
+        if (!strcmp(n->name, (xmlChar *) "set"))
+        {
+            char *name, *target, *value, *user, *precedence;
+
+            name = xmlGetProp(n, (xmlChar *) "name");
+            target = xmlGetProp(n, (xmlChar *) "target");
+            value = xmlGetProp(n, (xmlChar *) "value");
+            user = xmlGetProp(n, (xmlChar *) "user");
+            precedence = xmlGetProp(n, (xmlChar *) "precedence");
+
+            if ((!name && !namea) || (!value && !valuea) || (!target && !targeta))
+            {
+                yaz_log(YLOG_FATAL, "set must specify name, value, and target");
+                exit(1);
+            }
+            else
+            {
+                struct setting set;
+                char nameb[1024];
+                char targetb[1024];
+                char userb[1024];
+                char valueb[1024];
+
+                // Copy everything into a temporary buffer -- we decide
+                // later if we are keeping it.
+                if (precedence)
+                    set.precedence = atoi((char *) precedence);
+                else if (precedencea)
+                    set.precedence = atoi((char *) precedencea);
+                else
+                    set.precedence = 0;
+                set.user = userb;
+                if (user)
+                    strcpy(userb, user);
+                else if (usera)
+                    strcpy(userb, usera);
+                else
+                    set.user = "";
+                if (target)
+                    strcpy(targetb, target);
+                else
+                    strcpy(targetb, targeta);
+                set.target = targetb;
+                if (name)
+                    strcpy(nameb, name);
+                else
+                    strcpy(nameb, namea);
+                set.name = nameb;
+                if (value)
+                    strcpy(valueb, value);
+                else
+                    strcpy(valueb, valuea);
+                set.value = valueb;
+                set.next = 0;
+                (*fun)(&set);
+            }
+            xmlFree(name);
+            xmlFree(precedence);
+            xmlFree(value);
+            xmlFree(user);
+            xmlFree(target);
+        }
+        else
+        {
+            yaz_log(YLOG_FATAL, "Unknown element %s in settings file", (char*) n->name);
+            exit(1);
+        }
     }
+    xmlFree(namea);
+    xmlFree(precedencea);
+    xmlFree(valuea);
+    xmlFree(usera);
+    xmlFree(targeta);
 }
  
 // Recursively read files in a directory structure, calling 
-static void read_settings(const char *path, void *context,
-		void (*fun)(void *context, struct setting *set))
+// callback for each one
+static void read_settings(const char *path,
+		void (*fun)(struct setting *set))
 {
     DIR *d;
     struct dirent *de;
@@ -96,12 +185,12 @@ static void read_settings(const char *path, void *context,
             continue;
         sprintf(tmp, "%s/%s", path, de->d_name);
         if (isdir(tmp))
-            read_settings(tmp, context, fun);
+            read_settings(tmp, fun);
         else
         {
             char *dot;
             if ((dot = rindex(de->d_name, '.')) && !strcmp(dot + 1, "xml"))
-                read_settings_file(tmp, context, fun);
+                read_settings_file(tmp, fun);
         }
     }
     closedir(d);
@@ -109,34 +198,92 @@ static void read_settings(const char *path, void *context,
 
 // Callback. Adds a new entry to the dictionary if necessary
 // This is used in pass 1 to determine layout of dictionary
-static void prepare_dictionary(void *context, struct setting *set)
+static void prepare_dictionary(struct setting *set)
 {
-    struct setting_dictionary *dict = (struct setting_dictionary *) context;
     int i;
 
-    for (i = 0; i < dict->num; i++)
-        if (!strcmp(set->name, set->name))
+    for (i = 0; i < dictionary->num; i++)
+        if (!strcmp(dictionary->dict[i], set->name))
             return;
     // Create a new dictionary entry
     // Grow dictionary if necessary
-    if (!dict->size)
-        dict->dict = nmem_malloc(nmem, (dict->size = 50) * sizeof(char*));
-    else if (dict->num + 1 > dict->size)
+    if (!dictionary->size)
+        dictionary->dict = nmem_malloc(nmem, (dictionary->size = 50) * sizeof(char*));
+    else if (dictionary->num + 1 > dictionary->size)
     {
-        char **tmp = nmem_malloc(nmem, dict->size * 2 * sizeof(char*));
-        memcpy(tmp, dict->dict, dict->size * sizeof(char*));
-        dict->dict = tmp;
-        dict->size *= 2;
+        char **tmp = nmem_malloc(nmem, dictionary->size * 2 * sizeof(char*));
+        memcpy(tmp, dictionary->dict, dictionary->size * sizeof(char*));
+        dictionary->dict = tmp;
+        dictionary->size *= 2;
     }
-    dict->dict[dict->num++] = nmem_strdup(nmem, set->name);
+    dictionary->dict[dictionary->num++] = nmem_strdup(nmem, set->name);
 }
 
-#ifdef GAGA
-// Callback -- updates database records with dictionary entries as appropriate
-static void update_databases(void *context, struct setting *set)
+// This is called from grep_databases -- adds/overrides setting for a target
+// This is also where the rules for precedence of settings are implemented
+static void update_database(void *context, struct database *db)
 {
+    struct setting *set = (struct setting *) context;
+    struct setting *s, **sp;
+    int offset;
+
+    if (!db->settings)
+    {
+        db->settings = nmem_malloc(nmem, sizeof(struct settings*) * dictionary->num);
+        memset(db->settings, sizeof(struct settings*) * dictionary->num, 0);
+    }
+    if ((offset = settings_offset(set->name)) < 0)
+        abort(); // Should never get here
+
+    // First we determine if this setting is overriding  any existing settings
+    // with the same name.
+    for (s = db->settings[offset], sp = &db->settings[offset]; s;
+            sp = &s->next, s = s->next)
+        if (!strcmp(s->user, set->user))
+        {
+            if (s->precedence < set->precedence)
+                // We discard the value (nmem keeps track of the space)
+                *sp = (*sp)->next;
+            else if (s->precedence > set->precedence)
+                // Db contains a higher-priority setting. Abort 
+                break;
+            if (*s->target == '*' && *set->target != '*')
+                // target-specific value trumps wildcard. Delete.
+                *sp = (*sp)->next;
+            else if (*s->target != '*' && *set->target == '*')
+                // Db already contains higher-priority setting. Abort
+                break;
+        }
+    if (!s) // s will be null when there are no higher-priority settings -- we add one
+    {
+        struct setting *new = nmem_malloc(nmem, sizeof(*new));
+
+        memset(new, sizeof(*new), 0);
+        new->precedence = set->precedence;
+        new->target = nmem_strdup(nmem, set->target);
+        new->name = nmem_strdup(nmem, set->name);
+        new->value = nmem_strdup(nmem, set->value);
+        new->user = nmem_strdup(nmem, set->user);
+        new->next = db->settings[offset];
+        db->settings[offset] = new;
+    }
 }
-#endif
+
+// Callback -- updates database records with dictionary entries as appropriate
+// This is used in pass 2 to assign name/value pairs to databases
+static void update_databases(struct setting *set)
+{
+    struct database_criterion crit;
+    struct database_criterion_value val;
+
+    // Update all databases which match pattern in set->target
+    crit.name = "id";
+    crit.values = &val;
+    crit.next = 0;
+    val.value = set->target;
+    val.next = 0;
+    grep_databases(set, &crit, update_database);
+}
 
 // This simply copies the 'hard' (application-specific) settings
 // to the settings dictionary.
@@ -161,8 +308,9 @@ void settings_read(const char *path)
     new = nmem_malloc(nmem, sizeof(*new));
     initialize_hard_settings(new);
     memset(new, sizeof(*new), 0);
-    read_settings(path, new, prepare_dictionary);
-    //read_settings(path, new, update_databases);
+    dictionary = new;
+    read_settings(path, prepare_dictionary);
+    read_settings(path, update_databases);
 }
 
 /*
