@@ -1,4 +1,4 @@
-/* $Id: zeerex.c,v 1.4 2007-03-15 16:50:56 quinn Exp $ */
+/* $Id: zeerex.c,v 1.5 2007-03-29 11:02:04 marc Exp $ */
 
 // Reads Zeerex records into a set of structures
 
@@ -20,7 +20,7 @@ static void fail(const char *s, xmlNode *n)
 // returns an nmem-allocated string if attr is present, or null
 static char *attrtostr(NMEM m, xmlNode *n, const char *name)
 {
-    char *s = xmlGetProp(n, name);
+    char *s = (char *) xmlGetProp(n, (xmlChar *) name);
     if (s)
     {
         char *r = nmem_strdup(m, s);
@@ -33,7 +33,7 @@ static char *attrtostr(NMEM m, xmlNode *n, const char *name)
 
 static int attrtoint(xmlNode *n, const char *name)
 {
-    char *s = xmlGetProp(n, name);
+    char *s = (char *)xmlGetProp(n, (xmlChar *) name);
     if (s)
     {
         int val = atoi(s);
@@ -46,7 +46,7 @@ static int attrtoint(xmlNode *n, const char *name)
 
 static Zr_bool attrtobool(xmlNode *node, const char *name)
 {
-    char *v = xmlGetProp(node, name);
+    char *v = (char *) xmlGetProp(node, (xmlChar *) name);
     if (v)
     {
         Zr_bool res;
@@ -65,7 +65,7 @@ static Zr_bool attrtobool(xmlNode *node, const char *name)
 
 static char *valuetostr(NMEM m, xmlNode *n)
 {
-    char *val = xmlNodeGetContent(n);
+    char *val = (char *) xmlNodeGetContent(n);
     if (val)
     {
         char *res = nmem_strdup(m, val);
@@ -78,7 +78,7 @@ static char *valuetostr(NMEM m, xmlNode *n)
 
 static int valuetoint(xmlNode *n)
 {
-    char *s = xmlNodeGetContent(n);
+    char *s = (char *) xmlNodeGetContent(n);
     if (s)
     {
         int res = atoi(s);
@@ -95,7 +95,8 @@ static Zr_langstr *findlangstr(NMEM m, xmlNode *node, const char *name)
     Zr_langstr *res = 0;
     for (n = node->children; n; n = n->next)
     {
-        if (n->type == XML_ELEMENT_NODE && !strcmp(n->name, name))
+        if (n->type == XML_ELEMENT_NODE 
+            && !strcmp((const char *) n->name, name))
         {
             Zr_langstr *new = nmem_malloc(m, sizeof(*new));
             memset(new, 0, sizeof(*new));
@@ -129,13 +130,13 @@ static struct zr_authentication *authentication(NMEM m, xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "open"))
+        if (!strcmp((const char *) n->name, "open"))
             r->open = valuetostr(m, n);
-        else if (!strcmp(n->name, "user"))
+        else if (!strcmp((const char *) n->name, "user"))
             r->user = valuetostr(m, n);
-        else if (!strcmp(n->name, "group"))
+        else if (!strcmp((const char *) n->name, "group"))
             r->group = valuetostr(m, n);
-        else if (!strcmp(n->name, "password"))
+        else if (!strcmp((const char *) n->name, "password"))
             r->password = valuetostr(m, n);
         else
         {
@@ -161,13 +162,13 @@ static struct zr_serverInfo *serverInfo(NMEM m, xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "host"))
+        if (!strcmp((const char *) n->name, "host"))
             r->host = valuetostr(m, n);
-        else if (!strcmp(n->name, "port"))
+        else if (!strcmp((const char *) n->name, "port"))
             r->port = valuetoint(n);
-        else if (!strcmp(n->name, "database"))
+        else if (!strcmp((const char *) n->name, "database"))
             r->database = valuetostr(m, n);
-        else if (!strcmp(n->name, "authentication"))
+        else if (!strcmp((const char *) n->name, "authentication"))
         {
             if (!(r->authentication = authentication(m, n)))
                 return 0;
@@ -203,7 +204,7 @@ static struct zr_implementation *implementation(NMEM m, xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "agent"))
+        if (!strcmp((const char *) n->name, "agent"))
         {
             struct zr_agent *ag = agent(m, node);
             if (!ag)
@@ -232,14 +233,14 @@ struct zr_databaseInfo *databaseInfo(NMEM m, xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "agents"))
+        if (!strcmp((const char *) n->name, "agents"))
         {
             xmlNode *n2;
             for (n2 = n->children; n2; n2 = n2->next)
             {
                 if (n2->type != XML_ELEMENT_NODE)
                     continue;
-                if (strcmp(n2->name, "agent"))
+                if (strcmp((const char *) n2->name, "agent"))
                     continue;
                 else
                 {
@@ -251,19 +252,19 @@ struct zr_databaseInfo *databaseInfo(NMEM m, xmlNode *node)
                 }
             }
         }
-        else if (!strcmp(n->name, "implementation")) 
+        else if (!strcmp((const char *) n->name, "implementation")) 
         {
             if (!(r->implementation = implementation(m, n)))
                 return 0;
         }
-        else if (!strcmp(n->name, "links"))
+        else if (!strcmp((const char *) n->name, "links"))
         {
             xmlNode *n2;
             for (n2 = n->children; n2; n2 = n2->next)
             {
                 if (n2->type != XML_ELEMENT_NODE)
                     continue;
-                if (!strcmp(n2->name, "link"))
+                if (!strcmp((const char *) n2->name, "link"))
                     continue;
                 else
                 {
@@ -276,11 +277,11 @@ struct zr_databaseInfo *databaseInfo(NMEM m, xmlNode *node)
                 }
             }
         }
-        else if (!strcmp(n->name, "history") && !r->lastUpdate)
+        else if (!strcmp((const char *) n->name, "history") && !r->lastUpdate)
             r->lastUpdate = attrtostr(m, n, "lastUpdate");
-        else if (!strcmp(n->name, "extent") && !r->numberOfRecords)
+        else if (!strcmp((const char *) n->name, "extent") && !r->numberOfRecords)
             r->numberOfRecords = attrtoint(n, "numberOfRecords");
-        else if (!strcmp(n->name, "langUsage") && !r->codes)
+        else if (!strcmp((const char *) n->name, "langUsage") && !r->codes)
             r->codes = attrtostr(m, n, "codes");
     }
     return r;
@@ -296,11 +297,11 @@ struct zr_metaInfo *metaInfo(NMEM m, xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "dateModified"))
+        if (!strcmp((const char *) n->name, "dateModified"))
             r->dateModified = valuetostr(m, n);
-        else if (!strcmp(n->name, "dateAggregated"))
+        else if (!strcmp((const char *) n->name, "dateAggregated"))
             r->dateAggregated = valuetostr(m, n);
-        else if (!strcmp(n->name, "aggregatedFrom"))
+        else if (!strcmp((const char *) n->name, "aggregatedFrom"))
             r->aggregatedFrom = valuetostr(m, n);
         else
         {
@@ -342,12 +343,12 @@ static struct zr_map *map(NMEM m, xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "name"))
+        if (!strcmp((const char *) n->name, "name"))
         {
             r->set = attrtostr(m, n, "set");
             r->name = valuetostr(m, n);
         }
-        else if (!strcmp(n->name, "attr"))
+        else if (!strcmp((const char *) n->name, "attr"))
         {
             struct zr_attr *new = attr(m, n);
             if (!new)
@@ -370,7 +371,7 @@ static Zr_setting *findsetting(NMEM m, xmlNode *node, char *name)
     xmlNode *n;
     for (n = node->children; n; n = n->next)
     {
-        if (node->type == XML_ELEMENT_NODE && !strcmp(n->name, name))
+        if (node->type == XML_ELEMENT_NODE && !strcmp((const char *) n->name, name))
         {
             xmlNode *n2;
             struct zr_setting *new = nmem_malloc(m, sizeof(*new));
@@ -378,7 +379,7 @@ static Zr_setting *findsetting(NMEM m, xmlNode *node, char *name)
             new->type = attrtostr(m, n, "type");
             for (n2 = n->children; n2; n2 = n2->next)
             {
-                if (n2->type == XML_ELEMENT_NODE && !strcmp(n2->name, "map"))
+                if (n2->type == XML_ELEMENT_NODE && !strcmp((const char *) n2->name, "map"))
                 {
                     new->map = map(m, n2);
                     if (!new)
@@ -387,7 +388,7 @@ static Zr_setting *findsetting(NMEM m, xmlNode *node, char *name)
                 }
             }
             if (!new->map)
-                new->value = xmlNodeGetContent(n);
+                new->value = (char *) xmlNodeGetContent(n);
             new->next = r;
             r = new;
         }
@@ -421,7 +422,7 @@ static struct zr_index *parse_index(NMEM m, xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "map"))
+        if (!strcmp((const char *) n->name, "map"))
         {
             struct zr_map *new = map(m, n);
             if (!new)
@@ -429,12 +430,12 @@ static struct zr_index *parse_index(NMEM m, xmlNode *node)
             new->next = r->maps;
             r->maps = new;
         }
-        else if (!strcmp(n->name, "configInfo"))
+        else if (!strcmp((const char *) n->name, "configInfo"))
         {
             if (!(r->configInfo = configInfo(m, n)))
                 return 0;
         }
-        else if (strcmp(n->name, "title"))
+        else if (strcmp((const char *) n->name, "title"))
         {
             fail("Unknown child element", n);
             return 0;
@@ -461,7 +462,7 @@ static struct zr_indexInfo *indexInfo(NMEM m , xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "set"))
+        if (!strcmp((const char *) n->name, "set"))
         {
             struct zr_set *new = set(m, n);
             if (!new)
@@ -469,7 +470,7 @@ static struct zr_indexInfo *indexInfo(NMEM m , xmlNode *node)
             new->next = r->sets;
             r->sets = new;
         }
-        else if (!strcmp(n->name, "index"))
+        else if (!strcmp((const char *) n->name, "index"))
         {
             struct zr_index *new = parse_index(m, n);
             if (!new)
@@ -477,7 +478,7 @@ static struct zr_indexInfo *indexInfo(NMEM m , xmlNode *node)
             new->next = r->indexes;
             r->indexes = new;
         }
-        else if (!strcmp(n->name, "sortKeyword"))
+        else if (!strcmp((const char *) n->name, "sortKeyword"))
         {
             struct zr_sortKeyword *new = sortKeyword(m, n);
             if (!new)
@@ -485,7 +486,7 @@ static struct zr_indexInfo *indexInfo(NMEM m , xmlNode *node)
             new->next = r->sortKeywords;
             r->sortKeywords = new;
         }
-        else if (!strcmp(n->name, "sortKeyword"))
+        else if (!strcmp((const char *) n->name, "sortKeyword"))
         {
             if (!(r->configInfo = configInfo(m, n)))
                 return 0;
@@ -522,7 +523,7 @@ static struct zr_recordSyntax *recordSyntax(NMEM m, xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "elementSet"))
+        if (!strcmp((const char *) n->name, "elementSet"))
         {
             if (!(*elementp = elementSet(m, n)))
                 return 0;
@@ -548,7 +549,7 @@ static struct zr_recordInfo *recordInfo(NMEM m, xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "recordSyntax"))
+        if (!strcmp((const char *) n->name, "recordSyntax"))
         {
             if (!(*syntaxp = recordSyntax(m, n)))
                 return 0;
@@ -589,7 +590,7 @@ static struct zr_schemaInfo *schemaInfo(NMEM m, xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "schema"))
+        if (!strcmp((const char *) n->name, "schema"))
         {
             if (!(*schemap = schema(m, n)))
                 return 0;
@@ -614,42 +615,42 @@ static struct zr_explain *explain(NMEM m, xmlNode *node)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, "serverInfo"))
+        if (!strcmp((const char *) n->name, "serverInfo"))
         {
             if (!(r->serverInfo = serverInfo(m, n)))
                 return 0;
         }
-        else if (!strcmp(n->name, "databaseInfo"))
+        else if (!strcmp((const char *) n->name, "databaseInfo"))
         {
             if (!(r->databaseInfo = databaseInfo(m, n)))
                 return 0;
         }
-        else if (!strcmp(n->name, "metaInfo"))
+        else if (!strcmp((const char *) n->name, "metaInfo"))
         {
             if (!(r->metaInfo = metaInfo(m, n)))
                 return 0;
         }
-        else if (!strcmp(n->name, "indexInfo"))
+        else if (!strcmp((const char *) n->name, "indexInfo"))
         {
             if (!(r->indexInfo = indexInfo(m, n)))
                 return 0;
         }
-        else if (!strcmp(n->name, "recordInfo"))
+        else if (!strcmp((const char *) n->name, "recordInfo"))
         {
             if (!(r->recordInfo = recordInfo(m, n)))
                 return 0;
         }
-        else if (!strcmp(n->name, "schemaInfo"))
+        else if (!strcmp((const char *) n->name, "schemaInfo"))
         {
             if (!(r->schemaInfo = schemaInfo(m, n)))
                 return 0;
         }
-        else if (!strcmp(n->name, "configInfo"))
+        else if (!strcmp((const char *) n->name, "configInfo"))
         {
             if (!(r->configInfo = configInfo(m, n)))
                return 0;
         }
-        else if (!strcmp(n->name, "status"))
+        else if (!strcmp((const char *) n->name, "status"))
             continue;
         else
         {
