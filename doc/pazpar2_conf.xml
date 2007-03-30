@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.9 2007-03-27 11:25:57 marc Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.10 2007-03-30 00:13:45 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -369,6 +369,33 @@
 ]]></screen>
    </para>
  </refsect1> 
+
+ <refsect1><title>TARGET SETTINGS</title>
+   <para>
+     Pazpar2 features a cunning scheme by which you can associate various
+     kinds of attributes, or settings with search targets. This is done
+     through XML files, and each file can associate one or more settings
+     with one or more targets. The file format is generic in nature,
+     designed to support a wide range of application requirements. The
+     settings can be purely technical things, like, how to perform a title
+     search against a given target, or it can associate arbitrary name=value
+     pairs with groups of targets -- for instance, if you would like to
+     place all commercial full-text bases in one group for selection
+     purposes, or you would like to control what targets are accessible to a
+     given user.
+   </para>
+
+   <para>
+     During startup, pazpar2 will recursively read a specified directory
+     (can be identified in the pazpar2.cfg file or on the command line), and
+     process any settings files found therein.
+   </para>
+
+   <refsect2><title>SETTINGS FILE FORMAT</title>
+     <para>
+     </para>
+    </refsect2>
+ </refsect1>
 </refentry>
 <!-- Keep this comment at the end of the file
 Local variables:
