@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.10 2007-03-30 00:13:45 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.11 2007-03-30 01:07:37 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -374,7 +374,7 @@
    <para>
      Pazpar2 features a cunning scheme by which you can associate various
      kinds of attributes, or settings with search targets. This is done
-     through XML files, and each file can associate one or more settings
+     through XML files; each file can associate one or more settings
      with one or more targets. The file format is generic in nature,
      designed to support a wide range of application requirements. The
      settings can be purely technical things, like, how to perform a title
@@ -393,8 +393,146 @@
 
    <refsect2><title>SETTINGS FILE FORMAT</title>
      <para>
+       Each file contains a root element named &lt;settings&gt;. It may
+       contain one or more &lt;set&gt; elements. The settings and set
+       elements may contain the following attributes. Attributes in set
+       overrides those in the setting root element. Each set node must
+       specify (directly, or inherited from the parent node) at least a
+       target, name, and value.
      </para>
+
+     <variablelist> 
+       <varlistentry>
+	 <term>target</term>
+	 <listitem>
+	   <para>
+	     This specifies the search target to which this setting should be
+	     applied. Targets are identified by their Z39.50 URL, generally
+	     including the host, port, and database name, (e.g.
+	     bagel.indexdata.com:210/marc). Two wildcard forms are accepted:
+	     * (asterisk) matches all known targets;
+	     bagel.indexdata.com:210/* matches all known databases on the given
+	     host.
+	   </para>
+	   <para>
+	     A precedence system determines what happens if there are
+	     overlapping values for the same setting name for the same
+	     target. A setting for a specific target name overrides a
+	     setting whch specifies target using a wildcard. This makes it
+	     easy to set defaults for all targets, and then override them
+	     for specific targets or hosts. If there are
+	     multiple overlapping settings with the same name and target
+	     value, the 'precedence' attribute determines what happens.
+	    </para>
+	 </listitem>
+       </varlistentry>
+       <varlistentry>
+         <term>user</term>
+	 <listitem>
+	   <para>
+	     This specifies the user ID to which this setting applies. A
+	     given setting may have values for any number of users, or it
+	     may have a 'default' value which is applied when no user is
+	     specified, or when no user-specific value is available.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>name</term>
+	  <listitem>
+	    <para>
+	      The name of the setting. This can be anything you like.
+	      However, pazpar2 reserves a number of setting names for
+	      specific purposes, all starting with 'pz:', and it is a good
+	      idea to avoid that prefix if you make up your own setting
+	      names. See below for a list of reserved variables.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>value</term>
+	  <listitem>
+	    <para>
+	      The value of the setting. Generally, this can be anything you
+	      want -- however, some of the reserved settings may expect
+	      specific kinds of values.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>precedence</term>
+	  <listitem>
+	    <para>
+	      This should be an integer. If not provided, the default value
+	      is 0. If two (or more) settings have the same content for
+	      target and name, the precedence value determines the outcome.
+	      If both settings have the same precedence value, they are both
+	      applied to the target(s). If one has a higher value, then the
+	      value of that setting is applied, and the other one is ignored.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+
+      <para>
+        By setting defaults for user, target, name, or value in the root
+	settings node, you can use the settings files in many different
+	ways. For instance, you can use a single file to set defaults for
+	many different settings, like search fields, retrieval syntaxes,
+	etc. You can have one file per server, which groups settings for
+	that server or target. You could also have one file which associates
+	a number of targets with a given setting, for instance, to associate
+	many databases with a given category or class that makes sense
+	within your application.
+      </para>
+
     </refsect2>
+
+    <refsect2><title>RESERVED SETTING NAMES</title>
+      <para>
+        The following setting names are reserved by pazpar2 to control the
+	behavior of the client function.
+      </para>
+
+      <variablelist>
+        <varlistentry>
+	  <term>pz:cclmap:xxx</term>
+	  <listitem>
+	    <para>
+	      This establishes a CCL field definition or other setting, for
+	      the purpose of mapping end-user queries. XXX is the field or
+	      setting name, and the value of the setting provides parameters
+	      (e.g. parameters to send to the server, etc.). Please consult
+	      the YAZ manual for a full overview of the many capabilities of
+	      the powerful and flexible CCL parser.
+	    </para>
+	    <para>
+	      Note that it is easy to etablish a set of default parameters,
+	      and then override them individually for a given target.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>pz:syntax</term>
+	  <listitem>
+	    <para>
+	      This specifies the record syntax to use when requesting
+	      records from a given server.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>pz:elements</term>
+	  <listitem>
+	    <para>
+	      The element set name to be used when retrieving records from a
+	      server.
+	    </para>
+	  </listitem>
+	</varlistentry>
+      </variablelist>
+    </refsect2>
+
  </refsect1>
 </refentry>
 <!-- Keep this comment at the end of the file
