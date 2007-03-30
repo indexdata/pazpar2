@@ -1,8 +1,7 @@
-// $Id: settings.c,v 1.3 2007-03-29 13:44:19 quinn Exp $
+// $Id: settings.c,v 1.4 2007-03-30 02:45:07 quinn Exp $
 // This module implements a generic system of settings (attribute-value) that can 
 // be associated with search targets. The system supports both default values,
 // per-target overrides, and per-user settings.
-//
 
 #include <string.h>
 #include <stdio.h>
@@ -27,7 +26,8 @@ static NMEM nmem = 0;
 static char *hard_settings[] = {
     "pz:piggyback",
     "pz:elements",
-    "pz::syntax",
+    "pz:syntax",
+    "pz:cclmap:",
     0
 };
 
@@ -46,6 +46,22 @@ int settings_offset(const char *name)
 
     for (i = 0; i < dictionary->num; i++)
         if (!strcmp(name, dictionary->dict[i]))
+            return i;
+    return -1;
+}
+
+// Ignores everything after second colon, if present
+// A bit of a hack to support the pz:cclmap: scheme (and more to come?)
+static int settings_offset_cprefix(const char *name)
+{
+    const char *p;
+    int maxlen = 100;
+    int i;
+
+    if (!strncmp("pz:", name, 3) && (p = strchr(name + 3, ':')))
+        maxlen = (p - name) + 1;
+    for (i = 0; i < dictionary->num; i++)
+        if (!strncmp(name, dictionary->dict[i], maxlen))
             return i;
     return -1;
 }
@@ -201,7 +217,10 @@ static void read_settings(const char *path,
 static void prepare_dictionary(struct setting *set)
 {
     int i;
+    char *p;
 
+    if (!strncmp(set->name, "pz:", 3) && (p = strchr(set->name + 3, ':')))
+        *(p + 1) = '\0';
     for (i = 0; i < dictionary->num; i++)
         if (!strcmp(dictionary->dict[i], set->name))
             return;
@@ -230,16 +249,16 @@ static void update_database(void *context, struct database *db)
     if (!db->settings)
     {
         db->settings = nmem_malloc(nmem, sizeof(struct settings*) * dictionary->num);
-        memset(db->settings, sizeof(struct settings*) * dictionary->num, 0);
+        memset(db->settings, 0, sizeof(struct settings*) * dictionary->num);
     }
-    if ((offset = settings_offset(set->name)) < 0)
+    if ((offset = settings_offset_cprefix(set->name)) < 0)
         abort(); // Should never get here
 
     // First we determine if this setting is overriding  any existing settings
     // with the same name.
     for (s = db->settings[offset], sp = &db->settings[offset]; s;
             sp = &s->next, s = s->next)
-        if (!strcmp(s->user, set->user))
+        if (!strcmp(s->user, set->user) && !strcmp(s->name, set->name))
         {
             if (s->precedence < set->precedence)
                 // We discard the value (nmem keeps track of the space)
@@ -258,7 +277,7 @@ static void update_database(void *context, struct database *db)
     {
         struct setting *new = nmem_malloc(nmem, sizeof(*new));
 
-        memset(new, sizeof(*new), 0);
+        memset(new, 0, sizeof(*new));
         new->precedence = set->precedence;
         new->target = nmem_strdup(nmem, set->target);
         new->name = nmem_strdup(nmem, set->name);
@@ -306,8 +325,8 @@ void settings_read(const char *path)
     else
         nmem_reset(nmem);
     new = nmem_malloc(nmem, sizeof(*new));
+    memset(new, 0, sizeof(*new));
     initialize_hard_settings(new);
-    memset(new, sizeof(*new), 0);
     dictionary = new;
     read_settings(path, prepare_dictionary);
     read_settings(path, update_databases);

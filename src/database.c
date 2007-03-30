@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.5 2007-03-29 13:44:38 quinn Exp $ */
+/* $Id: database.c,v 1.6 2007-03-30 02:45:07 quinn Exp $ */
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -127,9 +127,8 @@ static struct host *find_host(const char *hostport)
 static struct database *load_database(const char *id)
 {
     xmlDoc *doc = get_explain_xml(id);
-    struct zr_explain *explain;
+    struct zr_explain *explain = 0;
     struct conf_retrievalprofile *retrieval;
-    struct conf_queryprofile *query;
     struct database *db;
     struct host *host;
     char hostport[256];
@@ -143,8 +142,7 @@ static struct database *load_database(const char *id)
         if (!explain)
             return 0;
     }
-    if (!(retrieval = database_retrievalprofile(id)) ||
-            !(query = database_queryprofile(id)))
+    if (!(retrieval = database_retrievalprofile(id)))
     {
         xmlFree(doc);
         return 0;
@@ -168,10 +166,10 @@ static struct database *load_database(const char *id)
     db->databases[1] = 0;
     db->errors = 0;
     db->explain = explain;
-    db->qprofile = query;
     db->rprofile = retrieval;
     db->settings = 0;
     db->next = databases;
+    db->ccl_map = 0;
     databases = db;
 
     return db;

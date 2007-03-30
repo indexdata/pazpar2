@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.18 2007-03-27 11:25:57 marc Exp $ */
+/* $Id: config.c,v 1.19 2007-03-30 02:45:07 quinn Exp $ */
 
 #include <string.h>
 
@@ -183,6 +183,22 @@ static struct conf_service *parse_service(xmlNode *node)
     return r;
 }
 
+static char *parse_settings(xmlNode *node)
+{
+    xmlChar *src = xmlGetProp(node, (xmlChar *) "src");
+    char *r;
+
+    if (src)
+        r = nmem_strdup(nmem, (const char *) src);
+    else
+    {
+        yaz_log(YLOG_FATAL, "Must specify src in targetprofile");
+        return 0;
+    }
+    xmlFree(src);
+    return r;
+}
+
 static struct conf_server *parse_server(xmlNode *node)
 {
     xmlNode *n;
@@ -197,6 +213,7 @@ static struct conf_server *parse_server(xmlNode *node)
     r->zproxy_port = 0;
     r->service = 0;
     r->next = 0;
+    r->settings = 0;
 
     for (n = node->children; n; n = n->next)
     {
@@ -224,11 +241,13 @@ static struct conf_server *parse_server(xmlNode *node)
                 r->proxy_host = nmem_strdup(nmem, (const char *) host);
             if (myurl)
                 r->myurl = nmem_strdup(nmem, (const char *) myurl);
+#ifdef GAGA
             else
             {
                 yaz_log(YLOG_FATAL, "Must specify @myurl for proxy");
                 return 0;
             }
+#endif
             xmlFree(port);
             xmlFree(host);
             xmlFree(myurl);
@@ -248,6 +267,16 @@ static struct conf_server *parse_server(xmlNode *node)
 
             xmlFree(port);
             xmlFree(host);
+        }
+        else if (!strcmp((const char *) n->name, "settings"))
+        {
+            if (r->settings)
+            {
+                yaz_log(YLOG_FATAL, "Can't repeat 'settings'");
+                return 0;
+            }
+            if (!(r->settings = parse_settings(n)))
+                return 0;
         }
         else if (!strcmp((const char *) n->name, "service"))
         {
@@ -454,7 +483,6 @@ static struct conf_config *parse_config(xmlNode *root)
     struct conf_retrievalprofile **rp = &r->retrievalprofiles;
 
     r->servers = 0;
-    r->queryprofiles = 0;
     r->retrievalprofiles = 0;
     r->targetprofiles = 0;
 
@@ -469,9 +497,6 @@ static struct conf_config *parse_config(xmlNode *root)
                 return 0;
             tmp->next = r->servers;
             r->servers = tmp;
-        }
-        else if (!strcmp((const char *) n->name, "queryprofile"))
-        {
         }
         else if (!strcmp((const char *) n->name, "retrievalprofile"))
         {

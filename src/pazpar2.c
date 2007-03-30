@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.56 2007-03-28 12:05:18 marc Exp $ */
+/* $Id: pazpar2.c,v 1.57 2007-03-30 02:45:07 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -88,7 +88,6 @@ struct parameters global_parameters =
     MAX_CHUNK,
     0,
     0,
-    0,
     0
 };
 
@@ -161,6 +160,34 @@ static void send_init(IOCHAN i)
     odr_reset(global_parameters.odr_out);
 }
 
+static void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
+{
+    switch (n->kind)
+    {
+        case CCL_RPN_AND:
+        case CCL_RPN_OR:
+        case CCL_RPN_NOT:
+        case CCL_RPN_PROX:
+            pull_terms(nmem, n->u.p[0], termlist, num);
+            pull_terms(nmem, n->u.p[1], termlist, num);
+            break;
+        case CCL_RPN_TERM:
+            termlist[(*num)++] = nmem_strdup(nmem, n->u.t.term);
+            break;
+        default: // NOOP
+            break;
+    }
+}
+
+// Extract terms from query into null-terminated termlist
+static void extract_terms(NMEM nmem, struct ccl_rpn_node *query, char **termlist)
+{
+    int num = 0;
+
+    pull_terms(nmem, query, termlist, &num);
+    termlist[num] = 0;
+}
+
 static void send_search(IOCHAN i)
 {
     struct connection *co = iochan_getdata(i);
@@ -176,9 +203,19 @@ static void send_search(IOCHAN i)
 
     yaz_log(YLOG_DEBUG, "Sending search");
 
-    cn = ccl_find_str(global_parameters.ccl_filter, se->query, &cerror, &cpos);
+    cn = ccl_find_str(db->ccl_map, se->query, &cerror, &cpos);
     if (!cn)
         return;
+
+    if (!se->relevance)
+    {
+        // Initialize relevance structure with query terms
+        char *p[512];
+        extract_terms(se->nmem, cn, p);
+        se->relevance = relevance_create(se->nmem, (const char **) p,
+                se->expected_maxrecs);
+    }
+
     a->u.searchRequest->query = zquery = odr_malloc(global_parameters.odr_out,
             sizeof(Z_Query));
     zquery->which = Z_Query_type_1;
@@ -1189,41 +1226,6 @@ void load_simpletargets(const char *fn)
 
 #endif
 
-static void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
-{
-    switch (n->kind)
-    {
-        case CCL_RPN_AND:
-        case CCL_RPN_OR:
-        case CCL_RPN_NOT:
-        case CCL_RPN_PROX:
-            pull_terms(nmem, n->u.p[0], termlist, num);
-            pull_terms(nmem, n->u.p[1], termlist, num);
-            break;
-        case CCL_RPN_TERM:
-            termlist[(*num)++] = nmem_strdup(nmem, n->u.t.term);
-            break;
-        default: // NOOP
-            break;
-    }
-}
-
-// Extract terms from query into null-terminated termlist
-static int extract_terms(NMEM nmem, char *query, char **termlist)
-{
-    int error, pos;
-    struct ccl_rpn_node *n;
-    int num = 0;
-
-    n = ccl_find_str(global_parameters.ccl_filter, query, &error, &pos);
-    if (!n)
-        return -1;
-    pull_terms(nmem, n, termlist, &num);
-    termlist[num] = 0;
-    ccl_rpn_delete(n);
-    return 0;
-}
-
 static struct client *client_create(void)
 {
     struct client *r;
@@ -1378,12 +1380,11 @@ char *search(struct session *se, char *query, char *filter)
     }
     if (live_channels)
     {
-        char *p[512];
         int maxrecs = live_channels * global_parameters.toget;
         se->num_termlists = 0;
         se->reclist = reclist_create(se->nmem, maxrecs);
-        extract_terms(se->nmem, query, p);
-        se->relevance = relevance_create(se->nmem, (const char **) p, maxrecs);
+        // This will be initialized in send_search()
+        se->relevance = 0;
         se->total_records = se->total_hits = se->total_merged = 0;
         se->expected_maxrecs = maxrecs;
     }
@@ -1562,17 +1563,6 @@ void statistics(struct session *se, struct statistics *stat)
     stat->num_clients = count;
 }
 
-static CCL_bibset load_cclfile(const char *fn)
-{
-    CCL_bibset res = ccl_qual_mk();
-    if (ccl_qual_fname(res, fn) < 0)
-    {
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "%s", fn);
-        exit(1);
-    }
-    return res;
-}
-
 static void start_http_listener(void)
 {
     char hp[128] = "";
@@ -1591,6 +1581,36 @@ static void start_http_listener(void)
         }
     }
     http_init(hp);
+}
+
+// Initialize CCL map for a target
+// Note: This approach ignores user-specific CCL maps, for which I
+// don't presently see any application.
+static void prepare_cclmap(void *context, struct database *db)
+{
+    struct setting *s;
+
+    if (!db->settings)
+        return;
+    db->ccl_map = ccl_qual_mk();
+    for (s = db->settings[PZ_CCLMAP]; s; s = s->next)
+        if (!*s->user)
+        {
+            char *p = strchr(s->name + 3, ':');
+            if (!p)
+            {
+                yaz_log(YLOG_FATAL, "Malformed cclmap name: %s", s->name);
+                exit(1);
+            }
+            p++;
+            ccl_qual_fitem(db->ccl_map, s->value, p);
+        }
+}
+
+// Read settings for each database, and prepare a CCL map for that database
+static void prepare_cclmaps(void)
+{
+    grep_databases(0, 0, prepare_cclmap);
 }
 
 static void start_proxy(void)
@@ -1661,7 +1681,7 @@ int main(int argc, char **argv)
 
     yaz_log_init(YLOG_DEFAULT_LEVEL, "pazpar2", 0);
 
-    while ((ret = options("t:f:x:h:p:z:C:s:d", argv, argc, &arg)) != -2)
+    while ((ret = options("t:f:x:h:p:z:s:d", argv, argc, &arg)) != -2)
     {
 	switch (ret) {
             case 'f':
@@ -1671,9 +1691,6 @@ int main(int argc, char **argv)
             case 'h':
                 strcpy(global_parameters.listener_override, arg);
                 break;
-            case 'C':
-                global_parameters.ccl_filter = load_cclfile(arg);
-                break;
             case 'p':
                 strcpy(global_parameters.proxy_override, arg);
                 break;
@@ -1681,7 +1698,7 @@ int main(int argc, char **argv)
                 strcpy(global_parameters.zproxy_override, arg);
                 break;
             case 't':
-                strcpy(global_parameters.settings_path, arg);
+                strcpy(global_parameters.settings_path_override, arg);
                 break;
             case 's':
                 load_simpletargets(arg);
@@ -1713,10 +1730,13 @@ int main(int argc, char **argv)
     start_proxy();
     start_zproxy();
 
-    if (*global_parameters.settings_path)
-        settings_read(global_parameters.settings_path);
-    if (!global_parameters.ccl_filter)
-        global_parameters.ccl_filter = load_cclfile("../etc/default.bib");
+    if (*global_parameters.settings_path_override)
+        settings_read(global_parameters.settings_path_override);
+    else if (global_parameters.server->settings)
+        settings_read(global_parameters.server->settings);
+    else
+        yaz_log(YLOG_WARN, "No settings-directory specified. Problems may ensue!");
+    prepare_cclmaps();
     global_parameters.yaz_marc = yaz_marc_create();
     yaz_marc_subfield_str(global_parameters.yaz_marc, "\t");
     global_parameters.odr_in = odr_createmem(ODR_DECODE);

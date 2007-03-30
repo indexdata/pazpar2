@@ -69,13 +69,9 @@ struct conf_server
     char *myurl;
     char *zproxy_host;
     int zproxy_port;
+    char *settings;
     struct conf_service *service;
     struct conf_server *next;
-};
-
-struct conf_queryprofile
-{
-    int dummy;
 };
 
 struct conf_retrievalmap
@@ -122,7 +118,6 @@ struct conf_targetprofiles
 struct conf_config
 {
     struct conf_server *servers;
-    struct conf_queryprofile *queryprofiles;
     struct conf_targetprofiles *targetprofiles;
     struct conf_retrievalprofile *retrievalprofiles;
 };

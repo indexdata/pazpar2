@@ -4,6 +4,7 @@
 #define PZ_PIGGYBACK    0 
 #define PZ_ELEMENTS     1
 #define PZ_SYNTAX       2
+#define PZ_CCLMAP       3
 
 struct setting
 {

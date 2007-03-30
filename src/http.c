@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.16 2007-03-29 15:23:17 quinn Exp $
+ * $Id: http.c,v 1.17 2007-03-30 02:45:07 quinn Exp $
  */
 
 #include <stdio.h>
@@ -760,6 +760,7 @@ static void http_io(IOCHAN i, int event)
     }
 }
 
+#ifdef GAGA
 // If this hostname contains our proxy host as a prefix, replace with myurl
 static char *sub_hostname(struct http_channel *c, char *buf)
 {
@@ -776,6 +777,7 @@ static char *sub_hostname(struct http_channel *c, char *buf)
     }
     return buf;
 }
+#endif
 
 // Handles I/O on a client connection to a backend web server (proxy mode)
 static void proxy_io(IOCHAN pi, int event)
