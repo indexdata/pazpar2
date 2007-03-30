@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.6 2007-03-29 09:11:01 jakub Exp $
+** $Id: client.js,v 1.7 2007-03-30 16:22:41 jakub Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -8,7 +8,7 @@ var my_paz = new pz2( { "onshow": my_onshow,
                     //"showtime": 1000,
                     //"onstat": my_onstat,
                     "onterm": my_onterm,
-                    "termlist": "subject,author,xtargets,date",
+                    "termlist": "xtargets,subject,author,date",
                     //"onbytarget": my_onbytarget,
                     "onrecord": my_onrecord } );
 
@@ -16,7 +16,9 @@ var my_paz = new pz2( { "onshow": my_onshow,
 var currentSort = 'relevance';
 var currentResultsPerPage = 20;
 var currentQuery = null;
+var currentQueryArr = new Array();
 var currentPage = 0;
+var currentFilter = undefined;
 
 var currentDetailedId = null;
 var currentDetailedData = null;
@@ -53,7 +55,8 @@ $(document).ready( function() {
 function onFormSubmitEventHandler() {
     if(!loadQueryFromForm())
         return false;
-    my_paz.search(currentQuery, currentResultsPerPage, currentSort);
+    fireSearch();
+    drawBreadcrumb();
     $('div.content').show();
     $("div.leftbar").show();
     return false;
@@ -133,11 +136,15 @@ function my_onterm(data)
             if (key == "activeclients")
                 continue;
             var listName = key;
-            if (key == "xtargets")
+            var listClass = "unselected";
+
+            if (key == "xtargets"){
                 listName = "resource";
+                listClass = "selected";
+            }
 
             var termList = $('<div class="termlist" id="term_'+key+'"/>').appendTo(termLists);
-            var termTitle = $('<div class="termTitle"><a class="unselected">'+listName+'</a></div>').appendTo(termList);
+            var termTitle = $('<div class="termTitle"><a class="'+listClass+'">'+listName+'</a></div>').appendTo(termList);
             termTitle.click(function(){
                                 if( this.firstChild.className == "selected" ){
                                     this.firstChild.className = "unselected";
@@ -149,20 +156,22 @@ function my_onterm(data)
                             });
 
             listEntries = $('<div class="termEntries"></div>');
-            listEntries.hide();
+            if (key != "xtargets") listEntries.hide();
             listEntries.appendTo(termList);
 
             for(var i = 0; i < data[key].length; i++)
             {
                 if (key == "xtargets"){
-                    var listItem = $('<a class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name+
-                                '<span> ('+data[key][i].freq+')</span></a>').appendTo(listEntries);
+                    var listItem = $('<a class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name
+                            /*+'<span> ('+data[key][i].freq+')</span>'*/+'</a>');
                     listItem.click(function(){ 
                         refine(this.name, this.attributes[0].nodeValue) });
+                    listItem.appendTo(listEntries);
                 } else {
-                    var listItem = $('<a class="sub" name="'+key+'">'+data[key][i].name+
-                                    '<span> ('+data[key][i].freq+')</span></a>').appendTo(listEntries);
+                    var listItem = $('<a class="sub" name="'+key+'">'+data[key][i].name
+                            /*+'<span> ('+data[key][i].freq+')</span>'*/+'</a>');
                     listItem.click(function(){ refine(this.name, this.firstChild.nodeValue) });
+                    listItem.appendTo(listEntries);
                 }
             }        
             $('<hr/>').appendTo(termLists);
@@ -179,13 +188,13 @@ function my_onterm(data)
 
             for(var i = 0; i < data[key].length; i++){
                 if (key == "xtargets"){
-                    var listItem = $('<a class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name+
-                                '<span> ('+data[key][i].freq+')</span></a>').click(function(){ 
+                    var listItem = $('<a class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name
+                                /*+'<span> ('+data[key][i].freq+')</span>'*/+'</a>').click(function(){ 
                                                                         refine(this.name, this.attributes[0].nodeValue) });
                     listItem.appendTo(listEntries);
                 } else {
-                    var listItem = $('<a class="sub" name="'+key+'">'+data[key][i].name+
-                                    '<span> ('+data[key][i].freq+')</span></a>').click(function(){ 
+                    var listItem = $('<a class="sub" name="'+key+'">'+data[key][i].name
+                                /*+'<span> ('+data[key][i].freq+')</span>'*/+'</a>').click(function(){ 
                                                                         refine(this.name, this.firstChild.nodeValue) });
                     listItem.appendTo(listEntries);
                 }
@@ -213,6 +222,14 @@ function my_onbytarget(data){}
 ** HELPER FUNCTIONS *************************************************************
 *********************************************************************************
 */
+function fireSearch()
+{
+    my_paz.search(currentQuery, currentResultsPerPage, currentSort, currentFilter);    
+    $('div.records').empty();
+    // hack for the time being
+    currentFilter = undefined;
+}
+
 function toggleAdvanced()
 {
     if(advancedOn){
@@ -257,48 +274,51 @@ function drawDetailedRec(detailBox)
 function refine(field, value)
 {
     // for the time being
-    if(!advancedOn)
-        toggleAdvanced();
+    //if(!advancedOn)
+    //    toggleAdvanced();
 
-    var query = '';
-    var filter = undefined;
-    
     switch(field) {
-        case "author":  query = ' and au="'+value+'"';
+        case "author":  currentQueryArr.push('au="'+value+'"');
                         if(document.search.author.value != '') document.search.author.value+='; ';
                         document.search.author.value += value; break;
 
-        case "title":   query = ' and ti="'+value+'"';
+        case "title":   currentQueryArr.push('ti="'+value+'"');
                         //if(document.search.tile.value != '') document.search.title.value+='; ';
                         //document.search.title.value += value; break;
         
-        case "date":    query = ' and date="'+value+'"';
+        case "date":    currentQueryArr.push('date="'+value+'"');
                         if(document.search.date.value != '') document.search.date.value+='; ';
                         document.search.date.value += value; break;
         
-        case "subject": query = ' and su="'+value+'"';
+        case "subject": currentQueryArr.push('su="'+value+'"');
                         if(document.search.subject.value != '') document.search.subject.value+='; ';
                         document.search.subject.value += value; break;
         
-        case "xtarget": filter = 'id='+value; break;
+        case "xtarget": currentFilter = 'id='+value; break;
     }
 
     currentPage = 0;
-    currentQuery = currentQuery + query;
-    my_paz.search(currentQuery, currentResultsPerPage, currentSort, filter);    
+    currentQuery = currentQueryArr.join(' and ');
+    drawBreadcrumb();
+    fireSearch();
 }
 
 function loadQueryFromForm()
 {
-    var query = new Array();
+    query = new Array();
+    if( document.search.query.value !== '' ) query.push(document.search.query.value);
 
-    if( document.search.query.value !== '' ) query.push(document.search.query.value);    
-    if( document.search.author.value !== '' ) query.push(parseField(document.search.author.value, 'au'));
-    if( document.search.title.value !== '' ) query.push(parseField(document.search.title.value, 'ti'));
-    if( document.search.date.value !== '' ) query.push(parseField(document.search.date.value, 'date'));
-    if( document.search.subject.value !== '' ) query.push(parseField(document.search.subject.value, 'su'));
+    if( advancedOn )
+    {
+        var input;
+        if( (input = parseField(document.search.author.value, 'au')).length ) query = query.concat(input);
+        if( (input = parseField(document.search.title.value, 'ti')).length ) query = query.concat(input);
+        if( (input = parseField(document.search.date.value, 'date')).length ) query = query.concat(input);
+        if( (input = parseField(document.search.subject.value, 'su')).length ) query = query.concat(input);
+    }
 
     if( query.length ) {
+        currentQueryArr = query;
         currentQuery = query.join(" and ");
         return true;
     } else {
@@ -316,7 +336,11 @@ function parseField(inputString, field)
         }
         outputArr.push(field+'="'+inputArr[i]+'"');
     }
-    return outputArr.join(" and ");
+    //if( outputArr.length ){
+        return outputArr;//.join(" and ");
+    //}else {
+    //    return false;
+    //}
 }
 
 function drawPager(max, hits)
@@ -370,4 +394,19 @@ function drawPager(max, hits)
     }
     else
         pager.append('<a class="next_inactive">Next</a>');
+}
+
+function drawBreadcrumb()
+{
+    var bc = $("#breadcrumb");
+    bc.empty();
+    bc.append('<span>'+currentQueryArr[0]+'</span>');
+
+    for(var i = 1; i < currentQueryArr.length; i++){
+        bc.append('<strong>/</strong>');
+        var bcLink = $('<a id="pos_'+i+'">'+
+                currentQueryArr[i].substring(currentQueryArr[i].indexOf('"') + 1, currentQueryArr[i].lastIndexOf('"'))
+                +'</a>').click(function() { currentQueryArr.splice(this.id.split('_')[1], 1);refine(); });
+        bc.append(bcLink);
+    }
 }

@@ -24,7 +24,7 @@ border: none;
 
 strong {
 color: #31568c;
-font-weight: bold;
+font-weight: 600;
 }
 
 h2 {
@@ -309,6 +309,24 @@ height: 28px;
 line-height: 28px;
 }
 
+div#breadcrumb {
+border-bottom: 1px solid #e1e5ec;
+float: left;
+background-color: #f6f6f9;
+padding-left: 0px;
+padding-right: 0px;
+margin-bottom: 10px;
+height: 28px;
+width: inherit;
+line-height: 28px;
+}
+
+div#breadcrumb span{
+margin-right: 2px;
+margin-left: 5px;
+}
+
+
 table {
 padding: 0px;
 margin: 0px;
@@ -419,7 +437,7 @@ line-height: 13px;
 }
 
 a.sub {
-text-indent: 15px;
+text-indent: -10px;
 font-size: 10px;
 line-height: 13px;
 }
