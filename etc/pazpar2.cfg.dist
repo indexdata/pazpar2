@@ -4,24 +4,23 @@
 <server>
   <listen port="9004"/>
   <proxy host="us1.indexdata.com"/>
+  <settings src="../etc/settings"/>
 
   <service>
+    <metadata name="url" merge="unique"/>
     <metadata name="title" brief="yes" sortkey="skiparticle" merge="longest" rank="6"/>
     <metadata name="isbn"/>
     <metadata name="date" brief="yes" sortkey="numeric" type="year" merge="range"
 	    termlist="yes"/>
     <metadata name="author" brief="yes" termlist="yes" merge="longest" rank="2"/>
     <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
-    <metadata name="url" merge="unique"/>
     <metadata name="id"/>
     <metadata name="lccn" merge="unique"/>
+    <metadata name="description" merge="longest" rank="3"/>
   </service>
 </server>
 
-<!-- Need to figure out where to get ZeeRex records for targets from -->
-
-<queryprofile/>  <!-- Like a CCL profile++ . Can optionally refer to XSLT to 
-       convert ZeeRex into queryprofile. Multiple profiles can exist.  -->
+<targetprofiles type="local" src="../zeerex/records/"/>
 
 <retrievalprofile>
   <requestsyntax>marc21</requestsyntax>
