@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.19 2007-03-31 20:06:18 marc Exp $
+ * $Id: http.c,v 1.20 2007-03-31 20:27:15 marc Exp $
  */
 
 #include <stdio.h>
@@ -610,20 +610,16 @@ static int http_proxy(struct http_request *rq)
     {
         hp = rq->headers;
         hp = http_header_append(c, hp, 
-                                PACKAGE_NAME "-version", PACKAGE_VERSION);
+                                "X-Pazpar2-Version", PACKAGE_VERSION);
         hp = http_header_append(c, hp, 
-                                PACKAGE_NAME "-server-host", ser->myurl);
+                                "X-Pazpar2-Server-Host", ser->host);
         sprintf(server_port, "%d",  ser->port);
         hp = http_header_append(c, hp, 
-                                PACKAGE_NAME "-server-port", server_port);
+                                "X-Pazpar2-Server-Port", server_port);
         sprintf(server_via,  "1.1 %s:%s (%s/%s)",  
-                ser->myurl, server_port, PACKAGE_NAME, PACKAGE_VERSION);
-        hp = http_header_append(c, hp, 
-                                "Via" , server_via);
-        //hp = http_header_append(c, hp,"Client-ip", 
-        //                        c->iochan->addr_str);
-        hp = http_header_append(c, hp,"X-Forwarded-For", 
-                                c->iochan->addr_str);
+                ser->host, server_port, PACKAGE_NAME, PACKAGE_VERSION);
+        hp = http_header_append(c, hp, "Via" , server_via);
+        hp = http_header_append(c, hp,"X-Forwarded-For", c->iochan->addr_str);
       }
 
     requestbuf = http_serialize_request(rq);
