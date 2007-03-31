@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.17 2007-03-30 02:45:07 quinn Exp $
+ * $Id: http.c,v 1.18 2007-03-31 19:55:25 marc Exp $
  */
 
 #include <stdio.h>
@@ -1031,6 +1031,7 @@ void http_set_proxyaddr(char *host, char *base_url)
     strcpy(proxy_url, host);
     p = strchr(host, ':');
     yaz_log(YLOG_DEBUG, "Proxying for %s", host);
+    yaz_log(YLOG_LOG, "HTTP backend %s", proxy_url);
     if (p) {
         port = atoi(p + 1);
         *p = '\0';

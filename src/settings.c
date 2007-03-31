@@ -1,4 +1,4 @@
-// $Id: settings.c,v 1.4 2007-03-30 02:45:07 quinn Exp $
+// $Id: settings.c,v 1.5 2007-03-31 19:55:25 marc Exp $
 // This module implements a generic system of settings (attribute-value) that can 
 // be associated with search targets. The system supports both default values,
 // per-target overrides, and per-user settings.
@@ -106,15 +106,15 @@ static void read_settings_file(const char *path,
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp(n->name, (xmlChar *) "set"))
+        if (!strcmp((const char *) n->name, "set"))
         {
             char *name, *target, *value, *user, *precedence;
 
-            name = xmlGetProp(n, (xmlChar *) "name");
-            target = xmlGetProp(n, (xmlChar *) "target");
-            value = xmlGetProp(n, (xmlChar *) "value");
-            user = xmlGetProp(n, (xmlChar *) "user");
-            precedence = xmlGetProp(n, (xmlChar *) "precedence");
+            name = (char *) xmlGetProp(n, (xmlChar *) "name");
+            target = (char *) xmlGetProp(n, (xmlChar *) "target");
+            value = (char *) xmlGetProp(n, (xmlChar *) "value");
+            user = (char *) xmlGetProp(n, (xmlChar *) "user");
+            precedence = (char *) xmlGetProp(n, (xmlChar *) "precedence");
 
             if ((!name && !namea) || (!value && !valuea) || (!target && !targeta))
             {
@@ -141,23 +141,23 @@ static void read_settings_file(const char *path,
                 if (user)
                     strcpy(userb, user);
                 else if (usera)
-                    strcpy(userb, usera);
+                    strcpy(userb, (const char *) usera);
                 else
                     set.user = "";
                 if (target)
                     strcpy(targetb, target);
                 else
-                    strcpy(targetb, targeta);
+                    strcpy(targetb, (const char *) targeta);
                 set.target = targetb;
                 if (name)
                     strcpy(nameb, name);
                 else
-                    strcpy(nameb, namea);
+                    strcpy(nameb, (const char *) namea);
                 set.name = nameb;
                 if (value)
                     strcpy(valueb, value);
                 else
-                    strcpy(valueb, valuea);
+                    strcpy(valueb, (const char *) valuea);
                 set.value = valueb;
                 set.next = 0;
                 (*fun)(&set);
