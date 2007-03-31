@@ -1,4 +1,4 @@
-/* $Id: zeerex.c,v 1.5 2007-03-29 11:02:04 marc Exp $ */
+/* $Id: zeerex.c,v 1.6 2007-03-31 20:06:18 marc Exp $ */
 
 // Reads Zeerex records into a set of structures
 
@@ -14,7 +14,8 @@
 // Replace this with something that will take a callback
 static void fail(const char *s, xmlNode *n)
 {
-    yaz_log(YLOG_WARN, "Zeerex Err '%s'; elem '%s/%s'", s, n->parent->name, n->name);
+    yaz_log(YLOG_WARN, "Zeerex Err '%s'; elem '%s/%s'", 
+            s, n->parent->name, n->name);
 }
 
 // returns an nmem-allocated string if attr is present, or null

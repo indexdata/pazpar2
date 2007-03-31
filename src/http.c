@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.18 2007-03-31 19:55:25 marc Exp $
+ * $Id: http.c,v 1.19 2007-03-31 20:06:18 marc Exp $
  */
 
 #include <stdio.h>
@@ -974,7 +974,7 @@ void http_init(const char *addr)
     const char *pp;
     int port;
 
-    yaz_log(YLOG_LOG, "HTTP listener is %s", addr);
+    yaz_log(YLOG_LOG, "HTTP listener %s", addr);
 
     memset(&myaddr, 0, sizeof myaddr);
     myaddr.sin_family = AF_INET;
@@ -1031,7 +1031,7 @@ void http_set_proxyaddr(char *host, char *base_url)
     strcpy(proxy_url, host);
     p = strchr(host, ':');
     yaz_log(YLOG_DEBUG, "Proxying for %s", host);
-    yaz_log(YLOG_LOG, "HTTP backend %s", proxy_url);
+    yaz_log(YLOG_LOG, "HTTP backend  %s", proxy_url);
     if (p) {
         port = atoi(p + 1);
         *p = '\0';
