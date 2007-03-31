@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.58 2007-03-31 20:06:18 marc Exp $ */
+/* $Id: pazpar2.c,v 1.59 2007-03-31 20:24:59 marc Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1661,7 +1661,7 @@ static void start_zproxy(void)
             sprintf(hp + strlen(hp), "%d", ser->zproxy_port);
         }
         strcpy(global_parameters.zproxy_override, hp);
-        yaz_log(YLOG_LOG, "Z39.50 proxy %s", 
+        yaz_log(YLOG_LOG, "Z39.50 proxy  %s", 
                 global_parameters.zproxy_override);
 
     }
