@@ -322,10 +322,18 @@ line-height: 28px;
 }
 
 div#breadcrumb span{
-margin-right: 2px;
+margin-right: 1px;
 margin-left: 5px;
 }
 
+div#breadcrumb a:hover {
+text-decoration: line-through;
+}
+
+strong#filter{
+margin-right: -5px;
+margin-left: 5px;
+}
 
 table {
 padding: 0px;

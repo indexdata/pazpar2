@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.7 2007-03-30 16:22:41 jakub Exp $
+** $Id: client.js,v 1.8 2007-04-02 08:41:51 jakub Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -19,6 +19,7 @@ var currentQuery = null;
 var currentQueryArr = new Array();
 var currentPage = 0;
 var currentFilter = undefined;
+var currentFilterName = null;
 
 var currentDetailedId = null;
 var currentDetailedData = null;
@@ -57,6 +58,8 @@ function onFormSubmitEventHandler() {
         return false;
     fireSearch();
     drawBreadcrumb();
+    //hack for now
+    currentFilter = undefined;
     $('div.content').show();
     $("div.leftbar").show();
     return false;
@@ -165,7 +168,7 @@ function my_onterm(data)
                     var listItem = $('<a class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name
                             /*+'<span> ('+data[key][i].freq+')</span>'*/+'</a>');
                     listItem.click(function(){ 
-                        refine(this.name, this.attributes[0].nodeValue) });
+                        refine(this.name, this.attributes[0].nodeValue, this.firstChild.nodeValue) });
                     listItem.appendTo(listEntries);
                 } else {
                     var listItem = $('<a class="sub" name="'+key+'">'+data[key][i].name
@@ -190,7 +193,7 @@ function my_onterm(data)
                 if (key == "xtargets"){
                     var listItem = $('<a class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name
                                 /*+'<span> ('+data[key][i].freq+')</span>'*/+'</a>').click(function(){ 
-                                                                        refine(this.name, this.attributes[0].nodeValue) });
+                                    refine(this.name, this.attributes[0].nodeValue, this.firstChild.nodeValue) });
                     listItem.appendTo(listEntries);
                 } else {
                     var listItem = $('<a class="sub" name="'+key+'">'+data[key][i].name
@@ -226,8 +229,6 @@ function fireSearch()
 {
     my_paz.search(currentQuery, currentResultsPerPage, currentSort, currentFilter);    
     $('div.records').empty();
-    // hack for the time being
-    currentFilter = undefined;
 }
 
 function toggleAdvanced()
@@ -271,7 +272,7 @@ function drawDetailedRec(detailBox)
     detailTable.appendTo(detailBox);
 }
 
-function refine(field, value)
+function refine(field, value, opt)
 {
     // for the time being
     //if(!advancedOn)
@@ -294,7 +295,8 @@ function refine(field, value)
                         if(document.search.subject.value != '') document.search.subject.value+='; ';
                         document.search.subject.value += value; break;
         
-        case "xtarget": currentFilter = 'id='+value; break;
+        case "xtarget": currentFilter = 'id='+value;
+                        currentFilterName = opt; break;
     }
 
     currentPage = 0;
@@ -400,10 +402,14 @@ function drawBreadcrumb()
 {
     var bc = $("#breadcrumb");
     bc.empty();
+    
+    if(currentFilter) $('<strong id="filter"><a>'+currentFilterName+'</a>: </strong>').click(function(){
+                                currentFilter = undefined; currentFilterName = null; refine();}).appendTo(bc);
+
     bc.append('<span>'+currentQueryArr[0]+'</span>');
 
     for(var i = 1; i < currentQueryArr.length; i++){
-        bc.append('<strong>/</strong>');
+        bc.append('<strong> + </strong>');
         var bcLink = $('<a id="pos_'+i+'">'+
                 currentQueryArr[i].substring(currentQueryArr[i].indexOf('"') + 1, currentQueryArr[i].lastIndexOf('"'))
                 +'</a>').click(function() { currentQueryArr.splice(this.id.split('_')[1], 1);refine(); });
