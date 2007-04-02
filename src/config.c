@@ -1,7 +1,6 @@
-/* $Id: config.c,v 1.20 2007-03-31 20:55:19 marc Exp $ */
+/* $Id: config.c,v 1.21 2007-04-02 09:43:08 marc Exp $ */
 
 #include <string.h>
-#include <unistd.h>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -228,15 +227,6 @@ static struct conf_server *parse_server(xmlNode *node)
                 r->port = atoi((const char *) port);
             if (host)
                 r->host = nmem_strdup(nmem, (const char *) host);
-            else { // get hostname from system
-                size_t len = 128;
-                char h[len];
-                if (0 == gethostname(h, len)){
-                    h[len - 1] = '\0';
-                    r->host = nmem_strdup(nmem, h);
-                } else 
-                    yaz_log(YLOG_WARN, "Could not get host name");
-            }
             xmlFree(port);
             xmlFree(host);
         }

@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.20 2007-03-31 20:27:15 marc Exp $
+ * $Id: http.c,v 1.21 2007-04-02 09:43:08 marc Exp $
  */
 
 #include <stdio.h>
@@ -21,10 +21,11 @@
 #endif
 
 #include <netinet/in.h>
+#include <netdb.h>
 
 #include <yaz/yaz-util.h>
 #include <yaz/comstack.h>
-#include <netdb.h>
+#include <yaz/nmem.h>
 
 #include "cconfig.h"
 #include "util.h"
@@ -39,6 +40,7 @@ static void http_destroy(IOCHAN i);
 
 extern IOCHAN channel_list;
 extern struct parameters global_parameters;
+//extern NMEM nmem;
 
 // If this is set, we proxy normal HTTP requests
 static struct sockaddr_in *proxy_addr = 0; 
@@ -988,15 +990,36 @@ void http_init(const char *addr)
             yaz_log(YLOG_FATAL, "Unable to resolve '%s'", hostname);
             exit(1);
         }
+        
         memcpy(&myaddr.sin_addr.s_addr, he->h_addr_list[0], he->h_length);
         port = atoi(pp + 1);
+
+        yaz_log(YLOG_LOG, "HTTP address  %s:%d", 
+                "" == he->h_addr_list[0] ? he->h_addr_list[0] : "127.0.0.1" , 
+                    port);
+
     }
     else
     {
+        //size_t len = 128;
+        //char h[len];
         port = atoi(addr);
         myaddr.sin_addr.s_addr = INADDR_ANY;
+
+#if 0
+        // get hostname from system - after deciding to bind to any 
+        // IP address this box might have.
+        if (0 == gethostname(h, len)){
+            h[len - 1] = '\0';
+            global_parameters.server->host = nmem_strdup(nmem, h);
+        } else 
+            yaz_log(YLOG_WARN, "Could not get host name");
+#endif
     }
+
+
     myaddr.sin_port = htons(port);
+
 
     if (!(p = getprotobyname("tcp"))) {
         abort();
