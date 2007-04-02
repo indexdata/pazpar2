@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.8 2007-04-02 08:41:51 jakub Exp $
+** $Id: client.js,v 1.9 2007-04-02 09:44:34 jakub Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -365,8 +365,13 @@ function drawPager(max, hits)
         pager.append('<a class="previous_inactive">Previous</a>');
 
     var numPages = Math.ceil(max / currentResultsPerPage);
+
+    var start = ( currentPage - 5 > 0 ? currentPage - 5 : 1 );
+    var stop =  ( start + 12 < numPages ? start + 12 : numPages );
+
+    if (start > 1) $('<span>... </span>').appendTo(pager);
     
-    for(var i = 1; i <= numPages; i++)
+    for(var i = start; i <= stop; i++)
     {
         if( i == (currentPage + 1) ){
            $('<a class="select">'+i+'</a>').appendTo(pager);
@@ -389,6 +394,8 @@ function drawPager(max, hits)
         pager.eq(0).append(pageLink);
         pager.eq(1).append(plClone);
     }
+
+    if (stop < numPages) $('<span> ...</span>').appendTo(pager);
 
     if ( currentPage < (numPages-1) ){
         $('<a class="next_active">Next</a>').click(function() { my_paz.showNext(1); currentPage++; }).appendTo(pager.eq(0));
