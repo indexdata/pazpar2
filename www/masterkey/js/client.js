@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.9 2007-04-02 09:44:34 jakub Exp $
+** $Id: client.js,v 1.10 2007-04-02 15:50:27 jakub Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -15,11 +15,12 @@ var my_paz = new pz2( { "onshow": my_onshow,
 /* some state variable */
 var currentSort = 'relevance';
 var currentResultsPerPage = 20;
-var currentQuery = null;
-var currentQueryArr = new Array();
+/*var currentQuery = null;
+var currentQueryArr = new Array();*/
 var currentPage = 0;
-var currentFilter = undefined;
-var currentFilterName = null;
+var curQuery = new pzQuery();
+/*var currentFilter = undefined;*/
+/*var currentFilterName = null;*/
 
 var currentDetailedId = null;
 var currentDetailedData = null;
@@ -54,12 +55,10 @@ $(document).ready( function() {
 
 /* search button event handler */
 function onFormSubmitEventHandler() {
-    if(!loadQueryFromForm())
-        return false;
+    loadQueryFromForm();
+    curQuery.clearFilter();
     fireSearch();
     drawBreadcrumb();
-    //hack for now
-    currentFilter = undefined;
     $('div.content').show();
     $("div.leftbar").show();
     return false;
@@ -103,7 +102,8 @@ function my_onshow(data)
         
         if( author ) {
             recBody.append('<i> by </i>');
-            $('<a name="author" class="recAuthor">'+author+'</a>\n').click(function(){ refine(this.name, this.firstChild.nodeValue) }).appendTo(recBody);
+            $('<a name="author" class="recAuthor">'+author+'</a>\n').click(function(){ 
+                            refine(this.name, this.firstChild.nodeValue) }).appendTo(recBody);
         }
 
         if( currentDetailedId == id ) {
@@ -227,8 +227,12 @@ function my_onbytarget(data){}
 */
 function fireSearch()
 {
-    my_paz.search(currentQuery, currentResultsPerPage, currentSort, currentFilter);    
+    $('div.showing').empty().text('No records to show.');
+    $('div.pages').empty().html('&nbsp;');
     $('div.records').empty();
+    if( !curQuery.totalLength() )
+        return false;
+    my_paz.search(curQuery.toCCL(), currentResultsPerPage, currentSort, curQuery.getFilterString() );
 }
 
 function toggleAdvanced()
@@ -243,6 +247,7 @@ function toggleAdvanced()
         $("div.advanced").show();
         advancedOn = true;
         $("#advanced").text("Simple search");
+        loadFormFieldsFromQuery();
     }
 }
 
@@ -274,75 +279,53 @@ function drawDetailedRec(detailBox)
 
 function refine(field, value, opt)
 {
-    // for the time being
-    //if(!advancedOn)
-    //    toggleAdvanced();
-
     switch(field) {
-        case "author":  currentQueryArr.push('au="'+value+'"');
-                        if(document.search.author.value != '') document.search.author.value+='; ';
-                        document.search.author.value += value; break;
-
-        case "title":   currentQueryArr.push('ti="'+value+'"');
-                        //if(document.search.tile.value != '') document.search.title.value+='; ';
-                        //document.search.title.value += value; break;
-        
-        case "date":    currentQueryArr.push('date="'+value+'"');
-                        if(document.search.date.value != '') document.search.date.value+='; ';
-                        document.search.date.value += value; break;
-        
-        case "subject": currentQueryArr.push('su="'+value+'"');
-                        if(document.search.subject.value != '') document.search.subject.value+='; ';
-                        document.search.subject.value += value; break;
-        
-        case "xtarget": currentFilter = 'id='+value;
-                        currentFilterName = opt; break;
+        case "author":  curQuery.addTerm('au', value); break;
+        case "title":   curQuery.addTerm('ti', value); break;
+        case "date":    curQuery.addTerm('date', value); break;
+        case "subject": curQuery.addTerm('su', value); break;
+        case "xtarget": curQuery.setFilter(opt, value); break;
     }
 
+    if(advancedOn)
+        loadFormFieldsFromQuery();
+
     currentPage = 0;
-    currentQuery = currentQueryArr.join(' and ');
     drawBreadcrumb();
     fireSearch();
 }
 
 function loadQueryFromForm()
 {
-    query = new Array();
-    if( document.search.query.value !== '' ) query.push(document.search.query.value);
+    curQuery.reset();
+    curQuery.simpleQuery = document.search.query.value;
 
     if( advancedOn )
     {
-        var input;
-        if( (input = parseField(document.search.author.value, 'au')).length ) query = query.concat(input);
-        if( (input = parseField(document.search.title.value, 'ti')).length ) query = query.concat(input);
-        if( (input = parseField(document.search.date.value, 'date')).length ) query = query.concat(input);
-        if( (input = parseField(document.search.subject.value, 'su')).length ) query = query.concat(input);
-    }
-
-    if( query.length ) {
-        currentQueryArr = query;
-        currentQuery = query.join(" and ");
-        return true;
-    } else {
-        return false;
+        curQuery.addTermsFromList(document.search.author.value, 'au');
+        curQuery.addTermsFromList(document.search.title.value, 'ti');
+        curQuery.addTermsFromList(document.search.date.value, 'date');
+        curQuery.addTermsFromList(document.search.subject.value, 'su');
     }
 }
 
-function parseField(inputString, field)
+function loadFormFieldsFromQuery()
 {
-    var inputArr = inputString.split(';');
-    var outputArr = new Array();
-    for(var i=0; i < inputArr.length; i++){
-        if(inputArr[i].length < 3){
-            continue;
+    document.search.author.value = '';
+    document.search.title.value = '';
+    document.search.date.value = '';
+    document.search.subject.value = '';
+
+    for(var i = 0; i < curQuery.numTerms; i++)
+    {
+        switch( curQuery.getTermFieldByIdx(i) )
+        {
+            case "au": document.search.author.value += curQuery.getTermValueByIdx(i) + ';'; break;
+            case "ti": document.search.title.value += curQuery.getTermValueByIdx(i) + ';'; break;
+            case "date": document.search.date.value += curQuery.getTermValueByIdx(i) + ';'; break;
+            case "su": document.search.subject.value += curQuery.getTermValueByIdx(i) + ';'; break;
         }
-        outputArr.push(field+'="'+inputArr[i]+'"');
     }
-    //if( outputArr.length ){
-        return outputArr;//.join(" and ");
-    //}else {
-    //    return false;
-    //}
 }
 
 function drawPager(max, hits)
@@ -410,16 +393,19 @@ function drawBreadcrumb()
     var bc = $("#breadcrumb");
     bc.empty();
     
-    if(currentFilter) $('<strong id="filter"><a>'+currentFilterName+'</a>: </strong>').click(function(){
-                                currentFilter = undefined; currentFilterName = null; refine();}).appendTo(bc);
+    if(curQuery.filterNums) $('<strong id="filter"><a>'+curQuery.getFilterName(0)+'</a>: </strong>').click(function() {
+                                curQuery.removeFilter(0);
+                                refine();
+                                }).appendTo(bc);
 
-    bc.append('<span>'+currentQueryArr[0]+'</span>');
+    bc.append('<span>'+curQuery.simpleQuery+'</span>');
 
-    for(var i = 1; i < currentQueryArr.length; i++){
+    for(var i = 0; i < curQuery.numTerms; i++){
         bc.append('<strong> + </strong>');
-        var bcLink = $('<a id="pos_'+i+'">'+
-                currentQueryArr[i].substring(currentQueryArr[i].indexOf('"') + 1, currentQueryArr[i].lastIndexOf('"'))
-                +'</a>').click(function() { currentQueryArr.splice(this.id.split('_')[1], 1);refine(); });
+        var bcLink = $('<a id="pos_'+i+'">'+curQuery.getTermValueByIdx(i)+'</a>').click(function() { 
+                                            curQuery.removeTermByIdx(this.id.split('_')[1]);
+                                            refine(); 
+                                            });
         bc.append(bcLink);
     }
 }
