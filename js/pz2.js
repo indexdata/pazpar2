@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.4 2007-03-28 15:20:53 jakub Exp $
+** $Id: pz2.js,v 1.5 2007-04-03 14:27:21 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -71,12 +71,17 @@ var pz2 = function(paramArray) {
     //timers
     __myself.statTime = paramArray.stattime || 2000;
     __myself.statTimer = null;
-    __myself.termTime = paramArray.termtime || 2000;
+    __myself.termTime = paramArray.termtime || 1000;
     __myself.termTimer = null;
-    __myself.showTime = paramArray.showtime || 2000;
+    __myself.showTime = paramArray.showtime || 1000;
     __myself.showTimer = null;
     __myself.bytargetTime = paramArray.bytargettime || 1000;
     __myself.bytargetTimer = null;
+
+    //useful?
+    __myself.dumpFactor = 500;
+    __myself.showCounter = 0;
+    __myself.termCounter = 0;
 
     // active clients, updated by stat and show
     // might be an issue since bytarget will poll accordingly
@@ -141,7 +146,10 @@ pz2.prototype = {
         clearTimeout(__myself.showTimer);
         clearTimeout(__myself.termTimer);
         clearTimeout(__myself.bytargetTimer);
-
+        
+        __myself.showCounter = 0;
+        __myself.termCounter = 0;
+        
         if( !__myself.initStatusOK )
             return;
         
@@ -165,8 +173,8 @@ pz2.prototype = {
                     if ( __myself.statCallback )
                         __myself.statTimer = setTimeout("__myself.stat()", __myself.statTime / 2);
                     if ( __myself.termlistCallback )
-                        __myself.termlist();
-                        //__myself.termTimer = setTimeout("__myself.termlist()", __myself.termTime / 2);
+                        //__myself.termlist();
+                        __myself.termTimer = setTimeout("__myself.termlist()", __myself.termTime / 2);
                     if ( __myself.bytargetCallback )
                         __myself.bytargetTimer = setTimeout("__myself.bytarget()", __myself.bytargetTime / 2);
                 }
@@ -257,8 +265,9 @@ pz2.prototype = {
                         }
                     }
                     __myself.showCallback(show);
+                    __myself.showCounter++;
                     if (activeClients > 0)
-                        __myself.showTimer = setTimeout("__myself.show()", __myself.showTime);
+                        __myself.showTimer = setTimeout("__myself.show()", (__myself.showTime + __myself.showCounter*__myself.dumpFactor));
                 }
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
@@ -345,9 +354,11 @@ pz2.prototype = {
                             termList[listName][j] = term;
                         }
                     }
+
                     __myself.termlistCallback(termList);
+                    __myself.termCounter++;
                     if (termList["activeclients"] > 0)
-                        __myself.termTimer = setTimeout("__myself.termlist()", __myself.termTime); 
+                        __myself.termTimer = setTimeout("__myself.termlist()", (__myself.termTime + __myself.termCounter*__myself.dumpFactor)); 
                 }
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)

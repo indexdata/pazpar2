@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.10 2007-04-02 15:50:27 jakub Exp $
+** $Id: client.js,v 1.11 2007-04-03 14:27:21 jakub Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -15,12 +15,8 @@ var my_paz = new pz2( { "onshow": my_onshow,
 /* some state variable */
 var currentSort = 'relevance';
 var currentResultsPerPage = 20;
-/*var currentQuery = null;
-var currentQueryArr = new Array();*/
 var currentPage = 0;
 var curQuery = new pzQuery();
-/*var currentFilter = undefined;*/
-/*var currentFilterName = null;*/
 
 var currentDetailedId = null;
 var currentDetailedData = null;
@@ -131,10 +127,10 @@ function my_onstat(data){}
 */
 function my_onterm(data)
 {
-    var termLists = $("#termlists");
-
     if(termStartup)
     {
+        var termLists = $("#termlists");
+        
         for(var key in data){
             if (key == "activeclients")
                 continue;
@@ -187,7 +183,7 @@ function my_onterm(data)
             if (key == "activeclients")
                 continue;
             var listEntries = $('#term_'+key).children('.termEntries');
-            listEntries.empty()
+            if( data[key].length ) listEntries.empty();
 
             for(var i = 0; i < data[key].length; i++){
                 if (key == "xtargets"){
@@ -230,6 +226,7 @@ function fireSearch()
     $('div.showing').empty().text('No records to show.');
     $('div.pages').empty().html('&nbsp;');
     $('div.records').empty();
+    currentDetailedId = null;
     if( !curQuery.totalLength() )
         return false;
     my_paz.search(curQuery.toCCL(), currentResultsPerPage, currentSort, curQuery.getFilterString() );
@@ -320,10 +317,10 @@ function loadFormFieldsFromQuery()
     {
         switch( curQuery.getTermFieldByIdx(i) )
         {
-            case "au": document.search.author.value += curQuery.getTermValueByIdx(i) + ';'; break;
-            case "ti": document.search.title.value += curQuery.getTermValueByIdx(i) + ';'; break;
-            case "date": document.search.date.value += curQuery.getTermValueByIdx(i) + ';'; break;
-            case "su": document.search.subject.value += curQuery.getTermValueByIdx(i) + ';'; break;
+            case "au": document.search.author.value += curQuery.getTermValueByIdx(i) + '; '; break;
+            case "ti": document.search.title.value += curQuery.getTermValueByIdx(i) + '; '; break;
+            case "date": document.search.date.value += curQuery.getTermValueByIdx(i) + '; '; break;
+            case "su": document.search.subject.value += curQuery.getTermValueByIdx(i) + '; '; break;
         }
     }
 }
