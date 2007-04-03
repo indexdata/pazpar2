@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.12 2007-04-03 03:59:10 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.13 2007-04-03 05:14:44 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -121,9 +121,7 @@
 	    <para>
 	      This nested element controls the behavior of pazpar2 with
 	      respect to your data model. In pazpar2, incoming records are
-	      normalized, using XSLT, into an internal representation (see
-	      the <link
-	      linkend="config-retrievalprofile">retrievalprofile</link> secion.
+	      normalized, using XSLT, into an internal representation.
 	      The 'service' section controls the further processing and
 	      extraction of data from the internal representation, primarily
 	      through the 'metdata' sub-element.
@@ -244,91 +242,6 @@
       </variablelist>           <!-- Data elements in server directive -->
     </refsect2>
 
-    <refsect2 id="config-queryprofile"><title>queryprofile</title>
-      <para>
-        At the moment, this directive is ignored; there is one global
-	CCL-mapping file which governs the mapping of queries to Z39.50
-	type-1. This file is located in etc/default.bib. This will change
-	shortly.
-      </para>
-    </refsect2>
-
-    <refsect2 id="config_retrievalprofile"><title>retrievalprofile</title>
-      <para>
-	Note: In the present version, there is a single retrieval
-	profile. However, in a future release, it will be possible to
-	associate unique retrieval profiles with different targets, or to
-	generate retrieval profiles using XSLT from the ZeeRex description of
-	a target.
-      </para>
-      
-      <para>
-        The following data elements are recognized for the retrievalprofile
-	directive:
-      </para>
-      
-      <variablelist>
-        <varlistentry><term>requestsyntax</term>
-	  <listitem>
-	    <para>
-	      This element specifies the request syntax to be used in queries. It only
-	      makes sense for Z39.50-type targets.
-	    </para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry><term>nativesyntax</term>
-	  <listitem>
-	    <para>
-	      This element specifies the native syntax and encoding of the
-	      result records. The default is XML. The following attributes
-	      are defined:
-	    </para>
-	    <variablelist>
-	      <varlistentry><term>name</term>
-	        <listitem>
-		  <para>
-		    The name of the syntax. Currently recognized values are
-		    'iso2709' (MARC), and 'xml'.
-		  </para>
-		</listitem>
-	      </varlistentry>
-
-	      <varlistentry><term>format</term>
-	        <listitem>
-		  <para>
-		    The format, or schema, to be expected. Default is
-		    'marc21'.
-		  </para>
-		</listitem>
-	      </varlistentry>
-
-	      <varlistentry><term>encoding</term>
-	        <listitem>
-		  <para>
-		    The encoding of the response record. Typical values for
-		    MARC records are 'marc8' (general MARC-8), 'marc8s'
-		    (MARC-8, but maps to precomposed UTF-8 characters, more
-		    suitable for use in web browsers), 'latin1'.
-		  </para>
-		</listitem>
-	      </varlistentry>
-
-	      <varlistentry><term>mapto</term>
-	        <listitem>
-		  <para>
-		    Specifies the flavor of MARCXML to map results to.
-		    Default is 'marcxml'. 'marcxchange' is also possible, and
-		    useful for Danish DANMARC records.
-		  </para>
-		</listitem>
-	      </varlistentry>
-	    </variablelist> <!-- parameters to nativesyntax directive -->
-	  </listitem>
-	</varlistentry>
-      </variablelist> <!-- sub-elements in retrievalprofile -->
-    </refsect2>
-
   </refsect1>
  
  <refsect1><title>EXAMPLE</title>
@@ -355,15 +268,6 @@
     <metadata name="url" merge="unique"/>
   </service>
 </server>
-
-<queryprofile/>  <!-- Like a CCL profile++ . Can optionally refer to XSLT to 
-       convert ZeeRex into queryprofile. Multiple profiles can exist.  -->
-
-<retrievalprofile>
-  <requestsyntax>marc21</requestsyntax>
-  <nativesyntax name="iso2709" format="marc21" encoding="marc8s" mapto="marcxml"/>
-  <map type="xslt" stylesheet="marc21.xsl"/>
-</retrievalprofile>
 
 </pazpar2>
 ]]></screen>
@@ -540,6 +444,34 @@
 	      servers will produce undesirable results.
 	      Set to '1' to enable piggybacking, '0' to disable it. Default
 	      is 1 (piggybacking enabled).
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>pz:nativesyntax</term>
+	  <listitem>
+	    <para>
+	      The representation of the retrieval records. Currently
+	      recognized values are iso2709 and xml.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>pz:encoding</term>
+	  <listitem>
+	    <para>
+	      The native encoding of retrieval records. Can be anything
+	      recognized by conv, but typical values are marc8 and latin1.
+	      The default is UTF-8.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>pz:xslt</term>
+	  <listitem>
+	    <para>
+	      Provides the path of an XSLT stylesheet which will be used to
+	      map incoming records to the internal representation.
 	    </para>
 	  </listitem>
 	</varlistentry>
