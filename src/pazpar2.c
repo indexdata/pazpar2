@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.60 2007-04-03 03:55:12 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.61 2007-04-03 04:05:01 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -388,42 +388,6 @@ char *normalize_mergekey(char *buf, int skiparticle)
 
     return buf;
 }
-
-
-#ifdef GAGA
-// FIXME needs to be generalized. Should flexibly generate X lists per search
-static void extract_subject(struct session *s, const char *rec)
-{
-    const char *field, *subfield;
-
-    while ((field = find_field(rec, "650")))
-    {
-        rec = field; 
-        if ((subfield = find_subfield(field, 'a')))
-        {
-            char *e, *ef;
-            char buf[1024];
-            int len;
-
-            ef = index(subfield, '\n');
-            if (!ef)
-                return;
-            if ((e = index(subfield, '\t')) && e < ef)
-                ef = e;
-            while (ef > subfield && !isalpha(*(ef - 1)) && *(ef - 1) != ')')
-                ef--;
-            len = ef - subfield;
-            assert(len < 1023);
-            memcpy(buf, subfield, len);
-            buf[len] = '\0';
-#ifdef FIXME
-            if (*buf)
-                termlist_insert(s->termlist, buf);
-#endif
-        }
-    }
-}
-#endif
 
 static void add_facet(struct session *s, const char *type, const char *value)
 {
