@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.11 2007-03-30 01:07:37 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.12 2007-04-03 03:59:10 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -527,6 +527,19 @@
 	    <para>
 	      The element set name to be used when retrieving records from a
 	      server.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>pz:piggyback</term>
+	  <listitem>
+	    <para>
+	      Piggybacking enables the server to retrieve records from the
+	      server as part of the search response in Z39.50. Almost all
+	      servers support this (or fail it gracefully), but a few
+	      servers will produce undesirable results.
+	      Set to '1' to enable piggybacking, '0' to disable it. Default
+	      is 1 (piggybacking enabled).
 	    </para>
 	  </listitem>
 	</varlistentry>
