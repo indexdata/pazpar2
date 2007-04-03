@@ -1,4 +1,4 @@
-// $Id: settings.c,v 1.5 2007-03-31 19:55:25 marc Exp $
+// $Id: settings.c,v 1.6 2007-04-03 03:55:12 quinn Exp $
 // This module implements a generic system of settings (attribute-value) that can 
 // be associated with search targets. The system supports both default values,
 // per-target overrides, and per-user settings.
@@ -28,6 +28,8 @@ static char *hard_settings[] = {
     "pz:elements",
     "pz:syntax",
     "pz:cclmap:",
+    "pz:charset",
+    "pz:xslt",
     0
 };
 
@@ -44,6 +46,8 @@ int settings_offset(const char *name)
 {
     int i;
 
+    if (!name)
+        name = "";
     for (i = 0; i < dictionary->num; i++)
         if (!strcmp(name, dictionary->dict[i]))
             return i;

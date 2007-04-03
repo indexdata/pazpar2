@@ -1,5 +1,8 @@
 <settings target="*">
 
+  <set name="pz:syntax" value="usmarc"/>
+  <set name="pz:elements" value="F"/>
+
   <!-- Default query mapping -->
   <!-- Note, individual fields can be overriden per-database and/or per-user -->
 

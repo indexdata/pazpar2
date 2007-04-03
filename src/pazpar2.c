@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.59 2007-03-31 20:24:59 marc Exp $ */
+/* $Id: pazpar2.c,v 1.60 2007-04-03 03:55:12 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -50,6 +50,7 @@ static int client_prep_connection(struct client *cl);
 static void ingest_records(struct client *cl, Z_Records *r);
 //static struct conf_retrievalprofile *database_retrieval_profile(struct database *db);
 void session_alert_watch(struct session *s, int what);
+char *session_setting_oneval(struct session *s, struct database *db, const char *name);
 
 IOCHAN channel_list = 0;  // Master list of connections we're handling events to
 
@@ -200,6 +201,8 @@ static void send_search(IOCHAN i)
     Z_Query *zquery;
     struct ccl_rpn_node *cn;
     int ssub = 0, lslb = 100000, mspn = 10;
+    char *recsyn;
+    char *piggyback;
 
     yaz_log(YLOG_DEBUG, "Sending search");
 
@@ -228,12 +231,16 @@ static void send_search(IOCHAN i)
     for (ndb = 0; db->databases[ndb]; ndb++)
 	databaselist[ndb] = db->databases[ndb];
 
-    a->u.searchRequest->preferredRecordSyntax =
-            yaz_oidval_to_z3950oid(global_parameters.odr_out,
-            CLASS_RECSYN, VAL_USMARC);
-    a->u.searchRequest->smallSetUpperBound = &ssub;
-    a->u.searchRequest->largeSetLowerBound = &lslb;
-    a->u.searchRequest->mediumSetPresentNumber = &mspn;
+    if (!(piggyback = session_setting_oneval(se, db, "pz:piggyback")) || *piggyback == '1')
+    {
+        if ((recsyn = session_setting_oneval(se, db, "pz:syntax")))
+            a->u.searchRequest->preferredRecordSyntax =
+                    yaz_str_to_z3950oid(global_parameters.odr_out,
+                    CLASS_RECSYN, recsyn);
+        a->u.searchRequest->smallSetUpperBound = &ssub;
+        a->u.searchRequest->largeSetLowerBound = &lslb;
+        a->u.searchRequest->mediumSetPresentNumber = &mspn;
+    }
     a->u.searchRequest->resultSetName = "Default";
     a->u.searchRequest->databaseNames = databaselist;
     a->u.searchRequest->num_databaseNames = ndb;
@@ -254,9 +261,12 @@ static void send_present(IOCHAN i)
 {
     struct connection *co = iochan_getdata(i);
     struct client *cl = co->client; 
+    struct session *se = cl->session;
+    struct database *db = cl->database;
     Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_presentRequest);
     int toget;
     int start = cl->records + 1;
+    char *recsyn;
 
     toget = global_parameters.chunk;
     if (toget > global_parameters.toget - cl->records)
@@ -271,9 +281,10 @@ static void send_present(IOCHAN i)
 
     a->u.presentRequest->resultSetId = "Default";
 
-    a->u.presentRequest->preferredRecordSyntax =
-            yaz_oidval_to_z3950oid(global_parameters.odr_out,
-            CLASS_RECSYN, VAL_USMARC);
+    if ((recsyn = session_setting_oneval(se, db, "pz:syntax")))
+        a->u.presentRequest->preferredRecordSyntax =
+                yaz_str_to_z3950oid(global_parameters.odr_out,
+                CLASS_RECSYN, recsyn);
 
     if (send_apdu(cl, a) >= 0)
     {
@@ -765,6 +776,19 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
     se->total_records++;
 
     return res;
+}
+
+// Retrieve first defined value for 'name' for given database.
+// Will be extended to take into account user associated with session
+char *session_setting_oneval(struct session *s, struct database *db, const char *name)
+{
+    int offset = settings_offset(name);
+
+    if (offset < 0)
+        return 0;
+    if (!db->settings[offset])
+        return 0;
+    return db->settings[offset]->value;
 }
 
 static void ingest_records(struct client *cl, Z_Records *r)
