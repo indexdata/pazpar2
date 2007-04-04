@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.62 2007-04-04 21:05:37 marc Exp $ */
+/* $Id: pazpar2.c,v 1.63 2007-04-04 22:43:10 marc Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -443,20 +443,23 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
         int len;
         if (rec->which != Z_External_octet)
         {
-            yaz_log(YLOG_WARN, "Unexpected external branch, probably BER");
+            yaz_log(YLOG_WARN, "Unexpected external branch, probably BER %s",
+                    cl->database->url);
             return 0;
         }
         buf = (char*) rec->u.octet_aligned->buf;
         len = rec->u.octet_aligned->len;
         if (yaz_marc_read_iso2709(rprofile->yaz_marc, buf, len) < 0)
         {
-            yaz_log(YLOG_WARN, "Failed to decode MARC");
+            yaz_log(YLOG_WARN, "Failed to decode MARC %s",
+                    cl->database->url);
             return 0;
         }
         if (yaz_marc_write_xml(rprofile->yaz_marc, &res,
                     "http://www.loc.gov/MARC21/slim", 0, 0) < 0)
         {
-            yaz_log(YLOG_WARN, "Failed to encode as XML");
+            yaz_log(YLOG_WARN, "Failed to encode as XML %s",
+                    cl->database->url);
             return 0;
         }
         rdoc = xmlNewDoc((xmlChar *) "1.0");
