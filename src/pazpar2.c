@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.61 2007-04-03 04:05:01 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.62 2007-04-04 21:05:37 marc Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -302,7 +302,7 @@ static void do_initResponse(IOCHAN i, Z_APDU *a)
     struct client *cl = co->client;
     Z_InitResponse *r = a->u.initResponse;
 
-    yaz_log(YLOG_DEBUG, "Received init response");
+    yaz_log(YLOG_DEBUG, "Init response %s", cl->database->url);
 
     if (*r->result)
     {
@@ -319,7 +319,8 @@ static void do_searchResponse(IOCHAN i, Z_APDU *a)
     struct session *se = cl->session;
     Z_SearchResponse *r = a->u.searchResponse;
 
-    yaz_log(YLOG_DEBUG, "Searchresponse (status=%d)", *r->searchStatus);
+    yaz_log(YLOG_DEBUG, "Search response %s (status=%d)", 
+            cl->database->url, *r->searchStatus);
 
     if (*r->searchStatus)
     {
@@ -327,7 +328,8 @@ static void do_searchResponse(IOCHAN i, Z_APDU *a)
         se->total_hits += cl->hits;
         if (r->presentStatus && !*r->presentStatus && r->records)
         {
-            yaz_log(YLOG_DEBUG, "Records in search response");
+            yaz_log(YLOG_DEBUG, "Records in search response %s", 
+                    cl->database->url);
             ingest_records(cl, r->records);
         }
         cl->state = Client_Idle;
@@ -340,13 +342,28 @@ static void do_searchResponse(IOCHAN i, Z_APDU *a)
             Z_Records *recs = r->records;
             if (recs->which == Z_Records_NSD)
             {
-                yaz_log(YLOG_WARN, "Non-surrogate diagnostic");
+                yaz_log(YLOG_WARN, 
+                        "Search response: Non-surrogate diagnostic %s",
+                        cl->database->url);
                 cl->diagnostic = *recs->u.nonSurrogateDiagnostic->condition;
                 cl->state = Client_Error;
             }
         }
     }
 }
+
+static void do_closeResponse(IOCHAN i, Z_APDU *a)
+{
+    struct connection *co = iochan_getdata(i);
+    struct client *cl = co->client;
+    /* Z_Close *r = a->u.close; */
+
+    yaz_log(YLOG_WARN, "Close response %s", cl->database->url);
+
+    cl->state = Client_Failed;
+    connection_destroy(co);
+}
+
 
 char *normalize_mergekey(char *buf, int skiparticle)
 {
@@ -775,7 +792,9 @@ static void ingest_records(struct client *cl, Z_Records *r)
         cl->records++;
         if (npr->which != Z_NamePlusRecord_databaseRecord)
         {
-            yaz_log(YLOG_WARN, "Unexpected record type, probably diagnostic");
+            yaz_log(YLOG_WARN, 
+                    "Unexpected record type, probably diagnostic %s",
+                    cl->database->url);
             continue;
         }
 
@@ -805,7 +824,8 @@ static void do_presentResponse(IOCHAN i, Z_APDU *a)
         Z_Records *recs = r->records;
         if (recs->which == Z_Records_NSD)
         {
-            yaz_log(YLOG_WARN, "Non-surrogate diagnostic");
+            yaz_log(YLOG_WARN, "Non-surrogate diagnostic %s",
+                    cl->database->url);
             cl->diagnostic = *recs->u.nonSurrogateDiagnostic->condition;
             cl->state = Client_Error;
         }
@@ -813,13 +833,15 @@ static void do_presentResponse(IOCHAN i, Z_APDU *a)
 
     if (!*r->presentStatus && cl->state != Client_Error)
     {
-        yaz_log(YLOG_DEBUG, "Good Present response");
+        yaz_log(YLOG_DEBUG, "Good Present response %s",
+                cl->database->url);
         ingest_records(cl, r->records);
         cl->state = Client_Idle;
     }
     else if (*r->presentStatus) 
     {
-        yaz_log(YLOG_WARN, "Bad Present response");
+        yaz_log(YLOG_WARN, "Bad Present response %s",
+                cl->database->url);
         cl->state = Client_Error;
     }
 }
@@ -865,13 +887,14 @@ static void handler(IOCHAN i, int event)
 
 	if (len < 0)
 	{
-            yaz_log(YLOG_WARN|YLOG_ERRNO, "Error reading from Z server");
+            yaz_log(YLOG_WARN|YLOG_ERRNO, "Error reading from %s", 
+                    cl->database->url);
             connection_destroy(co);
 	    return;
 	}
         else if (len == 0)
 	{
-            yaz_log(YLOG_WARN, "EOF reading from Z server");
+            yaz_log(YLOG_WARN, "EOF reading from %s", cl->database->url);
             connection_destroy(co);
 	    return;
 	}
@@ -901,8 +924,13 @@ static void handler(IOCHAN i, int event)
                     case Z_APDU_presentResponse:
                         do_presentResponse(i, a);
                         break;
+                    case Z_APDU_close:
+                        do_closeResponse(i, a);
+                        break;
                     default:
-                        yaz_log(YLOG_WARN, "Unexpected result from server");
+                        yaz_log(YLOG_WARN, 
+                                "Unexpected Z39.50 response from %s",  
+                                cl->database->url);
                         client_fatal(cl);
                         return;
                 }
@@ -1010,9 +1038,6 @@ static struct connection *connection_create(struct client *cl)
         yaz_log(YLOG_DEBUG, "Connection create %s proxy %s", 
                 cl->database->url, global_parameters.zproxy_override);
 
-        yaz_log(YLOG_LOG, "Connection cs_create_host %s proxy %s", 
-                cl->database->url, global_parameters.zproxy_override);
-        
         if (!(addr = cs_straddr(link, global_parameters.zproxy_override)))
             {
                 yaz_log(YLOG_WARN|YLOG_ERRNO, 
