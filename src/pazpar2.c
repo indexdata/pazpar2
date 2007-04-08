@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.64 2007-04-08 20:52:09 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.65 2007-04-08 21:51:58 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -48,7 +48,6 @@ static void client_fatal(struct client *cl);
 static void connection_destroy(struct connection *co);
 static int client_prep_connection(struct client *cl);
 static void ingest_records(struct client *cl, Z_Records *r);
-//static struct conf_retrievalprofile *database_retrieval_profile(struct database *db);
 void session_alert_watch(struct session *s, int what);
 char *session_setting_oneval(struct session *s, struct database *db, int offset);
 
@@ -119,6 +118,23 @@ static int send_apdu(struct client *c, Z_APDU *a)
     return 0;
 }
 
+// Set authentication token in init if one is set for the client
+// TODO: Extend this to handle other schemes than open (should be simple)
+static void init_authentication(struct client *cl, Z_InitRequest *req)
+{
+    struct database *db = cl->database;
+    struct session *se = cl->session;
+    char *auth = session_setting_oneval(se, db, PZ_AUTHENTICATION);
+
+    if (auth)
+    {
+        Z_IdAuthentication *idAuth = odr_malloc(global_parameters.odr_out,
+                sizeof(*idAuth));
+        idAuth->which = Z_IdAuthentication_open;
+        idAuth->u.open = auth;
+        req->idAuthentication = idAuth;
+    }
+}
 
 static void send_init(IOCHAN i)
 {
@@ -139,6 +155,7 @@ static void send_init(IOCHAN i)
     ODR_MASK_SET(a->u.initRequest->protocolVersion, Z_ProtocolVersion_2);
     ODR_MASK_SET(a->u.initRequest->protocolVersion, Z_ProtocolVersion_3);
 
+    init_authentication(cl, a->u.initRequest);
 
     /* add virtual host if tunneling through Z39.50 proxy */
     
@@ -147,8 +164,6 @@ static void send_init(IOCHAN i)
         yaz_oi_set_string_oidval(&a->u.initRequest->otherInfo, 
                                  global_parameters.odr_out, VAL_PROXY,
                                  1, cl->database->url);
-    
-
 
     if (send_apdu(cl, a) >= 0)
     {

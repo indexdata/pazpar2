@@ -1,4 +1,4 @@
-// $Id: settings.c,v 1.7 2007-04-08 20:52:09 quinn Exp $
+// $Id: settings.c,v 1.8 2007-04-08 21:51:58 quinn Exp $
 // This module implements a generic system of settings (attribute-value) that can 
 // be associated with search targets. The system supports both default values,
 // per-target overrides, and per-user settings.
@@ -31,6 +31,7 @@ static char *hard_settings[] = {
     "pz:encoding",
     "pz:xslt",
     "pz:nativesyntax",
+    "pz:authentication",
     0
 };
 
