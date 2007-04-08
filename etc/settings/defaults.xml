@@ -1,10 +1,9 @@
 <settings target="*">
 
-  <set name="pz:syntax" value="usmarc"/>
-  <set name="pz:elements" value="F"/>
+  <!-- This file introduces default settings for pazpar2 -->
+  <!-- $Id: defaults.xml,v 1.3 2007-04-08 20:52:09 quinn Exp $ -->
 
-  <!-- Default query mapping -->
-  <!-- Note, individual fields can be overriden per-database and/or per-user -->
+  <!-- Query mappings -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
@@ -14,5 +13,15 @@
   <set name="pz:cclmap:isbn" value="u=7"/>
   <set name="pz:cclmap:issn" value="u=8"/>
   <set name="pz:cclmap:date" value="u=30 r=r"/>
+
+  <!-- Retrieval settings -->
+
+  <set name="pz:requestsyntax" value="marc21"/>
+  <!-- <set name="pz:elements" value="F"/> NOT YET IMPLEMENTED -->
+
+  <!-- Result normalization settings -->
+
+  <set name="pz:nativesyntax" value="iso2709"/>
+  <set name="pz:xslt" value="../etc/marc21.xsl"/>
 
 </settings>

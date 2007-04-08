@@ -1,4 +1,4 @@
-// $Id: settings.c,v 1.6 2007-04-03 03:55:12 quinn Exp $
+// $Id: settings.c,v 1.7 2007-04-08 20:52:09 quinn Exp $
 // This module implements a generic system of settings (attribute-value) that can 
 // be associated with search targets. The system supports both default values,
 // per-target overrides, and per-user settings.
@@ -26,10 +26,11 @@ static NMEM nmem = 0;
 static char *hard_settings[] = {
     "pz:piggyback",
     "pz:elements",
-    "pz:syntax",
+    "pz:requestsyntax",
     "pz:cclmap:",
-    "pz:charset",
+    "pz:encoding",
     "pz:xslt",
+    "pz:nativesyntax",
     0
 };
 
@@ -228,6 +229,11 @@ static void prepare_dictionary(struct setting *set)
     for (i = 0; i < dictionary->num; i++)
         if (!strcmp(dictionary->dict[i], set->name))
             return;
+    if (!strncmp(set->name, "pz:", 3)) // Probably a typo in config fle
+    {
+        yaz_log(YLOG_FATAL, "Unknown pz: setting '%s'", set->name);
+        exit(1);
+    }
     // Create a new dictionary entry
     // Grow dictionary if necessary
     if (!dictionary->size)

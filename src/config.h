@@ -74,39 +74,6 @@ struct conf_server
     struct conf_server *next;
 };
 
-struct conf_retrievalmap
-{
-    enum {
-        Map_xslt
-    } type;
-    char *charset;
-    char *format;
-    xsltStylesheet *stylesheet;
-    struct conf_retrievalmap *next;
-};
-
-struct conf_retrievalprofile
-{
-    char *requestsyntax;
-    enum {
-        Nativesyn_xml,
-        Nativesyn_iso2709
-    } native_syntax;
-    enum {
-        Nativeform_na,
-        Nativeform_marc21,
-    } native_format;
-    char *native_encoding;
-    enum {
-        Nativemapto_na,
-        Nativemapto_marcxml,
-        Nativemapto_marcxchange
-    } native_mapto;
-    yaz_marc_t yaz_marc;
-    struct conf_retrievalmap *maplist;
-    struct conf_retrievalprofile *next;
-};
-
 struct conf_targetprofiles
 {
     enum {
@@ -119,7 +86,6 @@ struct conf_config
 {
     struct conf_server *servers;
     struct conf_targetprofiles *targetprofiles;
-    struct conf_retrievalprofile *retrievalprofiles;
 };
 
 #ifndef CONFIG_NOEXTERNS
@@ -129,6 +95,7 @@ extern struct conf_config *config;
 #endif
 
 int read_config(const char *fname);
+xsltStylesheet *conf_load_stylesheet(const char *fname);
 
 #endif
 

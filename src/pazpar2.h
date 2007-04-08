@@ -70,10 +70,17 @@ struct database {
     char **databases;
     int errors;
     struct zr_explain *explain;
-    struct conf_retrievalprofile *rprofile;
     struct setting **settings;
     struct database *next;
     CCL_bibset ccl_map;
+    yaz_marc_t yaz_marc;
+    struct database_retrievalmap *map;
+};
+
+// Normalization filter chain. Turns incoming record into internal representation
+struct database_retrievalmap {
+    xsltStylesheet *stylesheet;
+    struct database_retrievalmap *next;
 };
 
 struct database_criterion_value {
@@ -202,7 +209,6 @@ struct parameters {
     int session_timeout;
     int toget;
     int chunk;
-    yaz_marc_t yaz_marc;
     ODR odr_out;
     ODR odr_in;
 };

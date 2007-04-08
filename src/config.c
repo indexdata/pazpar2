@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.21 2007-04-02 09:43:08 marc Exp $ */
+/* $Id: config.c,v 1.22 2007-04-08 20:52:09 quinn Exp $ */
 
 #include <string.h>
 
@@ -294,150 +294,11 @@ static struct conf_server *parse_server(xmlNode *node)
     return r;
 }
 
-static xsltStylesheet *load_stylesheet(const char *fname)
+xsltStylesheet *conf_load_stylesheet(const char *fname)
 {
     char path[256];
     sprintf(path, "%s/%s", confdir, fname);
     return xsltParseStylesheetFile((xmlChar *) path);
-}
-
-static void setup_marc(struct conf_retrievalprofile *r)
-{
-    yaz_iconv_t cm;
-    r->yaz_marc = yaz_marc_create();
-    if (!(cm = yaz_iconv_open("utf-8", r->native_encoding)))
-    {
-        yaz_log(YLOG_WARN, "Unable to support mapping from %s", r->native_encoding);
-        return;
-    }
-    yaz_marc_iconv(r->yaz_marc, cm);
-}
-
-static struct conf_retrievalprofile *parse_retrievalprofile(xmlNode *node)
-{
-    struct conf_retrievalprofile *r = nmem_malloc(nmem, sizeof(struct conf_retrievalprofile));
-    xmlNode *n;
-    struct conf_retrievalmap **rm = &r->maplist;
-
-    r->requestsyntax = 0;
-    r->native_syntax = Nativesyn_xml;
-    r->native_format = Nativeform_na;
-    r->native_encoding = 0;
-    r->native_mapto = Nativemapto_na;
-    r->yaz_marc = 0;
-    r->maplist = 0;
-    r->next = 0;
-
-    for (n = node->children; n; n = n->next)
-    {
-        if (n->type != XML_ELEMENT_NODE)
-            continue;
-        if (!strcmp((const char *) n->name, "requestsyntax"))
-        {
-            xmlChar *content = xmlNodeGetContent(n);
-            if (content)
-                r->requestsyntax = nmem_strdup(nmem, (const char *) content);
-        }
-        else if (!strcmp((const char *) n->name, "nativesyntax"))
-        {
-            xmlChar *name = xmlGetProp(n, (xmlChar *) "name");
-            xmlChar *format = xmlGetProp(n, (xmlChar *) "format");
-            xmlChar *encoding = xmlGetProp(n, (xmlChar *) "encoding");
-            xmlChar *mapto = xmlGetProp(n, (xmlChar *) "mapto");
-            if (!name)
-            {
-                yaz_log(YLOG_WARN, "Missing name in 'nativesyntax' element");
-                return 0;
-            }
-            if (encoding)
-                r->native_encoding = (char *) encoding;
-            if (!strcmp((const char *) name, "iso2709"))
-            {
-                r->native_syntax = Nativesyn_iso2709;
-                // Set a few defaults, too
-                r->native_format = Nativeform_marc21;
-                r->native_mapto = Nativemapto_marcxml;
-                if (!r->native_encoding)
-                    r->native_encoding = "marc-8";
-                setup_marc(r);
-            }
-            else if (!strcmp((const char *) name, "xml"))
-                r->native_syntax = Nativesyn_xml;
-            else
-            {
-                yaz_log(YLOG_WARN, "Unknown native syntax name %s", name);
-                return 0;
-            }
-            if (format)
-            {
-                if (!strcmp((const char *) format, "marc21") 
-                    || !strcmp((const char *) format, "usmarc"))
-                    r->native_format = Nativeform_marc21;
-                else
-                {
-                    yaz_log(YLOG_WARN, "Unknown native format name %s", format);
-                    return 0;
-                }
-            }
-            if (mapto)
-            {
-                if (!strcmp((const char *) mapto, "marcxml"))
-                    r->native_mapto = Nativemapto_marcxml;
-                else if (!strcmp((const char *)mapto, "marcxchange"))
-                    r->native_mapto = Nativemapto_marcxchange;
-                else
-                {
-                    yaz_log(YLOG_WARN, "Unknown mapto target %s", format);
-                    return 0;
-                }
-            }
-            xmlFree(name);
-            xmlFree(format);
-            xmlFree(encoding);
-            xmlFree(mapto);
-        }
-        else if (!strcmp((const char *) n->name, "map"))
-        {
-            struct conf_retrievalmap *m = nmem_malloc(nmem, sizeof(struct conf_retrievalmap));
-            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
-            xmlChar *charset = xmlGetProp(n, (xmlChar *) "charset");
-            xmlChar *format = xmlGetProp(n, (xmlChar *) "format");
-            xmlChar *stylesheet = xmlGetProp(n, (xmlChar *) "stylesheet");
-            memset(m, 0, sizeof(*m));
-            if (type)
-            {
-                if (!strcmp((const char *) type, "xslt"))
-                    m->type = Map_xslt;
-                else
-                {
-                    yaz_log(YLOG_WARN, "Unknown map type: %s", type);
-                    return 0;
-                }
-            }
-            if (charset)
-                m->charset = nmem_strdup(nmem, (const char *) charset);
-            if (format)
-                m->format = nmem_strdup(nmem, (const char *) format);
-            if (stylesheet)
-            {
-                if (!(m->stylesheet = load_stylesheet((char *) stylesheet)))
-                    return 0;
-            }
-            *rm = m;
-            rm = &m->next;
-            xmlFree(type);
-            xmlFree(charset);
-            xmlFree(format);
-            xmlFree(stylesheet);
-        }
-        else
-        {
-            yaz_log(YLOG_FATAL, "Bad element in retrievalprofile: %s", n->name);
-            return 0;
-        }
-    }
-
-    return r;
 }
 
 static struct conf_targetprofiles *parse_targetprofiles(xmlNode *node)
@@ -480,10 +341,8 @@ static struct conf_config *parse_config(xmlNode *root)
 {
     xmlNode *n;
     struct conf_config *r = nmem_malloc(nmem, sizeof(struct conf_config));
-    struct conf_retrievalprofile **rp = &r->retrievalprofiles;
 
     r->servers = 0;
-    r->retrievalprofiles = 0;
     r->targetprofiles = 0;
 
     for (n = root->children; n; n = n->next)
@@ -497,12 +356,6 @@ static struct conf_config *parse_config(xmlNode *root)
                 return 0;
             tmp->next = r->servers;
             r->servers = tmp;
-        }
-        else if (!strcmp((const char *) n->name, "retrievalprofile"))
-        {
-            if (!(*rp = parse_retrievalprofile(n)))
-                return 0;
-            rp = &(*rp)->next;
         }
         else if (!strcmp((const char *) n->name, "targetprofiles"))
         {

@@ -5,8 +5,9 @@
 #define PZ_ELEMENTS     1
 #define PZ_SYNTAX       2
 #define PZ_CCLMAP       3
-#define PZ_CHARSET      4
+#define PZ_ENCODING     4
 #define PZ_XSLT         5
+#define PZ_NATIVESYNTAX 6
 
 struct setting
 {

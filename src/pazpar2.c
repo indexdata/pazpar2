@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.63 2007-04-04 22:43:10 marc Exp $ */
+/* $Id: pazpar2.c,v 1.64 2007-04-08 20:52:09 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -50,7 +50,7 @@ static int client_prep_connection(struct client *cl);
 static void ingest_records(struct client *cl, Z_Records *r);
 //static struct conf_retrievalprofile *database_retrieval_profile(struct database *db);
 void session_alert_watch(struct session *s, int what);
-char *session_setting_oneval(struct session *s, struct database *db, const char *name);
+char *session_setting_oneval(struct session *s, struct database *db, int offset);
 
 IOCHAN channel_list = 0;  // Master list of connections we're handling events to
 
@@ -87,7 +87,6 @@ struct parameters global_parameters =
     60,
     100,
     MAX_CHUNK,
-    0,
     0,
     0
 };
@@ -231,9 +230,9 @@ static void send_search(IOCHAN i)
     for (ndb = 0; db->databases[ndb]; ndb++)
 	databaselist[ndb] = db->databases[ndb];
 
-    if (!(piggyback = session_setting_oneval(se, db, "pz:piggyback")) || *piggyback == '1')
+    if (!(piggyback = session_setting_oneval(se, db, PZ_PIGGYBACK)) || *piggyback == '1')
     {
-        if ((recsyn = session_setting_oneval(se, db, "pz:syntax")))
+        if ((recsyn = session_setting_oneval(se, db, PZ_NATIVESYNTAX)))
             a->u.searchRequest->preferredRecordSyntax =
                     yaz_str_to_z3950oid(global_parameters.odr_out,
                     CLASS_RECSYN, recsyn);
@@ -281,7 +280,7 @@ static void send_present(IOCHAN i)
 
     a->u.presentRequest->resultSetId = "Default";
 
-    if ((recsyn = session_setting_oneval(se, db, "pz:syntax")))
+    if ((recsyn = session_setting_oneval(se, db, PZ_NATIVESYNTAX)))
         a->u.presentRequest->preferredRecordSyntax =
                 yaz_str_to_z3950oid(global_parameters.odr_out,
                 CLASS_RECSYN, recsyn);
@@ -431,13 +430,13 @@ static void add_facet(struct session *s, const char *type, const char *value)
 
 static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
 {
-    struct conf_retrievalprofile *rprofile = cl->database->rprofile;
-    struct conf_retrievalmap *m;
+    struct database_retrievalmap *m;
+    struct database *db = cl->database;
     xmlNode *res;
     xmlDoc *rdoc;
 
     // First normalize to XML
-    if (rprofile->native_syntax == Nativesyn_iso2709)
+    if (db->yaz_marc)
     {
         char *buf;
         int len;
@@ -449,13 +448,13 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
         }
         buf = (char*) rec->u.octet_aligned->buf;
         len = rec->u.octet_aligned->len;
-        if (yaz_marc_read_iso2709(rprofile->yaz_marc, buf, len) < 0)
+        if (yaz_marc_read_iso2709(db->yaz_marc, buf, len) < 0)
         {
             yaz_log(YLOG_WARN, "Failed to decode MARC %s",
                     cl->database->url);
             return 0;
         }
-        if (yaz_marc_write_xml(rprofile->yaz_marc, &res,
+        if (yaz_marc_write_xml(db->yaz_marc, &res,
                     "http://www.loc.gov/MARC21/slim", 0, 0) < 0)
         {
             yaz_log(YLOG_WARN, "Failed to encode as XML %s",
@@ -481,14 +480,9 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
 #endif
     }
 
-    for (m = rprofile->maplist; m; m = m->next)
+    for (m = db->map; m; m = m->next)
     {
         xmlDoc *new;
-        if (m->type != Map_xslt)
-        {
-            yaz_log(YLOG_WARN, "Unknown map type");
-            return 0;
-        }
         if (!(new = xsltApplyStylesheet(m->stylesheet, rdoc, 0)))
         {
             yaz_log(YLOG_WARN, "XSLT transformation failed");
@@ -764,12 +758,8 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
 
 // Retrieve first defined value for 'name' for given database.
 // Will be extended to take into account user associated with session
-char *session_setting_oneval(struct session *s, struct database *db, const char *name)
+char *session_setting_oneval(struct session *s, struct database *db, int offset)
 {
-    int offset = settings_offset(name);
-
-    if (offset < 0)
-        return 0;
     if (!db->settings[offset])
         return 0;
     return db->settings[offset]->value;
@@ -1599,36 +1589,6 @@ static void start_http_listener(void)
     http_init(hp);
 }
 
-// Initialize CCL map for a target
-// Note: This approach ignores user-specific CCL maps, for which I
-// don't presently see any application.
-static void prepare_cclmap(void *context, struct database *db)
-{
-    struct setting *s;
-
-    if (!db->settings)
-        return;
-    db->ccl_map = ccl_qual_mk();
-    for (s = db->settings[PZ_CCLMAP]; s; s = s->next)
-        if (!*s->user)
-        {
-            char *p = strchr(s->name + 3, ':');
-            if (!p)
-            {
-                yaz_log(YLOG_FATAL, "Malformed cclmap name: %s", s->name);
-                exit(1);
-            }
-            p++;
-            ccl_qual_fitem(db->ccl_map, s->value, p);
-        }
-}
-
-// Read settings for each database, and prepare a CCL map for that database
-static void prepare_cclmaps(void)
-{
-    grep_databases(0, 0, prepare_cclmap);
-}
-
 static void start_proxy(void)
 {
     char hp[128] = "";
@@ -1751,10 +1711,8 @@ int main(int argc, char **argv)
     else if (global_parameters.server->settings)
         settings_read(global_parameters.server->settings);
     else
-        yaz_log(YLOG_WARN, "No settings-directory specified. Problems may ensue!");
-    prepare_cclmaps();
-    global_parameters.yaz_marc = yaz_marc_create();
-    yaz_marc_subfield_str(global_parameters.yaz_marc, "\t");
+        yaz_log(YLOG_WARN, "No settings-directory specified. Problems may well ensue!");
+    prepare_databases();
     global_parameters.odr_in = odr_createmem(ODR_DECODE);
     global_parameters.odr_out = odr_createmem(ODR_ENCODE);
 
