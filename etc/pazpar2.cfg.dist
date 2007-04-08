@@ -22,10 +22,4 @@
 
 <targetprofiles type="local" src="../zeerex/records/"/>
 
-<retrievalprofile>
-  <requestsyntax>marc21</requestsyntax>
-  <nativesyntax name="iso2709" format="marc21" encoding="marc8s" mapto="marcxml"/>
-  <map type="xslt" stylesheet="marc21.xsl"/>
-</retrievalprofile>
-
 </pazpar2>
