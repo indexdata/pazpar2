@@ -3,7 +3,12 @@
  * See the file LICENSE for details.
  * Sebastian Hammer, Adam Dickmeiss
  *
- * $Id: eventl.h,v 1.2 2007-03-28 12:05:18 marc Exp $
+ * $Log: eventl.h,v $
+ * Revision 1.3  2007-04-08 23:04:20  adam
+ * Moved HTTP channel address from struct iochan to struct http_channel.
+ * This fixes compilation on FreeBSD and reverts eventl.{c,h} to original
+ * paraz state. This change, simple as it is, is untested.
+ *
  * Revision 1.1  2006/12/20 20:47:16  quinn
  * Reorganized source tree
  *
@@ -61,14 +66,6 @@
 
 #include <time.h>
 
-#ifdef WIN32
-#include <winsock.h>
-#else
-#include <unistd.h>
-#include <arpa/inet.h>
-#endif
-
-
 struct iochan;
 
 typedef void (*IOC_CALLBACK)(struct iochan *i, int event);
@@ -76,8 +73,6 @@ typedef void (*IOC_CALLBACK)(struct iochan *i, int event);
 typedef struct iochan
 {
     int fd;
-    struct sockaddr_in addr_in;
-    char addr_str[64];
     int flags;
 #define EVENT_INPUT     0x01
 #define EVENT_OUTPUT    0x02
@@ -111,8 +106,7 @@ typedef struct iochan
 #define iochan_settimeout(i, t) ((i)->max_idle = (t), (i)->last_event = time(0))
 #define iochan_activity(i) ((i)->last_event = time(0))
 
-IOCHAN iochan_create(int fd, struct sockaddr_in * addr_in, 
-                     IOC_CALLBACK cb, int flags);
+IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags);
 int event_loop(IOCHAN *iochans);
 
 #endif

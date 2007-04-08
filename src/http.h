@@ -28,6 +28,7 @@ struct http_channel
     struct http_request *request;
     struct http_response *response;
     struct http_channel *next; // for freelist
+    char *addr; /* forwarded address */
 };
 
 struct http_proxy //  attached to iochan for proxy connection

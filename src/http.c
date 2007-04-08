@@ -1,5 +1,5 @@
 /*
- * $Id: http.c,v 1.21 2007-04-02 09:43:08 marc Exp $
+ * $Id: http.c,v 1.22 2007-04-08 23:04:20 adam Exp $
  */
 
 #include <stdio.h>
@@ -21,6 +21,7 @@
 #endif
 
 #include <netinet/in.h>
+#include <arpa/inet.h>
 #include <netdb.h>
 
 #include <yaz/yaz-util.h>
@@ -35,7 +36,7 @@
 #include "http_command.h"
 
 static void proxy_io(IOCHAN i, int event);
-static struct http_channel *http_create(void);
+static struct http_channel *http_create(const char *addr);
 static void http_destroy(IOCHAN i);
 
 extern IOCHAN channel_list;
@@ -592,7 +593,7 @@ static int http_proxy(struct http_request *rq)
         p->first_response = 1;
         c->proxy = p;
         // We will add EVENT_OUTPUT below
-        p->iochan = iochan_create(sock, 0, proxy_io, EVENT_INPUT);
+        p->iochan = iochan_create(sock, proxy_io, EVENT_INPUT);
         iochan_setdata(p->iochan, p);
         p->iochan->next = channel_list;
         channel_list = p->iochan;
@@ -621,9 +622,9 @@ static int http_proxy(struct http_request *rq)
         sprintf(server_via,  "1.1 %s:%s (%s/%s)",  
                 ser->host, server_port, PACKAGE_NAME, PACKAGE_VERSION);
         hp = http_header_append(c, hp, "Via" , server_via);
-        hp = http_header_append(c, hp,"X-Forwarded-For", c->iochan->addr_str);
-      }
-
+        hp = http_header_append(c, hp, "X-Forwarded-For", c->addr);
+    }
+    
     requestbuf = http_serialize_request(rq);
     http_buf_enqueue(&p->oqueue, requestbuf);
     iochan_setflag(p->iochan, EVENT_OUTPUT);
@@ -902,7 +903,7 @@ static void http_destroy(IOCHAN i)
     iochan_destroy(i);
 }
 
-static struct http_channel *http_create(void)
+static struct http_channel *http_create(const char *addr)
 {
     struct http_channel *r = http_channel_freelist;
 
@@ -924,6 +925,12 @@ static struct http_channel *http_create(void)
     r->state = Http_Idle;
     r->request = 0;
     r->response = 0;
+    if (!addr)
+    {
+        yaz_log(YLOG_WARN, "Invalid HTTP forward address");
+        exit(1);
+    }
+    r->addr = nmem_strdup(r->nmem, addr);
     return r;
 }
 
@@ -951,9 +958,9 @@ static void http_accept(IOCHAN i, int event)
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl2");
 
     yaz_log(YLOG_DEBUG, "New command connection");
-    c = iochan_create(s, &addr, http_io, EVENT_INPUT | EVENT_EXCEPT);
-
-    ch = http_create();
+    c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT);
+    
+    ch = http_create(inet_ntoa(addr.sin_addr));
     ch->iochan = c;
     iochan_setdata(c, ch);
 
@@ -1035,7 +1042,7 @@ void http_init(const char *addr)
     if (listen(l, SOMAXCONN) < 0) 
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "listen");
 
-    c = iochan_create(l, &myaddr, http_accept, EVENT_INPUT | EVENT_EXCEPT);
+    c = iochan_create(l, http_accept, EVENT_INPUT | EVENT_EXCEPT);
     c->next = channel_list;
     channel_list = c;
 }

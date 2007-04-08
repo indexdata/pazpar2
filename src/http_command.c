@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.29 2007-03-28 12:05:18 marc Exp $
+ * $Id: http_command.c,v 1.30 2007-04-08 23:04:20 adam Exp $
  */
 
 #include <stdio.h>
@@ -53,7 +53,7 @@ struct http_session *http_session_create()
     r->timestamp = 0;
     r->next = session_list;
     session_list = r;
-    r->timeout_iochan = iochan_create(-1, 0, session_timeout, 0);
+    r->timeout_iochan = iochan_create(-1, session_timeout, 0);
     iochan_setdata(r->timeout_iochan, r);
     iochan_settimeout(r->timeout_iochan, global_parameters.session_timeout);
     r->timeout_iochan->next = channel_list;
