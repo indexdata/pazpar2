@@ -9,7 +9,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: book.xml,v 1.6 2007-01-19 21:50:02 adam Exp $ -->
+<!-- $Id: book.xml,v 1.7 2007-04-09 23:58:04 quinn Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -134,7 +134,7 @@
 
   <chapter id="license">
    <title>Pazpar2 License</title>
-   <para>To be decided and written.</para>
+   <para>Insert GPL</para>
   </chapter>
   
   <chapter id="installation">
