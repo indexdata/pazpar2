@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.14 2007-04-08 22:15:23 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.15 2007-04-09 05:01:32 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -479,7 +479,19 @@
 	  <term>pz:authentication</term>
 	  <listitem>
 	    <para>
-	      Sets an authentication string for a given server.
+	      Sets an authentication string for a given server. See the section on
+	      authorization and authentication for discussion.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>pz:allow</term>
+	  <listitem>
+	    <para>
+	      Allows or denies access to the resources it is applied to. Possible
+	      values are '0' and '1'. The default is '1' (allow access to this resource).
+	      See the manual section on authorization and authentication for discussion
+	      about how to use this setting.
 	    </para>
 	  </listitem>
 	</varlistentry>
