@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.15 2007-04-09 05:01:32 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.16 2007-04-09 05:11:49 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -417,11 +417,12 @@
 	  </listitem>
 	</varlistentry>
 	<varlistentry>
-	  <term>pz:syntax</term>
+	  <term>pz:requestsyntax</term>
 	  <listitem>
 	    <para>
 	      This specifies the record syntax to use when requesting
-	      records from a given server.
+	      records from a given server. The value can be a symbolic name like
+	      marc21 or xml, or it can be a Z39.50-style dot-separated OID.
 	    </para>
 	  </listitem>
 	</varlistentry>
