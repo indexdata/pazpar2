@@ -1,3 +1,5 @@
+# $Id: Makefile.am,v 1.7 2007-04-10 08:48:55 adam Exp $
+
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 

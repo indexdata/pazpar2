@@ -1,5 +1,4 @@
-# ParaZ. Copyright (C) 2006-2007, Index Data.
-# $Id: Makefile.am,v 1.4 2007-03-27 15:31:34 quinn Exp $
+# $Id: Makefile.am,v 1.5 2007-04-10 08:48:56 adam Exp $
 
 bin_PROGRAMS = pazpar2
 
