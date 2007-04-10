@@ -9,12 +9,15 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: book.xml,v 1.9 2007-04-10 08:59:35 adam Exp $ -->
+<!-- $Id: book.xml,v 1.10 2007-04-10 15:12:51 quinn Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
   <author>
    <firstname>Sebastian</firstname><surname>Hammer</surname>
+  </author>
+  <author>
+   <firstname>Adam</firstname><surname>Dickmeiss</surname>
   </author>
   <releaseinfo>&version;</releaseinfo>
   <copyright>
@@ -357,6 +360,36 @@
 	search has been started, you can follow its progress using the
 	'stat', 'bytarget', 'termlist', or 'show' commands. Detailed records
 	can be fetched using the 'record' command.
+      </para>
+    </section>
+
+    <section id="nonstandard">
+      <title>Connecting to non-standard resources</title>
+      <para>
+        Pazpar2 uses Z39.50 as its switchboard language -- i.e. as far as it
+	is concerned, all resources speak Z39.50. It is, however, equipped
+	to handle a broad range of different server behavior, through
+	configurable query mapping and record normalization. If you develop
+	configuration, stylesheets, etc., for a new type of resources, we
+	encourage you to share your work.
+      </para>
+
+      <para>
+        For a growing number of resources, Z39.50 is all you need. Over the
+	last few years, a number of commercial, full-text resources have
+	implemented Z39.50. These can be used through pazpar2 with little or
+	no effort. Resources that use non-standard record formats will
+	require a bit of XSLT work, but that's all.
+      </para>
+
+      <para>
+        But what about resources that don't support Z39.50 at all? The NISO
+	SRU protocol is slowly gathering steam. Other resources might
+	support OpenSearch, private, XML/HTTP-based protocols, or something
+	else entirely. Some databases exist only as web user interfaces and
+	  will require screen-scraping. Still others exist only as static
+	  files, or perhaps as databases supporting the OAI-PMH protocol.
+	  There is hope! Read on.
       </para>
     </section>
   </chapter> <!-- Using pazpar2 -->
