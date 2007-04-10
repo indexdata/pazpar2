@@ -1,5 +1,5 @@
-<!-- $Id: entities.ent,v 1.1 2007-01-10 09:44:20 adam Exp $ -->
+<!-- $Id: entities.ent,v 1.2 2007-04-10 08:59:35 adam Exp $ -->
 <!-- Manually edited stuff used for all package documentation -->
-<!ENTITY copyright-year "2007">
+<!ENTITY copyright-year "2006-2007">
 <!ENTITY manref SYSTEM "manref.xml">
 
