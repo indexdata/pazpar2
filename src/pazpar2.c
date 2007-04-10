@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.68 2007-04-10 00:53:24 quinn Exp $ */
+/* $Id: pazpar2.c,v 1.69 2007-04-10 01:19:56 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -247,7 +247,7 @@ static void send_search(IOCHAN i)
 
     if (!(piggyback = session_setting_oneval(se, db, PZ_PIGGYBACK)) || *piggyback == '1')
     {
-        if ((recsyn = session_setting_oneval(se, db, PZ_NATIVESYNTAX)))
+        if ((recsyn = session_setting_oneval(se, db, PZ_REQUESTSYNTAX)))
             a->u.searchRequest->preferredRecordSyntax =
                     yaz_str_to_z3950oid(global_parameters.odr_out,
                     CLASS_RECSYN, recsyn);
@@ -295,7 +295,7 @@ static void send_present(IOCHAN i)
 
     a->u.presentRequest->resultSetId = "Default";
 
-    if ((recsyn = session_setting_oneval(se, db, PZ_NATIVESYNTAX)))
+    if ((recsyn = session_setting_oneval(se, db, PZ_REQUESTSYNTAX)))
         a->u.presentRequest->preferredRecordSyntax =
                 yaz_str_to_z3950oid(global_parameters.odr_out,
                 CLASS_RECSYN, recsyn);
