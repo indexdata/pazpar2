@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.67 2007-04-08 23:04:20 adam Exp $ */
+/* $Id: pazpar2.c,v 1.68 2007-04-10 00:53:24 quinn Exp $ */
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -1207,7 +1207,6 @@ static void select_targets_callback(void *context, struct database *db)
     se->clients = cl;
 }
 
-// This should be extended with parameters to control selection criteria
 // Associates a set of clients with a session;
 int select_targets(struct session *se, struct database_criterion *crit)
 {
@@ -1284,7 +1283,6 @@ char *search(struct session *se, char *query, char *filter)
     criteria = parse_filter(se->nmem, filter);
     strcpy(se->query, query);
     se->requestid++;
-    // Release any existing clients
     select_targets(se, criteria);
     for (cl = se->clients; cl; cl = cl->next)
     {
@@ -1316,10 +1314,10 @@ void destroy_session(struct session *s)
     wrbuf_destroy(s->wrbuf);
 }
 
-struct session *new_session() 
+struct session *new_session(NMEM nmem) 
 {
     int i;
-    struct session *session = xmalloc(sizeof(*session));
+    struct session *session = nmem_malloc(nmem, sizeof(*session));
 
     yaz_log(YLOG_DEBUG, "New pazpar2 session");
     
@@ -1331,6 +1329,7 @@ struct session *new_session()
     session->clients = 0;
     session->expected_maxrecs = 0;
     session->query[0] = '\0';
+    session->session_nmem = nmem;
     session->nmem = nmem_create();
     session->wrbuf = wrbuf_alloc();
     for (i = 0; i <= SESSION_WATCH_MAX; i++)

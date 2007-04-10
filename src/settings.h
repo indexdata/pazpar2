@@ -9,6 +9,8 @@
 #define PZ_XSLT           5
 #define PZ_NATIVESYNTAX   6
 #define PZ_AUTHENTICATION 7
+#define PZ_ALLOW          8
+#define PZ_MAXRECS        9
 
 struct setting
 {

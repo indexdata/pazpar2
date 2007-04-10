@@ -1,5 +1,5 @@
 /*
- * $Id: http_command.c,v 1.30 2007-04-08 23:04:20 adam Exp $
+ * $Id: http_command.c,v 1.31 2007-04-10 00:53:24 quinn Exp $
  */
 
 #include <stdio.h>
@@ -32,6 +32,7 @@ struct http_session {
     struct session *psession;
     unsigned int session_id;
     int timestamp;
+    NMEM nmem;
     struct http_session *next;
 };
 
@@ -47,10 +48,13 @@ static void session_timeout(IOCHAN i, int event)
 
 struct http_session *http_session_create()
 {
-    struct http_session *r = xmalloc(sizeof(*r));
-    r->psession = new_session();
+    NMEM nmem = nmem_create();
+    struct http_session *r = nmem_malloc(nmem, sizeof(*r));
+
+    r->psession = new_session(nmem);
     r->session_id = 0;
     r->timestamp = 0;
+    r->nmem = nmem;
     r->next = session_list;
     session_list = r;
     r->timeout_iochan = iochan_create(-1, session_timeout, 0);
@@ -73,7 +77,7 @@ void http_session_destroy(struct http_session *s)
         }
     iochan_destroy(s->timeout_iochan);
     destroy_session(s->psession);
-    xfree(s);
+    nmem_destroy(s->nmem);
 }
 
 static void error(struct http_response *rs, char *code, char *msg, char *txt)

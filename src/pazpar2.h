@@ -149,12 +149,22 @@ struct named_termlist
     struct termlist *termlist;
 };
 
+// Represents a database as viewed from one session, possibly with settings overriden
+// for that session (to support authorization/authentication)
+struct session_database
+{
+    struct database *database;
+    struct setting *settings;
+    struct session_database *next;
+};
+
 // End-user session
 struct session {
     struct client *clients;
     int requestid; 
     char query[1024];
-    NMEM nmem;          // Nmem for each operation (i.e. search)
+    NMEM session_nmem;  // Nmem for session-permanent storage
+    NMEM nmem;          // Nmem for each operation (i.e. search, result set, etc)
     WRBUF wrbuf;        // Wrbuf for scratch(i.e. search)
     int num_termlists;
     struct named_termlist termlists[SESSION_MAX_TERMLISTS];
@@ -215,7 +225,7 @@ struct parameters {
 
 struct hitsbytarget *hitsbytarget(struct session *s, int *count);
 int select_targets(struct session *se, struct database_criterion *crit);
-struct session *new_session();
+struct session *new_session(NMEM nmem);
 void destroy_session(struct session *s);
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
