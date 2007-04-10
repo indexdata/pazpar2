@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_protocol.xml,v 1.4 2007-01-19 19:08:00 quinn Exp $ -->
+<!-- $Id: pazpar2_protocol.xml,v 1.5 2007-04-10 08:53:48 adam Exp $ -->
 <refentry id="pazpar2_protocol">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -395,7 +395,6 @@ search.pz2?session=605047297&command=record&id=3
   </target>
   <!-- ... more target nodes below as necessary -->
 </bytarget>
-    <screen><![CDATA[
 ]]></screen>
 
    The following client states are defined: Client_Connecting,
