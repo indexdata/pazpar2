@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.73 2007-04-11 18:42:25 quinn Exp $
+/* $Id: pazpar2.c,v 1.74 2007-04-11 19:55:57 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1342,7 +1342,6 @@ void session_apply_setting(struct session *se, char *dbname, char *setting, char
             new->target = dbname;
             new->name = setting;
             new->value = value;
-            new->user = "";
             new->next = sdb->settings[offset];
             sdb->settings[offset] = new;
             break;

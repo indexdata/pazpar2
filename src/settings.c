@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.13 2007-04-11 18:42:25 quinn Exp $
+/* $Id: settings.c,v 1.14 2007-04-11 19:55:57 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -163,7 +163,6 @@ static void read_settings_file(const char *path,
                 struct setting set;
                 char nameb[1024];
                 char targetb[1024];
-                char userb[1024];
                 char valueb[1024];
 
                 // Copy everything into a temporary buffer -- we decide
@@ -174,13 +173,6 @@ static void read_settings_file(const char *path,
                     set.precedence = atoi((char *) precedencea);
                 else
                     set.precedence = 0;
-                set.user = userb;
-                if (user)
-                    strcpy(userb, user);
-                else if (usera)
-                    strcpy(userb, (const char *) usera);
-                else
-                    set.user = "";
                 if (target)
                     strcpy(targetb, target);
                 else
@@ -312,7 +304,6 @@ static void update_database(void *context, struct database *db)
         id->precedence = 0;
         id->name = "pz:id";
         id->target = id->value = db->url;
-        id->user = "";
         id->next = 0;
         db->settings[PZ_ID] = id;
     }
@@ -323,7 +314,7 @@ static void update_database(void *context, struct database *db)
     // with the same name.
     for (s = db->settings[offset], sp = &db->settings[offset]; s;
             sp = &s->next, s = s->next)
-        if (!strcmp(s->user, set->user) && !strcmp(s->name, set->name))
+        if (!strcmp(s->name, set->name))
         {
             if (s->precedence < set->precedence)
                 // We discard the value (nmem keeps track of the space)
@@ -347,7 +338,6 @@ static void update_database(void *context, struct database *db)
         new->target = nmem_strdup(nmem, set->target);
         new->name = nmem_strdup(nmem, set->name);
         new->value = nmem_strdup(nmem, set->value);
-        new->user = nmem_strdup(nmem, set->user);
         new->next = db->settings[offset];
         db->settings[offset] = new;
     }

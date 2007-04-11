@@ -1,4 +1,4 @@
-/* $Id: settings.h,v 1.12 2007-04-11 18:42:25 quinn Exp $
+/* $Id: settings.h,v 1.13 2007-04-11 19:55:57 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -41,7 +41,6 @@ struct setting
     char *target;
     char *name;
     char *value;
-    char *user;
     struct setting *next;
 };
 

@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.14 2007-04-11 18:42:25 quinn Exp $
+/* $Id: database.c,v 1.15 2007-04-11 19:55:57 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -133,6 +133,7 @@ static struct database *load_database(const char *id)
     char hostport[256];
     char *dbname;
 
+    yaz_log(YLOG_LOG, "New database: %s", id);
     if (!nmem)
         nmem = nmem_create();
     if (doc)
@@ -296,17 +297,16 @@ static void prepare_cclmap(void *ignore, struct database *db)
         return;
     db->ccl_map = ccl_qual_mk();
     for (s = db->settings[PZ_CCLMAP]; s; s = s->next)
-        if (!*s->user)
+    {
+        char *p = strchr(s->name + 3, ':');
+        if (!p)
         {
-            char *p = strchr(s->name + 3, ':');
-            if (!p)
-            {
-                yaz_log(YLOG_FATAL, "Malformed cclmap name: %s", s->name);
-                exit(1);
-            }
-            p++;
-            ccl_qual_fitem(db->ccl_map, s->value, p);
+            yaz_log(YLOG_FATAL, "Malformed cclmap name: %s", s->name);
+            exit(1);
         }
+        p++;
+        ccl_qual_fitem(db->ccl_map, s->value, p);
+    }
 }
 
 // Initialize YAZ Map structures for MARC-based targets
@@ -317,7 +317,7 @@ static void prepare_yazmarc(void *ignore, struct database *db)
     if (!db->settings)
         return;
     for (s = db->settings[PZ_NATIVESYNTAX]; s; s = s->next)
-        if (!*s->user && !strcmp(s->value, "iso2709"))
+        if (!strcmp(s->value, "iso2709"))
         {
             char *encoding = "marc-8s";
             yaz_iconv_t cm;
@@ -325,12 +325,11 @@ static void prepare_yazmarc(void *ignore, struct database *db)
             db->yaz_marc = yaz_marc_create();
             yaz_marc_subfield_str(db->yaz_marc, "\t");
             // See if a native encoding is specified
-            for (s = db->settings[PZ_ENCODING]; s; s = s->next)
-                if (!*s->user)
-                {
-                    encoding = s->value;
-                    break;
-                }
+            if ((s = db->settings[PZ_ENCODING]))
+            {
+                encoding = s->value;
+                break;
+            }
             if (!(cm = yaz_iconv_open("utf-8", encoding)))
             {
                 yaz_log(YLOG_FATAL, "Unable to map from %s to UTF-8", encoding);
@@ -349,28 +348,26 @@ static void prepare_map(void *ignore, struct database *db)
     if (!db->settings)
         return;
     for (s = db->settings[PZ_XSLT]; s; s = s->next)
-        if (!*s->user)
-        {
-            char **stylesheets;
-            struct database_retrievalmap **m = &db->map;
-            int num, i;
+    {
+        char **stylesheets;
+        struct database_retrievalmap **m = &db->map;
+        int num, i;
 
-            nmem_strsplit(nmem, ",", s->value, &stylesheets, &num);
-            for (i = 0; i < num; i++)
+        nmem_strsplit(nmem, ",", s->value, &stylesheets, &num);
+        for (i = 0; i < num; i++)
+        {
+            (*m) = nmem_malloc(nmem, sizeof(**m));
+            (*m)->next = 0;
+            if (!((*m)->stylesheet = conf_load_stylesheet(stylesheets[i])))
             {
-                (*m) = nmem_malloc(nmem, sizeof(**m));
-                (*m)->next = 0;
-                if (!((*m)->stylesheet = conf_load_stylesheet(stylesheets[i])))
-                {
-                    yaz_log(YLOG_FATAL, "Unable to load stylesheet: %s",
-                            stylesheets[i]);
-                    exit(1);
-                }
-                m = &(*m)->next;
+                yaz_log(YLOG_FATAL, "Unable to load stylesheet: %s",
+                        stylesheets[i]);
+                exit(1);
             }
-            break;
+            m = &(*m)->next;
         }
-    if (!s)
+    }
+    if (!db->map)
         yaz_log(YLOG_WARN, "No Normalization stylesheet for target %s", db->url);
 }
 
