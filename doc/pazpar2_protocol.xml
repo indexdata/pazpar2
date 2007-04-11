@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_protocol.xml,v 1.6 2007-04-11 04:35:35 quinn Exp $ -->
+<!-- $Id: pazpar2_protocol.xml,v 1.7 2007-04-11 04:51:23 quinn Exp $ -->
 <refentry id="pazpar2_protocol">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -59,7 +59,10 @@
     </init>
 ]]></screen>
    <para>
-     The 
+     The init command may take a number of setting parameters, similar to
+     the 'settings' command described below. These settings are immediately
+     applied to the new session.
+   </para>
   </refsect2>
   
   <refsect2 id="command-ping"><title>ping</title>
@@ -83,6 +86,46 @@
 </ping>
 ]]></screen>
    </para>
+  </refsect2>
+  <refsect2 id="command-settings">
+    <title>settings</title>
+    <para>
+      The settings command applies session-specific settings to one or more
+      databases. A typical function of this is to enable access to
+      restricted resources for registered users, or to set a user- or
+      library-specific username/password to use against a target. Each
+      setting parameter has the form name[target]=value, where name is the
+      name of the setting (e.g. pz:authentication), target is a target ID,
+      or possibly a wildcard, and value is the desired value for the
+      setting.
+    </para>
+
+    <para>
+      Because the settings command manipulates potentially sensitive
+      information, it is possible to configure pazpar2 to only allow access
+      to this command from a trusted site -- usually from server-side
+      scripting, which in turn is responsible for authenticating the user,
+      and possibly determining which resources he has access to, etc.
+    </para>
+
+    <para>
+      Note: As a shortcut, it is also possible to override settings directly in
+      the init command.
+    </para>
+
+    <para>
+      Example:
+      <screen><![CDATA[
+       search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
+      ]]></screen>
+    Response:
+   <screen><![CDATA[
+<settings>
+  <status>OK</status>
+</settings>
+]]></screen>
+    </para>
+
   </refsect2>
   <refsect2 id="command-search"><title>search</title>
    <para>
