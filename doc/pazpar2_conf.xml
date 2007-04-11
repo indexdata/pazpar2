@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.18 2007-04-11 02:23:21 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.19 2007-04-11 02:29:32 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -274,7 +274,7 @@
    </para>
  </refsect1> 
 
- <refsect1><title>TARGET SETTINGS</title>
+ <refsect1 id="target_settings"><title>TARGET SETTINGS</title>
    <para>
      Pazpar2 features a cunning scheme by which you can associate various
      kinds of attributes, or settings with search targets. This is done
@@ -294,6 +294,20 @@
      (can be identified in the pazpar2.cfg file or on the command line), and
      process any settings files found therein.
    </para>
+
+   <para>
+     Clients of the pazpar2 webservice interface can selectively override
+     settings for individual targets within the scope of one session. This
+     can be used in conjunction with an external authentication system to
+     determine which resources are to be accessible to which users. Pazpar2
+     itself has no notion of end-users, and so can be used in conjunction
+     with any type of authentication system. Similarly, the authentication
+     tokens submitted to access-controlled search targets can similarly be
+     overriden, to allow use of pazpar2 in a consortial or multi-library
+     environment, where different end-users may need to be represented to
+     some search targets in different ways. This, again, can be managed
+     using an external database or other lookup mechanism.
+    </para>
 
    <refsect2><title>SETTINGS FILE FORMAT</title>
      <para>
