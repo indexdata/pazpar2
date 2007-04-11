@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.11 2007-04-11 02:14:15 quinn Exp $
+/* $Id: settings.c,v 1.12 2007-04-11 11:22:35 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -215,6 +215,8 @@ static void read_settings_file(const char *path,
     xmlFree(valuea);
     xmlFree(usera);
     xmlFree(targeta);
+
+    xmlFreeDoc(doc);
 }
  
 // Recursively read files in a directory structure, calling 
