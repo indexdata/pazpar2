@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.70 2007-04-10 08:48:56 adam Exp $
+/* $Id: pazpar2.c,v 1.71 2007-04-11 02:14:15 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -68,7 +68,7 @@ static void connection_destroy(struct connection *co);
 static int client_prep_connection(struct client *cl);
 static void ingest_records(struct client *cl, Z_Records *r);
 void session_alert_watch(struct session *s, int what);
-char *session_setting_oneval(struct session *s, struct database *db, int offset);
+char *session_setting_oneval(struct session_database *db, int offset);
 
 IOCHAN channel_list = 0;  // Master list of connections we're handling events to
 
@@ -141,9 +141,8 @@ static int send_apdu(struct client *c, Z_APDU *a)
 // TODO: Extend this to handle other schemes than open (should be simple)
 static void init_authentication(struct client *cl, Z_InitRequest *req)
 {
-    struct database *db = cl->database;
-    struct session *se = cl->session;
-    char *auth = session_setting_oneval(se, db, PZ_AUTHENTICATION);
+    struct session_database *sdb = cl->database;
+    char *auth = session_setting_oneval(sdb, PZ_AUTHENTICATION);
 
     if (auth)
     {
@@ -179,10 +178,10 @@ static void send_init(IOCHAN i)
     /* add virtual host if tunneling through Z39.50 proxy */
     
     if (0 < strlen(global_parameters.zproxy_override) 
-        && 0 < strlen(cl->database->url))
+        && 0 < strlen(cl->database->database->url))
         yaz_oi_set_string_oidval(&a->u.initRequest->otherInfo, 
                                  global_parameters.odr_out, VAL_PROXY,
-                                 1, cl->database->url);
+                                 1, cl->database->database->url);
 
     if (send_apdu(cl, a) >= 0)
     {
@@ -227,7 +226,7 @@ static void send_search(IOCHAN i)
     struct connection *co = iochan_getdata(i);
     struct client *cl = co->client; 
     struct session *se = cl->session;
-    struct database *db = cl->database;
+    struct session_database *sdb = cl->database;
     Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_searchRequest);
     int ndb, cerror, cpos;
     char **databaselist;
@@ -239,7 +238,7 @@ static void send_search(IOCHAN i)
 
     yaz_log(YLOG_DEBUG, "Sending search");
 
-    cn = ccl_find_str(db->ccl_map, se->query, &cerror, &cpos);
+    cn = ccl_find_str(sdb->database->ccl_map, se->query, &cerror, &cpos);
     if (!cn)
         return;
 
@@ -258,15 +257,15 @@ static void send_search(IOCHAN i)
     zquery->u.type_1 = ccl_rpn_query(global_parameters.odr_out, cn);
     ccl_rpn_delete(cn);
 
-    for (ndb = 0; db->databases[ndb]; ndb++)
+    for (ndb = 0; sdb->database->databases[ndb]; ndb++)
 	;
     databaselist = odr_malloc(global_parameters.odr_out, sizeof(char*) * ndb);
-    for (ndb = 0; db->databases[ndb]; ndb++)
-	databaselist[ndb] = db->databases[ndb];
+    for (ndb = 0; sdb->database->databases[ndb]; ndb++)
+	databaselist[ndb] = sdb->database->databases[ndb];
 
-    if (!(piggyback = session_setting_oneval(se, db, PZ_PIGGYBACK)) || *piggyback == '1')
+    if (!(piggyback = session_setting_oneval(sdb, PZ_PIGGYBACK)) || *piggyback == '1')
     {
-        if ((recsyn = session_setting_oneval(se, db, PZ_REQUESTSYNTAX)))
+        if ((recsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX)))
             a->u.searchRequest->preferredRecordSyntax =
                     yaz_str_to_z3950oid(global_parameters.odr_out,
                     CLASS_RECSYN, recsyn);
@@ -294,8 +293,7 @@ static void send_present(IOCHAN i)
 {
     struct connection *co = iochan_getdata(i);
     struct client *cl = co->client; 
-    struct session *se = cl->session;
-    struct database *db = cl->database;
+    struct session_database *sdb = cl->database;
     Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_presentRequest);
     int toget;
     int start = cl->records + 1;
@@ -314,7 +312,7 @@ static void send_present(IOCHAN i)
 
     a->u.presentRequest->resultSetId = "Default";
 
-    if ((recsyn = session_setting_oneval(se, db, PZ_REQUESTSYNTAX)))
+    if ((recsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX)))
         a->u.presentRequest->preferredRecordSyntax =
                 yaz_str_to_z3950oid(global_parameters.odr_out,
                 CLASS_RECSYN, recsyn);
@@ -335,7 +333,7 @@ static void do_initResponse(IOCHAN i, Z_APDU *a)
     struct client *cl = co->client;
     Z_InitResponse *r = a->u.initResponse;
 
-    yaz_log(YLOG_DEBUG, "Init response %s", cl->database->url);
+    yaz_log(YLOG_DEBUG, "Init response %s", cl->database->database->url);
 
     if (*r->result)
     {
@@ -353,7 +351,7 @@ static void do_searchResponse(IOCHAN i, Z_APDU *a)
     Z_SearchResponse *r = a->u.searchResponse;
 
     yaz_log(YLOG_DEBUG, "Search response %s (status=%d)", 
-            cl->database->url, *r->searchStatus);
+            cl->database->database->url, *r->searchStatus);
 
     if (*r->searchStatus)
     {
@@ -362,7 +360,7 @@ static void do_searchResponse(IOCHAN i, Z_APDU *a)
         if (r->presentStatus && !*r->presentStatus && r->records)
         {
             yaz_log(YLOG_DEBUG, "Records in search response %s", 
-                    cl->database->url);
+                    cl->database->database->url);
             ingest_records(cl, r->records);
         }
         cl->state = Client_Idle;
@@ -377,7 +375,7 @@ static void do_searchResponse(IOCHAN i, Z_APDU *a)
             {
                 yaz_log(YLOG_WARN, 
                         "Search response: Non-surrogate diagnostic %s",
-                        cl->database->url);
+                        cl->database->database->url);
                 cl->diagnostic = *recs->u.nonSurrogateDiagnostic->condition;
                 cl->state = Client_Error;
             }
@@ -391,7 +389,7 @@ static void do_closeResponse(IOCHAN i, Z_APDU *a)
     struct client *cl = co->client;
     /* Z_Close *r = a->u.close; */
 
-    yaz_log(YLOG_WARN, "Close response %s", cl->database->url);
+    yaz_log(YLOG_WARN, "Close response %s", cl->database->database->url);
 
     cl->state = Client_Failed;
     connection_destroy(co);
@@ -465,7 +463,7 @@ static void add_facet(struct session *s, const char *type, const char *value)
 static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
 {
     struct database_retrievalmap *m;
-    struct database *db = cl->database;
+    struct database *db = cl->database->database;
     xmlNode *res;
     xmlDoc *rdoc;
 
@@ -477,7 +475,7 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
         if (rec->which != Z_External_octet)
         {
             yaz_log(YLOG_WARN, "Unexpected external branch, probably BER %s",
-                    cl->database->url);
+                    cl->database->database->url);
             return 0;
         }
         buf = (char*) rec->u.octet_aligned->buf;
@@ -485,14 +483,14 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
         if (yaz_marc_read_iso2709(db->yaz_marc, buf, len) < 0)
         {
             yaz_log(YLOG_WARN, "Failed to decode MARC %s",
-                    cl->database->url);
+                    cl->database->database->url);
             return 0;
         }
         if (yaz_marc_write_xml(db->yaz_marc, &res,
                     "http://www.loc.gov/MARC21/slim", 0, 0) < 0)
         {
             yaz_log(YLOG_WARN, "Failed to encode as XML %s",
-                    cl->database->url);
+                    cl->database->database->url);
             return 0;
         }
         rdoc = xmlNewDoc((xmlChar *) "1.0");
@@ -604,7 +602,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
                              &se->total_merged);
     if (global_parameters.dump_records)
         yaz_log(YLOG_LOG, "Cluster id %d from %s (#%d)", cluster->recid,
-                cl->database->url, cl->records);
+                cl->database->database->url, cl->records);
     if (!cluster)
     {
         /* no room for record */
@@ -792,7 +790,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
 
 // Retrieve first defined value for 'name' for given database.
 // Will be extended to take into account user associated with session
-char *session_setting_oneval(struct session *s, struct database *db, int offset)
+char *session_setting_oneval(struct session_database *db, int offset)
 {
     if (!db->settings[offset])
         return 0;
@@ -821,7 +819,7 @@ static void ingest_records(struct client *cl, Z_Records *r)
         {
             yaz_log(YLOG_WARN, 
                     "Unexpected record type, probably diagnostic %s",
-                    cl->database->url);
+                    cl->database->database->url);
             continue;
         }
 
@@ -852,7 +850,7 @@ static void do_presentResponse(IOCHAN i, Z_APDU *a)
         if (recs->which == Z_Records_NSD)
         {
             yaz_log(YLOG_WARN, "Non-surrogate diagnostic %s",
-                    cl->database->url);
+                    cl->database->database->url);
             cl->diagnostic = *recs->u.nonSurrogateDiagnostic->condition;
             cl->state = Client_Error;
         }
@@ -861,14 +859,14 @@ static void do_presentResponse(IOCHAN i, Z_APDU *a)
     if (!*r->presentStatus && cl->state != Client_Error)
     {
         yaz_log(YLOG_DEBUG, "Good Present response %s",
-                cl->database->url);
+                cl->database->database->url);
         ingest_records(cl, r->records);
         cl->state = Client_Idle;
     }
     else if (*r->presentStatus) 
     {
         yaz_log(YLOG_WARN, "Bad Present response %s",
-                cl->database->url);
+                cl->database->database->url);
         cl->state = Client_Error;
     }
 }
@@ -915,13 +913,13 @@ static void handler(IOCHAN i, int event)
 	if (len < 0)
 	{
             yaz_log(YLOG_WARN|YLOG_ERRNO, "Error reading from %s", 
-                    cl->database->url);
+                    cl->database->database->url);
             connection_destroy(co);
 	    return;
 	}
         else if (len == 0)
 	{
-            yaz_log(YLOG_WARN, "EOF reading from %s", cl->database->url);
+            yaz_log(YLOG_WARN, "EOF reading from %s", cl->database->database->url);
             connection_destroy(co);
 	    return;
 	}
@@ -957,7 +955,7 @@ static void handler(IOCHAN i, int event)
                     default:
                         yaz_log(YLOG_WARN, 
                                 "Unexpected Z39.50 response from %s",  
-                                cl->database->url);
+                                cl->database->database->url);
                         client_fatal(cl);
                         return;
                 }
@@ -1050,20 +1048,20 @@ static struct connection *connection_create(struct client *cl)
     
     if (0 == strlen(global_parameters.zproxy_override)){
         /* no Z39.50 proxy needed - direct connect */
-        yaz_log(YLOG_DEBUG, "Connection create %s", cl->database->url);
+        yaz_log(YLOG_DEBUG, "Connection create %s", cl->database->database->url);
         
-        if (!(addr = cs_straddr(link, cl->database->host->ipport)))
+        if (!(addr = cs_straddr(link, cl->database->database->host->ipport)))
             {
                 yaz_log(YLOG_WARN|YLOG_ERRNO, 
                         "Lookup of IP address %s failed", 
-                        cl->database->host->ipport);
+                        cl->database->database->host->ipport);
                 return 0;
             }
     
     } else {
         /* Z39.50 proxy connect */
         yaz_log(YLOG_DEBUG, "Connection create %s proxy %s", 
-                cl->database->url, global_parameters.zproxy_override);
+                cl->database->database->url, global_parameters.zproxy_override);
 
         if (!(addr = cs_straddr(link, global_parameters.zproxy_override)))
             {
@@ -1077,7 +1075,7 @@ static struct connection *connection_create(struct client *cl)
     res = cs_connect(link, addr);
     if (res < 0)
     {
-        yaz_log(YLOG_WARN|YLOG_ERRNO, "cs_connect %s", cl->database->url);
+        yaz_log(YLOG_WARN|YLOG_ERRNO, "cs_connect %s", cl->database->database->url);
         return 0;
     }
 
@@ -1090,7 +1088,7 @@ static struct connection *connection_create(struct client *cl)
         new->ibufsize = 0;
     }
     new->state = Conn_Connecting;
-    new->host = cl->database->host;
+    new->host = cl->database->database->host;
     new->next = new->host->connections;
     new->host->connections = new;
     new->client = cl;
@@ -1107,7 +1105,7 @@ static struct connection *connection_create(struct client *cl)
 // Close connection and set state to error
 static void client_fatal(struct client *cl)
 {
-    yaz_log(YLOG_WARN, "Fatal error from %s", cl->database->url);
+    yaz_log(YLOG_WARN, "Fatal error from %s", cl->database->database->url);
     connection_destroy(cl->connection);
     cl->state = Client_Error;
 }
@@ -1117,11 +1115,11 @@ static int client_prep_connection(struct client *cl)
 {
     struct connection *co;
     struct session *se = cl->session;
-    struct host *host = cl->database->host;
+    struct host *host = cl->database->database->host;
 
     co = cl->connection;
 
-    yaz_log(YLOG_DEBUG, "Client prep %s", cl->database->url);
+    yaz_log(YLOG_DEBUG, "Client prep %s", cl->database->database->url);
 
     if (!co)
     {
@@ -1216,7 +1214,7 @@ void session_alert_watch(struct session *s, int what)
 }
 
 //callback for grep_databases
-static void select_targets_callback(void *context, struct database *db)
+static void select_targets_callback(void *context, struct session_database *db)
 {
     struct session *se = (struct session*) context;
     struct client *cl = client_create();
@@ -1227,12 +1225,13 @@ static void select_targets_callback(void *context, struct database *db)
 }
 
 // Associates a set of clients with a session;
+// Note: Session-databases represent databases with per-session setting overrides
 int select_targets(struct session *se, struct database_criterion *crit)
 {
     while (se->clients)
         client_destroy(se->clients);
 
-    return grep_databases(se, crit, select_targets_callback);
+    return session_grep_databases(se, crit, select_targets_callback);
 }
 
 int session_active_clients(struct session *s)
@@ -1324,6 +1323,57 @@ char *search(struct session *se, char *query, char *filter)
     return 0;
 }
 
+// Apply a session override to a database
+void session_apply_setting(struct session *se, char *dbname, char *setting, char *value)
+{
+    struct session_database *sdb;
+
+    for (sdb = se->databases; sdb; sdb = sdb->next)
+        if (!strcmp(dbname, sdb->database->url))
+        {
+            struct setting *new = nmem_malloc(se->session_nmem, sizeof(*new));
+            int offset = settings_offset(setting);
+
+            if (offset < 0)
+            {
+                yaz_log(YLOG_WARN, "Unknown setting %s", setting);
+                return;
+            }
+            new->precedence = 0;
+            new->target = dbname;
+            new->name = setting;
+            new->value = value;
+            new->user = "";
+            new->next = sdb->settings[offset];
+            sdb->settings[offset] = new;
+            break;
+        }
+    if (!sdb)
+        yaz_log(YLOG_WARN, "Unknown database in setting override: %s", dbname);
+}
+
+void session_init_databases_fun(void *context, struct database *db)
+{
+    struct session *se = (struct session *) context;
+    struct session_database *new = nmem_malloc(se->session_nmem, sizeof(*new));
+    int num = settings_num();
+    int i;
+
+    new->database = db;
+    new->settings = nmem_malloc(se->session_nmem, sizeof(struct settings *) * num);
+    for (i = 0; i < num; i++)
+        new->settings[i] = db->settings[i];
+    new->next = se->databases;
+    se->databases = new;
+}
+
+// Initialize session_database list -- this represents this session's view
+// of the database list -- subject to modification by the settings ws command
+void session_init_databases(struct session *se)
+{
+    grep_databases(se, 0, session_init_databases_fun);
+}
+
 void destroy_session(struct session *s)
 {
     yaz_log(YLOG_LOG, "Destroying session");
@@ -1351,6 +1401,7 @@ struct session *new_session(NMEM nmem)
     session->session_nmem = nmem;
     session->nmem = nmem_create();
     session->wrbuf = wrbuf_alloc();
+    session_init_databases(session);
     for (i = 0; i <= SESSION_WATCH_MAX; i++)
     {
         session->watchlist[i].data = 0;
@@ -1368,8 +1419,8 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count)
     *count = 0;
     for (cl = se->clients; cl; cl = cl->next)
     {
-        res[*count].id = cl->database->url;
-        res[*count].name = cl->database->name;
+        res[*count].id = cl->database->database->url;
+        res[*count].name = cl->database->database->name;
         res[*count].hits = cl->hits;
         res[*count].records = cl->records;
         res[*count].diagnostic = cl->diagnostic;

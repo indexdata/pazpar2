@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.32 2007-04-10 08:48:56 adam Exp $
+/* $Id: http_command.c,v 1.33 2007-04-11 02:14:15 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.32 2007-04-10 08:48:56 adam Exp $
+ * $Id: http_command.c,v 1.33 2007-04-11 02:14:15 quinn Exp $
  */
 
 #include <stdio.h>
@@ -151,12 +151,42 @@ static struct http_session *locate_session(struct http_request *rq, struct http_
     return 0;
 }
 
+// Decode settings parameters and apply to session
+// Syntax: setting[target]=value
+static int process_settings(struct session *se, struct http_request *rq,
+        struct http_response *rs)
+{
+    struct http_argument *a;
+
+    for (a = rq->arguments; a; a = a->next)
+        if (strchr(a->name, '['))
+        {
+            char **res;
+            int num;
+            char *dbname;
+            char *setting;
+
+            // Nmem_strsplit *rules*!!!
+            nmem_strsplit(se->session_nmem, "[]", a->name, &res, &num);
+            if (num != 2)
+            {
+                error(rs, "417", "Malformed setting argument", 0);
+                yaz_log(YLOG_WARN, "Malformed setting: %s", a->name);
+                return -1;
+            }
+            setting = res[0];
+            dbname = res[1];
+            session_apply_setting(se, dbname, setting,
+                    nmem_strdup(se->session_nmem, a->value));
+        }
+    return 0;
+}
+
 static void cmd_exit(struct http_channel *c)
 {
     yaz_log(YLOG_WARN, "exit");
     exit(0);
 }
-
 
 static void cmd_init(struct http_channel *c)
 {
@@ -168,8 +198,25 @@ static void cmd_init(struct http_channel *c)
     yaz_log(YLOG_DEBUG, "HTTP Session init");
     sesid = make_sessionid();
     s->session_id = sesid;
+    if (process_settings(s->psession, c->request, c->response) < 0)
+        return;
     sprintf(buf, "<init><status>OK</status><session>%u</session></init>", sesid);
     rs->payload = nmem_strdup(c->nmem, buf);
+    http_send_response(c);
+}
+
+static void cmd_settings(struct http_channel *c)
+{
+    struct http_response *rs = c->response;
+    struct http_request *rq = c->request;
+    struct http_session *s = locate_session(rq, rs);
+
+    if (!s)
+        return;
+
+    if (process_settings(s->psession, rq, rs) < 0)
+        return;
+    rs->payload = "<settings><status>OK</status></settings>";
     http_send_response(c);
 }
 
@@ -336,8 +383,8 @@ static void write_metadata(WRBUF w, struct conf_service *service,
 static void write_subrecord(struct record *r, WRBUF w, struct conf_service *service)
 {
     wrbuf_printf(w, "<location id=\"%s\" name=\"%s\">\n",
-            r->client->database->url,
-            r->client->database->name ? r->client->database->name : "");
+            r->client->database->database->url,
+            r->client->database->database->name ? r->client->database->database->name : "");
     write_metadata(w, service, r->metadata, 1);
     wrbuf_puts(w, "</location>\n");
 }
@@ -573,6 +620,7 @@ struct {
     void (*fun)(struct http_channel *c);
 } commands[] = {
     { "init", cmd_init },
+    { "settings", cmd_settings },
     { "stat", cmd_stat },
     { "bytarget", cmd_bytarget },
     { "show", cmd_show },

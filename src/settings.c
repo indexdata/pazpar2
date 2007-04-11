@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.10 2007-04-10 08:48:56 adam Exp $
+/* $Id: settings.c,v 1.11 2007-04-11 02:14:15 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -55,6 +55,7 @@ static char *hard_settings[] = {
     "pz:authentication",
     "pz:allow",
     "pz:maxrecs",
+    "pz:id",
     0
 };
 
@@ -66,6 +67,12 @@ struct setting_dictionary
 };
 
 static struct setting_dictionary *dictionary = 0;
+
+// Returns size of settings directory
+int settings_num(void)
+{
+    return dictionary->num;
+}
 
 int settings_offset(const char *name)
 {
@@ -280,10 +287,24 @@ static void update_database(void *context, struct database *db)
     struct setting *s, **sp;
     int offset;
 
+    // Is this the right database?
+    if (!match_zurl(db->url, set->target))
+        return;
+
+    // Initialize settings array if it doesn't exist.
+    // If so, also set the 'id' automatic setting
     if (!db->settings)
     {
+        struct setting *id = nmem_malloc(nmem, sizeof(struct setting));
+
         db->settings = nmem_malloc(nmem, sizeof(struct settings*) * dictionary->num);
         memset(db->settings, 0, sizeof(struct settings*) * dictionary->num);
+        id->precedence = 0;
+        id->name = "pz:id";
+        id->target = id->value = db->url;
+        id->user = "";
+        id->next = 0;
+        db->settings[PZ_ID] = id;
     }
     if ((offset = settings_offset_cprefix(set->name)) < 0)
         abort(); // Should never get here
@@ -326,16 +347,7 @@ static void update_database(void *context, struct database *db)
 // This is used in pass 2 to assign name/value pairs to databases
 static void update_databases(struct setting *set)
 {
-    struct database_criterion crit;
-    struct database_criterion_value val;
-
-    // Update all databases which match pattern in set->target
-    crit.name = "id";
-    crit.values = &val;
-    crit.next = 0;
-    val.value = set->target;
-    val.next = 0;
-    grep_databases(set, &crit, update_database);
+    grep_databases(set, 0, update_database);
 }
 
 // This simply copies the 'hard' (application-specific) settings

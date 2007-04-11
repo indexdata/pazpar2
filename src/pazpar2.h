@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.21 2007-04-10 08:48:56 adam Exp $
+/* $Id: pazpar2.h,v 1.22 2007-04-11 02:14:15 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -98,7 +98,8 @@ struct database {
     struct database_retrievalmap *map;
 };
 
-// Normalization filter chain. Turns incoming record into internal representation
+// Normalization filter. Turns incoming record into internal representation
+// Simple sequence of stylesheets run in series.
 struct database_retrievalmap {
     xsltStylesheet *stylesheet;
     struct database_retrievalmap *next;
@@ -133,7 +134,7 @@ struct connection {
 
 // Represents client state for a connection to one search target
 struct client {
-    struct database *database;
+    struct session_database *database;
     struct connection *connection;
     struct session *session;
     int hits;
@@ -175,13 +176,14 @@ struct named_termlist
 struct session_database
 {
     struct database *database;
-    struct setting *settings;
+    struct setting **settings;
     struct session_database *next;
 };
 
 // End-user session
 struct session {
-    struct client *clients;
+    struct session_database *databases;  // All databases, settings overriden
+    struct client *clients;              // Clients connected for current search
     int requestid; 
     char query[1024];
     NMEM session_nmem;  // Nmem for session-permanent storage
@@ -257,6 +259,7 @@ struct record_cluster *show_single(struct session *s, int id);
 struct termlist_score **termlist(struct session *s, const char *name, int *num);
 void session_set_watch(struct session *s, int what, session_watchfun fun, void *data);
 int session_active_clients(struct session *s);
+void session_apply_setting(struct session *se, char *dbname, char *setting, char *value);
 
 #endif
 

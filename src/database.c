@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.8 2007-04-10 08:48:56 adam Exp $
+/* $Id: database.c,v 1.9 2007-04-11 02:14:15 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -184,7 +184,9 @@ struct database *find_database(const char *id, int new)
     return load_database(id);
 }
 
-static int match_zurl(const char *zurl, const char *pattern)
+// This whole session_grep database thing should be moved to pazpar2.c
+
+int match_zurl(const char *zurl, const char *pattern)
 {
     if (!strcmp(pattern, "*"))
         return 1;
@@ -205,24 +207,42 @@ static int match_zurl(const char *zurl, const char *pattern)
 }
 
 // This will be generalized at some point
-static int match_criterion(struct database *db, struct database_criterion *c)
+static int match_criterion(struct setting **settings, struct database_criterion *c)
 {
-    if (!strcmp(c->name, "id"))
+    int offset = settings_offset(c->name);
+    struct database_criterion_value *v;
+
+    if (offset < 0)
     {
-        struct database_criterion_value *v;
-        for (v = c->values; v; v = v->next)
-            if (match_zurl(db->url, v->value))
-                return 1;
+        yaz_log(YLOG_WARN, "Criterion not found: %s", c->name);
         return 0;
     }
-    else
+    if (!settings[offset])
         return 0;
+    for (v = c->values; v; v = v->next)
+    {
+        if (offset == PZ_ID)
+        {
+            if (match_zurl(settings[offset]->value, v->value))
+                return 1;
+            else
+                return 0;
+        }
+        else 
+        {
+            if (!strcmp(settings[offset]->value, v->value))
+                return 1;
+            else
+                return 0;
+        }
+    }
+    return 0;
 }
 
-int database_match_criteria(struct database *db, struct database_criterion *cl)
+int database_match_criteria(struct setting **settings, struct database_criterion *cl)
 {
     for (; cl; cl = cl->next)
-        if (!match_criterion(db, cl))
+        if (!match_criterion(settings, cl))
             break;
     if (cl) // one of the criteria failed to match -- skip this db
         return 0;
@@ -232,20 +252,33 @@ int database_match_criteria(struct database *db, struct database_criterion *cl)
 
 // Cycles through databases, calling a handler function on the ones for
 // which all criteria matched.
+int session_grep_databases(struct session *se, struct database_criterion *cl,
+        void (*fun)(void *context, struct session_database *db))
+{
+    struct session_database *p;
+    int i = 0;
+
+    for (p = se->databases; p; p = p->next)
+        if (database_match_criteria(p->settings, cl))
+        {
+            (*fun)(se, p);
+            i++;
+        }
+    return i;
+}
+
 int grep_databases(void *context, struct database_criterion *cl,
         void (*fun)(void *context, struct database *db))
 {
     struct database *p;
-    int i;
+    int i = 0;
 
     for (p = databases; p; p = p->next)
-    {
-        if (database_match_criteria(p, cl))
+        if (database_match_criteria(p->settings, cl))
         {
             (*fun)(context, p);
             i++;
         }
-    }
     return i;
 }
 
