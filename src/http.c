@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.24 2007-04-11 11:08:24 marc Exp $
+/* $Id: http.c,v 1.25 2007-04-11 11:10:05 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -58,7 +58,6 @@ static void http_destroy(IOCHAN i);
 
 extern IOCHAN channel_list;
 extern struct parameters global_parameters;
-//extern NMEM nmem;
 
 // If this is set, we proxy normal HTTP requests
 static struct sockaddr_in *proxy_addr = 0; 
