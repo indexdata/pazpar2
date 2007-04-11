@@ -1,0 +1,7 @@
+<settings name="pz:name">
+  <set target="econtent.indexdata.com:210/oaister" value="OAIster"/>
+  <set target="econtent.indexdata.com:210/oca-all" value="Open"/>
+  <set target="econtent.indexdata.com:210/wikipedia" value="Wikipedia"/>
+  <set target="econtent.indexdata.com:210/dmoz" value="Open"/>
+  <set target="econtent.indexdata.com:210/gutenberg" value="Project"/>
+</settings>
