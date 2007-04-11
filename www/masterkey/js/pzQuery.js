@@ -111,7 +111,7 @@ pzQuery.prototype = {
         for(var i = 0; i < this.filterHash.length; i++)
         {
             if (filter != '') filter = filter + '|';            
-            filter += 'id='+this.filterHash[i].id; 
+            filter += 'pz:id='+this.filterHash[i].id; 
         }
         return filter;
     },
