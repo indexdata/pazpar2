@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.17 2007-04-11 02:18:04 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.18 2007-04-11 02:23:21 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -285,8 +285,8 @@
      search against a given target, or it can associate arbitrary name=value
      pairs with groups of targets -- for instance, if you would like to
      place all commercial full-text bases in one group for selection
-     purposes, or you would like to control what targets are accessible to a
-     given user.
+     purposes, or you would like to control what targets are accessible
+     to users by default.
    </para>
 
    <para>
@@ -330,17 +330,6 @@
 	    </para>
 	 </listitem>
        </varlistentry>
-       <varlistentry>
-         <term>user</term>
-	 <listitem>
-	   <para>
-	     This specifies the user ID to which this setting applies. A
-	     given setting may have values for any number of users, or it
-	     may have a 'default' value which is applied when no user is
-	     specified, or when no user-specific value is available.
-	    </para>
-	  </listitem>
-	</varlistentry>
 	<varlistentry>
 	  <term>name</term>
 	  <listitem>
@@ -379,7 +368,7 @@
       </variablelist>
 
       <para>
-        By setting defaults for user, target, name, or value in the root
+        By setting defaults for target, name, or value in the root
 	settings node, you can use the settings files in many different
 	ways. For instance, you can use a single file to set defaults for
 	many different settings, like search fields, retrieval syntaxes,
