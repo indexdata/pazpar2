@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.10 2007-04-11 04:33:41 quinn Exp $
+/* $Id: database.c,v 1.11 2007-04-11 11:13:46 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -241,6 +241,7 @@ static int match_criterion(struct setting **settings, struct database_criterion 
 
 int database_match_criteria(struct setting **settings, struct database_criterion *cl)
 {
+    assert(settings);
     if (settings[PZ_ALLOW] && *settings[PZ_ALLOW]->value == '0')
         return 0;
     for (; cl; cl = cl->next)
