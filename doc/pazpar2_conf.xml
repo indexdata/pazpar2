@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.19 2007-04-11 02:29:32 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.20 2007-04-11 03:34:11 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -313,7 +313,7 @@
      <para>
        Each file contains a root element named &lt;settings&gt;. It may
        contain one or more &lt;set&gt; elements. The settings and set
-       elements may contain the following attributes. Attributes in set
+       elements may contain the following attributes. Attributes in the set node
        overrides those in the setting root element. Each set node must
        specify (directly, or inherited from the parent node) at least a
        target, name, and value.
@@ -393,6 +393,74 @@
 	within your application.
       </para>
 
+      <para>
+        The following examples illustrate uses of the settings system to
+	associate settings with targets to meet different requirements.
+      </para>
+
+      <para>
+        The example below associates a set of default values that can be
+	used across many targets. Note the wildcard for targets.
+	This associates the given settings with all targets for which no
+	other information is provided.
+        <screen><![CDATA[
+<settings target="*">
+
+  <!-- This file introduces default settings for pazpar2 -->
+  <!-- $Id: pazpar2_conf.xml,v 1.20 2007-04-11 03:34:11 quinn Exp $ -->
+
+  <!-- mapping for unqualified search -->
+  <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
+
+  <!-- field-specific mappings -->
+  <set name="pz:cclmap:ti" value="u=4 s=al"/>
+  <set name="pz:cclmap:su" value="u=21 s=al"/>
+  <set name="pz:cclmap:isbn" value="u=7"/>
+  <set name="pz:cclmap:issn" value="u=8"/>
+  <set name="pz:cclmap:date" value="u=30 r=r"/>
+
+  <!-- Retrieval settings -->
+
+  <set name="pz:requestsyntax" value="marc21"/>
+  <!-- <set name="pz:elements" value="F"/> NOT YET IMPLEMENTED -->
+
+  <!-- Result normalization settings -->
+
+  <set name="pz:nativesyntax" value="iso2709"/>
+  <set name="pz:xslt" value="../etc/marc21.xsl"/>
+
+</settings>
+
+	]]></screen>
+      </para>
+
+      <para>
+        The next example shows certain settings overriden for one target,
+	one which returns XML records containing DublinCore elements, and
+	which furthermore requires a username/password.
+	<screen><![CDATA[
+<settings target="funkytarget.com:210/db1">
+  <set name="pz:requestsyntax" value="xml"/>
+  <set name="pz:nativesyntax" value="xml"/>
+  <set name="pz:xslt" value="../etc/dublincore.xsl"/>
+
+  <set name="pz:authentication" value="myuser/password"/>
+</settings>
+	]]></screen>
+      </para>
+
+      <para>
+        The following example associates a specific name/value combination
+	with a number of targets. The targets below are access-restricted,
+	and can only be used by users with special credentials.
+        <screen><![CDATA[
+<settings name="pz:allow" value="0">
+  <set target="funkytarget.com:210/*"/>
+  <set target="commercial.com:2100/expensiveDb"/>
+</settings>
+	]]></screen>
+      </para>
+
     </refsect2>
 
     <refsect2><title>RESERVED SETTING NAMES</title>
@@ -455,7 +523,7 @@
 	  <term>pz:nativesyntax</term>
 	  <listitem>
 	    <para>
-	      The representation of the retrieval records. Currently
+	      The representation (syntax) of the retrieval records. Currently
 	      recognized values are iso2709 and xml.
 	    </para>
 	  </listitem>
@@ -464,7 +532,7 @@
 	  <term>pz:encoding</term>
 	  <listitem>
 	    <para>
-	      The native encoding of retrieval records. Can be anything
+	      The native encoding (character set) of retrieval records. Can be anything
 	      recognized by conv, but typical values are marc8 and latin1.
 	      The default is UTF-8.
 	    </para>
@@ -496,6 +564,15 @@
 	      values are '0' and '1'. The default is '1' (allow access to this resource).
 	      See the manual section on authorization and authentication for discussion
 	      about how to use this setting.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>pz:maxrecs</term>
+	  <listitem>
+	    <para>
+	      Controls the maximum number of records to be retrieved from a
+	      server. The default is 100.
 	    </para>
 	  </listitem>
 	</varlistentry>
