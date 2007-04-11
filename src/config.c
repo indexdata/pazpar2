@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.23 2007-04-10 08:48:56 adam Exp $
+/* $Id: config.c,v 1.24 2007-04-11 11:01:45 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.23 2007-04-10 08:48:56 adam Exp $ */
+/* $Id: config.c,v 1.24 2007-04-11 11:01:45 marc Exp $ */
 
 #include <string.h>
 
@@ -191,6 +191,7 @@ static struct conf_service *parse_service(xmlNode *node)
             xmlFree(brief);
             xmlFree(sortkey);
             xmlFree(merge);
+            xmlFree(type);
             xmlFree(termlist);
             xmlFree(rank);
             md_node++;
