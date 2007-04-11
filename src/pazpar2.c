@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.72 2007-04-11 13:27:06 quinn Exp $
+/* $Id: pazpar2.c,v 1.73 2007-04-11 18:42:25 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -68,7 +68,6 @@ static void connection_destroy(struct connection *co);
 static int client_prep_connection(struct client *cl);
 static void ingest_records(struct client *cl, Z_Records *r);
 void session_alert_watch(struct session *s, int what);
-char *session_setting_oneval(struct session_database *db, int offset);
 
 IOCHAN channel_list = 0;  // Master list of connections we're handling events to
 
@@ -793,7 +792,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
 char *session_setting_oneval(struct session_database *db, int offset)
 {
     if (!db->settings[offset])
-        return 0;
+        return "";
     return db->settings[offset]->value;
 }
 
@@ -1420,8 +1419,10 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count)
     *count = 0;
     for (cl = se->clients; cl; cl = cl->next)
     {
+        char *name = session_setting_oneval(cl->database, PZ_NAME);
+
         res[*count].id = cl->database->database->url;
-        res[*count].name = cl->database->database->name;
+        res[*count].name = *name ? name : "Unknown";
         res[*count].hits = cl->hits;
         res[*count].records = cl->records;
         res[*count].diagnostic = cl->diagnostic;

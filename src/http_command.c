@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.33 2007-04-11 02:14:15 quinn Exp $
+/* $Id: http_command.c,v 1.34 2007-04-11 18:42:25 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.33 2007-04-11 02:14:15 quinn Exp $
+ * $Id: http_command.c,v 1.34 2007-04-11 18:42:25 quinn Exp $
  */
 
 #include <stdio.h>
@@ -44,6 +44,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "pazpar2.h"
 #include "http.h"
 #include "http_command.h"
+#include "settings.h"
 
 extern struct parameters global_parameters;
 extern IOCHAN channel_list;
@@ -382,9 +383,11 @@ static void write_metadata(WRBUF w, struct conf_service *service,
 
 static void write_subrecord(struct record *r, WRBUF w, struct conf_service *service)
 {
+    char *name = session_setting_oneval(r->client->database, PZ_NAME);
+
     wrbuf_printf(w, "<location id=\"%s\" name=\"%s\">\n",
             r->client->database->database->url,
-            r->client->database->database->name ? r->client->database->database->name : "");
+            *name ? name : "Unknown");
     write_metadata(w, service, r->metadata, 1);
     wrbuf_puts(w, "</location>\n");
 }

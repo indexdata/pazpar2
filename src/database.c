@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.13 2007-04-11 16:48:09 quinn Exp $
+/* $Id: database.c,v 1.14 2007-04-11 18:42:25 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -154,7 +154,6 @@ static struct database *load_database(const char *id)
     memset(db, 0, sizeof(*db));
     db->host = host;
     db->url = nmem_strdup(nmem, id);
-    db->name = 0;
     db->databases = xmalloc(2 * sizeof(char *));
     db->databases[0] = nmem_strdup(nmem, dbname);
     db->databases[1] = 0;
@@ -413,8 +412,6 @@ void load_simpletargets(const char *fn)
 
         if (!(db = find_database(url, 0)))
             yaz_log(YLOG_WARN, "Unable to load database %s", url);
-        if (name && db)
-            db->name = nmem_strdup(nmem, name);
     }
     fclose(f);
 }

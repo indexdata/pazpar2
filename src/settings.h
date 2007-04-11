@@ -1,4 +1,4 @@
-/* $Id: settings.h,v 1.11 2007-04-11 02:14:15 quinn Exp $
+/* $Id: settings.h,v 1.12 2007-04-11 18:42:25 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -33,6 +33,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #define PZ_ALLOW          8
 #define PZ_MAXRECS        9
 #define PZ_ID            10
+#define PZ_NAME          11
 
 struct setting
 {

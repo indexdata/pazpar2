@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.12 2007-04-11 11:22:35 marc Exp $
+/* $Id: settings.c,v 1.13 2007-04-11 18:42:25 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -56,6 +56,7 @@ static char *hard_settings[] = {
     "pz:allow",
     "pz:maxrecs",
     "pz:id",
+    "pz:name",
     0
 };
 
@@ -252,16 +253,23 @@ static void read_settings(const char *path,
 
 // Callback. Adds a new entry to the dictionary if necessary
 // This is used in pass 1 to determine layout of dictionary
+// and to load any databases mentioned
 static void prepare_dictionary(struct setting *set)
 {
     int i;
     char *p;
 
+    // If target address is not wildcard, add the database
+    if (*set->target && set->target[strlen(set->target) - 1] != '*')
+        find_database(set->target, 0);
+
+    // Determine if we already have a dictionary entry
     if (!strncmp(set->name, "pz:", 3) && (p = strchr(set->name + 3, ':')))
         *(p + 1) = '\0';
     for (i = 0; i < dictionary->num; i++)
         if (!strcmp(dictionary->dict[i], set->name))
             return;
+
     if (!strncmp(set->name, "pz:", 3)) // Probably a typo in config fle
     {
         yaz_log(YLOG_FATAL, "Unknown pz: setting '%s'", set->name);

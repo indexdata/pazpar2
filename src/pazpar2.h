@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.22 2007-04-11 02:14:15 quinn Exp $
+/* $Id: pazpar2.h,v 1.23 2007-04-11 18:42:25 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -87,7 +87,6 @@ struct host {
 struct database {
     struct host *host;
     char *url;
-    char *name;
     char **databases;
     int errors;
     struct zr_explain *explain;
@@ -260,6 +259,7 @@ struct termlist_score **termlist(struct session *s, const char *name, int *num);
 void session_set_watch(struct session *s, int what, session_watchfun fun, void *data);
 int session_active_clients(struct session *s);
 void session_apply_setting(struct session *se, char *dbname, char *setting, char *value);
+char *session_setting_oneval(struct session_database *db, int offset);
 
 #endif
 

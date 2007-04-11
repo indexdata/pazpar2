@@ -1,4 +1,4 @@
-/* $Id: database.h,v 1.5 2007-04-11 02:14:15 quinn Exp $
+/* $Id: database.h,v 1.6 2007-04-11 18:42:25 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -24,6 +24,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 void load_simpletargets(const char *fn);
 void prepare_databases(void);
+struct database *find_database(const char *id, int new);
 int database_match_criteria(struct session_database *db, struct database_criterion *cl);
 int session_grep_databases(struct session *se, struct database_criterion *cl,
         void (*fun)(void *context, struct session_database *db));
