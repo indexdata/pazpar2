@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.71 2007-04-11 02:14:15 quinn Exp $
+/* $Id: pazpar2.c,v 1.72 2007-04-11 13:27:06 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1371,6 +1371,7 @@ void session_init_databases_fun(void *context, struct database *db)
 // of the database list -- subject to modification by the settings ws command
 void session_init_databases(struct session *se)
 {
+    se->databases = 0;
     grep_databases(se, 0, session_init_databases_fun);
 }
 
