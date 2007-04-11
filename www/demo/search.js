@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.52 2007-03-20 21:36:39 quinn Exp $
+/* $Id: search.js,v 1.53 2007-04-11 02:11:29 quinn Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -592,7 +592,7 @@ function refine_query (obj) {
     else if (cur_termlist == 'date')
 	query_cell.value += ' and date="' + term + '"';
     else if (cur_termlist == 'xtargets')
-	filter ='id=' +  id;
+	filter ='pz:id=' +  id;
 
     start_search();
 }
