@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.23 2007-04-10 08:48:56 adam Exp $
+/* $Id: http.c,v 1.24 2007-04-11 11:08:24 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1025,25 +1025,11 @@ void http_init(const char *addr)
     }
     else
     {
-        //size_t len = 128;
-        //char h[len];
         port = atoi(addr);
         myaddr.sin_addr.s_addr = INADDR_ANY;
-
-#if 0
-        // get hostname from system - after deciding to bind to any 
-        // IP address this box might have.
-        if (0 == gethostname(h, len)){
-            h[len - 1] = '\0';
-            global_parameters.server->host = nmem_strdup(nmem, h);
-        } else 
-            yaz_log(YLOG_WARN, "Could not get host name");
-#endif
     }
 
-
     myaddr.sin_port = htons(port);
-
 
     if (!(p = getprotobyname("tcp"))) {
         abort();
