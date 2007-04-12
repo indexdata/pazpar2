@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.15 2007-04-11 19:55:57 quinn Exp $
+/* $Id: database.c,v 1.16 2007-04-12 07:15:48 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -126,7 +126,7 @@ static struct host *find_host(const char *hostport)
 
 static struct database *load_database(const char *id)
 {
-    xmlDoc *doc = get_explain_xml(id);
+    xmlDoc *doc = 0;
     struct zr_explain *explain = 0;
     struct database *db;
     struct host *host;
@@ -136,12 +136,15 @@ static struct database *load_database(const char *id)
     yaz_log(YLOG_LOG, "New database: %s", id);
     if (!nmem)
         nmem = nmem_create();
-    if (doc)
+
+    if (config && config->targetprofiles 
+        && (doc = get_explain_xml(id)))
     {
         explain = zr_read_xml(nmem, xmlDocGetRootElement(doc));
         if (!explain)
             return 0;
     }
+
     if (strlen(id) > 255)
         return 0;
     strcpy(hostport, id);
