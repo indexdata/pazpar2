@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.14 2007-04-11 19:55:57 quinn Exp $
+/* $Id: settings.c,v 1.15 2007-04-12 11:35:08 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,9 +20,10 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 
-// This module implements a generic system of settings (attribute-value) that can 
-// be associated with search targets. The system supports both default values,
-// per-target overrides, and per-user settings.
+// This module implements a generic system of settings
+// (attribute-value) that can be associated with search targets. The
+// system supports both default values, per-target overrides, and
+// per-user settings.
 
 #include <string.h>
 #include <stdio.h>
@@ -57,6 +58,7 @@ static char *hard_settings[] = {
     "pz:maxrecs",
     "pz:id",
     "pz:name",
+    "pz:queryencoding",
     0
 };
 
