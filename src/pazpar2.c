@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.74 2007-04-11 19:55:57 quinn Exp $
+/* $Id: pazpar2.c,v 1.75 2007-04-12 09:59:47 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -485,6 +485,8 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
                     cl->database->database->url);
             return 0;
         }
+
+        yaz_marc_write_using_libxml2(db->yaz_marc, 1);
         if (yaz_marc_write_xml(db->yaz_marc, &res,
                     "http://www.loc.gov/MARC21/slim", 0, 0) < 0)
         {
@@ -494,16 +496,20 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
         }
         rdoc = xmlNewDoc((xmlChar *) "1.0");
         xmlDocSetRootElement(rdoc, res);
+
     }
     else
     {
-        yaz_log(YLOG_FATAL, "Unknown native_syntax in normalize_record");
+        yaz_log(YLOG_FATAL, 
+                "Unknown native_syntax in normalize_record from %s",
+                cl->database->database->url);
         exit(1);
     }
 
-    if (global_parameters.dump_records)
-    {
-        fprintf(stderr, "Input Record (normalized):\n----------------\n");
+    if (global_parameters.dump_records){
+        fprintf(stderr, 
+                "Input Record (normalized) from %s\n----------------\n",
+                cl->database->database->url);
 #if LIBXML_VERSION >= 20600
         xmlDocFormatDump(stderr, rdoc, 1);
 #else
@@ -511,20 +517,50 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
 #endif
     }
 
-    for (m = db->map; m; m = m->next)
-    {
-        xmlDoc *new;
-        if (!(new = xsltApplyStylesheet(m->stylesheet, rdoc, 0)))
+    for (m = db->map; m; m = m->next){
+        xmlDoc *new = 0;
+
+#if 1
         {
-            yaz_log(YLOG_WARN, "XSLT transformation failed");
+            xmlNodePtr root = 0;
+            new = xsltApplyStylesheet(m->stylesheet, rdoc, 0);
+            root= xmlDocGetRootElement(new);
+        if (!new || !root || !(root->children))
+        {
+            yaz_log(YLOG_WARN, "XSLT transformation failed from %s",
+                    cl->database->database->url);
+            xmlFreeDoc(new);
+            xmlFreeDoc(rdoc);
             return 0;
         }
+        }
+#endif
+
+#if 0
+        // do it another way to detect transformation errors right now
+        // but does not seem to work either!
+        {
+            xsltTransformContextPtr ctxt;
+            ctxt = xsltNewTransformContext(m->stylesheet, rdoc);
+            new = xsltApplyStylesheetUser(m->stylesheet, rdoc, 0, 0, 0, ctxt);
+            if ((ctxt->state == XSLT_STATE_ERROR) ||
+                (ctxt->state == XSLT_STATE_STOPPED)){
+                yaz_log(YLOG_WARN, "XSLT transformation failed from %s",
+                        cl->database->database->url);
+                xmlFreeDoc(new);
+                xmlFreeDoc(rdoc);
+                return 0;
+            }
+        }
+#endif      
+   
         xmlFreeDoc(rdoc);
         rdoc = new;
     }
     if (global_parameters.dump_records)
     {
-        fprintf(stderr, "Record:\n----------------\n");
+        fprintf(stderr, "Record from %s\n----------------\n", 
+                cl->database->database->url);
 #if LIBXML_VERSION >= 20600
         xmlDocFormatDump(stderr, rdoc, 1);
 #else
