@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.16 2007-04-12 07:15:48 marc Exp $
+/* $Id: database.c,v 1.17 2007-04-12 10:17:53 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -327,19 +327,20 @@ static void prepare_yazmarc(void *ignore, struct database *db)
 
             db->yaz_marc = yaz_marc_create();
             yaz_marc_subfield_str(db->yaz_marc, "\t");
+
             // See if a native encoding is specified
             if ((s = db->settings[PZ_ENCODING]))
-            {
                 encoding = s->value;
-                break;
-            }
-            if (!(cm = yaz_iconv_open("utf-8", encoding)))
+            
+            cm = yaz_iconv_open("utf-8", encoding);
+            if (!cm)
             {
-                yaz_log(YLOG_FATAL, "Unable to map from %s to UTF-8", encoding);
+                yaz_log(YLOG_FATAL, 
+                        "Unable to map from %s to UTF-8 for target %s", 
+                        encoding, db->url);
                 exit(1);
             }
             yaz_marc_iconv(db->yaz_marc, cm);
-            break;
         }
 }
 
