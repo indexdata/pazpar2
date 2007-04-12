@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.76 2007-04-12 12:05:22 marc Exp $
+/* $Id: pazpar2.c,v 1.77 2007-04-12 13:46:28 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -40,6 +40,9 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>
 #include <yaz/querytowrbuf.h>
+#if YAZ_VERSIONL >= 0x020163
+#include <yaz/oid_db.h>
+#endif
 
 #if HAVE_CONFIG_H
 #include "cconfig.h"
@@ -179,9 +182,19 @@ static void send_init(IOCHAN i)
     
     if (0 < strlen(global_parameters.zproxy_override) 
         && 0 < strlen(cl->database->database->url))
-        yaz_oi_set_string_oidval(&a->u.initRequest->otherInfo, 
+    {
+#if YAZ_VERSIONL >= 0x020163
+        const int *oid_proxy = yaz_string_to_oid(yaz_oid_std(),
+                                                 CLASS_USERINFO, OID_STR_PROXY);
+        yaz_oi_set_string_oid(&a->u.initRequest->otherInfo,
+                              global_parameters.odr_out, oid_proxy,
+                              1, cl->database->database->url);
+#else
+        yaz_oi_set_string_oidval(&a->u.initRequest->otherInfo,
                                  global_parameters.odr_out, VAL_PROXY,
                                  1, cl->database->database->url);
+#endif
+    }
 
     if (send_apdu(cl, a) >= 0)
     {
@@ -266,9 +279,18 @@ static void send_search(IOCHAN i)
     if (!(piggyback = session_setting_oneval(sdb, PZ_PIGGYBACK)) || *piggyback == '1')
     {
         if ((recsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX)))
+        {
+#if YAZ_VERSIONL >= 0x020163
             a->u.searchRequest->preferredRecordSyntax =
-                    yaz_str_to_z3950oid(global_parameters.odr_out,
-                    CLASS_RECSYN, recsyn);
+                yaz_string_to_oid_odr(yaz_oid_std(),
+                                      CLASS_RECSYN, recsyn,
+                                      global_parameters.odr_out);
+#else
+            a->u.searchRequest->preferredRecordSyntax =
+                yaz_str_to_z3950oid(global_parameters.odr_out,
+                                    CLASS_RECSYN, recsyn);
+#endif
+        }
         a->u.searchRequest->smallSetUpperBound = &ssub;
         a->u.searchRequest->largeSetLowerBound = &lslb;
         a->u.searchRequest->mediumSetPresentNumber = &mspn;
@@ -326,9 +348,18 @@ static void send_present(IOCHAN i)
     a->u.presentRequest->resultSetId = "Default";
 
     if ((recsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX)))
+    {
+#if YAZ_VERSIONL >= 0x020163
         a->u.presentRequest->preferredRecordSyntax =
-                yaz_str_to_z3950oid(global_parameters.odr_out,
-                CLASS_RECSYN, recsyn);
+            yaz_string_to_oid_odr(yaz_oid_std(),
+                                  CLASS_RECSYN, recsyn,
+                                  global_parameters.odr_out);
+#else
+        a->u.presentRequest->preferredRecordSyntax =
+            yaz_str_to_z3950oid(global_parameters.odr_out,
+                                CLASS_RECSYN, recsyn);
+#endif
+    }
 
     if (send_apdu(cl, a) >= 0)
     {
