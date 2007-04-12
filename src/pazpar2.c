@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.75 2007-04-12 09:59:47 marc Exp $
+/* $Id: pazpar2.c,v 1.76 2007-04-12 12:05:22 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -39,6 +39,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <yaz/otherinfo.h>
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>
+#include <yaz/querytowrbuf.h>
 
 #if HAVE_CONFIG_H
 #include "cconfig.h"
@@ -235,7 +236,7 @@ static void send_search(IOCHAN i)
     char *recsyn;
     char *piggyback;
 
-    yaz_log(YLOG_DEBUG, "Sending search");
+    yaz_log(YLOG_DEBUG, "Sending search to %s", cl->database->database->url);
 
     cn = ccl_find_str(sdb->database->ccl_map, se->query, &cerror, &cpos);
     if (!cn)
@@ -276,14 +277,27 @@ static void send_search(IOCHAN i)
     a->u.searchRequest->databaseNames = databaselist;
     a->u.searchRequest->num_databaseNames = ndb;
 
-    if (send_apdu(cl, a) >= 0)
-    {
-	iochan_setflags(i, EVENT_INPUT);
-	cl->state = Client_Searching;
-        cl->requestid = se->requestid;
-    }
-    else
-        cl->state = Client_Error;
+    
+    {  //scope for sending and logging queries 
+        WRBUF wbquery = wrbuf_alloc();
+        yaz_query_to_wrbuf(wbquery, zquery);
+
+        if (send_apdu(cl, a) >= 0)
+            {
+                iochan_setflags(i, EVENT_INPUT);
+                cl->state = Client_Searching;
+                cl->requestid = se->requestid;
+                yaz_log(YLOG_LOG, "SearchRequest %s  %s", 
+                         cl->database->database->url, wrbuf_cstr(wbquery));
+            }
+        else {
+            cl->state = Client_Error;
+                yaz_log(YLOG_WARN, "Failed SearchRequest %s  %s", 
+                         cl->database->database->url, wrbuf_cstr(wbquery));
+        }
+        
+        wrbuf_destroy(wbquery);
+    }    
 
     odr_reset(global_parameters.odr_out);
 }
