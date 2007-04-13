@@ -64,7 +64,7 @@ pzQuery.prototype = {
         // TODO escape the characters
         var ccl = '';
         if( this.simpleQuery != '')
-            ccl = '"'+this.simpleQuery+'"';
+            ccl = this.simpleQuery;
         for(var i = 0; i < this.advTerms.length; i++)
         {
             if (ccl != '') ccl = ccl + ' and ';
