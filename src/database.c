@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.17 2007-04-12 10:17:53 marc Exp $
+/* $Id: database.c,v 1.18 2007-04-13 00:29:14 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -329,8 +329,8 @@ static void prepare_yazmarc(void *ignore, struct database *db)
             yaz_marc_subfield_str(db->yaz_marc, "\t");
 
             // See if a native encoding is specified
-            if ((s = db->settings[PZ_ENCODING]))
-                encoding = s->value;
+            if (db->settings[PZ_ENCODING])
+                encoding = db->settings[PZ_ENCODING]->value;
             
             cm = yaz_iconv_open("utf-8", encoding);
             if (!cm)
