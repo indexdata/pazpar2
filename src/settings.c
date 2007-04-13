@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.15 2007-04-12 11:35:08 marc Exp $
+/* $Id: settings.c,v 1.16 2007-04-13 01:48:22 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -214,35 +214,34 @@ static void read_settings_file(const char *path,
     xmlFreeDoc(doc);
 }
  
-// Recursively read files in a directory structure, calling 
+// Recursively read files or directories, invoking a 
 // callback for each one
 static void read_settings(const char *path,
 		void (*fun)(struct setting *set))
 {
     DIR *d;
     struct dirent *de;
+    char *dot;
 
-    if (!(d = opendir(path)))
+    if (isdir(path))
     {
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "%s", path);
-        exit(1);
-    }
-    while ((de = readdir(d)))
-    {
-        char tmp[1024];
-        if (*de->d_name == '.' || !strcmp(de->d_name, "CVS"))
-            continue;
-        sprintf(tmp, "%s/%s", path, de->d_name);
-        if (isdir(tmp))
-            read_settings(tmp, fun);
-        else
+        if (!(d = opendir(path)))
         {
-            char *dot;
-            if ((dot = rindex(de->d_name, '.')) && !strcmp(dot + 1, "xml"))
-                read_settings_file(tmp, fun);
+            yaz_log(YLOG_FATAL|YLOG_ERRNO, "%s", path);
+            exit(1);
         }
+        while ((de = readdir(d)))
+        {
+            char tmp[1024];
+            if (*de->d_name == '.' || !strcmp(de->d_name, "CVS"))
+                continue;
+            sprintf(tmp, "%s/%s", path, de->d_name);
+            read_settings(tmp, fun);
+        }
+        closedir(d);
     }
-    closedir(d);
+    else if ((dot = rindex(path, '.')) && !strcmp(dot + 1, "xml"))
+        read_settings_file(path, fun);
 }
 
 // Callback. Adds a new entry to the dictionary if necessary
