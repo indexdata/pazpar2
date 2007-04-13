@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.11 2007-04-03 14:27:21 jakub Exp $
+** $Id: client.js,v 1.12 2007-04-13 01:10:21 quinn Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -161,8 +161,7 @@ function my_onterm(data)
             for(var i = 0; i < data[key].length; i++)
             {
                 if (key == "xtargets"){
-                    var listItem = $('<a class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name
-                            /*+'<span> ('+data[key][i].freq+')</span>'*/+'</a>');
+                    var listItem = $('<a class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name +'<span> ('+data[key][i].freq+')</span>'+'</a>');
                     listItem.click(function(){ 
                         refine(this.name, this.attributes[0].nodeValue, this.firstChild.nodeValue) });
                     listItem.appendTo(listEntries);
@@ -187,8 +186,7 @@ function my_onterm(data)
 
             for(var i = 0; i < data[key].length; i++){
                 if (key == "xtargets"){
-                    var listItem = $('<a class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name
-                                /*+'<span> ('+data[key][i].freq+')</span>'*/+'</a>').click(function(){ 
+                    var listItem = $('<a class="sub" name="xtarget" value="'+data[key][i].id+'">'+data[key][i].name+'<span> ('+data[key][i].freq+')</span>'+'</a>').click(function(){ 
                                     refine(this.name, this.attributes[0].nodeValue, this.firstChild.nodeValue) });
                     listItem.appendTo(listEntries);
                 } else {
