@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.77 2007-04-12 13:46:28 adam Exp $
+/* $Id: pazpar2.c,v 1.78 2007-04-13 11:13:08 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -39,6 +39,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <yaz/otherinfo.h>
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>
+#include <yaz/query-charset.h>
 #include <yaz/querytowrbuf.h>
 #if YAZ_VERSIONL >= 0x020163
 #include <yaz/oid_db.h>
@@ -246,8 +247,10 @@ static void send_search(IOCHAN i)
     Z_Query *zquery;
     struct ccl_rpn_node *cn;
     int ssub = 0, lslb = 100000, mspn = 10;
-    char *recsyn;
-    char *piggyback;
+    char *recsyn = 0;
+    char *piggyback = 0;
+    char *queryenc = 0;
+    yaz_iconv_t iconv = 0;
 
     yaz_log(YLOG_DEBUG, "Sending search to %s", cl->database->database->url);
 
@@ -264,11 +267,25 @@ static void send_search(IOCHAN i)
                 se->expected_maxrecs);
     }
 
+    // constructing RPN query
     a->u.searchRequest->query = zquery = odr_malloc(global_parameters.odr_out,
             sizeof(Z_Query));
     zquery->which = Z_Query_type_1;
     zquery->u.type_1 = ccl_rpn_query(global_parameters.odr_out, cn);
     ccl_rpn_delete(cn);
+
+    // converting to target encoding
+    if ((queryenc = session_setting_oneval(sdb, PZ_QUERYENCODING))){
+        iconv = yaz_iconv_open(queryenc, "UTF-8");
+        if (iconv){
+            yaz_query_charset_convert_rpnquery(zquery->u.type_1, 
+                                               global_parameters.odr_out, 
+                                               iconv);
+            yaz_iconv_close(iconv);
+        } else
+            yaz_log(YLOG_WARN, "Query encoding failed %s %s", 
+                    cl->database->database->url, queryenc);
+    }
 
     for (ndb = 0; sdb->database->databases[ndb]; ndb++)
 	;
@@ -304,18 +321,23 @@ static void send_search(IOCHAN i)
         WRBUF wbquery = wrbuf_alloc();
         yaz_query_to_wrbuf(wbquery, zquery);
 
+
         if (send_apdu(cl, a) >= 0)
             {
                 iochan_setflags(i, EVENT_INPUT);
                 cl->state = Client_Searching;
                 cl->requestid = se->requestid;
-                yaz_log(YLOG_LOG, "SearchRequest %s  %s", 
-                         cl->database->database->url, wrbuf_cstr(wbquery));
+                yaz_log(YLOG_LOG, "SearchRequest %s %s %s", 
+                         cl->database->database->url,
+                        queryenc ? queryenc : "UTF-8",
+                        wrbuf_cstr(wbquery));
             }
         else {
             cl->state = Client_Error;
-                yaz_log(YLOG_WARN, "Failed SearchRequest %s  %s", 
-                         cl->database->database->url, wrbuf_cstr(wbquery));
+                yaz_log(YLOG_WARN, "Failed SearchRequest %s  %s %s", 
+                         cl->database->database->url, 
+                        queryenc ? queryenc : "UTF-8",
+                        wrbuf_cstr(wbquery));
         }
         
         wrbuf_destroy(wbquery);
