@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.12 2007-04-13 01:10:21 quinn Exp $
+** $Id: client.js,v 1.13 2007-04-13 17:19:53 quinn Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -90,6 +90,7 @@ function my_onshow(data)
                             currentDetailedId = null;
                             return;
                         } else if (currentDetailedId != null) {
+                            $(this.parentNode.lastChild).remove();
                             $('#rec_'+currentDetailedId).children('.detail').remove();
                         }
                         currentDetailedId = clickedId;

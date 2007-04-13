@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.5 2007-04-03 14:27:21 jakub Exp $
+** $Id: pz2.js,v 1.6 2007-04-13 17:19:53 quinn Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -308,7 +308,11 @@ pz2.prototype = {
                         for ( j = 0; j < locationNodes[i].childNodes.length; j++) {
                             if ( locationNodes[i].childNodes[j].nodeType == Node.ELEMENT_NODE ) {
                                 var nodeName = locationNodes[i].childNodes[j].nodeName;
-                                var nodeText = locationNodes[i].childNodes[j].firstChild.nodeValue;
+                                var nodeText;
+				if (locationNodes[i].childNodes[j].firstChild)
+					nodeText = locationNodes[i].childNodes[j].firstChild.nodeValue;
+				else
+					nodeText = '';
                                 record["location"][i][nodeName] = nodeText;                            
                             }
                         }
