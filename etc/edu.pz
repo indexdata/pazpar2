@@ -44,6 +44,8 @@ target z3950.library.wisc.edu:210/madison;U of Wisconsin
 target us1v1.indexdata.com/ruprime;Reference Universe
 target us1v1.indexdata.com/pdx;Public Documents Masterfile
 target us1.indexdata.com:9001/Default;Open Content Alliance
-target econtent.indexdata.com:210/oca-americana;OCA American Libraries
-target econtent.indexdata.com:210/oaister;OAIster
-target econtent.indexdata.com:210/wikipedia;Wikipedia
+target opencontent.indexdata.com:210/oca-all;OCA American Libraries
+target opencontent.indexdata.com:210/gutenberg;Project Gutenberg
+target z3950.loc.gov:7090/voyager;Library of Congress
+target melvyl.cdlib.org:210/CDL90;University of California
+target library.ox.ac.uk:210/ADVANCE;Oxford University
