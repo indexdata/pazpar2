@@ -1,7 +1,7 @@
 <settings target="*">
 
   <!-- Metasearching across some of ID's Open Content sources -->
-  <!-- $Id: opencontent.xml,v 1.1 2007-04-13 02:20:07 quinn Exp $ -->
+  <!-- $Id: opencontent.xml,v 1.2 2007-04-13 03:30:19 quinn Exp $ -->
 
   <!-- First we introduce the targets -->
 
@@ -15,6 +15,8 @@
   		  name="pz:name" value="Open Directory"/>
   <set target="opencontent.indexdata.com:210/gutenberg"
   		  name="pz:name" value="Project Gutenberg"/>
+
+  <!-- Then we apply settings to be used across all targets -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al 2=102"/>
