@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.14 2007-04-13 18:28:10 quinn Exp $
+** $Id: client.js,v 1.15 2007-04-14 06:12:21 quinn Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -251,22 +251,31 @@ function drawDetailedRec(detailBox)
     if( detailBox == undefined )
         detailBox = $('<div class="detail"></div>').appendTo($('#rec_'+currentDetailedId));
     
-    detailBox.append('Details:<hr/>');
     var detailTable = $('<table></table>');
-    var recDate = currentDetailedData["md-date"];
-    var recSubject = currentDetailedData["md-subject"];
     var recLocation = currentDetailedData["location"];
 
-    if( recDate )
-        detailTable.append('<tr><td class="item">Published:</td><td>'+recDate+'</td></tr>');
-    if( recSubject )
-        detailTable.append('<tr><td class="item">Subject:</td><td>'+recSubject+'</td></tr>');
     if( recLocation )
         detailTable.append('<tr><td class="item">Available at:</td><td>&nbsp;</td></tr>');
 
     for(var i=0; i < recLocation.length; i++)
     {
+	var url = recLocation[i]["md-url"];
+	var date = recLocation[i]["md-date"];
+	var description = recLocation[i]["md-description"];
         detailTable.append('<tr><td class="item">&nbsp;</td><td>'+recLocation[i].name+'</td></tr>');
+	if (url) {
+	    var tline = $('<tr><td>&nbsp;</td></tr>');
+	    var td = $('<td></td>').appendTo(tline);
+	    var tlink = $('<a>Go to resource</a>');
+	    tlink.attr('href', url);;
+	    tlink.attr('target', '_blank');
+	    tlink.appendTo(td);
+	    detailTable.append(tline);
+	}
+	if (date)
+	    detailTable.append($('<tr><td>Date</td><td>'+date+'</td></tr>'));
+	if (description)
+	    detailTable.append($('<tr><td>&nbsp</td><td>'+description+'</td></tr>'));
     }
 
     detailTable.appendTo(detailBox);
