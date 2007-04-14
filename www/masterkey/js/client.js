@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.15 2007-04-14 06:12:21 quinn Exp $
+** $Id: client.js,v 1.16 2007-04-14 23:59:20 quinn Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -254,28 +254,31 @@ function drawDetailedRec(detailBox)
     var detailTable = $('<table></table>');
     var recLocation = currentDetailedData["location"];
 
-    if( recLocation )
-        detailTable.append('<tr><td class="item">Available at:</td><td>&nbsp;</td></tr>');
+    var hdtarget;
+    if( recLocation ) {
+        hdtarget = $('<tr><td class="item">Available at:</td></tr>');
+	detailTable.append(hdtarget);
 
-    for(var i=0; i < recLocation.length; i++)
-    {
-	var url = recLocation[i]["md-url"];
-	var date = recLocation[i]["md-date"];
-	var description = recLocation[i]["md-description"];
-        detailTable.append('<tr><td class="item">&nbsp;</td><td>'+recLocation[i].name+'</td></tr>');
-	if (url) {
-	    var tline = $('<tr><td>&nbsp;</td></tr>');
-	    var td = $('<td></td>').appendTo(tline);
-	    var tlink = $('<a>Go to resource</a>');
-	    tlink.attr('href', url);;
-	    tlink.attr('target', '_blank');
-	    tlink.appendTo(td);
-	    detailTable.append(tline);
+	for(var i=0; i < recLocation.length; i++)
+	{
+	    if (!hdtarget)
+		hdtarget = $('<tr><td class="item">&nbsp;</td></tr>').appendTo(detailTable);
+	    var url = recLocation[i]["md-url"];
+	    var description = recLocation[i]["md-description"];
+	    hdtarget.append('<td><b>'+recLocation[i].name+'</b></td>');
+	    if (url) {
+		var tline = $('<tr><td>&nbsp;</td></tr>');
+		var td = $('<td></td>').appendTo(tline);
+		var tlink = $('<a>Go to resource</a>');
+		tlink.attr('href', url);;
+		tlink.attr('target', '_blank');
+		tlink.appendTo(td);
+		detailTable.append(tline);
+	    }
+	    if (description)
+		detailTable.append($('<tr><td>&nbsp</td><td>'+description+'</td></tr>'));
+	    hdtarget = undefined;
 	}
-	if (date)
-	    detailTable.append($('<tr><td>Date</td><td>'+date+'</td></tr>'));
-	if (description)
-	    detailTable.append($('<tr><td>&nbsp</td><td>'+description+'</td></tr>'));
     }
 
     detailTable.appendTo(detailBox);
