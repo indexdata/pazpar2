@@ -7,7 +7,7 @@ if(typeof window.jQuery == "undefined") {
  * Dual licensed under the MIT (MIT-LICENSE.txt)
  * and GPL (GPL-LICENSE.txt) licenses.
  *
- * $Date: 2007-03-22 16:08:20 $
+ * $Date: 2007-04-14 06:11:47 $
  * $Rev: 1465 $
  */
 
@@ -1824,6 +1824,7 @@ jQuery.extend({
 	},
 
 	handleError: function( s, xml, status, e ) {
+		throw(e);
 		// If a local callback was specified, fire it
 		if ( s.error ) s.error( xml, status, e );
 
