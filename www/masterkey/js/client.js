@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.16 2007-04-14 23:59:20 quinn Exp $
+** $Id: client.js,v 1.17 2007-04-15 03:24:18 quinn Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -23,6 +23,8 @@ var currentDetailedData = null;
 
 var termStartup = true;
 var advancedOn = false;
+
+var showBriefLocations = true;
 
 /* wait until the DOM is ready and register basic handlers */
 $(document).ready( function() { 
@@ -107,9 +109,22 @@ function my_onshow(data)
             drawDetailedRec(detailBox);
         }
 
-        if( count > 1 ) {
-            recBody.append('<span> ('+count+')</span>');
-        }
+	if (showBriefLocations) {
+	    var location = data.hits[i]['location'];
+	    var l;
+	    var list = '';
+	    for (l in location) {
+		if (list)
+		    list += ', ';
+		list += location[l].name;
+	    }
+	    recBody.append('<span> ('+list+')</span>');
+	}
+	else {
+	    if( count > 1 ) {
+		recBody.append('<span> ('+count+')</span>');
+	    }
+	}
 
         recsBody.append('<div class="resultNum">'+(currentPage*currentResultsPerPage+i+1)+'.</a>');
         recsBody.append(recBody);
