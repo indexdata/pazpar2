@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.25 2007-04-11 11:10:05 marc Exp $
+/* $Id: http.c,v 1.26 2007-04-15 00:35:57 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -946,7 +946,7 @@ static struct http_channel *http_create(const char *addr)
         yaz_log(YLOG_WARN, "Invalid HTTP forward address");
         exit(1);
     }
-    r->addr = nmem_strdup(r->nmem, addr);
+    strcpy(r->addr, addr);
     return r;
 }
 

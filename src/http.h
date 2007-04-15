@@ -1,4 +1,4 @@
-/* $Id: http.h,v 1.7 2007-04-10 08:48:56 adam Exp $
+/* $Id: http.h,v 1.8 2007-04-15 00:35:57 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -49,7 +49,7 @@ struct http_channel
     struct http_request *request;
     struct http_response *response;
     struct http_channel *next; // for freelist
-    char *addr; /* forwarded address */
+    char addr[20]; // forwarded address
 };
 
 struct http_proxy //  attached to iochan for proxy connection
