@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.34 2007-04-11 18:42:25 quinn Exp $
+/* $Id: http_command.c,v 1.35 2007-04-15 03:26:47 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.34 2007-04-11 18:42:25 quinn Exp $
+ * $Id: http_command.c,v 1.35 2007-04-15 03:26:47 quinn Exp $
  */
 
 #include <stdio.h>
@@ -381,14 +381,16 @@ static void write_metadata(WRBUF w, struct conf_service *service,
     }
 }
 
-static void write_subrecord(struct record *r, WRBUF w, struct conf_service *service)
+static void write_subrecord(struct record *r, WRBUF w,
+        struct conf_service *service, int show_details)
 {
     char *name = session_setting_oneval(r->client->database, PZ_NAME);
 
     wrbuf_printf(w, "<location id=\"%s\" name=\"%s\">\n",
             r->client->database->database->url,
             *name ? name : "Unknown");
-    write_metadata(w, service, r->metadata, 1);
+    if (show_details)
+        write_metadata(w, service, r->metadata, 1);
     wrbuf_puts(w, "</location>\n");
 }
 
@@ -421,7 +423,7 @@ static void cmd_record(struct http_channel *c)
     wrbuf_printf(c->wrbuf, "<recid>%d</recid>", rec->recid);
     write_metadata(c->wrbuf, service, rec->metadata, 1);
     for (r = rec->records; r; r = r->next)
-        write_subrecord(r, c->wrbuf, service);
+        write_subrecord(r, c->wrbuf, service, 1);
     wrbuf_puts(c->wrbuf, "</record>\n");
     rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
@@ -482,7 +484,7 @@ static void show_records(struct http_channel *c, int active)
         wrbuf_puts(c->wrbuf, "<hit>\n");
         write_metadata(c->wrbuf, service, rec->metadata, 0);
         for (ccount = 0, p = rl[i]->records; p;  p = p->next, ccount++)
-            ;
+            write_subrecord(p, c->wrbuf, service, 0); // subrecs w/o details
         if (ccount > 1)
             wrbuf_printf(c->wrbuf, "<count>%d</count>\n", ccount);
         wrbuf_printf(c->wrbuf, "<recid>%d</recid>\n", rec->recid);
