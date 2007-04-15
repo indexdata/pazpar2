@@ -1,0 +1,4 @@
+<settings target="204.179.122.51:210/sch">
+  <set name="pz:name" value="Science Reference Center"/>
+  <set name="pz:authentication" value="beta.indexdata.z3950/ebs1720@FT-LINKS"/>
+</settings>

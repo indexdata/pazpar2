@@ -1,0 +1,15 @@
+<settings target="opencontent.indexdata.com:210/*">
+  <set target="opencontent.indexdata.com:210/oca-all" name="pz:name" 
+        value="Open Content Alliance"/>
+  <set target="opencontent.indexdata.com:210/gutenberg" name="pz:name" 
+        value="Project Gutenberg"/>
+  <set target="opencontent.indexdata.com:210/wikipedia" name="pz:name" 
+        value="Wikipedia"/>
+
+  <!-- Exact title search for Wikipedia -->
+  <set target="opencontent.indexdata.com:210/wikipedia" name="pz:cclmap:term"
+      value="@attr 1=43 @attr 2=102 @attr 6=2"/>
+
+  <!-- The following settings apply to all opencontent sites -->
+  <set name="pz:cclmap:term" value="u=1016 t=l,r s=al 2=102"/>
+</settings>
