@@ -1,4 +1,4 @@
-/* $Id: reclists.c,v 1.9 2007-04-16 13:22:17 marc Exp $
+/* $Id: reclists.c,v 1.10 2007-04-16 13:57:25 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -212,7 +212,10 @@ struct record_cluster *reclist_insert( struct conf_service *service,
     unsigned int bucket;
     struct reclist_bucket **p;
     struct record_cluster *cluster = 0;
-    /*struct conf_service *service = global_parameters.server->service;*/
+    
+    assert(service);
+    assert(service->num_metadata);
+    assert(service->num_sortkeys);
 
     bucket = hash((unsigned char*) merge_key) & l->hashmask;
     for (p = &l->hashtable[bucket]; *p; p = &(*p)->next)
