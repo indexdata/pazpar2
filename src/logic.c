@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.1 2007-04-16 09:03:25 adam Exp $
+/* $Id: logic.c,v 1.2 2007-04-16 13:22:17 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -700,7 +700,7 @@ static struct record *ingest_record(struct client *cl, Z_External *rec)
     xmlFree(mergekey);
     normalize_mergekey((char *) mergekey_norm, 0);
 
-    cluster = reclist_insert(se->reclist, res, (char *) mergekey_norm, 
+    cluster = reclist_insert(global_parameters.server->service, se->reclist, res, (char *) mergekey_norm, 
                              &se->total_merged);
     if (global_parameters.dump_records)
         yaz_log(YLOG_LOG, "Cluster id %d from %s (#%d)", cluster->recid,
