@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.2 2007-04-16 13:22:17 marc Exp $
+/* $Id: logic.c,v 1.3 2007-04-16 21:54:43 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -185,10 +185,9 @@ static void send_init(IOCHAN i)
         && 0 < strlen(cl->database->database->url))
     {
 #if YAZ_VERSIONL >= 0x020163
-        const int *oid_proxy = yaz_string_to_oid(yaz_oid_std(),
-                                                 CLASS_USERINFO, OID_STR_PROXY);
         yaz_oi_set_string_oid(&a->u.initRequest->otherInfo,
-                              global_parameters.odr_out, oid_proxy,
+                              global_parameters.odr_out,
+                              yaz_oid_userinfo_proxy,
                               1, cl->database->database->url);
 #else
         yaz_oi_set_string_oidval(&a->u.initRequest->otherInfo,
