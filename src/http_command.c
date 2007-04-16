@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.35 2007-04-15 03:26:47 quinn Exp $
+/* $Id: http_command.c,v 1.36 2007-04-16 20:34:17 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.35 2007-04-15 03:26:47 quinn Exp $
+ * $Id: http_command.c,v 1.36 2007-04-16 20:34:17 quinn Exp $
  */
 
 #include <stdio.h>
@@ -362,7 +362,7 @@ static void write_metadata(WRBUF w, struct conf_service *service,
             continue;
         for (md = ml[imeta]; md; md = md->next)
         {
-            wrbuf_printf(w, "<md-%s>", cmd->name);
+            wrbuf_printf(w, "\n<md-%s>", cmd->name);
             switch (cmd->type)
             {
                 case Metadata_type_generic:
@@ -386,7 +386,7 @@ static void write_subrecord(struct record *r, WRBUF w,
 {
     char *name = session_setting_oneval(r->client->database, PZ_NAME);
 
-    wrbuf_printf(w, "<location id=\"%s\" name=\"%s\">\n",
+    wrbuf_printf(w, "<location id=\"%s\" name=\"%s\">",
             r->client->database->database->url,
             *name ? name : "Unknown");
     if (show_details)
