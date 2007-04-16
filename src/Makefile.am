@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.5 2007-04-10 08:48:56 adam Exp $
+# $Id: Makefile.am,v 1.6 2007-04-16 09:03:25 adam Exp $
 
 bin_PROGRAMS = pazpar2
 
@@ -9,7 +9,7 @@ LDADD = $(YAZLIB)
 
 pazpar2_SOURCES = config.c config.h eventl.c eventl.h \
 	http.c http_command.c http_command.h http.h \
-	pazpar2.c pazpar2.h reclists.c reclists.h \
+	logic.c pazpar2.c pazpar2.h reclists.c reclists.h \
 	relevance.c relevance.h termlists.c termlists.h \
 	util.c util.h zeerex.c zeerex.h database.c database.h \
-	settings.h settings.c
+	settings.h settings.c 

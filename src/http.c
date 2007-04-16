@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.26 2007-04-15 00:35:57 quinn Exp $
+/* $Id: http.c,v 1.27 2007-04-16 09:03:25 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -55,9 +55,6 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 static void proxy_io(IOCHAN i, int event);
 static struct http_channel *http_create(const char *addr);
 static void http_destroy(IOCHAN i);
-
-extern IOCHAN channel_list;
-extern struct parameters global_parameters;
 
 // If this is set, we proxy normal HTTP requests
 static struct sockaddr_in *proxy_addr = 0; 

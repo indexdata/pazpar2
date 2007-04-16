@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.23 2007-04-11 18:42:25 quinn Exp $
+/* $Id: pazpar2.h,v 1.24 2007-04-16 09:03:25 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -260,6 +260,13 @@ void session_set_watch(struct session *s, int what, session_watchfun fun, void *
 int session_active_clients(struct session *s);
 void session_apply_setting(struct session *se, char *dbname, char *setting, char *value);
 char *session_setting_oneval(struct session_database *db, int offset);
+
+void start_http_listener(void);
+void start_proxy(void);
+void start_zproxy(void);
+
+extern struct parameters global_parameters;
+extern IOCHAN channel_list;
 
 #endif
 
