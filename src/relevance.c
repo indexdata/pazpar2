@@ -1,4 +1,4 @@
-/* $Id: relevance.c,v 1.9 2007-04-10 08:48:56 adam Exp $
+/* $Id: relevance.c,v 1.10 2007-04-16 13:54:55 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -63,6 +63,7 @@ static struct word_trie *create_word_trie_node(NMEM nmem)
 
 static void word_trie_addterm(NMEM nmem, struct word_trie *n, const char *term, int num)
 {
+
     while (*term) {
         int c = tolower(*term);
         if (c < 'a' || c > 'z')
