@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.37 2007-04-16 21:11:26 quinn Exp $
+/* $Id: http_command.c,v 1.38 2007-04-16 21:14:38 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.37 2007-04-16 21:11:26 quinn Exp $
+ * $Id: http_command.c,v 1.38 2007-04-16 21:14:38 quinn Exp $
  */
 
 #include <stdio.h>
@@ -205,8 +205,7 @@ static void cmd_init(struct http_channel *c)
     if (process_settings(s->psession, c->request, c->response) < 0)
         return;
     sprintf(buf, "<init><status>OK</status><session>%u</session>"
-            "<protocol>" PAZPAR2_PROTOCOL_VERSION "</protocol>"
-            "<id>$Id: http_command.c,v 1.37 2007-04-16 21:11:26 quinn Exp $</id></init>", sesid);
+            "<protocol>" PAZPAR2_PROTOCOL_VERSION "</protocol></init>", sesid);
     rs->payload = nmem_strdup(c->nmem, buf);
     http_send_response(c);
 }
