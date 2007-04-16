@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.17 2007-04-15 03:24:18 quinn Exp $
+** $Id: client.js,v 1.18 2007-04-16 20:23:25 quinn Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -24,7 +24,7 @@ var currentDetailedData = null;
 var termStartup = true;
 var advancedOn = false;
 
-var showBriefLocations = true;
+var showBriefLocations = false;
 
 /* wait until the DOM is ready and register basic handlers */
 $(document).ready( function() { 
@@ -182,7 +182,7 @@ function my_onterm(data)
                     listItem.appendTo(listEntries);
                 } else {
                     var listItem = $('<a class="sub" name="'+key+'">'+data[key][i].name
-                            /*+'<span> ('+data[key][i].freq+')</span>'*/+'</a>');
+                            +'<span> ('+data[key][i].freq+')</span>'+'</a>');
                     listItem.click(function(){ refine(this.name, this.firstChild.nodeValue) });
                     listItem.appendTo(listEntries);
                 }
@@ -206,7 +206,7 @@ function my_onterm(data)
                     listItem.appendTo(listEntries);
                 } else {
                     var listItem = $('<a class="sub" name="'+key+'">'+data[key][i].name
-                                /*+'<span> ('+data[key][i].freq+')</span>'*/+'</a>').click(function(){ 
+                                +'<span> ('+data[key][i].freq+')</span>'+'</a>').click(function(){ 
                                                                         refine(this.name, this.firstChild.nodeValue) });
                     listItem.appendTo(listEntries);
                 }
@@ -281,6 +281,8 @@ function drawDetailedRec(detailBox)
 	    var url = recLocation[i]["md-url"];
 	    var description = recLocation[i]["md-description"];
 	    hdtarget.append('<td><b>'+recLocation[i].name+'</b></td>');
+	    if (description)
+		detailTable.append($('<tr><td>&nbsp</td><td>'+description+'</td></tr>'));
 	    if (url) {
 		var tline = $('<tr><td>&nbsp;</td></tr>');
 		var td = $('<td></td>').appendTo(tline);
@@ -290,8 +292,6 @@ function drawDetailedRec(detailBox)
 		tlink.appendTo(td);
 		detailTable.append(tline);
 	    }
-	    if (description)
-		detailTable.append($('<tr><td>&nbsp</td><td>'+description+'</td></tr>'));
 	    hdtarget = undefined;
 	}
     }
