@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.18 2007-04-16 20:23:25 quinn Exp $
+** $Id: client.js,v 1.19 2007-04-17 12:53:45 jakub Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -101,7 +101,7 @@ function my_onshow(data)
         if( author ) {
             recBody.append('<i> by </i>');
             $('<a name="author" class="recAuthor">'+author+'</a>\n').click(function(){ 
-                            refine(this.name, this.firstChild.nodeValue) }).appendTo(recBody);
+                            refine("authoronly", this.firstChild.nodeValue) }).appendTo(recBody);
         }
 
         if( currentDetailedId == id ) {
@@ -302,6 +302,7 @@ function drawDetailedRec(detailBox)
 function refine(field, value, opt)
 {
     switch(field) {
+        case "authoronly":  curQuery.reset(); curQuery.addTerm('au', value); break;
         case "author":  curQuery.addTerm('au', value); break;
         case "title":   curQuery.addTerm('ti', value); break;
         case "date":    curQuery.addTerm('date', value); break;
