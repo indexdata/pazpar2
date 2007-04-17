@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.24 2007-04-16 09:03:25 adam Exp $
+/* $Id: pazpar2.h,v 1.25 2007-04-17 21:25:26 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -136,6 +136,7 @@ struct client {
     struct session_database *database;
     struct connection *connection;
     struct session *session;
+    char *pquery; // Current search
     int hits;
     int records;
     int setno;

@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.4 2007-04-17 07:52:03 marc Exp $
+/* $Id: logic.c,v 1.5 2007-04-17 21:25:26 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -241,10 +241,9 @@ static void send_search(IOCHAN i)
     struct session *se = cl->session;
     struct session_database *sdb = cl->database;
     Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_searchRequest);
-    int ndb, cerror, cpos;
+    int ndb;
     char **databaselist;
     Z_Query *zquery;
-    struct ccl_rpn_node *cn;
     int ssub = 0, lslb = 100000, mspn = 10;
     char *recsyn = 0;
     char *piggyback = 0;
@@ -253,25 +252,11 @@ static void send_search(IOCHAN i)
 
     yaz_log(YLOG_DEBUG, "Sending search to %s", cl->database->database->url);
 
-    cn = ccl_find_str(sdb->database->ccl_map, se->query, &cerror, &cpos);
-    if (!cn)
-        return;
-
-    if (!se->relevance)
-    {
-        // Initialize relevance structure with query terms
-        char *p[512];
-        extract_terms(se->nmem, cn, p);
-        se->relevance = relevance_create(se->nmem, (const char **) p,
-                se->expected_maxrecs);
-    }
-
     // constructing RPN query
     a->u.searchRequest->query = zquery = odr_malloc(global_parameters.odr_out,
             sizeof(Z_Query));
     zquery->which = Z_Query_type_1;
-    zquery->u.type_1 = ccl_rpn_query(global_parameters.odr_out, cn);
-    ccl_rpn_delete(cn);
+    zquery->u.type_1 = p_query_rpn(global_parameters.odr_out, cl->pquery);
 
     // converting to target encoding
     if ((queryenc = session_setting_oneval(sdb, PZ_QUERYENCODING))){
@@ -1259,6 +1244,40 @@ static int client_prep_connection(struct client *cl)
         return 0;
 }
 
+// Parse the query given the settings specific to this client
+static int client_parse_query(struct client *cl)
+{
+    struct session *se = cl->session;
+    struct ccl_rpn_node *cn;
+    int cerror, cpos;
+
+    cn = ccl_find_str(cl->database->database->ccl_map, se->query, &cerror, &cpos);
+    if (!cn)
+    {
+        cl->state = Client_Error;
+        yaz_log(YLOG_WARN, "Failed to parse query for %s",
+                         cl->database->database->url);
+        return -1;
+    }
+    wrbuf_rewind(se->wrbuf);
+    ccl_pquery(se->wrbuf, cn);
+    if (cl->pquery)
+        xfree(cl->pquery);
+    cl->pquery = xstrdup(wrbuf_buf(se->wrbuf));
+
+    if (!se->relevance)
+    {
+        // Initialize relevance structure with query terms
+        char *p[512];
+        extract_terms(se->nmem, cn, p);
+        se->relevance = relevance_create(se->nmem, (const char **) p,
+                se->expected_maxrecs);
+    }
+
+    ccl_rpn_delete(cn);
+    return 0;
+}
+
 static struct client *client_create(void)
 {
     struct client *r;
@@ -1269,6 +1288,7 @@ static struct client *client_create(void)
     }
     else
         r = xmalloc(sizeof(struct client));
+    r->pquery = 0;
     r->database = 0;
     r->connection = 0;
     r->session = 0;
@@ -1404,24 +1424,28 @@ char *search(struct session *se, char *query, char *filter)
     criteria = parse_filter(se->nmem, filter);
     strcpy(se->query, query);
     se->requestid++;
-    select_targets(se, criteria);
-    for (cl = se->clients; cl; cl = cl->next)
-    {
-        if (client_prep_connection(cl))
-            live_channels++;
-    }
+    live_channels = select_targets(se, criteria);
     if (live_channels)
     {
         int maxrecs = live_channels * global_parameters.toget;
         se->num_termlists = 0;
         se->reclist = reclist_create(se->nmem, maxrecs);
         // This will be initialized in send_search()
-        se->relevance = 0;
         se->total_records = se->total_hits = se->total_merged = 0;
         se->expected_maxrecs = maxrecs;
     }
     else
         return "NOTARGETS";
+
+    se->relevance = 0;
+    for (cl = se->clients; cl; cl = cl->next)
+    {
+        if (client_prep_connection(cl))
+        {
+            if (client_parse_query(cl) < 0)  // Query must parse for all targets
+                return "QUERY";
+        }
+    }
 
     return 0;
 }
