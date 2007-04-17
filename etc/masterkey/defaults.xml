@@ -1,13 +1,14 @@
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: defaults.xml,v 1.1 2007-04-15 06:57:22 quinn Exp $ -->
+  <!-- $Id: defaults.xml,v 1.2 2007-04-17 17:48:48 quinn Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
 
   <!-- field-specific mappings -->
   <set name="pz:cclmap:ti" value="u=4 s=al"/>
+  <set name="pz:cclmap:au" value="u=1003 s=al"/>
   <set name="pz:cclmap:su" value="u=21 s=al"/>
   <set name="pz:cclmap:isbn" value="u=7"/>
   <set name="pz:cclmap:issn" value="u=8"/>
