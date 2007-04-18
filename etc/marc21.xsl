@@ -15,9 +15,11 @@
 	<xsl:value-of select="marc:datafield[@tag='100']/marc:subfield[@code='a']"/>
       </xsl:attribute>
 
-      <pz:metadata type="id">
-        <xsl:value-of select="marc:controlfield[@tag='001']"/>
-      </pz:metadata>
+      <xsl:for-each select="marc:controlfield[@tag='001']">
+        <pz:metadata type="id">
+          <xsl:value-of select="."/>
+        </pz:metadata>
+      </xsl:for-each>
 
       <xsl:for-each select="marc:datafield[@tag='010']">
         <pz:metadata type="lccn">
@@ -25,11 +27,13 @@
 	</pz:metadata>
       </xsl:for-each>
 
-      <pz:metadata type="title">
-	<xsl:value-of select="marc:datafield[@tag='245']/marc:subfield[@code='a']"/>
-	<xsl:text> </xsl:text>
-	<xsl:value-of select="marc:datafield[@tag='245']/marc:subfield[@code='b']"/>
-      </pz:metadata>
+      <xsl:for-each select="marc:datafield[@tag='245']">
+        <pz:metadata type="title">
+          <xsl:value-of select="marc:subfield[@code='a']"/>
+          <xsl:text> </xsl:text>
+          <xsl:value-of select="marc:subfield[@code='b']"/>
+        </pz:metadata>
+      </xsl:for-each>
 
       <xsl:for-each select="marc:datafield[@tag='020']">
         <pz:metadata type="isbn">
