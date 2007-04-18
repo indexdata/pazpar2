@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.18 2007-04-13 00:29:14 quinn Exp $
+/* $Id: database.c,v 1.19 2007-04-18 12:41:38 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -227,19 +227,18 @@ static int match_criterion(struct setting **settings, struct database_criterion 
         if (offset == PZ_ID)
         {
             if (match_zurl(settings[offset]->value, v->value))
-                return 1;
-            else
-                return 0;
+                break;
         }
         else 
         {
             if (!strcmp(settings[offset]->value, v->value))
-                return 1;
-            else
-                return 0;
+                break;
         }
     }
-    return 0;
+    if (v)
+        return 1;
+    else
+        return 0;
 }
 
 int database_match_criteria(struct setting **settings, struct database_criterion *cl)
