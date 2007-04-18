@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.8 2007-04-18 03:42:30 quinn Exp $
+** $Id: pz2.js,v 1.9 2007-04-18 04:07:48 quinn Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -91,6 +91,7 @@ var pz2 = function(paramArray) {
     // error handling
     $(document).ajaxError( 
     function (request, settings, exception) {
+	    alert("AjaxErr");
         if ( settings.responseXML && settings.responseXML.getElementsByTagName("error") )
             throw new Error( settings.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue);
     });
@@ -282,7 +283,6 @@ pz2.prototype = {
 		    var delay = __myself.showTime;
 		    if (__myself.showCounter > __myself.showFastCount)
 			    delay *= 2;
-			    alert(delay);
                     if (activeClients > 0)
                         __myself.showTimer = setTimeout("__myself.show()", delay);
                 }

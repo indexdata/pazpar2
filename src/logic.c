@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.5 2007-04-17 21:25:26 quinn Exp $
+/* $Id: logic.c,v 1.6 2007-04-18 04:07:48 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1261,6 +1261,7 @@ static int client_parse_query(struct client *cl)
     }
     wrbuf_rewind(se->wrbuf);
     ccl_pquery(se->wrbuf, cn);
+    wrbuf_putc(se->wrbuf, '\0');
     if (cl->pquery)
         xfree(cl->pquery);
     cl->pquery = xstrdup(wrbuf_buf(se->wrbuf));
