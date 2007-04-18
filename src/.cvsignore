@@ -1,8 +1,10 @@
+yaz
 pazpar2
 Makefile
-yaz
 Makefile.in
 cconfig.h
 cconfig.h.in
 .deps
 stamp-h1
+test_relevance
+test_relevance.log
