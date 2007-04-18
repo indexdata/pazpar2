@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.7 2007-04-18 04:22:55 quinn Exp $
+/* $Id: logic.c,v 1.8 2007-04-18 16:11:41 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -103,7 +103,7 @@ struct parameters global_parameters =
     0,
     30,
     "81",
-    "Index Data PazPar2 (MasterKey)",
+    "Index Data PazPar2",
     VERSION,
     600, // 10 minutes
     60,
