@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.6 2007-04-18 04:07:48 quinn Exp $
+/* $Id: logic.c,v 1.7 2007-04-18 04:22:55 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1440,13 +1440,10 @@ char *search(struct session *se, char *query, char *filter)
 
     se->relevance = 0;
     for (cl = se->clients; cl; cl = cl->next)
-    {
-        if (client_prep_connection(cl))
-        {
-            if (client_parse_query(cl) < 0)  // Query must parse for all targets
-                return "QUERY";
-        }
-    }
+        if (client_parse_query(cl) < 0)  // Query must parse for all targets
+            return "QUERY";
+    for (cl = se->clients; cl; cl = cl->next)
+        client_prep_connection(cl);
 
     return 0;
 }
