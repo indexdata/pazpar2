@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.7 2007-04-15 03:24:18 quinn Exp $
+** $Id: pz2.js,v 1.8 2007-04-18 03:42:30 quinn Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -75,6 +75,7 @@ var pz2 = function(paramArray) {
     __myself.termTimer = null;
     __myself.showTime = paramArray.showtime || 1000;
     __myself.showTimer = null;
+    __myself.showFastCount = 4;
     __myself.bytargetTime = paramArray.bytargettime || 1000;
     __myself.bytargetTimer = null;
 
@@ -278,8 +279,12 @@ pz2.prototype = {
                     }
                     __myself.showCallback(show);
                     __myself.showCounter++;
+		    var delay = __myself.showTime;
+		    if (__myself.showCounter > __myself.showFastCount)
+			    delay *= 2;
+			    alert(delay);
                     if (activeClients > 0)
-                        __myself.showTimer = setTimeout("__myself.show()", (__myself.showTime + __myself.showCounter*__myself.dumpFactor));
+                        __myself.showTimer = setTimeout("__myself.show()", delay);
                 }
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
