@@ -18,7 +18,7 @@ AC_PROG_RANLIB
 
 AC_LANG(C)
 
-YAZ_INIT(libxml2,2.1.50)
+YAZ_INIT([static],[2.1.50])
 if test -z "$YAZLIB"; then
 	AC_MSG_ERROR([YAZ development libraries missing])
 fi
