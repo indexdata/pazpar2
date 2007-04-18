@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.8 2007-04-18 16:11:41 quinn Exp $
+/* $Id: logic.c,v 1.9 2007-04-18 19:45:09 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -206,8 +206,13 @@ static void send_init(IOCHAN i)
     odr_reset(global_parameters.odr_out);
 }
 
+// Recursively traverse query structure to extract terms.
 static void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
 {
+    char **words;
+    int numwords;
+    int i;
+
     switch (n->kind)
     {
         case CCL_RPN_AND:
@@ -218,7 +223,9 @@ static void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *
             pull_terms(nmem, n->u.p[1], termlist, num);
             break;
         case CCL_RPN_TERM:
-            termlist[(*num)++] = nmem_strdup(nmem, n->u.t.term);
+            nmem_strsplit(nmem, " ", n->u.t.term, &words, &numwords);
+            for (i = 0; i < numwords; i++)
+                termlist[(*num)++] = words[i];
             break;
         default: // NOOP
             break;
