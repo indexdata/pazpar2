@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.9 2007-04-18 04:07:48 quinn Exp $
+** $Id: pz2.js,v 1.10 2007-04-18 04:23:53 quinn Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -91,9 +91,16 @@ var pz2 = function(paramArray) {
     // error handling
     $(document).ajaxError( 
     function (request, settings, exception) {
-	    alert("AjaxErr");
         if ( settings.responseXML && settings.responseXML.getElementsByTagName("error") )
-            throw new Error( settings.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue);
+	{
+	    var err = settings.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue;
+	    if (err == 'QUERY')
+		    alert("Your query was not understood. Please rephrase");
+	    else
+		    throw new Error( settings.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue);
+	}
+	else
+	    throw exception;
     });
     
     // auto init session?
