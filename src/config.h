@@ -1,4 +1,4 @@
-/* $Id: config.h,v 1.16 2007-04-10 08:48:56 adam Exp $
+/* $Id: config.h,v 1.17 2007-04-18 15:09:51 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -35,31 +35,32 @@ enum conf_sortkey_type
 };
 
 // Describes known metadata elements and how they are to be manipulated
-// An array of these structure provides a 'map' against which discovered metadata
-// elements are matched. It also governs storage, to minimize number of cycles needed
-// at various tages of processing
+// An array of these structure provides a 'map' against which
+// discovered metadata elements are matched. It also governs storage,
+// to minimize number of cycles needed at various tages of processing
 struct conf_metadata 
 {
-    char *name;  // The name of this element. Output by normalization stylesheet
+    char *name;  // The field name. Output by normalization stylesheet
     int brief;   // Is this element to be returned in the brief format?
     int termlist;// Is this field to be treated as a termlist for browsing?
-    int rank;    // Rank factor. 0 means don't use this field for ranking, 1 is default
+    int rank;    // Rank factor. 0 means don't use this field for ranking, 
+                 // 1 is default
                  // values >1  give additional significance to a field
     int sortkey_offset; // -1 if it's not a sortkey, otherwise index
                         // into service/record_cluster->sortkey array
     enum
     {
-        Metadata_type_generic,          // Generic text field
-        Metadata_type_number,           // A number
-        Metadata_type_year              // A number
+        Metadata_type_generic,    // Generic text field
+        Metadata_type_number,     // A number
+        Metadata_type_year        // A number
     } type;
     enum
     {
-        Metadata_merge_no,              // Don't merge
-        Metadata_merge_unique,          // Include unique elements in merged block
-        Metadata_merge_longest,         // Include the longest (strlen) value
-        Metadata_merge_range,           // Store value as a range of lowest-highest
-        Metadata_merge_all              // Just include all elements found
+        Metadata_merge_no,        // Don't merge
+        Metadata_merge_unique,    // Include unique elements in merged block
+        Metadata_merge_longest,   // Include the longest (strlen) value
+        Metadata_merge_range,     // Store value as a range of lowest-highest
+        Metadata_merge_all        // Just include all elements found
     } merge;
 };
 
@@ -70,9 +71,10 @@ struct conf_sortkey
     enum conf_sortkey_type type;
 };
 
-// It is conceivable that there will eventually be several 'services' offered
-// from one server, with separate configuration -- possibly more than one services
-// associated with the same port. For now, however, only a single service is possible.
+// It is conceivable that there will eventually be several 'services'
+// offered from one server, with separate configuration -- possibly
+// more than one services associated with the same port. For now,
+// however, only a single service is possible.
 struct conf_service
 {
     int num_metadata;
