@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.38 2007-04-16 21:14:38 quinn Exp $
+/* $Id: http_command.c,v 1.39 2007-04-19 15:31:23 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.38 2007-04-16 21:14:38 quinn Exp $
+ * $Id: http_command.c,v 1.39 2007-04-19 15:31:23 adam Exp $
  */
 
 #include <stdio.h>
@@ -48,9 +48,6 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 // Update this when the protocol changes
 #define PAZPAR2_PROTOCOL_VERSION "1"
-
-extern struct parameters global_parameters;
-extern IOCHAN channel_list;
 
 struct http_session {
     IOCHAN timeout_iochan;     // NOTE: This is NOT associated with a socket
