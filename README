@@ -31,7 +31,7 @@ Fire up pazpar2
 	sudo cp -a www/* /var/www
 	cd etc
 	cp pazpar2.cfg.dist pazpart2.cfg # edit port + proxy
-	../src/pazpar2 -f pazpar2.cfg -s test.pz 
+	../src/pazpar2 -f pazpar2.cfg -t ../etc/testserver.xml
 
 Fire up your browser:
 	http://localhost:8000/test1/index.html
