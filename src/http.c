@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.27 2007-04-16 09:03:25 adam Exp $
+/* $Id: http.c,v 1.28 2007-04-19 16:07:20 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -608,8 +608,7 @@ static int http_proxy(struct http_request *rq)
         // We will add EVENT_OUTPUT below
         p->iochan = iochan_create(sock, proxy_io, EVENT_INPUT);
         iochan_setdata(p->iochan, p);
-        p->iochan->next = channel_list;
-        channel_list = p->iochan;
+        pazpar2_add_channel(p->iochan);
     }
 
     // Do _not_ modify Host: header, just checking it's existence
@@ -977,8 +976,7 @@ static void http_accept(IOCHAN i, int event)
     ch->iochan = c;
     iochan_setdata(c, ch);
 
-    c->next = channel_list;
-    channel_list = c;
+    pazpar2_add_channel(c);
 }
 
 /* Create a http-channel listener, syntax [host:]port */
@@ -1042,8 +1040,7 @@ void http_init(const char *addr)
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "listen");
 
     c = iochan_create(l, http_accept, EVENT_INPUT | EVENT_EXCEPT);
-    c->next = channel_list;
-    channel_list = c;
+    pazpar2_add_channel(c);
 }
 
 void http_set_proxyaddr(char *host, char *base_url)

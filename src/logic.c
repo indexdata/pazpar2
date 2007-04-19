@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.9 2007-04-18 19:45:09 quinn Exp $
+/* $Id: logic.c,v 1.10 2007-04-19 16:07:20 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -73,8 +73,6 @@ static void connection_destroy(struct connection *co);
 static int client_prep_connection(struct client *cl);
 static void ingest_records(struct client *cl, Z_Records *r);
 void session_alert_watch(struct session *s, int what);
-
-IOCHAN channel_list = 0;  // Master list of connections we're handling events to
 
 static struct connection *connection_freelist = 0;
 static struct client *client_freelist = 0;
@@ -1192,8 +1190,7 @@ static struct connection *connection_create(struct client *cl)
 
     new->iochan = iochan_create(cs_fileno(link), handler, 0);
     iochan_setdata(new->iochan, new);
-    new->iochan->next = channel_list;
-    channel_list = new->iochan;
+    pazpar2_add_channel(new->iochan);
     return new;
 }
 
@@ -1755,7 +1752,18 @@ void start_zproxy(void)
         return;
 }
 
+// Master list of connections we're handling events to
+static IOCHAN channel_list = 0; 
+void pazpar2_add_channel(IOCHAN chan)
+{
+    chan->next = channel_list;
+    channel_list = chan;
+}
 
+void pazpar2_event_loop()
+{
+    event_loop(&channel_list);
+}
 
 /*
  * Local variables:

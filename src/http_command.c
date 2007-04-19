@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.39 2007-04-19 15:31:23 adam Exp $
+/* $Id: http_command.c,v 1.40 2007-04-19 16:07:20 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.39 2007-04-19 15:31:23 adam Exp $
+ * $Id: http_command.c,v 1.40 2007-04-19 16:07:20 adam Exp $
  */
 
 #include <stdio.h>
@@ -82,8 +82,8 @@ struct http_session *http_session_create()
     r->timeout_iochan = iochan_create(-1, session_timeout, 0);
     iochan_setdata(r->timeout_iochan, r);
     iochan_settimeout(r->timeout_iochan, global_parameters.session_timeout);
-    r->timeout_iochan->next = channel_list;
-    channel_list = r->timeout_iochan;
+
+    pazpar2_add_channel(r->timeout_iochan);
     return r;
 }
 

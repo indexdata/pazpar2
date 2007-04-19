@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.25 2007-04-17 21:25:26 quinn Exp $
+/* $Id: pazpar2.h,v 1.26 2007-04-19 16:07:20 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -267,8 +267,8 @@ void start_proxy(void);
 void start_zproxy(void);
 
 extern struct parameters global_parameters;
-extern IOCHAN channel_list;
-
+void pazpar2_add_channel(IOCHAN c);
+void pazpar2_event_loop(void);
 #endif
 
 /*
