@@ -1,7 +1,7 @@
-# $Id: Makefile.am,v 1.8 2007-04-16 13:58:20 marc Exp $
+# $Id: Makefile.am,v 1.9 2007-04-19 19:42:30 marc Exp $
 
 bin_PROGRAMS = pazpar2
-check_PROGRAMS = test_relevance
+check_PROGRAMS = test_config test_relevance
 TESTS = $(check_PROGRAMS)
 
 noinst_LIBRARIES = libpazpar2.a
@@ -21,5 +21,9 @@ libpazpar2_a_SOURCES = config.c config.h eventl.c eventl.h \
 pazpar2_SOURCES = pazpar2.c
 pazpar2_LDADD = libpazpar2.a $(YAZLIB)
 
+test_config_SOURCES = test_config.c
+test_config_LDADD = libpazpar2.a $(YAZLIB)
+
 test_relevance_SOURCES = test_relevance.c
 test_relevance_LDADD = libpazpar2.a $(YAZLIB)
+

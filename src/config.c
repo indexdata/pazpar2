@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.25 2007-04-19 11:57:53 marc Exp $
+/* $Id: config.c,v 1.26 2007-04-19 19:42:30 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.25 2007-04-19 11:57:53 marc Exp $ */
+/* $Id: config.c,v 1.26 2007-04-19 19:42:30 marc Exp $ */
 
 #include <string.h>
 
@@ -44,19 +44,9 @@ static char confdir[256] = ".";
 
 struct conf_config *config = 0;
 
-struct conf_service * conf_service_create(NMEM nmem)
-{
-    struct conf_service * service
-        = nmem_malloc(nmem, sizeof(struct conf_service));
-    service->num_metadata = 0;
-    service->metadata = 0;
-    service->num_sortkeys = 0;
-    service->sortkeys = 0;
-    return service; 
-}
 
-
-struct conf_metadata * conf_metadata_create(NMEM nmem, 
+struct conf_metadata * conf_metadata_assign(NMEM nmem, 
+                                            struct conf_metadata * metadata,
                                             const char *name,
                                             enum conf_metadata_type type,
                                             enum conf_metadata_merge merge,
@@ -65,10 +55,9 @@ struct conf_metadata * conf_metadata_create(NMEM nmem,
                                             int rank,
                                             int sortkey_offset)
 {
-
-    struct conf_metadata * metadata
-        = nmem_malloc(nmem, sizeof(struct conf_metadata));
-
+    if (!nmem || !metadata || !name)
+        return 0;
+    
     metadata->name = nmem_strdup(nmem, name);
     metadata->type = type;
     metadata->merge = merge;
@@ -76,11 +65,49 @@ struct conf_metadata * conf_metadata_create(NMEM nmem,
     metadata->termlist = termlist;
     metadata->rank = rank;    
     metadata->sortkey_offset = sortkey_offset;
+
     return metadata;
 }
 
-struct conf_metadata* conf_service_add_metadata(NMEM nmem,
+
+struct conf_sortkey * conf_sortkey_assign(NMEM nmem, 
+                                          struct conf_sortkey * sortkey,
+                                          const char *name,
+                                          enum conf_sortkey_type type)
+{
+    if (!nmem || !sortkey || !name)
+        return 0;
+    
+    sortkey->name = nmem_strdup(nmem, name);
+    sortkey->type = type;
+
+    return sortkey;
+}
+
+
+struct conf_service * conf_service_create(NMEM nmem,
+                                          int num_metadata, int num_sortkeys)
+{
+    struct conf_service * service
+        = nmem_malloc(nmem, sizeof(struct conf_service));
+    service->num_metadata = num_metadata;
+    service->metadata = 0;
+    if (service->num_metadata)
+      service->metadata 
+          = nmem_malloc(nmem, 
+                        sizeof(struct conf_metadata) * service->num_metadata);
+    service->num_sortkeys = num_sortkeys;
+    service->sortkeys = 0;
+    if (service->num_sortkeys)
+        service->sortkeys 
+            = nmem_malloc(nmem, 
+                          sizeof(struct conf_sortkey) * service->num_sortkeys);
+    return service; 
+}
+
+struct conf_metadata* conf_service_add_metadata(NMEM nmem, 
                                                 struct conf_service *service,
+                                                int position,
                                                 const char *name,
                                                 enum conf_metadata_type type,
                                                 enum conf_metadata_merge merge,
@@ -89,18 +116,39 @@ struct conf_metadata* conf_service_add_metadata(NMEM nmem,
                                                 int rank,
                                                 int sortkey_offset)
 {
-    struct conf_metadata * m = 0;
+    struct conf_metadata * md = 0;
 
-    if (!service)
-        return m;
+    if (!service || !service->metadata || !service->num_metadata
+        || position < 0  || !(position < service->num_metadata))
+        return 0;
 
-    m = conf_metadata_create(nmem, name, type, merge, 
+    //md = &((service->metadata)[position]);
+    md = service->metadata + position;
+    md = conf_metadata_assign(nmem, md, name, type, merge, 
                              brief, termlist, rank, sortkey_offset);
-
-    // Not finished, checked temporarily in for file move  // if (m)
-
-    return m;
+    return md;
 }
+
+
+struct conf_sortkey * conf_service_add_sortkey(NMEM nmem,
+                                               struct conf_service *service,
+                                               int position,
+                                               const char *name,
+                                               enum conf_sortkey_type type)
+{
+    struct conf_sortkey * sk = 0;
+
+    if (!service || !service->sortkeys || !service->num_sortkeys
+        || position < 0  || !(position < service->num_sortkeys))
+        return 0;
+
+    //sk = &((service->sortkeys)[position]);
+    sk = service->sortkeys + position;
+    sk = conf_sortkey_assign(nmem, sk, name, type);
+
+    return sk;
+}
+
 
 
 
