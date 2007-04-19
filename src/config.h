@@ -1,4 +1,4 @@
-/* $Id: config.h,v 1.17 2007-04-18 15:09:51 marc Exp $
+/* $Id: config.h,v 1.18 2007-04-19 11:57:53 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -34,6 +34,23 @@ enum conf_sortkey_type
     Metadata_sortkey_string         // Flat string
 };
 
+enum conf_metadata_type
+    {
+        Metadata_type_generic,    // Generic text field
+        Metadata_type_number,     // A number
+        Metadata_type_year        // A number
+    };
+
+enum conf_metadata_merge
+    {
+        Metadata_merge_no,        // Don't merge
+        Metadata_merge_unique,    // Include unique elements in merged block
+        Metadata_merge_longest,   // Include the longest (strlen) value
+        Metadata_merge_range,     // Store value as a range of lowest-highest
+        Metadata_merge_all        // Just include all elements found
+    };
+
+
 // Describes known metadata elements and how they are to be manipulated
 // An array of these structure provides a 'map' against which
 // discovered metadata elements are matched. It also governs storage,
@@ -48,21 +65,20 @@ struct conf_metadata
                  // values >1  give additional significance to a field
     int sortkey_offset; // -1 if it's not a sortkey, otherwise index
                         // into service/record_cluster->sortkey array
-    enum
-    {
-        Metadata_type_generic,    // Generic text field
-        Metadata_type_number,     // A number
-        Metadata_type_year        // A number
-    } type;
-    enum
-    {
-        Metadata_merge_no,        // Don't merge
-        Metadata_merge_unique,    // Include unique elements in merged block
-        Metadata_merge_longest,   // Include the longest (strlen) value
-        Metadata_merge_range,     // Store value as a range of lowest-highest
-        Metadata_merge_all        // Just include all elements found
-    } merge;
+    enum conf_metadata_type type;
+    enum conf_metadata_merge merge;
 };
+
+
+struct conf_metadata * conf_metadata_create(NMEM nmem, 
+                                            const char *name,
+                                            enum conf_metadata_type type,
+                                            enum conf_metadata_merge merge,
+                                            int brief,
+                                            int termlist,
+                                            int rank,
+                                            int sortkey_offset);
+
 
 // Controls sorting
 struct conf_sortkey
@@ -82,6 +98,19 @@ struct conf_service
     int num_sortkeys;
     struct conf_sortkey *sortkeys;
 };
+
+struct conf_service * conf_service_create(NMEM nmem);
+
+struct conf_metadata* conf_service_add_metadata(NMEM nmem,
+                                                struct conf_service *service,
+                                                const char *name,
+                                                enum conf_metadata_type type,
+                                                enum conf_metadata_merge merge,
+                                                int brief,
+                                                int termlist,
+                                                int rank,
+                                                int sortkey_offset);
+
 
 struct conf_server
 {

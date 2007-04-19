@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.24 2007-04-11 11:01:45 marc Exp $
+/* $Id: config.c,v 1.25 2007-04-19 11:57:53 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.24 2007-04-11 11:01:45 marc Exp $ */
+/* $Id: config.c,v 1.25 2007-04-19 11:57:53 marc Exp $ */
 
 #include <string.h>
 
@@ -43,6 +43,67 @@ static NMEM nmem = 0;
 static char confdir[256] = ".";
 
 struct conf_config *config = 0;
+
+struct conf_service * conf_service_create(NMEM nmem)
+{
+    struct conf_service * service
+        = nmem_malloc(nmem, sizeof(struct conf_service));
+    service->num_metadata = 0;
+    service->metadata = 0;
+    service->num_sortkeys = 0;
+    service->sortkeys = 0;
+    return service; 
+}
+
+
+struct conf_metadata * conf_metadata_create(NMEM nmem, 
+                                            const char *name,
+                                            enum conf_metadata_type type,
+                                            enum conf_metadata_merge merge,
+                                            int brief,
+                                            int termlist,
+                                            int rank,
+                                            int sortkey_offset)
+{
+
+    struct conf_metadata * metadata
+        = nmem_malloc(nmem, sizeof(struct conf_metadata));
+
+    metadata->name = nmem_strdup(nmem, name);
+    metadata->type = type;
+    metadata->merge = merge;
+    metadata->brief = brief;   
+    metadata->termlist = termlist;
+    metadata->rank = rank;    
+    metadata->sortkey_offset = sortkey_offset;
+    return metadata;
+}
+
+struct conf_metadata* conf_service_add_metadata(NMEM nmem,
+                                                struct conf_service *service,
+                                                const char *name,
+                                                enum conf_metadata_type type,
+                                                enum conf_metadata_merge merge,
+                                                int brief,
+                                                int termlist,
+                                                int rank,
+                                                int sortkey_offset)
+{
+    struct conf_metadata * m = 0;
+
+    if (!service)
+        return m;
+
+    m = conf_metadata_create(nmem, name, type, merge, 
+                             brief, termlist, rank, sortkey_offset);
+
+    // Not finished, checked temporarily in for file move  // if (m)
+
+    return m;
+}
+
+
+
 
 /* Code to parse configuration file */
 /* ==================================================== */

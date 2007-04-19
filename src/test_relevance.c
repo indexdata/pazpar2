@@ -1,4 +1,4 @@
-/* $Id: test_relevance.c,v 1.2 2007-04-17 13:30:24 marc Exp $
+/* $Id: test_relevance.c,v 1.3 2007-04-19 11:57:53 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -62,7 +62,7 @@ void test_relevance(int argc, char **argv)
   //    {"ål", "økologi", "æble", 0};
 
   struct record_cluster *cluster = 0;
-  struct conf_service service; 
+  struct conf_service *service = 0; 
   struct reclist *list = 0;
   struct record *record = 0;
   const char *mergekey = "amergekey";
@@ -72,43 +72,57 @@ void test_relevance(int argc, char **argv)
 
   rel = relevance_create(nmem, queryterms, numrecs);
   list = reclist_create(nmem, numrecs);
+  
+  service =  conf_service_create(nmem);
 
   // setting up service - sic!
   // this should have been done by a nice service_create function !!!
 
-  service.num_metadata = 1;
-  service.metadata = 0;
-  service.num_sortkeys = 0;
-  service.sortkeys = 0;
-  if (service.num_metadata)
-      service.metadata 
-          = nmem_malloc(nmem, 
-                        sizeof(struct conf_metadata) * service.num_metadata);
-  else
-      service.metadata = 0;
-  service.metadata->name = nmem_strdup(nmem, "aname");
-  //service.metadata->brief = 1;
-  //service.metadata->termlist = 1;
-  //service.metadata->rank = 1;
-  //service.metadata->type = Metadata_type_generic;
-  //service.metadata->type = Metadata_type_year;
-  //service.metadata->merge = Metadata_merge_no;
-  //service.metadata->merge = Metadata_merge_unique;
-  //service.metadata->merge = Metadata_merge_longest;
-  //service.metadata->merge = Metadata_merge_range;
-  //service.metadata->merge = Metadata_merge_all;
+  //service->num_metadata = 1;
+  //service->metadata = 0;
+  //service->num_sortkeys = 0;
+  //service->sortkeys = 0;
 
 
-  if (service.num_sortkeys)
-      service.sortkeys 
+  //if (service->num_metadata)
+  //    service->metadata 
+  //        = nmem_malloc(nmem, 
+  //                      sizeof(struct conf_metadata) * service->num_metadata);
+  //else
+  //    service->metadata = 0;
+  //service->metadata->name = nmem_strdup(nmem, "aname");
+  //service->metadata->brief = 1;
+  //service->metadata->termlist = 1;
+  //service->metadata->rank = 1;
+  //service->metadata->type = Metadata_type_generic;
+  //service->metadata->type = Metadata_type_year;
+  //service->metadata->merge = Metadata_merge_no;
+  //service->metadata->merge = Metadata_merge_unique;
+  //service->metadata->merge = Metadata_merge_longest;
+  //service->metadata->merge = Metadata_merge_range;
+  //service->metadata->merge = Metadata_merge_all;
+
+  service->metadata 
+      = conf_metadata_create(nmem, "name",
+                             Metadata_type_generic, Metadata_merge_unique,
+                             1, 1, 1, 0);
+  service->num_metadata = 1;
+
+  conf_service_add_metadata(nmem, service, "name",
+                             Metadata_type_generic, Metadata_merge_unique,
+                             1, 1, 1, 0);
+
+
+  if (service->num_sortkeys)
+      service->sortkeys 
           = nmem_malloc(nmem, 
-                        sizeof(struct conf_sortkey) * service.num_sortkeys);
+                        sizeof(struct conf_sortkey) * service->num_sortkeys);
   else
-      service.sortkeys = 0;
-  // service.sortkeys.type = Metadata_sortkey_numeric;
-  // service.sortkeys.type = Metadata_sortkey_skiparticle;
-  // service.sortkeys.name = service.metadata->name;
-  //service.metadata->sortkey_offset = sk_node;
+      service->sortkeys = 0;
+  // service->sortkeys.type = Metadata_sortkey_numeric;
+  // service->sortkeys.type = Metadata_sortkey_skiparticle;
+  // service->sortkeys.name = service->metadata->name;
+  //service->metadata->sortkey_offset = sk_node;
 
 
 
@@ -124,9 +138,9 @@ void test_relevance(int argc, char **argv)
   record->sortkeys = 0;
   record->metadata 
       = nmem_malloc(nmem, 
-                    sizeof(struct record_metadata*) * service.num_metadata);
+                    sizeof(struct record_metadata*) * service->num_metadata);
   memset(record->metadata, 0, 
-         sizeof(struct record_metadata*) * service.num_metadata);
+         sizeof(struct record_metadata*) * service->num_metadata);
 
 
   // now we need to put some actual data into the record ... how ??
@@ -255,7 +269,7 @@ void test_relevance(int argc, char **argv)
 
 
   // insert one record into recordlist/cluster - what's a cluster, exactly??
-  cluster = reclist_insert(list, &service, record, (char *)mergekey, &total);
+  cluster = reclist_insert(list, service, record, (char *)mergekey, &total);
 
 
   relevance_newrec(rel, cluster);
@@ -271,7 +285,7 @@ void test_relevance(int argc, char **argv)
 
   //relevance_donerecord(rel, cluster);
   // relevance_countwords(se->rel, cluster, 
-  //                                   (char *) value, service.metadata->rank);
+  //                                   (char *) value, service->metadata->rank);
   //      
 
 
