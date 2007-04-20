@@ -1,4 +1,4 @@
-/* $Id: record.h,v 1.1 2007-04-20 13:03:22 marc Exp $
+/* $Id: record.h,v 1.2 2007-04-20 14:37:17 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -46,6 +46,14 @@ struct record {
     union data_types **sortkeys;       // Array mirrors list of sortkey fields in config
     struct record *next;  // Next in cluster of merged records
 };
+
+
+struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys);
+
+struct record_metadata * record_add_metadata_fieldno(NMEM nmem, 
+                                                     struct record * record,
+                                                     int fieldno, 
+                                                     union data_types data);
 
 struct record_cluster
 {

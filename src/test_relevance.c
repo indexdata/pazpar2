@@ -1,4 +1,4 @@
-/* $Id: test_relevance.c,v 1.4 2007-04-19 19:42:30 marc Exp $
+/* $Id: test_relevance.c,v 1.5 2007-04-20 14:37:17 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -45,7 +45,8 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 //#include "pazpar2.h"
 #include "config.h"
 #include "relevance.h"
-
+#include "record.h"
+#include "pazpar2.h"
 
 
 void test_relevance(int argc, char **argv)
@@ -57,14 +58,16 @@ void test_relevance(int argc, char **argv)
       {"abe", "fisk", 0};
   //    {"ål", "økologi", "æble", 0};
 
-  struct record_cluster *cluster = 0;
+  //struct record_cluster *cluster = 0;
   struct conf_service *service = 0; 
   struct reclist *list = 0;
   struct record *record = 0;
-  const char *mergekey = "amergekey";
-  int total = 0;
+  //const char *mergekey = "amergekey";
+  //int total = 0;
 
   struct relevance *rel = 0;
+  struct client *client = 0;
+  
 
   rel = relevance_create(nmem, queryterms, numrecs);
   list = reclist_create(nmem, numrecs);
@@ -87,24 +90,30 @@ void test_relevance(int argc, char **argv)
                             1, 1, 1, 0);
 
 
-#if 0
-  // preparing one record
-  // this should have been done by a nice record_create function
-  // why the heck does the record know which client it belongs to ??
+  // testing record things
+  record = record_create(nmem, 4, 1);
+  YAZ_CHECK(record);
 
+  // why on earth do we have a client dangeling from the record ??
+  record->client = client;
 
-  record = nmem_malloc(nmem, sizeof(struct record));
-  record->next = 0;
-  // which client should I use for record->client = cl;  ??
-  record->client = 0;
-  // and which sortkeys data_types list should I use ??
-  record->sortkeys = 0;
-  record->metadata 
-      = nmem_malloc(nmem, 
-                    sizeof(struct record_metadata*) * service->num_metadata);
-  memset(record->metadata, 0, 
-         sizeof(struct record_metadata*) * service->num_metadata);
-#endif
+  //union data_types data;
+  //data.text = "sometext";
+
+  char * bla = "blabla";
+  union data_types data;
+  data.text = bla;
+
+  
+  union data_types data2;
+  data.number.min = 2;
+  data.number.max = 5;
+
+  record_add_metadata_fieldno(nmem, record, 0, data);
+  record_add_metadata_fieldno(nmem, record, 0, data2);
+
+  //record_add_metadata_text(nmem, record, 0, bla);
+
 
   // now we need to put some actual data into the record ... how ??
   // there is a hell of a lot spagetti code in logic.c ingest_record()

@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.27 2007-04-20 11:00:29 marc Exp $
+/* $Id: config.c,v 1.28 2007-04-20 14:37:17 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.27 2007-04-20 11:00:29 marc Exp $ */
+/* $Id: config.c,v 1.28 2007-04-20 14:37:17 marc Exp $ */
 
 #include <string.h>
 
@@ -88,8 +88,12 @@ struct conf_sortkey * conf_sortkey_assign(NMEM nmem,
 struct conf_service * conf_service_create(NMEM nmem,
                                           int num_metadata, int num_sortkeys)
 {
-    struct conf_service * service
-        = nmem_malloc(nmem, sizeof(struct conf_service));
+    struct conf_service * service = 0;
+
+    //assert(nmem);
+    
+    service = nmem_malloc(nmem, sizeof(struct conf_service));
+
     service->num_metadata = num_metadata;
     service->metadata = 0;
     if (service->num_metadata)

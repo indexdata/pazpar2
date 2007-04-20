@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.11 2007-04-20 13:03:22 marc Exp $
+# $Id: Makefile.am,v 1.12 2007-04-20 14:37:17 marc Exp $
 
 bin_PROGRAMS = pazpar2
 check_PROGRAMS = test_config test_relevance test_sel_thread
@@ -13,7 +13,7 @@ AM_CFLAGS = $(YAZINC)
 libpazpar2_a_SOURCES = config.c config.h eventl.c eventl.h \
 	http.c http_command.c http_command.h http.h \
 	logic.c pazpar2.h \
-	record.h reclists.c reclists.h \
+	record.h record.c reclists.c reclists.h \
 	relevance.c relevance.h termlists.c termlists.h \
 	util.c util.h zeerex.c zeerex.h database.c database.h \
 	settings.h settings.c sel_thread.c sel_thread.h
