@@ -1,4 +1,4 @@
-/* $Id: test_sel_thread.c,v 1.1 2007-04-20 10:06:52 adam Exp $
+/* $Id: test_sel_thread.c,v 1.2 2007-04-20 11:44:58 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -24,24 +24,90 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #endif
 
 #include "sel_thread.h"
+#include "eventl.h"
 #include <yaz/test.h>
+#include <yaz/xmalloc.h>
 
+/** \brief stuff we work on in separate thread */
 struct my_work_data {
     int x;
+    int y;
 };
 
+/** \brief work to be carried out in separate thrad */
 static void work_handler(void *vp)
 {
     struct my_work_data *p = vp;
-    p->x += 2;
+    p->y = p->x * 2;
 }
 
+/** \brief see if we can create and destroy without problems */
 static void test_1(void)
 {
     int fd;
     sel_thread_t p = sel_thread_create(work_handler, &fd);
     YAZ_CHECK(p);
+    if (!p)
+        return;
 
+    sel_thread_destroy(p);
+}
+
+
+void iochan_handler(struct iochan *i, int event)
+{
+    static int number = 0;
+    sel_thread_t p = iochan_getdata(i);
+
+    if (event & EVENT_INPUT)
+    {
+        struct my_work_data *work;
+
+        work = sel_thread_result(p);
+
+        YAZ_CHECK(work);
+        if (work)
+        {
+            YAZ_CHECK_EQ(work->x * 2, work->y);
+            /* stop work after a couple of iterations */
+            if (work->x > 10)
+                iochan_destroy(i);
+
+            xfree(work);
+        }
+
+    }
+    if (event & EVENT_TIMEOUT)
+    {
+        struct my_work_data *work;
+
+        work = xmalloc(sizeof(*work));
+        work->x = number;
+        sel_thread_add(p, work);
+
+        work = xmalloc(sizeof(*work));
+        work->x = number+1;
+        sel_thread_add(p, work);
+
+        number += 10;
+    }
+}
+
+/** brief use the fd for something */
+static void test_2(void)
+{
+    int thread_fd;
+    sel_thread_t p = sel_thread_create(work_handler, &thread_fd);
+    YAZ_CHECK(p);
+    if (p)
+    {
+        IOCHAN chan = iochan_create(thread_fd, iochan_handler,
+                                    EVENT_INPUT|EVENT_TIMEOUT);
+        iochan_settimeout(chan, 1);
+        iochan_setdata(chan, p);
+
+        event_loop(&chan);
+    }
     sel_thread_destroy(p);
 }
 
@@ -51,6 +117,7 @@ int main(int argc, char **argv)
     YAZ_CHECK_LOG(); 
 
     test_1();
+    test_2();
 
     YAZ_CHECK_TERM;
 }
