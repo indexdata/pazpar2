@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.20 2007-04-11 03:34:11 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.21 2007-04-20 14:05:23 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -407,7 +407,7 @@
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: pazpar2_conf.xml,v 1.20 2007-04-11 03:34:11 quinn Exp $ -->
+  <!-- $Id: pazpar2_conf.xml,v 1.21 2007-04-20 14:05:23 quinn Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
@@ -526,15 +526,9 @@
 	      The representation (syntax) of the retrieval records. Currently
 	      recognized values are iso2709 and xml.
 	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>pz:encoding</term>
-	  <listitem>
 	    <para>
-	      The native encoding (character set) of retrieval records. Can be anything
-	      recognized by conv, but typical values are marc8 and latin1.
-	      The default is UTF-8.
+	      For iso2709, can also specify a native character set, e.g. "iso2709;latin-1".
+	      If no character set is provided, MARC-8 is assumed.
 	    </para>
 	  </listitem>
 	</varlistentry>
