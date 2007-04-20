@@ -1,4 +1,4 @@
-/* $Id: sel_thread.c,v 1.1 2007-04-20 10:06:52 adam Exp $
+/* $Id: sel_thread.c,v 1.2 2007-04-20 10:15:19 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -87,7 +87,7 @@ static void *sel_thread_handler(void *vp)
 }
 
 sel_thread_t sel_thread_create(void (*work_handler)(void *work_data),
-                                 int *read_fd)
+                               int *read_fd)
 {
     NMEM nmem = nmem_create();
     sel_thread_t p = nmem_malloc(nmem, sizeof(*p));
@@ -147,11 +147,15 @@ void *sel_thread_result(sel_thread_t p)
 {
     struct work_item **work_p, *work_this;
     void *data;
+    char read_buf[1];
 
     /* got something. Take the last one out of output_queue */
     work_p = &p->output_queue;
     if (!*work_p)
         return 0;
+
+    read(p->fd[0], read_buf, 1);
+
     while ((*work_p)->next)
         work_p = &(*work_p)->next;
     work_this = *work_p;
