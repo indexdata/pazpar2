@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.21 2007-04-20 15:36:48 quinn Exp $
+/* $Id: database.c,v 1.22 2007-04-20 16:21:19 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -165,7 +165,6 @@ static struct database *load_database(const char *id)
     db->explain = explain;
     db->settings = 0;
     db->next = databases;
-    db->map = 0;
     databases = db;
 
     return db;
@@ -284,43 +283,6 @@ int grep_databases(void *context, struct database_criterion *cl,
             i++;
         }
     return i;
-}
-
-// Prepare XSLT stylesheets for record normalization
-static void prepare_map(void *ignore, struct database *db)
-{
-    struct setting *s;
-
-    if (!db->settings)
-        return;
-    for (s = db->settings[PZ_XSLT]; s; s = s->next)
-    {
-        char **stylesheets;
-        struct database_retrievalmap **m = &db->map;
-        int num, i;
-
-        nmem_strsplit(nmem, ",", s->value, &stylesheets, &num);
-        for (i = 0; i < num; i++)
-        {
-            (*m) = nmem_malloc(nmem, sizeof(**m));
-            (*m)->next = 0;
-            if (!((*m)->stylesheet = conf_load_stylesheet(stylesheets[i])))
-            {
-                yaz_log(YLOG_FATAL, "Unable to load stylesheet: %s",
-                        stylesheets[i]);
-                exit(1);
-            }
-            m = &(*m)->next;
-        }
-    }
-    if (!db->map)
-        yaz_log(YLOG_WARN, "No Normalization stylesheet for target %s", db->url);
-}
-
-// Read settings for each database, and prepare support data structures
-void prepare_databases(void)
-{
-    grep_databases(0, 0, prepare_map);
 }
 
 // This function will most likely vanish when a proper target profile mechanism is

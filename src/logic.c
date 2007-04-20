@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.13 2007-04-20 15:36:48 quinn Exp $
+/* $Id: logic.c,v 1.14 2007-04-20 16:21:19 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -18,6 +18,9 @@ along with Pazpar2; see the file LICENSE.  If not, write to the
 Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
+
+// This file contains the primary business logic. Several parts of it should
+// Eventually be factored into separate modules.
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -573,7 +576,7 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
 #endif
     }
 
-    for (m = db->map; m; m = m->next){
+    for (m = sdb->map; m; m = m->next){
         xmlDoc *new = 0;
 
 #if 1
@@ -1283,13 +1286,53 @@ static int prepare_yazmarc(struct session_database *sdb)
     return 0;
 }
 
+// Prepare XSLT stylesheets for record normalization
+// Structures are allocated on the session_wide nmem to avoid having
+// to recompute this for every search. This would lead
+// to leaking if a single session was to repeatedly change the PZ_XSLT
+// setting. However, this is not a realistic use scenario.
+static int prepare_map(struct session *se, struct session_database *sdb)
+{
+    struct setting *s;
+
+    if (!sdb->settings)
+    {
+        yaz_log(YLOG_WARN, "No settings on %s", sdb->database->url);
+        return -1;
+    }
+    if ((s = sdb->settings[PZ_XSLT]))
+    {
+        char **stylesheets;
+        struct database_retrievalmap **m = &sdb->map;
+        int num, i;
+
+        nmem_strsplit(se->session_nmem, ",", s->value, &stylesheets, &num);
+        for (i = 0; i < num; i++)
+        {
+            (*m) = nmem_malloc(se->session_nmem, sizeof(**m));
+            (*m)->next = 0;
+            if (!((*m)->stylesheet = conf_load_stylesheet(stylesheets[i])))
+            {
+                yaz_log(YLOG_FATAL, "Unable to load stylesheet: %s",
+                        stylesheets[i]);
+                return -1;
+            }
+            m = &(*m)->next;
+        }
+    }
+    if (!sdb->map)
+        yaz_log(YLOG_WARN, "No Normalization stylesheet for target %s",
+                sdb->database->url);
+    return 0;
+}
+
 // This analyzes settings and recomputes any supporting data structures
 // if necessary.
-static int prepare_session_database(struct session_database *sdb)
+static int prepare_session_database(struct session *se, struct session_database *sdb)
 {
     if (!sdb->settings)
     {
-        yaz_log(YLOG_WARN, "No settings associates with %s", sdb->database->url);
+        yaz_log(YLOG_WARN, "No settings associated with %s", sdb->database->url);
         return -1;
     }
     if (sdb->settings[PZ_NATIVESYNTAX] && !sdb->yaz_marc)
@@ -1299,6 +1342,8 @@ static int prepare_session_database(struct session_database *sdb)
     }
     if (sdb->settings[PZ_XSLT] && !sdb->map)
     {
+        if (prepare_map(se, sdb) < 0)
+            return -1;
     }
     return 0;
 }
@@ -1529,7 +1574,7 @@ char *search(struct session *se, char *query, char *filter)
 
     for (cl = se->clients; cl; cl = cl->next)
     {
-        if (prepare_session_database(cl->database) < 0)
+        if (prepare_session_database(se, cl->database) < 0)
             return "CONFIG_ERROR";
         if (client_parse_query(cl, query) < 0)  // Query must parse for all targets
             return "QUERY";

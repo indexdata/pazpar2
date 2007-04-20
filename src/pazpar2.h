@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.30 2007-04-20 15:36:48 quinn Exp $
+/* $Id: pazpar2.h,v 1.31 2007-04-20 16:21:19 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -61,15 +61,6 @@ struct database {
     struct zr_explain *explain;
     struct setting **settings;
     struct database *next;
-    //yaz_marc_t yaz_marc;
-    struct database_retrievalmap *map;
-};
-
-// Normalization filter. Turns incoming record into internal representation
-// Simple sequence of stylesheets run in series.
-struct database_retrievalmap {
-    xsltStylesheet *stylesheet;
-    struct database_retrievalmap *next;
 };
 
 struct database_criterion_value {
@@ -126,17 +117,11 @@ struct client {
     struct client *next;
 };
 
-#define SESSION_WATCH_RECORDS   0
-#define SESSION_WATCH_MAX       0
-
-#define SESSION_MAX_TERMLISTS 10
-
-typedef void (*session_watchfun)(void *data);
-
-struct named_termlist
-{
-    char *name;
-    struct termlist *termlist;
+// Normalization filter. Turns incoming record into internal representation
+// Simple sequence of stylesheets run in series.
+struct database_retrievalmap {
+    xsltStylesheet *stylesheet;
+    struct database_retrievalmap *next;
 };
 
 // Represents a database as viewed from one session, possibly with settings overriden
@@ -148,6 +133,19 @@ struct session_database
     yaz_marc_t yaz_marc;
     struct database_retrievalmap *map;
     struct session_database *next;
+};
+
+#define SESSION_WATCH_RECORDS   0
+#define SESSION_WATCH_MAX       0
+
+#define SESSION_MAX_TERMLISTS 10
+
+typedef void (*session_watchfun)(void *data);
+
+struct named_termlist
+{
+    char *name;
+    struct termlist *termlist;
 };
 
 // End-user session

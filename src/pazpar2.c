@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.80 2007-04-19 16:07:20 adam Exp $
+/* $Id: pazpar2.c,v 1.81 2007-04-20 16:21:19 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -95,7 +95,6 @@ int main(int argc, char **argv)
         settings_read(global_parameters.server->settings);
     else
         yaz_log(YLOG_WARN, "No settings-directory specified. Problems may well ensue!");
-    prepare_databases();
     global_parameters.odr_in = odr_createmem(ODR_DECODE);
     global_parameters.odr_out = odr_createmem(ODR_ENCODE);
 
