@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.11 2007-04-20 04:08:14 quinn Exp $
+/* $Id: logic.c,v 1.12 2007-04-20 04:32:33 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1248,14 +1248,43 @@ static int client_prep_connection(struct client *cl)
         return 0;
 }
 
+// Initialize CCL map for a target
+static CCL_bibset prepare_cclmap(struct client *cl)
+{
+    struct session_database *sdb = cl->database;
+    struct setting *s;
+    CCL_bibset res;
+
+    if (!sdb->settings)
+        return 0;
+    res = ccl_qual_mk();
+    for (s = sdb->settings[PZ_CCLMAP]; s; s = s->next)
+    {
+        char *p = strchr(s->name + 3, ':');
+        if (!p)
+        {
+            yaz_log(YLOG_WARN, "Malformed cclmap name: %s", s->name);
+            ccl_qual_rm(&res);
+            return 0;
+        }
+        p++;
+        ccl_qual_fitem(res, s->value, p);
+    }
+    return res;
+}
+
 // Parse the query given the settings specific to this client
 static int client_parse_query(struct client *cl, const char *query)
 {
     struct session *se = cl->session;
     struct ccl_rpn_node *cn;
     int cerror, cpos;
+    CCL_bibset ccl_map = prepare_cclmap(cl);
 
-    cn = ccl_find_str(cl->database->database->ccl_map, query, &cerror, &cpos);
+    if (!ccl_map)
+        return -1;
+    cn = ccl_find_str(ccl_map, query, &cerror, &cpos);
+    ccl_qual_rm(&ccl_map);
     if (!cn)
     {
         cl->state = Client_Error;

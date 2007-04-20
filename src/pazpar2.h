@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.27 2007-04-20 04:08:14 quinn Exp $
+/* $Id: pazpar2.h,v 1.28 2007-04-20 04:32:33 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -92,7 +92,6 @@ struct database {
     struct zr_explain *explain;
     struct setting **settings;
     struct database *next;
-    CCL_bibset ccl_map;
     yaz_marc_t yaz_marc;
     struct database_retrievalmap *map;
 };

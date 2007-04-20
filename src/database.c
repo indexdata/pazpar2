@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.19 2007-04-18 12:41:38 quinn Exp $
+/* $Id: database.c,v 1.20 2007-04-20 04:32:33 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -165,7 +165,6 @@ static struct database *load_database(const char *id)
     db->explain = explain;
     db->settings = 0;
     db->next = databases;
-    db->ccl_map = 0;
     db->yaz_marc = 0;
     db->map = 0;
     databases = db;
@@ -288,29 +287,6 @@ int grep_databases(void *context, struct database_criterion *cl,
     return i;
 }
 
-// Initialize CCL map for a target
-// Note: This approach ignores user-specific CCL maps, for which I
-// don't presently see any application.
-static void prepare_cclmap(void *ignore, struct database *db)
-{
-    struct setting *s;
-
-    if (!db->settings)
-        return;
-    db->ccl_map = ccl_qual_mk();
-    for (s = db->settings[PZ_CCLMAP]; s; s = s->next)
-    {
-        char *p = strchr(s->name + 3, ':');
-        if (!p)
-        {
-            yaz_log(YLOG_FATAL, "Malformed cclmap name: %s", s->name);
-            exit(1);
-        }
-        p++;
-        ccl_qual_fitem(db->ccl_map, s->value, p);
-    }
-}
-
 // Initialize YAZ Map structures for MARC-based targets
 static void prepare_yazmarc(void *ignore, struct database *db)
 {
@@ -377,7 +353,6 @@ static void prepare_map(void *ignore, struct database *db)
 // Read settings for each database, and prepare support data structures
 void prepare_databases(void)
 {
-    grep_databases(0, 0, prepare_cclmap);
     grep_databases(0, 0, prepare_yazmarc);
     grep_databases(0, 0, prepare_map);
 }
