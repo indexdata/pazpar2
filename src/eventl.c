@@ -1,4 +1,4 @@
-/* $Id: eventl.c,v 1.5 2007-04-10 08:48:56 adam Exp $
+/* $Id: eventl.c,v 1.6 2007-04-20 11:43:43 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -100,6 +100,8 @@ int event_loop(IOCHAN *iochans)
 	        FD_SET(p->fd, &except);
 	    if (p->fd > max)
 	        max = p->fd;
+            if (p->max_idle && p->max_idle < to.tv_sec)
+                to.tv_sec = p->max_idle;
 	}
 	if ((res = select(max + 1, &in, &out, &except, timeout)) < 0)
 	{
