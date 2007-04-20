@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.14 2007-04-20 16:21:19 quinn Exp $
+/* $Id: logic.c,v 1.15 2007-04-20 16:37:35 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1254,20 +1254,20 @@ static int client_prep_connection(struct client *cl)
 // Initialize YAZ Map structures for MARC-based targets
 static int prepare_yazmarc(struct session_database *sdb)
 {
-    struct setting *s;
+    char *s;
 
     if (!sdb->settings)
     {
         yaz_log(YLOG_WARN, "No settings for %s", sdb->database->url);
         return -1;
     }
-    if ((s = sdb->settings[PZ_NATIVESYNTAX]) && !strncmp(s->value, "iso2709", 7))
+    if ((s = session_setting_oneval(sdb, PZ_NATIVESYNTAX)) && !strncmp(s, "iso2709", 7))
     {
         char *encoding = "marc-8s", *e;
         yaz_iconv_t cm;
 
         // See if a native encoding is specified
-        if ((e = strchr(s->value, ';')))
+        if ((e = strchr(s, ';')))
             encoding = e + 1;
 
         sdb->yaz_marc = yaz_marc_create();
@@ -1293,20 +1293,20 @@ static int prepare_yazmarc(struct session_database *sdb)
 // setting. However, this is not a realistic use scenario.
 static int prepare_map(struct session *se, struct session_database *sdb)
 {
-    struct setting *s;
+   char *s;
 
     if (!sdb->settings)
     {
         yaz_log(YLOG_WARN, "No settings on %s", sdb->database->url);
         return -1;
     }
-    if ((s = sdb->settings[PZ_XSLT]))
+    if ((s = session_setting_oneval(sdb, PZ_XSLT)))
     {
         char **stylesheets;
         struct database_retrievalmap **m = &sdb->map;
         int num, i;
 
-        nmem_strsplit(se->session_nmem, ",", s->value, &stylesheets, &num);
+        nmem_strsplit(se->session_nmem, ",", s, &stylesheets, &num);
         for (i = 0; i < num; i++)
         {
             (*m) = nmem_malloc(se->session_nmem, sizeof(**m));
