@@ -1,16 +1,19 @@
 /*
-** $Id: client.js,v 1.19 2007-04-17 12:53:45 jakub Exp $
+** $Id: client.js,v 1.20 2007-04-20 13:56:20 jakub Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
 /* start with creating pz2 object and passing it event handlers*/
-var my_paz = new pz2( { "onshow": my_onshow,
+var my_paz = new pz2({ 
+                    "onshow": my_onshow,
                     //"showtime": 1000,
                     //"onstat": my_onstat,
                     "onterm": my_onterm,
                     "termlist": "xtargets,subject,author,date",
                     //"onbytarget": my_onbytarget,
-                    "onrecord": my_onrecord } );
+                    "onrecord": my_onrecord,
+                    "errorhandler": my_errorhandler
+                    });
 
 /* some state variable */
 var currentSort = 'relevance';
@@ -67,6 +70,14 @@ function onFormSubmitEventHandler() {
 ** pz2 Event Handlers ***********************************************************
 *********************************************************************************
 */
+function my_errorhandler(err)
+{
+    switch (err.message) 
+    {
+        case 'QUERY': alert("Your query was not understood. Please rephrase."); break;
+        default: alert(err.message);
+    }
+}
 
 /*
 ** data.hits["md-title"], data.hits["md-author"], data.hits.recid, data.hits.count

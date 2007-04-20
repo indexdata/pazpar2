@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.10 2007-04-18 04:23:53 quinn Exp $
+** $Id: pz2.js,v 1.11 2007-04-20 13:56:20 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -33,7 +33,11 @@ var pz2 = function(paramArray) {
 
     // at least one callback required
     if ( !paramArray )
-        throw new Error("An array with parameters has to be suplied when instantiating a class");   
+        throw new Error("An array with parameters has to be suplied when instantiating a class");
+
+    //supported pazpar2's protocol version
+    __myself.suppProtoVer = '1';
+    __myself.errorHandler = paramArray.errorhandler || null;
     
     // function callbacks
     __myself.statCallback = paramArray.onstat || null;
@@ -90,17 +94,30 @@ var pz2 = function(paramArray) {
 
     // error handling
     $(document).ajaxError( 
-    function (request, settings, exception) {
-        if ( settings.responseXML && settings.responseXML.getElementsByTagName("error") )
+    function (ajaxError, xhr, reqSettings, prevException)
+    {
+        if ( xhr.responseXML && xhr.responseXML.getElementsByTagName("error").length )
 	{
-	    var err = settings.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue;
-	    if (err == 'QUERY')
-		    alert("Your query was not understood. Please rephrase");
-	    else
-		    throw new Error( settings.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue);
+	    var errMsg = xhr.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue;
+            var errCode = xhr.responseXML.getElementsByTagName("error")[0].getAttribute("code");
+            
+            var err = new Error(errMsg);
+            err.code = errCode;
+	    
+            if (__myself.errorHandler) {
+                __myself.errorHandler(err);
+            }
+            else {
+                throw err;
+            }
 	}
-	else
-	    throw exception;
+        // ensure the errors are propagated
+	else if (prevException != undefined ) {
+	    throw prevException;
+        }
+        else {
+                throw new Error("XMLHttpRequest error. STATUS: " + xhr.status + " STATUS TEXT: " + xhr.statusText);
+        }
     });
     
     // auto init session?
@@ -111,12 +128,14 @@ pz2.prototype = {
     init: function(keepAlive) 
     {
         if ( keepAlive < __myself.keepAlive )
-            __myself.keepAlive = keepAlive;  
+            __myself.keepAlive = keepAlive;
         
         $.get( __myself.pz2String,
             { "command": "init" },
             function(data) {
                 if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
+                    if ( data.getElementsByTagName("protocol")[0].childNodes[0].nodeValue != __myself.suppProtoVer )
+                        throw new Error("Server's protocol not supported by the client");
                     __myself.initStatusOK = true;
                     __myself.sessionID = data.getElementsByTagName("session")[0].childNodes[0].nodeValue;
                     setTimeout(__myself.ping, __myself.keepAlive);
@@ -279,7 +298,7 @@ pz2.prototype = {
 				}
 				else {
 				    var nodeName = hits[i].childNodes[j].nodeName;
-				    var nodeText = hits[i].childNodes[j].firstChild.nodeValue;
+                                    var nodeText = hits[i].childNodes[j].firstChild.nodeValue;
 				    show.hits[i][nodeName] = nodeText;
 				}
                             }
