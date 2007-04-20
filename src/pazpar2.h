@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.26 2007-04-19 16:07:20 adam Exp $
+/* $Id: pazpar2.h,v 1.27 2007-04-20 04:08:14 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -185,7 +185,6 @@ struct session {
     struct session_database *databases;  // All databases, settings overriden
     struct client *clients;              // Clients connected for current search
     int requestid; 
-    char query[1024];
     NMEM session_nmem;  // Nmem for session-permanent storage
     NMEM nmem;          // Nmem for each operation (i.e. search, result set, etc)
     WRBUF wrbuf;        // Wrbuf for scratch(i.e. search)

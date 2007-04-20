@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.10 2007-04-19 16:07:20 adam Exp $
+/* $Id: logic.c,v 1.11 2007-04-20 04:08:14 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1071,7 +1071,7 @@ static void handler(IOCHAN i, int event)
 
     if (cl->state == Client_Idle)
     {
-        if (cl->requestid != se->requestid && *se->query) {
+        if (cl->requestid != se->requestid && cl->pquery) {
             send_search(i);
         }
         else if (cl->hits > 0 && cl->records < global_parameters.toget &&
@@ -1249,13 +1249,13 @@ static int client_prep_connection(struct client *cl)
 }
 
 // Parse the query given the settings specific to this client
-static int client_parse_query(struct client *cl)
+static int client_parse_query(struct client *cl, const char *query)
 {
     struct session *se = cl->session;
     struct ccl_rpn_node *cn;
     int cerror, cpos;
 
-    cn = ccl_find_str(cl->database->database->ccl_map, se->query, &cerror, &cpos);
+    cn = ccl_find_str(cl->database->database->ccl_map, query, &cerror, &cpos);
     if (!cn)
     {
         cl->state = Client_Error;
@@ -1427,7 +1427,6 @@ char *search(struct session *se, char *query, char *filter)
 
     nmem_reset(se->nmem);
     criteria = parse_filter(se->nmem, filter);
-    strcpy(se->query, query);
     se->requestid++;
     live_channels = select_targets(se, criteria);
     if (live_channels)
@@ -1444,7 +1443,7 @@ char *search(struct session *se, char *query, char *filter)
 
     se->relevance = 0;
     for (cl = se->clients; cl; cl = cl->next)
-        if (client_parse_query(cl) < 0)  // Query must parse for all targets
+        if (client_parse_query(cl, query) < 0)  // Query must parse for all targets
             return "QUERY";
     for (cl = se->clients; cl; cl = cl->next)
         client_prep_connection(cl);
@@ -1526,7 +1525,6 @@ struct session *new_session(NMEM nmem)
     session->requestid = -1;
     session->clients = 0;
     session->expected_maxrecs = 0;
-    session->query[0] = '\0';
     session->session_nmem = nmem;
     session->nmem = nmem_create();
     session->wrbuf = wrbuf_alloc();
