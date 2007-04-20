@@ -1,7 +1,7 @@
-# $Id: Makefile.am,v 1.9 2007-04-19 19:42:30 marc Exp $
+# $Id: Makefile.am,v 1.10 2007-04-20 10:06:52 adam Exp $
 
 bin_PROGRAMS = pazpar2
-check_PROGRAMS = test_config test_relevance
+check_PROGRAMS = test_config test_relevance test_sel_thread
 TESTS = $(check_PROGRAMS)
 
 noinst_LIBRARIES = libpazpar2.a
@@ -15,8 +15,7 @@ libpazpar2_a_SOURCES = config.c config.h eventl.c eventl.h \
 	logic.c pazpar2.h reclists.c reclists.h \
 	relevance.c relevance.h termlists.c termlists.h \
 	util.c util.h zeerex.c zeerex.h database.c database.h \
-	settings.h settings.c 
-
+	settings.h settings.c sel_thread.c sel_thread.h
 
 pazpar2_SOURCES = pazpar2.c
 pazpar2_LDADD = libpazpar2.a $(YAZLIB)
@@ -26,4 +25,7 @@ test_config_LDADD = libpazpar2.a $(YAZLIB)
 
 test_relevance_SOURCES = test_relevance.c
 test_relevance_LDADD = libpazpar2.a $(YAZLIB)
+
+test_sel_thread_SOURCES = test_sel_thread.c
+test_sel_thread_LDADD = libpazpar2.a $(YAZLIB)
 

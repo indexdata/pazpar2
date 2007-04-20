@@ -5,6 +5,8 @@ Makefile.in
 cconfig.h
 cconfig.h.in
 .deps
+*.log
 stamp-h1
+test_config
 test_relevance
-test_relevance.log
+test_sel_thread
