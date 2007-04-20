@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.26 2007-04-19 19:42:30 marc Exp $
+/* $Id: config.c,v 1.27 2007-04-20 11:00:29 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.26 2007-04-19 19:42:30 marc Exp $ */
+/* $Id: config.c,v 1.27 2007-04-20 11:00:29 marc Exp $ */
 
 #include <string.h>
 
@@ -159,30 +159,26 @@ struct conf_sortkey * conf_service_add_sortkey(NMEM nmem,
 static struct conf_service *parse_service(xmlNode *node)
 {
     xmlNode *n;
-    struct conf_service *r = nmem_malloc(nmem, sizeof(struct conf_service));
     int md_node = 0;
     int sk_node = 0;
 
-    r->num_sortkeys = r->num_metadata = 0;
-    // Allocate array of conf metadata and sortkey tructs, if necessary
+    struct conf_service *service = 0;
+    int num_metadata = 0;
+    int num_sortkeys = 0;
+    
+    // count num_metadata and num_sortkeys
     for (n = node->children; n; n = n->next)
         if (n->type == XML_ELEMENT_NODE && !strcmp((const char *)
                                                    n->name, "metadata"))
         {
             xmlChar *sortkey = xmlGetProp(n, (xmlChar *) "sortkey");
-            r->num_metadata++;
+            num_metadata++;
             if (sortkey && strcmp((const char *) sortkey, "no"))
-                r->num_sortkeys++;
+                num_sortkeys++;
             xmlFree(sortkey);
         }
-    if (r->num_metadata)
-        r->metadata = nmem_malloc(nmem, sizeof(struct conf_metadata) * r->num_metadata);
-    else
-        r->metadata = 0;
-    if (r->num_sortkeys)
-        r->sortkeys = nmem_malloc(nmem, sizeof(struct conf_sortkey) * r->num_sortkeys);
-    else
-        r->sortkeys = 0;
+
+    service = conf_service_create(nmem, num_metadata, num_sortkeys);    
 
     for (n = node->children; n; n = n->next)
     {
@@ -190,119 +186,139 @@ static struct conf_service *parse_service(xmlNode *node)
             continue;
         if (!strcmp((const char *) n->name, (const char *) "metadata"))
         {
-            struct conf_metadata *md = &r->metadata[md_node];
-            xmlChar *name = xmlGetProp(n, (xmlChar *) "name");
-            xmlChar *brief = xmlGetProp(n, (xmlChar *) "brief");
-            xmlChar *sortkey = xmlGetProp(n, (xmlChar *) "sortkey");
-            xmlChar *merge = xmlGetProp(n, (xmlChar *) "merge");
-            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
-            xmlChar *termlist = xmlGetProp(n, (xmlChar *) "termlist");
-            xmlChar *rank = xmlGetProp(n, (xmlChar *) "rank");
+            xmlChar *xml_name = xmlGetProp(n, (xmlChar *) "name");
+            xmlChar *xml_brief = xmlGetProp(n, (xmlChar *) "brief");
+            xmlChar *xml_sortkey = xmlGetProp(n, (xmlChar *) "sortkey");
+            xmlChar *xml_merge = xmlGetProp(n, (xmlChar *) "merge");
+            xmlChar *xml_type = xmlGetProp(n, (xmlChar *) "type");
+            xmlChar *xml_termlist = xmlGetProp(n, (xmlChar *) "termlist");
+            xmlChar *xml_rank = xmlGetProp(n, (xmlChar *) "rank");
 
-            if (!name)
+            enum conf_metadata_type type = Metadata_type_generic;
+            enum conf_metadata_merge merge = Metadata_merge_no;
+            int brief = 0;
+            int termlist = 0;
+            int rank = 0;
+            int sortkey_offset = 0;
+            enum conf_sortkey_type sk_type = Metadata_sortkey_relevance;
+            
+            // now do the parsing logic
+            if (!xml_name)
             {
                 yaz_log(YLOG_FATAL, "Must specify name in metadata element");
                 return 0;
             }
-            md->name = nmem_strdup(nmem, (const char *) name);
-            if (brief)
+            if (xml_brief)
             {
-                if (!strcmp((const char *) brief, "yes"))
-                    md->brief = 1;
-                else if (strcmp((const char *) brief, "no"))
+                if (!strcmp((const char *) xml_brief, "yes"))
+                    brief = 1;
+                 else if (strcmp((const char *) xml_brief, "no"))
                 {
                     yaz_log(YLOG_FATAL, "metadata/brief must be yes or no");
                     return 0;
                 }
             }
             else
-                md->brief = 0;
+                brief = 0;
 
-            if (termlist)
+            if (xml_termlist)
             {
-                if (!strcmp((const char *) termlist, "yes"))
-                    md->termlist = 1;
-                else if (strcmp((const char *) termlist, "no"))
+                if (!strcmp((const char *) xml_termlist, "yes"))
+                    termlist = 1;
+                else if (strcmp((const char *) xml_termlist, "no"))
                 {
                     yaz_log(YLOG_FATAL, "metadata/termlist must be yes or no");
                     return 0;
                 }
             }
             else
-                md->termlist = 0;
+                termlist = 0;
 
-            if (rank)
-                md->rank = atoi((const char *) rank);
+            if (xml_rank)
+                rank = atoi((const char *) xml_rank);
             else
-                md->rank = 0;
+                rank = 0;
 
-            if (type)
+            if (xml_type)
             {
-                if (!strcmp((const char *) type, "generic"))
-                    md->type = Metadata_type_generic;
-                else if (!strcmp((const char *) type, "year"))
-                    md->type = Metadata_type_year;
+                if (!strcmp((const char *) xml_type, "generic"))
+                    type = Metadata_type_generic;
+                else if (!strcmp((const char *) xml_type, "year"))
+                    type = Metadata_type_year;
                 else
                 {
-                    yaz_log(YLOG_FATAL, "Unknown value for metadata/type: %s", type);
+                    yaz_log(YLOG_FATAL, "Unknown value for metadata/type: %s", xml_type);
                     return 0;
                 }
             }
             else
-                md->type = Metadata_type_generic;
+                type = Metadata_type_generic;
 
-            if (merge)
+            if (xml_merge)
             {
-                if (!strcmp((const char *) merge, "no"))
-                    md->merge = Metadata_merge_no;
-                else if (!strcmp((const char *) merge, "unique"))
-                    md->merge = Metadata_merge_unique;
-                else if (!strcmp((const char *) merge, "longest"))
-                    md->merge = Metadata_merge_longest;
-                else if (!strcmp((const char *) merge, "range"))
-                    md->merge = Metadata_merge_range;
-                else if (!strcmp((const char *) merge, "all"))
-                    md->merge = Metadata_merge_all;
+                if (!strcmp((const char *) xml_merge, "no"))
+                    merge = Metadata_merge_no;
+                else if (!strcmp((const char *) xml_merge, "unique"))
+                    merge = Metadata_merge_unique;
+                else if (!strcmp((const char *) xml_merge, "longest"))
+                    merge = Metadata_merge_longest;
+                else if (!strcmp((const char *) xml_merge, "range"))
+                    merge = Metadata_merge_range;
+                else if (!strcmp((const char *) xml_merge, "all"))
+                    merge = Metadata_merge_all;
                 else
                 {
-                    yaz_log(YLOG_FATAL, "Unknown value for metadata/merge: %s", merge);
+                    yaz_log(YLOG_FATAL, 
+                            "Unknown value for metadata/merge: %s", xml_merge);
                     return 0;
                 }
             }
             else
-                md->merge = Metadata_merge_no;
+                merge = Metadata_merge_no;
 
-            if (sortkey && strcmp((const char *) sortkey, "no"))
+            // add a sortkey if so specified
+            if (xml_sortkey && strcmp((const char *) xml_sortkey, "no"))
             {
-                struct conf_sortkey *sk = &r->sortkeys[sk_node];
-                if (md->merge == Metadata_merge_no)
+                if (merge == Metadata_merge_no)
                 {
-                    yaz_log(YLOG_FATAL, "Can't specify sortkey on a non-merged field");
+                    yaz_log(YLOG_FATAL, 
+                            "Can't specify sortkey on a non-merged field");
                     return 0;
                 }
-                if (!strcmp((const char *) sortkey, "numeric"))
-                    sk->type = Metadata_sortkey_numeric;
-                else if (!strcmp((const char *) sortkey, "skiparticle"))
-                    sk->type = Metadata_sortkey_skiparticle;
+                if (!strcmp((const char *) xml_sortkey, "numeric"))
+                    sk_type = Metadata_sortkey_numeric;
+                else if (!strcmp((const char *) xml_sortkey, "skiparticle"))
+                    sk_type = Metadata_sortkey_skiparticle;
                 else
                 {
-                    yaz_log(YLOG_FATAL, "Unknown sortkey in metadata element: %s", sortkey);
+                    yaz_log(YLOG_FATAL,
+                            "Unknown sortkey in metadata element: %s", 
+                            xml_sortkey);
                     return 0;
                 }
-                sk->name = md->name;
-                md->sortkey_offset = sk_node;
+                sortkey_offset = sk_node;
+
+                conf_service_add_sortkey(nmem, service, sk_node,
+                                         (const char *) xml_name, sk_type);
+                
                 sk_node++;
             }
             else
-                md->sortkey_offset = -1;
+                sortkey_offset = -1;
 
-            xmlFree(name);
-            xmlFree(brief);
-            xmlFree(sortkey);
-            xmlFree(merge);
-            xmlFree(type);
-            xmlFree(termlist);
-            xmlFree(rank);
+            // metadata known, assign values
+            conf_service_add_metadata(nmem, service, md_node,
+                                      (const char *) xml_name,
+                                      type, merge,
+                                      brief, termlist, rank, sortkey_offset);
+
+            xmlFree(xml_name);
+            xmlFree(xml_brief);
+            xmlFree(xml_sortkey);
+            xmlFree(xml_merge);
+            xmlFree(xml_type);
+            xmlFree(xml_termlist);
+            xmlFree(xml_rank);
             md_node++;
         }
         else
@@ -311,7 +327,7 @@ static struct conf_service *parse_service(xmlNode *node)
             return 0;
         }
     }
-    return r;
+    return service;
 }
 
 static char *parse_settings(xmlNode *node)
