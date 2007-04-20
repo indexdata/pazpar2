@@ -1,4 +1,4 @@
-/* $Id: test_sel_thread.c,v 1.2 2007-04-20 11:44:58 adam Exp $
+/* $Id: test_sel_thread.c,v 1.3 2007-04-20 11:56:37 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -107,8 +107,8 @@ static void test_2(void)
         iochan_setdata(chan, p);
 
         event_loop(&chan);
+        sel_thread_destroy(p);
     }
-    sel_thread_destroy(p);
 }
 
 int main(int argc, char **argv)
