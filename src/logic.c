@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.12 2007-04-20 04:32:33 quinn Exp $
+/* $Id: logic.c,v 1.13 2007-04-20 15:36:48 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -518,36 +518,36 @@ static void add_facet(struct session *s, const char *type, const char *value)
 static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
 {
     struct database_retrievalmap *m;
-    struct database *db = cl->database->database;
+    struct session_database *sdb = cl->database;
+    struct database *db = sdb->database;
     xmlNode *res;
     xmlDoc *rdoc;
 
     // First normalize to XML
-    if (db->yaz_marc)
+    if (sdb->yaz_marc)
     {
         char *buf;
         int len;
         if (rec->which != Z_External_octet)
         {
             yaz_log(YLOG_WARN, "Unexpected external branch, probably BER %s",
-                    cl->database->database->url);
+                    db->url);
             return 0;
         }
         buf = (char*) rec->u.octet_aligned->buf;
         len = rec->u.octet_aligned->len;
-        if (yaz_marc_read_iso2709(db->yaz_marc, buf, len) < 0)
+        if (yaz_marc_read_iso2709(sdb->yaz_marc, buf, len) < 0)
         {
-            yaz_log(YLOG_WARN, "Failed to decode MARC %s",
-                    cl->database->database->url);
+            yaz_log(YLOG_WARN, "Failed to decode MARC %s", db->url);
             return 0;
         }
 
-        yaz_marc_write_using_libxml2(db->yaz_marc, 1);
-        if (yaz_marc_write_xml(db->yaz_marc, &res,
+        yaz_marc_write_using_libxml2(sdb->yaz_marc, 1);
+        if (yaz_marc_write_xml(sdb->yaz_marc, &res,
                     "http://www.loc.gov/MARC21/slim", 0, 0) < 0)
         {
             yaz_log(YLOG_WARN, "Failed to encode as XML %s",
-                    cl->database->database->url);
+                    db->url);
             return 0;
         }
         rdoc = xmlNewDoc((xmlChar *) "1.0");
@@ -558,14 +558,14 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
     {
         yaz_log(YLOG_FATAL, 
                 "Unknown native_syntax in normalize_record from %s",
-                cl->database->database->url);
+                db->url);
         exit(1);
     }
 
     if (global_parameters.dump_records){
         fprintf(stderr, 
                 "Input Record (normalized) from %s\n----------------\n",
-                cl->database->database->url);
+                db->url);
 #if LIBXML_VERSION >= 20600
         xmlDocFormatDump(stderr, rdoc, 1);
 #else
@@ -1248,6 +1248,61 @@ static int client_prep_connection(struct client *cl)
         return 0;
 }
 
+// Initialize YAZ Map structures for MARC-based targets
+static int prepare_yazmarc(struct session_database *sdb)
+{
+    struct setting *s;
+
+    if (!sdb->settings)
+    {
+        yaz_log(YLOG_WARN, "No settings for %s", sdb->database->url);
+        return -1;
+    }
+    if ((s = sdb->settings[PZ_NATIVESYNTAX]) && !strncmp(s->value, "iso2709", 7))
+    {
+        char *encoding = "marc-8s", *e;
+        yaz_iconv_t cm;
+
+        // See if a native encoding is specified
+        if ((e = strchr(s->value, ';')))
+            encoding = e + 1;
+
+        sdb->yaz_marc = yaz_marc_create();
+        yaz_marc_subfield_str(sdb->yaz_marc, "\t");
+        
+        cm = yaz_iconv_open("utf-8", encoding);
+        if (!cm)
+        {
+            yaz_log(YLOG_FATAL, 
+                    "Unable to map from %s to UTF-8 for target %s", 
+                    encoding, sdb->database->url);
+            return -1;
+        }
+        yaz_marc_iconv(sdb->yaz_marc, cm);
+    }
+    return 0;
+}
+
+// This analyzes settings and recomputes any supporting data structures
+// if necessary.
+static int prepare_session_database(struct session_database *sdb)
+{
+    if (!sdb->settings)
+    {
+        yaz_log(YLOG_WARN, "No settings associates with %s", sdb->database->url);
+        return -1;
+    }
+    if (sdb->settings[PZ_NATIVESYNTAX] && !sdb->yaz_marc)
+    {
+        if (prepare_yazmarc(sdb) < 0)
+            return -1;
+    }
+    if (sdb->settings[PZ_XSLT] && !sdb->map)
+    {
+    }
+    return 0;
+}
+
 // Initialize CCL map for a target
 static CCL_bibset prepare_cclmap(struct client *cl)
 {
@@ -1471,11 +1526,19 @@ char *search(struct session *se, char *query, char *filter)
         return "NOTARGETS";
 
     se->relevance = 0;
+
     for (cl = se->clients; cl; cl = cl->next)
+    {
+        if (prepare_session_database(cl->database) < 0)
+            return "CONFIG_ERROR";
         if (client_parse_query(cl, query) < 0)  // Query must parse for all targets
             return "QUERY";
+    }
+
     for (cl = se->clients; cl; cl = cl->next)
+    {
         client_prep_connection(cl);
+    }
 
     return 0;
 }
@@ -1502,6 +1565,29 @@ void session_apply_setting(struct session *se, char *dbname, char *setting, char
             new->value = value;
             new->next = sdb->settings[offset];
             sdb->settings[offset] = new;
+
+            // Force later recompute of settings-driven data structures
+            // (happens when a search starts and client connections are prepared)
+            switch (offset)
+            {
+                case PZ_NATIVESYNTAX:
+                    if (sdb->yaz_marc)
+                    {
+                        yaz_marc_destroy(sdb->yaz_marc);
+                        sdb->yaz_marc = 0;
+                    }
+                    break;
+                case PZ_XSLT:
+                    if (sdb->map)
+                    {
+                        struct database_retrievalmap *m;
+                        // We don't worry about the map structure -- it's in nmem
+                        for (m = sdb->map; m; m = m->next)
+                            xsltFreeStylesheet(m->stylesheet);
+                        sdb->map = 0;
+                    }
+                    break;
+            }
             break;
         }
     if (!sdb)
@@ -1516,6 +1602,8 @@ void session_init_databases_fun(void *context, struct database *db)
     int i;
 
     new->database = db;
+    new->yaz_marc = 0;
+    new->map = 0;
     new->settings = nmem_malloc(se->session_nmem, sizeof(struct settings *) * num);
     for (i = 0; i < num; i++)
         new->settings[i] = db->settings[i];

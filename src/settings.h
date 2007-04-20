@@ -1,4 +1,4 @@
-/* $Id: settings.h,v 1.14 2007-04-12 11:35:08 marc Exp $
+/* $Id: settings.h,v 1.15 2007-04-20 15:36:48 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -26,15 +26,14 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #define PZ_ELEMENTS       1
 #define PZ_REQUESTSYNTAX  2
 #define PZ_CCLMAP         3
-#define PZ_ENCODING       4
-#define PZ_XSLT           5
-#define PZ_NATIVESYNTAX   6
-#define PZ_AUTHENTICATION 7
-#define PZ_ALLOW          8
-#define PZ_MAXRECS        9
-#define PZ_ID            10
-#define PZ_NAME          11
-#define PZ_QUERYENCODING 12
+#define PZ_XSLT           4
+#define PZ_NATIVESYNTAX   5
+#define PZ_AUTHENTICATION 6
+#define PZ_ALLOW          7
+#define PZ_MAXRECS        8
+#define PZ_ID             9
+#define PZ_NAME          10
+#define PZ_QUERYENCODING 11
 
 
 struct setting

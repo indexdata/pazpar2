@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.16 2007-04-13 01:48:22 quinn Exp $
+/* $Id: settings.c,v 1.17 2007-04-20 15:36:48 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -50,7 +50,6 @@ static char *hard_settings[] = {
     "pz:elements",
     "pz:requestsyntax",
     "pz:cclmap:",
-    "pz:encoding",
     "pz:xslt",
     "pz:nativesyntax",
     "pz:authentication",

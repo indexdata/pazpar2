@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.20 2007-04-20 04:32:33 quinn Exp $
+/* $Id: database.c,v 1.21 2007-04-20 15:36:48 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -165,7 +165,6 @@ static struct database *load_database(const char *id)
     db->explain = explain;
     db->settings = 0;
     db->next = databases;
-    db->yaz_marc = 0;
     db->map = 0;
     databases = db;
 
@@ -287,38 +286,6 @@ int grep_databases(void *context, struct database_criterion *cl,
     return i;
 }
 
-// Initialize YAZ Map structures for MARC-based targets
-static void prepare_yazmarc(void *ignore, struct database *db)
-{
-    struct setting *s;
-
-    if (!db->settings)
-        return;
-    for (s = db->settings[PZ_NATIVESYNTAX]; s; s = s->next)
-        if (!strcmp(s->value, "iso2709"))
-        {
-            char *encoding = "marc-8s";
-            yaz_iconv_t cm;
-
-            db->yaz_marc = yaz_marc_create();
-            yaz_marc_subfield_str(db->yaz_marc, "\t");
-
-            // See if a native encoding is specified
-            if (db->settings[PZ_ENCODING])
-                encoding = db->settings[PZ_ENCODING]->value;
-            
-            cm = yaz_iconv_open("utf-8", encoding);
-            if (!cm)
-            {
-                yaz_log(YLOG_FATAL, 
-                        "Unable to map from %s to UTF-8 for target %s", 
-                        encoding, db->url);
-                exit(1);
-            }
-            yaz_marc_iconv(db->yaz_marc, cm);
-        }
-}
-
 // Prepare XSLT stylesheets for record normalization
 static void prepare_map(void *ignore, struct database *db)
 {
@@ -353,7 +320,6 @@ static void prepare_map(void *ignore, struct database *db)
 // Read settings for each database, and prepare support data structures
 void prepare_databases(void)
 {
-    grep_databases(0, 0, prepare_yazmarc);
     grep_databases(0, 0, prepare_map);
 }
 

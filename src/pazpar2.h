@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.29 2007-04-20 13:03:22 marc Exp $
+/* $Id: pazpar2.h,v 1.30 2007-04-20 15:36:48 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -61,7 +61,7 @@ struct database {
     struct zr_explain *explain;
     struct setting **settings;
     struct database *next;
-    yaz_marc_t yaz_marc;
+    //yaz_marc_t yaz_marc;
     struct database_retrievalmap *map;
 };
 
@@ -140,11 +140,13 @@ struct named_termlist
 };
 
 // Represents a database as viewed from one session, possibly with settings overriden
-// for that session (to support authorization/authentication)
+// for that session
 struct session_database
 {
     struct database *database;
     struct setting **settings;
+    yaz_marc_t yaz_marc;
+    struct database_retrievalmap *map;
     struct session_database *next;
 };
 
