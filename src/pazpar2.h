@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.28 2007-04-20 04:32:33 quinn Exp $
+/* $Id: pazpar2.h,v 1.29 2007-04-20 13:03:22 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -22,7 +22,6 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #ifndef PAZPAR2_H
 #define PAZPAR2_H
 
-struct record;
 
 #include <netdb.h>
 
@@ -40,38 +39,8 @@ struct record;
 #include "eventl.h"
 #include "config.h"
 
+struct record;
 struct client;
-
-union data_types {
-    char *text;
-    struct {
-        int min;
-        int max;
-    } number;
-};
-
-struct record_metadata {
-    union data_types data;
-    struct record_metadata *next; // next item of this name
-};
-
-struct record {
-    struct client *client;
-    struct record_metadata **metadata; // Array mirrors list of metadata fields in config
-    union data_types **sortkeys;       // Array mirrors list of sortkey fields in config
-    struct record *next;  // Next in cluster of merged records
-};
-
-struct record_cluster
-{
-    struct record_metadata **metadata; // Array mirrors list of metadata fields in config
-    union data_types **sortkeys;
-    char *merge_key;
-    int relevance;
-    int *term_frequency_vec;
-    int recid; // Set-specific ID for this record
-    struct record *records;
-};
 
 struct connection;
 
@@ -267,6 +236,9 @@ void start_zproxy(void);
 extern struct parameters global_parameters;
 void pazpar2_add_channel(IOCHAN c);
 void pazpar2_event_loop(void);
+
+
+
 #endif
 
 /*

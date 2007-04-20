@@ -1,4 +1,4 @@
-/* $Id: reclists.h,v 1.7 2007-04-17 07:52:03 marc Exp $
+/* $Id: reclists.h,v 1.8 2007-04-20 13:03:22 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -23,6 +23,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #define RECLISTS_H
 
 #include "config.h"
+#include "record.h"
 
 struct reclist
 {
