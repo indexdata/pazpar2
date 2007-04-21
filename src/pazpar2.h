@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.31 2007-04-20 16:21:19 quinn Exp $
+/* $Id: pazpar2.h,v 1.32 2007-04-21 12:00:54 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -237,7 +237,7 @@ extern struct parameters global_parameters;
 void pazpar2_add_channel(IOCHAN c);
 void pazpar2_event_loop(void);
 
-
+int host_getaddrinfo(struct host *host);
 
 #endif
 

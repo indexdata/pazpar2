@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.22 2007-04-20 16:21:19 quinn Exp $
+/* $Id: database.c,v 1.23 2007-04-21 12:00:54 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -71,45 +71,19 @@ static xmlDoc *get_explain_xml(const char *id)
 // Create a new host structure for hostport
 static struct host *create_host(const char *hostport)
 {
-    struct addrinfo *addrinfo, hints;
     struct host *host;
-    char *port;
-    char ipport[128];
-    unsigned char addrbuf[4];
-    int res;
 
     host = xmalloc(sizeof(struct host));
     host->hostport = xstrdup(hostport);
     host->connections = 0;
+    host->ipport = 0;
 
-    if ((port = strchr(hostport, ':')))
-        *(port++) = '\0';
-    else
-        port = "210";
-
-    hints.ai_flags = 0;
-    hints.ai_family = PF_INET;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_protocol = IPPROTO_TCP;
-    hints.ai_addrlen = 0;
-    hints.ai_addr = 0;
-    hints.ai_canonname = 0;
-    hints.ai_next = 0;
-    // This is not robust code. It assumes that getaddrinfo always
-    // returns AF_INET address.
-    if ((res = getaddrinfo(hostport, port, &hints, &addrinfo)))
+    if (host_getaddrinfo(host))
     {
-        yaz_log(YLOG_WARN, "Failed to resolve %s: %s", hostport, gai_strerror(res));
         xfree(host->hostport);
         xfree(host);
         return 0;
     }
-    assert(addrinfo->ai_family == PF_INET);
-    memcpy(addrbuf, &((struct sockaddr_in*)addrinfo->ai_addr)->sin_addr.s_addr, 4);
-    sprintf(ipport, "%u.%u.%u.%u:%s",
-            addrbuf[0], addrbuf[1], addrbuf[2], addrbuf[3], port);
-    host->ipport = xstrdup(ipport);
-    freeaddrinfo(addrinfo);
     host->next = hosts;
     hosts = host;
     return host;

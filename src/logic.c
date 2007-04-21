@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.15 2007-04-20 16:37:35 quinn Exp $
+/* $Id: logic.c,v 1.16 2007-04-21 12:00:54 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -967,7 +967,7 @@ static void do_presentResponse(IOCHAN i, Z_APDU *a)
     }
 }
 
-static void handler(IOCHAN i, int event)
+void connection_handler(IOCHAN i, int event)
 {
     struct connection *co = iochan_getdata(i);
     struct client *cl = co->client;
@@ -1126,6 +1126,7 @@ static void connection_destroy(struct connection *co)
     connection_freelist = co;
 }
 
+
 // Creates a new connection for client, associated with the host of 
 // client's database
 static struct connection *connection_create(struct client *cl)
@@ -1135,6 +1136,13 @@ static struct connection *connection_create(struct client *cl)
     int res;
     void *addr;
 
+
+    if (!cl->database->database->host->ipport)
+    {
+        yaz_log(YLOG_WARN, "Not yet resolved: %s",
+                cl->database->database->url);
+        return 0;
+    }
 
     if (!(link = cs_create(tcpip_type, 0, PROTO_Z3950)))
         {
@@ -1191,7 +1199,7 @@ static struct connection *connection_create(struct client *cl)
     cl->connection = new;
     new->link = link;
 
-    new->iochan = iochan_create(cs_fileno(link), handler, 0);
+    new->iochan = iochan_create(cs_fileno(link), connection_handler, 0);
     iochan_setdata(new->iochan, new);
     pazpar2_add_channel(new->iochan);
     return new;
