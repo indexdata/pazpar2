@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.17 2007-04-22 15:07:10 adam Exp $
+/* $Id: logic.c,v 1.18 2007-04-22 16:41:42 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1100,8 +1100,12 @@ static void connection_release(struct connection *co)
 static void connection_destroy(struct connection *co)
 {
     struct host *h = co->host;
-    cs_close(co->link);
-    iochan_destroy(co->iochan);
+    
+    if (co->link)
+    {
+        cs_close(co->link);
+        iochan_destroy(co->iochan);
+    }
 
     yaz_log(YLOG_DEBUG, "Connection destroy %s", co->host->hostport);
     if (h->connections == co)
@@ -1126,61 +1130,103 @@ static void connection_destroy(struct connection *co)
     connection_freelist = co;
 }
 
-
-// Creates a new connection for client, associated with the host of 
-// client's database
-static struct connection *connection_create(struct client *cl)
+static int connection_connect(struct connection *con)
 {
-    struct connection *new;
-    COMSTACK link; 
-    int res;
+    COMSTACK link = 0;
+    struct client *cl = con->client;
+    struct host *host = con->host;
     void *addr;
-    struct host *host = cl->database->database->host;
+    int res;
 
-    if (!host->ipport)
-    {
-        yaz_log(YLOG_WARN, "Not yet resolved: %s",
-                cl->database->database->url);
-        return 0;
-    }
+    assert(host->ipport);
+    assert(cl);
 
     if (!(link = cs_create(tcpip_type, 0, PROTO_Z3950)))
-        {
-            yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to create comstack");
-            exit(1);
-        }
+    {
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to create comstack");
+        exit(1);
+    }
     
     if (0 == strlen(global_parameters.zproxy_override)){
         /* no Z39.50 proxy needed - direct connect */
         yaz_log(YLOG_DEBUG, "Connection create %s", cl->database->database->url);
         
         if (!(addr = cs_straddr(link, host->ipport)))
-            {
-                yaz_log(YLOG_WARN|YLOG_ERRNO, 
-                        "Lookup of IP address %s failed", host->ipport);
-                return 0;
-            }
-    
+        {
+            yaz_log(YLOG_WARN|YLOG_ERRNO, 
+                    "Lookup of IP address %s failed", host->ipport);
+            return -1;
+        }
+        
     } else {
         /* Z39.50 proxy connect */
         yaz_log(YLOG_DEBUG, "Connection create %s proxy %s", 
                 cl->database->database->url, global_parameters.zproxy_override);
-
+        
         if (!(addr = cs_straddr(link, global_parameters.zproxy_override)))
-            {
-                yaz_log(YLOG_WARN|YLOG_ERRNO, 
-                        "Lookup of IP address %s failed", 
-                        global_parameters.zproxy_override);
-                return 0;
-            }
+        {
+            yaz_log(YLOG_WARN|YLOG_ERRNO, 
+                    "Lookup of IP address %s failed", 
+                    global_parameters.zproxy_override);
+            return -1;
+        }
     }
-
+    
     res = cs_connect(link, addr);
     if (res < 0)
     {
         yaz_log(YLOG_WARN|YLOG_ERRNO, "cs_connect %s", cl->database->database->url);
-        return 0;
+        return -1;
     }
+    con->link = link;
+    con->state = Conn_Connecting;
+    con->iochan = iochan_create(cs_fileno(link), connection_handler, 0);
+    iochan_setdata(con->iochan, con);
+    pazpar2_add_channel(con->iochan);
+
+    /* this fragment is bad DRY: from client_prep_connection */
+    cl->state = Client_Connecting;
+    iochan_setflag(con->iochan, EVENT_OUTPUT);
+    return 0;
+}
+
+void connect_resolver_host(struct host *host)
+{
+    struct connection *con = host->connections;
+
+    while (con)
+    {
+        if (con->state == Conn_Resolving)
+        {
+            if (!host->ipport) /* unresolved */
+            {
+                connection_destroy(con);
+                /* start all over .. at some point it will be NULL */
+                con = host->connections;
+            }
+            else if (!con->client)
+            {
+                yaz_log(YLOG_WARN, "connect_unresolved_host : ophan client");
+                connection_destroy(con);
+                /* start all over .. at some point it will be NULL */
+                con = host->connections;
+            }
+            else
+            {
+                connection_connect(con);
+                con = con->next;
+            }
+        }
+    }
+}
+
+
+// Creates a new connection for client, associated with the host of 
+// client's database
+static struct connection *connection_create(struct client *cl)
+{
+    struct connection *new;
+    struct host *host = cl->database->database->host;
 
     if ((new = connection_freelist))
         connection_freelist = new->next;
@@ -1190,17 +1236,15 @@ static struct connection *connection_create(struct client *cl)
         new->ibuf = 0;
         new->ibufsize = 0;
     }
-    new->state = Conn_Connecting;
     new->host = host;
     new->next = new->host->connections;
     new->host->connections = new;
     new->client = cl;
     cl->connection = new;
-    new->link = link;
-
-    new->iochan = iochan_create(cs_fileno(link), connection_handler, 0);
-    iochan_setdata(new->iochan, new);
-    pazpar2_add_channel(new->iochan);
+    new->link = 0;
+    new->state = Conn_Resolving;
+    if (host->ipport)
+        connection_connect(new);
     return new;
 }
 

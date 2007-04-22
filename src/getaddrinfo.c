@@ -1,4 +1,4 @@
-/* $Id: getaddrinfo.c,v 1.1 2007-04-21 12:00:54 adam Exp $
+/* $Id: getaddrinfo.c,v 1.2 2007-04-22 16:41:42 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -116,6 +116,7 @@ void iochan_handler(struct iochan *i, int event)
         else
             yaz_log(log_level, "unresolved result");
         w->host->ipport = w->ipport;
+        connect_resolver_host(w->host);
         xfree(w);
     }
 }
@@ -144,7 +145,7 @@ static void getaddrinfo_start(void)
 int host_getaddrinfo(struct host *host)
 {
     struct work *w = xmalloc(sizeof(*w));
-    int use_thread = 1;
+    int use_thread = 1; /* =0 to disable threading entirely */
 
     w->hostport = host->hostport;
     w->ipport = 0;
