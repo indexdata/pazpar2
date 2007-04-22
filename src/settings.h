@@ -1,4 +1,4 @@
-/* $Id: settings.h,v 1.15 2007-04-20 15:36:48 quinn Exp $
+/* $Id: settings.h,v 1.16 2007-04-22 15:07:10 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -34,6 +34,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #define PZ_ID             9
 #define PZ_NAME          10
 #define PZ_QUERYENCODING 11
+#define PZ_IP            12
 
 
 struct setting
@@ -48,6 +49,7 @@ struct setting
 int settings_num(void);
 void settings_read(const char *path);
 int settings_offset(const char *name);
+void init_settings(void);
 
 #endif
 

@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.81 2007-04-20 16:21:19 quinn Exp $
+/* $Id: pazpar2.c,v 1.82 2007-04-22 15:07:10 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -59,9 +59,6 @@ int main(int argc, char **argv)
             case 't':
                 strcpy(global_parameters.settings_path_override, arg);
                 break;
-            case 's':
-                load_simpletargets(arg);
-                break;
             case 'd':
                 global_parameters.dump_records = 1;
                 break;
@@ -88,13 +85,14 @@ int main(int argc, char **argv)
     start_http_listener();
     start_proxy();
     start_zproxy();
+    init_settings();
 
     if (*global_parameters.settings_path_override)
         settings_read(global_parameters.settings_path_override);
     else if (global_parameters.server->settings)
         settings_read(global_parameters.server->settings);
     else
-        yaz_log(YLOG_WARN, "No settings-directory specified. Problems may well ensue!");
+        yaz_log(YLOG_WARN, "No settings-directory specified");
     global_parameters.odr_in = odr_createmem(ODR_DECODE);
     global_parameters.odr_out = odr_createmem(ODR_ENCODE);
 

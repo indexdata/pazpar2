@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.16 2007-04-21 12:00:54 adam Exp $
+/* $Id: logic.c,v 1.17 2007-04-22 15:07:10 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1135,9 +1135,9 @@ static struct connection *connection_create(struct client *cl)
     COMSTACK link; 
     int res;
     void *addr;
+    struct host *host = cl->database->database->host;
 
-
-    if (!cl->database->database->host->ipport)
+    if (!host->ipport)
     {
         yaz_log(YLOG_WARN, "Not yet resolved: %s",
                 cl->database->database->url);
@@ -1154,11 +1154,10 @@ static struct connection *connection_create(struct client *cl)
         /* no Z39.50 proxy needed - direct connect */
         yaz_log(YLOG_DEBUG, "Connection create %s", cl->database->database->url);
         
-        if (!(addr = cs_straddr(link, cl->database->database->host->ipport)))
+        if (!(addr = cs_straddr(link, host->ipport)))
             {
                 yaz_log(YLOG_WARN|YLOG_ERRNO, 
-                        "Lookup of IP address %s failed", 
-                        cl->database->database->host->ipport);
+                        "Lookup of IP address %s failed", host->ipport);
                 return 0;
             }
     
@@ -1192,7 +1191,7 @@ static struct connection *connection_create(struct client *cl)
         new->ibufsize = 0;
     }
     new->state = Conn_Connecting;
-    new->host = cl->database->database->host;
+    new->host = host;
     new->next = new->host->connections;
     new->host->connections = new;
     new->client = cl;
@@ -1596,58 +1595,8 @@ char *search(struct session *se, char *query, char *filter)
     return 0;
 }
 
-// Apply a session override to a database
-void session_apply_setting(struct session *se, char *dbname, char *setting, char *value)
-{
-    struct session_database *sdb;
-
-    for (sdb = se->databases; sdb; sdb = sdb->next)
-        if (!strcmp(dbname, sdb->database->url))
-        {
-            struct setting *new = nmem_malloc(se->session_nmem, sizeof(*new));
-            int offset = settings_offset(setting);
-
-            if (offset < 0)
-            {
-                yaz_log(YLOG_WARN, "Unknown setting %s", setting);
-                return;
-            }
-            new->precedence = 0;
-            new->target = dbname;
-            new->name = setting;
-            new->value = value;
-            new->next = sdb->settings[offset];
-            sdb->settings[offset] = new;
-
-            // Force later recompute of settings-driven data structures
-            // (happens when a search starts and client connections are prepared)
-            switch (offset)
-            {
-                case PZ_NATIVESYNTAX:
-                    if (sdb->yaz_marc)
-                    {
-                        yaz_marc_destroy(sdb->yaz_marc);
-                        sdb->yaz_marc = 0;
-                    }
-                    break;
-                case PZ_XSLT:
-                    if (sdb->map)
-                    {
-                        struct database_retrievalmap *m;
-                        // We don't worry about the map structure -- it's in nmem
-                        for (m = sdb->map; m; m = m->next)
-                            xsltFreeStylesheet(m->stylesheet);
-                        sdb->map = 0;
-                    }
-                    break;
-            }
-            break;
-        }
-    if (!sdb)
-        yaz_log(YLOG_WARN, "Unknown database in setting override: %s", dbname);
-}
-
-void session_init_databases_fun(void *context, struct database *db)
+// Creates a new session_database object for a database
+static void session_init_databases_fun(void *context, struct database *db)
 {
     struct session *se = (struct session *) context;
     struct session_database *new = nmem_malloc(se->session_nmem, sizeof(*new));
@@ -1658,10 +1607,25 @@ void session_init_databases_fun(void *context, struct database *db)
     new->yaz_marc = 0;
     new->map = 0;
     new->settings = nmem_malloc(se->session_nmem, sizeof(struct settings *) * num);
-    for (i = 0; i < num; i++)
-        new->settings[i] = db->settings[i];
+    memset(new->settings, 0, sizeof(struct settings*) * num);
+    if (db->settings)
+    {
+        for (i = 0; i < num; i++)
+            new->settings[i] = db->settings[i];
+    }
     new->next = se->databases;
     se->databases = new;
+}
+
+// Doesn't free memory associated with sdb -- nmem takes care of that
+static void session_database_destroy(struct session_database *sdb)
+{
+    struct database_retrievalmap *m;
+
+    for (m = sdb->map; m; m = m->next)
+        xsltFreeStylesheet(m->stylesheet);
+    if (sdb->yaz_marc)
+        yaz_marc_destroy(sdb->yaz_marc);
 }
 
 // Initialize session_database list -- this represents this session's view
@@ -1672,11 +1636,80 @@ void session_init_databases(struct session *se)
     grep_databases(se, 0, session_init_databases_fun);
 }
 
+// Probably session_init_databases_fun should be refactored instead of
+// called here.
+static struct session_database *load_session_database(struct session *se, char *id)
+{
+    struct database *db = find_database(id, 0);
+
+    session_init_databases_fun((void*) se, db);
+    // New sdb is head of se->databases list
+    return se->databases;
+}
+
+// Find an existing session database. If not found, load it
+static struct session_database *find_session_database(struct session *se, char *id)
+{
+    struct session_database *sdb;
+
+    for (sdb = se->databases; sdb; sdb = sdb->next)
+        if (!strcmp(sdb->database->url, id))
+            return sdb;
+    return load_session_database(se, id);
+}
+
+// Apply a session override to a database
+void session_apply_setting(struct session *se, char *dbname, char *setting, char *value)
+{
+    struct session_database *sdb = find_session_database(se, dbname);
+    struct setting *new = nmem_malloc(se->session_nmem, sizeof(*new));
+    int offset = settings_offset(setting);
+
+    if (offset < 0)
+    {
+        yaz_log(YLOG_WARN, "Unknown setting %s", setting);
+        return;
+    }
+    new->precedence = 0;
+    new->target = dbname;
+    new->name = setting;
+    new->value = value;
+    new->next = sdb->settings[offset];
+    sdb->settings[offset] = new;
+
+    // Force later recompute of settings-driven data structures
+    // (happens when a search starts and client connections are prepared)
+    switch (offset)
+    {
+        case PZ_NATIVESYNTAX:
+            if (sdb->yaz_marc)
+            {
+                yaz_marc_destroy(sdb->yaz_marc);
+                sdb->yaz_marc = 0;
+            }
+            break;
+        case PZ_XSLT:
+            if (sdb->map)
+            {
+                struct database_retrievalmap *m;
+                // We don't worry about the map structure -- it's in nmem
+                for (m = sdb->map; m; m = m->next)
+                    xsltFreeStylesheet(m->stylesheet);
+                sdb->map = 0;
+            }
+            break;
+    }
+}
+
 void destroy_session(struct session *s)
 {
+    struct session_database *sdb;
+
     yaz_log(YLOG_LOG, "Destroying session");
     while (s->clients)
         client_destroy(s->clients);
+    for (sdb = s->databases; sdb; sdb = sdb->next)
+        session_database_destroy(sdb);
     nmem_destroy(s->nmem);
     wrbuf_destroy(s->wrbuf);
 }

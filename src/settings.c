@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.17 2007-04-20 15:36:48 quinn Exp $
+/* $Id: settings.c,v 1.18 2007-04-22 15:07:10 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -58,6 +58,7 @@ static char *hard_settings[] = {
     "pz:id",
     "pz:name",
     "pz:queryencoding",
+    "pz:ip",
     0
 };
 
@@ -365,6 +366,12 @@ static void initialize_hard_settings(struct setting_dictionary *dict)
 // for the contents of every directory before the databases are updated.
 void settings_read(const char *path)
 {
+    read_settings(path, prepare_dictionary);
+    read_settings(path, update_databases);
+}
+
+void init_settings(void)
+{
     struct setting_dictionary *new;
     if (!nmem)
         nmem = nmem_create();
@@ -374,8 +381,6 @@ void settings_read(const char *path)
     memset(new, 0, sizeof(*new));
     initialize_hard_settings(new);
     dictionary = new;
-    read_settings(path, prepare_dictionary);
-    read_settings(path, update_databases);
 }
 
 /*
