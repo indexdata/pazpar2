@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.21 2007-04-20 14:05:23 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.22 2007-04-22 15:19:36 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -407,7 +407,7 @@
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: pazpar2_conf.xml,v 1.21 2007-04-20 14:05:23 quinn Exp $ -->
+  <!-- $Id: pazpar2_conf.xml,v 1.22 2007-04-22 15:19:36 quinn Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
@@ -502,7 +502,7 @@
 	  <listitem>
 	    <para>
 	      The element set name to be used when retrieving records from a
-	      server.
+	      server (not yet implemented).
 	    </para>
 	  </listitem>
 	</varlistentry>
@@ -566,7 +566,7 @@
 	  <listitem>
 	    <para>
 	      Controls the maximum number of records to be retrieved from a
-	      server. The default is 100.
+	      server. The default is 100 (not yet implemented).
 	    </para>
 	  </listitem>
 	</varlistentry>
