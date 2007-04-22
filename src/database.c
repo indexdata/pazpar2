@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.23 2007-04-21 12:00:54 adam Exp $
+/* $Id: database.c,v 1.24 2007-04-22 15:00:56 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -158,7 +158,7 @@ struct database *find_database(const char *id, int new)
     return load_database(id);
 }
 
-// This whole session_grep database thing should be moved to pazpar2.c
+// This whole session_grep database thing should be moved elsewhere
 
 int match_zurl(const char *zurl, const char *pattern)
 {
@@ -258,41 +258,6 @@ int grep_databases(void *context, struct database_criterion *cl,
         }
     return i;
 }
-
-// This function will most likely vanish when a proper target profile mechanism is
-// introduced.
-void load_simpletargets(const char *fn)
-{
-    FILE *f = fopen(fn, "r");
-    char line[256];
-
-    if (!f)
-    {
-        yaz_log(YLOG_WARN|YLOG_ERRNO, "open %s", fn);
-        exit(1);
-    }
-
-    while (fgets(line, 255, f))
-    {
-        char *url;
-        char *name;
-        struct database *db;
-
-        if (strncmp(line, "target ", 7))
-            continue;
-        line[strlen(line) - 1] = '\0';
-
-        if ((name = strchr(line, ';')))
-            *(name++) = '\0';
-
-        url = line + 7;
-
-        if (!(db = find_database(url, 0)))
-            yaz_log(YLOG_WARN, "Unable to load database %s", url);
-    }
-    fclose(f);
-}
-
 
 /*
  * Local variables:
