@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.28 2007-04-19 16:07:20 adam Exp $
+/* $Id: http.c,v 1.29 2007-04-23 08:15:22 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1004,10 +1004,7 @@ void http_init(const char *addr)
         strncpy(hostname, addr, len);
         hostname[len] = '\0';
         if (!(he = gethostbyname(hostname)))
-        {
             yaz_log(YLOG_FATAL, "Unable to resolve '%s'", hostname);
-            exit(1);
-        }
         
         memcpy(&myaddr.sin_addr.s_addr, he->h_addr_list[0], he->h_length);
         port = atoi(pp + 1);

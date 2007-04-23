@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.18 2007-04-22 16:41:42 adam Exp $
+/* $Id: logic.c,v 1.19 2007-04-23 08:15:22 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -509,8 +509,9 @@ static void add_facet(struct session *s, const char *type, const char *value)
         if (i == SESSION_MAX_TERMLISTS)
         {
             yaz_log(YLOG_FATAL, "Too many termlists");
-            exit(1);
+            return;
         }
+
         s->termlists[i].name = nmem_strdup(s->nmem, type);
         s->termlists[i].termlist = termlist_create(s->nmem, s->expected_maxrecs, 15);
         s->num_termlists = i + 1;
@@ -562,7 +563,7 @@ static xmlDoc *normalize_record(struct client *cl, Z_External *rec)
         yaz_log(YLOG_FATAL, 
                 "Unknown native_syntax in normalize_record from %s",
                 db->url);
-        exit(1);
+        return 0;
     }
 
     if (global_parameters.dump_records){
@@ -1144,7 +1145,7 @@ static int connection_connect(struct connection *con)
     if (!(link = cs_create(tcpip_type, 0, PROTO_Z3950)))
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to create comstack");
-        exit(1);
+        return -1;
     }
     
     if (0 == strlen(global_parameters.zproxy_override)){
