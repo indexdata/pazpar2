@@ -1,4 +1,4 @@
-/* $Id: test_sel_thread.c,v 1.3 2007-04-20 11:56:37 adam Exp $
+/* $Id: test_sel_thread.c,v 1.4 2007-04-23 07:29:34 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -42,7 +42,7 @@ static void work_handler(void *vp)
 }
 
 /** \brief see if we can create and destroy without problems */
-static void test_1(void)
+static void test_create_destroy(void)
 {
     int fd;
     sel_thread_t p = sel_thread_create(work_handler, &fd);
@@ -94,7 +94,7 @@ void iochan_handler(struct iochan *i, int event)
 }
 
 /** brief use the fd for something */
-static void test_2(void)
+static void test_for_real_work(void)
 {
     int thread_fd;
     sel_thread_t p = sel_thread_create(work_handler, &thread_fd);
@@ -116,8 +116,8 @@ int main(int argc, char **argv)
     YAZ_CHECK_INIT(argc, argv); 
     YAZ_CHECK_LOG(); 
 
-    test_1();
-    test_2();
+    test_create_destroy();
+    test_for_real_work();
 
     YAZ_CHECK_TERM;
 }
