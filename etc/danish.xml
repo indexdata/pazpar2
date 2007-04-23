@@ -1,0 +1,42 @@
+<settings target="*">
+<!-- $Id: danish.xml,v 1.1 2007-04-23 07:26:15 adam Exp $ -->
+<!-- based on danish.pz -->
+  <set target="cosmos.dnlb.dk:9909/DNL01" name="pz:name" value="cosmos.dnlb.dk:9909/DNL01"/>
+  <set target="odin.dtv.dk:210/DTV01" name="pz:name" value="odin.dtv.dk:210/DTV01"/>
+  <set target="dvjb1.kvl.dk:9909/dvj01" name="pz:name" value="dvjb1.kvl.dk:9909/dvj01"/>
+  <set target="hermes.lib.cbs.dk:2100/S" name="pz:name" value="hermes.lib.cbs.dk:2100/S"/>
+  <set target="a800.hha.dk:9909/hba01" name="pz:name" value="a800.hha.dk:9909/hba01"/>
+  <set target="z3950.kb.dk:2100/kgl01" name="pz:name" value="z3950.kb.dk:2100/kgl01"/>
+  <set target="hans.ruc.dk:2210/S" name="pz:name" value="hans.ruc.dk:2210/S"/>
+  <set target="a500.aub.auc.dk:9909/AUB01" name="pz:name" value="a500.aub.auc.dk:9909/AUB01"/>
+  <set target="z3950.dbc.dk:213/def1forsk" name="pz:name" value="z3950.dbc.dk:213/def1forsk"/>
+  <set target="z3950.dbc.dk:213/def1total" name="pz:name" value="z3950.dbc.dk:213/def1total"/>
+  <set target="z3950.dbc.dk:213/danbibv2" name="pz:name" value="z3950.dbc.dk:213/danbibv2"/>
+  <set target="hcb.bibnet.dk:2100/S" name="pz:name" value="hcb.bibnet.dk:2100/S"/>
+  <set target="z3950.bibsys.no:2100/BIBSYS" name="pz:name" value="z3950.bibsys.no:2100/BIBSYS"/>
+  <set target="z3950.libris.kb.se:210/libr" name="pz:name" value="z3950.libris.kb.se:210/libr"/>
+  <set target="bagel.indexdata.dk/gils" name="pz:name" value="bagel.indexdata.dk/gils"/>
+  <set target="www.deff.dk:2100/Default" name="pz:name" value="www.deff.dk:2100/Default"/>
+  <set target="www.deff.dk:2102/Default" name="pz:name" value="www.deff.dk:2102/Default"/>
+  
+  <!-- mapping for unqualified search -->
+  <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
+  
+  <!-- field-specific mappings -->
+  <set name="pz:cclmap:ti" value="u=4 s=al"/>
+  <set name="pz:cclmap:su" value="u=21 s=al"/>
+  <set name="pz:cclmap:isbn" value="u=7"/>
+  <set name="pz:cclmap:issn" value="u=8"/>
+  <set name="pz:cclmap:date" value="u=30 r=r"/>
+
+  <!-- Retrieval settings -->
+
+  <set name="pz:requestsyntax" value="marc21"/>
+  <!-- <set name="pz:elements" value="F"/> NOT YET IMPLEMENTED -->
+
+  <!-- Result normalization settings -->
+
+  <set name="pz:nativesyntax" value="iso2709"/>
+  <set name="pz:xslt" value="../etc/marc21.xsl"/>
+
+</settings>

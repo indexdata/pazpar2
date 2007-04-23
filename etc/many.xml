@@ -1,0 +1,325 @@
+<settings target="*">
+<!-- $Id: many.xml,v 1.1 2007-04-23 07:26:15 adam Exp $ -->
+<!-- based on many.pz -->
+  <set target="12.4.242.230:210/Unicorn" name="pz:name" value="12.4.242.230:210/Unicorn"/>
+  <set target="128.119.168.1:210/INNOPAC" name="pz:name" value="128.119.168.1:210/INNOPAC"/>
+  <set target="128.119.168.2:210/INNOPAC" name="pz:name" value="128.119.168.2:210/INNOPAC"/>
+  <set target="128.197.130.200:210/INNOPAC" name="pz:name" value="128.197.130.200:210/INNOPAC"/>
+  <set target="128.218.15.173:210/INNOPAC" name="pz:name" value="128.218.15.173:210/INNOPAC"/>
+  <set target="128.83.82.249:210/INNOPAC" name="pz:name" value="128.83.82.249:210/INNOPAC"/>
+  <set target="129.234.4.6:210/INNOPAC" name="pz:name" value="129.234.4.6:210/INNOPAC"/>
+  <set target="129.65.20.27:210/Innopac" name="pz:name" value="129.65.20.27:210/Innopac"/>
+  <set target="129.78.72.7:210/INNOPAC" name="pz:name" value="129.78.72.7:210/INNOPAC"/>
+  <set target="130.102.42.45:210/Innopac" name="pz:name" value="130.102.42.45:210/Innopac"/>
+  <set target="130.111.64.52:210/INNOPAC" name="pz:name" value="130.111.64.52:210/INNOPAC"/>
+  <set target="130.206.134.239:210/INNOPAC" name="pz:name" value="130.206.134.239:210/INNOPAC"/>
+  <set target="130.212.18.200:210/Innopac" name="pz:name" value="130.212.18.200:210/Innopac"/>
+  <set target="130.91.144.191:210/INNOPAC" name="pz:name" value="130.91.144.191:210/INNOPAC"/>
+  <set target="131.165.177.76:2100/S" name="pz:name" value="131.165.177.76:2100/S"/>
+  <set target="131.165.97.2:210/S" name="pz:name" value="131.165.97.2:210/S"/>
+  <set target="131.232.13.6:210/INNOPAC" name="pz:name" value="131.232.13.6:210/INNOPAC"/>
+  <set target="134.115.152.130:210/Innopac" name="pz:name" value="134.115.152.130:210/Innopac"/>
+  <set target="134.154.30.10:210/Innopac" name="pz:name" value="134.154.30.10:210/Innopac"/>
+  <set target="137.187.166.250:210/INNOPAC" name="pz:name" value="137.187.166.250:210/INNOPAC"/>
+  <set target="137.45.212.100:210/INNOPAC" name="pz:name" value="137.45.212.100:210/INNOPAC"/>
+  <set target="141.215.16.4:210/INNOPAC" name="pz:name" value="141.215.16.4:210/INNOPAC"/>
+  <set target="144.37.1.4:210/Innopac" name="pz:name" value="144.37.1.4:210/Innopac"/>
+  <set target=" 147.143.2.5:210/INNOPAC" name="pz:name" value=" 147.143.2.5:210/INNOPAC"/>
+  <set target="147.175.67.227:1111/DEFAULT" name="pz:name" value="147.175.67.227:1111/DEFAULT"/>
+  <set target="147.175.67.227:2222/DEFAULT" name="pz:name" value="147.175.67.227:2222/DEFAULT"/>
+  <set target="147.29.116.113:2100/DAB01" name="pz:name" value="147.29.116.113:2100/DAB01"/>
+  <set target="147.29.116.113:2100/KGB01" name="pz:name" value="147.29.116.113:2100/KGB01"/>
+  <set target="147.29.116.113:2100/PVS" name="pz:name" value="147.29.116.113:2100/PVS"/>
+  <set target="147.29.116.113:2100/vej01" name="pz:name" value="147.29.116.113:2100/vej01"/>
+  <set target="149.130.90.2:210/INNOPAC" name="pz:name" value="149.130.90.2:210/INNOPAC"/>
+  <set target="149.175.20.20:210/INNOPAC" name="pz:name" value="149.175.20.20:210/INNOPAC"/>
+  <set target="161.210.213.100:210/INNOPAC" name="pz:name" value="161.210.213.100:210/INNOPAC"/>
+  <set target="169.139.225.46:210/horizon" name="pz:name" value="169.139.225.46:210/horizon"/>
+  <set target="192.188.131.54:2200/UNICORN" name="pz:name" value="192.188.131.54:2200/UNICORN"/>
+  <set target="192.197.190.4:210/Advance" name="pz:name" value="192.197.190.4:210/Advance"/>
+  <set target="192.65.218.23:210/DREWDB" name="pz:name" value="192.65.218.23:210/DREWDB"/>
+  <set target="193.162.157.130:2100/S" name="pz:name" value="193.162.157.130:2100/S"/>
+  <set target="193.43.102.194:21210/ADVANCE" name="pz:name" value="193.43.102.194:21210/ADVANCE"/>
+  <set target="193.52.199.5:21210/ADVANCE" name="pz:name" value="193.52.199.5:21210/ADVANCE"/>
+  <set target="193.59.172.100:210/INNOPAC" name="pz:name" value="193.59.172.100:210/INNOPAC"/>
+  <set target="194.182.134.04:210/S" name="pz:name" value="194.182.134.04:210/S"/>
+  <set target="194.239.156.133:2100/S" name="pz:name" value="194.239.156.133:2100/S"/>
+  <set target="195.215.203.98:2100/S" name="pz:name" value="195.215.203.98:2100/S"/>
+  <set target="195.249.206.204:210/Default" name="pz:name" value="195.249.206.204:210/Default"/>
+  <set target="195.249.206.204:210/default" name="pz:name" value="195.249.206.204:210/default"/>
+  <set target="195.41.8.218:2100/S" name="pz:name" value="195.41.8.218:2100/S"/>
+  <set target="195.50.60.15:2100/CB" name="pz:name" value="195.50.60.15:2100/CB"/>
+  <set target="195.50.60.15:2101/FB" name="pz:name" value="195.50.60.15:2101/FB"/>
+  <set target="195.50.60.15:2102/MB" name="pz:name" value="195.50.60.15:2102/MB"/>
+  <set target="195.50.60.15:2103/PB" name="pz:name" value="195.50.60.15:2103/PB"/>
+  <set target="196.6.221.16:210/INNOPAC" name="pz:name" value="196.6.221.16:210/INNOPAC"/>
+  <set target="198.62.73.72:210/INNOPAC" name="pz:name" value="198.62.73.72:210/INNOPAC"/>
+  <set target="199.184.19.10:210/innopac" name="pz:name" value="199.184.19.10:210/innopac"/>
+  <set target="199.88.71.7:210/INNOPAC" name="pz:name" value="199.88.71.7:210/INNOPAC"/>
+  <set target="202.14.152.4:210/INNOPAC" name="pz:name" value="202.14.152.4:210/INNOPAC"/>
+  <set target="202.40.151.2:210/INNOPAC" name="pz:name" value="202.40.151.2:210/INNOPAC"/>
+  <set target="202.40.216.17:210/INNOPAC" name="pz:name" value="202.40.216.17:210/INNOPAC"/>
+  <set target="206.48.3.167:7090/Voyager" name="pz:name" value="206.48.3.167:7090/Voyager"/>
+  <set target="207.194.254.193:210/advance" name="pz:name" value="207.194.254.193:210/advance"/>
+  <set target="Exlibris.albertslundbib.dk:2100/S" name="pz:name" value="Exlibris.albertslundbib.dk:2100/S"/>
+  <set target="Exlibris.daimi.au.dk:2104/FYS01" name="pz:name" value="Exlibris.daimi.au.dk:2104/FYS01"/>
+  <set target="Exlibris.daimi.au.dk:2104/GEO01" name="pz:name" value="Exlibris.daimi.au.dk:2104/GEO01"/>
+  <set target="Exlibris.daimi.au.dk:2104/KEM01" name="pz:name" value="Exlibris.daimi.au.dk:2104/KEM01"/>
+  <set target="Exlibris.daimi.au.dk:2104/MAT01" name="pz:name" value="Exlibris.daimi.au.dk:2104/MAT01"/>
+  <set target="Exlibris.daimi.au.dk:2104/VID01" name="pz:name" value="Exlibris.daimi.au.dk:2104/VID01"/>
+  <set target="Z3950.maribo.integrabib.dk:210/Default" name="pz:name" value="Z3950.maribo.integrabib.dk:210/Default"/>
+  <set target="Z3950cat.bl.uk:9909/BLAC" name="pz:name" value="Z3950cat.bl.uk:9909/BLAC"/>
+  <set target="acorn.library.vanderbilt.edu:2200/ACORN" name="pz:name" value="acorn.library.vanderbilt.edu:2200/ACORN"/>
+  <set target="advance.biblio.polymtl.ca:210/ADVANCE" name="pz:name" value="advance.biblio.polymtl.ca:210/ADVANCE"/>
+  <set target="advance.lib.rmit.edu.au:21210/Advance" name="pz:name" value="advance.lib.rmit.edu.au:21210/Advance"/>
+  <set target="albert.rit.edu:210/INNOPAC" name="pz:name" value="albert.rit.edu:210/INNOPAC"/>
+  <set target="aleph.mcgill.ca:210/MUSE" name="pz:name" value="aleph.mcgill.ca:210/MUSE"/>
+  <set target="aleph.unibas.ch:9909/DSV01" name="pz:name" value="aleph.unibas.ch:9909/DSV01"/>
+  <set target=" alpha.svkol.cz:9909/SVK01" name="pz:name" value=" alpha.svkol.cz:9909/SVK01"/>
+  <set target="alpha.svkol.cz:9909/SVK02" name="pz:name" value="alpha.svkol.cz:9909/SVK02"/>
+  <set target="atrium.bib.umontreal.ca:210/ADVANCE" name="pz:name" value="atrium.bib.umontreal.ca:210/ADVANCE"/>
+  <set target="bagel.indexdata.dk:210/gils" name="pz:name" value="bagel.indexdata.dk:210/gils"/>
+  <set target="bagel.indexdata.dk:210/marc" name="pz:name" value="bagel.indexdata.dk:210/marc"/>
+  <set target="bcr1.larioja.org:210/AbsysE" name="pz:name" value="bcr1.larioja.org:210/AbsysE"/>
+  <set target="bib.gladsaxe.dk:2100/S" name="pz:name" value="bib.gladsaxe.dk:2100/S"/>
+  <set target="bib.gladsaxe.dk:2101/H" name="pz:name" value="bib.gladsaxe.dk:2101/H"/>
+  <set target="bib.gladsaxe.dk:2101/S" name="pz:name" value="bib.gladsaxe.dk:2101/S"/>
+  <set target=" biblio.crusca.fi.it:9909/ADC01" name="pz:name" value=" biblio.crusca.fi.it:9909/ADC01"/>
+  <set target="biblio.hec.ca:210/hec" name="pz:name" value="biblio.hec.ca:210/hec"/>
+  <set target="biblios.dic.uchile.cl:210/BELLO" name="pz:name" value="biblios.dic.uchile.cl:210/BELLO"/>
+  <set target="biblioteca.uc3m.es:2200/unicorn" name="pz:name" value="biblioteca.uc3m.es:2200/unicorn"/>
+  <set target="bobcat.nyu.edu:210/ADVANCE" name="pz:name" value="bobcat.nyu.edu:210/ADVANCE"/>
+  <set target="books.luther.edu:210/innopac" name="pz:name" value="books.luther.edu:210/innopac"/>
+  <set target="brocar.unavarra.es:9999/libros" name="pz:name" value="brocar.unavarra.es:9999/libros"/>
+  <set target="brocar.unavarra.es:9999/revistas" name="pz:name" value="brocar.unavarra.es:9999/revistas"/>
+  <set target=" cat.cisti.nrc.ca:210/INNOPAC" name="pz:name" value=" cat.cisti.nrc.ca:210/INNOPAC"/>
+  <set target="cat.lib.grin.edu:210/innopac" name="pz:name" value="cat.lib.grin.edu:210/innopac"/>
+  <set target="catalog.bedfordlibrary.org:210/Innopac" name="pz:name" value="catalog.bedfordlibrary.org:210/Innopac"/>
+  <set target="catalog.crl.edu:210/INNOPAC" name="pz:name" value="catalog.crl.edu:210/INNOPAC"/>
+  <set target="catalog.lib.jhu.edu:210/horizon" name="pz:name" value="catalog.lib.jhu.edu:210/horizon"/>
+  <set target="cisne.sim.ucm.es:210/INNOPAC" name="pz:name" value="cisne.sim.ucm.es:210/INNOPAC"/>
+  <set target="clavis.ucalgary.ca:2200/UNICORN" name="pz:name" value="clavis.ucalgary.ca:2200/UNICORN"/>
+  <set target="cornelia.whoi.edu:7090/VOYAGER" name="pz:name" value="cornelia.whoi.edu:7090/VOYAGER"/>
+  <set target="corpsgeo1.usace.army.mil:2210/geo1" name="pz:name" value="corpsgeo1.usace.army.mil:2210/geo1"/>
+  <set target="csulib.ctstateu.edu:210/INNOPAC" name="pz:name" value="csulib.ctstateu.edu:210/INNOPAC"/>
+  <set target=" echea.ru.ac.za:210/INNOPAC" name="pz:name" value=" echea.ru.ac.za:210/INNOPAC"/>
+  <set target="edcsns17.cr.usgs.gov:6675/AVHRR" name="pz:name" value="edcsns17.cr.usgs.gov:6675/AVHRR"/>
+  <set target="edcsns17.cr.usgs.gov:6675/DOQ" name="pz:name" value="edcsns17.cr.usgs.gov:6675/DOQ"/>
+  <set target="edcsns17.cr.usgs.gov:6675/HAZARDS" name="pz:name" value="edcsns17.cr.usgs.gov:6675/HAZARDS"/>
+  <set target=" edcsns17.cr.usgs.gov:6675/LANDSAT_MSS" name="pz:name" value=" edcsns17.cr.usgs.gov:6675/LANDSAT_MSS"/>
+  <set target=" edcsns17.cr.usgs.gov:6675/LANDSAT_TM" name="pz:name" value=" edcsns17.cr.usgs.gov:6675/LANDSAT_TM"/>
+  <set target="edcsns17.cr.usgs.gov:6675/NAPP" name="pz:name" value="edcsns17.cr.usgs.gov:6675/NAPP"/>
+  <set target="edcsns17.cr.usgs.gov:6675/NHAP" name="pz:name" value="edcsns17.cr.usgs.gov:6675/NHAP"/>
+  <set target="eleanor.lib.gla.ac.uk:210/INNOPAC" name="pz:name" value="eleanor.lib.gla.ac.uk:210/INNOPAC"/>
+  <set target="eusa.library.net:5666/eusa" name="pz:name" value="eusa.library.net:5666/eusa"/>
+  <set target="explore.up.ac.za:210/INNOPAC" name="pz:name" value="explore.up.ac.za:210/INNOPAC"/>
+  <set target="gaudi.ua.es:2200/unicorn" name="pz:name" value="gaudi.ua.es:2200/unicorn"/>
+  <set target="gb.glostrupbib.dk:2100/S" name="pz:name" value="gb.glostrupbib.dk:2100/S"/>
+  <set target="hcb.bibnet.dk:2100/S" name="pz:name" value="hcb.bibnet.dk:2100/S"/>
+  <set target="helios.nlib.ee:210/INNOPAC" name="pz:name" value="helios.nlib.ee:210/INNOPAC"/>
+  <set target="hermes.lib.cbs.dk:2100/S" name="pz:name" value="hermes.lib.cbs.dk:2100/S"/>
+  <set target="hkbulib.hkbu.edu.hk:210/INNOPAC" name="pz:name" value="hkbulib.hkbu.edu.hk:210/INNOPAC"/>
+  <set target="ikast.ikast.bibnet.dk:2100/S" name="pz:name" value="ikast.ikast.bibnet.dk:2100/S"/>
+  <set target="indexgeo.com.au:6668/dataset" name="pz:name" value="indexgeo.com.au:6668/dataset"/>
+  <set target="indexgeo.net:5511/act" name="pz:name" value="indexgeo.net:5511/act"/>
+  <set target="info.library.mun.ca:2200/UNICORN" name="pz:name" value="info.library.mun.ca:2200/UNICORN"/>
+  <set target="innopac.lib.kth.se:210/innopac" name="pz:name" value="innopac.lib.kth.se:210/innopac"/>
+  <set target="innopac.wits.ac.za:210/INNOPAC" name="pz:name" value="innopac.wits.ac.za:210/INNOPAC"/>
+  <set target="itec.mty.itesm.mx:210/innopac" name="pz:name" value="itec.mty.itesm.mx:210/innopac"/>
+  <set target="jasper.acadiau.ca:2200/UNICORN" name="pz:name" value="jasper.acadiau.ca:2200/UNICORN"/>
+  <set target="jenda.lib.nccu.edu.tw:210/INNOPAC" name="pz:name" value="jenda.lib.nccu.edu.tw:210/INNOPAC"/>
+  <set target="kat.vkol.cz:9909/SVK01" name="pz:name" value="kat.vkol.cz:9909/SVK01"/>
+  <set target="kat.vkol.cz:9909/SVK02" name="pz:name" value="kat.vkol.cz:9909/SVK02"/>
+  <set target="kraka.birkerod.bibnet.dk:2100/S" name="pz:name" value="kraka.birkerod.bibnet.dk:2100/S"/>
+  <set target="ksclib.keene.edu:210/INNOPAC" name="pz:name" value="ksclib.keene.edu:210/INNOPAC"/>
+  <set target="l1.uwaterloo.ca:7090/VOYAGER" name="pz:name" value="l1.uwaterloo.ca:7090/VOYAGER"/>
+  <set target="lance.missouri.edu:210/INNOPAC" name="pz:name" value="lance.missouri.edu:210/INNOPAC"/>
+  <set target="lib.leeds.ac.uk:210/INNOPAC" name="pz:name" value="lib.leeds.ac.uk:210/INNOPAC"/>
+  <set target="lib.soas.ac.uk:210/innopac" name="pz:name" value="lib.soas.ac.uk:210/innopac"/>
+  <set target="libadfa.adfa.edu.au:7090/VOYAGER" name="pz:name" value="libadfa.adfa.edu.au:7090/VOYAGER"/>
+  <set target="libcat.qut.edu.au:210/INNOPAC" name="pz:name" value="libcat.qut.edu.au:210/INNOPAC"/>
+  <set target="liber.acadlib.lv:211/codex.previous" name="pz:name" value="liber.acadlib.lv:211/codex.previous"/>
+  <set target="liber.acadlib.lv:211/liber1" name="pz:name" value="liber.acadlib.lv:211/liber1"/>
+  <set target="liber.acadlib.lv:212/liber1" name="pz:name" value="liber.acadlib.lv:212/liber1"/>
+  <set target="library.anu.edu.au:210/INNOPAC" name="pz:name" value="library.anu.edu.au:210/INNOPAC"/>
+  <set target="library.ballarat.edu.au:210/INNOPAC" name="pz:name" value="library.ballarat.edu.au:210/INNOPAC"/>
+  <set target="library.bangor.ac.uk:210/INNOPAC" name="pz:name" value="library.bangor.ac.uk:210/INNOPAC"/>
+  <set target="library.bilgi.edu.tr:210/INNOPAC" name="pz:name" value="library.bilgi.edu.tr:210/INNOPAC"/>
+  <set target="library.brad.ac.uk:210/xxDefault" name="pz:name" value="library.brad.ac.uk:210/xxDefault"/>
+  <set target="library.brunel.ac.uk:2200/UNICORN" name="pz:name" value="library.brunel.ac.uk:2200/UNICORN"/>
+  <set target="library.daemen.edu:210/innopac" name="pz:name" value="library.daemen.edu:210/innopac"/>
+  <set target=" library.deakin.edu.au:210/INNOPAC" name="pz:name" value=" library.deakin.edu.au:210/INNOPAC"/>
+  <set target="library.gu.edu.au:21210/ADVANCE" name="pz:name" value="library.gu.edu.au:21210/ADVANCE"/>
+  <set target="library.hud.ac.uk:210/HORIZON" name="pz:name" value="library.hud.ac.uk:210/HORIZON"/>
+  <set target="library.hull.ac.uk:210/INNOPAC" name="pz:name" value="library.hull.ac.uk:210/INNOPAC"/>
+  <set target="library.latrobe.edu.au:210/INNOPAC" name="pz:name" value="library.latrobe.edu.au:210/INNOPAC"/>
+  <set target="library.lbc.edu:7090/voyager" name="pz:name" value="library.lbc.edu:7090/voyager"/>
+  <set target="library.mdx.ac.uk:210/mdx" name="pz:name" value="library.mdx.ac.uk:210/mdx"/>
+  <set target=" library.newcastle.edu.au:210/INNOPAC" name="pz:name" value=" library.newcastle.edu.au:210/INNOPAC"/>
+  <set target="library.ox.ac.uk:210/ADVANCE" name="pz:name" value="library.ox.ac.uk:210/ADVANCE"/>
+  <set target="library.tcd.ie:210/advance" name="pz:name" value="library.tcd.ie:210/advance"/>
+  <set target="library.ucc.ie:210/INNOPAC" name="pz:name" value="library.ucc.ie:210/INNOPAC"/>
+  <set target=" library.uh.edu:210/INNOPAC" name="pz:name" value=" library.uh.edu:210/INNOPAC"/>
+  <set target="library.vu.edu.au:210/INNOPAC" name="pz:name" value="library.vu.edu.au:210/INNOPAC"/>
+  <set target="library2.open.ac.uk:7090/voyager" name="pz:name" value="library2.open.ac.uk:7090/voyager"/>
+  <set target="libsys.lib.hull.ac.uk:210/INNOPAC" name="pz:name" value="libsys.lib.hull.ac.uk:210/INNOPAC"/>
+  <set target="libuni01.ccc.govt.nz:2200/unicorn" name="pz:name" value="libuni01.ccc.govt.nz:2200/unicorn"/>
+  <set target="libuni01.ccc.govt.nz:2220/cinch" name="pz:name" value="libuni01.ccc.govt.nz:2220/cinch"/>
+  <set target="libuni01.ccc.govt.nz:2220/papers" name="pz:name" value="libuni01.ccc.govt.nz:2220/papers"/>
+  <set target="libunix.ku.edu.tr:210/INNOPAC" name="pz:name" value="libunix.ku.edu.tr:210/INNOPAC"/>
+  <set target="linc.nus.edu.sg:210/innopac" name="pz:name" value="linc.nus.edu.sg:210/innopac"/>
+  <set target="lion.swem.wm.edu:2200/unicorn" name="pz:name" value="lion.swem.wm.edu:2200/unicorn"/>
+  <set target="loke.dcbib.dk:2100/S" name="pz:name" value="loke.dcbib.dk:2100/S"/>
+  <set target="lrpapp.cc.umanitoba.ca:2200/unicorn" name="pz:name" value="lrpapp.cc.umanitoba.ca:2200/unicorn"/>
+  <set target="malad2.mala.bc.ca:2200/UNICORN" name="pz:name" value="malad2.mala.bc.ca:2200/UNICORN"/>
+  <set target="malad2.mala.bc.ca:2200/unicorn" name="pz:name" value="malad2.mala.bc.ca:2200/unicorn"/>
+  <set target=" marte.biblioteca.upm.es:2200/unicorn" name="pz:name" value=" marte.biblioteca.upm.es:2200/unicorn"/>
+  <set target="medupe.ub.bw:210/INNOPAC" name="pz:name" value="medupe.ub.bw:210/INNOPAC"/>
+  <set target="melvyl.cdlib.org:210/CDL90" name="pz:name" value="melvyl.cdlib.org:210/CDL90"/>
+  <set target="mercury.concordia.ca:210/Innopac" name="pz:name" value="mercury.concordia.ca:210/Innopac"/>
+  <set target="merihobu.utlib.ee:210/INNOPAC" name="pz:name" value="merihobu.utlib.ee:210/INNOPAC"/>
+  <set target="merlinweb.ville.montreal.qc.ca:2100/Z3950S" name="pz:name" value="merlinweb.ville.montreal.qc.ca:2100/Z3950S"/>
+  <set target=" nbinet.ncl.edu.tw:210/INNOPAC" name="pz:name" value=" nbinet.ncl.edu.tw:210/INNOPAC"/>
+  <set target="ncsulib.lib.ncsu.edu:210/MARION" name="pz:name" value="ncsulib.lib.ncsu.edu:210/MARION"/>
+  <set target="newlib.ci.lubbock.tx.us:2200/unicorn" name="pz:name" value="newlib.ci.lubbock.tx.us:2200/unicorn"/>
+  <set target="nobis.njl.dk:210/S" name="pz:name" value="nobis.njl.dk:210/S"/>
+  <set target="nrhcat.library.nrhtx.com:210/INNOPAC" name="pz:name" value="nrhcat.library.nrhtx.com:210/INNOPAC"/>
+  <set target="oda.fynbib.dk:2100/S" name="pz:name" value="oda.fynbib.dk:2100/S"/>
+  <set target="odin2.bib.sdu.dk:210/Horizon" name="pz:name" value="odin2.bib.sdu.dk:210/Horizon"/>
+  <set target="odin2.bib.sdu.dk:210/otb" name="pz:name" value="odin2.bib.sdu.dk:210/otb"/>
+  <set target="opac.nebis.ch:9909/NEBIS" name="pz:name" value="opac.nebis.ch:9909/NEBIS"/>
+  <set target="opac.sbn.it:2100/nopac" name="pz:name" value="opac.sbn.it:2100/nopac"/>
+  <set target="opac.sbn.it:3950/nopac" name="pz:name" value="opac.sbn.it:3950/nopac"/>
+  <set target="opac.shu.ac.uk:210/INNOPAC" name="pz:name" value="opac.shu.ac.uk:210/INNOPAC"/>
+  <set target="opac.unifi.it:210/OPAC" name="pz:name" value="opac.unifi.it:210/OPAC"/>
+  <set target="opac.utmem.edu:210/INNOPAC" name="pz:name" value="opac.utmem.edu:210/INNOPAC"/>
+  <set target="orac.lib.uts.edu.au:210/INNOPAC" name="pz:name" value="orac.lib.uts.edu.au:210/INNOPAC"/>
+  <set target=" pollux.dslak.co.nz:210/MARNSL" name="pz:name" value=" pollux.dslak.co.nz:210/MARNSL"/>
+  <set target="prodorbis.library.yale.edu:7090/voyager" name="pz:name" value="prodorbis.library.yale.edu:7090/voyager"/>
+  <set target="quest.unb.ca:2200/unicorn" name="pz:name" value="quest.unb.ca:2200/unicorn"/>
+  <set target="rebiun.crue.org:210/absysREBIUN" name="pz:name" value="rebiun.crue.org:210/absysREBIUN"/>
+  <set target="roble.unizar.es:210/INNOPAC" name="pz:name" value="roble.unizar.es:210/INNOPAC"/>
+  <set target="rs6000.nshpl.library.ns.ca:210/AVR" name="pz:name" value="rs6000.nshpl.library.ns.ca:210/AVR"/>
+  <set target="rs6000.nshpl.library.ns.ca:210/CBR" name="pz:name" value="rs6000.nshpl.library.ns.ca:210/CBR"/>
+  <set target="rs6000.nshpl.library.ns.ca:210/CEH" name="pz:name" value="rs6000.nshpl.library.ns.ca:210/CEH"/>
+  <set target="rs6000.nshpl.library.ns.ca:210/CUR" name="pz:name" value="rs6000.nshpl.library.ns.ca:210/CUR"/>
+  <set target="rs6000.nshpl.library.ns.ca:210/ECR" name="pz:name" value="rs6000.nshpl.library.ns.ca:210/ECR"/>
+  <set target="rs6000.nshpl.library.ns.ca:210/NSP" name="pz:name" value="rs6000.nshpl.library.ns.ca:210/NSP"/>
+  <set target="rs6000.nshpl.library.ns.ca:210/PAR" name="pz:name" value="rs6000.nshpl.library.ns.ca:210/PAR"/>
+  <set target="rs6000.nshpl.library.ns.ca:210/SSR" name="pz:name" value="rs6000.nshpl.library.ns.ca:210/SSR"/>
+  <set target="rs6000.nshpl.library.ns.ca:210/WCR" name="pz:name" value="rs6000.nshpl.library.ns.ca:210/WCR"/>
+  <set target="sabio.library.arizona.edu:210/innopac" name="pz:name" value="sabio.library.arizona.edu:210/innopac"/>
+  <set target="salty.slcpl.lib.ut.us:210/INNOPAC" name="pz:name" value="salty.slcpl.lib.ut.us:210/INNOPAC"/>
+  <set target="scotty.mhsl.uab.edu:7090/VOYAGER" name="pz:name" value="scotty.mhsl.uab.edu:7090/VOYAGER"/>
+  <set target="serapis.leedsmet.ac.uk:2200/unicorn" name="pz:name" value="serapis.leedsmet.ac.uk:2200/unicorn"/>
+  <set target="serapis.lmu.ac.uk:2200/unicorn" name="pz:name" value="serapis.lmu.ac.uk:2200/unicorn"/>
+  <set target="sflwww.er.usgs.gov:251/sflwwwmeta" name="pz:name" value="sflwww.er.usgs.gov:251/sflwwwmeta"/>
+  <set target="silkbib.bib.dk:2100/S" name="pz:name" value="silkbib.bib.dk:2100/S"/>
+  <set target="sirsi.library.utoronto.ca:2200/UNICORN" name="pz:name" value="sirsi.library.utoronto.ca:2200/UNICORN"/>
+  <set target="star.tsl.state.tx.us:2200/unicorn" name="pz:name" value="star.tsl.state.tx.us:2200/unicorn"/>
+  <set target="strife.library.uwa.edu.au:210/INNOPAC" name="pz:name" value="strife.library.uwa.edu.au:210/INNOPAC"/>
+  <set target="strife.library.uwa.edu.au:210/innopac" name="pz:name" value="strife.library.uwa.edu.au:210/innopac"/>
+  <set target=" sundog.usask.ca:210/INNOPAC" name="pz:name" value=" sundog.usask.ca:210/INNOPAC"/>
+  <set target="tegument.nlm.nih.gov:7090/VOYAGER" name="pz:name" value="tegument.nlm.nih.gov:7090/VOYAGER"/>
+  <set target="titus.folger.edu:7090/VOYAGER" name="pz:name" value="titus.folger.edu:7090/VOYAGER"/>
+  <set target="tora.htk.dk:2100/S" name="pz:name" value="tora.htk.dk:2100/S"/>
+  <set target="troy.lib.sfu.ca:210/INNOPAC" name="pz:name" value="troy.lib.sfu.ca:210/INNOPAC"/>
+  <set target="unicorn.lib.ic.ac.uk:2200/IC" name="pz:name" value="unicorn.lib.ic.ac.uk:2200/IC"/>
+  <set target="unicorn.qmced.ac.uk:2200/unicorn" name="pz:name" value="unicorn.qmced.ac.uk:2200/unicorn"/>
+  <set target="unicornio.umb.edu.co:2200/Unicorn" name="pz:name" value="unicornio.umb.edu.co:2200/Unicorn"/>
+  <set target="ustlib.ust.hk:210/INNOPAC" name="pz:name" value="ustlib.ust.hk:210/INNOPAC"/>
+  <set target=" vax.lib.state.ca.us:210/marion" name="pz:name" value=" vax.lib.state.ca.us:210/marion"/>
+  <set target="vlsirsi.rdg.ac.uk:2200/UNICORN" name="pz:name" value="vlsirsi.rdg.ac.uk:2200/UNICORN"/>
+  <set target="voyager.its.csiro.au:7090/VOYAGER" name="pz:name" value="voyager.its.csiro.au:7090/VOYAGER"/>
+  <set target="voyager.tcs.tulane.edu:7090/VOYAGER" name="pz:name" value="voyager.tcs.tulane.edu:7090/VOYAGER"/>
+  <set target=" voyager.wrlc.org:7090/VOYAGER" name="pz:name" value=" voyager.wrlc.org:7090/VOYAGER"/>
+  <set target="www.agralin.nl:210/clcz3950" name="pz:name" value="www.agralin.nl:210/clcz3950"/>
+  <set target="www.bibliotek.taarnby.dk:210/S" name="pz:name" value="www.bibliotek.taarnby.dk:210/S"/>
+  <set target="www.congreso.es:2100/ABSYSBCD" name="pz:name" value="www.congreso.es:2100/ABSYSBCD"/>
+  <set target="www.csc.noaa.gov:2210/CSC_Products" name="pz:name" value="www.csc.noaa.gov:2210/CSC_Products"/>
+  <set target="www.eevl.ac.uk:2100/eevlacuk" name="pz:name" value="www.eevl.ac.uk:2100/eevlacuk"/>
+  <set target="www.grimes.lib.ia.us:210/main" name="pz:name" value="www.grimes.lib.ia.us:210/main"/>
+  <set target=" www.knihovna.cz:8888/un_cat" name="pz:name" value=" www.knihovna.cz:8888/un_cat"/>
+  <set target="www.library.nps.gov:7090/VOYAGER" name="pz:name" value="www.library.nps.gov:7090/VOYAGER"/>
+  <set target="www.sbn.it:2100/nopac" name="pz:name" value="www.sbn.it:2100/nopac"/>
+  <set target="www.scran.ac.uk:3950/default" name="pz:name" value="www.scran.ac.uk:3950/default"/>
+  <set target="yulib001.mc.yu.edu:1111/DEFAULT" name="pz:name" value="yulib001.mc.yu.edu:1111/DEFAULT"/>
+  <set target=" z39.libis.lt:210/KNYGOS" name="pz:name" value=" z39.libis.lt:210/KNYGOS"/>
+  <set target="z3950.ahds.ac.uk:210/CMF" name="pz:name" value="z3950.ahds.ac.uk:210/CMF"/>
+  <set target="z3950.ahds.ac.uk:210/DC" name="pz:name" value="z3950.ahds.ac.uk:210/DC"/>
+  <set target="z3950.bcl.jcyl.es:210/AbsysBCL" name="pz:name" value="z3950.bcl.jcyl.es:210/AbsysBCL"/>
+  <set target="z3950.bcl.jcyl.es:210/AbsysCCFL" name="pz:name" value="z3950.bcl.jcyl.es:210/AbsysCCFL"/>
+  <set target="z3950.bergen.folkebibl.no:210/data" name="pz:name" value="z3950.bergen.folkebibl.no:210/data"/>
+  <set target="z3950.biblos.pk.edu.pl:4210/books" name="pz:name" value="z3950.biblos.pk.edu.pl:4210/books"/>
+  <set target="z3950.bibsys.no:2100/BIBSYS" name="pz:name" value="z3950.bibsys.no:2100/BIBSYS"/>
+  <set target="z3950.bibsys.no:2100/PERI" name="pz:name" value="z3950.bibsys.no:2100/PERI"/>
+  <set target="z3950.copac.ac.uk:210/copac" name="pz:name" value="z3950.copac.ac.uk:210/copac"/>
+  <set target="z3950.copac.ac.uk:2100/COPAC" name="pz:name" value="z3950.copac.ac.uk:2100/COPAC"/>
+  <set target="z3950.deich.folkebibl.no:210/data" name="pz:name" value="z3950.deich.folkebibl.no:210/data"/>
+  <set target="z3950.dragsholm.integrabib.dk:210/default" name="pz:name" value="z3950.dragsholm.integrabib.dk:210/default"/>
+  <set target="z3950.fcla.edu:210/CF" name="pz:name" value="z3950.fcla.edu:210/CF"/>
+  <set target="z3950.fcla.edu:210/FA" name="pz:name" value="z3950.fcla.edu:210/FA"/>
+  <set target="z3950.fcla.edu:210/FI" name="pz:name" value="z3950.fcla.edu:210/FI"/>
+  <set target="z3950.fcla.edu:210/FO" name="pz:name" value="z3950.fcla.edu:210/FO"/>
+  <set target="z3950.fcla.edu:210/QB" name="pz:name" value="z3950.fcla.edu:210/QB"/>
+  <set target="z3950.fcla.edu:210/RF" name="pz:name" value="z3950.fcla.edu:210/RF"/>
+  <set target="z3950.fcla.edu:210/SR" name="pz:name" value="z3950.fcla.edu:210/SR"/>
+  <set target="z3950.fcla.edu:210/ST" name="pz:name" value="z3950.fcla.edu:210/ST"/>
+  <set target="z3950.gbv.de:20010/GVK" name="pz:name" value="z3950.gbv.de:20010/GVK"/>
+  <set target="z3950.gbv.de:20011/GVK" name="pz:name" value="z3950.gbv.de:20011/GVK"/>
+  <set target="z3950.gbv.de:20011/GVK" name="pz:name" value="z3950.gbv.de:20011/GVK"/>
+  <set target="z3950.gbv.de:210/GVK" name="pz:name" value="z3950.gbv.de:210/GVK"/>
+  <set target="z3950.gbv.de:210/GVK" name="pz:name" value="z3950.gbv.de:210/GVK"/>
+  <set target="z3950.haderslev.integrabib.dk:210/default" name="pz:name" value="z3950.haderslev.integrabib.dk:210/default"/>
+  <set target="z3950.haslev.integrabib.dk:210/Default" name="pz:name" value="z3950.haslev.integrabib.dk:210/Default"/>
+  <set target="z3950.hoerning.integrabib.dk:210/default" name="pz:name" value="z3950.hoerning.integrabib.dk:210/default"/>
+  <set target="z3950.kb.dk:2100/BGF01" name="pz:name" value="z3950.kb.dk:2100/BGF01"/>
+  <set target="z3950.kb.dk:2100/BHS01" name="pz:name" value="z3950.kb.dk:2100/BHS01"/>
+  <set target="z3950.kb.dk:2100/DRA01" name="pz:name" value="z3950.kb.dk:2100/DRA01"/>
+  <set target="z3950.kb.dk:2100/KBB01" name="pz:name" value="z3950.kb.dk:2100/KBB01"/>
+  <set target="z3950.kb.dk:2100/KBH01" name="pz:name" value="z3950.kb.dk:2100/KBH01"/>
+  <set target="z3950.kb.dk:2100/KGL01" name="pz:name" value="z3950.kb.dk:2100/KGL01"/>
+  <set target="z3950.libh.uoc.gr:210/default" name="pz:name" value="z3950.libh.uoc.gr:210/default"/>
+  <set target="z3950.libr.uoc.gr:210/logios" name="pz:name" value="z3950.libr.uoc.gr:210/logios"/>
+  <set target="z3950.libr.uoc.gr:210/ptolemeos_ii" name="pz:name" value="z3950.libr.uoc.gr:210/ptolemeos_ii"/>
+  <set target="z3950.library.wisc.edu:210/madison" name="pz:name" value="z3950.library.wisc.edu:210/madison"/>
+  <set target="z3950.libris.kb.se:210/libr" name="pz:name" value="z3950.libris.kb.se:210/libr"/>
+  <set target="z3950.lillehammer.folkebibl.no:210/data" name="pz:name" value="z3950.lillehammer.folkebibl.no:210/data"/>
+  <set target="z3950.loc.gov:7090/voyager" name="pz:name" value="z3950.loc.gov:7090/voyager"/>
+  <set target="z3950.nakskov.integrabib.dk:210/default" name="pz:name" value="z3950.nakskov.integrabib.dk:210/default"/>
+  <set target="z3950.nb.no:2100/Norbok" name="pz:name" value="z3950.nb.no:2100/Norbok"/>
+  <set target="z3950.nb.no:2100/Norper" name="pz:name" value="z3950.nb.no:2100/Norper"/>
+  <set target="z3950.nb.no:2100/Sambok" name="pz:name" value="z3950.nb.no:2100/Sambok"/>
+  <set target="z3950.nls.uk:7290/voyager" name="pz:name" value="z3950.nls.uk:7290/voyager"/>
+  <set target="z3950.ovid.com:2213/eric" name="pz:name" value="z3950.ovid.com:2213/eric"/>
+  <set target="z3950.ovid.com:2213/pmed" name="pz:name" value="z3950.ovid.com:2213/pmed"/>
+  <set target="z3950.rdn.ac.uk:210/xxdefault" name="pz:name" value="z3950.rdn.ac.uk:210/xxdefault"/>
+  <set target="z3950.ringsted.integrabib.dk:210/Default" name="pz:name" value="z3950.ringsted.integrabib.dk:210/Default"/>
+  <set target="z3950.skagen.integrabib.dk:210/default" name="pz:name" value="z3950.skagen.integrabib.dk:210/default"/>
+  <set target="z3950.sydfalster.integrabib.dk:210/default" name="pz:name" value="z3950.sydfalster.integrabib.dk:210/default"/>
+  <set target="z3950.trondheim.folkebibl.no:210/data" name="pz:name" value="z3950.trondheim.folkebibl.no:210/data"/>
+  <set target="z3950.vallensbaek.integrabib.dk:210/default" name="pz:name" value="z3950.vallensbaek.integrabib.dk:210/default"/>
+  <set target="z3950.vejen.integrabib.dk:210/default" name="pz:name" value="z3950.vejen.integrabib.dk:210/default"/>
+
+
+  <!-- mapping for unqualified search -->
+  <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
+  
+  <!-- field-specific mappings -->
+  <set name="pz:cclmap:ti" value="u=4 s=al"/>
+  <set name="pz:cclmap:su" value="u=21 s=al"/>
+  <set name="pz:cclmap:isbn" value="u=7"/>
+  <set name="pz:cclmap:issn" value="u=8"/>
+  <set name="pz:cclmap:date" value="u=30 r=r"/>
+
+  <!-- Retrieval settings -->
+
+  <set name="pz:requestsyntax" value="marc21"/>
+  <!-- <set name="pz:elements" value="F"/> NOT YET IMPLEMENTED -->
+
+  <!-- Result normalization settings -->
+
+  <set name="pz:nativesyntax" value="iso2709"/>
+  <set name="pz:xslt" value="../etc/marc21.xsl"/>
+
+</settings>
