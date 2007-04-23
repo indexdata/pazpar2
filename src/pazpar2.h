@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.33 2007-04-22 16:41:42 adam Exp $
+/* $Id: pazpar2.h,v 1.34 2007-04-23 21:05:23 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -38,19 +38,12 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "reclists.h"
 #include "eventl.h"
 #include "config.h"
+#include "parameters.h"
 
 struct record;
 struct client;
 
 struct connection;
-
-// Represents a host (irrespective of databases)
-struct host {
-    char *hostport;
-    char *ipport;
-    struct connection *connections; // All connections to this
-    struct host *next;
-};
 
 // Represents a (virtual) database on a host
 struct database {
@@ -72,50 +65,6 @@ struct database_criterion {
     char *name;
     struct database_criterion_value *values;
     struct database_criterion *next;
-};
-
-// Represents a physical, reusable  connection to a remote Z39.50 host
-struct connection {
-    IOCHAN iochan;
-    COMSTACK link;
-    struct host *host;
-    struct client *client;
-    char *ibuf;
-    int ibufsize;
-    enum {
-        Conn_Resolving,
-        Conn_Connecting,
-        Conn_Open,
-        Conn_Waiting,
-    } state;
-    struct connection *next;
-};
-
-// Represents client state for a connection to one search target
-struct client {
-    struct session_database *database;
-    struct connection *connection;
-    struct session *session;
-    char *pquery; // Current search
-    int hits;
-    int records;
-    int setno;
-    int requestid;                              // ID of current outstanding request
-    int diagnostic;
-    enum client_state
-    {
-        Client_Connecting,
-        Client_Connected,
-	Client_Idle,
-        Client_Initializing,
-        Client_Searching,
-        Client_Presenting,
-        Client_Error,
-        Client_Failed,
-        Client_Disconnected,
-        Client_Stopped
-    } state;
-    struct client *next;
 };
 
 // Normalization filter. Turns incoming record into internal representation
@@ -191,27 +140,8 @@ struct hitsbytarget {
     int hits;
     int diagnostic;
     int records;
-    char* state;
+    const char *state;
     int connected;
-};
-
-struct parameters {
-    char proxy_override[128];
-    char listener_override[128];
-    char zproxy_override[128];
-    char settings_path_override[128];
-    struct conf_server *server;
-    int dump_records;
-    int timeout;		/* operations timeout, in seconds */
-    char implementationId[128];
-    char implementationName[128];
-    char implementationVersion[128];
-    int target_timeout; // seconds
-    int session_timeout;
-    int toget;
-    int chunk;
-    ODR odr_out;
-    ODR odr_in;
 };
 
 struct hitsbytarget *hitsbytarget(struct session *s, int *count);
@@ -234,12 +164,19 @@ void start_http_listener(void);
 void start_proxy(void);
 void start_zproxy(void);
 
-extern struct parameters global_parameters;
 void pazpar2_add_channel(IOCHAN c);
 void pazpar2_event_loop(void);
 
 int host_getaddrinfo(struct host *host);
-void connect_resolver_host(struct host *host);
+
+xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec);
+void connection_destroy(struct connection *co);
+
+struct record *ingest_record(struct client *cl, Z_External *rec,
+                             int record_no);
+void session_alert_watch(struct session *s, int what);
+void connection_release(struct connection *co);
+void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num);
 
 #endif
 

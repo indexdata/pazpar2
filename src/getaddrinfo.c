@@ -1,4 +1,4 @@
-/* $Id: getaddrinfo.c,v 1.4 2007-04-23 08:06:21 adam Exp $
+/* $Id: getaddrinfo.c,v 1.5 2007-04-23 21:05:23 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -39,6 +39,8 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <yaz/tcpip.h>
 
 #include "pazpar2.h"
+#include "connection.h"
+#include "host.h"
 
 struct work {
     char *hostport;  /* hostport to be resolved in separate thread */

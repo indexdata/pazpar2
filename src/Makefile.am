@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.14 2007-04-23 12:33:00 marc Exp $
+# $Id: Makefile.am,v 1.15 2007-04-23 21:05:23 adam Exp $
 
 bin_PROGRAMS = pazpar2
 check_PROGRAMS = test_config test_record test_relevance test_sel_thread
@@ -6,7 +6,9 @@ TESTS = $(check_PROGRAMS)
 
 noinst_LIBRARIES = libpazpar2.a
 
-MAINTAINERCLEANFILES = Makefile.in cconfig.h
+MAINTAINERCLEANFILES = Makefile.in cconfig.h 
+
+CONFIG_CLEAN_FILES=*.log
 
 AM_CFLAGS = $(YAZINC)
 
@@ -16,7 +18,8 @@ libpazpar2_a_SOURCES = config.c config.h eventl.c eventl.h \
 	record.h record.c reclists.c reclists.h \
 	relevance.c relevance.h termlists.c termlists.h \
 	util.c util.h zeerex.c zeerex.h database.c database.h \
-	settings.h settings.c sel_thread.c sel_thread.h getaddrinfo.c
+	settings.h settings.c sel_thread.c sel_thread.h getaddrinfo.c \
+	client.c client.h connection.c connection.h host.h parameters.h
 
 pazpar2_SOURCES = pazpar2.c
 pazpar2_LDADD = libpazpar2.a $(YAZLIB)

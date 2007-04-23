@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.40 2007-04-19 16:07:20 adam Exp $
+/* $Id: http_command.c,v 1.41 2007-04-23 21:05:23 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.40 2007-04-19 16:07:20 adam Exp $
+ * $Id: http_command.c,v 1.41 2007-04-23 21:05:23 adam Exp $
  */
 
 #include <stdio.h>
@@ -45,6 +45,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "http.h"
 #include "http_command.h"
 #include "settings.h"
+#include "client.h"
 
 // Update this when the protocol changes
 #define PAZPAR2_PROTOCOL_VERSION "1"
@@ -385,10 +386,10 @@ static void write_metadata(WRBUF w, struct conf_service *service,
 static void write_subrecord(struct record *r, WRBUF w,
         struct conf_service *service, int show_details)
 {
-    char *name = session_setting_oneval(r->client->database, PZ_NAME);
+    char *name = session_setting_oneval(client_get_database(r->client), PZ_NAME);
 
     wrbuf_printf(w, "<location id=\"%s\" name=\"%s\">",
-            r->client->database->database->url,
+            client_get_database(r->client)->database->url,
             *name ? name : "Unknown");
     if (show_details)
         write_metadata(w, service, r->metadata, 1);

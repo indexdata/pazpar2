@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.82 2007-04-22 15:07:10 adam Exp $
+/* $Id: pazpar2.c,v 1.83 2007-04-23 21:05:23 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -25,6 +25,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 
 #include <signal.h>
+#include <assert.h>
 
 #include "pazpar2.h"
 #include "database.h"
@@ -100,6 +101,7 @@ int main(int argc, char **argv)
 
     return 0;
 }
+
 
 /*
  * Local variables:

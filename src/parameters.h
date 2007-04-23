@@ -1,4 +1,4 @@
-/* $Id: relevance.h,v 1.5 2007-04-23 21:05:23 adam Exp $
+/* $Id: parameters.h,v 1.1 2007-04-23 21:05:23 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,22 +19,31 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-#ifndef RELEVANCE_H
-#define RELEVANCE_H
+#ifndef PARAMETERS_H
+#define PARAMETERS_H
 
-#include <yaz/yaz-util.h>
+#include <yaz/odr.h>
 
-struct relevance;
-struct record_cluster;
-struct reclist;
-
-struct relevance *relevance_create(NMEM nmem, const char **terms, int numrecs);
-void relevance_newrec(struct relevance *r, struct record_cluster *cluster);
-void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
-        const char *words, int multiplier);
-void relevance_donerecord(struct relevance *r, struct record_cluster *cluster);
-
-void relevance_prepare_read(struct relevance *rel, struct reclist *rec);
+/** \brief global parameters */
+struct parameters {
+    char proxy_override[128];
+    char listener_override[128];
+    char zproxy_override[128];
+    char settings_path_override[128];
+    struct conf_server *server;
+    int dump_records;
+    int timeout;		/* operations timeout, in seconds */
+    char implementationId[128];
+    char implementationName[128];
+    char implementationVersion[128];
+    int target_timeout; // seconds
+    int session_timeout;
+    int toget;
+    int chunk;
+    ODR odr_out;
+    ODR odr_in;
+};
+extern struct parameters global_parameters;
 
 #endif
 

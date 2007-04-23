@@ -1,4 +1,4 @@
-/* $Id: relevance.h,v 1.5 2007-04-23 21:05:23 adam Exp $
+/* $Id: host.h,v 1.1 2007-04-23 21:05:23 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,22 +19,17 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-#ifndef RELEVANCE_H
-#define RELEVANCE_H
+#ifndef HOST_H
+#define HOST_H
 
-#include <yaz/yaz-util.h>
+/** \brief Represents a host (irrespective of databases) */
+struct host {
+    char *hostport;
+    char *ipport;
+    struct connection *connections; // All connections to this
+    struct host *next;
+};
 
-struct relevance;
-struct record_cluster;
-struct reclist;
-
-struct relevance *relevance_create(NMEM nmem, const char **terms, int numrecs);
-void relevance_newrec(struct relevance *r, struct record_cluster *cluster);
-void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
-        const char *words, int multiplier);
-void relevance_donerecord(struct relevance *r, struct record_cluster *cluster);
-
-void relevance_prepare_read(struct relevance *rel, struct reclist *rec);
 
 #endif
 

@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.24 2007-04-22 15:00:56 adam Exp $
+/* $Id: database.c,v 1.25 2007-04-23 21:05:23 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -29,6 +29,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <sys/stat.h>
 
 #include "pazpar2.h"
+#include "host.h"
 #include "config.h"
 #include "settings.h"
 #include "http.h"
