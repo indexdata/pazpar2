@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.19 2007-04-23 08:15:22 marc Exp $
+/* $Id: settings.c,v 1.20 2007-04-23 09:06:20 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -263,8 +263,11 @@ static void prepare_dictionary(struct setting *set)
         if (!strcmp(dictionary->dict[i], set->name))
             return;
 
-    if (!strncmp(set->name, "pz:", 3)) // Probably a typo in config fle
-        yaz_log(YLOG_FATAL, "Unknown pz: setting '%s'", set->name);
+    if (!strncmp(set->name, "pz:", 3)) // Probably a typo in config file
+        {
+            yaz_log(YLOG_FATAL, "Unknown pz: setting '%s'", set->name);
+            exit(1);
+        }
 
     // Create a new dictionary entry
     // Grow dictionary if necessary
