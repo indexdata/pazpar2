@@ -1,4 +1,4 @@
-/* $Id: test_config.c,v 1.1 2007-04-19 19:42:30 marc Exp $
+/* $Id: test_config.c,v 1.2 2007-04-23 12:33:00 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -52,7 +52,7 @@ void test_conf_service(int argc, char **argv)
   NMEM 	nmem = nmem_create();
 
   struct conf_service *service = 0;
-  service = conf_service_create(nmem, 4, 1);
+  service = conf_service_create(nmem, 4, 3);
 
   YAZ_CHECK(service);
 
@@ -117,7 +117,7 @@ void test_conf_service(int argc, char **argv)
   YAZ_CHECK(!conf_service_add_sortkey(nmem, service, -1, "out_of_bounds",
                                      Metadata_sortkey_string));
 
-  YAZ_CHECK(!conf_service_add_sortkey(nmem, service, 1, "out_of_bounds",
+  YAZ_CHECK(!conf_service_add_sortkey(nmem, service, 3, "out_of_bounds",
                                      Metadata_sortkey_relevance));
 
   YAZ_CHECK(!conf_service_add_sortkey(nmem, service, 0, 0, //missing name
@@ -125,9 +125,16 @@ void test_conf_service(int argc, char **argv)
 
 
   // expected sortkey sucess
-  YAZ_CHECK(conf_service_add_sortkey(nmem, service, 0, "title",
+  YAZ_CHECK(conf_service_add_sortkey(nmem, service, 0, "relevance",
                                      Metadata_sortkey_relevance));
+
+  YAZ_CHECK(conf_service_add_sortkey(nmem, service, 1, "title",
+                                     Metadata_sortkey_string));
   
+  YAZ_CHECK(conf_service_add_sortkey(nmem, service, 2, "year",
+                                     Metadata_sortkey_numeric));
+  
+
 
 
 

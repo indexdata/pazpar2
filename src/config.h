@@ -1,4 +1,4 @@
-/* $Id: config.h,v 1.20 2007-04-23 08:48:50 marc Exp $
+/* $Id: config.h,v 1.21 2007-04-23 12:33:00 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -130,7 +130,9 @@ struct conf_sortkey * conf_service_add_sortkey(NMEM nmem,
                                                enum conf_sortkey_type type);
 
 
-int conf_service_field_id(struct conf_service *service, const char * name);
+int conf_service_metadata_field_id(struct conf_service *service, const char * name);
+
+int conf_service_sortkey_field_id(struct conf_service *service, const char * name);
 
 
 struct conf_server

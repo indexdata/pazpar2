@@ -1,4 +1,4 @@
-/* $Id: record.c,v 1.2 2007-04-23 08:48:50 marc Exp $
+/* $Id: record.c,v 1.3 2007-04-23 12:33:00 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: record.c,v 1.2 2007-04-23 08:48:50 marc Exp $ */
+/* $Id: record.c,v 1.3 2007-04-23 12:33:00 marc Exp $ */
 
 
 #include <string.h>
@@ -34,6 +34,25 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 //#define CONFIG_NOEXTERNS
 #include "config.h"
 #include "record.h"
+
+
+
+union data_types * data_types_assign(NMEM nmem, 
+                                     union data_types * data1, 
+                                     union data_types data2)
+{
+    // assert(nmem);
+
+    if (!data1){
+        if (!nmem)
+            return 0;
+        else
+            data1  = nmem_malloc(nmem, sizeof(union data_types));
+    }
+    
+    *data1 = data2;
+    return data1;
+}
 
 
 struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys)
@@ -87,6 +106,17 @@ struct record_metadata * record_metadata_insert(NMEM nmem,
     return tmp_rmd;
 }
 
+struct record_metadata * record_add_metadata_field_id(NMEM nmem, 
+                                                     struct record * record,
+                                                     int field_id, 
+                                                     union data_types data)
+{
+    if (field_id < 0 || !record || !record->metadata)
+        return 0;
+
+    return record_metadata_insert(nmem, &(record->metadata[field_id]), data);
+}
+
 
 struct record_metadata * record_add_metadata(NMEM nmem, 
                                              struct record * record,
@@ -99,7 +129,7 @@ struct record_metadata * record_add_metadata(NMEM nmem,
     if (!record || !record->metadata || !service || !name)  
         return 0;
     
-    field_id = conf_service_field_id(service, name);
+    field_id = conf_service_metadata_field_id(service, name);
 
     if (-1 == field_id)
         return 0;
@@ -109,16 +139,41 @@ struct record_metadata * record_add_metadata(NMEM nmem,
 
 
 
-struct record_metadata * record_add_metadata_field_id(NMEM nmem, 
-                                                     struct record * record,
-                                                     int field_id, 
-                                                     union data_types data)
+
+
+
+union data_types * record_assign_sortkey_field_id(NMEM nmem, 
+                                               struct record * record,
+                                               int field_id, 
+                                               union data_types data)
 {
-    if (field_id < 0 || !record || !record->metadata)
+    if (field_id < 0 || !record || !record->sortkeys)
         return 0;
 
-    return record_metadata_insert(nmem, &(record->metadata[field_id]), data);
-};
+    return data_types_assign(nmem, record->sortkeys[field_id], data);
+}
+
+
+
+union data_types * record_assign_sortkey(NMEM nmem, 
+                                      struct record * record,
+                                      struct conf_service * service,
+                                      const char * name,
+                                      union data_types data)
+{
+    int field_id = 0;
+
+    if (!record || !service || !name)  
+        return 0;
+    
+    field_id = conf_service_sortkey_field_id(service, name);
+
+    if (!(field_id < service->num_sortkeys))
+        return 0;
+
+    return record_assign_sortkey_field_id(nmem, record, field_id, data);
+}
+
 
 
 /*
