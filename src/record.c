@@ -1,4 +1,4 @@
-/* $Id: record.c,v 1.1 2007-04-20 14:37:17 marc Exp $
+/* $Id: record.c,v 1.2 2007-04-23 08:48:50 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: record.c,v 1.1 2007-04-20 14:37:17 marc Exp $ */
+/* $Id: record.c,v 1.2 2007-04-23 08:48:50 marc Exp $ */
 
 
 #include <string.h>
@@ -65,26 +65,59 @@ struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys)
 }
 
 
-struct record_metadata * record_add_metadata_fieldno(NMEM nmem, 
-                                                     struct record * record,
-                                                     int fieldno, 
-                                                     union data_types data)
+struct record_metadata * record_metadata_insert(NMEM nmem, 
+                                                struct record_metadata ** rmd,
+                                                union data_types data)
 {
-    struct record_metadata * rmd = 0;
-    
-    if (!record || fieldno < 0 
-        || !record->metadata || !record->metadata[fieldno] )
+    struct record_metadata * tmp_rmd = 0;
+    // assert(nmem);
+
+    if(!rmd)
         return 0;
 
-    // construct new record_metadata    
-    rmd  = nmem_malloc(nmem, sizeof(struct record_metadata));
-    rmd->data = data;
-    rmd->next = 0;
+    // construct new record_metadata
+    tmp_rmd  = nmem_malloc(nmem, sizeof(struct record_metadata));
+    tmp_rmd->data = data;
 
-    // still needs to be assigned ..
 
-    return rmd;
+    // insert in *rmd's place
+    tmp_rmd->next = *rmd;
+    *rmd = tmp_rmd;
+
+    return tmp_rmd;
+}
+
+
+struct record_metadata * record_add_metadata(NMEM nmem, 
+                                             struct record * record,
+                                             struct conf_service * service,
+                                             const char * name,
+                                             union data_types data)
+{
+    int field_id = 0;
+
+    if (!record || !record->metadata || !service || !name)  
+        return 0;
     
+    field_id = conf_service_field_id(service, name);
+
+    if (-1 == field_id)
+        return 0;
+    
+    return record_metadata_insert(nmem, &(record->metadata[field_id]), data);
+}
+
+
+
+struct record_metadata * record_add_metadata_field_id(NMEM nmem, 
+                                                     struct record * record,
+                                                     int field_id, 
+                                                     union data_types data)
+{
+    if (field_id < 0 || !record || !record->metadata)
+        return 0;
+
+    return record_metadata_insert(nmem, &(record->metadata[field_id]), data);
 };
 
 

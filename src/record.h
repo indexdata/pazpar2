@@ -1,4 +1,4 @@
-/* $Id: record.h,v 1.2 2007-04-20 14:37:17 marc Exp $
+/* $Id: record.h,v 1.3 2007-04-23 08:48:50 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -25,7 +25,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 struct record;
 struct client;
-
+struct conf_service;
 
 union data_types {
     char *text;
@@ -37,32 +37,51 @@ union data_types {
 
 struct record_metadata {
     union data_types data;
-    struct record_metadata *next; // next item of this name
+    // next item of this name
+    struct record_metadata *next; 
 };
 
 struct record {
     struct client *client;
-    struct record_metadata **metadata; // Array mirrors list of metadata fields in config
-    union data_types **sortkeys;       // Array mirrors list of sortkey fields in config
-    struct record *next;  // Next in cluster of merged records
+    // Array mirrors list of metadata fields in config
+    struct record_metadata **metadata; 
+    // Array mirrors list of sortkey fields in config
+    union data_types **sortkeys;
+    // Next in cluster of merged records       
+    struct record *next;  
 };
 
 
 struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys);
 
-struct record_metadata * record_add_metadata_fieldno(NMEM nmem, 
-                                                     struct record * record,
-                                                     int fieldno, 
-                                                     union data_types data);
+struct record_metadata * record_metadata_insert(NMEM nmem, 
+                                                struct record_metadata ** rmd,
+                                                union data_types data);
+
+
+struct record_metadata * record_add_metadata_field_id(NMEM nmem, 
+                                                      struct record * record,
+                                                      int field_id, 
+                                                      union data_types data);
+
+
+struct record_metadata * record_add_metadata(NMEM nmem, 
+                                             struct record * record,
+                                             struct conf_service * service,
+                                             const char * name,
+                                             union data_types data);
+
 
 struct record_cluster
 {
-    struct record_metadata **metadata; // Array mirrors list of metadata fields in config
+    // Array mirrors list of metadata fields in config
+    struct record_metadata **metadata; 
     union data_types **sortkeys;
     char *merge_key;
     int relevance;
     int *term_frequency_vec;
-    int recid; // Set-specific ID for this record
+    // Set-specific ID for this record
+    int recid; 
     struct record *records;
 };
 

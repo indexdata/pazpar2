@@ -1,4 +1,4 @@
-/* $Id: test_relevance.c,v 1.5 2007-04-20 14:37:17 marc Exp $
+/* $Id: test_relevance.c,v 1.6 2007-04-23 08:48:50 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -109,10 +109,17 @@ void test_relevance(int argc, char **argv)
   data.number.min = 2;
   data.number.max = 5;
 
-  record_add_metadata_fieldno(nmem, record, 0, data);
-  record_add_metadata_fieldno(nmem, record, 0, data2);
+  struct record_metadata * tmp_md = 0;
+  tmp_md = record_metadata_insert(nmem, &(record->metadata[0]), data);
+  YAZ_CHECK(tmp_md);
+  tmp_md = record_metadata_insert(nmem, &tmp_md, data);
+  YAZ_CHECK(tmp_md);
 
-  //record_add_metadata_text(nmem, record, 0, bla);
+  YAZ_CHECK(record_add_metadata_field_id(nmem, record, 3, data2));
+  YAZ_CHECK(record_add_metadata_field_id(nmem, record, 3, data2));
+
+  YAZ_CHECK(record_add_metadata(nmem, record, service, "author", data));
+  YAZ_CHECK(record_add_metadata(nmem, record, service, "author", data));
 
 
   // now we need to put some actual data into the record ... how ??

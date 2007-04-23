@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.28 2007-04-20 14:37:17 marc Exp $
+/* $Id: config.c,v 1.29 2007-04-23 08:48:50 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.28 2007-04-20 14:37:17 marc Exp $ */
+/* $Id: config.c,v 1.29 2007-04-23 08:48:50 marc Exp $ */
 
 #include <string.h>
 
@@ -154,6 +154,20 @@ struct conf_sortkey * conf_service_add_sortkey(NMEM nmem,
 }
 
 
+int conf_service_field_id(struct conf_service *service, const char * name)
+{
+    int i = 0;
+
+    if (!service || !service->metadata || !service->num_metadata)
+        return -1;
+
+    for(i = 0; i < service->num_metadata; i++) {
+        if (!strcmp(name, (service->metadata[i]).name))
+            return i;
+    }
+   
+    return -1;
+};
 
 
 
