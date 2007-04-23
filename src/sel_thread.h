@@ -1,4 +1,4 @@
-/* $Id: sel_thread.h,v 1.1 2007-04-20 10:06:52 adam Exp $
+/* $Id: sel_thread.h,v 1.2 2007-04-23 08:06:21 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -30,7 +30,9 @@ typedef struct sel_thread *sel_thread_t;
 
 /** \brief creates select thread 
     \param work_handler handler that does work in worker thread
+    \param work_destroy optional destroy handler for work (0 = no handler)
     \param read_fd pointer to readable socket upon completion
+    \param no_of_threads number of worker threads
     \returns select thread handler
 
     Creates a worker thread. The worker thread will signal "completed"
@@ -39,7 +41,8 @@ typedef struct sel_thread *sel_thread_t;
     call sel_thread_result accordingly.
 */
 sel_thread_t sel_thread_create(void (*work_handler)(void *work_data),
-                               int *read_fd);
+                               void (*work_destroy)(void *work_data),
+                               int *read_fd, int no_of_threads);
 
 /** \brief destorys select thread 
     \param p select thread handler

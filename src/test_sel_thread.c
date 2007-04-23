@@ -1,4 +1,4 @@
-/* $Id: test_sel_thread.c,v 1.4 2007-04-23 07:29:34 adam Exp $
+/* $Id: test_sel_thread.c,v 1.5 2007-04-23 08:06:21 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -41,11 +41,18 @@ static void work_handler(void *vp)
     p->y = p->x * 2;
 }
 
+/** \brief how work is destructed */
+static void work_destroy(void *vp)
+{
+    struct my_work_data *p = vp;
+    xfree(p);
+}
+
 /** \brief see if we can create and destroy without problems */
 static void test_create_destroy(void)
 {
     int fd;
-    sel_thread_t p = sel_thread_create(work_handler, &fd);
+    sel_thread_t p = sel_thread_create(work_handler, 0, &fd, 1);
     YAZ_CHECK(p);
     if (!p)
         return;
@@ -94,10 +101,11 @@ void iochan_handler(struct iochan *i, int event)
 }
 
 /** brief use the fd for something */
-static void test_for_real_work(void)
+static void test_for_real_work(int no_threads)
 {
     int thread_fd;
-    sel_thread_t p = sel_thread_create(work_handler, &thread_fd);
+    sel_thread_t p = sel_thread_create(work_handler, work_destroy, 
+                                       &thread_fd, no_threads);
     YAZ_CHECK(p);
     if (p)
     {
@@ -117,7 +125,8 @@ int main(int argc, char **argv)
     YAZ_CHECK_LOG(); 
 
     test_create_destroy();
-    test_for_real_work();
+    test_for_real_work(1);
+    test_for_real_work(3);
 
     YAZ_CHECK_TERM;
 }

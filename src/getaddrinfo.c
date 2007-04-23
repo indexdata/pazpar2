@@ -1,4 +1,4 @@
-/* $Id: getaddrinfo.c,v 1.3 2007-04-23 07:34:48 adam Exp $
+/* $Id: getaddrinfo.c,v 1.4 2007-04-23 08:06:21 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -122,7 +122,9 @@ static sel_thread_t resolver_thread = 0;
 static void getaddrinfo_start(void)
 {
     int fd;
-    sel_thread_t p = resolver_thread = sel_thread_create(work_handler, &fd);
+    sel_thread_t p = resolver_thread = 
+        sel_thread_create(work_handler, 0 /* work_destroy */, &fd,
+                          3 /* no of resolver threads */);
     if (!p)
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "sel_create_create failed");

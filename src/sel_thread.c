@@ -1,4 +1,4 @@
-/* $Id: sel_thread.c,v 1.3 2007-04-20 11:44:58 adam Exp $
+/* $Id: sel_thread.c,v 1.4 2007-04-23 08:06:21 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -50,17 +50,25 @@ static struct work_item *queue_remove_last(struct work_item **q)
     return work_this;
 }
 
+static void queue_trav(struct work_item *q, void (*f)(void *data))
+{
+    for (; q; q = q->next)
+        f(q->data);
+}
+
 struct sel_thread {
     int fd[2];
     NMEM nmem;
-    pthread_t thread_id;
+    pthread_t *thread_id;
     pthread_mutex_t mutex;
     pthread_cond_t input_data;
     int stop_flag;
+    int no_threads;
     struct work_item *input_queue;
     struct work_item *output_queue;
     struct work_item *free_queue;
-    void (*work_handler)(void *work_data);;
+    void (*work_handler)(void *work_data);
+    void (*work_destroy)(void *work_data);
 };
 
 static void *sel_thread_handler(void *vp)
@@ -102,10 +110,17 @@ static void *sel_thread_handler(void *vp)
 }
 
 sel_thread_t sel_thread_create(void (*work_handler)(void *work_data),
-                               int *read_fd)
+                               void (*work_destroy)(void *work_data),
+                               int *read_fd, int no_of_threads)
 {
+    int i;
     NMEM nmem = nmem_create();
     sel_thread_t p = nmem_malloc(nmem, sizeof(*p));
+
+    assert(work_handler);
+    /* work_destroy may be NULL */
+    assert(read_fd);
+    assert(no_of_threads >= 1);
 
     p->nmem = nmem;
     if (pipe(p->fd))
@@ -118,22 +133,35 @@ sel_thread_t sel_thread_create(void (*work_handler)(void *work_data),
     p->output_queue = 0;
     p->free_queue = 0;
     p->work_handler = work_handler;
+    p->work_destroy = work_destroy;
 
     p->stop_flag = 0;
+    p->no_threads = no_of_threads;
     pthread_mutex_init(&p->mutex, 0);
     pthread_cond_init(&p->input_data, 0);
-    pthread_create (&p->thread_id, 0, sel_thread_handler, p);
+
+    p->thread_id = nmem_malloc(nmem, sizeof(*p->thread_id) * p->no_threads);
+    for (i = 0; i < p->no_threads; i++)
+        pthread_create (p->thread_id + i, 0, sel_thread_handler, p);
     return p;
 }
 
 void sel_thread_destroy(sel_thread_t p)
 {
+    int i;
     pthread_mutex_lock(&p->mutex);
     p->stop_flag = 1;
     pthread_cond_broadcast(&p->input_data);
     pthread_mutex_unlock(&p->mutex);
     
-    pthread_join(p->thread_id, 0);
+    for (i = 0; i< p->no_threads; i++)
+        pthread_join(p->thread_id[i], 0);
+
+    if (p->work_destroy)
+    {
+        queue_trav(p->input_queue, p->work_destroy);
+        queue_trav(p->output_queue, p->work_destroy);
+    }
 
     close(p->fd[0]);
     close(p->fd[1]);
