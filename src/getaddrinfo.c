@@ -1,4 +1,4 @@
-/* $Id: getaddrinfo.c,v 1.2 2007-04-22 16:41:42 adam Exp $
+/* $Id: getaddrinfo.c,v 1.3 2007-04-23 07:34:48 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -86,7 +86,7 @@ void perform_getaddrinfo(struct work *w)
                 addrbuf[0], addrbuf[1], addrbuf[2], addrbuf[3], port);
         freeaddrinfo(addrinfo);
         w->ipport = xstrdup(ipport);
-        yaz_log(log_level, "%s -> %s", hostport, ipport);
+        yaz_log(log_level, "Resolved %s -> %s", hostport, ipport);
     }
     xfree(hostport);
 }
@@ -111,10 +111,6 @@ void iochan_handler(struct iochan *i, int event)
     if (event & EVENT_INPUT)
     {
         struct work *w = sel_thread_result(p);
-        if (w->ipport)
-            yaz_log(log_level, "resolved result %s", w->ipport);
-        else
-            yaz_log(log_level, "unresolved result");
         w->host->ipport = w->ipport;
         connect_resolver_host(w->host);
         xfree(w);
