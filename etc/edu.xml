@@ -1,0 +1,76 @@
+<settings target="*">
+  <!-- $Id: edu.xml,v 1.1 2007-04-24 12:30:09 adam Exp $ -->
+  <!-- based on edu.pz -->
+  <set target="acorn.library.vanderbilt.edu:2200/ACORN;Vanderbilt U" name="pz:name" value="acorn.library.vanderbilt.edu:2200/ACORN;Vanderbilt U"/>
+  <set target="advance.biblio.polymtl.ca:210/ADVANCE;Ecole Polytechnique Montreal" name="pz:name" value="advance.biblio.polymtl.ca:210/ADVANCE;Ecole Polytechnique Montreal"/>
+  <set target="albert.rit.edu:210/INNOPAC;Rochester U of Tech" name="pz:name" value="albert.rit.edu:210/INNOPAC;Rochester U of Tech"/>
+  <set target="aleph.mcgill.ca:210/MUSE;McGill U" name="pz:name" value="aleph.mcgill.ca:210/MUSE;McGill U"/>
+  <set target="atrium.bib.umontreal.ca:210/ADVANCE;U of Montreal" name="pz:name" value="atrium.bib.umontreal.ca:210/ADVANCE;U of Montreal"/>
+  <set target="biblio.hec.ca:210/hec;HEC Montreal" name="pz:name" value="biblio.hec.ca:210/hec;HEC Montreal"/>
+  <set target="bobcat.nyu.edu:210/ADVANCE;New York University" name="pz:name" value="bobcat.nyu.edu:210/ADVANCE;New York University"/>
+  <set target="books.luther.edu:210/innopac;Luther College" name="pz:name" value="books.luther.edu:210/innopac;Luther College"/>
+  <set target="cat.cisti.nrc.ca:210/INNOPAC;NRC Canada" name="pz:name" value="cat.cisti.nrc.ca:210/INNOPAC;NRC Canada"/>
+  <set target="cat.lib.grin.edu:210/innopac;Grinell College" name="pz:name" value="cat.lib.grin.edu:210/innopac;Grinell College"/>
+  <set target="catalog.crl.edu:210/INNOPAC;Center for Research Lib" name="pz:name" value="catalog.crl.edu:210/INNOPAC;Center for Research Lib"/>
+  <set target="catalog.lib.jhu.edu:210/horizon;Johns Hopkins U" name="pz:name" value="catalog.lib.jhu.edu:210/horizon;Johns Hopkins U"/>
+  <set target="clavis.ucalgary.ca:2200/UNICORN;U of Calgary" name="pz:name" value="clavis.ucalgary.ca:2200/UNICORN;U of Calgary"/>
+  <set target="cornelia.whoi.edu:7090/VOYAGER;Woods Hole OI" name="pz:name" value="cornelia.whoi.edu:7090/VOYAGER;Woods Hole OI"/>
+  <set target="csulib.ctstateu.edu:210/INNOPAC;CT State U" name="pz:name" value="csulib.ctstateu.edu:210/INNOPAC;CT State U"/>
+  <set target="info.library.mun.ca:2200/UNICORN;Memorial U" name="pz:name" value="info.library.mun.ca:2200/UNICORN;Memorial U"/>
+  <set target="jasper.acadiau.ca:2200/UNICORN;Acadia U" name="pz:name" value="jasper.acadiau.ca:2200/UNICORN;Acadia U"/>
+  <set target="ksclib.keene.edu:210/INNOPAC;NH Keene State" name="pz:name" value="ksclib.keene.edu:210/INNOPAC;NH Keene State"/>
+  <set target="l1.uwaterloo.ca:7090/VOYAGER;U of Waterloo" name="pz:name" value="l1.uwaterloo.ca:7090/VOYAGER;U of Waterloo"/>
+  <set target="lance.missouri.edu:210/INNOPAC;U of Missouri" name="pz:name" value="lance.missouri.edu:210/INNOPAC;U of Missouri"/>
+  <set target="library.daemen.edu:210/innopac;Daemen C" name="pz:name" value="library.daemen.edu:210/innopac;Daemen C"/>
+  <set target="library.lbc.edu:7090/voyager;Lancaster Bible C" name="pz:name" value="library.lbc.edu:7090/voyager;Lancaster Bible C"/>
+  <set target="library.uh.edu:210/INNOPAC;U of Houston" name="pz:name" value="library.uh.edu:210/INNOPAC;U of Houston"/>
+  <set target="lion.swem.wm.edu:2200/unicorn;C of William and Mary" name="pz:name" value="lion.swem.wm.edu:2200/unicorn;C of William and Mary"/>
+  <set target="lrpapp.cc.umanitoba.ca:2200/unicorn;U of Manitoba" name="pz:name" value="lrpapp.cc.umanitoba.ca:2200/unicorn;U of Manitoba"/>
+  <set target="malad2.mala.bc.ca:2200/UNICORN;Malaspina U" name="pz:name" value="malad2.mala.bc.ca:2200/UNICORN;Malaspina U"/>
+  <set target="mercury.concordia.ca:210/Innopac;Concordia U" name="pz:name" value="mercury.concordia.ca:210/Innopac;Concordia U"/>
+  <set target="merlinweb.ville.montreal.qc.ca:2100/Z3950S;U of Montreal" name="pz:name" value="merlinweb.ville.montreal.qc.ca:2100/Z3950S;U of Montreal"/>
+  <set target="ncsulib.lib.ncsu.edu:210/MARION;North Carolina SU" name="pz:name" value="ncsulib.lib.ncsu.edu:210/MARION;North Carolina SU"/>
+  <set target="opac.utmem.edu:210/INNOPAC;U of Tennessee" name="pz:name" value="opac.utmem.edu:210/INNOPAC;U of Tennessee"/>
+  <set target="prodorbis.library.yale.edu:7090/voyager;Yale U" name="pz:name" value="prodorbis.library.yale.edu:7090/voyager;Yale U"/>
+  <set target="quest.unb.ca:2200/unicorn;U of New Brunswick" name="pz:name" value="quest.unb.ca:2200/unicorn;U of New Brunswick"/>
+  <set target="rs6000.nshpl.library.ns.ca:210/AVR;National Library Canada" name="pz:name" value="rs6000.nshpl.library.ns.ca:210/AVR;National Library Canada"/>
+  <set target="sabio.library.arizona.edu:210/innopac;U of Arizona" name="pz:name" value="sabio.library.arizona.edu:210/innopac;U of Arizona"/>
+  <set target="scotty.mhsl.uab.edu:7090/VOYAGER;U of Alabama" name="pz:name" value="scotty.mhsl.uab.edu:7090/VOYAGER;U of Alabama"/>
+  <set target="sirsi.library.utoronto.ca:2200/UNICORN;U of Toronto" name="pz:name" value="sirsi.library.utoronto.ca:2200/UNICORN;U of Toronto"/>
+  <set target="sundog.usask.ca:210/INNOPAC;U of Saskatchewan" name="pz:name" value="sundog.usask.ca:210/INNOPAC;U of Saskatchewan"/>
+  <set target="titus.folger.edu:7090/VOYAGER;Folger Shakespeare" name="pz:name" value="titus.folger.edu:7090/VOYAGER;Folger Shakespeare"/>
+  <set target="troy.lib.sfu.ca:210/INNOPAC;Simon Fraser U" name="pz:name" value="troy.lib.sfu.ca:210/INNOPAC;Simon Fraser U"/>
+  <set target="voyager.tcs.tulane.edu:7090/VOYAGER;Tulane U" name="pz:name" value="voyager.tcs.tulane.edu:7090/VOYAGER;Tulane U"/>
+  <set target="yulib001.mc.yu.edu:1111/DEFAULT;Yeshiva U" name="pz:name" value="yulib001.mc.yu.edu:1111/DEFAULT;Yeshiva U"/>
+  <set target="z3950.fcla.edu:210/CF;Florida CLA" name="pz:name" value="z3950.fcla.edu:210/CF;Florida CLA"/>
+  <set target="z3950.library.wisc.edu:210/madison;U of Wisconsin" name="pz:name" value="z3950.library.wisc.edu:210/madison;U of Wisconsin"/>
+  <set target="us1v1.indexdata.com/ruprime;Reference Universe" name="pz:name" value="us1v1.indexdata.com/ruprime;Reference Universe"/>
+  <set target="us1v1.indexdata.com/pdx;Public Documents Masterfile" name="pz:name" value="us1v1.indexdata.com/pdx;Public Documents Masterfile"/>
+  <set target="us1.indexdata.com:9001/Default;Open Content Alliance" name="pz:name" value="us1.indexdata.com:9001/Default;Open Content Alliance"/>
+  <set target="opencontent.indexdata.com:210/oca-all;OCA American Libraries" name="pz:name" value="opencontent.indexdata.com:210/oca-all;OCA American Libraries"/>
+  <set target="opencontent.indexdata.com:210/gutenberg;Project Gutenberg" name="pz:name" value="opencontent.indexdata.com:210/gutenberg;Project Gutenberg"/>
+  <set target="z3950.loc.gov:7090/voyager;Library of Congress" name="pz:name" value="z3950.loc.gov:7090/voyager;Library of Congress"/>
+  <set target="melvyl.cdlib.org:210/CDL90;University of California" name="pz:name" value="melvyl.cdlib.org:210/CDL90;University of California"/>
+  <set target="library.ox.ac.uk:210/ADVANCE;Oxford University" name="pz:name" value="library.ox.ac.uk:210/ADVANCE;Oxford University"/>
+
+  <!-- mapping for unqualified search -->
+  <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
+  
+  <!-- field-specific mappings -->
+  <set name="pz:cclmap:ti" value="u=4 s=al"/>
+  <set name="pz:cclmap:su" value="u=21 s=al"/>
+  <set name="pz:cclmap:isbn" value="u=7"/>
+  <set name="pz:cclmap:issn" value="u=8"/>
+  <set name="pz:cclmap:date" value="u=30 r=r"/>
+
+  <!-- Retrieval settings -->
+
+  <set name="pz:requestsyntax" value="marc21"/>
+  <!-- <set name="pz:elements" value="F"/> NOT YET IMPLEMENTED -->
+
+  <!-- Result normalization settings -->
+
+  <set name="pz:nativesyntax" value="iso2709"/>
+  <set name="pz:xslt" value="../etc/marc21.xsl"/>
+
+</settings>
