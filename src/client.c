@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.1 2007-04-23 21:05:23 adam Exp $
+/* $Id: client.c,v 1.2 2007-04-24 07:04:36 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -66,7 +66,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "connection.h"
 #include "settings.h"
 
-// Represents client state for a connection to one search target
+/** \brief Represents client state for a connection to one search target */
 struct client {
     struct session_database *database;
     struct connection *connection;
@@ -75,10 +75,10 @@ struct client {
     int hits;
     int records;
     int setno;
-    int requestid;              // ID of current outstanding request
+    int requestid;            // ID of current outstanding request
     int diagnostic;
     enum client_state state;
-    struct client *next;
+    struct client *next;     // next client in session or next in free list
 };
 
 static const char *client_states[] = {
