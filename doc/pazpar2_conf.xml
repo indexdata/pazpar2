@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.22 2007-04-22 15:19:36 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.23 2007-04-24 04:37:58 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -277,10 +277,10 @@
  <refsect1 id="target_settings"><title>TARGET SETTINGS</title>
    <para>
      Pazpar2 features a cunning scheme by which you can associate various
-     kinds of attributes, or settings with search targets. This is done
-     through XML files; each file can associate one or more settings
-     with one or more targets. The file format is generic in nature,
-     designed to support a wide range of application requirements. The
+     kinds of attributes, or settings with search targets. This can be done
+     through XML files which are read at startup; each file can associate
+     one or more settings with one or more targets. The file format is generic
+     in nature, designed to support a wide range of application requirements. The
      settings can be purely technical things, like, how to perform a title
      search against a given target, or it can associate arbitrary name=value
      pairs with groups of targets -- for instance, if you would like to
@@ -306,7 +306,73 @@
      overriden, to allow use of pazpar2 in a consortial or multi-library
      environment, where different end-users may need to be represented to
      some search targets in different ways. This, again, can be managed
-     using an external database or other lookup mechanism.
+     using an external database or other lookup mechanism. Setting overrides
+     can be performed either using the 'init' or the 'settings' webservice
+     command (see XXX ref to pazpar2 protocol).
+    </para>
+
+    <para>
+      In fact, every setting that applies to a database (except pz:id, which
+      can only be used for filtering targets to use for a search) can be overriden
+      on a per-session basis. This allows the client to override specific CCL fields
+      for searching, etc., to meet the needs of a session or user.
+    </para>
+
+    <para>
+      Finally, as an extreme case of this, the webservice client can
+      introduce entirely new targets, on the fly, as part of the init or
+      settings command. This is useful if you desire to manage information
+      about your search targets in a separate application such as a database.
+      You do not need any static settings file whatsoever to run pazpar2 -- as
+      long as the webservice client is prepared to supply the necessary
+      information at the beginning of every session.
+    </para>
+
+    <para>
+      NOTE: The following discussion of practical issues related to session and settings
+      management are cast in terms of a user interface based on Ajax/Javascript
+      technology. It would apply equally well to many other kinds of browser-based logic.
+    </para>
+
+    <para>
+      Typically, a Javascript client is not allowed to  directly alter the parameters
+      of a session. There are two reasons for this. One has to do with access
+      to information; typically, information about a user will be stored in a
+      system on the server side, or it will be accessible in some way from the server.
+      However, since the Javascript client cannot be entirely trusted (some hostile
+      agent might in fact 'pretend' to be a regular ws client), it is more robust
+      to control session sesttings from scripting that you run as part of your
+      webserver. Typically, this can be handled during the session initialization,
+      as follows:
+    </para>
+
+    <para>
+      Step 1: The Javascript client loads, and asks the webserver for a new pazpar2
+      session ID. This can be done using a Javascript call, for instance. Note that
+      it is possible to submit Ajax HTTPXmlRequest calls either to pazpar2 or to the
+      webserver that pazpar2 is proxying for. See (XXX Insert link to pazpar2 protocol).
+    </para>
+
+    <para>
+      Step 2: Code on the webserver authenticates the user, by database lookup,
+      LDAP access, NCIP, etc. Determines which resources the user has access to,
+      and any user-specific parameters that are to be applied during this session.
+    </para>
+
+    <para>
+      Step 3: The webserver initializes a new pazpar2 settings, and sets user-specific
+      parameters as necessary, using the init webservice command. A new session ID is
+      returned.
+    </para>
+
+    <para>
+      Step 4: The webserver returns this session ID to the Javascript client, which then
+      uses the session ID to submit searches, show results, etc.
+    </para>
+
+    <para>
+      Step 5: When the Javascript client ceases to use the session, pazpar2 destroys
+      any session-specific information.
     </para>
 
    <refsect2><title>SETTINGS FILE FORMAT</title>
@@ -407,7 +473,7 @@
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: pazpar2_conf.xml,v 1.22 2007-04-22 15:19:36 quinn Exp $ -->
+  <!-- $Id: pazpar2_conf.xml,v 1.23 2007-04-24 04:37:58 quinn Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
