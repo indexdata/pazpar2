@@ -1,4 +1,4 @@
-/* $Id: connection.c,v 1.1 2007-04-23 21:05:23 adam Exp $
+/* $Id: connection.c,v 1.2 2007-04-24 08:03:03 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -49,7 +49,8 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "parameters.h"
 
 
-// Represents a physical, reusable  connection to a remote Z39.50 host
+/** \brief Represents a physical, reusable  connection to a remote Z39.50 host
+ */
 struct connection {
     IOCHAN iochan;
     COMSTACK link;
@@ -63,14 +64,14 @@ struct connection {
         Conn_Open,
         Conn_Waiting,
     } state;
-    struct connection *next;
+    struct connection *next; // next for same host or next in free list
 };
 
 static struct connection *connection_freelist = 0;
 
-void host_remove_connection(struct host *h, struct connection *con)
+static void remove_connection_from_host(struct connection *con)
 {
-    struct connection **conp = &h->connections;
+    struct connection **conp = &con->host->connections;
     assert(con);
     while (*conp)
     {
@@ -87,8 +88,6 @@ void host_remove_connection(struct host *h, struct connection *con)
 // Close connection and recycle structure
 void connection_destroy(struct connection *co)
 {
-    struct host *h = co->host;
-    
     if (co->link)
     {
         cs_close(co->link);
@@ -97,7 +96,7 @@ void connection_destroy(struct connection *co)
 
     yaz_log(YLOG_DEBUG, "Connection destroy %s", co->host->hostport);
 
-    host_remove_connection(h, co);
+    remove_connection_from_host(co);
     if (co->client)
     {
         client_disconnect(co->client);

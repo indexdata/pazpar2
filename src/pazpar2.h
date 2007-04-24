@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.34 2007-04-23 21:05:23 adam Exp $
+/* $Id: pazpar2.h,v 1.35 2007-04-24 08:03:03 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -42,8 +42,6 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 struct record;
 struct client;
-
-struct connection;
 
 // Represents a (virtual) database on a host
 struct database {
@@ -170,12 +168,10 @@ void pazpar2_event_loop(void);
 int host_getaddrinfo(struct host *host);
 
 xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec);
-void connection_destroy(struct connection *co);
 
 struct record *ingest_record(struct client *cl, Z_External *rec,
                              int record_no);
 void session_alert_watch(struct session *s, int what);
-void connection_release(struct connection *co);
 void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num);
 
 #endif

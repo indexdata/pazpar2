@@ -1,4 +1,4 @@
-/* $Id: connection.h,v 1.1 2007-04-23 21:05:23 adam Exp $
+/* $Id: connection.h,v 1.2 2007-04-24 08:03:03 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -44,6 +44,7 @@ struct connection *connection_get_available(struct connection *con_list,
                                             struct session *se);
 int connection_prep_connection(struct connection *co, struct session *se);
 const char *connection_get_url(struct connection *co);
+void connection_release(struct connection *co);
 
 #endif
 
