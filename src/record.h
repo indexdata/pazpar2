@@ -1,4 +1,4 @@
-/* $Id: record.h,v 1.4 2007-04-23 12:33:00 marc Exp $
+/* $Id: record.h,v 1.5 2007-04-24 22:17:05 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -44,7 +44,7 @@ struct record_metadata {
 };
 
 union data_types * data_types_assign(NMEM nmem, 
-                                     union data_types * data1, 
+                                     union data_types ** data1, 
                                      union data_types data2);
 
 

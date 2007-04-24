@@ -1,4 +1,4 @@
-/* $Id: record.c,v 1.4 2007-04-24 13:50:07 marc Exp $
+/* $Id: record.c,v 1.5 2007-04-24 22:17:05 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: record.c,v 1.4 2007-04-24 13:50:07 marc Exp $ */
+/* $Id: record.c,v 1.5 2007-04-24 22:17:05 marc Exp $ */
 
 
 #include <string.h>
@@ -38,26 +38,27 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 
 union data_types * data_types_assign(NMEM nmem, 
-                                     union data_types * data1, 
+                                     union data_types ** data1, 
                                      union data_types data2)
 {
     // assert(nmem);
 
-    if (!data1){
+    if (!*data1){
         if (!nmem)
             return 0;
         else
-            data1  = nmem_malloc(nmem, sizeof(union data_types));
+            *data1  = nmem_malloc(nmem, sizeof(union data_types));
     }
     
-    *data1 = data2;
-    return data1;
+    **data1 = data2;
+    return *data1;
 }
 
 
 struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys)
 {
     struct record * record = 0;
+    int i = 0;
     
     // assert(nmem);
 
@@ -70,15 +71,14 @@ struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys)
     record->metadata 
         = nmem_malloc(nmem, 
                       sizeof(struct record_metadata*) * num_metadata);
-    //memset(record->metadata, 0, 
-    //((       sizeof(struct record_metadata*) * num_metadata);
+    for (i = 0; i < num_metadata; i++)
+        record->metadata[i] = 0;
     
     record->sortkeys  
         = nmem_malloc(nmem, 
                       sizeof(union data_types*) * num_sortkeys);
-     //memset(record->metadata, 0, 
-     //      sizeof(union data_types*) * num_sortkeys);
-    
+    for (i = 0; i < num_sortkeys; i++)
+        record->sortkeys[i] = 0;
     
     return record;
 }
@@ -99,11 +99,11 @@ struct record_metadata * record_metadata_insert(NMEM nmem,
     tmp_rmd->data = data;
 
 
-    // insert in *rmd's place
+    // insert in *rmd's place, moving *rmd one down the list
     tmp_rmd->next = *rmd;
     *rmd = tmp_rmd;
 
-    return tmp_rmd;
+    return *rmd;
 }
 
 struct record_metadata * record_add_metadata_field_id(NMEM nmem, 
@@ -150,7 +150,7 @@ union data_types * record_assign_sortkey_field_id(NMEM nmem,
     if (field_id < 0 || !record || !record->sortkeys)
         return 0;
 
-    return data_types_assign(nmem, record->sortkeys[field_id], data);
+    return data_types_assign(nmem, &(record->sortkeys[field_id]), data);
 }
 
 
@@ -168,7 +168,7 @@ union data_types * record_assign_sortkey(NMEM nmem,
     
     field_id = conf_service_sortkey_field_id(service, name);
 
-    if (!(field_id < service->num_sortkeys))
+    if (!(-1 < field_id) || !(field_id < service->num_sortkeys))
         return 0;
 
     return record_assign_sortkey_field_id(nmem, record, field_id, data);

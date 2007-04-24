@@ -1,4 +1,4 @@
-/* $Id: test_record.c,v 1.2 2007-04-24 13:50:07 marc Exp $
+/* $Id: test_record.c,v 1.3 2007-04-24 22:17:05 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -125,9 +125,15 @@ void test_record(int argc, char **argv)
   YAZ_CHECK(record->metadata[1]->next);
 
 
+  YAZ_CHECK(0 == record->sortkeys[0]);
   YAZ_CHECK(record_assign_sortkey_field_id(nmem, record, 0, data_text));
+  YAZ_CHECK(record->sortkeys[0]);
+  YAZ_CHECK(0 == record->sortkeys[1]);
   YAZ_CHECK(record_assign_sortkey_field_id(nmem, record, 1, data_text));
+  YAZ_CHECK(record->sortkeys[1]);
+  YAZ_CHECK(0 == record->sortkeys[2]);
   YAZ_CHECK(record_assign_sortkey_field_id(nmem, record, 2, data_num));
+  YAZ_CHECK(record->sortkeys[2]);
 
 
   YAZ_CHECK(record_assign_sortkey(nmem, record, service, "relevance", data_text));
