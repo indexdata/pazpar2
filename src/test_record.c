@@ -1,4 +1,4 @@
-/* $Id: test_record.c,v 1.1 2007-04-23 12:33:00 marc Exp $
+/* $Id: test_record.c,v 1.2 2007-04-24 13:50:07 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -107,19 +107,28 @@ void test_record(int argc, char **argv)
   struct record_metadata * tmp_md = 0;
   tmp_md = record_metadata_insert(nmem, &(record->metadata[0]), data_text);
   YAZ_CHECK(tmp_md);
-  tmp_md = record_metadata_insert(nmem, &tmp_md, data_text);
+  YAZ_CHECK(0 == record->metadata[0]->next);
+
+  tmp_md = record_metadata_insert(nmem, &(record->metadata[0]->next), 
+                                  data_text);
   YAZ_CHECK(tmp_md);
+  YAZ_CHECK(record->metadata[0]->next);
 
   YAZ_CHECK(record_add_metadata_field_id(nmem, record, 3, data_num));
+  YAZ_CHECK(0 == record->metadata[3]->next);
   YAZ_CHECK(record_add_metadata_field_id(nmem, record, 3, data_num));
+  YAZ_CHECK(record->metadata[3]->next);
 
   YAZ_CHECK(record_add_metadata(nmem, record, service, "author", data_text));
+  YAZ_CHECK(0 == record->metadata[1]->next);
   YAZ_CHECK(record_add_metadata(nmem, record, service, "author", data_text));
+  YAZ_CHECK(record->metadata[1]->next);
 
 
   YAZ_CHECK(record_assign_sortkey_field_id(nmem, record, 0, data_text));
   YAZ_CHECK(record_assign_sortkey_field_id(nmem, record, 1, data_text));
   YAZ_CHECK(record_assign_sortkey_field_id(nmem, record, 2, data_num));
+
 
   YAZ_CHECK(record_assign_sortkey(nmem, record, service, "relevance", data_text));
   YAZ_CHECK(record_assign_sortkey(nmem, record, service, "title", data_text));

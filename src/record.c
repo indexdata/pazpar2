@@ -1,4 +1,4 @@
-/* $Id: record.c,v 1.3 2007-04-23 12:33:00 marc Exp $
+/* $Id: record.c,v 1.4 2007-04-24 13:50:07 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: record.c,v 1.3 2007-04-23 12:33:00 marc Exp $ */
+/* $Id: record.c,v 1.4 2007-04-24 13:50:07 marc Exp $ */
 
 
 #include <string.h>
@@ -70,14 +70,14 @@ struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys)
     record->metadata 
         = nmem_malloc(nmem, 
                       sizeof(struct record_metadata*) * num_metadata);
-    memset(record->metadata, 0, 
-           sizeof(struct record_metadata*) * num_metadata);
+    //memset(record->metadata, 0, 
+    //((       sizeof(struct record_metadata*) * num_metadata);
     
     record->sortkeys  
         = nmem_malloc(nmem, 
                       sizeof(union data_types*) * num_sortkeys);
-    memset(record->metadata, 0, 
-           sizeof(union data_types*) * num_sortkeys);
+     //memset(record->metadata, 0, 
+     //      sizeof(union data_types*) * num_sortkeys);
     
     
     return record;

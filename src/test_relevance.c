@@ -1,4 +1,4 @@
-/* $Id: test_relevance.c,v 1.7 2007-04-23 12:33:00 marc Exp $
+/* $Id: test_relevance.c,v 1.8 2007-04-24 13:50:07 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -66,7 +66,7 @@ void test_relevance(int argc, char **argv)
   //int total = 0;
 
   struct relevance *rel = 0;
-  struct client *client = 0;
+  //struct client *client = 0;
   
 
   rel = relevance_create(nmem, queryterms, numrecs);
@@ -111,7 +111,7 @@ void test_relevance(int argc, char **argv)
   YAZ_CHECK(record);
 
   // why on earth do we have a client dangeling from the record ??
-  record->client = client;
+  // record->client = client;
 
   char * bla = "blabla";
   union data_types data_text;
@@ -143,6 +143,8 @@ void test_relevance(int argc, char **argv)
   YAZ_CHECK(record_assign_sortkey(nmem, record, service, "title", data_text));
   YAZ_CHECK(record_assign_sortkey(nmem, record, service, "year", data_num));
 
+   
+   
 
 
 
