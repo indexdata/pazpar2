@@ -1,4 +1,4 @@
-/* $Id: test_relevance.c,v 1.10 2007-04-25 13:28:55 marc Exp $
+/* $Id: test_relevance.c,v 1.11 2007-04-25 13:57:49 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -42,17 +42,17 @@ void test_relevance_7bit(int argc, char **argv)
   NMEM 	nmem = nmem_create();
 
   struct conf_service *service = 0; 
-  service =  conf_service_create(nmem, 1, 2);
+  service =  conf_service_create(nmem, 1, 1);
 
   conf_service_add_metadata(nmem, service, 0, "title",
                             Metadata_type_generic, Metadata_merge_unique,
                             1, 1, 1, 0);
-
-  conf_service_add_sortkey(nmem, service, 0, "relevance",
-                           Metadata_sortkey_relevance);
   
-  conf_service_add_sortkey(nmem, service, 1, "title",
+  conf_service_add_sortkey(nmem, service, 0, "title",
                            Metadata_sortkey_string);
+
+  //conf_service_add_sortkey(nmem, service, 1, "relevance",
+  //                         Metadata_sortkey_relevance);
   
 
 
@@ -79,7 +79,7 @@ void test_relevance_7bit(int argc, char **argv)
   rec_ape_fish 
       = record_create(nmem, service->num_metadata, service->num_sortkeys);
   record_add_metadata(nmem, rec_ape_fish, service, "title", data_ape);
-  record_assign_sortkey(nmem, rec_ape_fish, service, "relevance", data_ape);
+  //record_assign_sortkey(nmem, rec_ape_fish, service, "relevance", data_ape);
   record_assign_sortkey(nmem, rec_ape_fish, service, "title", data_ape);
   record_add_metadata(nmem, rec_ape_fish, service, "title", data_fish);
   YAZ_CHECK(rec_ape_fish);  
@@ -89,7 +89,7 @@ void test_relevance_7bit(int argc, char **argv)
   rec_bee_fish 
       = record_create(nmem, service->num_metadata, service->num_sortkeys);
   record_add_metadata(nmem, rec_bee_fish, service, "title", data_bee);
-  record_assign_sortkey(nmem, rec_bee_fish, service, "relevance", data_bee);
+  //record_assign_sortkey(nmem, rec_bee_fish, service, "relevance", data_bee);
   record_assign_sortkey(nmem, rec_bee_fish, service, "title", data_bee);
   record_add_metadata(nmem, rec_bee_fish, service, "title", data_fish);
   YAZ_CHECK(rec_bee_fish);
@@ -99,7 +99,7 @@ void test_relevance_7bit(int argc, char **argv)
   rec_fish_bee 
       = record_create(nmem, service->num_metadata, service->num_sortkeys);
   record_add_metadata(nmem, rec_fish_bee, service, "title", data_fish);
-  record_assign_sortkey(nmem, rec_fish_bee, service, "relevance", data_fish);
+  //record_assign_sortkey(nmem, rec_fish_bee, service, "relevance", data_fish);
   record_assign_sortkey(nmem, rec_fish_bee, service, "title", data_fish);
   record_add_metadata(nmem, rec_fish_bee, service, "title", data_bee);
   YAZ_CHECK(rec_fish_bee);
@@ -109,7 +109,7 @@ void test_relevance_7bit(int argc, char **argv)
     rec_zebra_bee 
       = record_create(nmem, service->num_metadata, service->num_sortkeys);
   record_add_metadata(nmem, rec_zebra_bee, service, "title", data_zebra);
-  record_assign_sortkey(nmem, rec_zebra_bee, service, "relevance", data_zebra);
+  //record_assign_sortkey(nmem, rec_zebra_bee, service, "relevance", data_zebra);
   record_assign_sortkey(nmem, rec_zebra_bee, service, "title", data_zebra);
   record_add_metadata(nmem, rec_zebra_bee, service, "title", data_bee);
   YAZ_CHECK(rec_zebra_bee);
@@ -127,9 +127,9 @@ void test_relevance_7bit(int argc, char **argv)
   //    {"ål", "økologi", "æble", 0};
 
 
-  struct relevance *rel = 0;
-  rel = relevance_create(nmem, queryterms, no_recs);
-  YAZ_CHECK(rel);
+  //struct relevance *rel = 0;
+  //rel = relevance_create(nmem, queryterms, no_recs);
+  //YAZ_CHECK(rel);
   
   struct record_cluster *cluster = 0;
 
@@ -139,22 +139,22 @@ void test_relevance_7bit(int argc, char **argv)
   cluster 
       = reclist_insert(list, service, rec_ape_fish, mk_ape_fish, &no_merged);
   YAZ_CHECK(cluster);
-  relevance_newrec(rel, cluster);
+  //relevance_newrec(rel, cluster);
 
   cluster 
       = reclist_insert(list, service, rec_bee_fish, mk_bee_fish, &no_merged);
   YAZ_CHECK(cluster);
-  relevance_newrec(rel, cluster);
+  //relevance_newrec(rel, cluster);
 
   cluster 
       = reclist_insert(list, service, rec_fish_bee, mk_fish_bee, &no_merged);
   YAZ_CHECK(cluster);
-  relevance_newrec(rel, cluster);
+  //relevance_newrec(rel, cluster);
 
   cluster 
       = reclist_insert(list, service, rec_zebra_bee, mk_zebra_bee, &no_merged);
   YAZ_CHECK(cluster);
-  relevance_newrec(rel, cluster);
+  //relevance_newrec(rel, cluster);
 
 
   YAZ_CHECK(no_recs == no_merged);
@@ -165,10 +165,8 @@ void test_relevance_7bit(int argc, char **argv)
   //reclist_sortparms_insert(nmem, &sort_parms, service, "relevance", 1);
 
   // crashes with a fat segmentation fault! To be traced tomorrow
-  //reclist_sort(list, sort_parms);
+  // reclist_sort(list, sort_parms);
   
-  
-
 
                         
   //mergekey_norm = (xmlChar *) nmem_strdup(se->nmem, (char*) mergekey);
