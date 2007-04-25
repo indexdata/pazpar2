@@ -1,7 +1,13 @@
-# $Id: Makefile.am,v 1.15 2007-04-23 21:05:23 adam Exp $
+# $Id: Makefile.am,v 1.16 2007-04-25 13:14:46 marc Exp $
 
 bin_PROGRAMS = pazpar2
-check_PROGRAMS = test_config test_record test_relevance test_sel_thread
+check_PROGRAMS = test_config \
+      test_record \
+      test_reclists \
+      test_relevance \
+      test_sel_thread
+
+
 TESTS = $(check_PROGRAMS)
 
 noinst_LIBRARIES = libpazpar2.a
@@ -27,11 +33,14 @@ pazpar2_LDADD = libpazpar2.a $(YAZLIB)
 test_config_SOURCES = test_config.c
 test_config_LDADD = libpazpar2.a $(YAZLIB)
 
-test_relevance_SOURCES = test_relevance.c
-test_relevance_LDADD = libpazpar2.a $(YAZLIB)
-
 test_record_SOURCES = test_record.c
 test_record_LDADD = libpazpar2.a $(YAZLIB)
+
+test_reclists_SOURCES = test_reclists.c
+test_reclists_LDADD = libpazpar2.a $(YAZLIB)
+
+test_relevance_SOURCES = test_relevance.c
+test_relevance_LDADD = libpazpar2.a $(YAZLIB)
 
 test_sel_thread_SOURCES = test_sel_thread.c
 test_sel_thread_LDADD = libpazpar2.a $(YAZLIB)
