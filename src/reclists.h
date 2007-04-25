@@ -1,4 +1,4 @@
-/* $Id: reclists.h,v 1.9 2007-04-25 08:07:47 marc Exp $
+/* $Id: reclists.h,v 1.10 2007-04-25 13:09:17 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -47,6 +47,22 @@ struct reclist_sortparms
     int increasing;
     struct reclist_sortparms *next;
 };
+
+struct reclist_sortparms * 
+reclist_sortparms_insert_field_id(NMEM nmem,
+                                  struct reclist_sortparms **sortparms,
+                                  int field_id ,
+                                  enum conf_sortkey_type type,
+                                  int increasing);
+
+
+struct reclist_sortparms * 
+reclist_sortparms_insert(NMEM nmem, 
+                         struct reclist_sortparms **sortparms,
+                         struct conf_service * service,
+                         const char * name,
+                         int increasing);
+
 
 struct reclist *reclist_create(NMEM, int numrecs);
 struct record_cluster *reclist_insert( struct reclist *tl,
