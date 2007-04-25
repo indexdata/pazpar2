@@ -1,4 +1,4 @@
-/* $Id: test_config.c,v 1.2 2007-04-23 12:33:00 marc Exp $
+/* $Id: test_config.c,v 1.3 2007-04-25 07:00:33 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,17 +19,6 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <sys/time.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <signal.h>
-#include <ctype.h>
-#include <assert.h>
-
 #if HAVE_CONFIG_H
 #include "cconfig.h"
 #endif
@@ -41,8 +30,6 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 #include <yaz/test.h>
 
-
-//#include "pazpar2.h"
 #include "config.h"
 
 
