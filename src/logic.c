@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.20 2007-04-23 21:05:23 adam Exp $
+/* $Id: logic.c,v 1.21 2007-04-25 08:55:01 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -210,7 +210,8 @@ static void add_facet(struct session *s, const char *type, const char *value)
         }
 
         s->termlists[i].name = nmem_strdup(s->nmem, type);
-        s->termlists[i].termlist = termlist_create(s->nmem, s->expected_maxrecs, 15);
+        s->termlists[i].termlist 
+            = termlist_create(s->nmem, s->expected_maxrecs, 15);
         s->num_termlists = i + 1;
     }
     termlist_insert(s->termlists[i].termlist, value);
@@ -347,7 +348,8 @@ static int prepare_yazmarc(struct session_database *sdb)
         yaz_log(YLOG_WARN, "No settings for %s", sdb->database->url);
         return -1;
     }
-    if ((s = session_setting_oneval(sdb, PZ_NATIVESYNTAX)) && !strncmp(s, "iso2709", 7))
+    if ((s = session_setting_oneval(sdb, PZ_NATIVESYNTAX)) 
+        && !strncmp(s, "iso2709", 7))
     {
         char *encoding = "marc-8s", *e;
         yaz_iconv_t cm;
@@ -414,11 +416,13 @@ static int prepare_map(struct session *se, struct session_database *sdb)
 
 // This analyzes settings and recomputes any supporting data structures
 // if necessary.
-static int prepare_session_database(struct session *se, struct session_database *sdb)
+static int prepare_session_database(struct session *se, 
+                                    struct session_database *sdb)
 {
     if (!sdb->settings)
     {
-        yaz_log(YLOG_WARN, "No settings associated with %s", sdb->database->url);
+        yaz_log(YLOG_WARN, 
+                "No settings associated with %s", sdb->database->url);
         return -1;
     }
     if (sdb->settings[PZ_NATIVESYNTAX] && !sdb->yaz_marc)
@@ -435,7 +439,8 @@ static int prepare_session_database(struct session *se, struct session_database 
 }
 
 
-void session_set_watch(struct session *s, int what, session_watchfun fun, void *data)
+void session_set_watch(struct session *s, int what, 
+                       session_watchfun fun, void *data)
 {
     s->watchlist[what].fun = fun;
     s->watchlist[what].data = data;
@@ -460,7 +465,8 @@ static void select_targets_callback(void *context, struct session_database *db)
 }
 
 // Associates a set of clients with a session;
-// Note: Session-databases represent databases with per-session setting overrides
+// Note: Session-databases represent databases with per-session 
+// setting overrides
 int select_targets(struct session *se, struct database_criterion *crit)
 {
     while (se->clients)
@@ -510,7 +516,8 @@ static struct database_criterion *parse_filter(NMEM m, const char *buf)
         new->values = 0;
         for (subi = 0; subi < subnum; subi++)
         {
-            struct database_criterion_value *newv = nmem_malloc(m, sizeof(*newv));
+            struct database_criterion_value *newv
+                = nmem_malloc(m, sizeof(*newv));
             newv->value = subvalues[subi];
             newv->next = new->values;
             new->values = newv;
@@ -551,7 +558,8 @@ char *search(struct session *se, char *query, char *filter)
     {
         if (prepare_session_database(se, client_get_database(cl)) < 0)
             return "CONFIG_ERROR";
-        if (client_parse_query(cl, query) < 0)  // Query must parse for all targets
+        // Query must parse for all targets
+        if (client_parse_query(cl, query) < 0)  
             return "QUERY";
     }
 
@@ -574,8 +582,10 @@ static void session_init_databases_fun(void *context, struct database *db)
     new->database = db;
     new->yaz_marc = 0;
     new->map = 0;
-    new->settings = nmem_malloc(se->session_nmem, sizeof(struct settings *) * num);
+    new->settings 
+        = nmem_malloc(se->session_nmem, sizeof(struct settings *) * num);
     memset(new->settings, 0, sizeof(struct settings*) * num);
+
     if (db->settings)
     {
         for (i = 0; i < num; i++)
@@ -606,7 +616,8 @@ void session_init_databases(struct session *se)
 
 // Probably session_init_databases_fun should be refactored instead of
 // called here.
-static struct session_database *load_session_database(struct session *se, char *id)
+static struct session_database *load_session_database(struct session *se, 
+                                                      char *id)
 {
     struct database *db = find_database(id, 0);
 
@@ -616,7 +627,8 @@ static struct session_database *load_session_database(struct session *se, char *
 }
 
 // Find an existing session database. If not found, load it
-static struct session_database *find_session_database(struct session *se, char *id)
+static struct session_database *find_session_database(struct session *se, 
+                                                      char *id)
 {
     struct session_database *sdb;
 
@@ -627,7 +639,8 @@ static struct session_database *find_session_database(struct session *se, char *
 }
 
 // Apply a session override to a database
-void session_apply_setting(struct session *se, char *dbname, char *setting, char *value)
+void session_apply_setting(struct session *se, char *dbname, char *setting,
+                           char *value)
 {
     struct session_database *sdb = find_session_database(se, dbname);
     struct setting *new = nmem_malloc(se->session_nmem, sizeof(*new));
@@ -766,8 +779,9 @@ struct record_cluster *show_single(struct session *s, int id)
     return 0;
 }
 
-struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, int start,
-        int *num, int *total, int *sumhits, NMEM nmem_show)
+struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, 
+                             int start, int *num, int *total, int *sumhits, 
+                             NMEM nmem_show)
 {
     struct record_cluster **recs = nmem_malloc(nmem_show, *num 
                                        * sizeof(struct record_cluster *));
@@ -963,7 +977,8 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
     res->client = cl;
     res->metadata = nmem_malloc(se->nmem,
             sizeof(struct record_metadata*) * service->num_metadata);
-    memset(res->metadata, 0, sizeof(struct record_metadata*) * service->num_metadata);
+    memset(res->metadata, 0, 
+           sizeof(struct record_metadata*) * service->num_metadata);
 
     mergekey_norm = (xmlChar *) nmem_strdup(se->nmem, (char*) mergekey);
     xmlFree(mergekey);
@@ -1010,7 +1025,8 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
 
             // First, find out what field we're looking at
             for (imeta = 0; imeta < service->num_metadata; imeta++)
-                if (!strcmp((const char *) type, service->metadata[imeta].name))
+                if (!strcmp((const char *) type,
+                            service->metadata[imeta].name))
                 {
                     md = &service->metadata[imeta];
                     if (md->sortkey_offset >= 0)
@@ -1019,7 +1035,8 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 }
             if (!md)
             {
-                yaz_log(YLOG_WARN, "Ignoring unknown metadata element: %s", type);
+                yaz_log(YLOG_WARN, 
+                        "Ignoring unknown metadata element: %s", type);
                 continue;
             }
 
@@ -1050,10 +1067,12 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             }
             else
             {
-                yaz_log(YLOG_WARN, "Unknown type in metadata element %s", type);
+                yaz_log(YLOG_WARN, 
+                        "Unknown type in metadata element %s", type);
                 continue;
             }
-            if (md->type == Metadata_type_year && md->merge != Metadata_merge_range)
+            if (md->type == Metadata_type_year 
+                && md->merge != Metadata_merge_range)
             {
                 yaz_log(YLOG_WARN, "Only range merging supported for years");
                 continue;
@@ -1062,7 +1081,8 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             {
                 struct record_metadata *mnode;
                 for (mnode = *wheretoput; mnode; mnode = mnode->next)
-                    if (!strcmp((const char *) mnode->data.text, newm->data.text))
+                    if (!strcmp((const char *) mnode->data.text, 
+                                newm->data.text))
                         break;
                 if (!mnode)
                 {
@@ -1072,8 +1092,9 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             }
             else if (md->merge == Metadata_merge_longest)
             {
-                if (!*wheretoput ||
-                        strlen(newm->data.text) > strlen((*wheretoput)->data.text))
+                if (!*wheretoput 
+                    || strlen(newm->data.text) 
+                       > strlen((*wheretoput)->data.text))
                 {
                     *wheretoput = newm;
                     if (sk)
@@ -1081,14 +1102,16 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                         char *s = nmem_strdup(se->nmem, newm->data.text);
                         if (!cluster->sortkeys[md->sortkey_offset])
                             cluster->sortkeys[md->sortkey_offset] = 
-                                nmem_malloc(se->nmem, sizeof(union data_types));
+                                nmem_malloc(se->nmem, 
+                                            sizeof(union data_types));
                         normalize_mergekey(s,
                                 (sk->type == Metadata_sortkey_skiparticle));
                         cluster->sortkeys[md->sortkey_offset]->text = s;
                     }
                 }
             }
-            else if (md->merge == Metadata_merge_all || md->merge == Metadata_merge_no)
+            else if (md->merge == Metadata_merge_all 
+                     || md->merge == Metadata_merge_no)
             {
                 newm->next = *wheretoput;
                 *wheretoput = newm;
@@ -1114,13 +1137,17 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
 #ifdef GAGA
                 if (sk)
                 {
-                    union data_types *sdata = cluster->sortkeys[md->sortkey_offset];
-                    yaz_log(YLOG_LOG, "SK range: %d-%d", sdata->number.min, sdata->number.max);
+                    union data_types *sdata 
+                        = cluster->sortkeys[md->sortkey_offset];
+                    yaz_log(YLOG_LOG, "SK range: %d-%d",
+                            sdata->number.min, sdata->number.max);
                 }
 #endif
             }
             else
-                yaz_log(YLOG_WARN, "Don't know how to merge on element name %s", md->name);
+                yaz_log(YLOG_WARN,
+                        "Don't know how to merge on element name %s",
+                        md->name);
 
             if (md->rank)
                 relevance_countwords(se->relevance, cluster, 
@@ -1146,7 +1173,8 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             type = value = 0;
         }
         else
-            yaz_log(YLOG_WARN, "Unexpected element %s in internal record", n->name);
+            yaz_log(YLOG_WARN,
+                    "Unexpected element %s in internal record", n->name);
     }
     if (type)
         xmlFree(type);
