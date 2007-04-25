@@ -1,4 +1,4 @@
-/* $Id: reclists.c,v 1.13 2007-04-25 08:07:47 marc Exp $
+/* $Id: reclists.c,v 1.14 2007-04-25 09:23:03 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -125,7 +125,8 @@ static int reclist_cmp(const void *p1, const void *p2)
                 res = r2->relevance - r1->relevance;
                 break;
             case Metadata_sortkey_string:
-                res = strcmp(r2->sortkeys[s->offset]->text, r1->sortkeys[s->offset]->text);
+                res = strcmp(r2->sortkeys[s->offset]->text, 
+                             r1->sortkeys[s->offset]->text);
                 break;
             case Metadata_sortkey_numeric:
                 res = 0;
@@ -147,7 +148,8 @@ static int reclist_cmp(const void *p1, const void *p2)
 void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
 {
     sortparms = parms;
-    qsort(l->flatlist, l->num_records, sizeof(struct record_cluster*), reclist_cmp);
+    qsort(l->flatlist, l->num_records, 
+          sizeof(struct record_cluster*), reclist_cmp);
     reclist_rewind(l);
 }
 
@@ -190,7 +192,8 @@ struct reclist *reclist_create(NMEM nmem, int numrecs)
     while (hashsize < numrecs)
         hashsize <<= 1;
     res = nmem_malloc(nmem, sizeof(struct reclist));
-    res->hashtable = nmem_malloc(nmem, hashsize * sizeof(struct reclist_bucket*));
+    res->hashtable 
+        = nmem_malloc(nmem, hashsize * sizeof(struct reclist_bucket*));
     memset(res->hashtable, 0, hashsize * sizeof(struct reclist_bucket*));
     res->hashtable_size = hashsize;
     res->nmem = nmem;
@@ -250,10 +253,12 @@ struct record_cluster *reclist_insert( struct reclist *l,
         newc->recid = (*total)++;
         newc->metadata = nmem_malloc(l->nmem,
                 sizeof(struct record_metadata*) * service->num_metadata);
-        memset(newc->metadata, 0, sizeof(struct record_metadata*) * service->num_metadata);
+        memset(newc->metadata, 0, 
+               sizeof(struct record_metadata*) * service->num_metadata);
         newc->sortkeys = nmem_malloc(l->nmem,
                 sizeof(struct record_metadata*) * service->num_sortkeys);
-        memset(newc->sortkeys, 0, sizeof(union data_types*) * service->num_sortkeys);
+        memset(newc->sortkeys, 0,
+               sizeof(union data_types*) * service->num_sortkeys);
 
         *p = new;
         l->flatlist[l->num_records++] = newc;
