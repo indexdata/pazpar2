@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.30 2007-04-23 12:33:00 marc Exp $
+/* $Id: config.c,v 1.31 2007-04-26 10:19:05 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.30 2007-04-23 12:33:00 marc Exp $ */
+/* $Id: config.c,v 1.31 2007-04-26 10:19:05 marc Exp $ */
 
 #include <string.h>
 
@@ -111,7 +111,7 @@ struct conf_service * conf_service_create(NMEM nmem,
 
 struct conf_metadata* conf_service_add_metadata(NMEM nmem, 
                                                 struct conf_service *service,
-                                                int position,
+                                                int field_id,
                                                 const char *name,
                                                 enum conf_metadata_type type,
                                                 enum conf_metadata_merge merge,
@@ -123,11 +123,11 @@ struct conf_metadata* conf_service_add_metadata(NMEM nmem,
     struct conf_metadata * md = 0;
 
     if (!service || !service->metadata || !service->num_metadata
-        || position < 0  || !(position < service->num_metadata))
+        || field_id < 0  || !(field_id < service->num_metadata))
         return 0;
 
-    //md = &((service->metadata)[position]);
-    md = service->metadata + position;
+    //md = &((service->metadata)[field_id]);
+    md = service->metadata + field_id;
     md = conf_metadata_assign(nmem, md, name, type, merge, 
                              brief, termlist, rank, sortkey_offset);
     return md;
@@ -136,25 +136,26 @@ struct conf_metadata* conf_service_add_metadata(NMEM nmem,
 
 struct conf_sortkey * conf_service_add_sortkey(NMEM nmem,
                                                struct conf_service *service,
-                                               int position,
+                                               int field_id,
                                                const char *name,
                                                enum conf_sortkey_type type)
 {
     struct conf_sortkey * sk = 0;
 
     if (!service || !service->sortkeys || !service->num_sortkeys
-        || position < 0  || !(position < service->num_sortkeys))
+        || field_id < 0  || !(field_id < service->num_sortkeys))
         return 0;
 
-    //sk = &((service->sortkeys)[position]);
-    sk = service->sortkeys + position;
+    //sk = &((service->sortkeys)[field_id]);
+    sk = service->sortkeys + field_id;
     sk = conf_sortkey_assign(nmem, sk, name, type);
 
     return sk;
 }
 
 
-int conf_service_metadata_field_id(struct conf_service *service, const char * name)
+int conf_service_metadata_field_id(struct conf_service *service,
+                                   const char * name)
 {
     int i = 0;
 
@@ -170,7 +171,8 @@ int conf_service_metadata_field_id(struct conf_service *service, const char * na
 };
 
 
-int conf_service_sortkey_field_id(struct conf_service *service, const char * name)
+int conf_service_sortkey_field_id(struct conf_service *service,
+                                  const char * name)
 {
     int i = 0;
 

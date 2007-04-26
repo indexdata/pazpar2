@@ -1,4 +1,4 @@
-/* $Id: record.h,v 1.5 2007-04-24 22:17:05 marc Exp $
+/* $Id: record.h,v 1.6 2007-04-26 10:19:05 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -107,6 +107,8 @@ struct record_cluster
     int recid; 
     struct record *records;
 };
+
+
 
 
 #endif // RECORD_H

@@ -1,4 +1,4 @@
-/* $Id: config.h,v 1.21 2007-04-23 12:33:00 marc Exp $
+/* $Id: config.h,v 1.22 2007-04-26 10:19:05 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -114,7 +114,7 @@ struct conf_service * conf_service_create(NMEM nmem,
 
 struct conf_metadata* conf_service_add_metadata(NMEM nmem, 
                                                 struct conf_service *service,
-                                                int position,
+                                                int field_id,
                                                 const char *name,
                                                 enum conf_metadata_type type,
                                                 enum conf_metadata_merge merge,
@@ -125,7 +125,7 @@ struct conf_metadata* conf_service_add_metadata(NMEM nmem,
 
 struct conf_sortkey * conf_service_add_sortkey(NMEM nmem,
                                                struct conf_service *service,
-                                               int position,
+                                               int field_id,
                                                const char *name,
                                                enum conf_sortkey_type type);
 
