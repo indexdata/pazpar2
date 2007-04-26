@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.21 2007-04-25 08:55:01 marc Exp $
+/* $Id: logic.c,v 1.22 2007-04-26 11:03:54 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1011,10 +1011,11 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             continue;
         if (!strcmp((const char *) n->name, "metadata"))
         {
-            struct conf_metadata *md = 0;
-            struct conf_sortkey *sk = 0;
+            struct conf_metadata *ser_md = 0;
+            struct conf_sortkey *ser_sk = 0;
             struct record_metadata **wheretoput, *newm;
-            int imeta;
+            int md_field_id = -1;
+            int sk_field_id = -1;
             int first, last;
 
             type = xmlGetProp(n, (xmlChar *) "type");
@@ -1024,16 +1025,17 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 continue;
 
             // First, find out what field we're looking at
-            for (imeta = 0; imeta < service->num_metadata; imeta++)
+            for (md_field_id = 0; md_field_id < service->num_metadata;
+                 md_field_id++)
                 if (!strcmp((const char *) type,
-                            service->metadata[imeta].name))
+                            service->metadata[md_field_id].name))
                 {
-                    md = &service->metadata[imeta];
-                    if (md->sortkey_offset >= 0)
-                        sk = &service->sortkeys[md->sortkey_offset];
+                    ser_md = &service->metadata[md_field_id];
+                    if (ser_md->sortkey_offset >= 0)
+                        ser_sk = &service->sortkeys[ser_md->sortkey_offset];
                     break;
                 }
-            if (!md)
+            if (!ser_md)
             {
                 yaz_log(YLOG_WARN, 
                         "Ignoring unknown metadata element: %s", type);
@@ -1041,15 +1043,15 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             }
 
             // Find out where we are putting it
-            if (md->merge == Metadata_merge_no)
-                wheretoput = &res->metadata[imeta];
+            if (ser_md->merge == Metadata_merge_no)
+                wheretoput = &res->metadata[md_field_id];
             else
-                wheretoput = &cluster->metadata[imeta];
+                wheretoput = &cluster->metadata[md_field_id];
             
             // Put it there
             newm = nmem_malloc(se->nmem, sizeof(struct record_metadata));
             newm->next = 0;
-            if (md->type == Metadata_type_generic)
+            if (ser_md->type == Metadata_type_generic)
             {
                 char *p, *pe;
                 for (p = (char *) value; *p && isspace(*p); p++)
@@ -1060,7 +1062,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 newm->data.text = nmem_strdup(se->nmem, p);
 
             }
-            else if (md->type == Metadata_type_year)
+            else if (ser_md->type == Metadata_type_year)
             {
                 if (extract_years((char *) value, &first, &last) < 0)
                     continue;
@@ -1071,13 +1073,13 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                         "Unknown type in metadata element %s", type);
                 continue;
             }
-            if (md->type == Metadata_type_year 
-                && md->merge != Metadata_merge_range)
+            if (ser_md->type == Metadata_type_year 
+                && ser_md->merge != Metadata_merge_range)
             {
                 yaz_log(YLOG_WARN, "Only range merging supported for years");
                 continue;
             }
-            if (md->merge == Metadata_merge_unique)
+            if (ser_md->merge == Metadata_merge_unique)
             {
                 struct record_metadata *mnode;
                 for (mnode = *wheretoput; mnode; mnode = mnode->next)
@@ -1090,42 +1092,43 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                     *wheretoput = newm;
                 }
             }
-            else if (md->merge == Metadata_merge_longest)
+            else if (ser_md->merge == Metadata_merge_longest)
             {
                 if (!*wheretoput 
                     || strlen(newm->data.text) 
                        > strlen((*wheretoput)->data.text))
                 {
                     *wheretoput = newm;
-                    if (sk)
+                    if (ser_sk)
                     {
                         char *s = nmem_strdup(se->nmem, newm->data.text);
-                        if (!cluster->sortkeys[md->sortkey_offset])
-                            cluster->sortkeys[md->sortkey_offset] = 
+                        if (!cluster->sortkeys[ser_md->sortkey_offset])
+                            cluster->sortkeys[ser_md->sortkey_offset] = 
                                 nmem_malloc(se->nmem, 
                                             sizeof(union data_types));
                         normalize_mergekey(s,
-                                (sk->type == Metadata_sortkey_skiparticle));
-                        cluster->sortkeys[md->sortkey_offset]->text = s;
+                             (ser_sk->type == Metadata_sortkey_skiparticle));
+                        cluster->sortkeys[ser_md->sortkey_offset]->text = s;
                     }
                 }
             }
-            else if (md->merge == Metadata_merge_all 
-                     || md->merge == Metadata_merge_no)
+            else if (ser_md->merge == Metadata_merge_all 
+                     || ser_md->merge == Metadata_merge_no)
             {
                 newm->next = *wheretoput;
                 *wheretoput = newm;
             }
-            else if (md->merge == Metadata_merge_range)
+            else if (ser_md->merge == Metadata_merge_range)
             {
-                assert(md->type == Metadata_type_year);
+                assert(ser_md->type == Metadata_type_year);
                 if (!*wheretoput)
                 {
                     *wheretoput = newm;
                     (*wheretoput)->data.number.min = first;
                     (*wheretoput)->data.number.max = last;
-                    if (sk)
-                        cluster->sortkeys[md->sortkey_offset] = &newm->data;
+                    if (ser_sk)
+                        cluster->sortkeys[ser_md->sortkey_offset] 
+                            = &newm->data;
                 }
                 else
                 {
@@ -1147,14 +1150,14 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             else
                 yaz_log(YLOG_WARN,
                         "Don't know how to merge on element name %s",
-                        md->name);
+                        ser_md->name);
 
-            if (md->rank)
+            if (ser_md->rank)
                 relevance_countwords(se->relevance, cluster, 
-                                     (char *) value, md->rank);
-            if (md->termlist)
+                                     (char *) value, ser_md->rank);
+            if (ser_md->termlist)
             {
-                if (md->type == Metadata_type_year)
+                if (ser_md->type == Metadata_type_year)
                 {
                     char year[64];
                     sprintf(year, "%d", last);
