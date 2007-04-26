@@ -1,4 +1,4 @@
-/* $Id: record.h,v 1.6 2007-04-26 10:19:05 marc Exp $
+/* $Id: record.h,v 1.7 2007-04-26 11:41:26 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -77,6 +77,10 @@ struct record_metadata * record_add_metadata(NMEM nmem,
                                              struct conf_service * service,
                                              const char * name,
                                              union data_types data);
+
+
+struct client * record_assign_client(struct record * record,
+                                     struct client *client);
 
 
 

@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.22 2007-04-26 11:03:54 marc Exp $
+/* $Id: logic.c,v 1.23 2007-04-26 11:41:26 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -953,7 +953,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
 {
     xmlDoc *xdoc = normalize_record(client_get_database(cl), rec);
     xmlNode *root, *n;
-    struct record *res;
+    struct record *record;
     struct record_cluster *cluster;
     struct session *se = client_get_session(cl);
     xmlChar *mergekey, *mergekey_norm;
@@ -972,13 +972,20 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
         return 0;
     }
 
-    res = nmem_malloc(se->nmem, sizeof(struct record));
-    res->next = 0;
-    res->client = cl;
-    res->metadata = nmem_malloc(se->nmem,
+#if 0
+    record = nmem_malloc(se->nmem, sizeof(struct record));
+    record->next = 0;
+    record->client = cl;
+    record->metadata = nmem_malloc(se->nmem,
             sizeof(struct record_metadata*) * service->num_metadata);
-    memset(res->metadata, 0, 
+    memset(record->metadata, 0, 
            sizeof(struct record_metadata*) * service->num_metadata);
+
+#else
+    record = record_create(se->nmem, 
+                           service->num_metadata, service->num_sortkeys);
+    record_assign_client(record, cl);
+#endif
 
     mergekey_norm = (xmlChar *) nmem_strdup(se->nmem, (char*) mergekey);
     xmlFree(mergekey);
@@ -986,7 +993,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
 
     cluster = reclist_insert(se->reclist, 
                              global_parameters.server->service, 
-                             res, (char *) mergekey_norm, 
+                             record, (char *) mergekey_norm, 
                              &se->total_merged);
     if (global_parameters.dump_records)
         yaz_log(YLOG_LOG, "Cluster id %d from %s (#%d)", cluster->recid,
@@ -1024,6 +1031,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             if (!type || !value)
                 continue;
 
+#if 0
             // First, find out what field we're looking at
             for (md_field_id = 0; md_field_id < service->num_metadata;
                  md_field_id++)
@@ -1031,10 +1039,13 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                             service->metadata[md_field_id].name))
                 {
                     ser_md = &service->metadata[md_field_id];
-                    if (ser_md->sortkey_offset >= 0)
-                        ser_sk = &service->sortkeys[ser_md->sortkey_offset];
+                    if (ser_md->sortkey_offset >= 0){
+                        sk_field_id = ser_md->sortkey_offset;
+                        ser_sk = &service->sortkeys[sk_field_id];
+                    }
                     break;
                 }
+
             if (!ser_md)
             {
                 yaz_log(YLOG_WARN, 
@@ -1042,9 +1053,27 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 continue;
             }
 
+#else
+            md_field_id 
+                = conf_service_metadata_field_id(service, (const char *) type);
+            if (md_field_id < 0)
+            {
+                yaz_log(YLOG_WARN, 
+                        "Ignoring unknown metadata element: %s", type);
+                continue;
+            }
+
+            ser_md = &service->metadata[md_field_id];
+
+            if (ser_md->sortkey_offset >= 0){
+                sk_field_id = ser_md->sortkey_offset;
+                ser_sk = &service->sortkeys[sk_field_id];
+            }
+#endif
+
             // Find out where we are putting it
             if (ser_md->merge == Metadata_merge_no)
-                wheretoput = &res->metadata[md_field_id];
+                wheretoput = &record->metadata[md_field_id];
             else
                 wheretoput = &cluster->metadata[md_field_id];
             
@@ -1102,13 +1131,13 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                     if (ser_sk)
                     {
                         char *s = nmem_strdup(se->nmem, newm->data.text);
-                        if (!cluster->sortkeys[ser_md->sortkey_offset])
-                            cluster->sortkeys[ser_md->sortkey_offset] = 
+                        if (!cluster->sortkeys[sk_field_id])
+                            cluster->sortkeys[sk_field_id] = 
                                 nmem_malloc(se->nmem, 
                                             sizeof(union data_types));
                         normalize_mergekey(s,
                              (ser_sk->type == Metadata_sortkey_skiparticle));
-                        cluster->sortkeys[ser_md->sortkey_offset]->text = s;
+                        cluster->sortkeys[sk_field_id]->text = s;
                     }
                 }
             }
@@ -1127,7 +1156,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                     (*wheretoput)->data.number.min = first;
                     (*wheretoput)->data.number.max = last;
                     if (ser_sk)
-                        cluster->sortkeys[ser_md->sortkey_offset] 
+                        cluster->sortkeys[sk_field_id] 
                             = &newm->data;
                 }
                 else
@@ -1138,10 +1167,10 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                         (*wheretoput)->data.number.max = last;
                 }
 #ifdef GAGA
-                if (sk)
+                if (ser_sk)
                 {
                     union data_types *sdata 
-                        = cluster->sortkeys[md->sortkey_offset];
+                        = cluster->sortkeys[sk_field_id];
                     yaz_log(YLOG_LOG, "SK range: %d-%d",
                             sdata->number.min, sdata->number.max);
                 }
@@ -1189,7 +1218,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
     relevance_donerecord(se->relevance, cluster);
     se->total_records++;
 
-    return res;
+    return record;
 }
 
 

@@ -1,4 +1,4 @@
-/* $Id: record.c,v 1.6 2007-04-24 22:19:19 marc Exp $
+/* $Id: record.c,v 1.7 2007-04-26 11:41:26 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: record.c,v 1.6 2007-04-24 22:19:19 marc Exp $ */
+/* $Id: record.c,v 1.7 2007-04-26 11:41:26 marc Exp $ */
 
 
 #include <string.h>
@@ -86,6 +86,13 @@ struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys)
     return record;
 }
 
+
+struct client * record_assign_client(struct record * record,
+                                     struct client * client)
+{
+    record->client = client;
+    return client;
+}
 
 struct record_metadata * record_metadata_insert(NMEM nmem, 
                                                 struct record_metadata ** rmd,
