@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.24 2007-04-26 12:12:19 marc Exp $
+/* $Id: logic.c,v 1.25 2007-04-26 21:33:32 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -70,6 +70,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "database.h"
 #include "client.h"
 #include "settings.h"
+#include "normalize7bit.h"
 
 #define MAX_CHUNK 15
 
@@ -121,75 +122,6 @@ void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
     }
 }
 
-char *normalize_mergekey(char *buf, int skiparticle)
-{
-    char *p = buf, *pout = buf;
-
-    if (skiparticle)
-    {
-        char firstword[64];
-        char articles[] = "the den der die des an a "; // must end in space
-
-        while (*p && !isalnum(*p))
-            p++;
-        pout = firstword;
-        while (*p && *p != ' ' && pout - firstword < 62)
-            *(pout++) = tolower(*(p++));
-        *(pout++) = ' ';
-        *(pout++) = '\0';
-        if (!strstr(articles, firstword))
-            p = buf;
-        pout = buf;
-    }
-
-    while (*p)
-    {
-        while (*p && !isalnum(*p))
-            p++;
-        while (isalnum(*p))
-            *(pout++) = tolower(*(p++));
-        if (*p)
-            *(pout++) = ' ';
-        while (*p && !isalnum(*p))
-            p++;
-    }
-    if (buf != pout)
-        do {
-            *(pout--) = '\0';
-        }
-        while (pout > buf && *pout == ' ');
-
-    return buf;
-}
-
-// Extract what appears to be years from buf, storing highest and
-// lowest values.
-static int extract_years(const char *buf, int *first, int *last)
-{
-    *first = -1;
-    *last = -1;
-    while (*buf)
-    {
-        const char *e;
-        int len;
-
-        while (*buf && !isdigit(*buf))
-            buf++;
-        len = 0;
-        for (e = buf; *e && isdigit(*e); e++)
-            len++;
-        if (len == 4)
-        {
-            int value = atoi(buf);
-            if (*first < 0 || value < *first)
-                *first = value;
-            if (*last < 0 || value > *last)
-                *last = value;
-        }
-        buf = e;
-    }
-    return *first;
-}
 
 
 static void add_facet(struct session *s, const char *type, const char *value)
@@ -291,9 +223,7 @@ xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec)
             return 0;
         }
         }
-#endif
-
-#if 0
+#else
         // do it another way to detect transformation errors right now
         // but does not seem to work either!
         {
@@ -989,7 +919,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
 
     mergekey_norm = (xmlChar *) nmem_strdup(se->nmem, (char*) mergekey);
     xmlFree(mergekey);
-    normalize_mergekey((char *) mergekey_norm, 0);
+    normalize7bit_mergekey((char *) mergekey_norm, 0);
 
     cluster = reclist_insert(se->reclist, 
                              global_parameters.server->service, 
@@ -1095,6 +1025,8 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 for (pe = p + strlen(p) - 1;
                         pe > p && strchr(" ,/.:([", *pe); pe--)
                     *pe = '\0';
+                //char * normalize7bit_generic(char* str, char* rm_chars);
+                
                 rec_md->data.text = nmem_strdup(se->nmem, p);
 
             }
@@ -1142,7 +1074,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                             cluster->sortkeys[sk_field_id] = 
                                 nmem_malloc(se->nmem, 
                                             sizeof(union data_types));
-                        normalize_mergekey(s,
+                        normalize7bit_mergekey(s,
                              (ser_sk->type == Metadata_sortkey_skiparticle));
                         cluster->sortkeys[sk_field_id]->text = s;
                     }
