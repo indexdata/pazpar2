@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.23 2007-04-26 11:41:26 marc Exp $
+/* $Id: logic.c,v 1.24 2007-04-26 12:12:19 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1020,7 +1020,8 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
         {
             struct conf_metadata *ser_md = 0;
             struct conf_sortkey *ser_sk = 0;
-            struct record_metadata **wheretoput, *newm;
+            struct record_metadata **wheretoput = 0;
+            struct record_metadata *rec_md = 0;
             int md_field_id = -1;
             int sk_field_id = -1;
             int first, last;
@@ -1078,8 +1079,14 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 wheretoput = &cluster->metadata[md_field_id];
             
             // Put it there
-            newm = nmem_malloc(se->nmem, sizeof(struct record_metadata));
-            newm->next = 0;
+
+#if 1  //something wrong with constructor, debug tomorrow
+            rec_md = nmem_malloc(se->nmem, sizeof(struct record_metadata));
+            rec_md->next = 0;
+#else
+            rec_md = record_metadata_create(se->nmem);
+#endif
+
             if (ser_md->type == Metadata_type_generic)
             {
                 char *p, *pe;
@@ -1088,7 +1095,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 for (pe = p + strlen(p) - 1;
                         pe > p && strchr(" ,/.:([", *pe); pe--)
                     *pe = '\0';
-                newm->data.text = nmem_strdup(se->nmem, p);
+                rec_md->data.text = nmem_strdup(se->nmem, p);
 
             }
             else if (ser_md->type == Metadata_type_year)
@@ -1113,24 +1120,24 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 struct record_metadata *mnode;
                 for (mnode = *wheretoput; mnode; mnode = mnode->next)
                     if (!strcmp((const char *) mnode->data.text, 
-                                newm->data.text))
+                                rec_md->data.text))
                         break;
                 if (!mnode)
                 {
-                    newm->next = *wheretoput;
-                    *wheretoput = newm;
+                    rec_md->next = *wheretoput;
+                    *wheretoput = rec_md;
                 }
             }
             else if (ser_md->merge == Metadata_merge_longest)
             {
                 if (!*wheretoput 
-                    || strlen(newm->data.text) 
+                    || strlen(rec_md->data.text) 
                        > strlen((*wheretoput)->data.text))
                 {
-                    *wheretoput = newm;
+                    *wheretoput = rec_md;
                     if (ser_sk)
                     {
-                        char *s = nmem_strdup(se->nmem, newm->data.text);
+                        char *s = nmem_strdup(se->nmem, rec_md->data.text);
                         if (!cluster->sortkeys[sk_field_id])
                             cluster->sortkeys[sk_field_id] = 
                                 nmem_malloc(se->nmem, 
@@ -1144,20 +1151,20 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             else if (ser_md->merge == Metadata_merge_all 
                      || ser_md->merge == Metadata_merge_no)
             {
-                newm->next = *wheretoput;
-                *wheretoput = newm;
+                rec_md->next = *wheretoput;
+                *wheretoput = rec_md;
             }
             else if (ser_md->merge == Metadata_merge_range)
             {
                 assert(ser_md->type == Metadata_type_year);
                 if (!*wheretoput)
                 {
-                    *wheretoput = newm;
+                    *wheretoput = rec_md;
                     (*wheretoput)->data.number.min = first;
                     (*wheretoput)->data.number.max = last;
                     if (ser_sk)
                         cluster->sortkeys[sk_field_id] 
-                            = &newm->data;
+                            = &rec_md->data;
                 }
                 else
                 {
