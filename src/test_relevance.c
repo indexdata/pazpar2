@@ -1,4 +1,4 @@
-/* $Id: test_relevance.c,v 1.11 2007-04-25 13:57:49 marc Exp $
+/* $Id: test_relevance.c,v 1.12 2007-04-26 21:31:05 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -139,21 +139,25 @@ void test_relevance_7bit(int argc, char **argv)
   cluster 
       = reclist_insert(list, service, rec_ape_fish, mk_ape_fish, &no_merged);
   YAZ_CHECK(cluster);
+  data_types_assign(nmem, &cluster->sortkeys[0], *rec_ape_fish->sortkeys[0]);
   //relevance_newrec(rel, cluster);
 
   cluster 
       = reclist_insert(list, service, rec_bee_fish, mk_bee_fish, &no_merged);
   YAZ_CHECK(cluster);
+  data_types_assign(nmem, &cluster->sortkeys[0], *rec_bee_fish->sortkeys[0]);
   //relevance_newrec(rel, cluster);
 
   cluster 
       = reclist_insert(list, service, rec_fish_bee, mk_fish_bee, &no_merged);
   YAZ_CHECK(cluster);
+  data_types_assign(nmem, &cluster->sortkeys[0], *rec_fish_bee->sortkeys[0]);
   //relevance_newrec(rel, cluster);
 
   cluster 
       = reclist_insert(list, service, rec_zebra_bee, mk_zebra_bee, &no_merged);
   YAZ_CHECK(cluster);
+  data_types_assign(nmem, &cluster->sortkeys[0], *rec_zebra_bee->sortkeys[0]);
   //relevance_newrec(rel, cluster);
 
 
@@ -165,7 +169,7 @@ void test_relevance_7bit(int argc, char **argv)
   //reclist_sortparms_insert(nmem, &sort_parms, service, "relevance", 1);
 
   // crashes with a fat segmentation fault! To be traced tomorrow
-  // reclist_sort(list, sort_parms);
+  reclist_sort(list, sort_parms);
   
 
                         
