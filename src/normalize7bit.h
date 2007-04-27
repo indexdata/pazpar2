@@ -1,4 +1,4 @@
-/* $Id: normalize7bit.h,v 1.1 2007-04-26 21:33:32 marc Exp $
+/* $Id: normalize7bit.h,v 1.2 2007-04-27 12:17:04 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -23,7 +23,8 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #define NORMALIZE7BIT_H
 
 char *normalize7bit_mergekey(char *buf, int skiparticle);
-int extract_years(const char *buf, int *first, int *last);
+char * normalize7bit_generic(char * str, const char * rm_chars);
+int extract7bit_years(const char *buf, int *first, int *last);
 
 
 #endif

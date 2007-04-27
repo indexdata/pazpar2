@@ -1,4 +1,4 @@
-/* $Id: normalize7bit.c,v 1.1 2007-04-26 21:33:32 marc Exp $
+/* $Id: normalize7bit.c,v 1.2 2007-04-27 12:17:04 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -34,7 +34,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "normalize7bit.h"
 
 
-char * normalize7bit_generic(char* str, char* rm_chars)
+char * normalize7bit_generic(char * str, const char * rm_chars)
 {
     char *p, *pe;
                 for (p = str; *p && isspace(*p); p++)
@@ -90,7 +90,7 @@ char * normalize7bit_mergekey(char *buf, int skiparticle)
 
 // Extract what appears to be years from buf, storing highest and
 // lowest values.
-int extract_years(const char *buf, int *first, int *last)
+int extract7bit_years(const char *buf, int *first, int *last)
 {
     *first = -1;
     *last = -1;

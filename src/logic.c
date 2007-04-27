@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.25 2007-04-26 21:33:32 marc Exp $
+/* $Id: logic.c,v 1.26 2007-04-27 12:17:04 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -936,6 +936,8 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
     }
     relevance_newrec(se->relevance, cluster);
 
+
+    // now parsing XML record and adding data to cluster or record metadata
     for (n = root->children; n; n = n->next)
     {
         if (type)
@@ -1002,37 +1004,43 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             }
 #endif
 
-            // Find out where we are putting it
+            // Find out where we are putting it - based on merge or not
             if (ser_md->merge == Metadata_merge_no)
                 wheretoput = &record->metadata[md_field_id];
             else
                 wheretoput = &cluster->metadata[md_field_id];
             
-            // Put it there
-
-#if 1  //something wrong with constructor, debug tomorrow
+            // create new record_metadata
+#if 0
             rec_md = nmem_malloc(se->nmem, sizeof(struct record_metadata));
             rec_md->next = 0;
 #else
             rec_md = record_metadata_create(se->nmem);
 #endif
 
+            // and polulate with data:
+            // type based charmapping decisions follow here
             if (ser_md->type == Metadata_type_generic)
             {
+
+#if 0
                 char *p, *pe;
                 for (p = (char *) value; *p && isspace(*p); p++)
                     ;
                 for (pe = p + strlen(p) - 1;
                         pe > p && strchr(" ,/.:([", *pe); pe--)
                     *pe = '\0';
-                //char * normalize7bit_generic(char* str, char* rm_chars);
+#else
+                char * p = (char *) value;
+                p = normalize7bit_generic(p, " ,/.:([");
+#endif
                 
                 rec_md->data.text = nmem_strdup(se->nmem, p);
 
             }
             else if (ser_md->type == Metadata_type_year)
             {
-                if (extract_years((char *) value, &first, &last) < 0)
+                if (extract7bit_years((char *) value, &first, &last) < 0)
                     continue;
             }
             else
@@ -1041,12 +1049,22 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                         "Unknown type in metadata element %s", type);
                 continue;
             }
+
+#if 0  // this test does not belong here.
+       // the condition is enforced in the constructor 
+       // inside conf_metadata_assign()
+       // and will _never_ occur
             if (ser_md->type == Metadata_type_year 
                 && ser_md->merge != Metadata_merge_range)
             {
                 yaz_log(YLOG_WARN, "Only range merging supported for years");
                 continue;
             }
+# endif
+
+
+            // and polulate with data:
+            // assign cluster or record based on merge action
             if (ser_md->merge == Metadata_merge_unique)
             {
                 struct record_metadata *mnode;
@@ -1088,7 +1106,14 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             }
             else if (ser_md->merge == Metadata_merge_range)
             {
+
+#if 0           // this assert does not belong here.
+                // the condition is enforced in the constructor 
+                // inside conf_metadata_assign()
+                // and will _never_ occur
                 assert(ser_md->type == Metadata_type_year);
+#endif
+
                 if (!*wheretoput)
                 {
                     *wheretoput = rec_md;
@@ -1115,14 +1140,23 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 }
 #endif
             }
+
+#if 0      // this else is only entered when Metadata_merge_no
+           // but I believe then we should _not_ pollute with log messages 
             else
+
                 yaz_log(YLOG_WARN,
                         "Don't know how to merge on element name %s",
                         ser_md->name);
+#endif
 
+
+            // ranking of _all_ fields enabled ... 
             if (ser_md->rank)
                 relevance_countwords(se->relevance, cluster, 
                                      (char *) value, ser_md->rank);
+
+            // construct facets ... 
             if (ser_md->termlist)
             {
                 if (ser_md->type == Metadata_type_year)
@@ -1139,6 +1173,8 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 else
                     add_facet(se, (char *) type, (char *) value);
             }
+
+            // cleaning up
             xmlFree(type);
             xmlFree(value);
             type = value = 0;
