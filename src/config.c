@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.31 2007-04-26 10:19:05 marc Exp $
+/* $Id: config.c,v 1.32 2007-04-27 09:38:13 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.31 2007-04-26 10:19:05 marc Exp $ */
+/* $Id: config.c,v 1.32 2007-04-27 09:38:13 marc Exp $ */
 
 #include <string.h>
 
@@ -60,12 +60,17 @@ struct conf_metadata * conf_metadata_assign(NMEM nmem,
     
     metadata->name = nmem_strdup(nmem, name);
     metadata->type = type;
-    metadata->merge = merge;
+
+    // enforcing that years are always range merged
+    if (metadata->type == Metadata_type_year)
+        metadata->merge = Metadata_merge_range;
+    else
+        metadata->merge = merge;
+
     metadata->brief = brief;   
     metadata->termlist = termlist;
     metadata->rank = rank;    
     metadata->sortkey_offset = sortkey_offset;
-
     return metadata;
 }
 
