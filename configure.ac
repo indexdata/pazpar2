@@ -24,6 +24,9 @@ if test -z "$YAZLIB"; then
 fi
 YAZ_DOC
 
+AC_CHECK_ICU(3.6, [], 
+    AC_MSG_WARN([For ICU internationalizing support please install libicu36-dev or similar]))
+
 AC_CONFIG_FILES([
 	Doxyfile
 	Makefile
@@ -59,6 +62,9 @@ echo \
   YAZ Include:                ${YAZINC}
   YAZ La Lib:                 ${YAZLALIB}
   YAZ Lib:                    ${YAZLIB}
+  ICU Version:                ${ICU_VERSION}
+  ICU Include:                ${ICU_CPPFLAGS}
+  ICU Lib:                    ${ICU_LIBS}
   Bugreport:                  ${PACKAGE_BUGREPORT}
 
 ------------------------------------------------------------------------"

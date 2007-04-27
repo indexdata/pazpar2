@@ -1,7 +1,8 @@
-# $Id: Makefile.am,v 1.17 2007-04-26 21:33:32 marc Exp $
+# $Id: Makefile.am,v 1.18 2007-04-27 14:31:15 marc Exp $
 
 bin_PROGRAMS = pazpar2
 check_PROGRAMS = test_config \
+      test_icu_I18N \
       test_record \
       test_reclists \
       test_relevance \
@@ -16,7 +17,7 @@ MAINTAINERCLEANFILES = Makefile.in cconfig.h
 
 CONFIG_CLEAN_FILES=*.log
 
-AM_CFLAGS = $(YAZINC)
+AM_CFLAGS = $(YAZINC) $(ICU_CPPFLAGS)
 
 libpazpar2_a_SOURCES = config.c config.h eventl.c eventl.h \
 	http.c http_command.c http_command.h http.h \
@@ -29,7 +30,7 @@ libpazpar2_a_SOURCES = config.c config.h eventl.c eventl.h \
 	client.c client.h connection.c connection.h host.h parameters.h
 
 pazpar2_SOURCES = pazpar2.c
-pazpar2_LDADD = libpazpar2.a $(YAZLIB)
+pazpar2_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
 
 test_config_SOURCES = test_config.c
 test_config_LDADD = libpazpar2.a $(YAZLIB)
@@ -45,4 +46,7 @@ test_relevance_LDADD = libpazpar2.a $(YAZLIB)
 
 test_sel_thread_SOURCES = test_sel_thread.c
 test_sel_thread_LDADD = libpazpar2.a $(YAZLIB)
+
+test_icu_I18N_SOURCES = test_icu_I18N.c
+test_icu_I18N_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
 
