@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.32 2007-04-27 09:38:13 marc Exp $
+/* $Id: config.c,v 1.33 2007-04-27 10:27:35 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.32 2007-04-27 09:38:13 marc Exp $ */
+/* $Id: config.c,v 1.33 2007-04-27 10:27:35 marc Exp $ */
 
 #include <string.h>
 
@@ -59,13 +59,18 @@ struct conf_metadata * conf_metadata_assign(NMEM nmem,
         return 0;
     
     metadata->name = nmem_strdup(nmem, name);
-    metadata->type = type;
 
-    // enforcing that years are always range merged
+    // enforcing that merge_range is always type_year 
+    if (merge == Metadata_merge_range)
+        metadata->type = Metadata_type_year;
+    else
+        metadata->type = type;
+
+    // enforcing that type_year is always range_merge
     if (metadata->type == Metadata_type_year)
         metadata->merge = Metadata_merge_range;
     else
-        metadata->merge = merge;
+        metadata->merge = merge;    
 
     metadata->brief = brief;   
     metadata->termlist = termlist;
@@ -288,7 +293,8 @@ static struct conf_service *parse_service(xmlNode *node)
                     type = Metadata_type_year;
                 else
                 {
-                    yaz_log(YLOG_FATAL, "Unknown value for metadata/type: %s", xml_type);
+                    yaz_log(YLOG_FATAL, 
+                            "Unknown value for metadata/type: %s", xml_type);
                     return 0;
                 }
             }
