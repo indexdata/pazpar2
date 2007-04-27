@@ -1,4 +1,4 @@
-/* $Id: record.h,v 1.7 2007-04-26 11:41:26 marc Exp $
+/* $Id: record.h,v 1.8 2007-04-27 11:56:41 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -60,6 +60,8 @@ struct record {
 
 
 struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys);
+
+struct record_metadata * record_metadata_create(NMEM nmem);
 
 struct record_metadata * record_metadata_insert(NMEM nmem, 
                                                 struct record_metadata ** rmd,
