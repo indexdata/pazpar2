@@ -1,0 +1,4 @@
+<settings>
+  <set target="us1v1.indexdata.com/ruprime" name="pz:name" value="Reference Universe"/>
+  <set target="us1v1.indexdata.com/pdx" name="pz:name" value="Public Documents Metafile"/>
+</settings>
