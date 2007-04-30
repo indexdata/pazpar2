@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.21 2007-04-30 03:35:57 quinn Exp $
+** $Id: client.js,v 1.22 2007-04-30 14:28:09 quinn Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -283,7 +283,7 @@ function drawDetailedRec(detailBox)
 
     var hdtarget;
     if( recLocation ) {
-        hdtarget = $('<tr><td class="item">Available at:</td></tr>');
+        hdtarget = $('<tr><td class="item" align="right">Available at:&nbsp;</td></tr>');
 	detailTable.append(hdtarget);
 
 	for(var i=0; i < recLocation.length; i++)
@@ -292,7 +292,13 @@ function drawDetailedRec(detailBox)
 		hdtarget = $('<tr><td class="item">&nbsp;</td></tr>').appendTo(detailTable);
 	    var url = recLocation[i]["md-url"];
 	    var description = recLocation[i]["md-description"];
+	    var date = recLocation[i]["md-date"];
+	    var citation = recLocation[i]["md-citation"];
 	    hdtarget.append('<td><b>'+recLocation[i].name+'</b></td>');
+	    if (date)
+		detailTable.append($('<tr><td align="right">Date:&nbsp;</td><td>'+date+'</td></tr>'));
+	    if (citation)
+		detailTable.append($('<tr><td align="right" valign="top">Citation:&nbsp;</td><td>'+citation+'</td></tr>'));
 	    if (description)
 		detailTable.append($('<tr><td>&nbsp</td><td>'+description+'</td></tr>'));
 	    if (url) {
