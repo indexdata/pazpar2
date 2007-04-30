@@ -183,6 +183,12 @@ background-color: #ffffff;
 color: #002863;
 }
 
+div.motd {
+float: right;
+width: 754px;
+}
+
+
 input.button {
 color: #ffffff;
 font: bold 11px verdana;

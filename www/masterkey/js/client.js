@@ -1,5 +1,5 @@
 /*
-** $Id: client.js,v 1.20 2007-04-20 13:56:20 jakub Exp $
+** $Id: client.js,v 1.21 2007-04-30 03:35:57 quinn Exp $
 ** MasterKey - pazpar2's javascript client .
 */
 
@@ -60,6 +60,7 @@ function onFormSubmitEventHandler() {
     curQuery.clearFilter();
     fireSearch();
     drawBreadcrumb();
+    $('div.motd').empty();
     $('div.content').show();
     $("div.leftbar").show();
     return false;
