@@ -1,4 +1,8 @@
 <settings target="opencontent.indexdata.com:210/*">
+  <set target="opencontent.indexdata.com:210/oaister" name="pz:name" 
+        value="OAIster"/>
+  <set target="opencontent.indexdata.com:210/dmoz" name="pz:name" 
+        value="Open Directory Project"/>
   <set target="opencontent.indexdata.com:210/oca-all" name="pz:name" 
         value="Open Content Alliance"/>
   <set target="opencontent.indexdata.com:210/gutenberg" name="pz:name" 

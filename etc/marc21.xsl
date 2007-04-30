@@ -83,6 +83,15 @@
 	</pz:metadata>
       </xsl:for-each>
 
+      <xsl:for-each select="marc:datafield[@tag='773']">
+	<pz:metadata type="citation">
+	  <xsl:for-each select="*">
+	    <xsl:value-of select="normalize-space(.)"/>
+	    <xsl:text> </xsl:text>
+	  </xsl:for-each>
+	</pz:metadata>
+      </xsl:for-each>
+
     </pz:record>
   </xsl:template>
 
