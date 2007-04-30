@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.18 2007-04-27 14:31:15 marc Exp $
+# $Id: Makefile.am,v 1.19 2007-04-30 13:56:52 marc Exp $
 
 bin_PROGRAMS = pazpar2
 check_PROGRAMS = test_config \
@@ -21,6 +21,7 @@ AM_CFLAGS = $(YAZINC) $(ICU_CPPFLAGS)
 
 libpazpar2_a_SOURCES = config.c config.h eventl.c eventl.h \
 	http.c http_command.c http_command.h http.h \
+        icu_I18N.h icu_I18N.c \
 	logic.c pazpar2.h \
 	record.h record.c reclists.c reclists.h \
 	relevance.c relevance.h termlists.c termlists.h \
