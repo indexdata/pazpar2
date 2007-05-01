@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.1 2007-04-30 13:56:52 marc Exp $
+/* $Id: icu_I18N.c,v 1.2 2007-05-01 08:17:05 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -35,18 +35,49 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <yaz/log.h>
 
 #include <string.h>
+
 #include <unicode/ustring.h>  /* some more string fcns*/
+#include <unicode/uchar.h>    /* char names           */
+
 
 //#include <unicode/ustdio.h>
 //#include <unicode/utypes.h>   /* Basic ICU data types */
 //#include <unicode/ucol.h> 
 //#include <unicode/ucnv.h>     /* C   Converter API    */
-//#include <unicode/uchar.h>    /* char names           */
 //#include <unicode/uloc.h>
 //#include <unicode/ubrk.h>
 /* #include <unicode/unistr.h> */
 
 
+// forward declarations for helper functions
+
+int icu_check_status (UErrorCode status);
+
+UChar* icu_utf16_from_utf8(UChar *utf16,
+                           int32_t utf16_cap,
+                           int32_t *utf16_len,
+                           const char *utf8);
+
+UChar* icu_utf16_from_utf8n(UChar *utf16,
+                            int32_t utf16_cap,
+                            int32_t *utf16_len,
+                            const char *utf8, 
+                            size_t utf8_len);
+
+
+char* icu_utf16_to_utf8(char *utf8,           
+                        size_t utf8_cap,
+                        size_t *utf8_len,
+                        const UChar *utf16, 
+                        int32_t utf16_len);
+
+
+int32_t icu_utf16_casemap(UChar *dest16, int32_t dest16_cap,
+                          const UChar *src16, int32_t src16_len,
+                          const char *locale, char action);
+
+
+// source code
 
 int icu_check_status (UErrorCode status)
 {

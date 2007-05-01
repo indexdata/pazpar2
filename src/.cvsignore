@@ -8,6 +8,7 @@ cconfig.h.in
 *.log
 stamp-h1
 test_config
+test_icu_I18N
 test_record
 test_reclists
 test_relevance
