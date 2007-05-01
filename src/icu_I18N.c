@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.2 2007-05-01 08:17:05 marc Exp $
+/* $Id: icu_I18N.c,v 1.3 2007-05-01 13:16:09 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -42,7 +42,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 //#include <unicode/ustdio.h>
 //#include <unicode/utypes.h>   /* Basic ICU data types */
-//#include <unicode/ucol.h> 
+#include <unicode/ucol.h> 
 //#include <unicode/ucnv.h>     /* C   Converter API    */
 //#include <unicode/uloc.h>
 //#include <unicode/ubrk.h>
@@ -77,7 +77,7 @@ int32_t icu_utf16_casemap(UChar *dest16, int32_t dest16_cap,
                           const char *locale, char action);
 
 
-// source code
+// source code of all functions
 
 int icu_check_status (UErrorCode status)
 {
@@ -197,6 +197,93 @@ char * icu_casemap(NMEM nmem, char *buf, size_t buf_cap,
                             (const UChar *) buf, (int32_t) buf_len);
 
     
+    // copying out to nmem
+    buf[buf_len] = '\0';
+
+    if(dest8_len)
+        *dest8_len = buf_len;
+
+    dest8 =  nmem_strdup(nmem, buf);
+    return dest8;
+}
+
+
+struct icu_termmap * icu_termmap_create(NMEM nmem)
+{
+    struct icu_termmap *itmp =  nmem_malloc(nmem, sizeof(*itmp));
+    itmp->sort_len = 0;
+    itmp->sort_key = 0;
+    itmp->norm_term = 0;
+    itmp->disp_term = 0;
+    return itmp;
+};
+
+int icu_termmap_cmp(const void *vp1, const void *vp2)
+{
+    struct icu_termmap *itmp1 = *(struct icu_termmap **) vp1;
+    struct icu_termmap *itmp2 = *(struct icu_termmap **) vp2;
+    int cmp = 0;
+
+#if 0
+    size_t len = itmp1->sort_len;
+    // minimum sortkey length
+    if (itmp2->sort_len < len)
+        len = itmp2->sort_len;
+
+    cmp = strncmp(itmp1->sort_key, itmp2->sort_key, len);
+    
+    if (cmp == 0 && (itmp1->sort_len < itmp2->sort_len))
+        cmp = -1;
+    
+    if (cmp == 0 && (itmp1->sort_len > itmp2->sort_len))
+        cmp = 1;
+#else   
+    cmp = strcmp(itmp1->sort_key, itmp2->sort_key);
+#endif
+    return cmp;
+}
+
+
+
+char * icu_sortmap(NMEM nmem, char *buf, size_t buf_cap, 
+                   size_t *dest8_len,  const char *src8,
+                   const char *locale)
+{
+    size_t src8_len = strlen(src8);
+    int32_t buf_len = 0;
+    char * dest8 = 0;
+    
+    if (dest8_len)
+        *dest8_len = 0;
+
+    if (!buf || !(buf_cap > 0) || !src8_len)
+        return 0;
+
+    // converting buf to utf16
+    buf = (char *)icu_utf16_from_utf8n((UChar *) buf, 
+                                       (int32_t) buf_cap, &buf_len,
+                                       src8, src8_len);
+    
+    // sort mapping
+    //buf_len = (size_t) icu_utf16_casemap((UChar *)buf, (int32_t) buf_cap,
+    //                                     (const UChar *)buf, (int32_t) buf_len,
+    //                                      locale, action);
+    
+    
+    {
+        UErrorCode status = U_ZERO_ERROR;
+
+        UCollator * coll = ucol_open (locale, &status);
+        if (U_ZERO_ERROR != icu_check_status(status))
+            buf_len = 0;
+
+        ucol_getSortKey(coll, (const UChar *) buf, (int32_t) buf_len, 
+                        (uint8_t *) buf, (int32_t) buf_cap);
+        
+        ucol_close(coll);
+    }
+    
+
     // copying out to nmem
     buf[buf_len] = '\0';
 

@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.2 2007-05-01 08:17:05 marc Exp $
+/* $Id: icu_I18N.h,v 1.3 2007-05-01 13:16:09 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -39,9 +39,26 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 //#include <unicode/unistr.h>
 
 
+
+struct icu_termmap
+{
+    size_t sort_len;   // needed, because 
+    char * sort_key;   // no guarantee on '\0' termination ??? 
+    char * norm_term;  // standard C utf-8 string
+    char * disp_term;  // standard C utf-8 string
+};
+
+struct icu_termmap * icu_termmap_create(NMEM nmem);
+
+int icu_termmap_cmp(const void *vp1, const void *vp2);
+
 char * icu_casemap(NMEM nmem, char *buf, size_t buf_cap, 
                    size_t *dest8_len,  const char *src8,
                    const char *locale, char action);
+
+char * icu_sortmap(NMEM nmem, char *buf, size_t buf_cap, 
+                   size_t *dest8_len,  const char *src8,
+                   const char *locale);
 
 
 #endif // HAVE_ICU
