@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.5 2007-05-01 13:16:09 marc Exp $
+/* $Id: test_icu_I18N.c,v 1.6 2007-05-01 13:27:32 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -256,18 +256,25 @@ void test_icu_I18N_sortmap(int argc, char **argv)
     const char * en_1_src[6] = {"z", "K", "a", "A", "Z", "k"};
     const char * en_1_cck[6] = {"a", "A", "K", "k", "z", "Z"};
     YAZ_CHECK(test_icu_sortmap("en", en_1_len, en_1_src, en_1_cck));
+    YAZ_CHECK(0 == test_icu_sortmap("en_AU", en_1_len, en_1_src, en_1_cck));
+    YAZ_CHECK(0 == test_icu_sortmap("en_CA", en_1_len, en_1_src, en_1_cck));
+    YAZ_CHECK(0 == test_icu_sortmap("en_GB", en_1_len, en_1_src, en_1_cck));
+    YAZ_CHECK(0 == test_icu_sortmap("en_US", en_1_len, en_1_src, en_1_cck));
     
     // sucessful tests - this one fails and should not!!!
     size_t da_1_len = 6;
     const char * da_1_src[6] = {"z", "å", "o", "æ", "a", "ø"};
     const char * da_1_cck[6] = {"a", "o", "z", "æ", "ø", "å"};
     YAZ_CHECK(0 == test_icu_sortmap("da", da_1_len, da_1_src, da_1_cck));
+    YAZ_CHECK(0 == test_icu_sortmap("da_DK", da_1_len, da_1_src, da_1_cck));
     
     // sucessful tests
     size_t de_1_len = 9;
     const char * de_1_src[9] = {"u", "ä", "o", "t", "s", "ß", "ü", "ö", "a"};
     const char * de_1_cck[9] = {"ä", "a", "o", "ö", "s", "ß", "t", "u", "ü"};
     YAZ_CHECK(test_icu_sortmap("de", de_1_len, de_1_src, de_1_cck));
+    YAZ_CHECK(0 == test_icu_sortmap("de_AT", de_1_len, de_1_src, de_1_cck));
+    YAZ_CHECK(0 == test_icu_sortmap("de_DE", de_1_len, de_1_src, de_1_cck));
     
 }
 
