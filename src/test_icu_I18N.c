@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.2 2007-04-30 13:56:52 marc Exp $
+/* $Id: test_icu_I18N.c,v 1.3 2007-05-01 07:58:43 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -268,7 +268,7 @@ int main(int argc, char **argv)
 #else
 
     printf("ICU unit tests omitted.\n"
-           "Please install libicu36-dev and icu-doc or similar\n".);
+           "Please install libicu36-dev and icu-doc or similar\n");
     YAZ_CHECK(0 == 0);
 
 #endif    
