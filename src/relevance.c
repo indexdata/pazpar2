@@ -1,4 +1,4 @@
-/* $Id: relevance.c,v 1.10 2007-04-16 13:54:55 marc Exp $
+/* $Id: relevance.c,v 1.11 2007-05-01 05:04:53 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -232,7 +232,17 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
         if (!rel->doc_frequency_vec[i])
             idfvec[i] = 0;
         else
-            idfvec[i] = log((float) rel->doc_frequency_vec[0] / rel->doc_frequency_vec[i]);
+        {
+            // This conditional may be terribly wrong
+            // It was there to address the situation where vec[0] == vec[i]
+            // which leads to idfvec[i] == 0... not sure about this
+            // Traditional TF-IDF may assume that a word that occurs in every
+            // record is irrelevant, but this is actually something we will
+            // see a lot
+            if ((idfvec[i] = log((float) rel->doc_frequency_vec[0] /
+                            rel->doc_frequency_vec[i])) < 0.0000001)
+                idfvec[i] = 1;
+        }
     }
     // Calculate relevance for each document
     for (i = 0; i < reclist->num_records; i++)
