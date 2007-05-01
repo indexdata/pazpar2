@@ -1,4 +1,4 @@
-/* $Id: reclists.c,v 1.15 2007-04-25 13:09:17 marc Exp $
+/* $Id: reclists.c,v 1.16 2007-05-01 05:02:54 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -173,12 +173,15 @@ static int reclist_cmp(const void *p1, const void *p2)
         int res;
         switch (s->type)
         {
+            char *s1, *s2;
+            
             case Metadata_sortkey_relevance:
                 res = r2->relevance - r1->relevance;
                 break;
             case Metadata_sortkey_string:
-                res = strcmp(r2->sortkeys[s->offset]->text, 
-                             r1->sortkeys[s->offset]->text);
+                s1 = r1->sortkeys[s->offset] ? r1->sortkeys[s->offset]->text : "";
+                s2 = r2->sortkeys[s->offset] ? r2->sortkeys[s->offset]->text : "";
+                res = strcmp(s2, s1);
                 break;
             case Metadata_sortkey_numeric:
                 res = 0;
