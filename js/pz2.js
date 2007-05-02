@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.11 2007-04-20 13:56:20 jakub Exp $
+** $Id: pz2.js,v 1.12 2007-05-02 19:32:13 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -122,33 +122,36 @@ var pz2 = function(paramArray) {
     
     // auto init session?
     if (paramArray.autoInit !== false)
-        __myself.init(__myself.keepAlive);
+        __myself.init();
 };
 pz2.prototype = {
-    init: function(keepAlive) 
-    {
-        if ( keepAlive < __myself.keepAlive )
-            __myself.keepAlive = keepAlive;
-        
-        $.get( __myself.pz2String,
-            { "command": "init" },
-            function(data) {
-                if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
-                    if ( data.getElementsByTagName("protocol")[0].childNodes[0].nodeValue != __myself.suppProtoVer )
-                        throw new Error("Server's protocol not supported by the client");
-                    __myself.initStatusOK = true;
-                    __myself.sessionID = data.getElementsByTagName("session")[0].childNodes[0].nodeValue;
-                    setTimeout(__myself.ping, __myself.keepAlive);
+    init: function ( sessionId ) 
+    {   
+        if ( sessionId != undefined ) {
+            __myself.initStatusOK = true;
+            __myself.sessionID = sessionId;
+            __myself.ping();
+        } else {
+            $.get( __myself.pz2String,
+                { "command": "init" },
+                function(data) {
+                    if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
+                        if ( data.getElementsByTagName("protocol")[0].childNodes[0].nodeValue != __myself.suppProtoVer )
+                            throw new Error("Server's protocol not supported by the client");
+                        __myself.initStatusOK = true;
+                        __myself.sessionID = data.getElementsByTagName("session")[0].childNodes[0].nodeValue;
+                        setTimeout("__myself.ping()", __myself.keepAlive);
+                    }
+                    else
+                        // if it gets here the http return code was 200 (pz2 errors are 417)
+                        // but the response was invalid, it should never occur
+                        setTimeout("__myself.init()", 1000);
                 }
-                else
-                    // if it gets here the http return code was 200 (pz2 errors are 417)
-                    // but the response was invalid, it should never occur
-                    setTimeout("__myself.init()", 1000);
-            }
-        );
+            );
+        }
     },
     // no need to ping explicitly
-    ping: function() 
+    ping: function () 
     {
         if( !__myself.initStatusOK )
             return;
@@ -168,7 +171,7 @@ pz2.prototype = {
             }
         );
     },
-    search: function(query, num, sort, filter)
+    search: function (query, num, sort, filter)
     {
         clearTimeout(__myself.statTimer);
         clearTimeout(__myself.showTimer);
