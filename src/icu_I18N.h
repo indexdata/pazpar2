@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.3 2007-05-01 13:16:09 marc Exp $
+/* $Id: icu_I18N.h,v 1.4 2007-05-02 14:01:36 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -42,8 +42,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 struct icu_termmap
 {
-    size_t sort_len;   // needed, because 
-    char * sort_key;   // no guarantee on '\0' termination ??? 
+    char * sort_key;   // standard C string '\0' terminated 
     char * norm_term;  // standard C utf-8 string
     char * disp_term;  // standard C utf-8 string
 };

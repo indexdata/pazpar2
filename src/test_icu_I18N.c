@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.6 2007-05-01 13:27:32 marc Exp $
+/* $Id: test_icu_I18N.c,v 1.7 2007-05-02 14:01:36 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -219,8 +219,9 @@ int test_icu_sortmap(const char * locale, size_t list_len,
         //dest8_list[i]->sort_key =  nmem_strdup(nmem, src8_list[i]);
         //dest8_list[i]->sort_len =  strlen(src8_list[i]);
         dest8_list[i]->sort_key 
-            = icu_sortmap(nmem, buf, buf_cap, &(dest8_list[i]->sort_len),
-                          src8_list[i], locale);
+            = icu_sortmap(nmem, buf, buf_cap, 0, src8_list[i], locale);
+        // = icu_sortmap(nmem, buf, buf_cap, &(dest8_list[i]->sort_len),
+        //                  src8_list[i], locale);
     }
 
     // do the sorting
@@ -234,12 +235,26 @@ int test_icu_sortmap(const char * locale, size_t list_len,
         }
     }
 
-    if (!sucess)
-        for (i = 0; i < list_len; i++){
-            printf("icu_sortmap '%s': '%s' '%s'\n", locale,
-                   dest8_list[i]->disp_term, check8_list[i]);
-        }
-
+    if (1 || !sucess){
+        printf("\n");
+        printf("Input    '%s':", locale);
+        for (i = 0; i < list_len; i++)
+            printf(" '%s'", src8_list[i]);
+        printf("\n");        
+        printf("ICU sort '%s':", locale);
+        for (i = 0; i < list_len; i++)
+            printf(" '%s'", dest8_list[i]->disp_term);
+        if (sucess)
+            printf(" OK");
+        else
+            printf(" ERROR ??");
+        printf("\n");
+        printf("Expected '%s':", locale);
+        for (i = 0; i < list_len; i++)
+            printf(" '%s'", check8_list[i]);
+        printf("\n");        
+    }
+    
     nmem_destroy(nmem);
 
     return sucess;

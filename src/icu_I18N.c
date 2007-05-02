@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.3 2007-05-01 13:16:09 marc Exp $
+/* $Id: icu_I18N.c,v 1.4 2007-05-02 14:01:36 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -81,9 +81,10 @@ int32_t icu_utf16_casemap(UChar *dest16, int32_t dest16_cap,
 
 int icu_check_status (UErrorCode status)
 {
-  if(U_FAILURE(status))
+    //if(U_FAILURE(status))
+    if(!U_SUCCESS(status))
       yaz_log(YLOG_WARN, 
-              "ICU Error: %d %s\n", status, u_errorName(status));
+              "ICU: %d %s\n", status, u_errorName(status));
   return status;
 }
 
@@ -211,7 +212,6 @@ char * icu_casemap(NMEM nmem, char *buf, size_t buf_cap,
 struct icu_termmap * icu_termmap_create(NMEM nmem)
 {
     struct icu_termmap *itmp =  nmem_malloc(nmem, sizeof(*itmp));
-    itmp->sort_len = 0;
     itmp->sort_key = 0;
     itmp->norm_term = 0;
     itmp->disp_term = 0;
@@ -222,25 +222,8 @@ int icu_termmap_cmp(const void *vp1, const void *vp2)
 {
     struct icu_termmap *itmp1 = *(struct icu_termmap **) vp1;
     struct icu_termmap *itmp2 = *(struct icu_termmap **) vp2;
-    int cmp = 0;
 
-#if 0
-    size_t len = itmp1->sort_len;
-    // minimum sortkey length
-    if (itmp2->sort_len < len)
-        len = itmp2->sort_len;
-
-    cmp = strncmp(itmp1->sort_key, itmp2->sort_key, len);
-    
-    if (cmp == 0 && (itmp1->sort_len < itmp2->sort_len))
-        cmp = -1;
-    
-    if (cmp == 0 && (itmp1->sort_len > itmp2->sort_len))
-        cmp = 1;
-#else   
-    cmp = strcmp(itmp1->sort_key, itmp2->sort_key);
-#endif
-    return cmp;
+    return strcmp(itmp1->sort_key, itmp2->sort_key);
 }
 
 
