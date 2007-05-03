@@ -2,7 +2,7 @@
 /*
 gcc -g -Wall `icu-config --cppflags`  `icu-config --ldflags` -o icu_bug_2 icu_bug_2.c
 snatched from http://www.icu-project.org/userguide/Collate_API.html 
-and corrected for compile errors
+and changed.
 added a struct icu_termmap such that I actually can see the output
 */
 
@@ -54,7 +54,7 @@ struct icu_buf_utf16 * icu_buf_utf16_create(size_t capacity)
 struct icu_buf_utf16 * icu_buf_utf16_resize(struct icu_buf_utf16 * buf16,
                                             size_t capacity)
 {
-  printf("buf16 resize: %d\n", (int)capacity);
+  //printf("buf16 resize: %d\n", (int)capacity);
   if (buf16){
     if (capacity >  0){
       if (0 == buf16->utf16)
@@ -121,7 +121,7 @@ struct icu_buf_utf8 * icu_buf_utf8_create(size_t capacity)
 struct icu_buf_utf8 * icu_buf_utf8_resize(struct icu_buf_utf8 * buf8,
                                           size_t capacity)
 {
-  printf("buf8  resize: %d\n", (int)capacity);
+  //printf("buf8  resize: %d\n", (int)capacity);
   if (buf8){
     if (capacity >  0){
       if (0 == buf8->utf8)
@@ -164,7 +164,7 @@ UErrorCode icu_utf16_from_utf8(struct icu_buf_utf16 * dest16,
 {
   //if(!U_SUCCESS(*status))
   //  return *status;
-  printf("icu_utf16_from_utf8 working\n");
+  printf("icu_utf16_from_utf8 working - needs correcting, see icu_utf16_from_utf8_cstr\n");
 
   u_strFromUTF8(dest16->utf16, dest16->utf16_cap, &(dest16->utf16_len),
                 (const char *) src8->utf8, src8->utf8_len, status);
@@ -193,7 +193,7 @@ UErrorCode icu_utf16_from_utf8_cstr(struct icu_buf_utf16 * dest16,
   //if(!U_SUCCESS(status))
   //  return *status;
 
-  printf("icu_utf16_from_utf8_cstr working\n");  
+  //printf("icu_utf16_from_utf8_cstr working\n");  
   src8cstr_len = strlen(src8cstr);
   
   u_strFromUTF8(dest16->utf16, dest16->utf16_cap,
@@ -205,7 +205,7 @@ UErrorCode icu_utf16_from_utf8_cstr(struct icu_buf_utf16 * dest16,
   if (*status == U_BUFFER_OVERFLOW_ERROR
       //|| dest16->utf16_len > dest16->utf16_cap
       ){
-    printf("icu_utf16_from_utf8_cstr need resize\n");
+    //printf("icu_utf16_from_utf8_cstr need resize\n");
     icu_buf_utf16_resize(dest16, utf16_len * 2);
     *status = U_ZERO_ERROR;
     u_strFromUTF8(dest16->utf16, dest16->utf16_cap,
@@ -236,13 +236,13 @@ UErrorCode icu_sortkey8_from_utf16(UCollator *coll,
   //if(!U_SUCCESS(status))
   //  return *status;
 
-  printf("icu_sortkey8_from_utf16 working\n");  
+  //printf("icu_sortkey8_from_utf16 working\n");  
   sortkey_len = ucol_getSortKey(coll, src16->utf16, src16->utf16_len,
                                 dest8->utf8, dest8->utf8_cap);
   
   // check for buffer overflow, resize and retry
   if (sortkey_len > dest8->utf8_cap) {
-    printf("icu_sortkey8_from_utf16 need resize\n");
+    //printf("icu_sortkey8_from_utf16 need resize\n");
     icu_buf_utf8_resize(dest8, sortkey_len * 2);
     sortkey_len = ucol_getSortKey(coll, src16->utf16, src16->utf16_len,
                                   dest8->utf8, dest8->utf8_cap);
@@ -338,6 +338,7 @@ int icu_coll_sort(const char * locale, int src_list_len,
   printf("ICU sort:  '%s' : ", locale); 
   for (i = 0; i < src_list_len; i++) {
     printf(" '%s'", list[i]->disp_term); 
+    printf("(%d|%d)", list[i]->sort_key[0],list[i]->sort_key[1]); 
   }
   printf("\n"); 
   
