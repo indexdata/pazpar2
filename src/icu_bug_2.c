@@ -1,6 +1,6 @@
 // Make command on debian 64 bit testing dist  
 /*
-gcc -g -Wall `icu-config --cppflags`  `icu-config --ldflags` -o icu_bug icu_bug.c
+gcc -g -Wall `icu-config --cppflags`  `icu-config --ldflags` -o icu_bug_2 icu_bug_2.c
 snatched from http://www.icu-project.org/userguide/Collate_API.html 
 and corrected for compile errors
 added a struct icu_termmap such that I actually can see the output
@@ -24,9 +24,6 @@ added a struct icu_termmap such that I actually can see the output
 
 
 #define MAX_KEY_SIZE 256
-//#define MAX_BUFFER_SIZE 10000
-//#define MAX_LIST_LENGTH 5
- 
 
 struct icu_buf_utf16
 {
@@ -47,6 +44,7 @@ struct icu_buf_utf16 * icu_buf_utf16_create(size_t capacity)
 
   if (capacity > 0){
     buf16->utf16 = (UChar *) malloc(sizeof(UChar) * capacity);
+    buf16->utf16[0] = (UChar) 0;
     buf16->utf16_cap = capacity;
   }
   return buf16;
@@ -64,6 +62,7 @@ struct icu_buf_utf16 * icu_buf_utf16_resize(struct icu_buf_utf16 * buf16,
       else
         buf16->utf16 
           = (UChar *) realloc(buf16->utf16, sizeof(UChar) * capacity);
+      buf16->utf16[0] = (UChar) 0;
       buf16->utf16_len = 0;
       buf16->utf16_cap = capacity;
     } 
@@ -111,6 +110,7 @@ struct icu_buf_utf8 * icu_buf_utf8_create(size_t capacity)
 
   if (capacity > 0){
     buf8->utf8 = (uint8_t *) malloc(sizeof(uint8_t) * capacity);
+    buf8->utf8[0] = (uint8_t) 0;
     buf8->utf8_cap = capacity;
   }
   return buf8;
@@ -129,6 +129,7 @@ struct icu_buf_utf8 * icu_buf_utf8_resize(struct icu_buf_utf8 * buf8,
       else
         buf8->utf8 
           = (uint8_t *) realloc(buf8->utf8, sizeof(uint8_t) * capacity);
+      buf8->utf8[0] = (uint8_t) 0;
       buf8->utf8_len = 0;
       buf8->utf8_cap = capacity;
     } 
@@ -161,14 +162,16 @@ UErrorCode icu_utf16_from_utf8(struct icu_buf_utf16 * dest16,
                                struct icu_buf_utf8 * src8,
                                UErrorCode * status)
 {
-  if(!U_SUCCESS(*status))
-    return *status;
+  //if(!U_SUCCESS(*status))
+  //  return *status;
+  printf("icu_utf16_from_utf8 working\n");
 
   u_strFromUTF8(dest16->utf16, dest16->utf16_cap, &(dest16->utf16_len),
                 (const char *) src8->utf8, src8->utf8_len, status);
 
   // check for buffer overflow, resize and retry
   if (dest16->utf16_len > dest16->utf16_cap){
+    printf("icu_utf16_from_utf8 need resize\n");
     icu_buf_utf16_resize(dest16, dest16->utf16_len * 2);
     *status = U_ZERO_ERROR;
     u_strFromUTF8(dest16->utf16, dest16->utf16_cap, &(dest16->utf16_len),
@@ -185,21 +188,38 @@ UErrorCode icu_utf16_from_utf8_cstr(struct icu_buf_utf16 * dest16,
                                     UErrorCode * status)
 {
   size_t src8cstr_len = 0;
-  
-  if(!U_SUCCESS(status))
-    return *status;
-  
+  int32_t utf16_len = 0;
+
+  //if(!U_SUCCESS(status))
+  //  return *status;
+
+  printf("icu_utf16_from_utf8_cstr working\n");  
   src8cstr_len = strlen(src8cstr);
   
-  u_strFromUTF8(dest16->utf16, dest16->utf16_cap, &(dest16->utf16_len),
+  u_strFromUTF8(dest16->utf16, dest16->utf16_cap,
+                &utf16_len,
+                //&(dest16->utf16_len),
                 src8cstr, src8cstr_len, status);
   
   // check for buffer overflow, resize and retry
-  if (dest16->utf16_len > dest16->utf16_cap){
-    icu_buf_utf16_resize(dest16, dest16->utf16_len * 2);
+  if (*status == U_BUFFER_OVERFLOW_ERROR
+      //|| dest16->utf16_len > dest16->utf16_cap
+      ){
+    printf("icu_utf16_from_utf8_cstr need resize\n");
+    icu_buf_utf16_resize(dest16, utf16_len * 2);
     *status = U_ZERO_ERROR;
-    u_strFromUTF8(dest16->utf16, dest16->utf16_cap, &(dest16->utf16_len),
+    u_strFromUTF8(dest16->utf16, dest16->utf16_cap,
+                  &utf16_len,
+                  //&(dest16->utf16_len),
                   src8cstr, src8cstr_len, status);
+  }
+
+  if (*status != U_BUFFER_OVERFLOW_ERROR
+      && utf16_len < dest16->utf16_cap)
+    dest16->utf16_len = utf16_len;
+  else {
+    dest16->utf16[0] = (UChar) 0;
+    dest16->utf16_len = 0;
   }
   
   return *status;
@@ -213,17 +233,19 @@ UErrorCode icu_sortkey8_from_utf16(UCollator *coll,
 { 
   
   int32_t sortkey_len = 0;
-  if(!U_SUCCESS(status))
-    return *status;
-  
+  //if(!U_SUCCESS(status))
+  //  return *status;
+
+  printf("icu_sortkey8_from_utf16 working\n");  
   sortkey_len = ucol_getSortKey(coll, src16->utf16, src16->utf16_len,
-                                dest8->utf8, dest8->utf8_len);
+                                dest8->utf8, dest8->utf8_cap);
   
   // check for buffer overflow, resize and retry
   if (sortkey_len > dest8->utf8_cap) {
+    printf("icu_sortkey8_from_utf16 need resize\n");
     icu_buf_utf8_resize(dest8, sortkey_len * 2);
-    ucol_getSortKey(coll, src16->utf16, src16->utf16_len,
-                    dest8->utf8, dest8->utf8_len);
+    sortkey_len = ucol_getSortKey(coll, src16->utf16, src16->utf16_len,
+                                  dest8->utf8, dest8->utf8_cap);
   }
 
   return *status;
@@ -335,6 +357,8 @@ int main(int argc, char **argv)
   const char * en_1_src[6] = {"z", "K", "a", "A", "Z", "k"};
   const char * en_1_cck[6] = {"a", "A", "K", "k", "z", "Z"};
   icu_coll_sort("en", en_1_len, en_1_src, en_1_cck);
+
+#if 0
   icu_coll_sort("en_AU", en_1_len, en_1_src, en_1_cck);
   icu_coll_sort("en_CA", en_1_len, en_1_src, en_1_cck);
   icu_coll_sort("en_GB", en_1_len, en_1_src, en_1_cck);
@@ -354,7 +378,7 @@ int main(int argc, char **argv)
   icu_coll_sort("de", de_1_len, de_1_src, de_1_cck);
   icu_coll_sort("de_AT", de_1_len, de_1_src, de_1_cck);
   icu_coll_sort("de_DE", de_1_len, de_1_src, de_1_cck);
-
+#endif
   return 0;
 };
 
