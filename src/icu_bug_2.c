@@ -287,7 +287,8 @@ int icu_coll_sort(const char * locale, int src_list_len,
                   const char ** src_list, const char ** chk_list)
 {
   UErrorCode status = U_ZERO_ERROR;
-  
+  int success = 1;
+
   struct icu_buf_utf8 * buf8 = icu_buf_utf8_create(0);
   struct icu_buf_utf16 * buf16 = icu_buf_utf16_create(0);
 
@@ -324,31 +325,45 @@ int icu_coll_sort(const char * locale, int src_list_len,
       //strcpy((char *) list[i]->sort_key, (const char *) buf8->utf8);
     } 
 
-  printf("\n"); 
+
+  // do the sorting
+  qsort(list, src_list_len, 
+        sizeof(struct icu_termmap *), icu_termmap_cmp);
+
+  // checking correct sorting
+  for (i = 0; i < src_list_len; i++){
+    if (0 != strcmp(list[i]->disp_term, chk_list[i])){
+      success = 0;
+    }
+  }
+
+  if(!success){
+  printf("\nERROR\n"); 
   printf("Input str: '%s' : ", locale); 
   for (i = 0; i < src_list_len; i++) {
     printf(" '%s'", list[i]->disp_term); 
   }
   printf("\n");
-
-  // do the sorting
-  qsort(list, src_list_len, 
-        sizeof(struct icu_termmap *), icu_termmap_cmp);
-  
-  
   printf("ICU sort:  '%s' : ", locale); 
   for (i = 0; i < src_list_len; i++) {
     printf(" '%s'", list[i]->disp_term); 
     //printf("(%d|%d)", list[i]->sort_key[0],list[i]->sort_key[1]); 
   }
   printf("\n"); 
+  printf("Expected:  '%s' : ", locale); 
+  for (i = 0; i < src_list_len; i++) {
+    printf(" '%s'", chk_list[i]); 
+  }
+  printf("\n"); 
+  }
+  
   
   ucol_close(coll);
 
   icu_buf_utf8_destroy(buf8);
   icu_buf_utf16_destroy(buf16);
 
-  return 1;
+  return success;
 };
 
 
@@ -357,7 +372,7 @@ int main(int argc, char **argv)
   
   size_t en_1_len = 6;
   const char * en_1_src[6] = {"z", "K", "a", "A", "Z", "k"};
-  const char * en_1_cck[6] = {"a", "A", "K", "k", "z", "Z"};
+  const char * en_1_cck[6] = {"a", "A", "k", "K", "z", "Z"};
   icu_coll_sort("en", en_1_len, en_1_src, en_1_cck);
   icu_coll_sort("en_AU", en_1_len, en_1_src, en_1_cck);
   icu_coll_sort("en_CA", en_1_len, en_1_src, en_1_cck);
@@ -374,7 +389,7 @@ int main(int argc, char **argv)
 
   size_t de_1_len = 9;
   const char * de_1_src[9] = {"u", "ä", "o", "t", "s", "ß", "ü", "ö", "a"};
-  const char * de_1_cck[9] = {"ä", "a", "o", "ö", "s", "ß", "t", "u", "ü"};
+  const char * de_1_cck[9] = {"a", "ä", "o", "ö", "s", "ß", "t", "u", "ü"};
   icu_coll_sort("de", de_1_len, de_1_src, de_1_cck);
   icu_coll_sort("de_AT", de_1_len, de_1_src, de_1_cck);
   icu_coll_sort("de_DE", de_1_len, de_1_src, de_1_cck);
