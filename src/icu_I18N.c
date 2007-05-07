@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.5 2007-05-07 09:31:36 marc Exp $
+/* $Id: icu_I18N.c,v 1.6 2007-05-07 12:18:34 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -202,7 +202,8 @@ UErrorCode icu_utf16_from_utf8(struct icu_buf_utf16 * dest16,
                   (const char *) src8->utf8, src8->utf8_len, status);
   }
 
-  if (*status != U_BUFFER_OVERFLOW_ERROR
+    //if (*status != U_BUFFER_OVERFLOW_ERROR
+  if (U_SUCCESS(*status)  
       && utf16_len < dest16->utf16_cap)
     dest16->utf16_len = utf16_len;
   else {
@@ -239,7 +240,8 @@ UErrorCode icu_utf16_from_utf8_cstr(struct icu_buf_utf16 * dest16,
                   src8cstr, src8cstr_len, status);
   }
 
-  if (*status != U_BUFFER_OVERFLOW_ERROR
+  //  if (*status != U_BUFFER_OVERFLOW_ERROR
+  if (U_SUCCESS(*status)  
       && utf16_len < dest16->utf16_cap)
     dest16->utf16_len = utf16_len;
   else {
@@ -249,6 +251,45 @@ UErrorCode icu_utf16_from_utf8_cstr(struct icu_buf_utf16 * dest16,
   
   return *status;
 };
+
+
+
+
+UErrorCode icu_utf16_to_utf8(struct icu_buf_utf8 * dest8,
+                               struct icu_buf_utf16 * src16,
+                               UErrorCode * status)
+{
+  int32_t utf8_len = 0;
+  
+  u_strToUTF8((char *) dest8->utf8, dest8->utf8_cap,
+                &utf8_len,
+                 src16->utf16, src16->utf16_len, status);
+  
+  // check for buffer overflow, resize and retry
+  if (*status == U_BUFFER_OVERFLOW_ERROR
+      //|| dest8->utf8_len > dest8->utf8_cap
+      ){
+    icu_buf_utf8_resize(dest8, utf8_len * 2);
+    *status = U_ZERO_ERROR;
+    u_strToUTF8((char *) dest8->utf8, dest8->utf8_cap,
+                &utf8_len,
+                src16->utf16, src16->utf16_len, status);
+
+  }
+
+  //if (*status != U_BUFFER_OVERFLOW_ERROR
+  if (U_SUCCESS(*status)  
+      && utf8_len < dest8->utf8_cap)
+      dest8->utf8_len = utf8_len;
+  else {
+      dest8->utf8[0] = (uint8_t) 0;
+      dest8->utf8_len = 0;
+  }
+  
+  return *status;
+};
+
+
 
 
 UErrorCode icu_sortkey8_from_utf16(UCollator *coll,
@@ -269,9 +310,14 @@ UErrorCode icu_sortkey8_from_utf16(UCollator *coll,
                                   dest8->utf8, dest8->utf8_cap);
   }
 
-  if (sortkey_len > 0)
+  if (U_SUCCESS(*status)
+      && sortkey_len > 0)
     dest8->utf8_len = sortkey_len;
- 
+  else {
+    dest8->utf8[0] = (UChar) 0;
+    dest8->utf8_len = 0;
+  }
+
   return *status;
 };
 

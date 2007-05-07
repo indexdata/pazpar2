@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.5 2007-05-07 09:31:36 marc Exp $
+/* $Id: icu_I18N.h,v 1.6 2007-05-07 12:18:34 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -75,6 +75,12 @@ UErrorCode icu_utf16_from_utf8(struct icu_buf_utf16 * dest16,
 UErrorCode icu_utf16_from_utf8_cstr(struct icu_buf_utf16 * dest16,
                                     const char * src8cstr,
                                     UErrorCode * status);
+
+
+UErrorCode icu_utf16_to_utf8(struct icu_buf_utf8 * dest8,
+                             struct icu_buf_utf16 * src16,
+                             UErrorCode * status);
+
 
 UErrorCode icu_sortkey8_from_utf16(UCollator *coll,
                                    struct icu_buf_utf8 * dest8, 
