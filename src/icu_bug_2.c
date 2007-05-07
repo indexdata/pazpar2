@@ -164,7 +164,7 @@ UErrorCode icu_utf16_from_utf8(struct icu_buf_utf16 * dest16,
 {
   //if(!U_SUCCESS(*status))
   //  return *status;
-  printf("icu_utf16_from_utf8 working - needs correcting, see icu_utf16_from_utf8_cstr\n");
+  printf("icu_utf16_from_utf8 - needs correcting, see icu_utf16_from_utf8_cstr\n");
 
   u_strFromUTF8(dest16->utf16, dest16->utf16_cap, &(dest16->utf16_len),
                 (const char *) src8->utf8, src8->utf8_len, status);
@@ -239,7 +239,7 @@ UErrorCode icu_sortkey8_from_utf16(UCollator *coll,
   //printf("icu_sortkey8_from_utf16 working\n");  
   sortkey_len = ucol_getSortKey(coll, src16->utf16, src16->utf16_len,
                                 dest8->utf8, dest8->utf8_cap);
-  
+
   // check for buffer overflow, resize and retry
   if (sortkey_len > dest8->utf8_cap) {
     //printf("icu_sortkey8_from_utf16 need resize\n");
@@ -248,6 +248,9 @@ UErrorCode icu_sortkey8_from_utf16(UCollator *coll,
                                   dest8->utf8, dest8->utf8_cap);
   }
 
+  if (sortkey_len > 0)
+    dest8->utf8_len = sortkey_len;
+ 
   return *status;
 };
 
@@ -321,6 +324,10 @@ int icu_coll_sort(const char * locale, int src_list_len,
     
       // assigning sortkeys
       memcpy(list[i]->sort_key, buf8->utf8, buf8->utf8_len);    
+      //strncpy(list[i]->sort_key, buf8->utf8, buf8->utf8_len);    
+      //strcpy((char *) list[i]->sort_key, (const char *) buf8->utf8);
+      //printf("strcp: %s (%d) [%d]\n", list[i]->sort_key, 
+      //       strlen(list[i]->sort_key), buf8->utf8_len);
     } 
 
   printf("\n"); 
@@ -338,7 +345,7 @@ int icu_coll_sort(const char * locale, int src_list_len,
   printf("ICU sort:  '%s' : ", locale); 
   for (i = 0; i < src_list_len; i++) {
     printf(" '%s'", list[i]->disp_term); 
-    printf("(%d|%d)", list[i]->sort_key[0],list[i]->sort_key[1]); 
+    //printf("(%d|%d)", list[i]->sort_key[0],list[i]->sort_key[1]); 
   }
   printf("\n"); 
   
@@ -358,8 +365,6 @@ int main(int argc, char **argv)
   const char * en_1_src[6] = {"z", "K", "a", "A", "Z", "k"};
   const char * en_1_cck[6] = {"a", "A", "K", "k", "z", "Z"};
   icu_coll_sort("en", en_1_len, en_1_src, en_1_cck);
-
-#if 0
   icu_coll_sort("en_AU", en_1_len, en_1_src, en_1_cck);
   icu_coll_sort("en_CA", en_1_len, en_1_src, en_1_cck);
   icu_coll_sort("en_GB", en_1_len, en_1_src, en_1_cck);
@@ -379,7 +384,7 @@ int main(int argc, char **argv)
   icu_coll_sort("de", de_1_len, de_1_src, de_1_cck);
   icu_coll_sort("de_AT", de_1_len, de_1_src, de_1_cck);
   icu_coll_sort("de_DE", de_1_len, de_1_src, de_1_cck);
-#endif
+
   return 0;
 };
 
