@@ -6,6 +6,7 @@
 var pzQuery = function()
 {
     this.simpleQuery = '';
+    this.singleFilter = null;
     this.advTerms = new Array();
     this.filterHash = new Array();
     this.numTerms = 0;
@@ -16,7 +17,7 @@ pzQuery.prototype = {
     {
         this.simpleQuery = '';
         this.advTerms = new Array();
-        this.filterHash = new Array();
+        this.simpleFilter = null;
         this.numTerms = 0;
     },
     addTerm: function(field, value)
@@ -64,7 +65,7 @@ pzQuery.prototype = {
         // TODO escape the characters
         var ccl = '';
         if( this.simpleQuery != '')
-            ccl = this.simpleQuery;
+            ccl = '"'+this.simpleQuery+'"';
         for(var i = 0; i < this.advTerms.length; i++)
         {
             if (ccl != '') ccl = ccl + ' and ';
@@ -75,8 +76,9 @@ pzQuery.prototype = {
     addFilter: function(name, value)
     {
         var filter = {"name": name, "id": value };
-        this.filterHash[this.filterNums] = filter;
-        this.filterNums++;
+        this.filterHash[this.filterHash.length] = filter;
+        this.filterNums++
+        return  this.filterHash.length - 1;
     },
     setFilter: function(name, value)
     {
@@ -94,7 +96,7 @@ pzQuery.prototype = {
     },
     removeFilter: function(index)
     {
-        this.filterHash.splice(index, 1);
+        delete this.filterHash[index];
         this.filterNums--;
     },
     clearFilter: function()
@@ -105,13 +107,19 @@ pzQuery.prototype = {
     getFilterString: function()
     {
         //temporary
-        if(!this.filterNums)
+        if( this.singleFilter != null ) {
+            return 'pz:id='+this.singleFilter.id;
+        } 
+        else if( this.filterNums <= 0 ) {
             return undefined;
-        var filter = '';
+        }
+
+        var filter = 'pz:id=';
         for(var i = 0; i < this.filterHash.length; i++)
         {
-            if (filter != '') filter = filter + '|';            
-            filter += 'pz:id='+this.filterHash[i].id; 
+            if (this.filterHash[i] == undefined) continue;
+            if (filter > 'pz:id=') filter = filter + '|';            
+            filter += this.filterHash[i].id; 
         }
         return filter;
     },
@@ -119,5 +127,17 @@ pzQuery.prototype = {
     {
         var simpleLength = this.simpleQuery != '' ? 1 : 0;
         return this.advTerms.length + simpleLength;
+    },
+    clearSingleFilter: function()
+    {
+        this.singleFilter = null;
+    },
+    setSingleFilter: function(name, value)
+    {
+        this.singleFilter = {"name": name, "id": value };
+    },
+    getSingleFilterName: function()
+    {
+        return this.singleFilter.name;
     }
 }
