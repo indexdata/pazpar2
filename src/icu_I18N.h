@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.7 2007-05-07 12:52:04 marc Exp $
+/* $Id: icu_I18N.h,v 1.8 2007-05-09 14:01:21 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -35,8 +35,17 @@
 //#include <unicode/ucnv.h>     /* C   Converter API    */
 //#include <unicode/ustring.h>  /* some more string fcns*/
 //#include <unicode/uloc.h>
-//#include <unicode/ubrk.h>
+#include <unicode/ubrk.h>
 //#include <unicode/unistr.h>
+
+
+// forward declarations
+//struct UBreakIterator;
+
+
+
+
+// declared structs and functions
 
 
 int icu_check_status (UErrorCode status);
@@ -90,6 +99,44 @@ UErrorCode icu_sortkey8_from_utf16(UCollator *coll,
                                    struct icu_buf_utf8 * dest8, 
                                    struct icu_buf_utf16 * src16,
                                    UErrorCode * status);
+
+struct icu_tokenizer
+{
+  char locale[16];
+  char action;
+  UBreakIterator* bi;
+  struct icu_buf_utf16 * buf16;
+  int32_t token_count;
+  int32_t token_id;
+  int32_t token_start;
+  int32_t token_end;
+  // keep always invariant
+  // 0 <= token_start 
+  //   <= token_end 
+  //   <= buf16->utf16_len
+  // and invariant
+  // 0 <= token_id <= token_count
+};
+
+struct icu_tokenizer * icu_tokenizer_create(const char *locale, char action,
+                                            UErrorCode *status);
+
+void icu_tokenizer_destroy(struct icu_tokenizer * tokenizer);
+
+int icu_tokenizer_attach(struct icu_tokenizer * tokenizer, 
+                         struct icu_buf_utf16 * src16, UErrorCode *status);
+
+int32_t icu_tokenizer_next_token(struct icu_tokenizer * tokenizer, 
+                                 struct icu_buf_utf16 * tkn16, 
+                                 UErrorCode *status);
+
+int32_t icu_tokenizer_token_id(struct icu_tokenizer * tokenizer);
+int32_t icu_tokenizer_token_start(struct icu_tokenizer * tokenizer);
+int32_t icu_tokenizer_token_end(struct icu_tokenizer * tokenizer);
+int32_t icu_tokenizer_token_length(struct icu_tokenizer * tokenizer);
+int32_t icu_tokenizer_token_count(struct icu_tokenizer * tokenizer);
+
+
 
 
 #endif // HAVE_ICU
