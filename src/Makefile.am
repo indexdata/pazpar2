@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.19 2007-04-30 13:56:52 marc Exp $
+# $Id: Makefile.am,v 1.20 2007-05-10 11:46:09 adam Exp $
 
 bin_PROGRAMS = pazpar2
 check_PROGRAMS = test_config \
@@ -28,6 +28,7 @@ libpazpar2_a_SOURCES = config.c config.h eventl.c eventl.h \
         normalize7bit.h normalize7bit.c \
 	util.c util.h zeerex.c zeerex.h database.c database.h \
 	settings.h settings.c sel_thread.c sel_thread.h getaddrinfo.c \
+	charsets.c charsets.h \
 	client.c client.h connection.c connection.h host.h parameters.h
 
 pazpar2_SOURCES = pazpar2.c

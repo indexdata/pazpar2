@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.26 2007-04-27 12:17:04 marc Exp $
+/* $Id: logic.c,v 1.27 2007-05-10 11:46:09 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -511,6 +511,7 @@ static void session_init_databases_fun(void *context, struct database *db)
 
     new->database = db;
     new->yaz_marc = 0;
+    new->pct = pp2_charset_create();
     new->map = 0;
     new->settings 
         = nmem_malloc(se->session_nmem, sizeof(struct settings *) * num);
@@ -534,6 +535,8 @@ static void session_database_destroy(struct session_database *sdb)
         xsltFreeStylesheet(m->stylesheet);
     if (sdb->yaz_marc)
         yaz_marc_destroy(sdb->yaz_marc);
+    if (sdb->pct)
+        pp2_charset_destroy(sdb->pct);
 }
 
 // Initialize session_database list -- this represents this session's view

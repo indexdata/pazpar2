@@ -1,4 +1,4 @@
-/* $Id: relevance.h,v 1.6 2007-05-10 11:46:09 adam Exp $
+/* $Id: charsets.h,v 1.1 2007-05-10 11:46:09 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,24 +19,23 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-#ifndef RELEVANCE_H
-#define RELEVANCE_H
+/** \file charsets.h
+    \brief Pazpar2 Character set facilities
+*/
 
-#include <yaz/yaz-util.h>
-#include "charsets.h"
+#ifndef PAZPAR_CHARSETS_H
+#define PAZPAR_CHARSETS_H
 
-struct relevance;
-struct record_cluster;
-struct reclist;
+typedef struct pp2_charset_s *pp2_charset_t;
+typedef struct pp2_relevance_token_s *pp2_relevance_token_t;
 
-struct relevance *relevance_create(pp2_charset_t pct,
-                                   NMEM nmem, const char **terms, int numrecs);
-void relevance_newrec(struct relevance *r, struct record_cluster *cluster);
-void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
-        const char *words, int multiplier);
-void relevance_donerecord(struct relevance *r, struct record_cluster *cluster);
+pp2_charset_t pp2_charset_create(void);
+void pp2_charset_destroy(pp2_charset_t pct);
 
-void relevance_prepare_read(struct relevance *rel, struct reclist *rec);
+pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
+                                             const char *buf);
+void pp2_relevance_token_destroy(pp2_relevance_token_t prt);
+const char *pp2_relevance_token_next(pp2_relevance_token_t prt);
 
 #endif
 

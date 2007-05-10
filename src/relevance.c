@@ -1,4 +1,4 @@
-/* $Id: relevance.c,v 1.12 2007-05-10 09:26:19 adam Exp $
+/* $Id: relevance.c,v 1.13 2007-05-10 11:46:09 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -40,14 +40,15 @@ struct relevance
     struct word_trie *wt;
 #else
     struct word_entry *entries;
+    pp2_charset_t pct;
 #endif
     NMEM nmem;
 };
 
+#if USE_TRIE
 #define raw_char(c) (((c) >= 'a' && (c) <= 'z') ? (c) - 'a' : -1)
 
 
-#if USE_TRIE
 // We use this data structure to recognize terms in input records,
 // and map them to record term vectors for counting.
 struct word_trie
@@ -137,6 +138,36 @@ static struct word_trie *build_word_trie(NMEM nmem, const char **terms)
     return res;
 }
 
+
+// FIXME. The definition of a word is crude here.. should support
+// some form of localization mechanism?
+void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
+                          const char *words, int multiplier)
+{
+    while (*words)
+    {
+        char c;
+        int res;
+        int skipped = 0;
+        while (*words && (c = raw_char(tolower(*words))) < 0)
+            words++;
+        if (!*words)
+            break;
+        res = word_trie_match(r->wt, words, &skipped);
+        if (res)
+        {
+            words += skipped;
+            cluster->term_frequency_vec[res] += multiplier;
+        }
+        else
+        {
+            while (*words && (c = raw_char(tolower(*words))) >= 0)
+                words++;
+        }
+        cluster->term_frequency_vec[0]++;
+    }
+}
+
 #else
 
 struct word_entry {
@@ -169,46 +200,51 @@ int word_entry_match(struct word_entry *entries, const char *norm_str)
     return 0;
 }
 
-static struct word_entry *build_word_entries(NMEM nmem,
+static struct word_entry *build_word_entries(pp2_charset_t pct, NMEM nmem,
                                              const char **terms)
 {
     int termno = 1; /* >0 signals THERE is an entry */
     struct word_entry *entries = 0;
     const char **p = terms;
-    WRBUF norm_str = wrbuf_alloc();
 
     for (; *p; p++)
     {
-        const char *cp = *p;
-        for (; *cp; cp++)
-        {
-            int c = raw_char(*cp);
-            if (c >= 0)
-                wrbuf_putc(norm_str, c);
-            else
-            {
-                if (wrbuf_len(norm_str))
-                    add_word_entry(nmem, &entries, wrbuf_cstr(norm_str),
-                                   termno);
-                wrbuf_rewind(norm_str);
-            }
-        }
-        if (wrbuf_len(norm_str))
-            add_word_entry(nmem, &entries, wrbuf_cstr(norm_str), termno);
-        wrbuf_rewind(norm_str);
+        pp2_relevance_token_t prt = pp2_relevance_tokenize(pct, *p);
+        const char *norm_str;
+
+        while ((norm_str = pp2_relevance_token_next(prt)))
+            add_word_entry(nmem, &entries, norm_str, termno);
+
+        pp2_relevance_token_destroy(prt);
+
         termno++;
     }
-    wrbuf_destroy(norm_str);
     return entries;
 }
 
-
+void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
+        const char *words, int multiplier)
+{
+    pp2_relevance_token_t prt = pp2_relevance_tokenize(r->pct, words);
+    
+    const char *norm_str;
+    
+    while ((norm_str = pp2_relevance_token_next(prt)))
+    {
+        int res = word_entry_match(r->entries, norm_str);
+        if (res)
+            cluster->term_frequency_vec[res] += multiplier;
+        cluster->term_frequency_vec[0]++;
+    }
+    pp2_relevance_token_destroy(prt);
+}
 
 #endif
 
 
 
-struct relevance *relevance_create(NMEM nmem, const char **terms, int numrecs)
+struct relevance *relevance_create(pp2_charset_t pct,
+                                   NMEM nmem, const char **terms, int numrecs)
 {
     struct relevance *res = nmem_malloc(nmem, sizeof(struct relevance));
     const char **p;
@@ -223,7 +259,8 @@ struct relevance *relevance_create(NMEM nmem, const char **terms, int numrecs)
 #if USE_TRIE
     res->wt = build_word_trie(nmem, terms);
 #else
-    res->entries = build_word_entries(nmem, terms);
+    res->entries = build_word_entries(pct, nmem, terms);
+    res->pct = pct;
 #endif
     return res;
 }
@@ -237,55 +274,6 @@ void relevance_newrec(struct relevance *r, struct record_cluster *rec)
     }
 }
 
-
-// FIXME. The definition of a word is crude here.. should support
-// some form of localization mechanism?
-void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
-        const char *words, int multiplier)
-{
-#if !USE_TRIE
-    WRBUF norm_str = wrbuf_alloc();
-#endif
-    while (*words)
-    {
-        char c;
-        int res;
-#if USE_TRIE
-        int skipped = 0;
-#endif
-        while (*words && (c = raw_char(tolower(*words))) < 0)
-            words++;
-        if (!*words)
-            return;
-#if USE_TRIE
-        res = word_trie_match(r->wt, words, &skipped);
-        if (res)
-        {
-            words += skipped;
-            cluster->term_frequency_vec[res] += multiplier;
-        }
-        else
-        {
-            while (*words && (c = raw_char(tolower(*words))) >= 0)
-                words++;
-        }
-#else
-        while (*words && (c = raw_char(tolower(*words))) >= 0)
-        {
-            wrbuf_putc(norm_str, c);
-            words++;
-        }
-        res = word_entry_match(r->entries, wrbuf_cstr(norm_str));
-        if (res)
-            cluster->term_frequency_vec[res] += multiplier;
-        wrbuf_rewind(norm_str);
-#endif
-        cluster->term_frequency_vec[0]++;
-    }
-#if !USE_TRIE
-    wrbuf_destroy(norm_str);
-#endif
-}
 
 void relevance_donerecord(struct relevance *r, struct record_cluster *cluster)
 {
