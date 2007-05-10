@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.8 2007-05-09 14:01:21 marc Exp $
+/* $Id: icu_I18N.c,v 1.9 2007-05-10 11:53:47 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -418,6 +418,7 @@ struct icu_tokenizer * icu_tokenizer_create(const char *locale, char action,
     tokenizer->action = action;
     tokenizer->bi = 0;
     tokenizer->buf16 = 0;
+    tokenizer->token_count = 0;
     tokenizer->token_id = 0;
     tokenizer->token_start = 0;
     tokenizer->token_end = 0;
@@ -486,7 +487,12 @@ int icu_tokenizer_attach(struct icu_tokenizer * tokenizer,
     if (!tokenizer || !tokenizer->bi || !src16)
         return 0;
 
+
     tokenizer->buf16 = src16;
+    tokenizer->token_count = 0;
+    tokenizer->token_id = 0;
+    tokenizer->token_start = 0;
+    tokenizer->token_end = 0;
 
     ubrk_setText(tokenizer->bi, src16->utf16, src16->utf16_len, status);
     
@@ -503,6 +509,7 @@ int32_t icu_tokenizer_next_token(struct icu_tokenizer * tokenizer,
 {
     int32_t tkn_start = 0;
     int32_t tkn_end = 0;
+    int32_t tkn_len = 0;
     
 
     if (!tokenizer || !tokenizer->bi
@@ -530,23 +537,32 @@ int32_t icu_tokenizer_next_token(struct icu_tokenizer * tokenizer,
     // copy out if everything is well
     if(U_FAILURE(*status))
         return 0;        
-        
-    tokenizer->token_id++;
+    
+    // everything OK, now update internal state
+    tkn_len = tkn_end - tkn_start;
+
+    if (0 < tkn_len){
+        tokenizer->token_count++;
+        tokenizer->token_id++;
+    } else {
+        tokenizer->token_id = 0;    
+    }
     tokenizer->token_start = tkn_start;
     tokenizer->token_end = tkn_end;
     
+
     // copying into token buffer if it exists 
     if (tkn16){
-        if (tkn16->utf16_cap < (tkn_end - tkn_start))
-            icu_buf_utf16_resize(tkn16, (size_t) (tkn_end - tkn_start) * 2);
+        if (tkn16->utf16_cap < tkn_len)
+            icu_buf_utf16_resize(tkn16, (size_t) tkn_len * 2);
 
         u_strncpy(tkn16->utf16, &(tokenizer->buf16->utf16)[tkn_start], 
-                  (tkn_end - tkn_start));
+                  tkn_len);
 
-        tkn16->utf16_len = (tkn_end - tkn_start);
+        tkn16->utf16_len = tkn_len;
     }
 
-    return (tokenizer->token_end - tokenizer->token_start);
+    return tkn_len;
 }
 
 

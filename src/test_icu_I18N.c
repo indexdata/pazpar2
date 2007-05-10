@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.12 2007-05-10 10:29:58 marc Exp $
+/* $Id: test_icu_I18N.c,v 1.13 2007-05-10 11:53:47 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -400,13 +400,14 @@ void test_icu_I18N_tokenizer(int argc, char **argv)
 
 
 
-    const char * fr_str 
-        = "O Romeo, Romeo! wherefore art thou Romeo?";
+    const char * da_str 
+        = "Blåbærtærte. Denne kage stammer fra Finland. "
+        "Den er med blåbær, men alle sommerens forskellige bær kan bruges.";
     
-    YAZ_CHECK(test_icu_tokenizer("fr", 's', fr_str, 2));
-    YAZ_CHECK(test_icu_tokenizer("fr", 'l', fr_str, 7));
-    YAZ_CHECK(test_icu_tokenizer("fr", 'w', fr_str, 16));
-    YAZ_CHECK(test_icu_tokenizer("fr", 'c', fr_str, 41));
+    YAZ_CHECK(test_icu_tokenizer("da", 's', da_str, 3));
+    YAZ_CHECK(test_icu_tokenizer("dar", 'l', da_str, 17));
+    YAZ_CHECK(test_icu_tokenizer("da", 'w', da_str, 37));
+    YAZ_CHECK(test_icu_tokenizer("da", 'c', da_str, 110));
 
 }
 
