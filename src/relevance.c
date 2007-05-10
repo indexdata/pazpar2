@@ -1,4 +1,4 @@
-/* $Id: relevance.c,v 1.11 2007-05-01 05:04:53 quinn Exp $
+/* $Id: relevance.c,v 1.12 2007-05-10 09:26:19 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -30,14 +30,24 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "relevance.h"
 #include "pazpar2.h"
 
+#define USE_TRIE 0
+
 struct relevance
 {
     int *doc_frequency_vec;
     int vec_len;
+#if USE_TRIE
     struct word_trie *wt;
+#else
+    struct word_entry *entries;
+#endif
     NMEM nmem;
 };
 
+#define raw_char(c) (((c) >= 'a' && (c) <= 'z') ? (c) - 'a' : -1)
+
+
+#if USE_TRIE
 // We use this data structure to recognize terms in input records,
 // and map them to record term vectors for counting.
 struct word_trie
@@ -87,8 +97,6 @@ static void word_trie_addterm(NMEM nmem, struct word_trie *n, const char *term, 
     }
 }
 
-#define raw_char(c) (((c) >= 'a' && (c) <= 'z') ? (c) - 'a' : -1)
-
 static int word_trie_match(struct word_trie *t, const char *word, int *skipped)
 {
     int c = raw_char(tolower(*word));
@@ -129,6 +137,77 @@ static struct word_trie *build_word_trie(NMEM nmem, const char **terms)
     return res;
 }
 
+#else
+
+struct word_entry {
+    const char *norm_str;
+    int termno;
+    struct word_entry *next;
+};
+
+static void add_word_entry(NMEM nmem, 
+                           struct word_entry **entries,
+                           const char *norm_str,
+                           int term_no)
+{
+    struct word_entry *ne = nmem_malloc(nmem, sizeof(*ne));
+    ne->norm_str = nmem_strdup(nmem, norm_str);
+    ne->termno = term_no;
+    
+    ne->next = *entries;
+    *entries = ne;
+}
+
+
+int word_entry_match(struct word_entry *entries, const char *norm_str)
+{
+    for (; entries; entries = entries->next)
+    {
+        if (!strcmp(norm_str, entries->norm_str))
+            return entries->termno;
+    }
+    return 0;
+}
+
+static struct word_entry *build_word_entries(NMEM nmem,
+                                             const char **terms)
+{
+    int termno = 1; /* >0 signals THERE is an entry */
+    struct word_entry *entries = 0;
+    const char **p = terms;
+    WRBUF norm_str = wrbuf_alloc();
+
+    for (; *p; p++)
+    {
+        const char *cp = *p;
+        for (; *cp; cp++)
+        {
+            int c = raw_char(*cp);
+            if (c >= 0)
+                wrbuf_putc(norm_str, c);
+            else
+            {
+                if (wrbuf_len(norm_str))
+                    add_word_entry(nmem, &entries, wrbuf_cstr(norm_str),
+                                   termno);
+                wrbuf_rewind(norm_str);
+            }
+        }
+        if (wrbuf_len(norm_str))
+            add_word_entry(nmem, &entries, wrbuf_cstr(norm_str), termno);
+        wrbuf_rewind(norm_str);
+        termno++;
+    }
+    wrbuf_destroy(norm_str);
+    return entries;
+}
+
+
+
+#endif
+
+
+
 struct relevance *relevance_create(NMEM nmem, const char **terms, int numrecs)
 {
     struct relevance *res = nmem_malloc(nmem, sizeof(struct relevance));
@@ -141,7 +220,11 @@ struct relevance *relevance_create(NMEM nmem, const char **terms, int numrecs)
     res->doc_frequency_vec = nmem_malloc(nmem, res->vec_len * sizeof(int));
     memset(res->doc_frequency_vec, 0, res->vec_len * sizeof(int));
     res->nmem = nmem;
+#if USE_TRIE
     res->wt = build_word_trie(nmem, terms);
+#else
+    res->entries = build_word_entries(nmem, terms);
+#endif
     return res;
 }
 
@@ -160,17 +243,23 @@ void relevance_newrec(struct relevance *r, struct record_cluster *rec)
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
         const char *words, int multiplier)
 {
+#if !USE_TRIE
+    WRBUF norm_str = wrbuf_alloc();
+#endif
     while (*words)
     {
         char c;
         int res;
-        int skipped;
+#if USE_TRIE
+        int skipped = 0;
+#endif
         while (*words && (c = raw_char(tolower(*words))) < 0)
             words++;
         if (!*words)
             return;
-        skipped = 0;
-        if ((res = word_trie_match(r->wt, words, &skipped)))
+#if USE_TRIE
+        res = word_trie_match(r->wt, words, &skipped);
+        if (res)
         {
             words += skipped;
             cluster->term_frequency_vec[res] += multiplier;
@@ -180,8 +269,22 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
             while (*words && (c = raw_char(tolower(*words))) >= 0)
                 words++;
         }
+#else
+        while (*words && (c = raw_char(tolower(*words))) >= 0)
+        {
+            wrbuf_putc(norm_str, c);
+            words++;
+        }
+        res = word_entry_match(r->entries, wrbuf_cstr(norm_str));
+        if (res)
+            cluster->term_frequency_vec[res] += multiplier;
+        wrbuf_rewind(norm_str);
+#endif
         cluster->term_frequency_vec[0]++;
     }
+#if !USE_TRIE
+    wrbuf_destroy(norm_str);
+#endif
 }
 
 void relevance_donerecord(struct relevance *r, struct record_cluster *cluster)
