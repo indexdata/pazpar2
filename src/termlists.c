@@ -1,4 +1,4 @@
-/* $Id: termlists.c,v 1.7 2007-04-10 08:48:56 adam Exp $
+/* $Id: termlists.c,v 1.8 2007-05-10 09:24:32 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -147,10 +147,10 @@ void termlist_insert(struct termlist *tl, const char *term)
     if (strlen(term) > 255)
         return;
     strcpy(buf, term);
-    for (cp = buf + strlen(buf) - 1; cp > buf &&
-            (*cp == ',' || *cp == '.' || *cp == ' ' || *cp == '-'); cp--)
-        *cp = '\0';
-
+    /* chop right */
+    for (cp = buf + strlen(buf); cp != buf && strchr(",. -", cp[-1]); cp--)
+        cp[-1] = '\0';
+    
     bucket = hash((unsigned char *)buf) & tl->hashmask;
     for (p = &tl->hashtable[bucket]; *p; p = &(*p)->next)
     {
