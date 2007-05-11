@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.17 2007-05-11 22:23:33 marc Exp $
+/* $Id: test_icu_I18N.c,v 1.18 2007-05-11 22:59:36 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -267,13 +267,16 @@ int test_icu_sortmap(const char * locale, int src_list_len,
         printf("\n"); 
     }
   
-  
+
+
+    for( i = 0; i < src_list_len; i++)
+        free(list[i]);
+        
+    
     ucol_close(coll);
 
     icu_buf_utf8_destroy(buf8);
     icu_buf_utf16_destroy(buf16);
-
-
 
     return success;  
 }
