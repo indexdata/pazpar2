@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.14 2007-05-10 12:11:42 marc Exp $
+/* $Id: test_icu_I18N.c,v 1.15 2007-05-11 06:48:32 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -352,10 +352,8 @@ void test_icu_I18N_transliterator(int argc, char **argv)
              "   Pattern         Description\n"
              "   Ranges          [a-z]  The lower case letters a through z\n"
              "   Named Chars     [abc123] The six characters a,b,c,1,2 and 3\n"
-             "   String          [abc{def}] chars a, b and c, and string 'def'\n
-"
-             "   Categories      [\\p{Letter}] Perl General Category 'Letter'.\n
-"
+             "   String          [abc{def}] chars a, b and c, and string 'def'\n"
+             "   Categories      [\\p{Letter}] Perl General Category 'Letter'.\n"
              "   Categories      [:Letter:] Posix General Category 'Letter'.\n"
              "\n"
              "   Combination     Example\n"
@@ -382,14 +380,10 @@ void test_icu_I18N_transliterator(int argc, char **argv)
              "   Lower; [:^Letter:] Remove (word tokenization)\n"
              "   [:^Number:] Remove (numeric tokenization)\n"
              "   [:^Katagana:] Remove (remove everything except Katagana)\n"
-             "   Lower;[[:WhiteSpace:][:Punctuation:]] Remove (word tokenization
-)\n"
-             "   NFD; [:Nonspacing Mark:] Remove; NFC   (removes accents from ch
-aracters)\n"
-             "   [A-Za-z]; Lower(); Latin-Katakana; Katakana-Hiragana (transform
-s latin and katagana to hiragana)\n"
-             "   [[:separator:][:start punctuation:][:initial punctuation:]] Rem
-ove \n"
+             "   Lower;[[:WhiteSpace:][:Punctuation:]] Remove (word tokenization)\n"
+             "   NFD; [:Nonspacing Mark:] Remove; NFC   (removes accents from characters)\n"
+             "   [A-Za-z]; Lower(); Latin-Katakana; Katakana-Hiragana (transforms latin and katagana to hiragana)\n"
+             "   [[:separator:][:start punctuation:][:initial punctuation:]] Remove \n"
              "\n"
              "see http://icu.sourceforge.net/userguide/Transform.html\n"
              "    http://www.unicode.org/Public/UNIDATA/UCD.html\n"

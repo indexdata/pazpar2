@@ -1,4 +1,4 @@
-/* $Id: reclists.c,v 1.16 2007-05-01 05:02:54 quinn Exp $
+/* $Id: reclists.c,v 1.17 2007-05-11 06:48:32 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -41,6 +41,7 @@ struct reclist_bucket
     struct reclist_bucket *next;
 };
 
+#if 0
 struct reclist_sortparms * 
 reclist_sortparms_insert_field_id(NMEM nmem,
                          struct reclist_sortparms **sortparms,
@@ -67,8 +68,9 @@ reclist_sortparms_insert_field_id(NMEM nmem,
 
     return *sortparms;
 };
+#endif
 
-
+#if 0
 struct reclist_sortparms * 
 reclist_sortparms_insert(NMEM nmem, 
                          struct reclist_sortparms **sortparms,
@@ -90,7 +92,7 @@ reclist_sortparms_insert(NMEM nmem,
                                              service->sortkeys[field_id].type,
                                              increasing);
 };
-
+#endif
 
 
 struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms)
