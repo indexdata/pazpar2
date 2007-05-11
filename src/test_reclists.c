@@ -1,4 +1,4 @@
-/* $Id: test_reclists.c,v 1.1 2007-04-25 13:09:17 marc Exp $
+/* $Id: test_reclists.c,v 1.2 2007-05-11 08:41:07 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -35,6 +35,8 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 //#include "record.h"
 #include "reclists.h"
 
+
+#if 0
 
 void test_reclist_sortparms(int argc, char **argv)
 {
@@ -75,13 +77,15 @@ void test_reclist_sortparms(int argc, char **argv)
 }
 
 
+#endif 
+
 int main(int argc, char **argv)
 {
     YAZ_CHECK_INIT(argc, argv); 
     YAZ_CHECK_LOG(); 
 
 
-    test_reclist_sortparms(argc, argv); 
+    //test_reclist_sortparms(argc, argv); 
 
     
     YAZ_CHECK_TERM;
