@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.8 2007-05-09 14:01:21 marc Exp $
+/* $Id: icu_I18N.h,v 1.9 2007-05-11 08:27:29 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -37,6 +37,8 @@
 //#include <unicode/uloc.h>
 #include <unicode/ubrk.h>
 //#include <unicode/unistr.h>
+#include <unicode/utrans.h>
+
 
 
 // forward declarations
