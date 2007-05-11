@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.25 2007-04-23 21:05:23 adam Exp $
+/* $Id: database.c,v 1.26 2007-05-11 16:57:42 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -235,6 +235,8 @@ int session_grep_databases(struct session *se, struct database_criterion *cl,
     for (p = se->databases; p; p = p->next)
     {
         if (p->settings && p->settings[PZ_ALLOW] && *p->settings[PZ_ALLOW]->value == '0')
+            continue;
+        if (!p->settings[PZ_NAME])
             continue;
         if (database_match_criteria(p->settings, cl))
         {
