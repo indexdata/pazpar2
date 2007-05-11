@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.10 2007-05-11 09:35:50 marc Exp $
+/* $Id: icu_I18N.c,v 1.11 2007-05-11 10:38:42 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -111,6 +111,22 @@ struct icu_buf_utf16 * icu_buf_utf16_resize(struct icu_buf_utf16 * buf16,
 };
 
 
+struct icu_buf_utf16 * icu_buf_utf16_copy(struct icu_buf_utf16 * dest16,
+                                          struct icu_buf_utf16 * src16)
+{
+    if(!dest16 || !src16
+       || dest16 == src16)
+        return 0;
+
+    if (dest16->utf16_cap < src16->utf16_len)
+        icu_buf_utf16_resize(dest16, src16->utf16_len * 2);
+
+    u_strncpy(dest16->utf16, src16->utf16, src16->utf16_len);
+
+    return dest16;
+};
+
+
 void icu_buf_utf16_destroy(struct icu_buf_utf16 * buf16)
 {
     if (buf16){
@@ -169,6 +185,23 @@ struct icu_buf_utf8 * icu_buf_utf8_resize(struct icu_buf_utf8 * buf8,
     }
 
     return buf8;
+};
+
+
+struct icu_buf_utf8 * icu_buf_utf8_copy(struct icu_buf_utf8 * dest8,
+                                          struct icu_buf_utf8 * src8)
+{
+    if(!dest8 || !src8
+       || dest8 == src8)
+        return 0;
+    
+
+    if (dest8->utf8_cap < src8->utf8_len)
+        icu_buf_utf8_resize(dest8, src8->utf8_len * 2);
+
+    strncpy((char*) dest8->utf8, (char*) src8->utf8, src8->utf8_len);
+
+    return dest8;
 };
 
 
@@ -404,7 +437,7 @@ UErrorCode icu_sortkey8_from_utf16(UCollator *coll,
         dest8->utf8_len = 0;
     }
 
-    return *status;
+    return sortkey_len;
 };
 
 
@@ -461,13 +494,8 @@ struct icu_tokenizer * icu_tokenizer_create(const char *locale, char action,
     if (U_SUCCESS(*status))
         return tokenizer;
 
-    // reestablishing zero error state
-    //if (*status == U_USING_DEFAULT_WARNING)
-    //    *status = U_ZERO_ERROR;
- 
-
     // freeing if failed
-    free(tokenizer);
+    icu_tokenizer_destroy(tokenizer);
     return 0;
 };
 
@@ -611,8 +639,9 @@ struct icu_normalizer * icu_normalizer_create(const char *rules, char action,
 
     normalizer->action = action;
     normalizer->trans = 0;
+    normalizer->rules16 =  icu_buf_utf16_create(0);
     icu_utf16_from_utf8_cstr(normalizer->rules16, rules, status);
-
+     
     switch(normalizer->action) {    
     case 'f':
         normalizer->trans
@@ -622,14 +651,14 @@ struct icu_normalizer * icu_normalizer_create(const char *rules, char action,
                            0, 0, 
                            normalizer->parse_error, status);
         break;
-/*     case 'b': */
-/*         normalizer->trans */
-/*             = utrans_openU(normalizer->rules16->utf16,  */
-/*                            normalizer->rules16->utf16_len, */
-/*                            UTRANS_BACKWARD, */
-/*                            0, 0,  */
-/*                            normalizer->parse_error, status); */
-/*         break; */
+    case 'r':
+        normalizer->trans
+            = utrans_openU(normalizer->rules16->utf16,
+                           normalizer->rules16->utf16_len,
+                           UTRANS_REVERSE ,
+                           0, 0,
+                           normalizer->parse_error, status);
+        break;
     default:
         *status = U_UNSUPPORTED_ERROR;
         return 0;
@@ -640,18 +669,47 @@ struct icu_normalizer * icu_normalizer_create(const char *rules, char action,
         return normalizer;
 
     // freeing if failed
-    free(normalizer);
+    icu_normalizer_destroy(normalizer);
     return 0;
 };
 
 
 void icu_normalizer_destroy(struct icu_normalizer * normalizer){
     if (normalizer) {
+        if (normalizer->rules16) 
+            icu_buf_utf16_destroy(normalizer->rules16);
         if (normalizer->trans)
-            utrans_close (normalizer->trans);
+            utrans_close(normalizer->trans);
         free(normalizer);
     }
 };
+
+
+
+int icu_normalizer_normalize(struct icu_normalizer * normalizer,
+                             struct icu_buf_utf16 * dest16,
+                             struct icu_buf_utf16 * src16,
+                             UErrorCode *status)
+{
+    if (!normalizer || !normalizer->trans || !src16 || !dest16)
+        return 0;
+
+    if (!icu_buf_utf16_copy(dest16, src16))
+        return 0;
+
+    utrans_transUChars (normalizer->trans, 
+                        dest16->utf16, &(dest16->utf16_len),
+                        dest16->utf16_cap,
+                        0, &(src16->utf16_len), status);
+
+    if (U_FAILURE(*status)){
+        dest16->utf16[0] = (UChar) 0;
+        dest16->utf16_len = 0;
+    }
+    
+    return dest16->utf16_len;
+}
+
 
 
 

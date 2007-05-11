@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.10 2007-05-11 09:35:50 marc Exp $
+/* $Id: icu_I18N.h,v 1.11 2007-05-11 10:38:42 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -62,6 +62,8 @@ struct icu_buf_utf16
 struct icu_buf_utf16 * icu_buf_utf16_create(size_t capacity);
 struct icu_buf_utf16 * icu_buf_utf16_resize(struct icu_buf_utf16 * buf16,
                                             size_t capacity);
+struct icu_buf_utf16 * icu_buf_utf16_copy(struct icu_buf_utf16 * dest16,
+                                          struct icu_buf_utf16 * src16);
 void icu_buf_utf16_destroy(struct icu_buf_utf16 * buf16);
 
 
@@ -153,6 +155,13 @@ struct icu_normalizer * icu_normalizer_create(const char *rules, char action,
 
 
 void icu_normalizer_destroy(struct icu_normalizer * normalizer);
+
+int icu_normalizer_normalize(struct icu_normalizer * normalizer,
+                             struct icu_buf_utf16 * dest16,
+                             struct icu_buf_utf16 * src16,
+                             UErrorCode *status);
+
+
 
 
 #endif // HAVE_ICU
