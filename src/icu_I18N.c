@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.9 2007-05-10 11:53:47 marc Exp $
+/* $Id: icu_I18N.c,v 1.10 2007-05-11 09:35:50 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -330,6 +330,7 @@ int icu_utf16_casemap(struct icu_buf_utf16 * dest16,
 
     // check for buffer overflow, resize and retry
     if (*status == U_BUFFER_OVERFLOW_ERROR
+        && dest16 != src16        // do not resize if in-place conversion 
         //|| dest16_len > dest16->utf16_cap
         ){
         icu_buf_utf16_resize(dest16, dest16_len * 2);
@@ -472,7 +473,6 @@ struct icu_tokenizer * icu_tokenizer_create(const char *locale, char action,
 
 void icu_tokenizer_destroy(struct icu_tokenizer * tokenizer)
 {
-
     if (tokenizer) {
         if (tokenizer->bi)
             ubrk_close(tokenizer->bi);
@@ -591,6 +591,67 @@ int32_t icu_tokenizer_token_count(struct icu_tokenizer * tokenizer)
     return tokenizer->token_count;
 };
 
+
+
+//struct icu_normalizer
+//{
+//  char action;
+//  struct icu_buf_utf16 * rules16;
+//  UParseError parse_error[256];
+//  UTransliterator * trans;
+//};
+
+
+struct icu_normalizer * icu_normalizer_create(const char *rules, char action,
+                                              UErrorCode *status)
+{
+
+    struct icu_normalizer * normalizer
+        = (struct icu_normalizer *) malloc(sizeof(struct icu_normalizer));
+
+    normalizer->action = action;
+    normalizer->trans = 0;
+    icu_utf16_from_utf8_cstr(normalizer->rules16, rules, status);
+
+    switch(normalizer->action) {    
+    case 'f':
+        normalizer->trans
+            = utrans_openU(normalizer->rules16->utf16, 
+                           normalizer->rules16->utf16_len,
+                           UTRANS_FORWARD,
+                           0, 0, 
+                           normalizer->parse_error, status);
+        break;
+/*     case 'b': */
+/*         normalizer->trans */
+/*             = utrans_openU(normalizer->rules16->utf16,  */
+/*                            normalizer->rules16->utf16_len, */
+/*                            UTRANS_BACKWARD, */
+/*                            0, 0,  */
+/*                            normalizer->parse_error, status); */
+/*         break; */
+    default:
+        *status = U_UNSUPPORTED_ERROR;
+        return 0;
+        break;
+    }
+    
+    if (U_SUCCESS(*status))
+        return normalizer;
+
+    // freeing if failed
+    free(normalizer);
+    return 0;
+};
+
+
+void icu_normalizer_destroy(struct icu_normalizer * normalizer){
+    if (normalizer) {
+        if (normalizer->trans)
+            utrans_close (normalizer->trans);
+        free(normalizer);
+    }
+};
 
 
 

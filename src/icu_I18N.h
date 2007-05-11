@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.9 2007-05-11 08:27:29 marc Exp $
+/* $Id: icu_I18N.h,v 1.10 2007-05-11 09:35:50 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -139,6 +139,20 @@ int32_t icu_tokenizer_token_length(struct icu_tokenizer * tokenizer);
 int32_t icu_tokenizer_token_count(struct icu_tokenizer * tokenizer);
 
 
+
+struct icu_normalizer
+{
+  char action;
+  struct icu_buf_utf16 * rules16;
+  UParseError parse_error[256];
+  UTransliterator * trans;
+};
+
+struct icu_normalizer * icu_normalizer_create(const char *rules, char action,
+                                              UErrorCode *status);
+
+
+void icu_normalizer_destroy(struct icu_normalizer * normalizer);
 
 
 #endif // HAVE_ICU
