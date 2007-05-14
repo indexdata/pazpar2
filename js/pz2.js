@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.12 2007-05-02 19:32:13 jakub Exp $
+** $Id: pz2.js,v 1.13 2007-05-14 12:57:43 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -45,6 +45,7 @@ var pz2 = function(paramArray) {
     __myself.termlistCallback = paramArray.onterm || null;
     __myself.recordCallback = paramArray.onrecord || null;
     __myself.bytargetCallback = paramArray.onbytarget || null;
+    __myself.resetCallback = paramArray.onreset || null;
 
     // termlist keys
     __myself.termKeys = paramArray.termlist || "subject";
@@ -125,12 +126,28 @@ var pz2 = function(paramArray) {
         __myself.init();
 };
 pz2.prototype = {
+    reset: function ()
+    {
+        __myself.sessionID = null;
+        __myself.initStatusOK = false;
+        __myself.pingStatusOK = false;
+        __myself.searchStatusOK = false;
+
+        clearTimeout(__myself.statTimer);
+        clearTimeout(__myself.showTimer);
+        clearTimeout(__myself.termTimer);
+        clearTimeout(__myself.bytargetTimer);
+
+        __myself.resetCallback();
+    },
     init: function ( sessionId ) 
-    {   
+    {
+        __myself.reset();
         if ( sessionId != undefined ) {
             __myself.initStatusOK = true;
             __myself.sessionID = sessionId;
             __myself.ping();
+
         } else {
             $.get( __myself.pz2String,
                 { "command": "init" },
