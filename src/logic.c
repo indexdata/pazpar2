@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.27 2007-05-10 11:46:09 adam Exp $
+/* $Id: logic.c,v 1.28 2007-05-14 08:01:39 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -209,7 +209,6 @@ xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec)
     for (m = sdb->map; m; m = m->next){
         xmlDoc *new = 0;
 
-#if 1
         {
             xmlNodePtr root = 0;
             new = xsltApplyStylesheet(m->stylesheet, rdoc, 0);
@@ -223,23 +222,6 @@ xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec)
             return 0;
         }
         }
-#else
-        // do it another way to detect transformation errors right now
-        // but does not seem to work either!
-        {
-            xsltTransformContextPtr ctxt;
-            ctxt = xsltNewTransformContext(m->stylesheet, rdoc);
-            new = xsltApplyStylesheetUser(m->stylesheet, rdoc, 0, 0, 0, ctxt);
-            if ((ctxt->state == XSLT_STATE_ERROR) ||
-                (ctxt->state == XSLT_STATE_STOPPED)){
-                yaz_log(YLOG_WARN, "XSLT transformation failed from %s",
-                        cl->database->database->url);
-                xmlFreeDoc(new);
-                xmlFreeDoc(rdoc);
-                return 0;
-            }
-        }
-#endif      
    
         xmlFreeDoc(rdoc);
         rdoc = new;
@@ -905,20 +887,9 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
         return 0;
     }
 
-#if 0
-    record = nmem_malloc(se->nmem, sizeof(struct record));
-    record->next = 0;
-    record->client = cl;
-    record->metadata = nmem_malloc(se->nmem,
-            sizeof(struct record_metadata*) * service->num_metadata);
-    memset(record->metadata, 0, 
-           sizeof(struct record_metadata*) * service->num_metadata);
-
-#else
     record = record_create(se->nmem, 
                            service->num_metadata, service->num_sortkeys);
     record_assign_client(record, cl);
-#endif
 
     mergekey_norm = (xmlChar *) nmem_strdup(se->nmem, (char*) mergekey);
     xmlFree(mergekey);
@@ -967,29 +938,6 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             if (!type || !value)
                 continue;
 
-#if 0
-            // First, find out what field we're looking at
-            for (md_field_id = 0; md_field_id < service->num_metadata;
-                 md_field_id++)
-                if (!strcmp((const char *) type,
-                            service->metadata[md_field_id].name))
-                {
-                    ser_md = &service->metadata[md_field_id];
-                    if (ser_md->sortkey_offset >= 0){
-                        sk_field_id = ser_md->sortkey_offset;
-                        ser_sk = &service->sortkeys[sk_field_id];
-                    }
-                    break;
-                }
-
-            if (!ser_md)
-            {
-                yaz_log(YLOG_WARN, 
-                        "Ignoring unknown metadata element: %s", type);
-                continue;
-            }
-
-#else
             md_field_id 
                 = conf_service_metadata_field_id(service, (const char *) type);
             if (md_field_id < 0)
@@ -1005,7 +953,6 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 sk_field_id = ser_md->sortkey_offset;
                 ser_sk = &service->sortkeys[sk_field_id];
             }
-#endif
 
             // Find out where we are putting it - based on merge or not
             if (ser_md->merge == Metadata_merge_no)
@@ -1014,29 +961,15 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 wheretoput = &cluster->metadata[md_field_id];
             
             // create new record_metadata
-#if 0
-            rec_md = nmem_malloc(se->nmem, sizeof(struct record_metadata));
-            rec_md->next = 0;
-#else
             rec_md = record_metadata_create(se->nmem);
-#endif
 
             // and polulate with data:
             // type based charmapping decisions follow here
             if (ser_md->type == Metadata_type_generic)
             {
 
-#if 0
-                char *p, *pe;
-                for (p = (char *) value; *p && isspace(*p); p++)
-                    ;
-                for (pe = p + strlen(p) - 1;
-                        pe > p && strchr(" ,/.:([", *pe); pe--)
-                    *pe = '\0';
-#else
                 char * p = (char *) value;
                 p = normalize7bit_generic(p, " ,/.:([");
-#endif
                 
                 rec_md->data.text = nmem_strdup(se->nmem, p);
 
@@ -1052,19 +985,6 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                         "Unknown type in metadata element %s", type);
                 continue;
             }
-
-#if 0  // this test does not belong here.
-       // the condition is enforced in the constructor 
-       // inside conf_metadata_assign()
-       // and will _never_ occur
-            if (ser_md->type == Metadata_type_year 
-                && ser_md->merge != Metadata_merge_range)
-            {
-                yaz_log(YLOG_WARN, "Only range merging supported for years");
-                continue;
-            }
-# endif
-
 
             // and polulate with data:
             // assign cluster or record based on merge action
@@ -1109,14 +1029,6 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             }
             else if (ser_md->merge == Metadata_merge_range)
             {
-
-#if 0           // this assert does not belong here.
-                // the condition is enforced in the constructor 
-                // inside conf_metadata_assign()
-                // and will _never_ occur
-                assert(ser_md->type == Metadata_type_year);
-#endif
-
                 if (!*wheretoput)
                 {
                     *wheretoput = rec_md;
@@ -1143,15 +1055,6 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 }
 #endif
             }
-
-#if 0      // this else is only entered when Metadata_merge_no
-           // but I believe then we should _not_ pollute with log messages 
-            else
-
-                yaz_log(YLOG_WARN,
-                        "Don't know how to merge on element name %s",
-                        ser_md->name);
-#endif
 
 
             // ranking of _all_ fields enabled ... 
