@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.11 2007-05-11 10:38:42 marc Exp $
+/* $Id: icu_I18N.h,v 1.12 2007-05-14 13:51:24 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -41,14 +41,7 @@
 
 
 
-// forward declarations
-//struct UBreakIterator;
-
-
-
-
 // declared structs and functions
-
 
 int icu_check_status (UErrorCode status);
 
@@ -161,6 +154,73 @@ int icu_normalizer_normalize(struct icu_normalizer * normalizer,
                              struct icu_buf_utf16 * src16,
                              UErrorCode *status);
 
+
+#if 0
+struct icu_token
+{
+  int32_t token_id;
+  uint8_t * display8;
+  uint8_t * norm8;
+  uint8_t * sort8;
+}
+#endif
+
+enum icu_chain_step_type {
+    ICU_chain_step_type_none,      // 
+    ICU_chain_step_type_display,   // convert to utf8 display format 
+    ICU_chain_step_type_norm,      // convert to utf8 norm format 
+    ICU_chain_step_type_sort,      // convert to utf8 sort format 
+    ICU_chain_step_type_charmap,   // apply utf16 charmap
+    ICU_chain_step_type_normalize, // apply utf16 normalization
+    ICU_chain_step_type_tokenize   // apply utf16 tokenization 
+};
+
+
+
+struct icu_chain_step
+{
+  // type and action object
+  enum icu_chain_step_type type;
+  union {
+    struct icu_normalizer * normalizer;
+    struct icu_tokenizer * tokenizer;  
+  } u;
+  // temprary post-action utf16 buffer
+  struct icu_buf_utf16 * buf16;  
+  struct icu_chain_step * next;
+};
+
+
+struct icu_chain
+{
+  uint8_t identifier[128];
+  uint8_t locale[16];
+
+  // number of tokens returned so far
+  int32_t token_count;
+
+  // utf8 output buffers
+  struct icu_buf_utf8 * display8;
+  struct icu_buf_utf8 * norm8;
+  struct icu_buf_utf8 * sort8;
+
+  // utf16 source buffer
+  struct icu_buf_utf16 * src16;
+
+  // linked list of chain steps
+  struct icu_chain_step * steps;
+};
+
+struct icu_chain * icu_chain_create(const uint8_t * identifier, 
+                                    const uint8_t * locale);
+
+void icu_chain_destroy(struct icu_chain * chain);
+
+struct icu_chain_step * icu_chain_append_step(struct icu_chain * chain,
+                                              enum icu_chain_step_type type,
+                                              const uint8_t * rule);
+
+void icu_chain_step_destroy(struct icu_chain_step * step);
 
 
 

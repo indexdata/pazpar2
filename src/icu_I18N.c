@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.11 2007-05-11 10:38:42 marc Exp $
+/* $Id: icu_I18N.c,v 1.12 2007-05-14 13:51:24 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -710,6 +710,77 @@ int icu_normalizer_normalize(struct icu_normalizer * normalizer,
     return dest16->utf16_len;
 }
 
+
+
+struct icu_chain * icu_chain_create(const uint8_t * identifier, 
+                                    const uint8_t * locale)
+{
+
+    struct icu_chain * chain 
+        = (struct icu_chain *) malloc(sizeof(struct icu_chain));
+
+    strncpy((char *) chain->identifier, (const char *) identifier, 128);
+    chain->identifier[128 - 1] = '\0';
+    strncpy((char *) chain->locale, (const char *) locale, 16);    
+    chain->locale[16 - 1] = '\0';
+
+    chain->token_count = 0;
+
+    chain->display8 = icu_buf_utf8_create(0);
+    chain->norm8 = icu_buf_utf8_create(0);
+    chain->sort8 = icu_buf_utf8_create(0);
+
+    chain->src16 = icu_buf_utf16_create(0);
+
+    chain->steps = 0;
+
+    return chain;
+};
+
+void icu_chain_destroy(struct icu_chain * chain)
+{
+    icu_buf_utf8_destroy(chain->display8);
+    icu_buf_utf8_destroy(chain->norm8);
+    icu_buf_utf8_destroy(chain->sort8);
+
+    icu_buf_utf16_destroy(chain->src16);
+
+    icu_chain_step_destroy(chain->steps);
+};
+
+struct icu_chain_step * icu_chain_append_step(struct icu_chain * chain,
+                                         enum icu_chain_step_type type,
+                                         const uint8_t * rule)
+{
+    
+    struct icu_chain_step * step 
+        = (struct icu_chain_step *) malloc(sizeof(struct icu_chain_step));
+
+
+
+    return step;
+};
+
+void icu_chain_step_destroy(struct icu_chain_step * step){
+    
+    if (!step)
+        return;
+    
+    if (step->next)
+        icu_chain_step_destroy(step->next);
+
+    // destroy last living icu_chain-step
+    switch(step->type) {
+    case ICU_chain_step_type_normalize:
+        icu_normalizer_destroy(step->u.normalizer);
+        break;
+    case ICU_chain_step_type_tokenize:
+        icu_tokenizer_destroy(step->u.tokenizer);
+        break;
+    default:
+        break;
+    }
+};
 
 
 
