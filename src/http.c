@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.30 2007-04-23 08:56:52 marc Exp $
+/* $Id: http.c,v 1.31 2007-05-15 08:51:49 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1034,9 +1034,15 @@ void http_init(const char *addr)
         abort();
 
     if (bind(l, (struct sockaddr *) &myaddr, sizeof myaddr) < 0) 
+    {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "bind");
+        exit(1);
+    }
     if (listen(l, SOMAXCONN) < 0) 
+    {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "listen");
+        exit(1);
+    }
 
     c = iochan_create(l, http_accept, EVENT_INPUT | EVENT_EXCEPT);
     pazpar2_add_channel(c);
