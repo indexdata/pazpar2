@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: test_http.sh,v 1.1 2007-05-15 15:50:48 adam Exp $
+# $Id: test_http.sh,v 1.2 2007-05-15 21:28:36 adam Exp $
 #
 # Regression test using pazpar2 against yaz-ztest
 # Reads Pazpar2 URLs from test_http_urls
@@ -29,7 +29,8 @@ $yt -l test_http_ztest.log tcp:@:9764 &
 YTPID=$!
 
 # Fire yp pazpar2
-../src/pazpar2 -f ${srcdir}/test_http.cfg -t ${srcdir}/test_http.xml >test_http_pp2.log 2>&1 &
+rm -f pazpar2.log
+../src/pazpar2 -l pazpar2.log -f ${srcdir}/test_http.cfg -t ${srcdir}/test_http.xml >extra_pazpar2.log 2>&1 &
 PP2PID=$!
 
 # Give both programs room to start properly..
@@ -64,7 +65,7 @@ for f in `cat ${srcdir}/test_http_urls`; do
 	rm -f $OUT2
 	wget -q -O $OUT2 $f
 	if diff $OUT1 $OUT2 >$DIFF; then
-	    echo "Test $testno: OK"
+	    :
 	else
 	    echo "Test $testno: Failed. See $OUT1, $OUT2 and $DIFF"
 	    code=1
