@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.3 2007-05-10 11:46:09 adam Exp $
+/* $Id: client.c,v 1.4 2007-05-15 08:52:35 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -622,10 +622,8 @@ int client_parse_query(struct client *cl, const char *query)
     }
     wrbuf_rewind(se->wrbuf);
     ccl_pquery(se->wrbuf, cn);
-    wrbuf_putc(se->wrbuf, '\0');
-    if (cl->pquery)
-        xfree(cl->pquery);
-    cl->pquery = xstrdup(wrbuf_buf(se->wrbuf));
+    xfree(cl->pquery);
+    cl->pquery = xstrdup(wrbuf_cstr(se->wrbuf));
 
     if (!se->relevance)
     {
