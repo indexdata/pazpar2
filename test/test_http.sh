@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: test_http.sh,v 1.2 2007-05-15 21:28:36 adam Exp $
+# $Id: test_http.sh,v 1.3 2007-05-15 21:40:57 adam Exp $
 #
 # Regression test using pazpar2 against yaz-ztest
 # Reads Pazpar2 URLs from test_http_urls
@@ -13,13 +13,13 @@ srcdir=${srcdir:-"."}
 
 # Find a suitable yaz-ztest
 yt=""
-for d in /usr/bin /usr/local/bin ../../yaz/ztest; do
+for d in /usr/bin /usr/local/bin ${srcdir}/../../yaz/ztest ${srcdir}/../../../yaz/ztest; do
     yt=${d}/yaz-ztest
     if test -x ${yt}; then
 	break
     fi
 done
-if test -z "${yt}"; then
+if test ! -x "${yt}"; then
     echo "No yaz-ztest found. Skipping"
     exit 0
 fi
@@ -59,8 +59,8 @@ fi
 testno=1
 for f in `cat ${srcdir}/test_http_urls`; do
     OUT1=${srcdir}/test_http_${testno}.res
-    OUT2=${srcdir}/test_http_${testno}.log
-    DIFF=${srcdir}/test_http_${testno}.dif
+    OUT2=test_http_${testno}.log
+    DIFF=test_http_${testno}.dif
     if test -f $OUT1; then
 	rm -f $OUT2
 	wget -q -O $OUT2 $f

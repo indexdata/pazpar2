@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.1 2007-05-15 15:50:48 adam Exp $
+# $Id: Makefile.am,v 1.2 2007-05-15 21:40:57 adam Exp $
 
 check_SCRIPTS = test_http.sh
 
@@ -8,8 +8,8 @@ TESTS = $(check_SCRIPTS)
 
 MAINTAINERCLEANFILES = Makefile.in
 
-CONFIG_CLEAN_FILES=*.log
+CONFIG_CLEAN_FILES=*.log *.dif
 
 dist-hook:
-	cp test_http_*.res $(distdir)
+	cp ${srcdir}/test_http_*.res $(distdir)
 
