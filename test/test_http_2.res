@@ -1,0 +1,13 @@
+<stat><activeclients>0</activeclients>
+<hits>0</hits>
+<records>0</records>
+<clients>0</clients>
+<unconnected>0</unconnected>
+<connecting>0</connecting>
+<initializing>0</initializing>
+<searching>0</searching>
+<presenting>0</presenting>
+<idle>0</idle>
+<failed>0</failed>
+<error>0</error>
+</stat>

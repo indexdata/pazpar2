@@ -1,0 +1,1 @@
+<ping><status>OK</status></ping>

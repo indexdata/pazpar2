@@ -1,0 +1,4 @@
+*.log
+*.dif
+Makefile
+Makefile.in

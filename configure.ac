@@ -31,6 +31,7 @@ AC_CONFIG_FILES([
 	Doxyfile
 	Makefile
 	src/Makefile
+	test/Makefile
 	doc/Makefile
 	doc/local.ent
 	doc/common/Makefile

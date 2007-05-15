@@ -1,7 +1,7 @@
-<settings target="localhost:9999/Default">
+<settings target="localhost:9764/Default">
 
   <!-- Used by test test_http.sh -->
-  <!-- $Id: test_http.xml,v 1.1 2007-05-15 08:56:03 adam Exp $ -->
+  <!-- $Id: test_http.xml,v 1.1 2007-05-15 15:50:48 adam Exp $ -->
 
   <set name="pz:name" value="Local Test"/>
 
