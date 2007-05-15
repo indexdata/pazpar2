@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.12 2007-05-14 13:51:24 marc Exp $
+/* $Id: icu_I18N.h,v 1.13 2007-05-15 15:11:42 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -186,9 +186,22 @@ struct icu_chain_step
     struct icu_tokenizer * tokenizer;  
   } u;
   // temprary post-action utf16 buffer
-  struct icu_buf_utf16 * buf16;  
-  struct icu_chain_step * next;
+  struct icu_buf_utf16 * src16;  
+  struct icu_chain_step * previous;
+  int end_of_tokens;
 };
+
+
+struct icu_chain;
+
+struct icu_chain_step * icu_chain_step_create(struct icu_chain * chain,
+                                              enum icu_chain_step_type type,
+                                              const uint8_t * rule,
+                                              struct icu_buf_utf16 * src16,
+                                              UErrorCode *status);
+
+
+void icu_chain_step_destroy(struct icu_chain_step * step);
 
 
 struct icu_chain
@@ -216,11 +229,11 @@ struct icu_chain * icu_chain_create(const uint8_t * identifier,
 
 void icu_chain_destroy(struct icu_chain * chain);
 
-struct icu_chain_step * icu_chain_append_step(struct icu_chain * chain,
+struct icu_chain_step * icu_chain_insert_step(struct icu_chain * chain,
                                               enum icu_chain_step_type type,
-                                              const uint8_t * rule);
+                                              const uint8_t * rule,
+                                              UErrorCode *status);
 
-void icu_chain_step_destroy(struct icu_chain_step * step);
 
 
 

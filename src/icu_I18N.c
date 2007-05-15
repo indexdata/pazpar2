@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.12 2007-05-14 13:51:24 marc Exp $
+/* $Id: icu_I18N.c,v 1.13 2007-05-15 15:11:42 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -712,7 +712,87 @@ int icu_normalizer_normalize(struct icu_normalizer * normalizer,
 
 
 
-struct icu_chain * icu_chain_create(const uint8_t * identifier, 
+
+struct icu_chain_step * icu_chain_step_create(struct icu_chain * chain,
+                                              enum icu_chain_step_type type,
+                                              const uint8_t * rule,
+                                              struct icu_buf_utf16 * src16,
+                                              UErrorCode *status)
+{
+    struct icu_chain_step * step = 0;
+    
+    if(!chain || !type || !rule)
+        return 0;
+
+    step = (struct icu_chain_step *) malloc(sizeof(struct icu_chain_step));
+
+    // create auxilary objects
+    switch(step->type) {
+    case ICU_chain_step_type_display:
+        break;
+    case ICU_chain_step_type_norm:
+        break;
+    case ICU_chain_step_type_sort:
+        break;
+    case ICU_chain_step_type_charmap:
+        break;
+    case ICU_chain_step_type_normalize:
+        step->u.normalizer = icu_normalizer_create((char *) rule, 'f', status);
+        break;
+    case ICU_chain_step_type_tokenize:
+        step->u.tokenizer = icu_tokenizer_create((char *) chain->locale, 
+                                                 (char) rule[0], status);
+        break;
+    default:
+        break;
+    }
+
+    if (src16)
+        step->src16 = src16;
+
+
+    return step;
+};
+
+
+void icu_chain_step_destroy(struct icu_chain_step * step){
+    
+    if (!step)
+        return;
+    
+    if (step->previous)
+        icu_chain_step_destroy(step->previous);
+
+    if (step->src16)
+        icu_buf_utf16_destroy(step->src16);
+
+    // destroy last living icu_chain_step
+
+    switch(step->type) {
+    case ICU_chain_step_type_display:
+        break;
+    case ICU_chain_step_type_norm:
+        break;
+    case ICU_chain_step_type_sort:
+        break;
+    case ICU_chain_step_type_charmap:
+        break;
+    case ICU_chain_step_type_normalize:
+        icu_normalizer_destroy(step->u.normalizer);
+        break;
+    case ICU_chain_step_type_tokenize:
+        icu_tokenizer_destroy(step->u.tokenizer);
+        break;
+    default:
+        break;
+    }
+
+
+};
+
+
+
+struct icu_chain * icu_chain_create(const uint8_t * identifier,
                                     const uint8_t * locale)
 {
 
@@ -737,6 +817,7 @@ struct icu_chain * icu_chain_create(const uint8_t * identifier,
     return chain;
 };
 
+
 void icu_chain_destroy(struct icu_chain * chain)
 {
     icu_buf_utf8_destroy(chain->display8);
@@ -748,40 +829,47 @@ void icu_chain_destroy(struct icu_chain * chain)
     icu_chain_step_destroy(chain->steps);
 };
 
-struct icu_chain_step * icu_chain_append_step(struct icu_chain * chain,
-                                         enum icu_chain_step_type type,
-                                         const uint8_t * rule)
-{
+
+struct icu_chain_step * icu_chain_insert_step(struct icu_chain * chain,
+                                              enum icu_chain_step_type type,
+                                              const uint8_t * rule,
+                                              UErrorCode *status)
+{    
+    struct icu_chain_step * step = 0;
+    struct icu_buf_utf16 * src16 = 0;
+
+    if (!chain || !type || !rule)
+        return 0;
+
+    //if(chain->steps && chain->steps->src16)  
     
-    struct icu_chain_step * step 
-        = (struct icu_chain_step *) malloc(sizeof(struct icu_chain_step));
-
-
-
-    return step;
-};
-
-void icu_chain_step_destroy(struct icu_chain_step * step){
-    
-    if (!step)
-        return;
-    
-    if (step->next)
-        icu_chain_step_destroy(step->next);
-
-    // destroy last living icu_chain-step
+    // assign utf16 src buffers as needed
     switch(step->type) {
+    case ICU_chain_step_type_display:
+        break;
+    case ICU_chain_step_type_norm:
+        break;
+    case ICU_chain_step_type_sort:
+        break;
+    case ICU_chain_step_type_charmap:
+        break;
     case ICU_chain_step_type_normalize:
-        icu_normalizer_destroy(step->u.normalizer);
         break;
     case ICU_chain_step_type_tokenize:
-        icu_tokenizer_destroy(step->u.tokenizer);
         break;
     default:
         break;
     }
-};
 
+    // create actual chain step with this buffer
+    // leave zero for implicit buffer creation
+    step = icu_chain_step_create(chain, type, rule, src16, status);
+
+    step->previous = chain->steps;
+    chain->steps = step;
+
+    return step;
+};
 
 
 #endif // HAVE_ICU    
