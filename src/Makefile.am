@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.20 2007-05-10 11:46:09 adam Exp $
+# $Id: Makefile.am,v 1.21 2007-05-15 08:56:03 adam Exp $
 
 bin_PROGRAMS = pazpar2
 check_PROGRAMS = test_config \
@@ -8,8 +8,11 @@ check_PROGRAMS = test_config \
       test_relevance \
       test_sel_thread
 
+check_SCRIPTS = test_http.sh
 
-TESTS = $(check_PROGRAMS)
+EXTRA_DIST = test_http.xml test_http.cfg $(check_SCRIPTS)
+
+TESTS = $(check_PROGRAMS) $(check_SCRIPTS)
 
 noinst_LIBRARIES = libpazpar2.a
 

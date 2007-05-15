@@ -1,0 +1,28 @@
+<settings target="localhost:9999/Default">
+
+  <!-- Used by test test_http.sh -->
+  <!-- $Id: test_http.xml,v 1.1 2007-05-15 08:56:03 adam Exp $ -->
+
+  <set name="pz:name" value="Local Test"/>
+
+  <!-- mapping for unqualified search -->
+  <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
+
+  <!-- field-specific mappings -->
+  <set name="pz:cclmap:ti" value="u=4 s=al"/>
+  <set name="pz:cclmap:su" value="u=21 s=al"/>
+  <set name="pz:cclmap:isbn" value="u=7"/>
+  <set name="pz:cclmap:issn" value="u=8"/>
+  <set name="pz:cclmap:date" value="u=30 r=r"/>
+
+  <!-- Retrieval settings -->
+
+  <set name="pz:requestsyntax" value="marc21"/>
+  <!-- <set name="pz:elements" value="F"/> NOT YET IMPLEMENTED -->
+
+  <!-- Result normalization settings -->
+
+  <set name="pz:nativesyntax" value="iso2709"/>
+  <set name="pz:xslt" value="../etc/marc21.xsl"/>
+
+</settings>
