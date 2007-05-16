@@ -1,7 +1,17 @@
 /*
-** $Id: client.js,v 1.22 2007-04-30 14:28:09 quinn Exp $
+** $Id: client.js,v 1.23 2007-05-16 07:53:32 jakub Exp $
 ** MasterKey - pazpar2's javascript client .
 */
+
+// check for pz2.js
+if(typeof window.pz2 == "undefined"){
+    throw new Error("Client requires pz2.js library.");
+}
+
+// check for jQuery
+if(typeof window.jQuery == "undefined"){
+    throw new Error("Client requires requires jQuery library");
+}
 
 /* start with creating pz2 object and passing it event handlers*/
 var my_paz = new pz2({ 
@@ -61,8 +71,6 @@ function onFormSubmitEventHandler() {
     fireSearch();
     drawBreadcrumb();
     $('div.motd').empty();
-    $('div.content').show();
-    $("div.leftbar").show();
     return false;
 }
 
@@ -76,6 +84,8 @@ function my_errorhandler(err)
     switch (err.message) 
     {
         case 'QUERY': alert("Your query was not understood. Please rephrase."); break;
+        case 'NOTARGETS': alert("You are not allowed to search any targets."); break;
+        case 'HTTP': alert("There were problems with the connection."); break;
         default: alert(err.message);
     }
 }
@@ -86,6 +96,9 @@ function my_errorhandler(err)
 */
 function my_onshow(data)
 {
+    $('div.content').show();
+    $("div.leftbar").show();
+    
     var recsBody = $('div.records');
     recsBody.empty();
     
