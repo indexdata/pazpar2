@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.14 2007-05-16 07:53:32 jakub Exp $
+** $Id: pz2.js,v 1.15 2007-05-16 20:54:17 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -518,7 +518,7 @@ pzHttpRequest.prototype =
         this.request.onreadystatechange = function () {
             context._handleResponse();
         }
-        this.request.send();
+        this.request.send(null);
     },
 
     _handleResponse: function ()
