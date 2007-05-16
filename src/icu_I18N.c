@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.14 2007-05-16 12:39:49 marc Exp $
+/* $Id: icu_I18N.c,v 1.15 2007-05-16 19:12:00 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -122,6 +122,7 @@ struct icu_buf_utf16 * icu_buf_utf16_copy(struct icu_buf_utf16 * dest16,
         icu_buf_utf16_resize(dest16, src16->utf16_len * 2);
 
     u_strncpy(dest16->utf16, src16->utf16, src16->utf16_len);
+    dest16->utf16_len = src16->utf16_len;
 
     return dest16;
 };

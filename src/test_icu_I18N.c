@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.19 2007-05-16 12:39:49 marc Exp $
+/* $Id: test_icu_I18N.c,v 1.20 2007-05-16 19:12:00 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -320,36 +320,28 @@ void test_icu_I18N_sortmap(int argc, char **argv)
 
 
 
-int test_icu_transliterator(const char * rules8cstr,
+int test_icu_normalizer(const char * rules8cstr,
                             const char * src8cstr,
                             const char * chk8cstr)
 {
     int success = 0;
     
     UErrorCode status = U_ZERO_ERROR;
-    UParseError parse_error[256];
 
-
-    struct icu_buf_utf16 * rules16 = icu_buf_utf16_create(0);
     struct icu_buf_utf16 * src16 = icu_buf_utf16_create(0);
     struct icu_buf_utf16 * dest16 = icu_buf_utf16_create(0);
     struct icu_buf_utf8 * dest8 = icu_buf_utf8_create(0);
-
-    icu_utf16_from_utf8_cstr(rules16, rules8cstr, &status);
+    struct icu_normalizer * normalizer
+        = icu_normalizer_create(rules8cstr, 'f', &status);
     icu_check_status(status);
-
+    
     icu_utf16_from_utf8_cstr(src16, src8cstr, &status);
     icu_check_status(status);
 
-
-    struct icu_normalizer * normalizer
-        = icu_normalizer_create((const char *) rules16, 'f', &status);
+    icu_normalizer_normalize(normalizer, dest16, src16, &status);
     icu_check_status(status);
 
-    icu_normalizer_normalize(normalizer, dest16, src16, &status);
-
-
-    icu_utf16_to_utf8(dest8, src16, &status);
+    icu_utf16_to_utf8(dest8, dest16, &status);
     icu_check_status(status);
 
 
@@ -358,7 +350,7 @@ int test_icu_transliterator(const char * rules8cstr,
         success = 1;
     else {
         success = 0;
-        printf("Normaliozation;");
+        printf("Normalization\n");
         printf("Rules:      '%s'\n", rules8cstr);
         printf("Input:      '%s'\n", src8cstr);
         printf("Normalized: '%s'\n", dest8->utf8);
@@ -367,164 +359,48 @@ int test_icu_transliterator(const char * rules8cstr,
     
 
     icu_normalizer_destroy(normalizer);
-    icu_buf_utf16_destroy(rules16);
     icu_buf_utf16_destroy(src16);
     icu_buf_utf16_destroy(dest16);
     icu_buf_utf8_destroy(dest8);
 
     return success;
-}
-
-
-#if 0
-
-int test_icu_transliterator(const char * rules8cstr,
-                            const char * src8cstr,
-                            const char * chk8cstr)
-{
-    int success = 0;
-    
-    UErrorCode status = U_ZERO_ERROR;
-    UParseError parse_error[256];
-
-
-    struct icu_buf_utf16 * rules16 = icu_buf_utf16_create(0);
-    struct icu_buf_utf16 * src16 = icu_buf_utf16_create(0);
-    struct icu_buf_utf16 * dest16 = icu_buf_utf16_create(0);
-    struct icu_buf_utf8 * dest8 = icu_buf_utf8_create(0);
-
-    icu_utf16_from_utf8_cstr(rules16, rules8cstr, &status);
-    icu_check_status(status);
-
-    icu_utf16_from_utf8_cstr(src16, src8cstr, &status);
-    icu_check_status(status);
-
-    UTransliterator * trans
-        = utrans_openU(rules16->utf16, rules16->utf16_len,
-                       UTRANS_FORWARD,
-                       0, 0, 
-                       parse_error, &status);
-
-    //= utrans_openU(0, 0, UTRANS_FORWARD,
-    //                   rules16->utf16, rules16->utf16_len, 
-    //                   parse_error, &status);
-
-    icu_check_status(status);
-    if(U_FAILURE(status)) {
-      printf("Parse Error: \n line %d offset %d \n '%s'\n", 
-              parse_error->line, parse_error->offset,
-             rules8cstr);
-    }
-
-    utrans_transUChars(trans, src16->utf16, &(src16->utf16_len),
-                        src16->utf16_cap,
-                        0, &(src16->utf16_len), &status);
-
-    icu_utf16_to_utf8(dest8, src16, &status);
-    icu_check_status(status);
-
-
-    if(!strcmp((const char *) dest8->utf8, 
-               (const char *) chk8cstr))
-        success = 1;
-    else {
-        success = 0;
-        printf("Normaliozation;");
-        printf("Rules:      '%s'\n", rules8cstr);
-        printf("Input:      '%s'\n", src8cstr);
-        printf("Normalized: '%s'\n", dest8->utf8);
-        printf("Expected:   '%s'\n", chk8cstr);
-    }
-    
-
-    utrans_close (trans);
-    icu_buf_utf16_destroy(rules16);
-    icu_buf_utf16_destroy(src16);
-    icu_buf_utf16_destroy(dest16);
-    icu_buf_utf8_destroy(dest8);
-
-    return success;
-}
-
-    printf("\n\nUnicode Set Patterns:\n"
-             "   Pattern         Description\n"
-             "   Ranges          [a-z]  The lower case letters a through z\n"
-             "   Named Chars     [abc123] The six characters a,b,c,1,2 and 3\n"
-             "   String          [abc{def}] chars a, b and c, and string 'def'\n"
-             "   Categories      [\\p{Letter}] Perl General Category 'Letter'.\n"
-             "   Categories      [:Letter:] Posix General Category 'Letter'.\n"
-             "\n"
-             "   Combination     Example\n"
-             "   Union           [[:Greek:] [:letter:]]\n"
-             "   Intersection    [[:Greek:] & [:letter:]]\n"
-             "   Set Complement  [[:Greek:] - [:letter:]]\n"
-             "   Complement      [^[:Greek:] [:letter:]]\n"
-             "\n"
-             "see: http://icu.sourceforge.net/userguide/unicodeSet.html\n"
-             "\n"
-             "Examples:\n"
-             "   [:Punctuation:] Any-Remove\n"
-             "   [:Cased-Letter:] Any-Upper\n"
-             "   [:Control:] Any-Remove\n"
-             "   [:Decimal_Number:] Any-Remove\n"
-             "   [:Final_Punctuation:] Any-Remove\n"
-             "   [:Georgian:] Any-Upper\n"
-             "   [:Katakana:] Any-Remove\n"
-             "   [:Arabic:] Any-Remove\n"
-             "   [:Punctuation:] Remove\n"
-             "   [[:Punctuation:]-[.,]] Remove\n"
-             "   [:Line_Separator:] Any-Remove\n"
-             "   [:Math_Symbol:] Any-Remove\n"
-             "   Lower; [:^Letter:] Remove (word tokenization)\n"
-             "   [:^Number:] Remove (numeric tokenization)\n"
-             "   [:^Katagana:] Remove (remove everything except Katagana)\n"
-             "   Lower;[[:WhiteSpace:][:Punctuation:]] Remove (word tokenization)\n"
-             "   NFD; [:Nonspacing Mark:] Remove; NFC   (removes accents from characters)\n"
-             "   [A-Za-z]; Lower(); Latin-Katakana; Katakana-Hiragana (transforms latin and katagana to hiragana)\n"
-             "   [[:separator:][:start punctuation:][:initial punctuation:]] Remove \n"
-             "\n"
-             "see http://icu.sourceforge.net/userguide/Transform.html\n"
-             "    http://www.unicode.org/Public/UNIDATA/UCD.html\n"
-             "    http://icu.sourceforge.net/userguide/Transform.html\n"
-             "    http://icu.sourceforge.net/userguide/TransformRule.html\n"
-             );
-#endif
+};
 
 
 // DO NOT EDIT THIS FILE IF YOUR EDITOR DOES NOT SUPPORT UTF-8
 
-void test_icu_I18N_transliterator(int argc, char **argv)
+void test_icu_I18N_normalizer(int argc, char **argv)
 {
 
-    YAZ_CHECK(test_icu_transliterator("[:Punctuation:] Any-Remove",
-                                      "Don't shoot!",
-                                      "Dont shoot"));
+    YAZ_CHECK(test_icu_normalizer("[:Punctuation:] Any-Remove",
+                                  "Don't shoot!",
+                                  "Dont shoot"));
     
-    YAZ_CHECK(test_icu_transliterator("[:Control:] Any-Remove",
-                                      "Don't\n shoot!",
-                                      "Don't shoot!"));
+    YAZ_CHECK(test_icu_normalizer("[:Control:] Any-Remove",
+                                  "Don't\n shoot!",
+                                  "Don't shoot!"));
 
-    YAZ_CHECK(test_icu_transliterator("[:Decimal_Number:] Any-Remove",
-                                      "This is 4 you!",
-                                      "This is  you!"));
+    YAZ_CHECK(test_icu_normalizer("[:Decimal_Number:] Any-Remove",
+                                  "This is 4 you!",
+                                  "This is  you!"));
 
-    YAZ_CHECK(test_icu_transliterator("Lower; [:^Letter:] Remove",
-                                      "Don't shoot!",
-                                      "dontshoot"));
+    YAZ_CHECK(test_icu_normalizer("Lower; [:^Letter:] Remove",
+                                  "Don't shoot!",
+                                  "dontshoot"));
     
-    YAZ_CHECK(test_icu_transliterator("[:^Number:] Remove",
-                                      "Monday 15th of April",
-                                      "15"));
+    YAZ_CHECK(test_icu_normalizer("[:^Number:] Remove",
+                                  "Monday 15th of April",
+                                  "15"));
 
-    YAZ_CHECK(test_icu_transliterator("Lower;"
-                                      "[[:WhiteSpace:][:Punctuation:]] Remove",
-                                      " word4you? ",
-                                      "word4you"));
+    YAZ_CHECK(test_icu_normalizer("Lower;"
+                                  "[[:WhiteSpace:][:Punctuation:]] Remove",
+                                  " word4you? ",
+                                  "word4you"));
 
 
-    YAZ_CHECK(test_icu_transliterator("NFD; [:Nonspacing Mark:] Remove; NFC",
-                                      "à côté de l'alcôve ovoïde",
-                                      "a cote de l'alcove ovoide"));
+    YAZ_CHECK(test_icu_normalizer("NFD; [:Nonspacing Mark:] Remove; NFC",
+                                  "à côté de l'alcôve ovoïde",
+                                  "a cote de l'alcove ovoide"));
 
 }
 
@@ -566,8 +442,6 @@ int test_icu_tokenizer(const char * locale, char action,
         // converting to UTF8
         icu_utf16_to_utf8(tkn8, tkn16, &status);
 
-        //printf("(%d)'%s' ", icu_tokenizer_token_id(tokenizer), tkn8->utf8);
-        
         //printf("token %d %d %d %d '%s'\n",
         //       
         //       icu_tokenizer_token_start(tokenizer),
@@ -575,8 +449,6 @@ int test_icu_tokenizer(const char * locale, char action,
         //       icu_tokenizer_token_length(tokenizer),
         //       tkn8->utf8);
     }
-    //printf("\nTokens: %d\n", icu_tokenizer_token_count(tokenizer));
-
 
     if (count != icu_tokenizer_token_count(tokenizer)){
         success = 0;
@@ -687,7 +559,7 @@ int main(int argc, char **argv)
     //test_icu_I18N_casemap_failures(argc, argv);
     test_icu_I18N_casemap(argc, argv);
     test_icu_I18N_sortmap(argc, argv);
-    //test_icu_I18N_transliterator(argc, argv);
+    test_icu_I18N_normalizer(argc, argv);
     test_icu_I18N_tokenizer(argc, argv);
     //test_icu_I18N_chain(argc, argv);
 
