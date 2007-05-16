@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: test_http.sh,v 1.5 2007-05-16 09:37:34 adam Exp $
+# $Id: test_http.sh,v 1.6 2007-05-16 13:07:18 adam Exp $
 #
 # Regression test using pazpar2 against z3950.indexdata.com/marc
 # Reads Pazpar2 URLs from test_http_urls
@@ -11,12 +11,15 @@
 # srcdir might be set by make
 srcdir=${srcdir:-"."}
 
+wget=""
+lynx=""
 if test -x /usr/bin/wget; then
-    :
-else
-    echo "wget not found"
-    exit 0
+    wget=/usr/bin/wget
 fi
+if test -x /usr/bin/lynx; then
+    lynx=/usr/bin/lynx
+fi
+
 # Fire up pazpar2
 rm -f pazpar2.log
 ../src/pazpar2 -l pazpar2.log -f ${srcdir}/test_http.cfg -t ${srcdir}/test_http.xml >extra_pazpar2.log 2>&1 &
@@ -50,7 +53,13 @@ for f in `cat ${srcdir}/test_http_urls`; do
 	DIFF=test_http_${testno}.dif
 	if test -f $OUT1; then
 	    rm -f $OUT2
-	    wget -q -O $OUT2 $f
+	    if test -n "${wget}"; then
+		${wget} -q -O $OUT2 $f
+	    elif test -n "${lynx}"; then
+		${lynx} -dump $f >$OUT2
+	    else
+		break
+	    fi
 	    if diff $OUT1 $OUT2 >$DIFF; then
 		:
 	    else
@@ -59,7 +68,7 @@ for f in `cat ${srcdir}/test_http_urls`; do
 	    fi
 	else
 	    echo "Test $testno: Making for the first time"
-	    wget -q -O $OUT1 $f
+	    ${wget} -q -O $OUT1 $f
 	    code=1
 	fi
 	testno=`expr $testno + 1`
