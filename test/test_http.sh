@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: test_http.sh,v 1.4 2007-05-16 08:31:17 adam Exp $
+# $Id: test_http.sh,v 1.5 2007-05-16 09:37:34 adam Exp $
 #
 # Regression test using pazpar2 against z3950.indexdata.com/marc
 # Reads Pazpar2 URLs from test_http_urls
@@ -11,7 +11,13 @@
 # srcdir might be set by make
 srcdir=${srcdir:-"."}
 
-# Fire yp pazpar2
+if test -x /usr/bin/wget; then
+    :
+else
+    echo "wget not found"
+    exit 0
+fi
+# Fire up pazpar2
 rm -f pazpar2.log
 ../src/pazpar2 -l pazpar2.log -f ${srcdir}/test_http.cfg -t ${srcdir}/test_http.xml >extra_pazpar2.log 2>&1 &
 PP2PID=$!
