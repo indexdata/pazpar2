@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.13 2007-05-15 15:11:42 marc Exp $
+/* $Id: icu_I18N.h,v 1.14 2007-05-16 12:39:49 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -186,9 +186,9 @@ struct icu_chain_step
     struct icu_tokenizer * tokenizer;  
   } u;
   // temprary post-action utf16 buffer
-  struct icu_buf_utf16 * src16;  
+  struct icu_buf_utf16 * buf16;  
   struct icu_chain_step * previous;
-  int end_of_tokens;
+  int more_tokens;
 };
 
 
@@ -197,7 +197,7 @@ struct icu_chain;
 struct icu_chain_step * icu_chain_step_create(struct icu_chain * chain,
                                               enum icu_chain_step_type type,
                                               const uint8_t * rule,
-                                              struct icu_buf_utf16 * src16,
+                                              struct icu_buf_utf16 * buf16,
                                               UErrorCode *status);
 
 
@@ -226,13 +226,33 @@ struct icu_chain
 
 struct icu_chain * icu_chain_create(const uint8_t * identifier, 
                                     const uint8_t * locale);
-
 void icu_chain_destroy(struct icu_chain * chain);
 
 struct icu_chain_step * icu_chain_insert_step(struct icu_chain * chain,
                                               enum icu_chain_step_type type,
                                               const uint8_t * rule,
                                               UErrorCode *status);
+
+
+int icu_chain_step_next_token(struct icu_chain * chain,
+                              struct icu_chain_step * step,
+                              UErrorCode *status);
+
+int icu_chain_assign_cstr(struct icu_chain * chain,
+                          const char * src8cstr, 
+                          UErrorCode *status);
+
+int icu_chain_next_token(struct icu_chain * chain,
+                         UErrorCode *status);
+
+int icu_chain_get_token_count(struct icu_chain * chain);
+
+const char * icu_chain_get_display(struct icu_chain * chain);
+
+const char * icu_chain_get_norm(struct icu_chain * chain);
+
+const char * icu_chain_get_sort(struct icu_chain * chain);
+
 
 
 
