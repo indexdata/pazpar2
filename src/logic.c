@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.28 2007-05-14 08:01:39 marc Exp $
+/* $Id: logic.c,v 1.29 2007-05-16 17:16:21 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -559,11 +559,16 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
 {
     struct session_database *sdb = find_session_database(se, dbname);
     struct setting *new = nmem_malloc(se->session_nmem, sizeof(*new));
-    int offset = settings_offset(setting);
+    int offset = settings_offset_cprefix(setting);
 
     if (offset < 0)
     {
         yaz_log(YLOG_WARN, "Unknown setting %s", setting);
+        return;
+    }
+    if (offset == PZ_ID)
+    {
+        yaz_log(YLOG_WARN, "No need to set pz:id setting. Ignoring");
         return;
     }
     new->precedence = 0;

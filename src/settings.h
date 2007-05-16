@@ -1,4 +1,4 @@
-/* $Id: settings.h,v 1.16 2007-04-22 15:07:10 adam Exp $
+/* $Id: settings.h,v 1.17 2007-05-16 17:16:21 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -49,6 +49,7 @@ struct setting
 int settings_num(void);
 void settings_read(const char *path);
 int settings_offset(const char *name);
+int settings_offset_cprefix(const char *name);
 void init_settings(void);
 
 #endif

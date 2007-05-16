@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.20 2007-04-23 09:06:20 marc Exp $
+/* $Id: settings.c,v 1.21 2007-05-16 17:16:21 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -91,7 +91,7 @@ int settings_offset(const char *name)
 
 // Ignores everything after second colon, if present
 // A bit of a hack to support the pz:cclmap: scheme (and more to come?)
-static int settings_offset_cprefix(const char *name)
+int settings_offset_cprefix(const char *name)
 {
     const char *p;
     int maxlen = 100;
