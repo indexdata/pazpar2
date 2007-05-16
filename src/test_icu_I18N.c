@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.20 2007-05-16 19:12:00 marc Exp $
+/* $Id: test_icu_I18N.c,v 1.21 2007-05-16 19:50:01 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -507,9 +507,9 @@ void test_icu_I18N_chain(int argc, char **argv)
 /*     step = icu_chain_insert_step(chain, ICU_chain_step_type_normalize, */
 /*                                  (const uint8_t *) "[:Control:] Any-Remove", */
 /*                                  &status); */
-/*     step = icu_chain_insert_step(chain, ICU_chain_step_type_tokenize, */
-/*                                  (const uint8_t *) "w", */
-/*                                  &status); */
+    step = icu_chain_insert_step(chain, ICU_chain_step_type_tokenize,
+                                 (const uint8_t *) "l",
+                                 &status);
 /*     step = icu_chain_insert_step(chain, ICU_chain_step_type_normalize, */
 /*                                  (const uint8_t *) */
 /*                                  "[[:WhiteSpace:][:Punctuation:]] Any-Remove", */
@@ -517,12 +517,12 @@ void test_icu_I18N_chain(int argc, char **argv)
     step = icu_chain_insert_step(chain, ICU_chain_step_type_display,
                                  (const uint8_t *)"",
                                  &status);
-    step = icu_chain_insert_step(chain, ICU_chain_step_type_normalize,
-                                 (const uint8_t *) "Lower",
-                                 &status);
-    step = icu_chain_insert_step(chain, ICU_chain_step_type_norm,
-                                 (const uint8_t *)"",
-                                 &status);
+/*     step = icu_chain_insert_step(chain, ICU_chain_step_type_normalize, */
+/*                                  (const uint8_t *) "Lower", */
+/*                                  &status); */
+/*     step = icu_chain_insert_step(chain, ICU_chain_step_type_norm, */
+/*                                  (const uint8_t *)"", */
+/*                                  &status); */
 /*     step = icu_chain_insert_step(chain, ICU_chain_step_type_sort, */
 /*                                  (const uint8_t *)"", */
 /*                                  &status); */

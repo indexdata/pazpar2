@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.15 2007-05-16 19:12:00 marc Exp $
+/* $Id: icu_I18N.c,v 1.16 2007-05-16 19:50:01 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -938,9 +938,10 @@ int icu_chain_step_next_token(struct icu_chain * chain,
                                  step->buf16, src16, status);
         break;
     case ICU_chain_step_type_tokenize:
-        // step->more_tokens
-        //       = icu_tokenizer_next_token(step->u.tokenizer,
-        //                               step->buf16, status);
+        icu_tokenizer_attach(step->u.tokenizer, src16, status);
+        step->more_tokens
+            = icu_tokenizer_next_token(step->u.tokenizer,
+                                       step->buf16, status);
         break;
     default:
         return 0;
