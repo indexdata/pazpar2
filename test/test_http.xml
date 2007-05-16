@@ -1,7 +1,7 @@
-<settings target="localhost:9764/Default">
+<settings target="z3950.indexdata.com/marc">
 
   <!-- Used by test test_http.sh -->
-  <!-- $Id: test_http.xml,v 1.1 2007-05-15 15:50:48 adam Exp $ -->
+  <!-- $Id: test_http.xml,v 1.2 2007-05-16 08:31:17 adam Exp $ -->
 
   <set name="pz:name" value="Local Test"/>
 
