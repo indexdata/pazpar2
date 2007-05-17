@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.15 2007-05-16 20:54:17 jakub Exp $
+** $Id: pz2.js,v 1.16 2007-05-17 21:00:09 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -313,7 +313,8 @@ pz2.prototype = {
                     __myself.showCounter++;
 		    var delay = __myself.showTime;
 		    if (__myself.showCounter > __myself.showFastCount)
-			    delay *= 2;
+			    //delay *= 2;
+                            delay += __myself.showCounter * __myself.dumpFactor;
                     if (activeClients > 0)
                         __myself.showTimer = setTimeout("__myself.show()", delay);
                 }
@@ -508,13 +509,18 @@ pzHttpRequest.prototype =
     {
         this.callback = callback;
         
+        var getUrl = this.url;
         var paramArr = new Array();
+
         for ( var key in params ) {
             paramArr.push(key + '=' + escape(params[key]));
         }
 
+        if ( paramArr.length )
+            getUrl += '?' + paramArr.join('&');
+
         var context = this;
-        this.request.open( 'GET', this.url+'?'+paramArr.join('&'), true );
+        this.request.open( 'GET', getUrl, true );
         this.request.onreadystatechange = function () {
             context._handleResponse();
         }
