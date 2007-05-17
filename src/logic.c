@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.29 2007-05-16 17:16:21 quinn Exp $
+/* $Id: logic.c,v 1.30 2007-05-17 22:56:41 jakub Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -566,11 +566,12 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
         yaz_log(YLOG_WARN, "Unknown setting %s", setting);
         return;
     }
-    if (offset == PZ_ID)
+    // Jakub: This breaks the filter setting.
+    /*if (offset == PZ_ID)
     {
         yaz_log(YLOG_WARN, "No need to set pz:id setting. Ignoring");
         return;
-    }
+    }*/
     new->precedence = 0;
     new->target = dbname;
     new->name = setting;
