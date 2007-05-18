@@ -1,0 +1,4 @@
+For the time being example/ (and masterkey/js/ as well, but this will be removed from the repo anyway) requires the pz2.js
+to be symlinked to work. Solutions on its way, (need to talk to Adam).
+
+www$ ln -s ../js/pz2.js example/pz2.js

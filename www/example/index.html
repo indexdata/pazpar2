@@ -1,0 +1,57 @@
+<!-- $Id: index.html,v 1.1 2007-05-18 11:36:39 jakub Exp $ -->
+<html>
+ 
+ <head>
+  <title>Exemplary pazpar2 client [using pz2.js]</title>
+  <style type="text/css"></style>
+  <script type="text/javascript" src="pz2.js"></script>
+  <script type="text/javascript" src="example_client.js"></script>
+ </head>
+ 
+ <body onload="domReady();">
+  
+  <table width="100%" border="0" cellpadding="6" cellspacing="6">
+  
+  <tr>
+   <td width="250" height="100" align="center"><b>Exemplary pazpar2 client [using pz2.js]</b></td>
+   <td>
+    <form id="searchForm" name="search">
+     <b>Search:</b>
+     <input id="query" type="text" size="50"/>
+     <input type="submit" value="Go"/>
+    </form>
+   <td>
+  </tr>
+  
+  <tr>
+   <td width="250" valign="top">
+    <b>TERMLISTS:</b>
+    <br/><br/>
+     <div id="termlist"></div>
+   </td>
+   <td valign="top">
+    <b>RESULTS:</b>
+    <br/><br/>
+    <div id="body"><div>
+   <td>
+  </tr>
+  
+  </table>
+
+  <hr/>
+  
+  <b>STATUS INFO:<b>
+  <br/>
+  <br/>
+  <div id="stat"></div>
+ 
+  <br/>
+  <hr/>
+ 
+  <b>TARGET IFO:</b>
+  <br/>
+  <br/>
+  <table id="bytarget"></table>
+
+ </body>
+</html>
