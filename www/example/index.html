@@ -1,4 +1,8 @@
-<!-- $Id: index.html,v 1.2 2007-05-18 13:00:14 jakub Exp $ -->
+<!-- $Id: index.html,v 1.3 2007-05-18 15:16:18 jakub Exp $ -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
 <html>
  
  <head>
@@ -9,17 +13,51 @@
         overflow-y: scroll;
     }
 
-    html, body {
-        color: #002863;
-        font-family: verdana, arial, sans-serif;
+    body {
+        font-family: tahoma, arial, sans-serif;
         font-size: small;
     }
 
-    input.search {
-        background-color: #f0f0f0;
-        color: #002863;
-        border: 1px solid #a5acb2;
-        width: 420px;
+    hr {
+        border: 0;
+        color: gray;
+        background-color: gray;
+        height: 1px;
+    }
+
+    .heading {
+        background-color: #ff8c71;
+        border-color: #ff8c71;
+        color: #ffffff;
+        font-size: large;
+    }
+    
+    input#button {
+        border: 3px groove #3171f2;
+        background-color: #6b9bfd;
+        padding: 1px;
+        width: 5em;
+        color: #FFFFFF;
+        font-weight: bold;
+        font-size: 12px;
+        margin-left: 8px;
+        cursor: pointer;
+    }
+
+    input#query {
+        border: 2px inset #ff613c;
+        padding: 3px;
+        font-size: 12px;
+    }
+
+    div.record {
+        padding: 5px;
+    }
+
+    div.details {
+        border: 3px dashed gray;
+        padding: 5px;
+        margin: 4px;
     }
 
   </style>
@@ -29,37 +67,32 @@
  
  <body onload="domReady();">
   
-  <table width="100%" border="0" cellpadding="6" cellspacing="6">
+  <table width="100%" border="0" cellpadding="6" cellspacing="0">
   
-  <tr>
-   <td width="250" height="100" align="center"><b>Exemplary pazpar2 client [using pz2.js]</b></td>
+  <tr class="heading">
+   <td width="250" height="100" align="center"><b>PazPar2</b></td>
    <td>
     <form id="searchForm" name="search">
-     <b>Search:</b>
      <input id="query" type="text" size="50"/>
-     <input type="submit" value="Go"/>
+     <input id="button" type="submit" value="Search"/>
     </form>
-   <td>
+   </td>
   </tr>
   
   <tr>
    <td width="250" valign="top">
-    <b>TERMLISTS:</b>
-    <br/><br/>
      <div id="termlist"></div>
    </td>
    <td valign="top">
-    <b>RESULTS:</b>
-    <br/><br/>
-    <div id="body"><div>
-   <td>
+    <div id="body"></div>
+   </td>
   </tr>
   
   </table>
 
   <hr/>
   
-  <b>STATUS INFO:<b>
+  <b>STATUS INFO:</b>
   <br/>
   <br/>
   <div id="stat"></div>
@@ -67,7 +100,7 @@
   <br/>
   <hr/>
  
-  <b>TARGET IFO:</b>
+  <b>TARGET INFO:</b>
   <br/>
   <br/>
   <table id="bytarget"></table>

@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.17 2007-05-18 12:38:48 jakub Exp $
+** $Id: pz2.js,v 1.18 2007-05-18 15:16:18 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -219,7 +219,7 @@ pz2.prototype = {
     },
     stat: function()
     {
-        if( !__myself.searchStatusOK )
+        if( !__myself.initStatusOK )
             return;
         // if called explicitly takes precedence
         clearTimeout(__myself.statTimer);
