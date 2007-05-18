@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.16 2007-05-17 21:00:09 jakub Exp $
+** $Id: pz2.js,v 1.17 2007-05-18 12:38:48 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -345,13 +345,14 @@ pz2.prototype = {
                         record['xslDoc'] = __myself.xslDoc;
                     } else {
                         for ( i = 0; i < recordNode.childNodes.length; i++) {
-                            if ( recordNode.childNodes[i].nodeType == Node.ELEMENT_NODE ) {
+                            if ( recordNode.childNodes[i].nodeType == Node.ELEMENT_NODE
+                                    && recordNode.childNodes[i].nodeName != 'location' ) {
                                 var nodeName = recordNode.childNodes[i].nodeName;
                                 var nodeText = recordNode.childNodes[i].firstChild.nodeValue;
                                 record[nodeName] = nodeText;                            
                             }
                         }
-                        // the location is hard coded
+                        // the location might be empty!!
                         var locationNodes = recordNode.getElementsByTagName("location");
                         record["location"] = new Array();
                         for ( i = 0; i < locationNodes.length; i++ ) {
@@ -359,14 +360,13 @@ pz2.prototype = {
                                 "id": locationNodes[i].getAttribute("id"),
                                 "name": locationNodes[i].getAttribute("name")
                             };
+                            
                             for ( j = 0; j < locationNodes[i].childNodes.length; j++) {
                                 if ( locationNodes[i].childNodes[j].nodeType == Node.ELEMENT_NODE ) {
                                     var nodeName = locationNodes[i].childNodes[j].nodeName;
-                                    var nodeText;
+                                    var nodeText = '';
                                     if (locationNodes[i].childNodes[j].firstChild)
                                             nodeText = locationNodes[i].childNodes[j].firstChild.nodeValue;
-                                    else
-                                            nodeText = '';
                                     record["location"][i][nodeName] = nodeText;                            
                                 }
                             }
