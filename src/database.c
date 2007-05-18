@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.26 2007-05-11 16:57:42 quinn Exp $
+/* $Id: database.c,v 1.27 2007-05-18 19:52:52 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -107,6 +107,7 @@ static struct database *load_database(const char *id)
     struct host *host;
     char hostport[256];
     char *dbname;
+    struct setting *idset;
 
     yaz_log(YLOG_LOG, "New database: %s", id);
     if (!nmem)
@@ -138,7 +139,18 @@ static struct database *load_database(const char *id)
     db->databases[1] = 0;
     db->errors = 0;
     db->explain = explain;
+
     db->settings = 0;
+
+    db->settings = nmem_malloc(nmem, sizeof(struct settings*) * settings_num());
+    memset(db->settings, 0, sizeof(struct settings*) * settings_num());
+    idset = nmem_malloc(nmem, sizeof(*id));
+    idset->precedence = 0;
+    idset->name = "pz:id";
+    idset->target = idset->value = db->url;
+    idset->next = 0;
+    db->settings[PZ_ID] = idset;
+
     db->next = databases;
     databases = db;
 

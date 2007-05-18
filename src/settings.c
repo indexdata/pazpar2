@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.21 2007-05-16 17:16:21 quinn Exp $
+/* $Id: settings.c,v 1.22 2007-05-18 19:52:52 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -295,6 +295,7 @@ static void update_database(void *context, struct database *db)
     if (!match_zurl(db->url, set->target))
         return;
 
+#ifdef GAGA
     // Initialize settings array if it doesn't exist.
     // If so, also set the 'id' automatic setting
     if (!db->settings)
@@ -309,6 +310,7 @@ static void update_database(void *context, struct database *db)
         id->next = 0;
         db->settings[PZ_ID] = id;
     }
+#endif
     if ((offset = settings_offset_cprefix(set->name)) < 0)
         abort(); // Should never get here
 
