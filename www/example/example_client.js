@@ -1,5 +1,5 @@
 /* A very simple client that shows a basic usage of the pz2.js
-** $Id: example_client.js,v 1.2 2007-05-18 15:16:18 jakub Exp $
+** $Id: example_client.js,v 1.3 2007-05-18 17:16:05 jakub Exp $
 */
 
 // create a parameters array and pass it to the pz2's constructor
@@ -30,6 +30,9 @@ function domReady ()
 // when search button pressed
 function onFormSubmitEventHandler() 
 {
+    curPage = 1;
+    curDetRecId = -1;
+    totalRec = 0;
     my_paz.search(document.search.query.value, recPerPage, 'relevance');
     return false;
 }
@@ -49,16 +52,16 @@ function my_onshow(data) {
                      ' of ' + data.merged + ' (total not merged hits: ' 
                      + data.total + ')</div>';
 
-    body.innerHTML += '<div style="float: clear"><span id="prev" onclick="pagerPrev();" style="cursor: pointer;">'
+    body.innerHTML += '<div style="float: clear"><span class="jslink" id="prev" onclick="pagerPrev();">'
                     +'&#60;&#60; Prev</span> <b>|</b> ' 
-                    +'<span id="next" onclick="pagerNext()" style="cursor: pointer;">'
+                    +'<span class="jslink" id="next" onclick="pagerNext()">'
                     +'Next &#62;&#62;</span></div><hr/>';
     
     for (var i = 0; i < data.hits.length; i++) {
         var hit = data.hits[i];
         body.innerHTML += '<div class="record" id="rec_' + hit.recid + '" onclick="showDetails(this.id)">'
                         +'<span>' + (i + 1 + recPerPage * ( curPage - 1)) + '. </span>'
-                        +'<span style="cursor: pointer;"><b>' + hit["md-title"] +
+                        +'<span class="jslink"><b>' + hit["md-title"] +
                         ' </b></span> by <span><i>' + hit["md-author"] + '</i></span></div>';
 
         if ( hit.recid == curDetRecId ) {
@@ -70,33 +73,33 @@ function my_onshow(data) {
 
 function my_onstat(data) {
     var stat = document.getElementById("stat");
-    stat.innerHTML = '<span>active clients: ' + data.activeclients + ' </span>' +
-                     '<span>hits: ' + data.hits + ' </span>' +
-                     '<span>records: ' + data.records + ' </span>' +
-                     '<span>clients: ' + data.clients + ' </span>' +
-                     '<span>searching: ' + data.searching + '</span>';
+    stat.innerHTML = '<span>Active clients: '+ data.activeclients
+                        + '/' + data.clients + ' | </span>'
+                        + '<span>Retrieved records: ' + data.records
+                        + '/' + data.hits + '</span>';
 }
 
 function my_onterm(data) {
     var termlist = document.getElementById("termlist");
     termlist.innerHTML = "<hr/><b>TERMLISTS:</b><hr/>";
-    termlist.innerHTML += "<div><b> --Author </b></div>";
-    for (var i = 0; i < data.author.length; i++ ) {
-        termlist.innerHTML += '<div><span>' 
-                            + data.author[i].name 
-                            + ' </span><span> (' 
-                            + data.author[i].freq 
-                            + ')</span></div>';
-    }
-    termlist.innerHTML += "<hr/>";
-    termlist.innerHTML += "<div><b> --Subject </b></div>";
+    termlist.innerHTML += '<div class="termtitle">.::Subjects</div>';
     for (var i = 0; i < data.subject.length; i++ ) {
-        termlist.innerHTML += '<div><span>' 
+        termlist.innerHTML += '<span>' 
                             + data.subject[i].name 
                             + ' </span><span> (' 
                             + data.subject[i].freq 
-                            + ')</span></div>';
+                            + ')</span><br/>';
     }
+    termlist.innerHTML += "<hr/>";
+    termlist.innerHTML += '<div class="termtitle">.::Authors</div>';
+    for (var i = 0; i < data.author.length; i++ ) {
+        termlist.innerHTML += '<span>' 
+                            + data.author[i].name 
+                            + ' </span><span> (' 
+                            + data.author[i].freq 
+                            + ')</span><br/>';
+    }
+
 }
 
 function my_onrecord(data) {
@@ -175,4 +178,25 @@ function pagerNext() {
 function pagerPrev() {
     if ( my_paz.showPrev() != false )
         curPage--;
+}
+
+// swithing view between targets and records
+
+function switchView(view) {
+    
+    var targets = document.getElementById('targetview');
+    var records = document.getElementById('recordview');
+    
+    switch(view) {
+        case 'targetview':
+            targets.style.display = "block";            
+            records.style.display = "none";
+            break;
+        case 'recordview':
+            targets.style.display = "none";            
+            records.style.display = "block";
+            break;
+        default:
+            alert('Unknown view.');
+    }
 }
