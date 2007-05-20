@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.14 2007-05-16 12:39:49 marc Exp $
+/* $Id: icu_I18N.h,v 1.15 2007-05-20 19:00:17 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -87,6 +87,22 @@ UErrorCode icu_utf16_to_utf8(struct icu_buf_utf8 * dest8,
                              struct icu_buf_utf16 * src16,
                              UErrorCode * status);
 
+struct icu_casemap
+{
+  char locale[16];
+  char action;
+};
+
+struct icu_casemap * icu_casemap_create(const char *locale, char action,
+                                            UErrorCode *status);
+
+void icu_casemap_destroy(struct icu_casemap * casemap);
+
+int icu_casemap_casemap(struct icu_casemap * casemap,
+                        struct icu_buf_utf16 * dest16,
+                        struct icu_buf_utf16 * src16,
+                        UErrorCode *status);
+
 int icu_utf16_casemap(struct icu_buf_utf16 * dest16,
                       struct icu_buf_utf16 * src16,
                       const char *locale, char action,
@@ -165,12 +181,13 @@ struct icu_token
 }
 #endif
 
+
 enum icu_chain_step_type {
     ICU_chain_step_type_none,      // 
     ICU_chain_step_type_display,   // convert to utf8 display format 
     ICU_chain_step_type_norm,      // convert to utf8 norm format 
     ICU_chain_step_type_sort,      // convert to utf8 sort format 
-    ICU_chain_step_type_charmap,   // apply utf16 charmap
+    ICU_chain_step_type_casemap,   // apply utf16 charmap
     ICU_chain_step_type_normalize, // apply utf16 normalization
     ICU_chain_step_type_tokenize   // apply utf16 tokenization 
 };
@@ -182,6 +199,7 @@ struct icu_chain_step
   // type and action object
   enum icu_chain_step_type type;
   union {
+    struct icu_casemap * casemap;
     struct icu_normalizer * normalizer;
     struct icu_tokenizer * tokenizer;  
   } u;
@@ -189,6 +207,7 @@ struct icu_chain_step
   struct icu_buf_utf16 * buf16;  
   struct icu_chain_step * previous;
   int more_tokens;
+  int need_new_token;
 };
 
 

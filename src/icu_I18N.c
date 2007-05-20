@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.16 2007-05-16 19:50:01 marc Exp $
+/* $Id: icu_I18N.c,v 1.17 2007-05-20 19:00:17 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -328,6 +328,51 @@ UErrorCode icu_utf16_to_utf8(struct icu_buf_utf8 * dest8,
 
 
 
+struct icu_casemap * icu_casemap_create(const char *locale, char action,
+                                        UErrorCode *status)
+{    
+    struct icu_casemap * casemap
+        = (struct icu_casemap *) malloc(sizeof(struct icu_casemap));
+    strcpy(casemap->locale, locale);
+    casemap->action = action;
+
+    switch(casemap->action) {    
+    case 'l':   
+        break;
+    case 'u':   
+        break;
+    case 't':  
+        break;
+    case 'f':  
+        break;
+    default:
+        icu_casemap_destroy(casemap);
+        return 0;
+    }
+
+    return casemap;
+};
+
+void icu_casemap_destroy(struct icu_casemap * casemap)
+{
+    if (casemap) 
+        free(casemap);
+};
+
+
+int icu_casemap_casemap(struct icu_casemap * casemap,
+                        struct icu_buf_utf16 * dest16,
+                        struct icu_buf_utf16 * src16,
+                        UErrorCode *status)
+{
+    if(!casemap)
+        return 0;
+    
+    return icu_utf16_casemap(dest16, src16,
+                             casemap->locale, casemap->action, status);
+};
+
+
 int icu_utf16_casemap(struct icu_buf_utf16 * dest16,
                       struct icu_buf_utf16 * src16,
                       const char *locale, char action,
@@ -622,15 +667,6 @@ int32_t icu_tokenizer_token_count(struct icu_tokenizer * tokenizer)
 
 
 
-//struct icu_normalizer
-//{
-//  char action;
-//  struct icu_buf_utf16 * rules16;
-//  UParseError parse_error[256];
-//  UTransliterator * trans;
-//};
-
-
 struct icu_normalizer * icu_normalizer_create(const char *rules, char action,
                                               UErrorCode *status)
 {
@@ -729,6 +765,7 @@ struct icu_chain_step * icu_chain_step_create(struct icu_chain * chain,
 
     step->type = type;
     step->more_tokens = 0;
+    step->need_new_token = 1;
 
     if (buf16)
         step->buf16 = buf16;
@@ -743,7 +780,9 @@ struct icu_chain_step * icu_chain_step_create(struct icu_chain * chain,
         break;
     case ICU_chain_step_type_sort:
         break;
-    case ICU_chain_step_type_charmap:
+    case ICU_chain_step_type_casemap:
+        step->u.casemap = icu_casemap_create((char *) chain->locale, 
+                                             (char) rule[0], status);
         break;
     case ICU_chain_step_type_normalize:
         step->u.normalizer = icu_normalizer_create((char *) rule, 'f', status);
@@ -774,7 +813,8 @@ void icu_chain_step_destroy(struct icu_chain_step * step){
         break;
     case ICU_chain_step_type_sort:
         break;
-    case ICU_chain_step_type_charmap:
+    case ICU_chain_step_type_casemap:
+        icu_casemap_destroy(step->u.casemap);
         icu_buf_utf16_destroy(step->buf16);
         break;
     case ICU_chain_step_type_normalize:
@@ -853,8 +893,7 @@ struct icu_chain_step * icu_chain_insert_step(struct icu_chain * chain,
         return 0;
 
     
-    // assign utf16 destination buffers as needed, or
-    // re-use previous uft18 buffer if this step does not touch it
+    // create utf16 destination buffers as needed, or
     switch(type) {
     case ICU_chain_step_type_display:
         buf16 = src16;
@@ -865,7 +904,7 @@ struct icu_chain_step * icu_chain_insert_step(struct icu_chain * chain,
     case ICU_chain_step_type_sort:
         buf16 = src16;
         break;
-    case ICU_chain_step_type_charmap:
+    case ICU_chain_step_type_casemap:
         buf16 = icu_buf_utf16_create(0);
         break;
     case ICU_chain_step_type_normalize:
@@ -894,17 +933,19 @@ int icu_chain_step_next_token(struct icu_chain * chain,
 {
     struct icu_buf_utf16 * src16 = 0;
     
-    printf("icu_chain_step_next_token %d\n", (int) step);
+    //printf("icu_chain_step_next_token %d\n", (int) step);
 
     if (!chain || !chain->src16 || !step || !step->more_tokens)
         return 0;
 
     // assign utf16 src buffers as neeed, advance in previous steps
-    // tokens, and setting stop condition
+    // tokens until non-zero token met, and setting stop condition
     if (step->previous){
         src16 = step->previous->buf16;
-        step->more_tokens 
-            = icu_chain_step_next_token(chain, step->previous, status);
+        if (step->need_new_token)
+            //while (step->more_tokens &&  !src16->utf16_len)
+                step->more_tokens 
+                    = icu_chain_step_next_token(chain, step->previous, status);
     }
     else { // first step can only work once on chain->src16 input buffer
         src16 = chain->src16;
@@ -913,10 +954,10 @@ int icu_chain_step_next_token(struct icu_chain * chain,
 
     // stop if nothing to process 
     // i.e new token source was not properly assigned
-    if (!step->more_tokens || !src16 || !src16->utf16_len) //  
+    if (!step->more_tokens || !src16) // || !src16->utf16_len 
         return 0;
 
-    printf("icu_chain_step_next_token %d working\n", (int) step);
+    //printf("icu_chain_step_next_token %d working\n", (int) step);
 
 
     // perform the work, eventually put this steps output in 
@@ -931,27 +972,51 @@ int icu_chain_step_next_token(struct icu_chain * chain,
     case ICU_chain_step_type_sort:
         icu_utf16_to_utf8(chain->sort8, src16, status);
         break;
-    case ICU_chain_step_type_charmap:
+    case ICU_chain_step_type_casemap:
+        icu_casemap_casemap(step->u.casemap,
+                            step->buf16, src16, status);
         break;
     case ICU_chain_step_type_normalize:
         icu_normalizer_normalize(step->u.normalizer,
                                  step->buf16, src16, status);
         break;
     case ICU_chain_step_type_tokenize:
-        icu_tokenizer_attach(step->u.tokenizer, src16, status);
+        // attach to new src16 token only first time during splitting
+        if (step->need_new_token){
+            icu_tokenizer_attach(step->u.tokenizer, src16, status);
+            step->need_new_token = 0;
+        }
+        // splitting one src16 token into multiple buf16 tokens
         step->more_tokens
             = icu_tokenizer_next_token(step->u.tokenizer,
                                        step->buf16, status);
+        // make sure to get new previous token if this one had been used up
+        if (step->previous && !step->more_tokens){
+            if (icu_chain_step_next_token(chain, step->previous, status)){
+                icu_tokenizer_attach(step->u.tokenizer, src16, status);
+                step->need_new_token = 0;   
+                step->more_tokens
+                    = icu_tokenizer_next_token(step->u.tokenizer,
+                                               step->buf16, status);
+            }
+        }
+        if (0 == step->more_tokens)
+            return 0;
         break;
     default:
         return 0;
         break;
     }
-    
 
-    // stop further token processing if last step
-    if (!step->previous)
+
+
+    // stop further token processing if last step and 
+    // new tokens are needed from previous (non-existing) step
+    if (!step->previous && step->need_new_token)
         step->more_tokens = 0;
+
+    //printf("%d %d %d\n", 
+    //       step->more_tokens, src16->utf16_len, step->buf16->utf16_len);
 
 
     if (U_FAILURE(*status))

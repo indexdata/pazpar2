@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.21 2007-05-16 19:50:01 marc Exp $
+/* $Id: test_icu_I18N.c,v 1.22 2007-05-20 19:00:17 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -498,31 +498,39 @@ void test_icu_I18N_tokenizer(int argc, char **argv)
 void test_icu_I18N_chain(int argc, char **argv)
 {
     const char * en_str 
-        = "O Romeo, Romeo! wherefore art thou Romeo?";
+        = "O Romeo, Romeo! wherefore   art\nthou\tRomeo?";
+
+    printf("ICU chain:\ninput: '%s'\n", en_str);
 
     UErrorCode status = U_ZERO_ERROR;
     struct icu_chain_step * step = 0;
     struct icu_chain * chain
-        = icu_chain_create((uint8_t *) "en:sentence", (uint8_t *) "en");
-/*     step = icu_chain_insert_step(chain, ICU_chain_step_type_normalize, */
-/*                                  (const uint8_t *) "[:Control:] Any-Remove", */
-/*                                  &status); */
+        = icu_chain_create((uint8_t *) "en:word", (uint8_t *) "en");
+    step = icu_chain_insert_step(chain, ICU_chain_step_type_normalize,
+                                 (const uint8_t *) "[:Control:] Any-Remove",
+                                 &status);
+    step = icu_chain_insert_step(chain, ICU_chain_step_type_tokenize,
+                                 (const uint8_t *) "s",
+                                 &status);
     step = icu_chain_insert_step(chain, ICU_chain_step_type_tokenize,
                                  (const uint8_t *) "l",
                                  &status);
-/*     step = icu_chain_insert_step(chain, ICU_chain_step_type_normalize, */
-/*                                  (const uint8_t *) */
-/*                                  "[[:WhiteSpace:][:Punctuation:]] Any-Remove", */
-/*                                  &status); */
+    step = icu_chain_insert_step(chain, ICU_chain_step_type_normalize,
+                                 (const uint8_t *)
+                                 "[[:WhiteSpace:][:Punctuation:]] Any-Remove",
+                                 &status);
     step = icu_chain_insert_step(chain, ICU_chain_step_type_display,
                                  (const uint8_t *)"",
                                  &status);
 /*     step = icu_chain_insert_step(chain, ICU_chain_step_type_normalize, */
 /*                                  (const uint8_t *) "Lower", */
 /*                                  &status); */
-/*     step = icu_chain_insert_step(chain, ICU_chain_step_type_norm, */
-/*                                  (const uint8_t *)"", */
-/*                                  &status); */
+    step = icu_chain_insert_step(chain, ICU_chain_step_type_casemap,
+                                 (const uint8_t *) "l",
+                                 &status);
+    step = icu_chain_insert_step(chain, ICU_chain_step_type_norm,
+                                 (const uint8_t *)"",
+                                 &status);
 /*     step = icu_chain_insert_step(chain, ICU_chain_step_type_sort, */
 /*                                  (const uint8_t *)"", */
 /*                                  &status); */
@@ -533,7 +541,7 @@ void test_icu_I18N_chain(int argc, char **argv)
     YAZ_CHECK(icu_chain_assign_cstr(chain, en_str, &status));
 
     while (icu_chain_next_token(chain, &status)){
-        printf("token %d norm: '%s' display: '%s'\n",
+        printf("%d '%s' '%s'\n",
                icu_chain_get_token_count(chain),
                icu_chain_get_norm(chain),
                icu_chain_get_display(chain));
@@ -561,7 +569,7 @@ int main(int argc, char **argv)
     test_icu_I18N_sortmap(argc, argv);
     test_icu_I18N_normalizer(argc, argv);
     test_icu_I18N_tokenizer(argc, argv);
-    //test_icu_I18N_chain(argc, argv);
+    test_icu_I18N_chain(argc, argv);
 
 #else // HAVE_ICU
 
