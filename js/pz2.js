@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.19 2007-05-21 09:07:43 jakub Exp $
+** $Id: pz2.js,v 1.20 2007-05-21 10:10:41 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -383,12 +383,13 @@ pz2.prototype = {
                             }
                         }
                     }
+                    
                     __myself.recordCallback(record);
                 }
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
                     // but the response was invalid, it should never occur
-                    setTimeout("__myself.record(__myself.currRecID)", 1000);
+                    setTimeout("__myself.record(__myself.currRecID)", 500);
             }
         );
     },
