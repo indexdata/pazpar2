@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.17 2007-05-20 19:00:17 marc Exp $
+/* $Id: icu_I18N.c,v 1.18 2007-05-21 10:14:08 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -862,14 +862,94 @@ struct icu_chain * icu_chain_create(const uint8_t * identifier,
 
 void icu_chain_destroy(struct icu_chain * chain)
 {
-    icu_buf_utf8_destroy(chain->display8);
-    icu_buf_utf8_destroy(chain->norm8);
-    icu_buf_utf8_destroy(chain->sort8);
-
-    icu_buf_utf16_destroy(chain->src16);
-
-    icu_chain_step_destroy(chain->steps);
+    if (chain){
+        icu_buf_utf8_destroy(chain->display8);
+        icu_buf_utf8_destroy(chain->norm8);
+        icu_buf_utf8_destroy(chain->sort8);
+        
+        icu_buf_utf16_destroy(chain->src16);
+    
+        icu_chain_step_destroy(chain->steps);
+    }
 };
+
+
+
+struct icu_chain * icu_chain_xml_config(xmlNode *xml_node, 
+                                        UErrorCode * status){
+
+    xmlNode *node = 0;
+    struct icu_chain * chain = 0;
+   
+    if (!xml_node 
+        ||xml_node->type != XML_ELEMENT_NODE 
+        || strcmp((const char *) xml_node->name, "icu_chain"))
+
+        return 0;
+    
+    xmlChar *xml_id = xmlGetProp(xml_node, (xmlChar *) "id");
+    xmlChar *xml_locale = xmlGetProp(xml_node, (xmlChar *) "locale");
+
+    if (!xml_id || !strlen((const char *) xml_id) 
+        || !xml_locale || !strlen((const char *) xml_locale))
+        return 0;
+
+    chain = icu_chain_create((const uint8_t *) xml_id, 
+                             (const uint8_t *) xml_locale);
+    
+    if (!chain)
+        return 0;
+        
+    for (node = xml_node->children; node; node = node->next)
+    {
+        if (node->type != XML_ELEMENT_NODE)
+            continue;
+
+        xmlChar *xml_rule = xmlGetProp(node, (xmlChar *) "rule");
+        struct icu_chain_step * step = 0;
+
+        if (!strcmp((const char *) node->name, 
+                    (const char *) "casemap")){
+            step = icu_chain_insert_step(chain, ICU_chain_step_type_casemap, 
+                                         (const uint8_t *) xml_rule, status);
+        }
+        else if (!strcmp((const char *) node->name,
+                         (const char *) "normalize")){
+            step = icu_chain_insert_step(chain, ICU_chain_step_type_normalize, 
+                                         (const uint8_t *) xml_rule, status);
+        }
+        else if (!strcmp((const char *) node->name,
+                         (const char *) "tokenize")){
+            step = icu_chain_insert_step(chain, ICU_chain_step_type_tokenize, 
+                                         (const uint8_t *) xml_rule, status);
+        }
+        else if (!strcmp((const char *) node->name,
+                         (const char *) "display")){
+            step = icu_chain_insert_step(chain, ICU_chain_step_type_display, 
+                                         (const uint8_t *) "", status);
+        }
+        else if (!strcmp((const char *) node->name,
+                         (const char *) "normal")){
+            step = icu_chain_insert_step(chain, ICU_chain_step_type_norm, 
+                                         (const uint8_t *) "", status);
+        }
+        else if (!strcmp((const char *) node->name,
+                         (const char *) "sort")){
+            step = icu_chain_insert_step(chain, ICU_chain_step_type_sort, 
+                                         (const uint8_t *) "", status);
+        }
+
+        if (!step || U_FAILURE(*status)){
+            icu_chain_destroy(chain);
+            return 0;
+        }
+        
+
+    }
+
+    return chain;
+};
+
 
 
 struct icu_chain_step * icu_chain_insert_step(struct icu_chain * chain,
@@ -1031,10 +1111,12 @@ int icu_chain_assign_cstr(struct icu_chain * chain,
                           const char * src8cstr, 
                           UErrorCode *status)
 {
-    struct icu_chain_step * stp = chain->steps;
+    struct icu_chain_step * stp = 0; 
 
     if (!chain || !src8cstr)
         return 0;
+
+    stp = chain->steps;
     
     // clear token count
     chain->token_count = 0;

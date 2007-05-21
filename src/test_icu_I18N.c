@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.22 2007-05-20 19:00:17 marc Exp $
+/* $Id: test_icu_I18N.c,v 1.23 2007-05-21 10:14:08 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -498,14 +498,35 @@ void test_icu_I18N_tokenizer(int argc, char **argv)
 void test_icu_I18N_chain(int argc, char **argv)
 {
     const char * en_str 
-        = "O Romeo, Romeo! wherefore   art\nthou\tRomeo?";
+        = "O Romeo, Romeo! wherefore art thou\t Romeo?";
 
     printf("ICU chain:\ninput: '%s'\n", en_str);
 
     UErrorCode status = U_ZERO_ERROR;
-    struct icu_chain_step * step = 0;
-    struct icu_chain * chain
-        = icu_chain_create((uint8_t *) "en:word", (uint8_t *) "en");
+    //struct icu_chain_step * step = 0;
+    struct icu_chain * chain = 0;
+    
+
+    const char * xml_str = "<icu_chain id=\"en:word\" locale=\"en\">"
+        "<normalize rule=\"[:Control:] Any-Remove\"/>"
+        "<tokenize rule=\"l\"/>"
+        "<normalize rule=\"[[:WhiteSpace:][:Punctuation:]] Remove\"/>"
+        "<display/>"
+        "<casemap rule=\"l\"/>"
+        "<normal/>"
+        "<sort/>"
+        "</icu_chain>";
+
+    
+    xmlDoc *doc = xmlParseMemory(xml_str, strlen(xml_str));
+    xmlNode *xml_node = xmlDocGetRootElement(doc);
+    YAZ_CHECK(xml_node);
+
+
+    chain = icu_chain_xml_config(xml_node, &status);
+
+#if 0
+    chain  = icu_chain_create((uint8_t *) "en:word", (uint8_t *) "en");
     step = icu_chain_insert_step(chain, ICU_chain_step_type_normalize,
                                  (const uint8_t *) "[:Control:] Any-Remove",
                                  &status);
@@ -535,8 +556,9 @@ void test_icu_I18N_chain(int argc, char **argv)
 /*                                  (const uint8_t *)"", */
 /*                                  &status); */
     
+#endif
 
-
+    YAZ_CHECK(chain);
 
     YAZ_CHECK(icu_chain_assign_cstr(chain, en_str, &status));
 
@@ -546,6 +568,8 @@ void test_icu_I18N_chain(int argc, char **argv)
                icu_chain_get_norm(chain),
                icu_chain_get_display(chain));
     }
+
+    YAZ_CHECK_EQ(icu_chain_get_token_count(chain), 7);
 
     icu_chain_destroy(chain);
 }

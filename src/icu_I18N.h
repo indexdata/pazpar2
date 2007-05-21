@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.15 2007-05-20 19:00:17 marc Exp $
+/* $Id: icu_I18N.h,v 1.16 2007-05-21 10:14:08 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -26,6 +26,8 @@
 
 #include <yaz/nmem.h>
 
+#include <libxml/parser.h>
+#include <libxml/tree.h>
 
 #include <unicode/utypes.h>   /* Basic ICU data types */
 #include <unicode/uchar.h>    /* char names           */
@@ -245,7 +247,12 @@ struct icu_chain
 
 struct icu_chain * icu_chain_create(const uint8_t * identifier, 
                                     const uint8_t * locale);
+
 void icu_chain_destroy(struct icu_chain * chain);
+
+struct icu_chain * icu_chain_xml_config(xmlNode *xml_node, 
+                                        UErrorCode * status);
+
 
 struct icu_chain_step * icu_chain_insert_step(struct icu_chain * chain,
                                               enum icu_chain_step_type type,

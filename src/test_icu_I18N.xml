@@ -17,6 +17,7 @@
     <normalize rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
     <display/>
     <normalize rule="Lower"/>
+    <normal/>
   </icu_chain>
   <icu_chain id="en:number" locale="en">
     <normalize rule="[:Letter:] Remove"/>
