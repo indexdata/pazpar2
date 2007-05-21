@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.18 2007-05-18 15:16:18 jakub Exp $
+** $Id: pz2.js,v 1.19 2007-05-21 09:07:43 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -84,7 +84,7 @@ var pz2 = function(paramArray) {
     __myself.currQuery = null;
 
     //timers
-    __myself.statTime = paramArray.stattime || 2000;
+    __myself.statTime = paramArray.stattime || 1000;
     __myself.statTimer = null;
     __myself.termTime = paramArray.termtime || 1000;
     __myself.termTimer = null;
@@ -94,10 +94,12 @@ var pz2 = function(paramArray) {
     __myself.bytargetTime = paramArray.bytargettime || 1000;
     __myself.bytargetTimer = null;
 
-    //useful?
+    // counters for each command and applied delay
     __myself.dumpFactor = 500;
     __myself.showCounter = 0;
     __myself.termCounter = 0;
+    __myself.statCounter = 0;
+    __myself.bytargetCounter = 0;
 
     // active clients, updated by stat and show
     // might be an issue since bytarget will poll accordingly
@@ -181,6 +183,8 @@ pz2.prototype = {
         
         __myself.showCounter = 0;
         __myself.termCounter = 0;
+        __myself.bytargetCounter = 0;
+        __myself.statCounter = 0;
         
         if( !__myself.initStatusOK )
             return;
@@ -203,17 +207,19 @@ pz2.prototype = {
                     //piggyback search
                     __myself.show(0, num, sort);
                     if ( __myself.statCallback )
-                        __myself.statTimer = setTimeout("__myself.stat()", __myself.statTime / 2);
+                        __myself.stat();
+                        //__myself.statTimer = setTimeout("__myself.stat()", __myself.statTime / 4);
                     if ( __myself.termlistCallback )
-                        //__myself.termlist();
-                        __myself.termTimer = setTimeout("__myself.termlist()", __myself.termTime / 2);
+                        __myself.termlist();
+                        //__myself.termTimer = setTimeout("__myself.termlist()", __myself.termTime / 4);
                     if ( __myself.bytargetCallback )
-                        __myself.bytargetTimer = setTimeout("__myself.bytarget()", __myself.bytargetTime / 2);
+                        __myself.bytarget();
+                        //__myself.bytargetTimer = setTimeout("__myself.bytarget()", __myself.bytargetTime / 4);
                 }
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
                     // but the response was invalid, it should never occur
-                    setTimeout("__myself.search(__myself.currQuery)", 1000);
+                    setTimeout("__myself.search(__myself.currQuery)", 500);
             }
         );
     },
@@ -242,9 +248,13 @@ pz2.prototype = {
                     "failed": Number( data.getElementsByTagName("failed")[0].childNodes[0].nodeValue ),
                     "error": Number( data.getElementsByTagName("error")[0].childNodes[0].nodeValue )
                     };
+                    
+                    __myself.statCounter++;
+		    var delay = __myself.statTime + __myself.statCounter * __myself.dumpFactor;
+                    if ( activeClients > 0 )
+                        __myself.statTimer = setTimeout("__myself.stat()", delay);
+                    
                     __myself.statCallback(stat);
-                    if (activeClients > 0)
-                        __myself.statTimer = setTimeout("__myself.stat()", __myself.statTime); 
                 }
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
@@ -276,6 +286,7 @@ pz2.prototype = {
                     // first parse the status data send along with records
                     // this is strictly bound to the format
                     var activeClients = Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue );
+                    __myself.activeClients = activeClients; 
                     var show = {
                     "activeclients": activeClients,
                     "merged": Number( data.getElementsByTagName("merged")[0].childNodes[0].nodeValue ),
@@ -309,14 +320,14 @@ pz2.prototype = {
                             }
                         }
                     }
-                    __myself.showCallback(show);
                     __myself.showCounter++;
 		    var delay = __myself.showTime;
 		    if (__myself.showCounter > __myself.showFastCount)
-			    //delay *= 2;
                             delay += __myself.showCounter * __myself.dumpFactor;
-                    if (activeClients > 0)
+                    if ( activeClients > 0 )
                         __myself.showTimer = setTimeout("__myself.show()", delay);
+
+                    __myself.showCallback(show);
                 }
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
@@ -392,7 +403,9 @@ pz2.prototype = {
             { "command": "termlist", "session": __myself.sessionID, "name": __myself.termKeys },
             function(data) {
                 if ( data.getElementsByTagName("termlist") ) {
-                    var termList = { "activeclients": Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue ) };
+                    var activeClients = Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue );
+                    __myself.activeClients = activeClients;
+                    var termList = { "activeclients":  activeClients };
                     var termLists = data.getElementsByTagName("list");
                     //for each termlist
                     for (i = 0; i < termLists.length; i++) {
@@ -414,10 +427,12 @@ pz2.prototype = {
                         }
                     }
 
-                    __myself.termlistCallback(termList);
                     __myself.termCounter++;
-                    if (termList["activeclients"] > 0)
-                        __myself.termTimer = setTimeout("__myself.termlist()", (__myself.termTime + __myself.termCounter*__myself.dumpFactor)); 
+                    var delay = __myself.termTime + __myself.termCounter * __myself.dumpFactor;
+                    if ( activeClients > 0 )
+                        __myself.termTimer = setTimeout("__myself.termlist()", delay);
+                   
+                   __myself.termlistCallback(termList);
                 }
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
@@ -450,9 +465,13 @@ pz2.prototype = {
                             }
                         }
                     }
-                    __myself.bytargetCallback(bytarget);
+                    
+                    __myself.bytargetCounter++;
+                    var delay = __myself.bytargetTime + __myself.bytargetCounter * __myself.dumpFactor;
                     if ( __myself.activeClients > 0 )
-                        __myself.bytargetTimer = setTimeout("__myself.bytarget()", __myself.bytargetTime);
+                        __myself.bytargetTimer = setTimeout("__myself.bytarget()", delay);
+
+                    __myself.bytargetCallback(bytarget);
                 }
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
