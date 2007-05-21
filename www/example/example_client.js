@@ -1,5 +1,5 @@
 /* A very simple client that shows a basic usage of the pz2.js
-** $Id: example_client.js,v 1.3 2007-05-18 17:16:05 jakub Exp $
+** $Id: example_client.js,v 1.4 2007-05-21 08:21:33 jakub Exp $
 */
 
 // create a parameters array and pass it to the pz2's constructor
@@ -15,7 +15,7 @@ my_paz = new pz2( { "onshow": my_onshow,
                     "onrecord": my_onrecord } );
 // some state vars
 var curPage = 1;
-var recPerPage = 15;
+var recPerPage = 20;
 var totalRec = 0;
 var curDetRecId = -1;
 var curDetRecData = null;
@@ -25,6 +25,7 @@ function domReady ()
 { 
     document.search.onsubmit = onFormSubmitEventHandler;
     my_paz.stat();
+    my_paz.bytarget();
 }
 
 // when search button pressed
