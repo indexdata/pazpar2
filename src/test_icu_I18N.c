@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.23 2007-05-21 10:14:08 marc Exp $
+/* $Id: test_icu_I18N.c,v 1.24 2007-05-22 07:51:45 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -572,6 +572,7 @@ void test_icu_I18N_chain(int argc, char **argv)
     YAZ_CHECK_EQ(icu_chain_get_token_count(chain), 7);
 
     icu_chain_destroy(chain);
+    xmlFreeDoc(doc);
 }
 
 

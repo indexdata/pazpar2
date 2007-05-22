@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.18 2007-05-21 10:14:08 marc Exp $
+/* $Id: icu_I18N.c,v 1.19 2007-05-22 07:51:45 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -687,6 +687,7 @@ struct icu_normalizer * icu_normalizer_create(const char *rules, char action,
                            UTRANS_FORWARD,
                            0, 0, 
                            normalizer->parse_error, status);
+        // yaz_log(YLOG_LOG, "utrans_open %p", normalizer->trans);
         break;
     case 'r':
         normalizer->trans
@@ -695,6 +696,7 @@ struct icu_normalizer * icu_normalizer_create(const char *rules, char action,
                            UTRANS_REVERSE ,
                            0, 0,
                            normalizer->parse_error, status);
+        // yaz_log(YLOG_LOG, "utrans_open %p", normalizer->trans);
         break;
     default:
         *status = U_UNSUPPORTED_ERROR;
@@ -716,7 +718,10 @@ void icu_normalizer_destroy(struct icu_normalizer * normalizer){
         if (normalizer->rules16) 
             icu_buf_utf16_destroy(normalizer->rules16);
         if (normalizer->trans)
+        {
+            // yaz_log(YLOG_LOG, "utrans_close %p", normalizer->trans);
             utrans_close(normalizer->trans);
+        }
         free(normalizer);
     }
 };
@@ -828,8 +833,7 @@ void icu_chain_step_destroy(struct icu_chain_step * step){
     default:
         break;
     }
-
-
+    free(step);
 };
 
 
@@ -870,6 +874,7 @@ void icu_chain_destroy(struct icu_chain * chain)
         icu_buf_utf16_destroy(chain->src16);
     
         icu_chain_step_destroy(chain->steps);
+        free(chain);
     }
 };
 
@@ -897,6 +902,8 @@ struct icu_chain * icu_chain_xml_config(xmlNode *xml_node,
     chain = icu_chain_create((const uint8_t *) xml_id, 
                              (const uint8_t *) xml_locale);
     
+    xmlFree(xml_id);
+    xmlFree(xml_locale);
     if (!chain)
         return 0;
         
@@ -939,6 +946,7 @@ struct icu_chain * icu_chain_xml_config(xmlNode *xml_node,
                                          (const uint8_t *) "", status);
         }
 
+        xmlFree(xml_rule);
         if (!step || U_FAILURE(*status)){
             icu_chain_destroy(chain);
             return 0;
