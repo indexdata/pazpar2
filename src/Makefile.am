@@ -1,6 +1,8 @@
-# $Id: Makefile.am,v 1.22 2007-05-15 15:50:48 adam Exp $
+# $Id: Makefile.am,v 1.23 2007-05-22 08:26:59 marc Exp $
 
 bin_PROGRAMS = pazpar2
+# icu_chain_test
+
 check_PROGRAMS = test_config \
       test_icu_I18N \
       test_record \
@@ -32,6 +34,9 @@ libpazpar2_a_SOURCES = config.c config.h eventl.c eventl.h \
 
 pazpar2_SOURCES = pazpar2.c
 pazpar2_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
+
+#icu_chain_test_SOURCES = icu_chain_test.c icu_I18N
+#icu_chain_test_LDADD = $(YAZLIB) $(ICU_LIBS)
 
 test_config_SOURCES = test_config.c
 test_config_LDADD = libpazpar2.a $(YAZLIB)
