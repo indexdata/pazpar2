@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.24 2007-05-22 21:20:10 marc Exp $
+# $Id: Makefile.am,v 1.25 2007-05-23 11:19:31 marc Exp $
 
 bin_PROGRAMS = pazpar2 icu_chain_test
 
@@ -38,19 +38,19 @@ icu_chain_test_SOURCES = icu_chain_test.c icu_I18N.c
 icu_chain_test_LDADD = $(YAZLIB) $(ICU_LIBS)
 
 test_config_SOURCES = test_config.c
-test_config_LDADD = libpazpar2.a $(YAZLIB)
+test_config_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
 
 test_record_SOURCES = test_record.c
-test_record_LDADD = libpazpar2.a $(YAZLIB)
+test_record_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
 
 test_reclists_SOURCES = test_reclists.c
-test_reclists_LDADD = libpazpar2.a $(YAZLIB)
+test_reclists_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
 
 test_relevance_SOURCES = test_relevance.c
-test_relevance_LDADD = libpazpar2.a $(YAZLIB)
+test_relevance_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
 
 test_sel_thread_SOURCES = test_sel_thread.c
-test_sel_thread_LDADD = libpazpar2.a $(YAZLIB)
+test_sel_thread_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
 
 test_icu_I18N_SOURCES = test_icu_I18N.c
 test_icu_I18N_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)

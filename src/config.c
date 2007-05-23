@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.33 2007-04-27 10:27:35 marc Exp $
+/* $Id: config.c,v 1.34 2007-05-23 11:19:31 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.33 2007-04-27 10:27:35 marc Exp $ */
+/* $Id: config.c,v 1.34 2007-05-23 11:19:31 marc Exp $ */
 
 #include <string.h>
 
@@ -38,6 +38,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 #define CONFIG_NOEXTERNS
 #include "config.h"
+
 
 static NMEM nmem = 0;
 static char confdir[256] = ".";
@@ -116,6 +117,7 @@ struct conf_service * conf_service_create(NMEM nmem,
         service->sortkeys 
             = nmem_malloc(nmem, 
                           sizeof(struct conf_sortkey) * service->num_sortkeys);
+
     return service; 
 }
 
@@ -396,18 +398,23 @@ static char *parse_settings(xmlNode *node)
 static struct conf_server *parse_server(xmlNode *node)
 {
     xmlNode *n;
-    struct conf_server *r = nmem_malloc(nmem, sizeof(struct conf_server));
+    struct conf_server *server = nmem_malloc(nmem, sizeof(struct conf_server));
 
-    r->host = 0;
-    r->port = 0;
-    r->proxy_host = 0;
-    r->proxy_port = 0;
-    r->myurl = 0;
-    r->zproxy_host = 0;
-    r->zproxy_port = 0;
-    r->service = 0;
-    r->next = 0;
-    r->settings = 0;
+    server->host = 0;
+    server->port = 0;
+    server->proxy_host = 0;
+    server->proxy_port = 0;
+    server->myurl = 0;
+    server->zproxy_host = 0;
+    server->zproxy_port = 0;
+    server->service = 0;
+    server->next = 0;
+    server->settings = 0;
+
+#ifdef HAVE_ICU
+    server->icu_chn = 0;
+#endif // HAVE_ICU
+
 
     for (n = node->children; n; n = n->next)
     {
@@ -418,9 +425,9 @@ static struct conf_server *parse_server(xmlNode *node)
             xmlChar *port = xmlGetProp(n, (xmlChar *) "port");
             xmlChar *host = xmlGetProp(n, (xmlChar *) "host");
             if (port)
-                r->port = atoi((const char *) port);
+                server->port = atoi((const char *) port);
             if (host)
-                r->host = nmem_strdup(nmem, (const char *) host);
+                server->host = nmem_strdup(nmem, (const char *) host);
             xmlFree(port);
             xmlFree(host);
         }
@@ -430,11 +437,11 @@ static struct conf_server *parse_server(xmlNode *node)
             xmlChar *host = xmlGetProp(n, (xmlChar *) "host");
             xmlChar *myurl = xmlGetProp(n, (xmlChar *) "myurl");
             if (port)
-                r->proxy_port = atoi((const char *) port);
+                server->proxy_port = atoi((const char *) port);
             if (host)
-                r->proxy_host = nmem_strdup(nmem, (const char *) host);
+                server->proxy_host = nmem_strdup(nmem, (const char *) host);
             if (myurl)
-                r->myurl = nmem_strdup(nmem, (const char *) myurl);
+                server->myurl = nmem_strdup(nmem, (const char *) myurl);
 #ifdef GAGA
             else
             {
@@ -455,29 +462,58 @@ static struct conf_server *parse_server(xmlNode *node)
             host = xmlGetProp(n, (xmlChar *) "host");
 
             if (port)
-                r->zproxy_port = atoi((const char *) port);
+                server->zproxy_port = atoi((const char *) port);
             if (host)
-                r->zproxy_host = nmem_strdup(nmem, (const char *) host);
+                server->zproxy_host = nmem_strdup(nmem, (const char *) host);
 
             xmlFree(port);
             xmlFree(host);
         }
         else if (!strcmp((const char *) n->name, "settings"))
         {
-            if (r->settings)
+            if (server->settings)
             {
                 yaz_log(YLOG_FATAL, "Can't repeat 'settings'");
                 return 0;
             }
-            if (!(r->settings = parse_settings(n)))
+            if (!(server->settings = parse_settings(n)))
                 return 0;
+        }
+        else if (!strcmp((const char *) n->name, "icu_chain"))
+        {
+#ifdef HAVE_ICU
+            UErrorCode status = U_ZERO_ERROR;
+            struct icu_chain *chain = icu_chain_xml_config(n, &status);
+            if (!chain || U_FAILURE(status)){
+                //xmlDocPtr icu_doc = 0;
+                //xmlChar *xmlstr = 0;
+                //int size = 0;
+                //xmlDocDumpMemory(icu_doc, size);
+                
+                yaz_log(YLOG_FATAL, "Could not parse ICU chain config:\n"
+                        "<%s>\n ... \n</%s>",
+                        n->name, n->name);
+                return 0;
+            }
+            server->icu_chn = chain;
+#else // HAVE_ICU
+            yaz_log(YLOG_FATAL, "Error: ICU support requested with element:\n"
+                    "<%s>\n ... \n</%s>",
+                    n->name, n->name);
+            yaz_log(YLOG_FATAL, 
+                    "But no ICU support compiled into pazpar2 server.");
+            yaz_log(YLOG_FATAL, 
+                    "Please install libicu36-dev and icu-doc or similar, "
+                    "re-configure and re-compile");            
+            return 0;
+#endif // HAVE_ICU
         }
         else if (!strcmp((const char *) n->name, "service"))
         {
             struct conf_service *s = parse_service(n);
             if (!s)
                 return 0;
-            r->service = s;
+            server->service = s;
         }
         else
         {
@@ -485,7 +521,7 @@ static struct conf_server *parse_server(xmlNode *node)
             return 0;
         }
     }
-    return r;
+    return server;
 }
 
 xsltStylesheet *conf_load_stylesheet(const char *fname)

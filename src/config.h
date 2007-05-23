@@ -1,4 +1,4 @@
-/* $Id: config.h,v 1.22 2007-04-26 10:19:05 marc Exp $
+/* $Id: config.h,v 1.23 2007-05-23 11:19:31 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -27,6 +27,11 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <libxslt/xsltutils.h>
 
 #include <yaz/nmem.h>
+
+#ifdef HAVE_ICU
+#include "icu_I18N.h"
+#endif // HAVE_ICU
+
 
 enum conf_metadata_type {
     Metadata_type_generic,    // Generic text field
@@ -107,6 +112,7 @@ struct conf_service
     struct conf_metadata *metadata;
     int num_sortkeys;
     struct conf_sortkey *sortkeys;
+
 };
 
 struct conf_service * conf_service_create(NMEM nmem, 
@@ -145,6 +151,11 @@ struct conf_server
     char *zproxy_host;
     int zproxy_port;
     char *settings;
+
+#ifdef HAVE_ICU
+    struct icu_chain * icu_chn;
+#endif // HAVE_ICU
+
     struct conf_service *service;
     struct conf_server *next;
 };
