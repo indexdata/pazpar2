@@ -1,4 +1,4 @@
-/* $Id: charsets.h,v 1.1 2007-05-10 11:46:09 adam Exp $
+/* $Id: charsets.h,v 1.2 2007-05-23 14:44:18 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -26,10 +26,13 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #ifndef PAZPAR_CHARSETS_H
 #define PAZPAR_CHARSETS_H
 
+
+struct icu_chain;
+
 typedef struct pp2_charset_s *pp2_charset_t;
 typedef struct pp2_relevance_token_s *pp2_relevance_token_t;
 
-pp2_charset_t pp2_charset_create(void);
+pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn);
 void pp2_charset_destroy(pp2_charset_t pct);
 
 pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,

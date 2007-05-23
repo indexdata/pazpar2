@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.30 2007-05-17 22:56:41 jakub Exp $
+/* $Id: logic.c,v 1.31 2007-05-23 14:44:18 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -493,7 +493,17 @@ static void session_init_databases_fun(void *context, struct database *db)
 
     new->database = db;
     new->yaz_marc = 0;
-    new->pct = pp2_charset_create();
+
+#ifdef HAVE_ICU
+    if (global_parameters.server && global_parameters.server->icu_chn)
+            new->pct
+                = pp2_charset_create(global_parameters.server->icu_chn);
+        else
+            new->pct = pp2_charset_create(0);
+#else // HAVE_ICU
+    new->pct = pp2_charset_create(0);
+#endif // HAVE_ICU
+
     new->map = 0;
     new->settings 
         = nmem_malloc(se->session_nmem, sizeof(struct settings *) * num);

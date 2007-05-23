@@ -1,4 +1,4 @@
-/* $Id: charsets.c,v 1.1 2007-05-10 11:46:09 adam Exp $
+/* $Id: charsets.c,v 1.2 2007-05-23 14:44:18 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -29,19 +29,33 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 #include <yaz/xmalloc.h>
 #include <yaz/wrbuf.h>
+#include <yaz/log.h>
 #include <ctype.h>
 #include <assert.h>
+
 #include "charsets.h"
+//#include "config.h"
+//#include "parameters.h"
+
+#ifdef HAVE_ICU
+#include "icu_I18N.h"
+#endif // HAVE_ICU
 
 /* charset handle */
 struct pp2_charset_s {
     const char *(*token_next_handler)(pp2_relevance_token_t prt);
     /* other handlers will come as we see fit */
+#ifdef HAVE_ICU
+    struct icu_chain * icu_chn;
+    UErrorCode icu_sts;
+#endif // HAVE_ICU
 };
 
 static const char *pp2_relevance_token_a_to_z(pp2_relevance_token_t prt);
-/* in the future : */
-// static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt);
+
+#ifdef HAVE_ICU
+static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt);
+#endif // HAVE_ICU
 
 /* tokenzier handle */
 struct pp2_relevance_token_s {
@@ -50,11 +64,24 @@ struct pp2_relevance_token_s {
     WRBUF norm_str;     /* normized string we return (temporarily) */
 };
 
-pp2_charset_t pp2_charset_create(void)
+pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn)
 {
     pp2_charset_t pct = xmalloc(sizeof(*pct));
 
+#ifdef HAVE_ICU
+    if (icu_chn){
+        pct->icu_chn = icu_chn;
+        pct->icu_sts = U_ZERO_ERROR;
+        pct->token_next_handler = pp2_relevance_token_icu;
+    }
+    else {
+        pct->icu_chn = 0;
+        pct->token_next_handler = pp2_relevance_token_a_to_z;
+    }
+#else // HAVE_ICU
     pct->token_next_handler = pp2_relevance_token_a_to_z;
+#endif // HAVE_ICU
+
     return pct;
 }
 
@@ -69,16 +96,37 @@ pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
     pp2_relevance_token_t prt = xmalloc(sizeof(*prt));
 
     assert(pct);
+
+#ifdef HAVE_ICU
+    if (pct->icu_chn){
+        pct->icu_sts = U_ZERO_ERROR;
+        int ok = 0;
+        ok = icu_chain_assign_cstr(pct->icu_chn, buf, &pct->icu_sts);
+        printf("\nfield ok: %d '%s'\n", ok, buf);
+        //prt->cp = buf;
+        prt->pct = pct;
+        prt->norm_str = 0;
+        return prt;
+    }
+    else {
+#endif // HAVE_ICU
+
     prt->norm_str = wrbuf_alloc();
     prt->cp = buf;
     prt->pct = pct;
     return prt;
+
+#ifdef HAVE_ICU
+    }
+#endif // HAVE_ICU
 }
+
 
 void pp2_relevance_token_destroy(pp2_relevance_token_t prt)
 {
     assert(prt);
-    wrbuf_destroy(prt->norm_str);
+    if(prt->norm_str) 
+        wrbuf_destroy(prt->norm_str);
     xfree(prt);
 }
 
@@ -115,6 +163,27 @@ static const char *pp2_relevance_token_a_to_z(pp2_relevance_token_t prt)
     prt->cp = cp;
     return wrbuf_cstr(prt->norm_str);
 }
+
+
+#ifdef HAVE_ICU
+static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)
+{
+    //&& U_SUCCESS(pct->icu_sts))
+    if (icu_chain_next_token(prt->pct->icu_chn, &prt->pct->icu_sts)){
+        printf("'%s' ",  icu_chain_get_norm(prt->pct->icu_chn)); 
+        if (U_FAILURE(prt->pct->icu_sts))
+        {
+            printf("ICU status failure\n "); 
+            return 0;
+        }
+            
+        return icu_chain_get_norm(prt->pct->icu_chn);
+    }
+    
+    return 0;
+};
+#endif // HAVE_ICU
+
 
 
 /*
