@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: test_http.sh,v 1.6 2007-05-16 13:07:18 adam Exp $
+# $Id: test_http.sh,v 1.7 2007-05-23 21:58:29 adam Exp $
 #
 # Regression test using pazpar2 against z3950.indexdata.com/marc
 # Reads Pazpar2 URLs from test_http_urls
@@ -22,7 +22,7 @@ fi
 
 # Fire up pazpar2
 rm -f pazpar2.log
-../src/pazpar2 -l pazpar2.log -f ${srcdir}/test_http.cfg -t ${srcdir}/test_http.xml >extra_pazpar2.log 2>&1 &
+../src/pazpar2 -X -l pazpar2.log -f ${srcdir}/test_http.cfg -t ${srcdir}/test_http.xml >extra_pazpar2.log 2>&1 &
 PP2PID=$!
 
 # Give it a chance to start properly..
@@ -74,6 +74,11 @@ for f in `cat ${srcdir}/test_http_urls`; do
 	testno=`expr $testno + 1`
     else
 	sleep $f
+    fi
+    if ps -p $PP2PID >/dev/null 2>&1; then
+	:
+    else
+	echo "pazpar2 died"
     fi
 done
 IFS="$oIFS"

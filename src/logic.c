@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.31 2007-05-23 14:44:18 marc Exp $
+/* $Id: logic.c,v 1.32 2007-05-23 21:58:28 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -82,7 +82,8 @@ struct parameters global_parameters =
     "",
     "",
     0,
-    0,
+    0, /* dump_records */
+    0, /* debug_mode */
     30,
     "81",
     "Index Data PazPar2",

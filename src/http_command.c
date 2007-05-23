@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.43 2007-05-23 09:57:54 adam Exp $
+/* $Id: http_command.c,v 1.44 2007-05-23 21:58:28 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.43 2007-05-23 09:57:54 adam Exp $
+ * $Id: http_command.c,v 1.44 2007-05-23 21:58:28 adam Exp $
  */
 
 #include <stdio.h>
@@ -126,19 +126,26 @@ static void error(struct http_response *rs,
 unsigned int make_sessionid()
 {
     static int seq = 0;
-#if 1
-    return ++seq;
-#else
-    struct timeval t;
     unsigned int res;
 
     seq++;
-    if (gettimeofday(&t, 0) < 0)
-        abort();
-    res = t.tv_sec;
-    res = ((res << 8) | (seq & 0xff)) & ((1U << 31) - 1);
+    if (global_parameters.debug_mode)
+        res = seq;
+    else
+    {
+        struct timeval t;
+
+        if (gettimeofday(&t, 0) < 0)
+        {
+            yaz_log(YLOG_WARN|YLOG_ERRNO, "gettimeofday");
+            exit(1);
+        }
+        /* at most 256 sessions per second .. 
+           (long long would be more appropriate)*/
+        res = t.tv_sec;
+        res = ((res << 8) | (seq & 0xff)) & ((1U << 31) - 1);
+    }
     return res;
-#endif
 }
 
 static struct http_session *locate_session(struct http_request *rq, struct http_response *rs)

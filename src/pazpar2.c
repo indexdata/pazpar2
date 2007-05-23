@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.84 2007-05-15 21:27:55 adam Exp $
+/* $Id: pazpar2.c,v 1.85 2007-05-23 21:58:28 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 
     yaz_log_init_prefix("pazpar2");
 
-    while ((ret = options("f:h:p:z:t:l:d", argv, argc, &arg)) != -2)
+    while ((ret = options("f:h:p:z:t:l:dX", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -67,6 +67,9 @@ int main(int argc, char **argv)
         case 'l':
             yaz_log_init_file(arg);
             break;
+        case 'X':
+            global_parameters.debug_mode = 1;
+            break;
         default:
             fprintf(stderr, "Usage: pazpar2\n"
                     "    -f configfile\n"
@@ -76,6 +79,7 @@ int main(int argc, char **argv)
                     "    -t settings\n"
                     "    -d                      (show internal records)\n"
                     "    -l file                 log to file\n"
+                    "    -X                      debug mode\n"
                 );
             exit(1);
 	}

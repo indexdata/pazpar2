@@ -1,4 +1,4 @@
-/* $Id: parameters.h,v 1.1 2007-04-23 21:05:23 adam Exp $
+/* $Id: parameters.h,v 1.2 2007-05-23 21:58:28 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -32,6 +32,7 @@ struct parameters {
     char settings_path_override[128];
     struct conf_server *server;
     int dump_records;
+    int debug_mode;
     int timeout;		/* operations timeout, in seconds */
     char implementationId[128];
     char implementationName[128];
