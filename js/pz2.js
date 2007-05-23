@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.20 2007-05-21 10:10:41 jakub Exp $
+** $Id: pz2.js,v 1.21 2007-05-23 09:18:10 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -533,7 +533,7 @@ pzHttpRequest.prototype =
         var paramArr = new Array();
 
         for ( var key in params ) {
-            paramArr.push(key + '=' + escape(params[key]));
+            paramArr.push(key + '=' + params[key] );
         }
 
         if ( paramArr.length )
