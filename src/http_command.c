@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.42 2007-05-15 15:50:48 adam Exp $
+/* $Id: http_command.c,v 1.43 2007-05-23 09:57:54 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.42 2007-05-15 15:50:48 adam Exp $
+ * $Id: http_command.c,v 1.43 2007-05-23 09:57:54 adam Exp $
  */
 
 #include <stdio.h>
@@ -31,7 +31,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <strings.h>
 #include <ctype.h>
 #include <sys/time.h>
-
+#include <yaz/snprintf.h>
 #if HAVE_CONFIG_H
 #include <cconfig.h>
 #endif
@@ -103,17 +103,23 @@ void http_session_destroy(struct http_session *s)
     nmem_destroy(s->nmem);
 }
 
-static void error(struct http_response *rs, char *code, char *msg, char *txt)
+static void error(struct http_response *rs, 
+                  const char *code, const char *msg, const char *extra)
 {
     struct http_channel *c = rs->channel;
-    char tmp[1024];
+    char text[1024];
+    char *sep = extra ? ": " : "";
 
-    if (!txt)
-        txt = msg;
     rs->msg = nmem_strdup(c->nmem, msg);
     strcpy(rs->code, code);
-    sprintf(tmp, "<error code=\"general\">%s</error>", txt);
-    rs->payload = nmem_strdup(c->nmem, tmp);
+
+    yaz_snprintf(text, sizeof(text),
+                 "<error code=\"general\">%s%s%s</error>", msg, sep,
+                 extra ? extra : "");
+
+    yaz_log(YLOG_WARN, "HTTP %s %s%s%s", code, msg, sep,
+            extra ? extra : "");
+    rs->payload = nmem_strdup(c->nmem, text);
     http_send_response(c);
 }
 
@@ -176,8 +182,7 @@ static int process_settings(struct session *se, struct http_request *rq,
             nmem_strsplit(se->session_nmem, "[]", a->name, &res, &num);
             if (num != 2)
             {
-                error(rs, "417", "Malformed setting argument", 0);
-                yaz_log(YLOG_WARN, "Malformed setting: %s", a->name);
+                error(rs, "417", "Malformed setting argument", a->name);
                 return -1;
             }
             setting = res[0];
@@ -546,6 +551,31 @@ static void cmd_ping(struct http_channel *c)
     http_send_response(c);
 }
 
+static int utf_8_valid(const char *str)
+{
+    yaz_iconv_t cd = yaz_iconv_open("utf-8", "utf-8");
+    if (cd)
+    {
+        /* check that query is UTF-8 encoded */
+        char *inbuf = (char *) str; /* we know iconv does not alter this */
+        size_t inbytesleft = strlen(inbuf);
+
+        size_t outbytesleft = strlen(inbuf) + 10;
+        char *out = xmalloc(outbytesleft);
+        char *outbuf = out;
+        size_t r = yaz_iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
+
+        /* if OK, try flushing the rest  */
+        if (r != (size_t) (-1))
+            r = yaz_iconv(cd, 0, 0, &outbuf, &outbytesleft);
+        yaz_iconv_close(cd);
+        xfree(out);
+        if (r == (size_t) (-1))
+            return 0;
+    }
+    return 1;
+}
+
 static void cmd_search(struct http_channel *c)
 {
     struct http_request *rq = c->request;
@@ -562,10 +592,15 @@ static void cmd_search(struct http_channel *c)
         error(rs, "417", "Must supply query", 0);
         return;
     }
+    if (!utf_8_valid(query))
+    {
+        error(rs, "417", "Query not UTF-8 encoded", 0);
+        return;
+    }
     res = search(s->psession, query, filter);
     if (res)
     {
-        error(rs, "417", res, res);
+        error(rs, "417", res, 0);
         return;
     }
     rs->payload = "<search><status>OK</status></search>";
@@ -667,7 +702,7 @@ void http_command(struct http_channel *c)
             break;
         }
     if (!commands[i].name)
-        error(rs, "417", "Unknown command", 0);
+        error(rs, "417", "Unknown command", command);
 
     return;
 }
