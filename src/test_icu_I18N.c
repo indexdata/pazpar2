@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.25 2007-05-24 10:35:21 adam Exp $
+/* $Id: test_icu_I18N.c,v 1.26 2007-05-24 10:52:36 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -666,10 +666,7 @@ int main(int argc, char **argv)
     test_icu_I18N_normalizer(argc, argv);
     test_icu_I18N_tokenizer(argc, argv);
     test_icu_I18N_chain(argc, argv);
-#if 0
-    /* currently fails */
     test_bug_1140();
-#endif
 
 #else // HAVE_ICU
 
