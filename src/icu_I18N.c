@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.20 2007-05-24 10:51:36 adam Exp $
+/* $Id: icu_I18N.c,v 1.21 2007-05-24 10:56:38 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -769,13 +769,8 @@ struct icu_chain_step * icu_chain_step_create(struct icu_chain * chain,
     step = (struct icu_chain_step *) malloc(sizeof(struct icu_chain_step));
 
     step->type = type;
-    step->more_tokens = 0;
-    step->need_new_token = 1;
 
-    if (buf16)
-        step->buf16 = buf16;
-    else
-        step->buf16 = 0;
+    step->buf16 = buf16;
 
     // create auxilary objects
     switch(step->type) {
