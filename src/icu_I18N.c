@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.19 2007-05-22 07:51:45 adam Exp $
+/* $Id: icu_I18N.c,v 1.20 2007-05-24 10:51:36 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -1133,6 +1133,7 @@ int icu_chain_assign_cstr(struct icu_chain * chain,
 
     while (stp){
         stp->more_tokens = 1;
+        stp->need_new_token = 1;
         stp = stp->previous;
     }
     
