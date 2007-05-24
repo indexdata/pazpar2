@@ -1,4 +1,4 @@
-/* $Id: charsets.c,v 1.2 2007-05-23 14:44:18 marc Exp $
+/* $Id: charsets.c,v 1.3 2007-05-24 11:09:27 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -68,20 +68,15 @@ pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn)
 {
     pp2_charset_t pct = xmalloc(sizeof(*pct));
 
+    pct->icu_chn = 0;
+    pct->token_next_handler = pp2_relevance_token_a_to_z;
 #ifdef HAVE_ICU
     if (icu_chn){
         pct->icu_chn = icu_chn;
         pct->icu_sts = U_ZERO_ERROR;
         pct->token_next_handler = pp2_relevance_token_icu;
     }
-    else {
-        pct->icu_chn = 0;
-        pct->token_next_handler = pp2_relevance_token_a_to_z;
-    }
-#else // HAVE_ICU
-    pct->token_next_handler = pp2_relevance_token_a_to_z;
-#endif // HAVE_ICU
-
+ #endif // HAVE_ICU
     return pct;
 }
 
@@ -97,8 +92,13 @@ pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
 
     assert(pct);
 
+    prt->norm_str = wrbuf_alloc();
+    prt->cp = buf;
+    prt->pct = pct;
+
 #ifdef HAVE_ICU
-    if (pct->icu_chn){
+    if (pct->icu_chn)
+    {
         pct->icu_sts = U_ZERO_ERROR;
         int ok = 0;
         ok = icu_chain_assign_cstr(pct->icu_chn, buf, &pct->icu_sts);
@@ -106,19 +106,9 @@ pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
         //prt->cp = buf;
         prt->pct = pct;
         prt->norm_str = 0;
-        return prt;
     }
-    else {
 #endif // HAVE_ICU
-
-    prt->norm_str = wrbuf_alloc();
-    prt->cp = buf;
-    prt->pct = pct;
     return prt;
-
-#ifdef HAVE_ICU
-    }
-#endif // HAVE_ICU
 }
 
 
@@ -179,7 +169,7 @@ static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)
             
         return icu_chain_get_norm(prt->pct->icu_chn);
     }
-    
+    printf ("EOF\n");
     return 0;
 };
 #endif // HAVE_ICU
