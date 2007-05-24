@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.24 2007-05-22 07:51:45 adam Exp $
+/* $Id: test_icu_I18N.c,v 1.25 2007-05-24 10:35:21 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -558,6 +558,7 @@ void test_icu_I18N_chain(int argc, char **argv)
     
 #endif
 
+    xmlFreeDoc(doc);
     YAZ_CHECK(chain);
 
     YAZ_CHECK(icu_chain_assign_cstr(chain, en_str, &status));
@@ -571,11 +572,81 @@ void test_icu_I18N_chain(int argc, char **argv)
 
     YAZ_CHECK_EQ(icu_chain_get_token_count(chain), 7);
 
+
+    YAZ_CHECK(icu_chain_assign_cstr(chain, "what is this?", &status));
+
+    while (icu_chain_next_token(chain, &status)){
+        printf("%d '%s' '%s'\n",
+               icu_chain_get_token_count(chain),
+               icu_chain_get_norm(chain),
+               icu_chain_get_display(chain));
+    }
+
+
+    YAZ_CHECK_EQ(icu_chain_get_token_count(chain), 3);
+
     icu_chain_destroy(chain);
-    xmlFreeDoc(doc);
 }
 
 
+void test_bug_1140(void)
+{
+    const char * en_str 
+        = "O Romeo, Romeo! wherefore art thou\t Romeo?";
+
+    printf("ICU chain:\ninput: '%s'\n", en_str);
+
+    UErrorCode status = U_ZERO_ERROR;
+    //struct icu_chain_step * step = 0;
+    struct icu_chain * chain = 0;
+    
+    const char * xml_str = "<icu_chain id=\"en:word\" locale=\"en\">"
+
+        /* if the first rule is normalize instead. Then it works */
+#if 0
+        "<normalize rule=\"[:Control:] Any-Remove\"/>"
+#endif
+        "<tokenize rule=\"l\"/>"
+        "<normalize rule=\"[[:WhiteSpace:][:Punctuation:]] Remove\"/>"
+        "<display/>"
+        "<casemap rule=\"l\"/>"
+        "<normal/>"
+        "<sort/>"
+        "</icu_chain>";
+
+    
+    xmlDoc *doc = xmlParseMemory(xml_str, strlen(xml_str));
+    xmlNode *xml_node = xmlDocGetRootElement(doc);
+    YAZ_CHECK(xml_node);
+
+    chain = icu_chain_xml_config(xml_node, &status);
+
+    xmlFreeDoc(doc);
+    YAZ_CHECK(chain);
+    
+    YAZ_CHECK(icu_chain_assign_cstr(
+                  chain,  "O Romeo, Romeo! wherefore art thou\t Romeo?",
+                  &status));
+
+    while (icu_chain_next_token(chain, &status))
+        ;
+
+    YAZ_CHECK_EQ(icu_chain_get_token_count(chain), 7);
+
+    YAZ_CHECK(icu_chain_assign_cstr(chain, "what is this?", &status));
+
+    while (icu_chain_next_token(chain, &status)){
+        printf("%d '%s' '%s'\n",
+               icu_chain_get_token_count(chain),
+               icu_chain_get_norm(chain),
+               icu_chain_get_display(chain));
+    }
+
+    /* we expect 'what' 'is' 'this', i.e. 3 tokens */
+    YAZ_CHECK_EQ(icu_chain_get_token_count(chain), 3);
+
+    icu_chain_destroy(chain);
+}
 
 #endif // HAVE_ICU
 
@@ -595,6 +666,10 @@ int main(int argc, char **argv)
     test_icu_I18N_normalizer(argc, argv);
     test_icu_I18N_tokenizer(argc, argv);
     test_icu_I18N_chain(argc, argv);
+#if 0
+    /* currently fails */
+    test_bug_1140();
+#endif
 
 #else // HAVE_ICU
 
