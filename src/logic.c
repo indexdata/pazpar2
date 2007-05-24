@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.32 2007-05-23 21:58:28 adam Exp $
+/* $Id: logic.c,v 1.33 2007-05-24 10:57:38 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -494,13 +494,12 @@ static void session_init_databases_fun(void *context, struct database *db)
 
     new->database = db;
     new->yaz_marc = 0;
-
+    
 #ifdef HAVE_ICU
     if (global_parameters.server && global_parameters.server->icu_chn)
-            new->pct
-                = pp2_charset_create(global_parameters.server->icu_chn);
-        else
-            new->pct = pp2_charset_create(0);
+        new->pct = pp2_charset_create(global_parameters.server->icu_chn);
+    else
+        new->pct = pp2_charset_create(0);
 #else // HAVE_ICU
     new->pct = pp2_charset_create(0);
 #endif // HAVE_ICU
