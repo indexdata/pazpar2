@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.27 2007-05-18 19:52:52 quinn Exp $
+/* $Id: database.c,v 1.28 2007-05-25 03:58:04 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -144,7 +144,7 @@ static struct database *load_database(const char *id)
 
     db->settings = nmem_malloc(nmem, sizeof(struct settings*) * settings_num());
     memset(db->settings, 0, sizeof(struct settings*) * settings_num());
-    idset = nmem_malloc(nmem, sizeof(*id));
+    idset = nmem_malloc(nmem, sizeof(*idset));
     idset->precedence = 0;
     idset->name = "pz:id";
     idset->target = idset->value = db->url;
