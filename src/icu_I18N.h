@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.16 2007-05-21 10:14:08 marc Exp $
+/* $Id: icu_I18N.h,v 1.17 2007-05-25 13:27:21 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -187,8 +187,8 @@ struct icu_token
 enum icu_chain_step_type {
     ICU_chain_step_type_none,      // 
     ICU_chain_step_type_display,   // convert to utf8 display format 
-    ICU_chain_step_type_norm,      // convert to utf8 norm format 
-    ICU_chain_step_type_sort,      // convert to utf8 sort format 
+    ICU_chain_step_type_index,     // convert to utf8 index format 
+    ICU_chain_step_type_sortkey,   // convert to utf8 sortkey format 
     ICU_chain_step_type_casemap,   // apply utf16 charmap
     ICU_chain_step_type_normalize, // apply utf16 normalization
     ICU_chain_step_type_tokenize   // apply utf16 tokenization 

@@ -1,4 +1,4 @@
-/* $Id: test_icu_I18N.c,v 1.26 2007-05-24 10:52:36 adam Exp $
+/* $Id: test_icu_I18N.c,v 1.27 2007-05-25 13:27:21 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -513,8 +513,8 @@ void test_icu_I18N_chain(int argc, char **argv)
         "<normalize rule=\"[[:WhiteSpace:][:Punctuation:]] Remove\"/>"
         "<display/>"
         "<casemap rule=\"l\"/>"
-        "<normal/>"
-        "<sort/>"
+        "<index/>"
+        "<sortkey/>"
         "</icu_chain>";
 
     
@@ -549,10 +549,10 @@ void test_icu_I18N_chain(int argc, char **argv)
     step = icu_chain_insert_step(chain, ICU_chain_step_type_casemap,
                                  (const uint8_t *) "l",
                                  &status);
-    step = icu_chain_insert_step(chain, ICU_chain_step_type_norm,
+    step = icu_chain_insert_step(chain, ICU_chain_step_type_index,
                                  (const uint8_t *)"",
                                  &status);
-/*     step = icu_chain_insert_step(chain, ICU_chain_step_type_sort, */
+/*     step = icu_chain_insert_step(chain, ICU_chain_step_type_sortkey, */
 /*                                  (const uint8_t *)"", */
 /*                                  &status); */
     
@@ -610,8 +610,8 @@ void test_bug_1140(void)
         "<normalize rule=\"[[:WhiteSpace:][:Punctuation:]] Remove\"/>"
         "<display/>"
         "<casemap rule=\"l\"/>"
-        "<normal/>"
-        "<sort/>"
+        "<index/>"
+        "<sortkey/>"
         "</icu_chain>";
 
     

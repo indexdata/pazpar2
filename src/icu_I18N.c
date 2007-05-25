@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.21 2007-05-24 10:56:38 adam Exp $
+/* $Id: icu_I18N.c,v 1.22 2007-05-25 13:27:21 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -776,9 +776,9 @@ struct icu_chain_step * icu_chain_step_create(struct icu_chain * chain,
     switch(step->type) {
     case ICU_chain_step_type_display:
         break;
-    case ICU_chain_step_type_norm:
+    case ICU_chain_step_type_index:
         break;
-    case ICU_chain_step_type_sort:
+    case ICU_chain_step_type_sortkey:
         break;
     case ICU_chain_step_type_casemap:
         step->u.casemap = icu_casemap_create((char *) chain->locale, 
@@ -809,9 +809,9 @@ void icu_chain_step_destroy(struct icu_chain_step * step){
     switch(step->type) {
     case ICU_chain_step_type_display:
         break;
-    case ICU_chain_step_type_norm:
+    case ICU_chain_step_type_index:
         break;
-    case ICU_chain_step_type_sort:
+    case ICU_chain_step_type_sortkey:
         break;
     case ICU_chain_step_type_casemap:
         icu_casemap_destroy(step->u.casemap);
@@ -931,13 +931,13 @@ struct icu_chain * icu_chain_xml_config(xmlNode *xml_node,
                                          (const uint8_t *) "", status);
         }
         else if (!strcmp((const char *) node->name,
-                         (const char *) "normal")){
-            step = icu_chain_insert_step(chain, ICU_chain_step_type_norm, 
+                         (const char *) "index")){
+            step = icu_chain_insert_step(chain, ICU_chain_step_type_index, 
                                          (const uint8_t *) "", status);
         }
         else if (!strcmp((const char *) node->name,
-                         (const char *) "sort")){
-            step = icu_chain_insert_step(chain, ICU_chain_step_type_sort, 
+                         (const char *) "sortkey")){
+            step = icu_chain_insert_step(chain, ICU_chain_step_type_sortkey, 
                                          (const uint8_t *) "", status);
         }
 
@@ -981,10 +981,10 @@ struct icu_chain_step * icu_chain_insert_step(struct icu_chain * chain,
     case ICU_chain_step_type_display:
         buf16 = src16;
         break;
-    case ICU_chain_step_type_norm:
+    case ICU_chain_step_type_index:
         buf16 = src16;
         break;
-    case ICU_chain_step_type_sort:
+    case ICU_chain_step_type_sortkey:
         buf16 = src16;
         break;
     case ICU_chain_step_type_casemap:
@@ -1049,10 +1049,10 @@ int icu_chain_step_next_token(struct icu_chain * chain,
     case ICU_chain_step_type_display:
         icu_utf16_to_utf8(chain->display8, src16, status);
         break;
-    case ICU_chain_step_type_norm:
+    case ICU_chain_step_type_index:
         icu_utf16_to_utf8(chain->norm8, src16, status);
         break;
-    case ICU_chain_step_type_sort:
+    case ICU_chain_step_type_sortkey:
         icu_utf16_to_utf8(chain->sort8, src16, status);
         break;
     case ICU_chain_step_type_casemap:

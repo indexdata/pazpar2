@@ -13,8 +13,7 @@
     <!--    <display/> -->
     <casemap rule="l"/>
     <!-- <normalize rule="Lower"/> -->
-    <normal/>
-    <sort/>
+    <index/>
   </icu_chain>
 
   <service>
