@@ -1,4 +1,4 @@
-/* $Id: charsets.c,v 1.3 2007-05-24 11:09:27 adam Exp $
+/* $Id: charsets.c,v 1.4 2007-05-25 06:51:35 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -68,9 +68,9 @@ pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn)
 {
     pp2_charset_t pct = xmalloc(sizeof(*pct));
 
-    pct->icu_chn = 0;
     pct->token_next_handler = pp2_relevance_token_a_to_z;
 #ifdef HAVE_ICU
+    pct->icu_chn = 0;
     if (icu_chn){
         pct->icu_chn = icu_chn;
         pct->icu_sts = U_ZERO_ERROR;
