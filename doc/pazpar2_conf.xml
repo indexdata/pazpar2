@@ -8,7 +8,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.23 2007-04-24 04:37:58 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.24 2007-05-25 12:30:27 marc Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -116,6 +116,72 @@
 	</varlistentry>
 
 	<varlistentry>
+	  <term>icu_chain</term>
+	  <listitem>
+	    <para>
+	      Definition of ICU tokenization and normalization rules
+	      are used if ICU support is compiled in.  The 'id'
+	      attribute is currently not used, and the 'locale'
+	      attribute must be set to one of the locale strings
+	      defined in ICU. The child elements listed below can be
+	      in any order, except the 'index' element which logically
+	      belongs to the end of the list. The stated tokenization,
+	      normalization and charmapping instructions are performed
+	      in order from top to bottom. 
+	    </para>
+	    <variablelist> <!-- Level 2 -->
+	      <varlistentry><term>casemap</term>
+	        <listitem>
+		  <para>
+                    The attribure 'rule' defines the direction of the
+                    per-character casemapping, allowed values are "l"
+                    (lower), "u" (upper), "t" (title).  
+                  </para>
+                </listitem>
+               </varlistentry>
+	      <varlistentry><term>normalize</term>
+	        <listitem>
+		  <para>
+                    Normalization and transformation of tokens follows
+                    the rules defined in the 'rule' attribute. For
+                    possible values we refer to the extensive ICU
+                    documentation found at the 
+                   <ulink url="&url.icu.transform;">ICU
+                    transformation</ulink> home page. Set filtering
+                    principles are explained at the 
+                   <ulink url="&url.icu.unicode.set;">ICU set and
+                    filtering</ulink> page.
+                  </para>
+                </listitem>
+               </varlistentry>
+	      <varlistentry><term>tokenize</term>
+	        <listitem>
+		  <para>
+                    Tokenization is the only rule in the ICU chain
+                    which splits one token into multiple tokens. The
+                    'rule' attribute may have the following values:
+                    "s" (sentence), "l" (line-break), "w" (word), and
+                    "c" (character), the later probably not beeing
+                    very useful in a runing pazpar2 installation. 
+                  </para>
+                </listitem>
+               </varlistentry>
+	      <varlistentry><term>index</term>
+	        <listitem>
+		  <para>
+                   Finally the 'index' element instruction - without
+                   any 'rule' attribute - is used to store the tokens
+                   after chain processing in the relevance ranking
+                   unit of Pazpar2. It will always be the last
+                   instruction in the chain.
+                  </para>
+                </listitem>
+               </varlistentry>
+             </variablelist>
+	  </listitem>
+	</varlistentry>
+
+	<varlistentry>
 	  <term>service</term>
 	  <listitem>
 	    <para>
@@ -144,10 +210,13 @@
 		      <listitem>
 			<para>
 			  This is the name of the data element. It is matched
-			  against the 'type' attribute of the 'metadata' element
+			  against the 'type' attribute of the
+			  'metadata' element 
 			  in the normalized record. A warning is produced if
-			  metdata elements with an unknown name are found in the
-			  normalized record. This name is also used to represent
+			  metdata elements with an unknown name are
+			  found in the 
+			  normalized record. This name is also used to
+			  represent 
 			  data elements in the records returned by the
 			  webservice API, and to name sort lists and browse
 			  facets.
@@ -194,11 +263,13 @@
 		    <varlistentry><term>rank</term>
 		      <listitem>
 			<para>
-			  Specifies that this element is to be used to help rank
+			  Specifies that this element is to be used to
+			  help rank 
 			  records against the user's query (when ranking is
 			  requested). The value is an integer, used as a
 			  multiplier against the basic TF*IDF score. A value of
-			  1 is the base, higher values give additional weight to
+			  1 is the base, higher values give additional
+			  weight to 
 			  elements of this type. The default is '0', which
 			  excludes this element from the rank calculation.
 			</para>
@@ -212,7 +283,8 @@
 			  termlist, or browse facet. Values are tabulated from
 			  incoming records, and a highscore of values (with
 			  their associated frequency) is made available to the
-			  client through the webservice API. The possible values
+			  client through the webservice API. 
+                          The possible values
 			  are 'yes' and 'no' (default).
 			</para>
 		      </listitem>
@@ -257,6 +329,18 @@
   <!-- <zproxy host="localhost" port="9000"/> -->
   <!-- <zproxy host="localhost:9000"/> -->
   <!-- <zproxy port="9000"/> -->
+
+
+  <!-- optional ICU ranking configuration example -->
+  <!--
+  <icu_chain id="el:word" locale="el">
+    <normalize rule="[:Control:] Any-Remove"/>
+    <tokenize rule="l"/>
+    <normalize rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
+    <casemap rule="l"/>
+    <index/>
+  </icu_chain>
+  -->
 
   <service>
     <metadata name="title" brief="yes" sortkey="skiparticle" merge="longest" rank="6"/>
@@ -473,7 +557,7 @@
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: pazpar2_conf.xml,v 1.23 2007-04-24 04:37:58 quinn Exp $ -->
+  <!-- $Id: pazpar2_conf.xml,v 1.24 2007-05-25 12:30:27 marc Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>

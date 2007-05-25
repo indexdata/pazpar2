@@ -9,7 +9,7 @@
      <!ENTITY % common SYSTEM "common/common.ent">
      %common;
 ]>
-<!-- $Id: book.xml,v 1.12 2007-04-23 07:03:06 adam Exp $ -->
+<!-- $Id: book.xml,v 1.13 2007-05-25 12:30:27 marc Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -18,6 +18,9 @@
   </author>
   <author>
    <firstname>Adam</firstname><surname>Dickmeiss</surname>
+  </author>
+  <author>
+   <firstname>Marc</firstname><surname>Cromme</surname>
   </author>
   <releaseinfo>&version;</releaseinfo>
   <copyright>
@@ -151,6 +154,24 @@
        </para>
       </listitem>
      </varlistentry>
+     <varlistentry><term><ulink url="&url.icu;">International
+     Components for Unicode (ICU)</ulink></term>
+      <listitem>
+       <para>
+       ICU provides Unicode support for non-english languages with
+       character sets outside the range of 7bit ASCII, like
+       Greek, Russian, German and Frensh. Pazpar2 uses the ICU
+       unicode character conversions, unicode normalization, case
+       folding and other fundamental operations needed in
+       tokenization, normalization and ranking of records. 
+       </para>
+       <para>
+       Compiling, linking, and usage of the ICU libraries is optional,
+       but strongly recommended for usage in an international
+       environment.  
+       </para>
+      </listitem>
+     </varlistentry>
     </variablelist>
    </para>
    <para>
@@ -196,6 +217,7 @@
     </para>
     <screen>
      apt-get install libyaz-dev
+     apt-get install libicu36-dev
     </screen>
     <para>
      With these packages installed, the usual configure + make
@@ -208,7 +230,8 @@
   <chapter id="using">
     <title>Using pazpar2</title>
     <para>
-      This chapter provides a general introduction to the use and deployment of pazpar2.
+      This chapter provides a general introduction to the use and
+      deployment of pazpar2. 
     </para>
 
     <section id="architecture">
@@ -225,8 +248,8 @@
 	functionality, but it isn't a requirement -- you can choose to use
 	pazpar2 entirely as a backend to your regular server-side scripting.
 	When you do use pazpar2 in conjunction
-	with browser scripting (JavaScript/Ajax, Flash, applets, etc.), there are
-	special considerations.
+	with browser scripting (JavaScript/Ajax, Flash, applets,
+	etc.), there are	special considerations.
       </para>
 
       <para>
@@ -410,7 +433,8 @@
 	metasearching is really, really hard. If you want to build a
 	project with pazpar2, and you need access to resources with
 	non-standard interfaces, we can help. We run gateways to more than
-	2,000 popular, commercial databases and other resources, making it simple
+	2,000 popular, commercial databases and other resources,
+	making it simple 
 	to plug them directly into pazpar2. For a small annual fee per
 	database, we can help you establish connections to your licensed
 	resources. Meanwhile, you can help! If you build your own
@@ -430,6 +454,32 @@
 	implement it.
       </para>
     </section>
+
+    <section id="unicode">
+      <title>Unicode Compliance</title>
+      <para>
+       Pazpar2 is unicode compliant and language and locale aware to
+       the exted the used backend Z39.50 targets are. Just a few bad
+       behaving targets can spoil the search experience considerably
+       if for example Greek, Russian or otherwise non 7-bit ASCII
+       search terms are entered. In these cases some targets return
+       records irrelevant to the query, and the result screens wil be
+       cluttered with noise.
+      </para>
+      <para>
+       While noise from misbehaving targets can not be removed, it can
+       be reduced using truely unicode based ranking. This is an
+       option which is available to the system administrator if ICU
+       support is compiled into Pazpar2, see
+       <xref linkend="installation"/> for details.
+      </para>
+      <para>
+       In addition, the ICU tokenization and normalization rules must
+       be defined in the master configuration file described in 
+       <xref linkend="config-server"/>.
+      </para>
+    </section>
+
   </chapter> <!-- Using pazpar2 -->
 
  <reference id="reference">
