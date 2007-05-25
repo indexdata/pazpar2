@@ -1,4 +1,4 @@
-/* $Id: charsets.c,v 1.4 2007-05-25 06:51:35 adam Exp $
+/* $Id: charsets.c,v 1.5 2007-05-25 10:32:55 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -102,8 +102,7 @@ pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
         pct->icu_sts = U_ZERO_ERROR;
         int ok = 0;
         ok = icu_chain_assign_cstr(pct->icu_chn, buf, &pct->icu_sts);
-        printf("\nfield ok: %d '%s'\n", ok, buf);
-        //prt->cp = buf;
+        //printf("\nfield ok: %d '%s'\n", ok, buf);
         prt->pct = pct;
         prt->norm_str = 0;
     }
@@ -160,16 +159,16 @@ static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)
 {
     //&& U_SUCCESS(pct->icu_sts))
     if (icu_chain_next_token(prt->pct->icu_chn, &prt->pct->icu_sts)){
-        printf("'%s' ",  icu_chain_get_norm(prt->pct->icu_chn)); 
+        //printf("'%s' ",  icu_chain_get_norm(prt->pct->icu_chn)); 
         if (U_FAILURE(prt->pct->icu_sts))
         {
-            printf("ICU status failure\n "); 
+            //printf("ICU status failure\n "); 
             return 0;
         }
             
         return icu_chain_get_norm(prt->pct->icu_chn);
     }
-    printf ("EOF\n");
+    //printf ("EOF\n");
     return 0;
 };
 #endif // HAVE_ICU
