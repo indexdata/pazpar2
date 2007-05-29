@@ -1,4 +1,4 @@
-/* $Id: test_record.c,v 1.4 2007-04-25 07:00:33 marc Exp $
+/* $Id: test_record.c,v 1.5 2007-05-29 07:16:50 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -43,6 +43,16 @@ void test_record(int argc, char **argv)
   struct record *record = 0;
 
   struct client *client = 0;
+  char * bla = "blabla";
+  union data_types data_text;
+  data_text.text = bla;
+
+  
+  union data_types data_num;
+  data_num.number.min = 2;
+  data_num.number.max = 5;
+
+  struct record_metadata * tmp_md = 0;
 
   service =  conf_service_create(nmem, 4, 3);
   YAZ_CHECK(service);
@@ -82,16 +92,6 @@ void test_record(int argc, char **argv)
   // why on earth do we have a client dangeling from the record ??
   record->client = client;
 
-  char * bla = "blabla";
-  union data_types data_text;
-  data_text.text = bla;
-
-  
-  union data_types data_num;
-  data_num.number.min = 2;
-  data_num.number.max = 5;
-
-  struct record_metadata * tmp_md = 0;
   tmp_md = record_metadata_insert(nmem, &(record->metadata[0]), data_text);
   YAZ_CHECK(tmp_md);
   YAZ_CHECK(0 == record->metadata[0]->next);
