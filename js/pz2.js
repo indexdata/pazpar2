@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.21 2007-05-23 09:18:10 jakub Exp $
+** $Id: pz2.js,v 1.22 2007-05-31 08:46:32 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -651,7 +651,7 @@ pzQuery.prototype = {
     {   
         var ccl = '';
         if( this.simpleQuery != '')
-            ccl = '"'+this.simpleQuery+'"';
+            ccl = this.simpleQuery;
         for(var i = 0; i < this.advTerms.length; i++)
         {
             if (ccl != '') ccl = ccl + ' and ';
