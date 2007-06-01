@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.22 2007-05-31 08:46:32 jakub Exp $
+** $Id: pz2.js,v 1.23 2007-06-01 08:06:17 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -541,6 +541,7 @@ pzHttpRequest.prototype =
 
         var context = this;
         this.request.open( 'GET', getUrl, true );
+        this.request.setRequestHeader('Accept-Charset', 'ISO-8859-1,utf-8;q=0.7,*;q=0.7');
         this.request.onreadystatechange = function () {
             context._handleResponse();
         }
