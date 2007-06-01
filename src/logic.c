@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.33 2007-05-24 10:57:38 adam Exp $
+/* $Id: logic.c,v 1.34 2007-06-01 10:38:08 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -154,48 +154,73 @@ xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec)
 {
     struct database_retrievalmap *m;
     struct database *db = sdb->database;
-    xmlNode *res;
-    xmlDoc *rdoc;
+    xmlDoc *rdoc = 0;
+    const Odr_oid *oid = rec->direct_reference;
 
-    // First normalize to XML
-    if (sdb->yaz_marc)
+    /* convert response record to XML somehow */
+    if (rec->which == Z_External_octet && oid
+        && !oid_oidcmp(oid, yaz_oid_recsyn_xml))
     {
-        char *buf;
-        int len;
-        if (rec->which != Z_External_octet)
+        /* xml already */
+        rdoc = xmlParseMemory((char*) rec->u.octet_aligned->buf,
+                              rec->u.octet_aligned->len);
+        if (!rdoc)
         {
-            yaz_log(YLOG_WARN, "Unexpected external branch, probably BER %s",
+            yaz_log(YLOG_FATAL, "Non-wellformed XML received from %s",
                     db->url);
             return 0;
         }
-        buf = (char*) rec->u.octet_aligned->buf;
-        len = rec->u.octet_aligned->len;
-        if (yaz_marc_read_iso2709(sdb->yaz_marc, buf, len) < 0)
+    }
+    else if (oid && yaz_oid_is_iso2709(oid))
+    {
+        /* ISO2709 gets converted to MARCXML */
+        if (!sdb->yaz_marc)
         {
-            yaz_log(YLOG_WARN, "Failed to decode MARC %s", db->url);
+            yaz_log(YLOG_FATAL, "Unable to handle ISO2709 record");
             return 0;
         }
-
-        yaz_marc_write_using_libxml2(sdb->yaz_marc, 1);
-        if (yaz_marc_write_xml(sdb->yaz_marc, &res,
-                    "http://www.loc.gov/MARC21/slim", 0, 0) < 0)
+        else
         {
-            yaz_log(YLOG_WARN, "Failed to encode as XML %s",
-                    db->url);
-            return 0;
+            xmlNode *res;
+            char *buf;
+            int len;
+            
+            if (rec->which != Z_External_octet)
+            {
+                yaz_log(YLOG_WARN, "Unexpected external branch, probably BER %s",
+                        db->url);
+                return 0;
+            }
+            buf = (char*) rec->u.octet_aligned->buf;
+            len = rec->u.octet_aligned->len;
+            if (yaz_marc_read_iso2709(sdb->yaz_marc, buf, len) < 0)
+            {
+                yaz_log(YLOG_WARN, "Failed to decode MARC %s", db->url);
+                return 0;
+            }
+            
+            yaz_marc_write_using_libxml2(sdb->yaz_marc, 1);
+            if (yaz_marc_write_xml(sdb->yaz_marc, &res,
+                                   "http://www.loc.gov/MARC21/slim", 0, 0) < 0)
+            {
+                yaz_log(YLOG_WARN, "Failed to encode as XML %s",
+                        db->url);
+                return 0;
+            }
+            rdoc = xmlNewDoc((xmlChar *) "1.0");
+            xmlDocSetRootElement(rdoc, res);
         }
-        rdoc = xmlNewDoc((xmlChar *) "1.0");
-        xmlDocSetRootElement(rdoc, res);
-
     }
     else
     {
+        char oid_name_buf[OID_STR_MAX];
+        const char *oid_name = yaz_oid_to_string_buf(oid, 0, oid_name_buf);
         yaz_log(YLOG_FATAL, 
-                "Unknown native_syntax in normalize_record from %s",
-                db->url);
+                "Unable to handle record of type %s from %s", 
+                oid_name, db->url);
         return 0;
     }
-
+    
     if (global_parameters.dump_records){
         fprintf(stderr, 
                 "Input Record (normalized) from %s\n----------------\n",
