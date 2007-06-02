@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.4 2007-05-15 08:52:35 adam Exp $
+/* $Id: client.c,v 1.5 2007-06-02 03:37:55 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -373,9 +373,10 @@ void client_search_response(struct client *cl, Z_APDU *a)
             Z_Records *recs = r->records;
             if (recs->which == Z_Records_NSD)
             {
-                yaz_log(YLOG_WARN, 
-                        "Search response: Non-surrogate diagnostic %s",
-                        cl->database->database->url);
+                yaz_log(YLOG_WARN,  
+                    "Search response: Non-surrogate diagnostic %s (%d)", 
+                    cl->database->database->url, 
+                    *recs->u.nonSurrogateDiagnostic->condition); 
                 cl->diagnostic = *recs->u.nonSurrogateDiagnostic->condition;
                 cl->state = Client_Error;
             }
@@ -441,7 +442,7 @@ static void init_authentication(struct client *cl, Z_InitRequest *req)
     struct session_database *sdb = client_get_database(cl);
     char *auth = session_setting_oneval(sdb, PZ_AUTHENTICATION);
 
-    if (auth)
+    if (*auth)
     {
         Z_IdAuthentication *idAuth = odr_malloc(global_parameters.odr_out,
                 sizeof(*idAuth));
