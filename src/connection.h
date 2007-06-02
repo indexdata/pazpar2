@@ -1,4 +1,4 @@
-/* $Id: connection.h,v 1.2 2007-04-24 08:03:03 adam Exp $
+/* $Id: connection.h,v 1.3 2007-06-02 04:32:28 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -39,6 +39,7 @@ struct connection *connection_create(struct client *cl);
 void connect_resolver_host(struct host *host);
 int connection_send_apdu(struct connection *co, Z_APDU *a);
 struct host *connection_get_host(struct connection *con);
+void connection_set_authentication(struct connection *co, char *auth);
 int connection_connect(struct connection *con);
 struct connection *connection_get_available(struct connection *con_list,
                                             struct session *se);

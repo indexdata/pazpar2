@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.5 2007-06-02 03:37:55 quinn Exp $
+/* $Id: client.c,v 1.6 2007-06-02 04:32:28 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -444,11 +444,14 @@ static void init_authentication(struct client *cl, Z_InitRequest *req)
 
     if (*auth)
     {
+        struct connection *co = client_get_connection(cl);
+        struct session *se = client_get_session(cl);
         Z_IdAuthentication *idAuth = odr_malloc(global_parameters.odr_out,
                 sizeof(*idAuth));
         idAuth->which = Z_IdAuthentication_open;
         idAuth->u.open = auth;
         req->idAuthentication = idAuth;
+        connection_set_authentication(co, nmem_strdup(se->session_nmem, auth));
     }
 }
 

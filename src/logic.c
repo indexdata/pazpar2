@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.34 2007-06-01 10:38:08 adam Exp $
+/* $Id: logic.c,v 1.35 2007-06-02 04:32:28 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -502,9 +502,7 @@ char *search(struct session *se, char *query, char *filter)
     }
 
     for (cl = se->clients; cl; cl = client_next_in_session(cl))
-    {
         client_prep_connection(cl);
-    }
 
     return 0;
 }

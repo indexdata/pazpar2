@@ -1,4 +1,4 @@
-/* $Id: connection.c,v 1.2 2007-04-24 08:03:03 adam Exp $
+/* $Id: connection.c,v 1.3 2007-06-02 04:32:28 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -46,6 +46,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "pazpar2.h"
 #include "host.h"
 #include "client.h"
+#include "settings.h"
 #include "parameters.h"
 
 
@@ -58,6 +59,7 @@ struct connection {
     struct client *client;
     char *ibuf;
     int ibufsize;
+    char *authentication; // Empty string or authentication string if set
     enum {
         Conn_Resolving,
         Conn_Connecting,
@@ -124,6 +126,7 @@ struct connection *connection_create(struct client *cl)
     new->next = new->host->connections;
     new->host->connections = new;
     new->client = cl;
+    new->authentication = "";
     client_set_connection(cl, new);
     new->link = 0;
     new->state = Conn_Resolving;
@@ -374,6 +377,11 @@ const char *connection_get_url(struct connection *co)
     return client_get_url(co->client);
 }
 
+void connection_set_authentication(struct connection *co, char *auth)
+{
+    co->authentication = auth;
+}
+
 // Ensure that client has a connection associated
 int client_prep_connection(struct client *cl)
 {
@@ -390,7 +398,11 @@ int client_prep_connection(struct client *cl)
         // See if someone else has an idle connection
         // We should look at timestamps here to select the longest-idle connection
         for (co = host->connections; co; co = co->next)
-            if (co->state == Conn_Open && (!co->client || client_get_session(co->client) != se))
+            if (co->state == Conn_Open &&
+                (!co->client || client_get_session(co->client) != se) &&
+                !strcmp(co->authentication,
+                    session_setting_oneval(client_get_database(cl),
+                    PZ_AUTHENTICATION)))
                 break;
         if (co)
         {
