@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.32 2007-06-04 14:27:48 adam Exp $
+/* $Id: http.c,v 1.33 2007-06-04 14:44:22 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -488,8 +488,6 @@ static struct http_buf *http_serialize_response(struct http_channel *c,
             xmlDoc *doc = xmlParseMemory(r->payload, strlen(r->payload));
             if (doc)
             {
-                yaz_log(YLOG_LOG, "payload: %s", r->payload);
-
                 xmlFreeDoc(doc);
             }
             else
