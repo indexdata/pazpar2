@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.31 2007-06-04 12:31:07 jakub Exp $
+** $Id: pz2.js,v 1.32 2007-06-04 12:49:21 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -314,7 +314,9 @@ pz2.prototype = {
 				}
 				else {
 				    var nodeName = hits[i].childNodes[j].nodeName;
-                                    var nodeText = hits[i].childNodes[j].firstChild.nodeValue;
+                                    var nodeText = 'ERROR'
+                                    if ( hits[i].childNodes[j].firstChild )
+                                        nodeText = hits[i].childNodes[j].firstChild.nodeValue;
 				    show.hits[i][nodeName] = nodeText;
 				}
                             }
