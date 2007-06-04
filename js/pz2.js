@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.30 2007-06-04 12:24:59 jakub Exp $
+** $Id: pz2.js,v 1.31 2007-06-04 12:31:07 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -417,7 +417,9 @@ pz2.prototype = {
                         //for each term in the list
                         for (j = 0; j < terms.length; j++) { 
                             var term = {
-                                "name": terms[j].getElementsByTagName("name")[0].childNodes[0].nodeValue || 'ERROR',
+                                "name": (terms[j].getElementsByTagName("name")[0].childNodes.length 
+                                                ? terms[j].getElementsByTagName("name")[0].childNodes[0].nodeValue
+                                                : 'ERROR'),
                                 "freq": terms[j].getElementsByTagName("frequency")[0].childNodes[0].nodeValue || 'ERROR'
                             };
 
