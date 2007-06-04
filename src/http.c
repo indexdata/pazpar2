@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.31 2007-05-15 08:51:49 adam Exp $
+/* $Id: http.c,v 1.32 2007-06-04 14:27:48 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -350,8 +350,9 @@ struct http_response *http_parse_response_buf(struct http_channel *c, const char
     return r;
 }
 
-struct http_request *http_parse_request(struct http_channel *c, struct http_buf **queue,
-        int len)
+struct http_request *http_parse_request(struct http_channel *c,
+                                        struct http_buf **queue,
+                                        int len)
 {
     struct http_request *r = nmem_malloc(c->nmem, sizeof(*r));
     char *p, *p2;
@@ -482,6 +483,22 @@ static struct http_buf *http_serialize_response(struct http_channel *c,
         wrbuf_printf(c->wrbuf, "Content-length: %d\r\n", r->payload ?
                 (int) strlen(r->payload) : 0);
         wrbuf_printf(c->wrbuf, "Content-type: text/xml\r\n");
+        if (1)
+        {
+            xmlDoc *doc = xmlParseMemory(r->payload, strlen(r->payload));
+            if (doc)
+            {
+                yaz_log(YLOG_LOG, "payload: %s", r->payload);
+
+                xmlFreeDoc(doc);
+            }
+            else
+            {
+                yaz_log(YLOG_WARN, "Sending non-wellformed "
+                        "response (bug #1162");
+                yaz_log(YLOG_WARN, "payload: %s", r->payload);
+            }
+        }
     }
     wrbuf_puts(c->wrbuf, "\r\n");
 

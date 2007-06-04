@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.44 2007-05-23 21:58:28 adam Exp $
+/* $Id: http_command.c,v 1.45 2007-06-04 14:27:48 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.44 2007-05-23 21:58:28 adam Exp $
+ * $Id: http_command.c,v 1.45 2007-06-04 14:27:48 adam Exp $
  */
 
 #include <stdio.h>
@@ -260,7 +260,10 @@ static void targets_termlist(WRBUF wrbuf, struct session *se, int num)
     {
         wrbuf_puts(wrbuf, "\n<term>\n");
         wrbuf_printf(wrbuf, "<id>%s</id>\n", ht[i].id);
-        wrbuf_printf(wrbuf, "<name>%s</name>\n", ht[i].name);
+        wrbuf_puts(wrbuf, "<name>");
+        wrbuf_xmlputs(wrbuf, ht[i].name);
+        wrbuf_puts(wrbuf, "</name>\n");
+
         wrbuf_printf(wrbuf, "<frequency>%d</frequency>\n", ht[i].hits);
         wrbuf_printf(wrbuf, "<state>%s</state>\n", ht[i].state);
         wrbuf_printf(wrbuf, "<diagnostic>%d</diagnostic>\n", ht[i].diagnostic);
@@ -307,7 +310,9 @@ static void cmd_termlist(struct http_channel *c)
         strncpy(tname, name, tp - name);
         tname[tp - name] = '\0';
 
-        wrbuf_printf(c->wrbuf, "\n<list name=\"%s\">\n", tname);
+        wrbuf_puts(c->wrbuf, "\n<list name=\"");
+        wrbuf_xmlputs(c->wrbuf, tname);
+        wrbuf_puts(c->wrbuf, "\">\n");
         if (!strcmp(tname, "xtargets"))
             targets_termlist(c->wrbuf, s->psession, num);
         else
@@ -317,7 +322,10 @@ static void cmd_termlist(struct http_channel *c)
                 for (i = 0; i < len && i < num; i++)
                 {
                     wrbuf_puts(c->wrbuf, "\n<term>");
-                    wrbuf_printf(c->wrbuf, "<name>%s</name>", p[i]->term);
+                    wrbuf_puts(c->wrbuf, "<name>");
+                    wrbuf_xmlputs(c->wrbuf, p[i]->term);
+                    wrbuf_puts(c->wrbuf, "</name>");
+
                     wrbuf_printf(c->wrbuf, "<frequency>%d</frequency>", p[i]->frequency);
                     wrbuf_puts(c->wrbuf, "</term>");
                 }
@@ -404,9 +412,14 @@ static void write_subrecord(struct record *r, WRBUF w,
 {
     char *name = session_setting_oneval(client_get_database(r->client), PZ_NAME);
 
-    wrbuf_printf(w, "<location id=\"%s\" name=\"%s\">",
-            client_get_database(r->client)->database->url,
-            *name ? name : "Unknown");
+    wrbuf_printf(w, "<location id=\"");
+    wrbuf_xmlputs(w, client_get_database(r->client)->database->url);
+    wrbuf_puts(w, "\" ");
+
+    wrbuf_printf(w, "name=\"");
+
+    wrbuf_xmlputs(w,  *name ? name : "Unknown");
+    wrbuf_printf(w, "\">");
     if (show_details)
         write_metadata(w, service, r->metadata, 1);
     wrbuf_puts(w, "</location>\n");
