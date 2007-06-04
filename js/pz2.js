@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.28 2007-06-01 09:19:58 jakub Exp $
+** $Id: pz2.js,v 1.29 2007-06-04 10:56:28 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -352,6 +352,7 @@ pz2.prototype = {
                 if ( recordNode = data.getElementsByTagName("record")[0] ) {
                     // if stylesheet was fetched do not parse the response
                     if ( __myself.xslDoc ) {
+                        record['recid'] = recordNode.getElementsByTagName("recid")[0].firstChild.nodeValue;
                         record['xmlDoc'] = data;
                         record['xslDoc'] = __myself.xslDoc;
                     } else {
