@@ -5,10 +5,10 @@
      %local;
      <!ENTITY % entities SYSTEM "entities.ent">
      %entities;
-     <!ENTITY % common SYSTEM "common/common.ent">
-     %common;
+     <!ENTITY % idcommon SYSTEM "common/common.ent">
+     %idcommon;
 ]>
-<!-- $Id: pazpar2_protocol.xml,v 1.7 2007-04-11 04:51:23 quinn Exp $ -->
+<!-- $Id: pazpar2_protocol.xml,v 1.8 2007-06-04 10:34:06 adam Exp $ -->
 <refentry id="pazpar2_protocol">
  <refentryinfo>
   <productname>Pazpar2</productname>

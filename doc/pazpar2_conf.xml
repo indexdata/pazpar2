@@ -5,10 +5,10 @@
      %local;
      <!ENTITY % entities SYSTEM "entities.ent">
      %entities;
-     <!ENTITY % common SYSTEM "common/common.ent">
-     %common;
+     <!ENTITY % idcommon SYSTEM "common/common.ent">
+     %idcommon;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.24 2007-05-25 12:30:27 marc Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.25 2007-06-04 10:34:06 adam Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -557,7 +557,7 @@
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: pazpar2_conf.xml,v 1.24 2007-05-25 12:30:27 marc Exp $ -->
+  <!-- $Id: pazpar2_conf.xml,v 1.25 2007-06-04 10:34:06 adam Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
