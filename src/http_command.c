@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.46 2007-06-05 13:36:40 marc Exp $
+/* $Id: http_command.c,v 1.47 2007-06-05 14:09:10 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.46 2007-06-05 13:36:40 marc Exp $
+ * $Id: http_command.c,v 1.47 2007-06-05 14:09:10 marc Exp $
  */
 
 #include <stdio.h>
@@ -258,25 +258,32 @@ static void targets_termlist(WRBUF wrbuf, struct session *se, int num)
     qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht);
     for (i = 0; i < count && i < num && ht[i].hits > 0; i++)
     {
+
+        // do only print terms which have display names
+    
         wrbuf_puts(wrbuf, "<term>\n");
 
         //wrbuf_printf(wrbuf, "<id>%s</id>\n", ht[i].id);
         wrbuf_puts(wrbuf, "<id>");
         wrbuf_xmlputs(wrbuf, ht[i].id);
         wrbuf_puts(wrbuf, "</id>\n");
-
+        
         wrbuf_puts(wrbuf, "<name>");
-        wrbuf_xmlputs(wrbuf, ht[i].name);
+        if (!ht[i].name || !ht[i].name[0])
+            wrbuf_xmlputs(wrbuf, "NO TARGET NAME");
+        else
+            wrbuf_xmlputs(wrbuf, ht[i].name);
         wrbuf_puts(wrbuf, "</name>\n");
-
+        
         wrbuf_printf(wrbuf, "<frequency>%d</frequency>\n", ht[i].hits);
-
+        
         //wrbuf_printf(wrbuf, "<state>%s</state>\n", ht[i].state);
         wrbuf_puts(wrbuf, "<state>");
         wrbuf_xmlputs(wrbuf, ht[i].state);
         wrbuf_puts(wrbuf, "</state>\n");
-
-        wrbuf_printf(wrbuf, "<diagnostic>%d</diagnostic>\n", ht[i].diagnostic);
+        
+        wrbuf_printf(wrbuf, "<diagnostic>%d</diagnostic>\n", 
+                     ht[i].diagnostic);
         wrbuf_puts(wrbuf, "</term>\n");
     }
 }
@@ -308,8 +315,8 @@ static void cmd_termlist(struct http_channel *c)
 
     wrbuf_rewind(c->wrbuf);
 
-    wrbuf_puts(c->wrbuf, "<termlist>");
-    wrbuf_printf(c->wrbuf, "\n<activeclients>%d</activeclients>", status);
+    wrbuf_puts(c->wrbuf, "<termlist>\n");
+    wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", status);
     while (*name)
     {
         char tname[256];
@@ -320,7 +327,7 @@ static void cmd_termlist(struct http_channel *c)
         strncpy(tname, name, tp - name);
         tname[tp - name] = '\0';
 
-        wrbuf_puts(c->wrbuf, "\n<list name=\"");
+        wrbuf_puts(c->wrbuf, "<list name=\"");
         wrbuf_xmlputs(c->wrbuf, tname);
         wrbuf_puts(c->wrbuf, "\">\n");
         if (!strcmp(tname, "xtargets"))
@@ -329,23 +336,28 @@ static void cmd_termlist(struct http_channel *c)
         {
             p = termlist(s->psession, tname, &len);
             if (p)
-                for (i = 0; i < len && i < num; i++)
-                {
-                    wrbuf_puts(c->wrbuf, "\n<term>");
+                for (i = 0; i < len && i < num; i++){
+                    // prevnt sending empty term elements
+                    if (!p[i]->term || !p[i]->term[0])
+                        continue;
+
+                    wrbuf_puts(c->wrbuf, "<term>");
                     wrbuf_puts(c->wrbuf, "<name>");
                     wrbuf_xmlputs(c->wrbuf, p[i]->term);
                     wrbuf_puts(c->wrbuf, "</name>");
-
-                    wrbuf_printf(c->wrbuf, "<frequency>%d</frequency>", p[i]->frequency);
-                    wrbuf_puts(c->wrbuf, "</term>");
-                }
+                        
+                    wrbuf_printf(c->wrbuf, 
+                                 "<frequency>%d</frequency>", 
+                                 p[i]->frequency);
+                    wrbuf_puts(c->wrbuf, "</term>\n");
+               }
         }
-        wrbuf_puts(c->wrbuf, "\n</list>");
+        wrbuf_puts(c->wrbuf, "</list>\n");
         name = tp;
         if (*name == ',')
             name++;
     }
-    wrbuf_puts(c->wrbuf, "</termlist>");
+    wrbuf_puts(c->wrbuf, "</termlist>\n");
     rs->payload = nmem_strdup(rq->channel->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
 }
@@ -472,7 +484,7 @@ static void cmd_record(struct http_channel *c)
         return;
     }
     wrbuf_puts(c->wrbuf, "<record>\n");
-    wrbuf_printf(c->wrbuf, "<recid>%d</recid>", rec->recid);
+    wrbuf_printf(c->wrbuf, "<recid>%d</recid>\n", rec->recid);
     write_metadata(c->wrbuf, service, rec->metadata, 1);
     for (r = rec->records; r; r = r->next)
         write_subrecord(r, c->wrbuf, service, 1);
