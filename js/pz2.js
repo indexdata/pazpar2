@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.32 2007-06-04 12:49:21 jakub Exp $
+** $Id: pz2.js,v 1.33 2007-06-05 15:19:25 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -110,18 +110,22 @@ var pz2 = function(paramArray) {
         __myself.init();
 };
 pz2.prototype = {
+    stop: function ()
+    {
+        clearTimeout(__myself.statTimer);
+        clearTimeout(__myself.showTimer);
+        clearTimeout(__myself.termTimer);
+        clearTimeout(__myself.bytargetTimer);
+    },
     reset: function ()
     {
         __myself.sessionID = null;
         __myself.initStatusOK = false;
         __myself.pingStatusOK = false;
         __myself.searchStatusOK = false;
-
-        clearTimeout(__myself.statTimer);
-        clearTimeout(__myself.showTimer);
-        clearTimeout(__myself.termTimer);
-        clearTimeout(__myself.bytargetTimer);
-            
+        
+        __myself.stop();
+               
         if ( __myself.resetCallback )
                 __myself.resetCallback();
     },
@@ -404,7 +408,7 @@ pz2.prototype = {
         clearTimeout(__myself.termTimer);
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         request.get(
-            { "command": "termlist", "session": __myself.sessionID, "name": __myself.termKeys },
+            { "command": "termlist", "session": __myself.sessionID, "name": __myself.termKeys, "block": "1" },
             function(data) {
                 if ( data.getElementsByTagName("termlist") ) {
                     var activeClients = Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue );
@@ -607,6 +611,10 @@ var pzQuery = function()
     this.filterNums = 0;
 };
 pzQuery.prototype = {
+    clearSimpleQuery: function()
+    {
+        this.simpleQuery = '';
+    },
     reset: function()
     {
         this.simpleQuery = '';
