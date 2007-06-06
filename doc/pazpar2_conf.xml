@@ -8,7 +8,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.25 2007-06-04 10:34:06 adam Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.26 2007-06-06 12:02:48 marc Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -96,21 +96,6 @@
 	      application on a conventional webserver, while efficiently
 	      processing webservice requests for metasearch status, results,
 	      etc.
-	    </para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term>zproxy</term>
-	  <listitem>
-	    <para>
-	      If this item is given, pazpar2 will send all Z39.50
-	      packages through this Z39.50 proxy server.
-              At least one of the 'host' and 'post' attributes is required.
-              The 'host' attribute may contain both host name and port
-	      number, seperated by a colon ':', or only the host name.
-              An empty 'host' attribute sets the Z39.50 host address
-	      to 'localhost'.  
 	    </para>
 	  </listitem>
 	</varlistentry>
@@ -325,11 +310,6 @@
 <server>
   <listen port="9004"/>
   <proxy host="us1.indexdata.com" myurl="us1.indexdata.com"/>
-
-  <!-- <zproxy host="localhost" port="9000"/> -->
-  <!-- <zproxy host="localhost:9000"/> -->
-  <!-- <zproxy port="9000"/> -->
-
 
   <!-- optional ICU ranking configuration example -->
   <!--
@@ -557,7 +537,7 @@
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: pazpar2_conf.xml,v 1.25 2007-06-04 10:34:06 adam Exp $ -->
+  <!-- $Id: pazpar2_conf.xml,v 1.26 2007-06-06 12:02:48 marc Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
@@ -728,6 +708,16 @@
 	      ZURL) for a given target, and is useful for filtering --
 	      specifically when you want to select one or more specific
 	      targets in the search command.
+	    </para>
+	  </listitem>
+	</varlistentry>
+	<varlistentry>
+	  <term>pz:zproxy</term>
+	  <listitem>
+	    <para>
+	      The 'pz:zproxy' setting has the value syntax 
+              'host.internet.adress:port', it is used to tunnel Z39.50
+              requests through the named Z39.50 proxy.
 	    </para>
 	  </listitem>
 	</varlistentry>
