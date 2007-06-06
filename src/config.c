@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.35 2007-06-06 11:49:48 marc Exp $
+/* $Id: config.c,v 1.36 2007-06-06 11:56:35 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.35 2007-06-06 11:49:48 marc Exp $ */
+/* $Id: config.c,v 1.36 2007-06-06 11:56:35 marc Exp $ */
 
 #include <string.h>
 
@@ -453,22 +453,6 @@ static struct conf_server *parse_server(xmlNode *node)
             xmlFree(host);
             xmlFree(myurl);
         }
-/*         else if (!strcmp((const char *) n->name, "zproxy")) */
-/*         { */
-/*             xmlChar *port = 0; */
-/*             xmlChar *host = 0; */
-
-/*             port = xmlGetProp(n, (xmlChar *) "port"); */
-/*             host = xmlGetProp(n, (xmlChar *) "host"); */
-
-/*             if (port) */
-/*                 server->zproxy_port = atoi((const char *) port); */
-/*             if (host) */
-/*                 server->zproxy_host = nmem_strdup(nmem, (const char *) host); */
-
-/*             xmlFree(port); */
-/*             xmlFree(host); */
-/*         } */
         else if (!strcmp((const char *) n->name, "settings"))
         {
             if (server->settings)

@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.7 2007-06-06 11:49:48 marc Exp $
+/* $Id: client.c,v 1.8 2007-06-06 11:56:35 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -235,7 +235,8 @@ void client_send_search(struct client *cl)
     for (ndb = 0; sdb->database->databases[ndb]; ndb++)
 	databaselist[ndb] = sdb->database->databases[ndb];
 
-    if (!(piggyback = session_setting_oneval(sdb, PZ_PIGGYBACK)) || *piggyback == '1')
+    if (!(piggyback = session_setting_oneval(sdb, PZ_PIGGYBACK)) 
+        || *piggyback == '1')
     {
         if ((recsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX)))
         {
