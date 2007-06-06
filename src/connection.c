@@ -1,4 +1,4 @@
-/* $Id: connection.c,v 1.3 2007-06-02 04:32:28 quinn Exp $
+/* $Id: connection.c,v 1.4 2007-06-06 11:49:48 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -319,6 +319,9 @@ int connection_connect(struct connection *con)
     void *addr;
     int res;
 
+    struct session_database *sdb = client_get_database(con->client);
+    char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
+
     assert(host->ipport);
     assert(con);
 
@@ -328,7 +331,7 @@ int connection_connect(struct connection *con)
         return -1;
     }
     
-    if (0 == strlen(global_parameters.zproxy_override)){
+    if (!zproxy || 0 == strlen(zproxy)){
         /* no Z39.50 proxy needed - direct connect */
         yaz_log(YLOG_DEBUG, "Connection create %s", connection_get_url(con));
         
@@ -342,13 +345,13 @@ int connection_connect(struct connection *con)
     } else {
         /* Z39.50 proxy connect */
         yaz_log(YLOG_DEBUG, "Connection create %s proxy %s", 
-                connection_get_url(con), global_parameters.zproxy_override);
+                connection_get_url(con), zproxy);
         
-        if (!(addr = cs_straddr(link, global_parameters.zproxy_override)))
+        if (!(addr = cs_straddr(link, zproxy)))
         {
             yaz_log(YLOG_WARN|YLOG_ERRNO, 
-                    "Lookup of IP address %s failed", 
-                    global_parameters.zproxy_override);
+                    "Lookup of ZProxy IP address %s failed", 
+                    zproxy);
             return -1;
         }
     }

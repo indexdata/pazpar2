@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.34 2007-05-23 11:19:31 marc Exp $
+/* $Id: config.c,v 1.35 2007-06-06 11:49:48 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.34 2007-05-23 11:19:31 marc Exp $ */
+/* $Id: config.c,v 1.35 2007-06-06 11:49:48 marc Exp $ */
 
 #include <string.h>
 
@@ -405,8 +405,8 @@ static struct conf_server *parse_server(xmlNode *node)
     server->proxy_host = 0;
     server->proxy_port = 0;
     server->myurl = 0;
-    server->zproxy_host = 0;
-    server->zproxy_port = 0;
+    //server->zproxy_host = 0;
+    //server->zproxy_port = 0;
     server->service = 0;
     server->next = 0;
     server->settings = 0;
@@ -453,22 +453,22 @@ static struct conf_server *parse_server(xmlNode *node)
             xmlFree(host);
             xmlFree(myurl);
         }
-        else if (!strcmp((const char *) n->name, "zproxy"))
-        {
-            xmlChar *port = 0;
-            xmlChar *host = 0;
+/*         else if (!strcmp((const char *) n->name, "zproxy")) */
+/*         { */
+/*             xmlChar *port = 0; */
+/*             xmlChar *host = 0; */
 
-            port = xmlGetProp(n, (xmlChar *) "port");
-            host = xmlGetProp(n, (xmlChar *) "host");
+/*             port = xmlGetProp(n, (xmlChar *) "port"); */
+/*             host = xmlGetProp(n, (xmlChar *) "host"); */
 
-            if (port)
-                server->zproxy_port = atoi((const char *) port);
-            if (host)
-                server->zproxy_host = nmem_strdup(nmem, (const char *) host);
+/*             if (port) */
+/*                 server->zproxy_port = atoi((const char *) port); */
+/*             if (host) */
+/*                 server->zproxy_host = nmem_strdup(nmem, (const char *) host); */
 
-            xmlFree(port);
-            xmlFree(host);
-        }
+/*             xmlFree(port); */
+/*             xmlFree(host); */
+/*         } */
         else if (!strcmp((const char *) n->name, "settings"))
         {
             if (server->settings)

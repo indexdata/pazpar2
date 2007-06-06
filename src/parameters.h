@@ -1,4 +1,4 @@
-/* $Id: parameters.h,v 1.2 2007-05-23 21:58:28 adam Exp $
+/* $Id: parameters.h,v 1.3 2007-06-06 11:49:48 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -28,7 +28,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 struct parameters {
     char proxy_override[128];
     char listener_override[128];
-    char zproxy_override[128];
+    //char zproxy_override[128];
     char settings_path_override[128];
     struct conf_server *server;
     int dump_records;

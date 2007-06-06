@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.36 2007-05-10 11:46:09 adam Exp $
+/* $Id: pazpar2.h,v 1.37 2007-06-06 11:49:48 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -161,7 +161,7 @@ char *session_setting_oneval(struct session_database *db, int offset);
 
 void start_http_listener(void);
 void start_proxy(void);
-void start_zproxy(void);
+//void start_zproxy(void);
 
 void pazpar2_add_channel(IOCHAN c);
 void pazpar2_event_loop(void);

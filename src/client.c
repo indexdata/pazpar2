@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.6 2007-06-02 04:32:28 quinn Exp $
+/* $Id: client.c,v 1.7 2007-06-06 11:49:48 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -455,6 +455,27 @@ static void init_authentication(struct client *cl, Z_InitRequest *req)
     }
 }
 
+static void init_zproxy(struct client *cl, Z_InitRequest *req)
+{
+    struct session_database *sdb = client_get_database(cl);
+    char *ztarget = sdb->database->url;
+    //char *ztarget = sdb->url;    
+    char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
+
+    if (*zproxy)
+#if YAZ_VERSIONL >= 0x020163
+        yaz_oi_set_string_oid(&req->otherInfo,
+                              global_parameters.odr_out,
+                              yaz_oid_userinfo_proxy,
+                              1, ztarget);
+#else
+        yaz_oi_set_string_oidval(&req->otherInfo,
+                                 global_parameters.odr_out, VAL_PROXY,
+                                 1, ztarget);
+#endif
+}
+
+
 static void client_init_request(struct client *cl)
 {
     Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_initRequest);
@@ -472,23 +493,9 @@ static void client_init_request(struct client *cl)
     ODR_MASK_SET(a->u.initRequest->protocolVersion, Z_ProtocolVersion_3);
 
     init_authentication(cl, a->u.initRequest);
+    init_zproxy(cl, a->u.initRequest);
 
-    /* add virtual host if tunneling through Z39.50 proxy */
-    
-    if (0 < strlen(global_parameters.zproxy_override) 
-        && 0 < strlen(client_get_database(cl)->database->url))
-    {
-#if YAZ_VERSIONL >= 0x020163
-        yaz_oi_set_string_oid(&a->u.initRequest->otherInfo,
-                              global_parameters.odr_out,
-                              yaz_oid_userinfo_proxy,
-                              1, client_get_database(cl)->database->url);
-#else
-        yaz_oi_set_string_oidval(&a->u.initRequest->otherInfo,
-                                 global_parameters.odr_out, VAL_PROXY,
-                                 1, client_get_database(cl->database)->url);
-#endif
-    }
+
 
     if (send_apdu(cl, a) >= 0)
 	client_set_state(cl, Client_Initializing);

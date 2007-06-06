@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.35 2007-06-02 04:32:28 quinn Exp $
+/* $Id: logic.c,v 1.36 2007-06-06 11:49:48 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -79,8 +79,8 @@ struct parameters global_parameters =
 {
     "",
     "",
-    "",
-    "",
+    /* "", */
+    "", 
     0,
     0, /* dump_records */
     0, /* debug_mode */
@@ -856,38 +856,38 @@ void start_proxy(void)
     http_set_proxyaddr(hp, ser->myurl ? ser->myurl : "");
 }
 
-void start_zproxy(void)
-{
-    struct conf_server *ser = global_parameters.server;
+/* void start_zproxy(void) */
+/* { */
+/*     struct conf_server *ser = global_parameters.server; */
 
-    if (*global_parameters.zproxy_override){
-        yaz_log(YLOG_LOG, "Z39.50 proxy  %s", 
-                global_parameters.zproxy_override);
-        return;
-    }
+/*     if (*global_parameters.zproxy_override){ */
+/*         yaz_log(YLOG_LOG, "Z39.50 proxy  %s",  */
+/*                 global_parameters.zproxy_override); */
+/*         return; */
+/*     } */
 
-    else if (ser->zproxy_host || ser->zproxy_port)
-    {
-        char hp[128] = "";
+/*     else if (ser->zproxy_host || ser->zproxy_port) */
+/*     { */
+/*         char hp[128] = ""; */
 
-        strcpy(hp, ser->zproxy_host ? ser->zproxy_host : "");
-        if (ser->zproxy_port)
-        {
-            if (*hp)
-                strcat(hp, ":");
-            else
-                strcat(hp, "@:");
+/*         strcpy(hp, ser->zproxy_host ? ser->zproxy_host : ""); */
+/*         if (ser->zproxy_port) */
+/*         { */
+/*             if (*hp) */
+/*                 strcat(hp, ":"); */
+/*             else */
+/*                 strcat(hp, "@:"); */
 
-            sprintf(hp + strlen(hp), "%d", ser->zproxy_port);
-        }
-        strcpy(global_parameters.zproxy_override, hp);
-        yaz_log(YLOG_LOG, "Z39.50 proxy  %s", 
-                global_parameters.zproxy_override);
+/*             sprintf(hp + strlen(hp), "%d", ser->zproxy_port); */
+/*         } */
+/*         strcpy(global_parameters.zproxy_override, hp); */
+/*         yaz_log(YLOG_LOG, "Z39.50 proxy  %s",  */
+/*                 global_parameters.zproxy_override); */
 
-    }
-    else
-        return;
-}
+/*     } */
+/*     else */
+/*         return; */
+/* } */
 
 // Master list of connections we're handling events to
 static IOCHAN channel_list = 0; 

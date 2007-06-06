@@ -1,4 +1,4 @@
-/* $Id: config.h,v 1.23 2007-05-23 11:19:31 marc Exp $
+/* $Id: config.h,v 1.24 2007-06-06 11:49:48 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -148,8 +148,8 @@ struct conf_server
     char *proxy_host;
     int proxy_port;
     char *myurl;
-    char *zproxy_host;
-    int zproxy_port;
+    //char *zproxy_host;
+    //int zproxy_port;
     char *settings;
 
 #ifdef HAVE_ICU
