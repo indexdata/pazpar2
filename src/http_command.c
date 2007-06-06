@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.47 2007-06-05 14:09:10 marc Exp $
+/* $Id: http_command.c,v 1.48 2007-06-06 09:00:56 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.47 2007-06-05 14:09:10 marc Exp $
+ * $Id: http_command.c,v 1.48 2007-06-06 09:00:56 marc Exp $
  */
 
 #include <stdio.h>
@@ -397,7 +397,7 @@ static void cmd_bytarget(struct http_channel *c)
         //wrbuf_printf(c->wrbuf, "<state>%s</state>\n", ht[i].state);
         wrbuf_puts(c->wrbuf, "<state>");
         wrbuf_xmlputs(c->wrbuf, ht[i].state);
-        wrbuf_puts(c->wrbuf, "</state\n");
+        wrbuf_puts(c->wrbuf, "</state>\n");
 
         wrbuf_puts(c->wrbuf, "</target>");
     }
