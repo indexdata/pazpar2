@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: book.xml,v 1.15 2007-06-04 11:00:54 adam Exp $ -->
+<!-- $Id: book.xml,v 1.16 2007-06-06 11:33:18 adam Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -248,23 +248,27 @@
    <para>
     Traditionnally Pazpar2 interprets URL paths with suffix 
     <literal>/search.pz2</literal>.
-    The <literal>ProxyPass</literal> must be configured with this
-    path and the address of the Pazpar2 server (listening port).
+    The 
+    <ulink 
+     url="http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypass"
+     >ProxyPass</ulink> directive of Apache must be used to map a URL path
+    the the Pazpar2 server (listening port).
    </para>
 
    <note>
     <para>
-     Since the ProxyPass directive takes a prefix rather than
-     a suffix as URL path it is important that the Java Script code
-     uses <literal>/search.pz2</literal> rather than just
-     <literal>search.pz2</literal>.
+     The ProxyPass directive takes a prefix rather than
+     a suffix as URL path. It is important that the Java Script code
+     uses the prefix given for it.
     </para>
    </note>
 
    <example id="installation.apache2proxy.example">
     <title>Apache 2 proxy configuration</title>
     <para>
-     If Pazpar2 is running on port 9004 we can use the following
+     If Pazpar2 is running on port 9004 and the portal is using
+     <filename>search.pz2</filename> inside portal in directory
+     <filename>/myportal/</filename> we could use the following
      Apache 2 configuration:
 
      <screen><![CDATA[
@@ -277,7 +281,7 @@
         Allow from all
        </Proxy>
       
-       ProxyPass /search.pz2 http://localhost:9004/search.pz2
+       ProxyPass /myportal/search.pz2 http://localhost:9004/search.pz2
        ProxyVia Off
       </IfModule>
       ]]></screen>
