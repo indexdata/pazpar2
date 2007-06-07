@@ -1,4 +1,4 @@
-/* $Id: record.h,v 1.8 2007-04-27 11:56:41 marc Exp $
+/* $Id: record.h,v 1.9 2007-06-07 12:27:03 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -59,7 +59,8 @@ struct record {
 };
 
 
-struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys);
+struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys,
+                              struct client *client);
 
 struct record_metadata * record_metadata_create(NMEM nmem);
 
@@ -79,11 +80,6 @@ struct record_metadata * record_add_metadata(NMEM nmem,
                                              struct conf_service * service,
                                              const char * name,
                                              union data_types data);
-
-
-struct client * record_assign_client(struct record * record,
-                                     struct client *client);
-
 
 
 union data_types * record_assign_sortkey_field_id(NMEM nmem, 

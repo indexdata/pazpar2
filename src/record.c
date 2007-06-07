@@ -1,4 +1,4 @@
-/* $Id: record.c,v 1.8 2007-04-26 12:12:19 marc Exp $
+/* $Id: record.c,v 1.9 2007-06-07 12:27:03 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: record.c,v 1.8 2007-04-26 12:12:19 marc Exp $ */
+/* $Id: record.c,v 1.9 2007-06-07 12:27:03 adam Exp $ */
 
 
 #include <string.h>
@@ -58,7 +58,8 @@ union data_types * data_types_assign(NMEM nmem,
 }
 
 
-struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys)
+struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys,
+                              struct client *client)
 {
     struct record * record = 0;
     int i = 0;
@@ -68,8 +69,7 @@ struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys)
     record = nmem_malloc(nmem, sizeof(struct record));
 
     record->next = 0;
-    // which client should I use for record->client = cl;  ??
-    record->client = 0;
+    record->client = client;
 
     record->metadata 
         = nmem_malloc(nmem, 
@@ -85,15 +85,6 @@ struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys)
     
     return record;
 }
-
-
-struct client * record_assign_client(struct record * record,
-                                     struct client * client)
-{
-    record->client = client;
-    return client;
-}
-
 
 struct record_metadata * record_metadata_create(NMEM nmem)
 {
