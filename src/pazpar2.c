@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.87 2007-06-08 13:57:19 adam Exp $
+/* $Id: pazpar2.c,v 1.88 2007-06-08 13:58:46 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -36,7 +36,6 @@ void child_handler(void *data)
     yaz_log(YLOG_LOG, "child_handler");
 
     start_proxy();
-    //start_zproxy();
     init_settings();
 
     if (*global_parameters.settings_path_override)
@@ -63,8 +62,7 @@ int main(int argc, char **argv)
 
     yaz_log_init_prefix("pazpar2");
 
-    //while ((ret = options("f:h:p:z:t:l:dX", argv, argc, &arg)) != -2)
-   while ((ret = options("f:h:p:t:l:dX", argv, argc, &arg)) != -2)
+    while ((ret = options("f:h:p:t:l:dX", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -78,9 +76,6 @@ int main(int argc, char **argv)
         case 'p':
             strcpy(global_parameters.proxy_override, arg);
             break;
-/*        case 'z': */
-/*             strcpy(global_parameters.zproxy_override, arg); */
-/*             break; */
         case 't':
             strcpy(global_parameters.settings_path_override, arg);
              break;
