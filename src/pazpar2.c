@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.86 2007-06-06 11:49:48 marc Exp $
+/* $Id: pazpar2.c,v 1.87 2007-06-08 13:57:19 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -31,10 +31,32 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "database.h"
 #include "settings.h"
 
+void child_handler(void *data)
+{
+    yaz_log(YLOG_LOG, "child_handler");
+
+    start_proxy();
+    //start_zproxy();
+    init_settings();
+
+    if (*global_parameters.settings_path_override)
+        settings_read(global_parameters.settings_path_override);
+    else if (global_parameters.server->settings)
+        settings_read(global_parameters.server->settings);
+    else
+        yaz_log(YLOG_WARN, "No settings-directory specified");
+    global_parameters.odr_in = odr_createmem(ODR_DECODE);
+    global_parameters.odr_out = odr_createmem(ODR_ENCODE);
+
+
+    pazpar2_event_loop();
+}
+
 int main(int argc, char **argv)
 {
     int ret;
     char *arg;
+    const char *pidfile = "pazpar2.pid";
 
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "signal");
@@ -94,21 +116,8 @@ int main(int argc, char **argv)
     global_parameters.server = config->servers;
 
     start_http_listener();
-    start_proxy();
-    //start_zproxy();
-    init_settings();
-
-    if (*global_parameters.settings_path_override)
-        settings_read(global_parameters.settings_path_override);
-    else if (global_parameters.server->settings)
-        settings_read(global_parameters.server->settings);
-    else
-        yaz_log(YLOG_WARN, "No settings-directory specified");
-    global_parameters.odr_in = odr_createmem(ODR_DECODE);
-    global_parameters.odr_out = odr_createmem(ODR_ENCODE);
-
-    pazpar2_event_loop();
-
+    pazpar2_process(global_parameters.debug_mode, 0, child_handler, 0,
+                    pidfile, 0);
     return 0;
 }
 
