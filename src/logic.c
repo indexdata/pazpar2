@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.39 2007-06-11 12:02:48 adam Exp $
+/* $Id: logic.c,v 1.40 2007-06-11 12:08:23 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -72,6 +72,8 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "settings.h"
 #include "normalize7bit.h"
 
+#define TERMLIST_HIGH_SCORE 25
+
 #define MAX_CHUNK 15
 
 // Note: Some things in this structure will eventually move to configuration
@@ -143,7 +145,8 @@ static void add_facet(struct session *s, const char *type, const char *value)
 
         s->termlists[i].name = nmem_strdup(s->nmem, type);
         s->termlists[i].termlist 
-            = termlist_create(s->nmem, s->expected_maxrecs, 15);
+            = termlist_create(s->nmem, s->expected_maxrecs,
+                              TERMLIST_HIGH_SCORE);
         s->num_termlists = i + 1;
     }
     termlist_insert(s->termlists[i].termlist, value);
