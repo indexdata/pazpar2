@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.11 2007-01-15 05:40:24 quinn Exp $
+/* $Id: search.js,v 1.12 2007-06-11 13:33:04 adam Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -190,13 +190,14 @@ function show_records()
 		body.innerHTML += mk[0].childNodes[0].nodeValue;
 	    body.innerHTML += '</p>';
 	}
-	shown++;
-	if (clients > 0)
-	{
+	if (shown >= 0) {
+	    shown++;	
 	    if (shown < 5)
 		searchtimer = setTimeout(check_search, 1000);
 	    else
 		searchtimer = setTimeout(check_search, 2000);
+	    if (clients == 0)
+		shown = -1;
 	}
     }
     if (!termtimer)
@@ -222,7 +223,7 @@ function check_search()
 
 function refine_query (obj) {
     var query_cell = document.getElementById('query');
-    var term = obj.innerHTML;
+    var term = obj.firstChild.nodeValue;
     
     term = term.replace(/[\(\)]/g, '');
     if (cur_termlist == 'subject')
@@ -300,6 +301,7 @@ function check_termlist()
     var url = "search.pz2?" +
         "command=termlist" +
 	"&session=" + session +
+	"&num=20" +
 	"&name=" + cur_termlist;
     xtermlist = GetXmlHttpObject();
     xtermlist.onreadystatechange=show_termlist;
@@ -369,6 +371,7 @@ function search_started()
 
 function start_search()
 {
+    shown = 0;
     clearTimeout(termtimer);
     termtimer = 0;
     clearTimeout(searchtimer);
@@ -394,7 +397,6 @@ function start_search()
     document.getElementById("termlist").innerHTML = '';
     document.getElementById("body").innerHTML = '';
     update_history();
-    shown = 0;
     document.search.startrec.value = 0;
 }
 
