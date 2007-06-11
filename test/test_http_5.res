@@ -49,17 +49,17 @@
 </hit>
 <hit>
 
-<md-title>Computer processing of dynamic images from an Anger scintillation camera : the proceedings of a workshop</md-title>
-<md-date>1974</md-date>
-<md-author>Larson, Kenneth B</md-author><location id="z3950.indexdata.com/marc" name="Local Test"></location>
-<recid>1</recid>
-</hit>
-<hit>
-
 <md-title>Computer science &amp; technology : proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title>
 <md-date>1977</md-date>
 <md-author>Evans, John Martin</md-author><location id="z3950.indexdata.com/marc" name="Local Test"></location>
 <recid>5</recid>
+</hit>
+<hit>
+
+<md-title>Computer processing of dynamic images from an Anger scintillation camera : the proceedings of a workshop</md-title>
+<md-date>1974</md-date>
+<md-author>Larson, Kenneth B</md-author><location id="z3950.indexdata.com/marc" name="Local Test"></location>
+<recid>1</recid>
 </hit>
 <hit>
 
