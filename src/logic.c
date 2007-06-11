@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.38 2007-06-07 12:27:03 adam Exp $
+/* $Id: logic.c,v 1.39 2007-06-11 12:02:48 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -938,7 +938,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             int first, last;
 
             type = xmlGetProp(n, (xmlChar *) "type");
-            value = xmlNodeListGetString(xdoc, n->children, 0);
+            value = xmlNodeListGetString(xdoc, n->children, 1);
 
             if (!type || !value)
                 continue;
