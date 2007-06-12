@@ -1,4 +1,4 @@
-/* $Id: process.c,v 1.1 2007-06-08 13:57:19 adam Exp $
+/* $Id: process.c,v 1.2 2007-06-12 13:02:38 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -29,6 +29,8 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/wait.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 #include <yaz/log.h>
 
@@ -56,10 +58,11 @@ void kill_child_handler(int num)
         kill(child_pid, num);
 }
 
-int pazpar2_process(int debug, int flags,
+int pazpar2_process(int debug, 
                     void (*work)(void *data), void *data,
                     const char *pidfile, const char *uid /* not yet used */)
 {
+    struct passwd *pw = 0;
     int run = 1;
     int cont = 1;
     void (*old_sighup)(int);
@@ -73,7 +76,19 @@ int pazpar2_process(int debug, int flags,
         work(data);
         exit(0);
     }
+    
     /* running in production mode. */
+    if (uid)
+    {
+        yaz_log(YLOG_LOG, "getpwnam");
+        // OK to use the non-thread version here
+        if (!(pw = getpwnam(uid)))
+        {
+            yaz_log(YLOG_FATAL, "%s: Unknown user", uid);
+            exit(1);
+        }
+    }
+    
 
     /* keep signals in their original state and make sure that some signals
        to parent process also gets sent to the child.. Normally this
@@ -100,6 +115,16 @@ int pazpar2_process(int debug, int flags,
             signal(SIGTERM, old_sigterm);/* restore */
 
             write_pidfile(pidfile);
+
+            if (pw)
+            {
+                if (setuid(pw->pw_uid) < 0)
+                {
+                    yaz_log(YLOG_FATAL|YLOG_ERRNO, "setuid");
+                    exit(1);
+                }
+            }
+
             work(data);
             exit(0);
         }
@@ -153,9 +178,9 @@ int pazpar2_process(int debug, int flags,
         else if (status == 0)
             cont = 0; /* child exited normally */
         else
-        {   /* child exited in an abnormal way */
+        {   /* child exited with error */
             yaz_log(YLOG_LOG, "Exit %d from child %ld", status, (long) p);
-            cont = 1;
+            cont = 0;
         }
         if (cont) /* respawn slower as we get more errors */
             sleep(1 + run/5);

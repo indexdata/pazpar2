@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.88 2007-06-08 13:58:46 adam Exp $
+/* $Id: pazpar2.c,v 1.89 2007-06-12 13:02:38 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -33,8 +33,6 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 void child_handler(void *data)
 {
-    yaz_log(YLOG_LOG, "child_handler");
-
     start_proxy();
     init_settings();
 
@@ -49,6 +47,7 @@ void child_handler(void *data)
 
 
     pazpar2_event_loop();
+
 }
 
 int main(int argc, char **argv)
@@ -56,13 +55,14 @@ int main(int argc, char **argv)
     int ret;
     char *arg;
     const char *pidfile = "pazpar2.pid";
+    const char *uid = 0;
 
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "signal");
 
     yaz_log_init_prefix("pazpar2");
 
-    while ((ret = options("f:h:p:t:l:dX", argv, argc, &arg)) != -2)
+    while ((ret = options("f:h:p:t:u:l:dX", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -74,11 +74,14 @@ int main(int argc, char **argv)
             strcpy(global_parameters.listener_override, arg);
             break;
         case 'p':
-            strcpy(global_parameters.proxy_override, arg);
+            pidfile = arg;
             break;
         case 't':
             strcpy(global_parameters.settings_path_override, arg);
-             break;
+            break;
+        case 'u':
+            uid = arg;
+            break;
         case 'd':
             global_parameters.dump_records = 1;
             break;
@@ -92,9 +95,9 @@ int main(int argc, char **argv)
             fprintf(stderr, "Usage: pazpar2\n"
                     "    -f configfile\n"
                     "    -h [host:]port          (REST protocol listener)\n"
-                    "    -p hostname[:portno]    (HTTP proxy)\n"
-                    "    -z hostname[:portno]    (Z39.50 proxy)\n"
+                    "    -p pidfile              PID file\n"
                     "    -t settings\n"
+                    "    -u uid\n"
                     "    -d                      (show internal records)\n"
                     "    -l file                 log to file\n"
                     "    -X                      debug mode\n"
@@ -111,8 +114,9 @@ int main(int argc, char **argv)
     global_parameters.server = config->servers;
 
     start_http_listener();
-    pazpar2_process(global_parameters.debug_mode, 0, child_handler, 0,
-                    pidfile, 0);
+    pazpar2_process(global_parameters.debug_mode,
+                    child_handler, 0 /* child_data */,
+                    pidfile, uid);
     return 0;
 }
 
