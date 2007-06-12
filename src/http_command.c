@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.49 2007-06-11 12:02:48 adam Exp $
+/* $Id: http_command.c,v 1.50 2007-06-12 09:26:40 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.49 2007-06-11 12:02:48 adam Exp $
+ * $Id: http_command.c,v 1.50 2007-06-12 09:26:40 adam Exp $
  */
 
 #include <stdio.h>
@@ -263,7 +263,6 @@ static void targets_termlist(WRBUF wrbuf, struct session *se, int num)
     
         wrbuf_puts(wrbuf, "<term>\n");
 
-        //wrbuf_printf(wrbuf, "<id>%s</id>\n", ht[i].id);
         wrbuf_puts(wrbuf, "<id>");
         wrbuf_xmlputs(wrbuf, ht[i].id);
         wrbuf_puts(wrbuf, "</id>\n");
@@ -277,7 +276,6 @@ static void targets_termlist(WRBUF wrbuf, struct session *se, int num)
         
         wrbuf_printf(wrbuf, "<frequency>%d</frequency>\n", ht[i].hits);
         
-        //wrbuf_printf(wrbuf, "<state>%s</state>\n", ht[i].state);
         wrbuf_puts(wrbuf, "<state>");
         wrbuf_xmlputs(wrbuf, ht[i].state);
         wrbuf_puts(wrbuf, "</state>\n");
@@ -385,7 +383,6 @@ static void cmd_bytarget(struct http_channel *c)
     {
         wrbuf_puts(c->wrbuf, "\n<target>");
 
-        //wrbuf_printf(c->wrbuf, "<id>%s</id>\n", ht[i].id);
         wrbuf_puts(c->wrbuf, "<id>");
         wrbuf_xmlputs(c->wrbuf, ht[i].id);
         wrbuf_puts(c->wrbuf, "</id>\n");
@@ -394,7 +391,6 @@ static void cmd_bytarget(struct http_channel *c)
         wrbuf_printf(c->wrbuf, "<diagnostic>%d</diagnostic>\n", ht[i].diagnostic);
         wrbuf_printf(c->wrbuf, "<records>%d</records>\n", ht[i].records);
 
-        //wrbuf_printf(c->wrbuf, "<state>%s</state>\n", ht[i].state);
         wrbuf_puts(c->wrbuf, "<state>");
         wrbuf_xmlputs(c->wrbuf, ht[i].state);
         wrbuf_puts(c->wrbuf, "</state>\n");
@@ -702,15 +698,12 @@ static void cmd_info(struct http_channel *c)
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, "<info>\n");
     wrbuf_puts(c->wrbuf, " <version>\n");
-    //wrbuf_printf(c->wrbuf, "  <pazpar2>%s</pazpar2>\n", VERSION);
     wrbuf_puts(c->wrbuf, "<pazpar2>");
     wrbuf_xmlputs(c->wrbuf, VERSION);
     wrbuf_puts(c->wrbuf, "</pazpar2>");
 
 
     yaz_version(yaz_version_str, 0);
-    //wrbuf_printf(c->wrbuf, "  <yaz compiled=\"%s\">%s</yaz>\n",
-    //             YAZ_VERSION, yaz_version_str);
     wrbuf_puts(c->wrbuf, "  <yaz compiled=\"");
     wrbuf_xmlputs(c->wrbuf, YAZ_VERSION);
     wrbuf_puts(c->wrbuf, "\">");
