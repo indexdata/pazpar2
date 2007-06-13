@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.41 2007-06-13 08:04:03 adam Exp $
+/* $Id: logic.c,v 1.42 2007-06-13 13:04:34 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -651,7 +651,6 @@ void destroy_session(struct session *s)
 {
     struct session_database *sdb;
 
-    yaz_log(YLOG_LOG, "Destroying session");
     while (s->clients)
         client_destroy(s->clients);
     for (sdb = s->databases; sdb; sdb = sdb->next)
@@ -667,6 +666,7 @@ struct session *new_session(NMEM nmem)
 
     yaz_log(YLOG_DEBUG, "New Pazpar2 session");
     
+    session->relevance = 0;
     session->total_hits = 0;
     session->total_records = 0;
     session->num_termlists = 0;
@@ -756,34 +756,44 @@ struct record_cluster **show(struct session *s, struct reclist_sortparms *sp,
     yaz_timing_t t = yaz_timing_create();
 #endif
 
-    for (spp = sp; spp; spp = spp->next)
-        if (spp->type == Metadata_sortkey_relevance)
-        {
-            relevance_prepare_read(s->relevance, s->reclist);
-            break;
-        }
-    reclist_sort(s->reclist, sp);
-
-    *total = s->reclist->num_records;
-    *sumhits = s->total_hits;
-
-    for (i = 0; i < start; i++)
-        if (!reclist_read_record(s->reclist))
-        {
-            *num = 0;
-            recs = 0;
-            break;
-        }
-
-    for (i = 0; i < *num; i++)
+    if (!s->relevance)
     {
-        struct record_cluster *r = reclist_read_record(s->reclist);
-        if (!r)
+        *num = 0;
+        *total = 0;
+        *sumhits = 0;
+        recs = 0;
+    }
+    else
+    {
+        for (spp = sp; spp; spp = spp->next)
+            if (spp->type == Metadata_sortkey_relevance)
+            {
+                relevance_prepare_read(s->relevance, s->reclist);
+                break;
+            }
+        reclist_sort(s->reclist, sp);
+        
+        *total = s->reclist->num_records;
+        *sumhits = s->total_hits;
+        
+        for (i = 0; i < start; i++)
+            if (!reclist_read_record(s->reclist))
+            {
+                *num = 0;
+                recs = 0;
+                break;
+            }
+        
+        for (i = 0; i < *num; i++)
         {
-            *num = i;
-            break;
+            struct record_cluster *r = reclist_read_record(s->reclist);
+            if (!r)
+            {
+                *num = i;
+                break;
+            }
+            recs[i] = r;
         }
-        recs[i] = r;
     }
 #if USE_TIMING
     yaz_timing_stop(t);

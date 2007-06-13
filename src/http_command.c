@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.51 2007-06-13 08:04:03 adam Exp $
+/* $Id: http_command.c,v 1.52 2007-06-13 13:04:34 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.51 2007-06-13 08:04:03 adam Exp $
+ * $Id: http_command.c,v 1.52 2007-06-13 13:04:34 adam Exp $
  */
 
 #include <stdio.h>
@@ -97,6 +97,7 @@ void http_session_destroy(struct http_session *s)
             *p = (*p)->next;
             break;
         }
+    yaz_log(YLOG_LOG, "Destroying session %u", s->session_id);
     iochan_destroy(s->timeout_iochan);
     destroy_session(s->psession);
     nmem_destroy(s->nmem);
