@@ -1,4 +1,4 @@
-/* $Id: record.h,v 1.9 2007-06-07 12:27:03 adam Exp $
+/* $Id: record.h,v 1.10 2007-06-13 21:29:04 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -56,11 +56,13 @@ struct record {
     union data_types **sortkeys;
     // Next in cluster of merged records       
     struct record *next;  
+    // client result set position;
+    int position;
 };
 
 
 struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys,
-                              struct client *client);
+                              struct client *client, int position);
 
 struct record_metadata * record_metadata_create(NMEM nmem);
 

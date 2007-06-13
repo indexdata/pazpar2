@@ -1,4 +1,4 @@
-/* $Id: record.c,v 1.9 2007-06-07 12:27:03 adam Exp $
+/* $Id: record.c,v 1.10 2007-06-13 21:29:04 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: record.c,v 1.9 2007-06-07 12:27:03 adam Exp $ */
+/* $Id: record.c,v 1.10 2007-06-13 21:29:04 adam Exp $ */
 
 
 #include <string.h>
@@ -59,7 +59,7 @@ union data_types * data_types_assign(NMEM nmem,
 
 
 struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys,
-                              struct client *client)
+                              struct client *client, int position)
 {
     struct record * record = 0;
     int i = 0;
@@ -82,6 +82,8 @@ struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys,
                       sizeof(union data_types*) * num_sortkeys);
     for (i = 0; i < num_sortkeys; i++)
         record->sortkeys[i] = 0;
+
+    record->position = position;
     
     return record;
 }

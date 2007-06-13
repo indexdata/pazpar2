@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.42 2007-06-13 13:04:34 adam Exp $
+/* $Id: logic.c,v 1.43 2007-06-13 21:29:04 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -916,7 +916,8 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
     }
 
     record = record_create(se->nmem, 
-                           service->num_metadata, service->num_sortkeys, cl);
+                           service->num_metadata, service->num_sortkeys, cl,
+                           record_no);
 
     mergekey_norm = (xmlChar *) nmem_strdup(se->nmem, (char*) mergekey);
     xmlFree(mergekey);
