@@ -1,4 +1,4 @@
-/* $Id: test_record.c,v 1.6 2007-06-07 12:27:03 adam Exp $
+/* $Id: test_record.c,v 1.7 2007-06-13 21:30:08 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -86,7 +86,7 @@ void test_record(int argc, char **argv)
 
 
   // testing record things
-  record = record_create(nmem, 4, 3, client);
+  record = record_create(nmem, 4, 3, client, 1);
   YAZ_CHECK(record);
 
   tmp_md = record_metadata_insert(nmem, &(record->metadata[0]), data_text);
