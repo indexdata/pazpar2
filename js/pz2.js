@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.35 2007-06-13 17:20:17 jakub Exp $
+** $Id: pz2.js,v 1.36 2007-06-13 17:25:02 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -633,6 +633,10 @@ pzQuery.prototype = {
         this.advTerms = new Array();
         this.simpleFilter = null;
         this.numTerms = 0;
+    },
+    clearSimpleQuery: function()
+    {
+        this.simpleQuery = '';
     },
     addTerm: function(field, value)
     {
