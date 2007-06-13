@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.33 2007-06-05 15:19:25 jakub Exp $
+** $Id: pz2.js,v 1.34 2007-06-13 16:07:43 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -110,22 +110,18 @@ var pz2 = function(paramArray) {
         __myself.init();
 };
 pz2.prototype = {
-    stop: function ()
-    {
-        clearTimeout(__myself.statTimer);
-        clearTimeout(__myself.showTimer);
-        clearTimeout(__myself.termTimer);
-        clearTimeout(__myself.bytargetTimer);
-    },
     reset: function ()
     {
         __myself.sessionID = null;
         __myself.initStatusOK = false;
         __myself.pingStatusOK = false;
         __myself.searchStatusOK = false;
-        
-        __myself.stop();
-               
+
+        clearTimeout(__myself.statTimer);
+        clearTimeout(__myself.showTimer);
+        clearTimeout(__myself.termTimer);
+        clearTimeout(__myself.bytargetTimer);
+            
         if ( __myself.resetCallback )
                 __myself.resetCallback();
     },
@@ -408,7 +404,7 @@ pz2.prototype = {
         clearTimeout(__myself.termTimer);
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         request.get(
-            { "command": "termlist", "session": __myself.sessionID, "name": __myself.termKeys, "block": "1" },
+            { "command": "termlist", "session": __myself.sessionID, "name": __myself.termKeys },
             function(data) {
                 if ( data.getElementsByTagName("termlist") ) {
                     var activeClients = Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue );
@@ -520,6 +516,7 @@ var pzHttpRequest = function ( url, errorHandler ) {
         this.request = null;
         this.url = url;
         this.errorHandler = errorHandler || null;
+        this.async = true;
         
         if ( window.XMLHttpRequest ) {
             this.request = new XMLHttpRequest();
@@ -536,8 +533,28 @@ pzHttpRequest.prototype =
 {
     get: function ( params, callback ) 
     {
+        this._send( 'GET', params, null, callback );
+    },
+
+    post: function ( params, data, callback )
+    {
+        this._send( 'POST', params, data, callback );
+    },
+
+    _send: function ( type, params, data, callback )
+    {
         this.callback = callback;
-        
+        var context = this;
+        this.request.open( type, this._urlAppendParams(params), this.async );
+        //this.request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        this.request.onreadystatechange = function () {
+            context._handleResponse();
+        }
+        this.request.send(data);
+    },
+
+    _urlAppendParams: function (params)
+    {
         var getUrl = this.url;
         var paramArr = new Array();
 
@@ -548,14 +565,7 @@ pzHttpRequest.prototype =
         if ( paramArr.length )
             getUrl += '?' + paramArr.join('&');
 
-        var context = this;
-        this.request.open( 'GET', getUrl, true );
-        this.request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-        //this.request.setRequestHeader('Accept-Charset', 'UTF-8');
-        this.request.onreadystatechange = function () {
-            context._handleResponse();
-        }
-        this.request.send(null);
+        return getUrl;
     },
 
     _handleResponse: function ()
@@ -611,10 +621,6 @@ var pzQuery = function()
     this.filterNums = 0;
 };
 pzQuery.prototype = {
-    clearSimpleQuery: function()
-    {
-        this.simpleQuery = '';
-    },
     reset: function()
     {
         this.simpleQuery = '';
