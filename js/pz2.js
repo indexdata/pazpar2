@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.34 2007-06-13 16:07:43 jakub Exp $
+** $Id: pz2.js,v 1.35 2007-06-13 17:20:17 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -109,7 +109,16 @@ var pz2 = function(paramArray) {
     if (paramArray.autoInit !== false)
         __myself.init();
 };
-pz2.prototype = {
+pz2.prototype = 
+{
+   stop: function ()
+   {
+       clearTimeout(__myself.statTimer);
+       clearTimeout(__myself.showTimer);
+       clearTimeout(__myself.termTimer);
+       clearTimeout(__myself.bytargetTimer);
+    },
+    
     reset: function ()
     {
         __myself.sessionID = null;
@@ -117,10 +126,7 @@ pz2.prototype = {
         __myself.pingStatusOK = false;
         __myself.searchStatusOK = false;
 
-        clearTimeout(__myself.statTimer);
-        clearTimeout(__myself.showTimer);
-        clearTimeout(__myself.termTimer);
-        clearTimeout(__myself.bytargetTimer);
+        __myself.stop();
             
         if ( __myself.resetCallback )
                 __myself.resetCallback();
