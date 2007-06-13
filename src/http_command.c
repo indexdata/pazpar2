@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.50 2007-06-12 09:26:40 adam Exp $
+/* $Id: http_command.c,v 1.51 2007-06-13 08:04:03 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.50 2007-06-12 09:26:40 adam Exp $
+ * $Id: http_command.c,v 1.51 2007-06-13 08:04:03 adam Exp $
  */
 
 #include <stdio.h>
@@ -60,7 +60,6 @@ struct http_session {
 };
 
 static struct http_session *session_list = 0;
-
 void http_session_destroy(struct http_session *s);
 
 static void session_timeout(IOCHAN i, int event)
@@ -103,22 +102,52 @@ void http_session_destroy(struct http_session *s)
     nmem_destroy(s->nmem);
 }
 
+static const char *get_msg(enum pazpar2_error_code code)
+{
+    struct pazpar2_error_msg {
+        enum pazpar2_error_code code;
+        const char *msg;
+    };
+    static const struct pazpar2_error_msg ar[] = {
+        { PAZPAR2_NO_SESSION, "Session does not exist or it has expired"},
+        { PAZPAR2_MISSING_PARAMETER, "Missing parameter"},
+        { PAZPAR2_MALFORMED_PARAMETER_VALUE, "Malformed parameter value"},
+        { PAZPAR2_MALFORMED_PARAMETER_ENCODING, "Malformed parameter encoding"},
+        { PAZPAR2_MALFORMED_SETTING, "Malformed setting argument"},
+        { PAZPAR2_HITCOUNTS_FAILED, "Failed to retrieve hitcounts"},
+        { PAZPAR2_RECORD_MISSING, "Record missing"},
+        { PAZPAR2_NO_TARGETS, "No targets"},
+        { PAZPAR2_CONFIG_TARGET, "Target cannot be configured"},
+        { 0, 0 }
+    };
+    int i = 0;
+    while (ar[i].msg)
+    {
+        if (code == ar[i].code)
+            return ar[i].msg;
+        i++;
+    }
+    return "No error";
+}
+
 static void error(struct http_response *rs, 
-                  const char *code, const char *msg, const char *extra)
+                  enum pazpar2_error_code code,
+                  const char *addinfo)
 {
     struct http_channel *c = rs->channel;
     char text[1024];
-    char *sep = extra ? ": " : "";
+    const char *http_status = "417";
+    const char *msg = get_msg(code);
 
     rs->msg = nmem_strdup(c->nmem, msg);
-    strcpy(rs->code, code);
+    strcpy(rs->code, http_status);
 
     yaz_snprintf(text, sizeof(text),
-                 "<error code=\"general\">%s%s%s</error>", msg, sep,
-                 extra ? extra : "");
+                 "<error code=\"%d\" msg=\"%s\">%s</error>", (int) code,
+                 msg, addinfo ? addinfo : "");
 
-    yaz_log(YLOG_WARN, "HTTP %s %s%s%s", code, msg, sep,
-            extra ? extra : "");
+    yaz_log(YLOG_WARN, "HTTP %s %s%s%s", http_status,
+            msg, addinfo ? ": " : "" , addinfo ? addinfo : "");
     rs->payload = nmem_strdup(c->nmem, text);
     http_send_response(c);
 }
@@ -156,7 +185,7 @@ static struct http_session *locate_session(struct http_request *rq, struct http_
 
     if (!session)
     {
-        error(rs, "417", "Must supply session", 0);
+        error(rs, PAZPAR2_MISSING_PARAMETER, "session");
         return 0;
     }
     id = atoi(session);
@@ -166,7 +195,7 @@ static struct http_session *locate_session(struct http_request *rq, struct http_
             iochan_activity(p->timeout_iochan);
             return p;
         }
-    error(rs, "417", "Session does not exist, or it has expired", 0);
+    error(rs, PAZPAR2_NO_SESSION, session);
     return 0;
 }
 
@@ -189,7 +218,7 @@ static int process_settings(struct session *se, struct http_request *rq,
             nmem_strsplit(se->session_nmem, "[]", a->name, &res, &num);
             if (num != 2)
             {
-                error(rs, "417", "Malformed setting argument", a->name);
+                error(rs, PAZPAR2_MALFORMED_SETTING, a->name);
                 return -1;
             }
             setting = res[0];
@@ -373,7 +402,7 @@ static void cmd_bytarget(struct http_channel *c)
         return;
     if (!(ht = hitsbytarget(s->psession, &count)))
     {
-        error(rs, "500", "Failed to retrieve hitcounts", 0);
+        error(rs, PAZPAR2_HITCOUNTS_FAILED, 0);
         return;
     }
     wrbuf_rewind(c->wrbuf);
@@ -469,14 +498,14 @@ static void cmd_record(struct http_channel *c)
         return;
     if (!idstr)
     {
-        error(rs, "417", "Must supply id", 0);
+        error(rs, PAZPAR2_MISSING_PARAMETER, "id");
         return;
     }
     wrbuf_rewind(c->wrbuf);
     id = atoi(idstr);
     if (!(rec = show_single(s->psession, id)))
     {
-        error(rs, "500", "Record missing", 0);
+        error(rs, PAZPAR2_RECORD_MISSING, idstr);
         return;
     }
     wrbuf_puts(c->wrbuf, "<record>\n");
@@ -520,7 +549,7 @@ static void show_records(struct http_channel *c, int active)
         sort = "relevance";
     if (!(sp = reclist_parse_sortparms(c->nmem, sort)))
     {
-        error(rs, "500", "Bad sort parameters", 0);
+        error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
         return;
     }
 
@@ -632,24 +661,25 @@ static void cmd_search(struct http_channel *c)
     struct http_session *s = locate_session(rq, rs);
     char *query = http_argbyname(rq, "query");
     char *filter = http_argbyname(rq, "filter");
-    char *res;
+    enum pazpar2_error_code code;
+    const char *addinfo = 0;
 
     if (!s)
         return;
     if (!query)
     {
-        error(rs, "417", "Must supply query", 0);
+        error(rs, PAZPAR2_MISSING_PARAMETER, "query");
         return;
     }
     if (!utf_8_valid(query))
     {
-        error(rs, "417", "Query not UTF-8 encoded", 0);
+        error(rs, PAZPAR2_MALFORMED_PARAMETER_ENCODING, "query");
         return;
     }
-    res = search(s->psession, query, filter);
-    if (res)
+    code = search(s->psession, query, filter, &addinfo);
+    if (code)
     {
-        error(rs, "417", res, 0);
+        error(rs, code, addinfo);
         return;
     }
     rs->payload = "<search><status>OK</status></search>";
@@ -748,7 +778,7 @@ void http_command(struct http_channel *c)
 
     if (!command)
     {
-        error(rs, "417", "Must supply command", 0);
+        error(rs, PAZPAR2_MISSING_PARAMETER, "command");
         return;
     }
     for (i = 0; commands[i].name; i++)
@@ -758,7 +788,7 @@ void http_command(struct http_channel *c)
             break;
         }
     if (!commands[i].name)
-        error(rs, "417", "Unknown command", command);
+        error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "command");
 
     return;
 }

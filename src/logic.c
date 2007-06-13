@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.40 2007-06-11 12:08:23 adam Exp $
+/* $Id: logic.c,v 1.41 2007-06-13 08:04:03 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -468,7 +468,9 @@ static struct database_criterion *parse_filter(NMEM m, const char *buf)
     return res;
 }
 
-char *search(struct session *se, char *query, char *filter)
+enum pazpar2_error_code search(struct session *se,
+                               char *query, char *filter,
+                               const char **addinfo)
 {
     int live_channels = 0;
     struct client *cl;
@@ -476,6 +478,7 @@ char *search(struct session *se, char *query, char *filter)
 
     yaz_log(YLOG_DEBUG, "Search");
 
+    *addinfo = 0;
     nmem_reset(se->nmem);
     criteria = parse_filter(se->nmem, filter);
     se->requestid++;
@@ -490,23 +493,29 @@ char *search(struct session *se, char *query, char *filter)
         se->expected_maxrecs = maxrecs;
     }
     else
-        return "NOTARGETS";
+        return PAZPAR2_NO_TARGETS;
 
     se->relevance = 0;
 
     for (cl = se->clients; cl; cl = client_next_in_session(cl))
     {
         if (prepare_session_database(se, client_get_database(cl)) < 0)
-            return "CONFIG_ERROR";
+        {
+            *addinfo = client_get_database(cl)->database->url;
+            return PAZPAR2_CONFIG_TARGET;
+        }
         // Query must parse for all targets
-        if (client_parse_query(cl, query) < 0)  
-            return "QUERY";
+        if (client_parse_query(cl, query) < 0)
+        {
+            *addinfo = "query";
+            return PAZPAR2_MALFORMED_PARAMETER_VALUE;
+        }
     }
 
     for (cl = se->clients; cl; cl = client_next_in_session(cl))
         client_prep_connection(cl);
 
-    return 0;
+    return PAZPAR2_NO_ERROR;
 }
 
 // Creates a new session_database object for a database

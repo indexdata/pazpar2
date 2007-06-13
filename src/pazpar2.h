@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.39 2007-06-12 13:02:38 adam Exp $
+/* $Id: pazpar2.h,v 1.40 2007-06-13 08:04:03 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -42,6 +42,21 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 struct record;
 struct client;
+
+
+enum pazpar2_error_code {
+    PAZPAR2_NO_ERROR = 0,
+
+    PAZPAR2_NO_SESSION,
+    PAZPAR2_MISSING_PARAMETER,
+    PAZPAR2_MALFORMED_PARAMETER_VALUE,
+    PAZPAR2_MALFORMED_PARAMETER_ENCODING,
+    PAZPAR2_MALFORMED_SETTING,
+    PAZPAR2_HITCOUNTS_FAILED,
+    PAZPAR2_RECORD_MISSING,
+    PAZPAR2_NO_TARGETS,
+    PAZPAR2_CONFIG_TARGET
+};
 
 // Represents a (virtual) database on a host
 struct database {
@@ -149,7 +164,8 @@ struct session *new_session(NMEM nmem);
 void destroy_session(struct session *s);
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
-char *search(struct session *s, char *query, char *filter);
+enum pazpar2_error_code search(struct session *s, char *query, 
+                               char *filter, const char **addinfo);
 struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, int start,
         int *num, int *total, int *sumhits, NMEM nmem_show);
 struct record_cluster *show_single(struct session *s, int id);
@@ -178,6 +194,7 @@ void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num);
 int pazpar2_process(int debug,
                     void (*work)(void *data), void *data,
                     const char *pidfile, const char *uid);
+
 
 #endif
 
