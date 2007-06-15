@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.9 2007-06-15 06:45:39 adam Exp $
+/* $Id: client.c,v 1.10 2007-06-15 06:55:16 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -349,7 +349,6 @@ void client_send_search(struct client *cl)
         a->u.searchRequest->largeSetLowerBound = &lslb;
         a->u.searchRequest->mediumSetPresentNumber = &mspn;
     }
-    a->u.searchRequest->resultSetName = "Default";
     a->u.searchRequest->databaseNames = databaselist;
     a->u.searchRequest->num_databaseNames = ndb;
 
