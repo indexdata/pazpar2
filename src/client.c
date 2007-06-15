@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.8 2007-06-06 11:56:35 marc Exp $
+/* $Id: client.c,v 1.9 2007-06-15 06:45:39 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -45,9 +45,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <yaz/nmem.h>
 #include <yaz/query-charset.h>
 #include <yaz/querytowrbuf.h>
-#if YAZ_VERSIONL >= 0x020163
 #include <yaz/oid_db.h>
-#endif
 
 #if HAVE_CONFIG_H
 #include "cconfig.h"
@@ -78,7 +76,18 @@ struct client {
     int requestid;            // ID of current outstanding request
     int diagnostic;
     enum client_state state;
+    struct show_raw *show_raw;
     struct client *next;     // next client in session or next in free list
+};
+
+struct show_raw {
+    int active; // whether this request has been sent to the server
+    int position;
+    char *syntax;
+    char *esn;
+    void (*error_handler)(void *data, const char *addinfo);
+    void (*record_handler)(void *data, const char *buf, size_t sz);
+    void *data;
 };
 
 static const char *client_states[] = {
@@ -117,9 +126,12 @@ void client_set_state(struct client *cl, enum client_state st)
     cl->state = st;
 }
 
+static void client_show_raw_error(struct client *cl, const char *addinfo);
+
 // Close connection and set state to error
 void client_fatal(struct client *cl)
 {
+    client_show_raw_error(cl, "client connection failure");
     yaz_log(YLOG_WARN, "Fatal error from %s", client_get_url(cl));
     connection_destroy(cl->connection);
     cl->state = Client_Error;
@@ -150,6 +162,100 @@ void client_set_requestid(struct client *cl, int id)
     cl->requestid = id;
 }
 
+int client_show_raw(struct client *cl, int position,
+                    const char *syntax, const char *esn,
+                    void *data,
+                    void (*error_handler)(void *data, const char *addinfo),
+                    void (*record_handler)(void *data, const char *buf,
+                                           size_t sz))
+{
+    if (cl->show_raw)
+        return -1;
+    cl->show_raw = xmalloc(sizeof(*cl->show_raw));
+    cl->show_raw->position = position;
+    cl->show_raw->active = 0;
+    cl->show_raw->data = data;
+    cl->show_raw->error_handler = error_handler;
+    cl->show_raw->record_handler = record_handler;
+    if (syntax)
+        cl->show_raw->syntax = xstrdup(syntax);
+    else
+        cl->show_raw->syntax = 0;
+    if (esn)
+        cl->show_raw->esn = xstrdup(esn);
+    else
+        cl->show_raw->esn = 0;
+    client_continue(cl);
+    return 0;
+}
+
+static void client_show_raw_error(struct client *cl, const char *addinfo)
+{
+    if (cl->show_raw)
+    {
+        cl->show_raw->error_handler(cl->show_raw->data, addinfo);
+        xfree(cl->show_raw);
+        cl->show_raw = 0;
+    }
+}
+
+static void client_show_raw_cancel(struct client *cl)
+{
+    if (cl->show_raw)
+    {
+        cl->show_raw->error_handler(cl->show_raw->data, "cancel");
+        xfree(cl->show_raw);
+        cl->show_raw = 0;
+    }
+}
+
+void client_send_raw_present(struct client *cl)
+{
+    Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_presentRequest);
+    int toget = 1;
+    int start = cl->show_raw->position;
+
+    assert(cl->show_raw);
+
+    yaz_log(YLOG_LOG, "Trying to present %d record(s) from %d",
+            toget, start);
+
+    a->u.presentRequest->resultSetStartPoint = &start;
+    a->u.presentRequest->numberOfRecordsRequested = &toget;
+
+    if (cl->show_raw->syntax)  // syntax is optional
+        a->u.presentRequest->preferredRecordSyntax =
+            yaz_string_to_oid_odr(yaz_oid_std(),
+                                  CLASS_RECSYN, cl->show_raw->syntax,
+                                  global_parameters.odr_out);
+    if (cl->show_raw->esn)  // element set is optional
+    {
+        Z_ElementSetNames *elementSetNames =
+            odr_malloc(global_parameters.odr_out, sizeof(*elementSetNames));
+        Z_RecordComposition *compo = 
+            odr_malloc(global_parameters.odr_out, sizeof(*compo));
+        a->u.presentRequest->recordComposition = compo;
+
+        compo->which = Z_RecordComp_simple;
+        compo->u.simple = elementSetNames;
+
+        elementSetNames->which = Z_ElementSetNames_generic;
+        elementSetNames->u.generic = 
+            odr_strdup(global_parameters.odr_out, cl->show_raw->esn);
+    }
+    if (send_apdu(cl, a) >= 0)
+    {
+        cl->show_raw->active = 1;
+	cl->state = Client_Presenting;
+    }
+    else
+    {
+        client_show_raw_error(cl, "send_apdu failed");
+        cl->state = Client_Error;
+    }
+    odr_reset(global_parameters.odr_out);
+}
+
 void client_send_present(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
@@ -164,25 +270,18 @@ void client_send_present(struct client *cl)
     if (toget > cl->hits - cl->records)
 	toget = cl->hits - cl->records;
 
-    yaz_log(YLOG_DEBUG, "Trying to present %d records\n", toget);
+    yaz_log(YLOG_DEBUG, "Trying to present %d record(s) from %d",
+            toget, start);
 
     a->u.presentRequest->resultSetStartPoint = &start;
     a->u.presentRequest->numberOfRecordsRequested = &toget;
 
-    a->u.presentRequest->resultSetId = "Default";
-
     if ((recsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX)))
     {
-#if YAZ_VERSIONL >= 0x020163
         a->u.presentRequest->preferredRecordSyntax =
             yaz_string_to_oid_odr(yaz_oid_std(),
                                   CLASS_RECSYN, recsyn,
                                   global_parameters.odr_out);
-#else
-        a->u.presentRequest->preferredRecordSyntax =
-            yaz_str_to_z3950oid(global_parameters.odr_out,
-                                CLASS_RECSYN, recsyn);
-#endif
     }
 
     if (send_apdu(cl, a) >= 0)
@@ -209,6 +308,7 @@ void client_send_search(struct client *cl)
 
     yaz_log(YLOG_DEBUG, "Sending search to %s", sdb->database->url);
 
+    
     // constructing RPN query
     a->u.searchRequest->query = zquery = odr_malloc(global_parameters.odr_out,
                                                     sizeof(Z_Query));
@@ -240,16 +340,10 @@ void client_send_search(struct client *cl)
     {
         if ((recsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX)))
         {
-#if YAZ_VERSIONL >= 0x020163
             a->u.searchRequest->preferredRecordSyntax =
                 yaz_string_to_oid_odr(yaz_oid_std(),
                                       CLASS_RECSYN, recsyn,
                                       global_parameters.odr_out);
-#else
-            a->u.searchRequest->preferredRecordSyntax =
-                yaz_str_to_z3950oid(global_parameters.odr_out,
-                                    CLASS_RECSYN, recsyn);
-#endif
         }
         a->u.searchRequest->smallSetUpperBound = &ssub;
         a->u.searchRequest->largeSetLowerBound = &lslb;
@@ -302,6 +396,49 @@ void client_init_response(struct client *cl, Z_APDU *a)
         cl->state = Client_Failed; // FIXME need to do something to the connection
 }
 
+
+static void ingest_raw_records(struct client *cl, Z_Records *r)
+{
+    Z_NamePlusRecordList *rlist;
+    Z_NamePlusRecord *npr;
+    xmlDoc *doc;
+    xmlChar *buf_out;
+    int len_out;
+    if (r->which != Z_Records_DBOSD)
+    {
+        client_show_raw_error(cl, "non-surrogate diagnostics");
+        return;
+    }
+
+    rlist = r->u.databaseOrSurDiagnostics;
+    if (rlist->num_records != 1 || !rlist->records || !rlist->records[0])
+    {
+        client_show_raw_error(cl, "no records");
+        return;
+    }
+    npr = rlist->records[0];
+    if (npr->which != Z_NamePlusRecord_databaseRecord)
+    {
+        client_show_raw_error(cl, "surrogate diagnostic");
+        return;
+    }
+
+    doc = record_to_xml(client_get_database(cl), npr->u.databaseRecord);
+    if (!doc)
+    {
+        client_show_raw_error(cl, "unable to convert record to xml");
+        return;
+    }
+
+    xmlDocDumpMemory(doc, &buf_out, &len_out);
+
+    cl->show_raw->record_handler(cl->show_raw->data,
+                                 (const char *) buf_out, len_out);
+    
+    xmlFreeDoc(doc);
+    xfree(cl->show_raw);
+    cl->show_raw = 0;
+}
 
 static void ingest_records(struct client *cl, Z_Records *r)
 {
@@ -397,6 +534,7 @@ void client_present_response(struct client *cl, Z_APDU *a)
                     cl->database->database->url);
             cl->diagnostic = *recs->u.nonSurrogateDiagnostic->condition;
             cl->state = Client_Error;
+            client_show_raw_error(cl, "non surrogate diagnostics");
         }
     }
 
@@ -404,7 +542,15 @@ void client_present_response(struct client *cl, Z_APDU *a)
     {
         yaz_log(YLOG_DEBUG, "Good Present response %s",
                 cl->database->database->url);
-        ingest_records(cl, r->records);
+
+        // we can mix show raw and normal show ..
+        if (cl->show_raw && cl->show_raw->active)
+        {
+            cl->show_raw->active = 0; // no longer active
+            ingest_raw_records(cl, r->records);
+        }
+        else
+            ingest_records(cl, r->records);
         cl->state = Client_Idle;
     }
     else if (*r->presentStatus) 
@@ -412,6 +558,7 @@ void client_present_response(struct client *cl, Z_APDU *a)
         yaz_log(YLOG_WARN, "Bad Present response %s",
                 cl->database->database->url);
         cl->state = Client_Error;
+        client_show_raw_error(cl, "bad present response");
     }
 }
 
@@ -464,16 +611,10 @@ static void init_zproxy(struct client *cl, Z_InitRequest *req)
     char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
 
     if (*zproxy)
-#if YAZ_VERSIONL >= 0x020163
         yaz_oi_set_string_oid(&req->otherInfo,
                               global_parameters.odr_out,
                               yaz_oid_userinfo_proxy,
                               1, ztarget);
-#else
-        yaz_oi_set_string_oidval(&req->otherInfo,
-                                 global_parameters.odr_out, VAL_PROXY,
-                                 1, ztarget);
-#endif
 }
 
 
@@ -496,8 +637,6 @@ static void client_init_request(struct client *cl)
     init_authentication(cl, a->u.initRequest);
     init_zproxy(cl, a->u.initRequest);
 
-
-
     if (send_apdu(cl, a) >= 0)
 	client_set_state(cl, Client_Initializing);
     else
@@ -515,7 +654,13 @@ void client_continue(struct client *cl)
     {
         struct session *se = client_get_session(cl);
         if (cl->requestid != se->requestid && cl->pquery) {
+            // we'll have to abort this because result set is to be deleted
+            client_show_raw_cancel(cl);   
             client_send_search(cl);
+        }
+        else if (cl->show_raw)
+        {
+            client_send_raw_present(cl);
         }
         else if (cl->hits > 0 && cl->records < global_parameters.toget &&
             cl->records < cl->hits) {
@@ -544,6 +689,7 @@ struct client *client_create(void)
     r->requestid = -1;
     r->diagnostic = 0;
     r->state = Client_Disconnected;
+    r->show_raw = 0;
     r->next = 0;
     return r;
 }

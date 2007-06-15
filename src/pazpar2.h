@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.40 2007-06-13 08:04:03 adam Exp $
+/* $Id: pazpar2.h,v 1.41 2007-06-15 06:45:39 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -55,7 +55,11 @@ enum pazpar2_error_code {
     PAZPAR2_HITCOUNTS_FAILED,
     PAZPAR2_RECORD_MISSING,
     PAZPAR2_NO_TARGETS,
-    PAZPAR2_CONFIG_TARGET
+    PAZPAR2_CONFIG_TARGET,
+    PAZPAR2_RECORD_FAIL,
+    PAZPAR2_NOT_IMPLEMENTED,
+
+    PAZPAR2_LAST_ERROR
 };
 
 // Represents a (virtual) database on a host
@@ -185,6 +189,7 @@ void pazpar2_event_loop(void);
 int host_getaddrinfo(struct host *host);
 
 xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec);
+xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec);
 
 struct record *ingest_record(struct client *cl, Z_External *rec,
                              int record_no);

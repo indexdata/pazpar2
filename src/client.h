@@ -1,4 +1,4 @@
-/* $Id: client.h,v 1.1 2007-04-23 21:05:23 adam Exp $
+/* $Id: client.h,v 1.2 2007-06-15 06:45:39 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -42,6 +42,13 @@ enum client_state
     Client_Disconnected,
     Client_Stopped
 };
+
+int client_show_raw(struct client *cl, int position,
+                    const char *syntax, const char *esn,
+                    void *data,
+                    void (*error_handler)(void *data, const char *addinfo),
+                    void (*record_handler)(void *data, const char *buf,
+                                           size_t sz));
 
 const char *client_get_state_str(struct client *cl);
 enum client_state client_get_state(struct client *cl);

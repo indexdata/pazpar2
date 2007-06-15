@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.52 2007-06-13 13:04:34 adam Exp $
+/* $Id: http_command.c,v 1.53 2007-06-15 06:45:39 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.52 2007-06-13 13:04:34 adam Exp $
+ * $Id: http_command.c,v 1.53 2007-06-15 06:45:39 adam Exp $
  */
 
 #include <stdio.h>
@@ -119,6 +119,9 @@ static const char *get_msg(enum pazpar2_error_code code)
         { PAZPAR2_RECORD_MISSING, "Record missing"},
         { PAZPAR2_NO_TARGETS, "No targets"},
         { PAZPAR2_CONFIG_TARGET, "Target cannot be configured"},
+        { PAZPAR2_RECORD_FAIL, "Record command failed"},
+        { PAZPAR2_NOT_IMPLEMENTED, "Not implemented"},
+        { PAZPAR2_LAST_ERROR, "Last error"},
         { 0, 0 }
     };
     int i = 0;
@@ -484,6 +487,24 @@ static void write_subrecord(struct record *r, WRBUF w,
     wrbuf_puts(w, "</location>\n");
 }
 
+static void show_raw_record_error(void *data, const char *addinfo)
+{
+    struct http_channel *c = (struct http_channel *) data;
+    struct http_response *rs = c->response;
+
+    error(rs, PAZPAR2_NOT_IMPLEMENTED, addinfo);
+}
+
+static void show_raw_record_ok(void *data, const char *buf, size_t sz)
+{
+    struct http_channel *c = (struct http_channel *) data;
+    struct http_response *rs = c->response;
+
+    wrbuf_write(c->wrbuf, buf, sz);
+    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
+    http_send_response(c);
+}
+
 static void cmd_record(struct http_channel *c)
 {
     struct http_response *rs = c->response;
@@ -492,7 +513,9 @@ static void cmd_record(struct http_channel *c)
     struct record_cluster *rec;
     struct record *r;
     struct conf_service *service = global_parameters.server->service;
-    char *idstr = http_argbyname(rq, "id");
+    const char *idstr = http_argbyname(rq, "id");
+    const char *offsetstr = http_argbyname(rq, "offset");
+    
     int id;
 
     if (!s)
@@ -509,14 +532,41 @@ static void cmd_record(struct http_channel *c)
         error(rs, PAZPAR2_RECORD_MISSING, idstr);
         return;
     }
-    wrbuf_puts(c->wrbuf, "<record>\n");
-    wrbuf_printf(c->wrbuf, "<recid>%d</recid>\n", rec->recid);
-    write_metadata(c->wrbuf, service, rec->metadata, 1);
-    for (r = rec->records; r; r = r->next)
-        write_subrecord(r, c->wrbuf, service, 1);
-    wrbuf_puts(c->wrbuf, "</record>\n");
-    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
-    http_send_response(c);
+    if (offsetstr)
+    {
+        int offset = atoi(offsetstr);
+        const char *syntax = http_argbyname(rq, "syntax");
+        const char *esn = http_argbyname(rq, "esn");
+        int i;
+        struct record*r = rec->records;
+
+        for (i = 0; i < offset && r; r = r->next, i++)
+            ;
+        if (!r)
+        {
+            error(rs, PAZPAR2_RECORD_FAIL, "no record at offset given");
+            return;
+        }
+        if (client_show_raw(r->client, r->position, syntax, esn, 
+                            c /* data */,
+                            show_raw_record_error,
+                            show_raw_record_ok))
+        {
+            error(rs, PAZPAR2_RECORD_FAIL, "invalid parameters");
+            return;
+        }
+    }
+    else
+    {
+        wrbuf_puts(c->wrbuf, "<record>\n");
+        wrbuf_printf(c->wrbuf, "<recid>%d</recid>\n", rec->recid);
+        write_metadata(c->wrbuf, service, rec->metadata, 1);
+        for (r = rec->records; r; r = r->next)
+            write_subrecord(r, c->wrbuf, service, 1);
+        wrbuf_puts(c->wrbuf, "</record>\n");
+        rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
+        http_send_response(c);
+    }
 }
 
 static void show_records(struct http_channel *c, int active)

@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.43 2007-06-13 21:29:04 adam Exp $
+/* $Id: logic.c,v 1.44 2007-06-15 06:45:39 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -45,9 +45,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <yaz/nmem.h>
 #include <yaz/query-charset.h>
 #include <yaz/querytowrbuf.h>
-#if YAZ_VERSIONL >= 0x020163
 #include <yaz/oid_db.h>
-#endif
 
 #if HAVE_CONFIG_H
 #include "cconfig.h"
@@ -152,9 +150,8 @@ static void add_facet(struct session *s, const char *type, const char *value)
     termlist_insert(s->termlists[i].termlist, value);
 }
 
-xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec)
+xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec)
 {
-    struct database_retrievalmap *m;
     struct database *db = sdb->database;
     xmlDoc *rdoc = 0;
     const Odr_oid *oid = rec->direct_reference;
@@ -233,36 +230,45 @@ xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec)
         xmlDocDump(stderr, rdoc);
 #endif
     }
+    return rdoc;
+}
 
-    for (m = sdb->map; m; m = m->next){
-        xmlDoc *new = 0;
-
-        {
-            xmlNodePtr root = 0;
-            new = xsltApplyStylesheet(m->stylesheet, rdoc, 0);
-            root= xmlDocGetRootElement(new);
-        if (!new || !root || !(root->children))
-        {
-            yaz_log(YLOG_WARN, "XSLT transformation failed from %s",
-                    sdb->database->url);
-            xmlFreeDoc(new);
-            xmlFreeDoc(rdoc);
-            return 0;
-        }
-        }
-   
-        xmlFreeDoc(rdoc);
-        rdoc = new;
-    }
-    if (global_parameters.dump_records)
+xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec)
+{
+    struct database_retrievalmap *m;
+    xmlDoc *rdoc = record_to_xml(sdb, rec);
+    if (rdoc)
     {
-        fprintf(stderr, "Record from %s\n----------------\n", 
-                sdb->database->url);
+        for (m = sdb->map; m; m = m->next){
+            xmlDoc *new = 0;
+            
+            {
+                xmlNodePtr root = 0;
+                new = xsltApplyStylesheet(m->stylesheet, rdoc, 0);
+                root= xmlDocGetRootElement(new);
+                if (!new || !root || !(root->children))
+                {
+                    yaz_log(YLOG_WARN, "XSLT transformation failed from %s",
+                            sdb->database->url);
+                    xmlFreeDoc(new);
+                    xmlFreeDoc(rdoc);
+                    return 0;
+                }
+            }
+            
+            xmlFreeDoc(rdoc);
+            rdoc = new;
+        }
+        if (global_parameters.dump_records)
+        {
+            fprintf(stderr, "Record from %s\n----------------\n", 
+                    sdb->database->url);
 #if LIBXML_VERSION >= 20600
-        xmlDocFormatDump(stderr, rdoc, 1);
+            xmlDocFormatDump(stderr, rdoc, 1);
 #else
-        xmlDocDump(stderr, rdoc);
+            xmlDocDump(stderr, rdoc);
 #endif
+        }
     }
     return rdoc;
 }
