@@ -1,4 +1,4 @@
-/* $Id: http.h,v 1.8 2007-04-15 00:35:57 quinn Exp $
+/* $Id: http.h,v 1.9 2007-06-15 19:35:17 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -32,6 +32,8 @@ struct http_buf
     struct http_buf *next;
 };
 
+typedef struct http_channel_observer_s *http_channel_observer_t;
+
 struct http_channel
 {
     IOCHAN iochan;
@@ -50,6 +52,7 @@ struct http_channel
     struct http_response *response;
     struct http_channel *next; // for freelist
     char addr[20]; // forwarded address
+    http_channel_observer_t observers;
 };
 
 struct http_proxy //  attached to iochan for proxy connection
@@ -108,6 +111,15 @@ struct http_response *http_create_response(struct http_channel *c);
 void http_send_response(struct http_channel *c);
 void urlencode(const char *i, char *o);
 
+typedef void (*http_channel_destroy_t)(void *data, struct http_channel *c);
+
+http_channel_observer_t http_add_observer(struct http_channel *c, void *data,
+                                          http_channel_destroy_t);
+
+void http_remove_observer(http_channel_observer_t obs);
+struct http_channel *http_channel_observer_chan(http_channel_observer_t obs);
+#endif
+
 /*
  * Local variables:
  * c-basic-offset: 4
@@ -115,4 +127,3 @@ void urlencode(const char *i, char *o);
  * End:
  * vim: shiftwidth=4 tabstop=8 expandtab
  */
-#endif

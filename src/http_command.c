@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.53 2007-06-15 06:45:39 adam Exp $
+/* $Id: http_command.c,v 1.54 2007-06-15 19:35:17 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.53 2007-06-15 06:45:39 adam Exp $
+ * $Id: http_command.c,v 1.54 2007-06-15 19:35:17 adam Exp $
  */
 
 #include <stdio.h>
@@ -489,20 +489,32 @@ static void write_subrecord(struct record *r, WRBUF w,
 
 static void show_raw_record_error(void *data, const char *addinfo)
 {
-    struct http_channel *c = (struct http_channel *) data;
+    http_channel_observer_t obs = data;
+    struct http_channel *c = http_channel_observer_chan(obs);
     struct http_response *rs = c->response;
+
+    http_remove_observer(obs);
 
     error(rs, PAZPAR2_NOT_IMPLEMENTED, addinfo);
 }
 
 static void show_raw_record_ok(void *data, const char *buf, size_t sz)
 {
-    struct http_channel *c = (struct http_channel *) data;
+    http_channel_observer_t obs = data;
+    struct http_channel *c = http_channel_observer_chan(obs);
     struct http_response *rs = c->response;
+
+    http_remove_observer(obs);
 
     wrbuf_write(c->wrbuf, buf, sz);
     rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
+}
+
+void show_raw_reset(void *data, struct http_channel *c)
+{
+    struct client *client = data;
+    client_show_raw_reset(client);
 }
 
 static void cmd_record(struct http_channel *c)
@@ -547,13 +559,19 @@ static void cmd_record(struct http_channel *c)
             error(rs, PAZPAR2_RECORD_FAIL, "no record at offset given");
             return;
         }
-        if (client_show_raw(r->client, r->position, syntax, esn, 
-                            c /* data */,
-                            show_raw_record_error,
-                            show_raw_record_ok))
+        else
         {
-            error(rs, PAZPAR2_RECORD_FAIL, "invalid parameters");
-            return;
+            http_channel_observer_t obs =
+                http_add_observer(c, r->client, show_raw_reset);
+            if (client_show_raw_begin(r->client, r->position, syntax, esn, 
+                                      obs /* data */,
+                                      show_raw_record_error,
+                                      show_raw_record_ok))
+            {
+                http_remove_observer(obs);
+                error(rs, PAZPAR2_RECORD_FAIL, "invalid parameters");
+                return;
+            }
         }
     }
     else
@@ -660,9 +678,14 @@ static void cmd_show(struct http_channel *c)
     {
         if (status && (!s->psession->reclist || !s->psession->reclist->num_records))
         {
-            session_set_watch(s->psession, SESSION_WATCH_RECORDS, show_records_ready, c);
-            yaz_log(YLOG_DEBUG, "Blocking on cmd_show");
-            return;
+            // if there is already a watch/block. we do not block this one
+            if (session_set_watch(s->psession,
+                                  SESSION_WATCH_RECORDS,
+                                  show_records_ready, c, c) == 0)
+            {
+                yaz_log(YLOG_DEBUG, "Blocking on cmd_show");
+                return;
+            }
         }
     }
 

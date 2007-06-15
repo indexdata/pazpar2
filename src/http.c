@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.33 2007-06-04 14:44:22 adam Exp $
+/* $Id: http.c,v 1.34 2007-06-15 19:35:17 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -62,6 +62,13 @@ static char proxy_url[256] = "";
 static char myurl[256] = "";
 static struct http_buf *http_buf_freelist = 0;
 static struct http_channel *http_channel_freelist = 0;
+
+struct http_channel_observer_s {
+    void *data;
+    void (*destroy)(void *data, struct http_channel *chan);
+    struct http_channel_observer_s *next;
+    struct http_channel *chan;
+};
 
 static struct http_buf *http_buf_create()
 {
@@ -701,12 +708,9 @@ static void http_io(IOCHAN i, int event)
                 http_destroy(i);
                 return;
             }
-            if (res > 0)
-            {
-                htbuf->buf[res] = '\0';
-                htbuf->len = res;
-                http_buf_enqueue(&hc->iqueue, htbuf);
-            }
+            htbuf->buf[res] = '\0';
+            htbuf->len = res;
+            http_buf_enqueue(&hc->iqueue, htbuf);
 
             if (hc->state == Http_Busy)
                 return;
@@ -909,6 +913,9 @@ static void proxy_io(IOCHAN pi, int event)
     }
 }
 
+static void http_fire_observers(struct http_channel *c);
+static void http_destroy_observers(struct http_channel *c);
+
 // Cleanup channel
 static void http_destroy(IOCHAN i)
 {
@@ -924,6 +931,10 @@ static void http_destroy(IOCHAN i)
         http_buf_destroy_queue(s->proxy->oqueue);
         xfree(s->proxy);
     }
+    http_buf_destroy_queue(s->iqueue);
+    http_buf_destroy_queue(s->oqueue);
+    http_fire_observers(s);
+    http_destroy_observers(s);
     s->next = http_channel_freelist;
     http_channel_freelist = s;
     close(iochan_getfd(i));
@@ -958,6 +969,7 @@ static struct http_channel *http_create(const char *addr)
         exit(1);
     }
     strcpy(r->addr, addr);
+    r->observers = 0;
     return r;
 }
 
@@ -1089,6 +1101,55 @@ void http_set_proxyaddr(char *host, char *base_url)
     proxy_addr->sin_family = he->h_addrtype;
     memcpy(&proxy_addr->sin_addr.s_addr, he->h_addr_list[0], he->h_length);
     proxy_addr->sin_port = htons(port);
+}
+
+static void http_fire_observers(struct http_channel *c)
+{
+    http_channel_observer_t p = c->observers;
+    while (p)
+    {
+        p->destroy(p->data, c);
+        p = p->next;
+    }
+}
+
+static void http_destroy_observers(struct http_channel *c)
+{
+    while (c->observers)
+    {
+        http_channel_observer_t obs = c->observers;
+        c->observers = obs->next;
+        xfree(obs);
+    }
+}
+
+http_channel_observer_t http_add_observer(struct http_channel *c, void *data,
+                                          http_channel_destroy_t des)
+{
+    http_channel_observer_t obs = xmalloc(sizeof(*obs));
+    obs->chan = c;
+    obs->data = data;
+    obs->destroy= des;
+    obs->next = c->observers;
+    c->observers = obs;
+    return obs;
+}
+
+void http_remove_observer(http_channel_observer_t obs)
+{
+    struct http_channel *c = obs->chan;
+    http_channel_observer_t found, *p = &c->observers;
+    while (*p != obs)
+        p = &(*p)->next;
+    found = *p;
+    assert(found);
+    *p = (*p)->next;
+    xfree(found);
+}
+
+struct http_channel *http_channel_observer_chan(http_channel_observer_t obs)
+{
+    return obs->chan;
 }
 
 /*

@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.10 2007-06-15 06:55:16 adam Exp $
+/* $Id: client.c,v 1.11 2007-06-15 19:35:17 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -162,12 +162,12 @@ void client_set_requestid(struct client *cl, int id)
     cl->requestid = id;
 }
 
-int client_show_raw(struct client *cl, int position,
-                    const char *syntax, const char *esn,
-                    void *data,
-                    void (*error_handler)(void *data, const char *addinfo),
-                    void (*record_handler)(void *data, const char *buf,
-                                           size_t sz))
+int client_show_raw_begin(struct client *cl, int position,
+                          const char *syntax, const char *esn,
+                          void *data,
+                          void (*error_handler)(void *data, const char *addinfo),
+                          void (*record_handler)(void *data, const char *buf,
+                                                 size_t sz))
 {
     if (cl->show_raw)
         return -1;
@@ -189,13 +189,18 @@ int client_show_raw(struct client *cl, int position,
     return 0;
 }
 
+void client_show_raw_reset(struct client *cl)
+{
+    xfree(cl->show_raw);
+    cl->show_raw = 0;
+}
+
 static void client_show_raw_error(struct client *cl, const char *addinfo)
 {
     if (cl->show_raw)
     {
         cl->show_raw->error_handler(cl->show_raw->data, addinfo);
-        xfree(cl->show_raw);
-        cl->show_raw = 0;
+        client_show_raw_reset(cl);
     }
 }
 
@@ -204,8 +209,7 @@ static void client_show_raw_cancel(struct client *cl)
     if (cl->show_raw)
     {
         cl->show_raw->error_handler(cl->show_raw->data, "cancel");
-        xfree(cl->show_raw);
-        cl->show_raw = 0;
+        client_show_raw_reset(cl);
     }
 }
 
@@ -217,7 +221,7 @@ void client_send_raw_present(struct client *cl)
 
     assert(cl->show_raw);
 
-    yaz_log(YLOG_LOG, "Trying to present %d record(s) from %d",
+    yaz_log(YLOG_DEBUG, "Trying to present %d record(s) from %d",
             toget, start);
 
     a->u.presentRequest->resultSetStartPoint = &start;
@@ -430,11 +434,12 @@ static void ingest_raw_records(struct client *cl, Z_Records *r)
     }
 
     xmlDocDumpMemory(doc, &buf_out, &len_out);
+    xmlFreeDoc(doc);
 
     cl->show_raw->record_handler(cl->show_raw->data,
                                  (const char *) buf_out, len_out);
     
-    xmlFreeDoc(doc);
+    xmlFree(buf_out);
     xfree(cl->show_raw);
     cl->show_raw = 0;
 }
@@ -706,6 +711,8 @@ void client_destroy(struct client *c)
         if (cc)
             cc->next = c->next;
     }
+    xfree(c->pquery);
+
     if (c->connection)
         connection_release(c->connection);
     c->next = client_freelist;

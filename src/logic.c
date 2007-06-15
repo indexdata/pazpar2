@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.44 2007-06-15 06:45:39 adam Exp $
+/* $Id: logic.c,v 1.45 2007-06-15 19:35:17 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -384,21 +384,39 @@ static int prepare_session_database(struct session *se,
     return 0;
 }
 
-
-void session_set_watch(struct session *s, int what, 
-                       session_watchfun fun, void *data)
+// called if watch should be removed because http_channel is to be destroyed
+static void session_watch_cancel(void *data, struct http_channel *c)
 {
+    struct session_watchentry *ent = data;
+
+    ent->fun = 0;
+    ent->data = 0;
+    ent->obs = 0;
+}
+
+// set watch. Returns 0=OK, -1 if watch is already set
+int session_set_watch(struct session *s, int what, 
+                      session_watchfun fun, void *data,
+                      struct http_channel *chan)
+{
+    if (s->watchlist[what].fun)
+        return -1;
     s->watchlist[what].fun = fun;
     s->watchlist[what].data = data;
+    s->watchlist[what].obs = http_add_observer(chan, &s->watchlist[what],
+                                               session_watch_cancel);
+    return 0;
 }
 
 void session_alert_watch(struct session *s, int what)
 {
     if (!s->watchlist[what].fun)
         return;
+    http_remove_observer(s->watchlist[what].obs);
     (*s->watchlist[what].fun)(s->watchlist[what].data);
     s->watchlist[what].fun = 0;
     s->watchlist[what].data = 0;
+    s->watchlist[what].obs = 0;
 }
 
 //callback for grep_databases

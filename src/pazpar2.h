@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.41 2007-06-15 06:45:39 adam Exp $
+/* $Id: pazpar2.h,v 1.42 2007-06-15 19:35:17 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -39,6 +39,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "eventl.h"
 #include "config.h"
 #include "parameters.h"
+#include "http.h"
 
 struct record;
 struct client;
@@ -116,6 +117,12 @@ struct named_termlist
     struct termlist *termlist;
 };
 
+struct session_watchentry {
+    void *data;
+    http_channel_observer_t obs;
+    session_watchfun fun;
+};
+
 // End-user session
 struct session {
     struct session_database *databases;  // All databases, settings overriden
@@ -128,10 +135,7 @@ struct session {
     struct named_termlist termlists[SESSION_MAX_TERMLISTS];
     struct relevance *relevance;
     struct reclist *reclist;
-    struct {
-        void *data;
-        session_watchfun fun;
-    } watchlist[SESSION_WATCH_MAX + 1];
+    struct session_watchentry watchlist[SESSION_WATCH_MAX + 1];
     int expected_maxrecs;
     int total_hits;
     int total_records;
@@ -174,14 +178,13 @@ struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, in
         int *num, int *total, int *sumhits, NMEM nmem_show);
 struct record_cluster *show_single(struct session *s, int id);
 struct termlist_score **termlist(struct session *s, const char *name, int *num);
-void session_set_watch(struct session *s, int what, session_watchfun fun, void *data);
+int session_set_watch(struct session *s, int what, session_watchfun fun, void *data, struct http_channel *c);
 int session_active_clients(struct session *s);
 void session_apply_setting(struct session *se, char *dbname, char *setting, char *value);
 char *session_setting_oneval(struct session_database *db, int offset);
 
 void start_http_listener(void);
 void start_proxy(void);
-//void start_zproxy(void);
 
 void pazpar2_add_channel(IOCHAN c);
 void pazpar2_event_loop(void);
