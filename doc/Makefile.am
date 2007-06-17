@@ -1,5 +1,5 @@
-## $Id: Makefile.am,v 1.3 2007-01-19 21:50:01 adam Exp $
-docdir=$(datadir)/doc/@PACKAGE@
+## $Id: Makefile.am,v 1.4 2007-06-17 07:05:21 adam Exp $
+## docdir=$(datadir)/doc/@PACKAGE@
 
 SUBDIRS = common
 
