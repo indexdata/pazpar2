@@ -27,8 +27,9 @@ YAZ_DOC
 AC_CHECK_ICU(3.6, [], 
     AC_MSG_WARN([For ICU internationalizing support please install libicu36-dev or similar]))
 
-ln -sf ../../js/pz2.js www/example/pz2.js
-ln -sf ../../../js/pz2.js www/masterkey/js/pz2.js
+dnl Breaks 'make dist'
+dnl ln -sf ../../js/pz2.js www/example/pz2.js
+dnl ln -sf ../../../js/pz2.js www/masterkey/js/pz2.js
 
 AC_CONFIG_FILES([
 	Doxyfile
