@@ -35,6 +35,7 @@ AC_CONFIG_FILES([
 	Makefile
 	src/Makefile
 	test/Makefile
+	js/Makefile
 	doc/Makefile
 	doc/local.ent
 	doc/common/Makefile

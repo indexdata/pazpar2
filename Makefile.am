@@ -1,9 +1,9 @@
-# $Id: Makefile.am,v 1.10 2007-06-17 07:52:20 adam Exp $
+# $Id: Makefile.am,v 1.11 2007-06-17 18:24:02 adam Exp $
 
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src test doc
+SUBDIRS = src test js doc
 
 EXTRA_DIST = README NEWS LICENSE buildconf.sh Doxyfile.in m4/yaz.m4 
 
