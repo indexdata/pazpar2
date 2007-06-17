@@ -1,0 +1,25 @@
+Source: pazpar2
+Section: net
+Priority: extra
+Maintainer: Adam Dickmeiss <adam@indexdata.dk>
+Build-Depends: debhelper (>= 5), autotools-dev, libyaz3-dev, libicu36-dev
+Standards-Version: 3.7.2
+
+Package: pazpar2
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: High-performance metaseacher
+ Pazpar2 is a high-performance, user interface-independent, data
+ model-independent metasearching middleware featuring merging, relevance
+ ranking, record sorting, and faceted results.
+
+Package: pazpar2-doc
+Section: doc
+Architecture: all
+Description: Documentation for Pazpar2 metasearcher
+ Pazpar2 is a high-performance, user interface-independent, data
+ model-independent metasearching middleware featuring merging, relevance
+ ranking, record sorting, and faceted results.
+ .
+ This packages includes HTML documentation for Pazpar2.
+

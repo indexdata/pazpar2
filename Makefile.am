@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.8 2007-05-15 15:50:47 adam Exp $
+# $Id: Makefile.am,v 1.9 2007-06-17 07:47:57 adam Exp $
 
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
@@ -13,7 +13,10 @@ dist-hook:
 	cvs=`find $(distdir)/etc -name CVS -type d -print`; if test "$$cvs"; then rm -r $$cvs; fi
 	cp -r $(srcdir)/www $(distdir)
 	cvs=`find $(distdir)/www -name CVS -type d -print`; if test "$$cvs"; then rm -r $$cvs; fi
-
+	mkdir $(distdir)/debian
+	for f in $(srcdir)/debian/*; do \
+		test -f $$f && cp $$f $(distdir)/debian; \
+	done
 
 cvs2cl:
 	cvs2cl
