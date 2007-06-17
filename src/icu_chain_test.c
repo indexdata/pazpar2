@@ -2,10 +2,13 @@
  gcc -I/usr/include/libxml2 -lxml2 -o icu-xml-convert icu-xml-convert.c
  */
 
-#include <stdio.h>
-#include <string.h>
+#if HAVE_CONFIG_H
+#include "cconfig.h"
+#endif
 
 #define _GNU_SOURCE
+#include <string.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
