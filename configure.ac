@@ -18,7 +18,7 @@ AC_PROG_RANLIB
 
 AC_LANG(C)
 
-YAZ_INIT([static threads],[2.1.50])
+YAZ_INIT([static threads],[3.0.4])
 if test -z "$YAZLIB"; then
 	AC_MSG_ERROR([YAZ development libraries missing])
 fi
