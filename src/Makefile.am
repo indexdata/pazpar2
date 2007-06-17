@@ -1,6 +1,8 @@
-# $Id: Makefile.am,v 1.26 2007-06-08 13:57:19 adam Exp $
+# $Id: Makefile.am,v 1.27 2007-06-17 07:04:37 adam Exp $
 
-bin_PROGRAMS = pazpar2 icu_chain_test
+bin_PROGRAMS = pazpar2
+
+noinst_PROGRAMS = icu_chain_test
 
 check_PROGRAMS = test_config \
       test_icu_I18N \
