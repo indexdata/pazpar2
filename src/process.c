@@ -1,4 +1,4 @@
-/* $Id: process.c,v 1.2 2007-06-12 13:02:38 adam Exp $
+/* $Id: process.c,v 1.3 2007-06-18 11:10:20 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -24,12 +24,15 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #endif
 
 #include <signal.h>
+#include <errno.h>
 #include <unistd.h>
 #include <assert.h>
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/wait.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <pwd.h>
 
 #include <yaz/log.h>
@@ -58,16 +61,14 @@ void kill_child_handler(int num)
         kill(child_pid, num);
 }
 
-int pazpar2_process(int debug, 
+int pazpar2_process(int debug, int daemon,
                     void (*work)(void *data), void *data,
                     const char *pidfile, const char *uid /* not yet used */)
 {
-    struct passwd *pw = 0;
     int run = 1;
     int cont = 1;
     void (*old_sighup)(int);
     void (*old_sigterm)(int);
-
 
     if (debug)
     {
@@ -77,24 +78,72 @@ int pazpar2_process(int debug,
         exit(0);
     }
     
+    write_pidfile(pidfile);
     /* running in production mode. */
     if (uid)
     {
-        yaz_log(YLOG_LOG, "getpwnam");
-        // OK to use the non-thread version here
-        if (!(pw = getpwnam(uid)))
+        /* OK to use the non-thread version here */
+        struct passwd *pw = getpwnam(uid);
+        if (!pw)
         {
             yaz_log(YLOG_FATAL, "%s: Unknown user", uid);
             exit(1);
         }
+        if (setuid(pw->pw_uid) < 0)
+        {
+            yaz_log(YLOG_FATAL|YLOG_ERRNO, "setuid");
+            exit(1);
+        }
     }
-    
 
+    if (daemon)
+    {
+        /* create pipe so that parent waits until child has created
+           PID (or failed) */
+        static int hand[2]; /* hand shake for child */
+        if (pipe(hand) < 0)
+        {
+            yaz_log(YLOG_FATAL|YLOG_ERRNO, "pipe");
+            return 1;
+        }
+        switch (fork())
+        {
+        case 0: 
+            break;
+        case -1:
+            return 1;
+        default:
+            close(hand[1]);
+            while(1)
+            {
+                char dummy[1];
+                int res = read(hand[0], dummy, 1);
+                if (res < 0 && errno != EINTR)
+                {
+                    yaz_log(YLOG_FATAL|YLOG_ERRNO, "read fork handshake");
+                    break;
+                }
+                else if (res >= 0)
+                    break;
+            }
+            close(hand[0]);
+            _exit(0);
+        }
+        /* child */
+        close(hand[0]);
+        if (setsid() < 0)
+            return 1;
+        
+        close(0);
+        close(1);
+        close(2);
+        open("/dev/null", O_RDWR);
+        dup(0); dup(0);
+        close(hand[1]);
+    }
     /* keep signals in their original state and make sure that some signals
-       to parent process also gets sent to the child.. Normally this
-       should not happen. We want the _child_ process to be terminated
-       normally. However, if the parent process is terminated, we
-       kill the child too */
+       to parent process also gets sent to the child.. 
+    */
     old_sighup = signal(SIGHUP, kill_child_handler);
     old_sigterm = signal(SIGTERM, kill_child_handler);
     while (cont)
@@ -114,17 +163,6 @@ int pazpar2_process(int debug,
             signal(SIGHUP, old_sighup);  /* restore */
             signal(SIGTERM, old_sigterm);/* restore */
 
-            write_pidfile(pidfile);
-
-            if (pw)
-            {
-                if (setuid(pw->pw_uid) < 0)
-                {
-                    yaz_log(YLOG_FATAL|YLOG_ERRNO, "setuid");
-                    exit(1);
-                }
-            }
-
             work(data);
             exit(0);
         }
@@ -133,7 +171,6 @@ int pazpar2_process(int debug,
         child_pid = p;
         
         p1 = wait(&status);
-        yaz_log_reopen();
 
         /* disable signalling in kill_child_handler */
         child_pid = 0;

@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.89 2007-06-12 13:02:38 adam Exp $
+/* $Id: pazpar2.c,v 1.90 2007-06-18 11:10:20 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -52,7 +52,9 @@ void child_handler(void *data)
 
 int main(int argc, char **argv)
 {
+    int daemon = 0;
     int ret;
+    int log_file_in_use = 0;
     char *arg;
     const char *pidfile = "pazpar2.pid";
     const char *uid = 0;
@@ -62,7 +64,7 @@ int main(int argc, char **argv)
 
     yaz_log_init_prefix("pazpar2");
 
-    while ((ret = options("f:h:p:t:u:l:dX", argv, argc, &arg)) != -2)
+    while ((ret = options("f:h:p:t:u:l:dDX", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -87,6 +89,10 @@ int main(int argc, char **argv)
             break;
         case 'l':
             yaz_log_init_file(arg);
+            log_file_in_use = 1;
+            break;
+        case 'D':
+            daemon = 1;
             break;
         case 'X':
             global_parameters.debug_mode = 1;
@@ -99,6 +105,7 @@ int main(int argc, char **argv)
                     "    -t settings\n"
                     "    -u uid\n"
                     "    -d                      (show internal records)\n"
+                    "    -D                      Daemon mode (background)\n"
                     "    -l file                 log to file\n"
                     "    -X                      debug mode\n"
                 );
@@ -106,6 +113,13 @@ int main(int argc, char **argv)
 	}
     }
 
+    yaz_log(YLOG_LOG, "Pazpar2 %s started", VERSION);
+    if (daemon && !log_file_in_use)
+    {
+        yaz_log(YLOG_FATAL, "Logfile must be given (option -l) for daemon "
+                "mode");
+        exit(1);
+    }
     if (!config)
     {
         yaz_log(YLOG_FATAL, "Load config with -f");
@@ -114,7 +128,7 @@ int main(int argc, char **argv)
     global_parameters.server = config->servers;
 
     start_http_listener();
-    pazpar2_process(global_parameters.debug_mode,
+    pazpar2_process(global_parameters.debug_mode, daemon,
                     child_handler, 0 /* child_data */,
                     pidfile, uid);
     return 0;
