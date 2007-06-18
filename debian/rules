@@ -74,11 +74,11 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs ChangeLog
+	dh_installchangelogs NEWS
 	mv $(CURDIR)/debian/pazpar2/usr/share/doc/pazpar2/* $(CURDIR)/debian/pazpar2-doc/usr/share/doc/pazpar2-doc
 	cp $(CURDIR)/debian/pazpar2.cfg $(CURDIR)/debian/pazpar2/etc/pazpar2
 	cp etc/settings/*.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/settings
-	dh_installchangelogs ChangeLog
+	dh_installchangelogs NEWS
 	dh_installdocs
 	dh_installexamples
 #	dh_install
