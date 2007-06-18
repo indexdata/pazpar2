@@ -8,7 +8,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2.xml,v 1.5 2007-06-04 10:34:06 adam Exp $ -->
+<!-- $Id: pazpar2.xml,v 1.6 2007-06-18 12:55:43 adam Exp $ -->
 <refentry id="pazpar2">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -16,7 +16,7 @@
  </refentryinfo>
  <refmeta>
   <refentrytitle>Pazpar2</refentrytitle>
-  <manvolnum>1</manvolnum>
+  <manvolnum>8</manvolnum>
  </refmeta>
  
  <refnamediv>
@@ -27,19 +27,114 @@
  <refsynopsisdiv>
   <cmdsynopsis>
    <command>pazpar2</command>
+   <arg choice="opt"><option>-d</option></arg>
+   <arg choice="opt"><option>-D</option></arg>
+   <arg choice="opt"><option>-f <replaceable>config</replaceable></option></arg>
+   <arg choice="opt"><option>-l <replaceable>logfile</replaceable></option></arg>
+   <arg choice="opt"><option>-p <replaceable>pidfile</replaceable></option></arg>
+   <arg choice="opt"><option>-t <replaceable>path</replaceable></option></arg>
+   <arg choice="opt"><option>-u <replaceable>uid</replaceable></option></arg>
+   <arg choice="opt"><option>-X</option></arg>
   </cmdsynopsis>
  </refsynopsisdiv>
  
  <refsect1><title>DESCRIPTION</title>
-  <para></para>
+  <para><command>pazpar2</command> is the pazpar2 Metasearch daemon
+   and server.
+   In normal operation it acts as a simple HTTP server which serves
+   the Pazpar2 protocol.
+   The HTTP listener address may be given on the command line using
+   option <option>-h</option> or in the main configuration
+   file. The main configuration must be specified using option
+   <option>-f</option>.
+  </para>
  </refsect1>
  
  <refsect1><title>OPTIONS</title>
   <para></para>
- </refsect1>
+  
+  <variablelist>
+   <varlistentry>
+    <term><option>-d</option></term>
+    <listitem>
+     <para>
+      Enables dump of XML records. It is useful if stylesheets are
+      being debugged.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><option>-D</option></term>
+    <listitem>
+     <para>Puts the pazpar2 server in the background.</para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><option>-f <replaceable>config</replaceable></option></term>
+    <listitem>
+     <para>
+      Specifies main configuration. This option must be specified
+      in order for pazpar2 to operate normally.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><option>-l <replaceable>logfile</replaceable></option></term>
+    <listitem>
+     <para>
+      Specifies log file. The log file must be specified when pazpar2
+      is running in the background (-D).
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><option>-p <replaceable>pidfile</replaceable></option></term>
+    <listitem>
+     <para>
+      Specifies PID file. If pazpar2 is started and configured properly
+      the file given holds the process ID of the pazpar2 process.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><option>-t <replaceable>path</replaceable></option></term>
+    <listitem>
+     <para>
+      Specifies a file or directory with alternative settings. This
+      overrides the <literal>settings</literal> element in the main
+      configuration.
+     </para>
+    </listitem>
+   </varlistentry>
 
+   <varlistentry>
+    <term><option>-u <replaceable>uid</replaceable></option></term>
+    <listitem>
+     <para>
+      Specifies that pazpar2 change user to the
+      <replaceable>uid</replaceable> given.
+      This, normally, require root privilege.
+     </para>
+    </listitem>
+   </varlistentry>
+
+   <varlistentry>
+    <term><option>-X</option></term>
+    <listitem>
+     <para>
+      Makes the pazpar2 server operate in debugging mode. This prevents pazpar2 
+      from making separate threads and processes. This option
+      should not be used in production.
+     </para>
+    </listitem>
+   </varlistentry>
+
+  </variablelist>
+  
+ </refsect1>
+ 
  <refsect1><title>EXAMPLES</title>
-  <para></para>
+  <para>None yet</para>
  </refsect1> 
  
  <refsect1><title>FILES</title>
@@ -48,12 +143,14 @@
  
  <refsect1><title>SEE ALSO</title>
   <para>
+   Pazpar2 configuration:
    <citerefentry>
     <refentrytitle>pazpar2_conf</refentrytitle>
     <manvolnum>5</manvolnum>
    </citerefentry>
   </para>
   <para>
+   Pazpar2 protocol:.
    <citerefentry>
     <refentrytitle>pazpar2_protocol</refentrytitle>
     <manvolnum>7</manvolnum>

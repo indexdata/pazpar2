@@ -1,9 +1,9 @@
-## $Id: Makefile.am,v 1.4 2007-06-17 07:05:21 adam Exp $
+## $Id: Makefile.am,v 1.5 2007-06-18 12:55:43 adam Exp $
 ## docdir=$(datadir)/doc/@PACKAGE@
 
 SUBDIRS = common
 
-SUFFIXES=.1 .7 .pdf .tkl .esp .xml 
+SUFFIXES=.1 .5 .7 .8 .pdf .tkl .esp .xml 
 
 XMLFILES = book.xml manref.xml
 
@@ -13,7 +13,7 @@ XMLMAN = pazpar2.xml pazpar2_protocol.xml pazpar2_conf.xml
 
 SUPPORTFILES = entities.ent local.ent.in
 
-MANFILES = pazpar2.1 pazpar2_protocol.7 pazpar2_conf.5
+MANFILES = pazpar2.8 pazpar2_protocol.7 pazpar2_conf.5
 
 HTMLFILES = index.html
 
@@ -35,6 +35,9 @@ $(HTMLFILES): $(XMLFILES) $(PNGFILES)
 	$(MAN_COMPILE) $<
 
 .xml.7:
+	$(MAN_COMPILE) $<
+
+.xml.8:
 	$(MAN_COMPILE) $<
 
 index.tkl: $(XMLFILES)
