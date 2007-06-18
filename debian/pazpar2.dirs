@@ -1,3 +1,4 @@
 etc/pazpar2
 etc/pazpar2/settings
 usr/bin
+usr/sbin
