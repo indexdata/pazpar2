@@ -1,3 +1,9 @@
+pazpar2 (0.1-3) unstable; urgency=low
+
+  * Init Script LSB compliant. Pazpar2 in /usr/sbin/pazpar2.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Mon, 18 Jun 2007 15:43:36 +0200
+
 pazpar2 (0.1-2) unstable; urgency=low
 
   * First version with start/stop script.
