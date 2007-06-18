@@ -11,7 +11,7 @@
 #
 
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
-DAEMON=/usr/bin/pazpar2
+DAEMON=/usr/sbin/pazpar2
 NAME=pazpar2
 DESC=pazpar2
 
