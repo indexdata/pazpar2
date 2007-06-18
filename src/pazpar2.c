@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.90 2007-06-18 11:10:20 adam Exp $
+/* $Id: pazpar2.c,v 1.91 2007-06-18 12:37:39 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -64,16 +64,26 @@ int main(int argc, char **argv)
 
     yaz_log_init_prefix("pazpar2");
 
-    while ((ret = options("f:h:p:t:u:l:dDX", argv, argc, &arg)) != -2)
+    while ((ret = options("dDf:h:l:p:t:u:X", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
+        case 'd':
+            global_parameters.dump_records = 1;
+            break;
+        case 'D':
+            daemon = 1;
+            break;
         case 'f':
             if (!read_config(arg))
                 exit(1);
             break;
         case 'h':
             strcpy(global_parameters.listener_override, arg);
+            break;
+        case 'l':
+            yaz_log_init_file(arg);
+            log_file_in_use = 1;
             break;
         case 'p':
             pidfile = arg;
@@ -84,29 +94,19 @@ int main(int argc, char **argv)
         case 'u':
             uid = arg;
             break;
-        case 'd':
-            global_parameters.dump_records = 1;
-            break;
-        case 'l':
-            yaz_log_init_file(arg);
-            log_file_in_use = 1;
-            break;
-        case 'D':
-            daemon = 1;
-            break;
         case 'X':
             global_parameters.debug_mode = 1;
             break;
         default:
             fprintf(stderr, "Usage: pazpar2\n"
+                    "    -d                      (show internal records)\n"
+                    "    -D                      Daemon mode (background)\n"
                     "    -f configfile\n"
                     "    -h [host:]port          (REST protocol listener)\n"
+                    "    -l file                 log to file\n"
                     "    -p pidfile              PID file\n"
                     "    -t settings\n"
                     "    -u uid\n"
-                    "    -d                      (show internal records)\n"
-                    "    -D                      Daemon mode (background)\n"
-                    "    -l file                 log to file\n"
                     "    -X                      debug mode\n"
                 );
             exit(1);
