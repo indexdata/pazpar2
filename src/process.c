@@ -1,4 +1,4 @@
-/* $Id: process.c,v 1.3 2007-06-18 11:10:20 adam Exp $
+/* $Id: process.c,v 1.4 2007-06-18 11:44:43 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -36,21 +36,26 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <pwd.h>
 
 #include <yaz/log.h>
-
+#include <yaz/snprintf.h>
 #include "pazpar2.h"
 
-static void write_pidfile(const char *pidfile)
+static void write_pidfile(int pid_fd)
 {
-    if (pidfile)
+    if (pid_fd != -1)
     {
-        FILE *f = fopen(pidfile, "w");
-        if (!f)
+        char buf[40];
+        yaz_snprintf(buf, sizeof(buf), "%ld", (long) getpid());
+        if (ftruncate(pid_fd, 0))
         {
-            yaz_log(YLOG_ERRNO|YLOG_FATAL, "Couldn't create %s", pidfile);
-            exit(0);
+            yaz_log(YLOG_FATAL|YLOG_ERRNO, "ftruncate");
+            exit(1);
         }
-        fprintf(f, "%ld", (long) getpid());
-        fclose(f);
+        if (write(pid_fd, buf, strlen(buf)) != strlen(buf))
+        {
+            yaz_log(YLOG_FATAL|YLOG_ERRNO, "write");
+            exit(1);
+        }
+        close(pid_fd);
     }
 }
 
@@ -69,16 +74,27 @@ int pazpar2_process(int debug, int daemon,
     int cont = 1;
     void (*old_sighup)(int);
     void (*old_sigterm)(int);
+    int pid_fd = -1;
+
+    /* open pidfile .. defer write until in child and after setuid */
+    if (pidfile)
+    {
+        pid_fd = open(pidfile, O_CREAT|O_RDWR, 0666);
+        if (pid_fd == -1)
+        {
+            yaz_log(YLOG_FATAL|YLOG_ERRNO, "open %s", pidfile);
+            exit(1);
+        }
+    }
 
     if (debug)
     {
         /* in debug mode.. it's quite simple */
-        write_pidfile(pidfile);
+        write_pidfile(pid_fd);
         work(data);
         exit(0);
     }
-    
-    write_pidfile(pidfile);
+
     /* running in production mode. */
     if (uid)
     {
@@ -141,6 +157,9 @@ int pazpar2_process(int debug, int daemon,
         dup(0); dup(0);
         close(hand[1]);
     }
+
+    write_pidfile(pid_fd);
+
     /* keep signals in their original state and make sure that some signals
        to parent process also gets sent to the child.. 
     */
