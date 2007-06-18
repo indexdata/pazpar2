@@ -33,7 +33,7 @@ endif
 ifneq "$(wildcard /usr/share/misc/config.guess)" ""
 	cp -f /usr/share/misc/config.guess config.guess
 endif
-	./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --with-yaz=/usr/bin --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs"
+	./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) --prefix=/usr --sysconfdir=/etc --with-yaz=/usr/bin --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs"
 
 
 build: build-stamp
@@ -66,7 +66,6 @@ install: build
 	# Add here commands to install the package into debian/pazpar2.
 	$(MAKE) DESTDIR=$(CURDIR)/debian/pazpar2 install
 
-
 # Build architecture-independent files here.
 binary-indep: build install
 # We have nothing to do by default.
@@ -77,6 +76,8 @@ binary-arch: build install
 	dh_testroot
 	dh_installchangelogs ChangeLog
 	mv $(CURDIR)/debian/pazpar2/usr/share/doc/pazpar2/* $(CURDIR)/debian/pazpar2-doc/usr/share/doc/pazpar2-doc
+	cp $(CURDIR)/debian/pazpar2.cfg $(CURDIR)/debian/pazpar2/etc/pazpar2
+	cp etc/settings/*.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/settings
 	dh_installchangelogs ChangeLog
 	dh_installdocs
 	dh_installexamples
@@ -88,7 +89,7 @@ binary-arch: build install
 #	dh_installpam
 #	dh_installmime
 #	dh_python
-#	dh_installinit
+	dh_installinit
 #	dh_installcron
 #	dh_installinfo
 	dh_installman

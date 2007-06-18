@@ -1,4 +1,10 @@
-pazpar2 (0.1) unstable; urgency=low
+pazpar2 (0.1-2) unstable; urgency=low
+
+  * First version with start/stop script.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Mon, 18 Jun 2007 13:39:32 +0200
+
+pazpar2 (0.1-1) unstable; urgency=low
 
   * Initial Release.
 
