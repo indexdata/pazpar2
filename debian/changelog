@@ -1,3 +1,10 @@
+pazpar2 (0.1-4) unstable; urgency=low
+
+  * Added package pazpar2-apache2.
+  * Added package pazpar2-test1.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Tue, 19 Jun 2007 14:50:29 +0200
+
 pazpar2 (0.1-3) unstable; urgency=low
 
   * Init Script LSB compliant. Pazpar2 in /usr/sbin/pazpar2.

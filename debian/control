@@ -12,6 +12,10 @@ Description: High-performance metaseacher
  Pazpar2 is a high-performance, user interface-independent, data
  model-independent metasearching middleware featuring merging, relevance
  ranking, record sorting, and faceted results.
+ .
+ This package includes the pazpar2 daemon, manpages for it and a init
+ service which, by default, makes pazpar2 operate as HTTP server on port
+ 8004.
 
 Package: pazpar2-doc
 Section: doc
@@ -23,3 +27,25 @@ Description: Documentation for Pazpar2 metasearcher
  .
  This packages includes HTML documentation for Pazpar2.
 
+Package: pazpar2-apache2
+Architecture: all
+Depends: pazpar2, apache2.2-common
+Description: Apache2 configuration for pazpar2
+ Pazpar2 is a high-performance, user interface-independent, data
+ model-independent metasearching middleware featuring merging, relevance
+ ranking, record sorting, and faceted results.
+ .
+ Enables Apache 2's http_proxy so that search portals may use pazpar2 as
+ HTTP backend.
+
+Package: pazpar2-test1
+Architecture: all
+Depends: pazpar2, pazpar2-apache2
+Description: pazpar2 portal test1
+ Pazpar2 is a high-performance, user interface-independent, data
+ model-independent metasearching middleware featuring merging, relevance
+ ranking, record sorting, and faceted results.
+ .
+ This is a simple metasearch interface using pazpar2 that us using
+ Apache2 as frontend HTTP server. When installed, this service is
+ available at http://host/pazpar2-test1/ .

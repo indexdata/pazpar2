@@ -1,0 +1,7 @@
+#!/bin/sh
+set -e
+if [ ! -f /etc/apache2/mods-enabled/proxy_http.load ]; then
+	a2enmod proxy_http
+fi
+
+exit 0
