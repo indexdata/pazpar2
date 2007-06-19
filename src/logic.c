@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.45 2007-06-15 19:35:17 adam Exp $
+/* $Id: logic.c,v 1.46 2007-06-19 10:16:15 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -347,7 +347,7 @@ static int prepare_map(struct session *se, struct session_database *sdb)
             (*m)->next = 0;
             if (!((*m)->stylesheet = conf_load_stylesheet(stylesheets[i])))
             {
-                yaz_log(YLOG_FATAL, "Unable to load stylesheet: %s",
+                yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load stylesheet: %s",
                         stylesheets[i]);
                 return -1;
             }
