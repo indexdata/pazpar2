@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.36 2007-06-06 11:56:35 marc Exp $
+/* $Id: config.c,v 1.37 2007-06-19 10:15:44 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.36 2007-06-06 11:56:35 marc Exp $ */
+/* $Id: config.c,v 1.37 2007-06-19 10:15:44 adam Exp $ */
 
 #include <string.h>
 
@@ -35,6 +35,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>
+#include <yaz/snprintf.h>
 
 #define CONFIG_NOEXTERNS
 #include "config.h"
@@ -511,7 +512,10 @@ static struct conf_server *parse_server(xmlNode *node)
 xsltStylesheet *conf_load_stylesheet(const char *fname)
 {
     char path[256];
-    sprintf(path, "%s/%s", confdir, fname);
+    if (*fname == '/')
+        yaz_snprintf(path, sizeof(path), fname);
+    else
+        yaz_snprintf(path, sizeof(path), "%s/%s", confdir, fname);
     return xsltParseStylesheetFile((xmlChar *) path);
 }
 
@@ -610,6 +614,8 @@ int read_config(const char *fname)
     if ((p = strrchr(fname, '/')))
     {
         int len = p - fname;
+        if (len >= sizeof(confdir))
+            len = sizeof(confdir)-1;
         strncpy(confdir, fname, len);
         confdir[len] = '\0';
     }
