@@ -1,7 +1,7 @@
 <settings target="localhost:9999/Slow">
 
   <!-- Simple test against a local test server (could be yaz-ztest) -->
-  <!-- $Id: testserver.xml,v 1.2 2007-06-17 07:47:57 adam Exp $ -->
+  <!-- $Id: testserver.xml,v 1.3 2007-06-19 12:19:30 adam Exp $ -->
 
   <set name="pz:name" value="Local Test"/>
 
@@ -23,6 +23,6 @@
   <!-- Result normalization settings -->
 
   <set name="pz:nativesyntax" value="iso2709"/>
-  <set name="pz:xslt" value="../etc/marc21.xsl"/>
+  <set name="pz:xslt" value="marc21.xsl"/>
 
 </settings>
