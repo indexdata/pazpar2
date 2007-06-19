@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: book.xml,v 1.16 2007-06-06 11:33:18 adam Exp $ -->
+<!-- $Id: book.xml,v 1.17 2007-06-19 07:58:35 adam Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -61,9 +61,11 @@
    relevance-ranking and sorting by arbitrary data content, and facet
    analysis for browsing purposes. It is designed to be data model
    independent, and is capable of working with MARC, DublinCore, or any
-   other XML-structured response format -- XSLT is used to normalize and extract
+   other <ulink url="&url.xml;">XML</ulink>-structured response format
+   -- <ulink url="&url.xslt;">XSLT</ulink> is used to normalize and extract
    data from retrieval records for display and analysis. It can be used
-   against any server which supports the Z39.50 protocol. Proprietary
+   against any server which supports the 
+   <ulink url="&url.z39.50;">Z39.50</ulink> protocol. Proprietary
    backend modules can be used to support a large number of other protocols
    (please contact Index Data for further information about this).
   </para>
@@ -182,9 +184,10 @@
   <section id="installation.unix">
    <title>Installation on Unix (from Source)</title>
    <para>
-    Here is a quick step-by-step guide on how to compile the
-    tools that Pazpar2 uses. Only few systems have none of the required
-    tools binary packages. If, for example, Libxml2/libxslt are already
+    The latest source code for pazpar2 is available from
+    <ulink url="&url.pazpar2.download;"/>.
+     Only few systems have none of the required
+     tools binary packages. If, for example, Libxml2/libxslt are already
     installed as development packages use these.
    </para>
    
@@ -206,23 +209,10 @@
   <section id="installation.debian">
    <title>Installation on Debian GNU/Linux</title>
    <para>
-    All dependencies for Pazpar2 are available as 
-    <ulink url="&url.debian;">Debian</ulink>
-    packages for the sarge (stable in 2005) and etch (testing in 2005)
-    distributions.
-   </para>
-   <para>
-    The procedures for Debian based systems, such as
-    <ulink url="&url.ubuntu;">Ubuntu</ulink> is probably similar
-   </para>
-   <screen>
-    apt-get install libyaz-dev
-    apt-get install libicu36-dev
-   </screen>
-   <para>
-    With these packages installed, the usual configure + make
-    procedure can be used for Pazpar2 as outlined in
-    <xref linkend="installation.unix"/>.
+    Index Data provides Debian packages for pazpar2. These are prepared
+    for Debian versions Etch and Lenny (as of 2007).
+    Theses packages are available at
+    <ulink url="&url.pazpar2.download.debian;"/>.
    </para>
   </section>
 
@@ -266,7 +256,7 @@
    <example id="installation.apache2proxy.example">
     <title>Apache 2 proxy configuration</title>
     <para>
-     If Pazpar2 is running on port 9004 and the portal is using
+     If Pazpar2 is running on port 8004 and the portal is using
      <filename>search.pz2</filename> inside portal in directory
      <filename>/myportal/</filename> we could use the following
      Apache 2 configuration:
@@ -281,7 +271,7 @@
         Allow from all
        </Proxy>
       
-       ProxyPass /myportal/search.pz2 http://localhost:9004/search.pz2
+       ProxyPass /myportal/search.pz2 http://localhost:8004/search.pz2
        ProxyVia Off
       </IfModule>
       ]]></screen>
@@ -328,7 +318,8 @@
     with the server from which the enclosing HTML page or object
     originated, pazpar2 is designed so that it can act as a transparent
     proxy in front of an existing webserver (see <xref
-     linkend="pazpar2_conf"/> for details). In this mode, all regular
+     linkend="pazpar2_conf"/> for details). 
+    In this mode, all regular
     HTTP requests are transparently passed through to your webserver,
     while pazpar2 only intercepts search-related webservice requests.
    </para>
@@ -337,6 +328,14 @@
     If you want to expose your combined service on port 80, you can
     either run your regular webserver on a different port, a different
     server, or a different IP address associated with the same server.
+   </para>
+
+   <para>
+    pazpar2 can also work behind
+    a reverse Proxy. Refer to <xref linkend="installation.apache2proxy"/>)
+    for more information.
+    This allows your existing HTTP server to operate on port 80 as usual.
+    Pazpar2 can be started on another (internal) port.
    </para>
 
    <para>
@@ -401,7 +400,8 @@
 
    <para>
     Elements should belong to the namespace
-    http://www.indexdata.com/pazpar2/1.0. If the root node contains the
+    <literal>http://www.indexdata.com/pazpar2/1.0</literal>.
+    If the root node contains the
     attribute 'mergekey', then every record that generates the same
     merge key (normalized for case differences, white space, and
     truncation) will be joined into a cluster. In other words, you
