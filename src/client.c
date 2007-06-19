@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.11 2007-06-15 19:35:17 adam Exp $
+/* $Id: client.c,v 1.12 2007-06-19 12:25:29 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -46,6 +46,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <yaz/query-charset.h>
 #include <yaz/querytowrbuf.h>
 #include <yaz/oid_db.h>
+#include <yaz/diagbib1.h>
 
 #if HAVE_CONFIG_H
 #include "cconfig.h"
@@ -136,6 +137,55 @@ void client_fatal(struct client *cl)
     connection_destroy(cl->connection);
     cl->state = Client_Error;
 }
+
+
+static int diag_to_wrbuf(Z_DiagRec **pp, int num, WRBUF w)
+{
+    int code = 0;
+    int i;
+    for (i = 0; i<num; i++)
+    {
+        Z_DiagRec *p = pp[i];
+        if (i)
+            wrbuf_puts(w, "; ");
+        if (p->which != Z_DiagRec_defaultFormat)
+        {
+            wrbuf_puts(w, "? Not in default format");
+        }
+        else
+        {
+            Z_DefaultDiagFormat *r = p->u.defaultFormat;
+            
+            if (!r->diagnosticSetId)
+                wrbuf_puts(w, "? Missing diagset");
+            else
+            {
+                oid_class oclass;
+                char diag_name_buf[OID_STR_MAX];
+                const char *diag_name = 0;
+                diag_name = yaz_oid_to_string_buf
+                    (r->diagnosticSetId, &oclass, diag_name_buf);
+                wrbuf_puts(w, diag_name);
+            }
+            if (!code)
+                code = *r->condition;
+            wrbuf_printf(w, " %d %s", *r->condition,
+                         diagbib1_str(*r->condition));
+            switch (r->which)
+            {
+            case Z_DefaultDiagFormat_v2Addinfo:
+                wrbuf_printf(w, " -- v2 addinfo '%s'", r->u.v2Addinfo);
+                break;
+            case Z_DefaultDiagFormat_v3Addinfo:
+                wrbuf_printf(w, " -- v3 addinfo '%s'", r->u.v3Addinfo);
+                break;
+            }
+        }
+    }
+    return code;
+}
+
+
 
 struct connection *client_get_connection(struct client *cl)
 {
@@ -509,19 +559,40 @@ void client_search_response(struct client *cl, Z_APDU *a)
     }
     else
     {          /*"FAILED"*/
+        Z_Records *recs = r->records;
 	cl->hits = 0;
         cl->state = Client_Error;
-        if (r->records) {
-            Z_Records *recs = r->records;
-            if (recs->which == Z_Records_NSD)
-            {
-                yaz_log(YLOG_WARN,  
-                    "Search response: Non-surrogate diagnostic %s (%d)", 
-                    cl->database->database->url, 
-                    *recs->u.nonSurrogateDiagnostic->condition); 
-                cl->diagnostic = *recs->u.nonSurrogateDiagnostic->condition;
-                cl->state = Client_Error;
-            }
+        if (recs && recs->which == Z_Records_NSD)
+        {
+            WRBUF w = wrbuf_alloc();
+
+            Z_DiagRec dr, *dr_p = &dr;
+            dr.which = Z_DiagRec_defaultFormat;
+            dr.u.defaultFormat = recs->u.nonSurrogateDiagnostic;
+            
+            wrbuf_printf(w, "Search response NSD %s: ",
+                         cl->database->database->url);
+            
+            cl->diagnostic = diag_to_wrbuf(&dr_p, 1, w);
+
+            yaz_log(YLOG_WARN, "%s", wrbuf_cstr(w));
+
+            cl->state = Client_Error;
+            wrbuf_destroy(w);
+        }
+        else if (recs && recs->which == Z_Records_multipleNSD)
+        {
+            WRBUF w = wrbuf_alloc();
+
+            wrbuf_printf(w, "Search response multipleNSD %s: ",
+                         cl->database->database->url);
+            cl->diagnostic = 
+                diag_to_wrbuf(recs->u.multipleNonSurDiagnostics->diagRecs,
+                              recs->u.multipleNonSurDiagnostics->num_diagRecs,
+                              w);
+            yaz_log(YLOG_WARN, "%s", wrbuf_cstr(w));
+            cl->state = Client_Error;
+            wrbuf_destroy(w);
         }
     }
 }
@@ -529,20 +600,43 @@ void client_search_response(struct client *cl, Z_APDU *a)
 void client_present_response(struct client *cl, Z_APDU *a)
 {
     Z_PresentResponse *r = a->u.presentResponse;
+    Z_Records *recs = r->records;
+        
+    if (recs && recs->which == Z_Records_NSD)
+    {
+        WRBUF w = wrbuf_alloc();
+        
+        Z_DiagRec dr, *dr_p = &dr;
+        dr.which = Z_DiagRec_defaultFormat;
+        dr.u.defaultFormat = recs->u.nonSurrogateDiagnostic;
+        
+        wrbuf_printf(w, "Present response NSD %s: ",
+                     cl->database->database->url);
+        
+        cl->diagnostic = diag_to_wrbuf(&dr_p, 1, w);
+        
+        yaz_log(YLOG_WARN, "%s", wrbuf_cstr(w));
+        
+        cl->state = Client_Error;
+        wrbuf_destroy(w);
 
-    if (r->records) {
-        Z_Records *recs = r->records;
-        if (recs->which == Z_Records_NSD)
-        {
-            yaz_log(YLOG_WARN, "Non-surrogate diagnostic %s",
-                    cl->database->database->url);
-            cl->diagnostic = *recs->u.nonSurrogateDiagnostic->condition;
-            cl->state = Client_Error;
-            client_show_raw_error(cl, "non surrogate diagnostics");
-        }
+        client_show_raw_error(cl, "non surrogate diagnostics");
     }
-
-    if (!*r->presentStatus && cl->state != Client_Error)
+    else if (recs && recs->which == Z_Records_multipleNSD)
+    {
+        WRBUF w = wrbuf_alloc();
+        
+        wrbuf_printf(w, "Present response multipleNSD %s: ",
+                     cl->database->database->url);
+        cl->diagnostic = 
+            diag_to_wrbuf(recs->u.multipleNonSurDiagnostics->diagRecs,
+                          recs->u.multipleNonSurDiagnostics->num_diagRecs,
+                          w);
+        yaz_log(YLOG_WARN, "%s", wrbuf_cstr(w));
+        cl->state = Client_Error;
+        wrbuf_destroy(w);
+    }
+    else if (recs && !*r->presentStatus && cl->state != Client_Error)
     {
         yaz_log(YLOG_DEBUG, "Good Present response %s",
                 cl->database->database->url);
@@ -551,10 +645,10 @@ void client_present_response(struct client *cl, Z_APDU *a)
         if (cl->show_raw && cl->show_raw->active)
         {
             cl->show_raw->active = 0; // no longer active
-            ingest_raw_records(cl, r->records);
+            ingest_raw_records(cl, recs);
         }
         else
-            ingest_records(cl, r->records);
+            ingest_records(cl, recs);
         cl->state = Client_Idle;
     }
     else if (*r->presentStatus) 
