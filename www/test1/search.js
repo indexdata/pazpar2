@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.12 2007-06-11 13:33:04 adam Exp $
+/* $Id: search.js,v 1.13 2007-06-19 12:50:02 adam Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -154,7 +154,7 @@ function show_records()
     if (!hits[0]) // We should never get here with blocking operations
     {
 	body.innerHTML = "No records yet";
-	searchtimer = setTimeout(check_search, 250);
+	searchtimer = setTimeout(check_search, 2000);
     }
     else
     {
@@ -201,7 +201,7 @@ function show_records()
 	}
     }
     if (!termtimer)
-	termtimer = setTimeout(check_termlist, 1000);
+	termtimer = setTimeout(check_termlist, 2000);
 }
 
 function check_search()
@@ -212,8 +212,7 @@ function check_search()
 	"&start=" + document.search.startrec.value +
 	"&num=" + recstoshow +
 	"&session=" + session +
-	"&sort=relevance" +
-	"&block=1";
+	"&sort=relevance";
     xshow = GetXmlHttpObject();
     xshow.onreadystatechange=show_records;
     xshow.open("GET", url);
@@ -276,7 +275,7 @@ function show_termlist()
 	Number(xml.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue);
     if (!hits[0])
     {
-	termtimer = setTimeout(check_termlist, 1000);
+	termtimer = setTimeout(check_termlist, 2000);
     }
     else
     {
