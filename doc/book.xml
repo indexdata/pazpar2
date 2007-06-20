@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: book.xml,v 1.17 2007-06-19 07:58:35 adam Exp $ -->
+<!-- $Id: book.xml,v 1.18 2007-06-20 07:41:58 adam Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -31,7 +31,7 @@
    <simpara>
     Pazpar2 is a high-performance, user interface-independent, data
     model-independent metasearching
-    middleware featuring merging, relevance ranking, record sorting, 
+    middle-ware featuring merging, relevance ranking, record sorting, 
     and faceted results.
    </simpara>
    <simpara>
@@ -53,7 +53,7 @@
  <chapter id="introduction">
   <title>Introduction</title>
   <para>
-   Pazpar2 is a stand-alone metasearch client with a webservice API, designed
+   Pazpar2 is a stand-alone metasearch client with a web-service API, designed
    to be used either from a browser-based client (JavaScript, Flash, Java,
    etc.), from from server-side code, or any combination of the two.
    Pazpar2 is a highly optimized client designed to
@@ -72,16 +72,16 @@
   <para>
    Additional functionality such as
    user management, attractive displays are expected to be implemented by
-   applications that use pazpar2. Pazpar2 is user interface independent.
-   Its functionality is exposed through a simple REST-style webservice API,
-   designed to be simple to use from an Ajax-enbled browser, Flash
+   applications that use Pazpar2. Pazpar2 is user interface independent.
+   Its functionality is exposed through a simple REST-style web-service API,
+   designed to be simple to use from an Ajax-enabled browser, Flash
    animation, Java applet, etc., or from a higher-level server-side language
    like PHP or Java. Because session information can be shared between
    browser-based logic and your server-side scripting, there is tremendous
-   flexibility in how you implement your business logic on top of pazpar2.
+   flexibility in how you implement your business logic on top of Pazpar2.
   </para>
   <para>
-   Once you launch a search in pazpar2, the operation continues behind the
+   Once you launch a search in Pazpar2, the operation continues behind the
    scenes. Pazpar2 connects to servers, carries out searches, and
    retrieves, deduplicates, and stores results internally. Your application
    code may periodically inquire about the status of an ongoing operation,
@@ -95,7 +95,7 @@
    normalized to XML/UTF-8, and then further normalized using XSLT to a
    simple internal representation that is suitable for analysis. By
    providing XSLT stylesheets for different kinds of result records, you
-   can tune pazpar2 to work against different kinds of information
+   can tune Pazpar2 to work against different kinds of information
    retrieval servers. Finally, metadata is extracted, in a configurable
    way, from this internal record, to support display, merging, ranking,
    result set facets, and sorting. Pazpar2 is not bound to a specific model
@@ -110,12 +110,12 @@
    to performance and economy that we use in our indexing engines, so that
    you can focus on building your application, without worrying about the
    details of metasearch logic. You can devote all of your attention to
-   usability and let pazpar2 do what it does best -- metasearch.
+   usability and let Pazpar2 do what it does best -- metasearch.
   </para>
   <para>
    If you wish to connect to commercial or other databases which do not
    support open standards, please contact Index Data. We have a licensing
-   agreement with a third party vendor which will enable pazpar2 to access
+   agreement with a third party vendor which will enable Pazpar2 to access
    thousands of online databases, in addition the vast number of catalogs
    and online services that support the Z39.50 protocol.
   </para>
@@ -125,10 +125,10 @@
    approach to performance, and attempting to make maximum use of the
    capabilities of modern browsers. The demo user interface that
    accompanies the distribution is but one example. If you think of new
-   ways of using pazpar2, we hope you'll share them with us, and if we
+   ways of using Pazpar2, we hope you'll share them with us, and if we
    can provide assistance with regards to training, design, programming,
    integration with different backends, hosting, or support, please don't
-   hesitate to contact us. If you'd like to see functionality in pazpar2
+   hesitate to contact us. If you'd like to see functionality in Pazpar2
    that is not there today, please don't hesitate to contact us. It may
    already be in our development pipeline, or there might be a
    possibility for you to help out by sponsoring development time or
@@ -160,10 +160,10 @@
        Components for Unicode (ICU)</ulink></term>
      <listitem>
       <para>
-       ICU provides Unicode support for non-english languages with
+       ICU provides Unicode support for non-English languages with
        character sets outside the range of 7bit ASCII, like
-       Greek, Russian, German and Frensh. Pazpar2 uses the ICU
-       unicode character conversions, unicode normalization, case
+       Greek, Russian, German and French. Pazpar2 uses the ICU
+       Unicode character conversions, Unicode normalization, case
        folding and other fundamental operations needed in
        tokenization, normalization and ranking of records. 
       </para>
@@ -184,10 +184,10 @@
   <section id="installation.unix">
    <title>Installation on Unix (from Source)</title>
    <para>
-    The latest source code for pazpar2 is available from
+    The latest source code for Pazpar2 is available from
     <ulink url="&url.pazpar2.download;"/>.
      Only few systems have none of the required
-     tools binary packages. If, for example, Libxml2/libxslt are already
+     tools binary packages. If, for example, Libxml2/libXSLT are already
     installed as development packages use these.
    </para>
    
@@ -209,7 +209,7 @@
   <section id="installation.debian">
    <title>Installation on Debian GNU/Linux</title>
    <para>
-    Index Data provides Debian packages for pazpar2. These are prepared
+    Index Data provides Debian packages for Pazpar2. These are prepared
     for Debian versions Etch and Lenny (as of 2007).
     Theses packages are available at
     <ulink url="&url.pazpar2.download.debian;"/>.
@@ -236,7 +236,7 @@
    </para>
 
    <para>
-    Traditionnally Pazpar2 interprets URL paths with suffix 
+    Traditionally Pazpar2 interprets URL paths with suffix 
     <literal>/search.pz2</literal>.
     The 
     <ulink 
@@ -282,10 +282,10 @@
  </chapter>
 
  <chapter id="using">
-  <title>Using pazpar2</title>
+  <title>Using Pazpar2</title>
   <para>
    This chapter provides a general introduction to the use and
-   deployment of pazpar2. 
+   deployment of Pazpar2. 
   </para>
 
   <section id="architecture">
@@ -295,13 +295,13 @@
     metasearching functionality to your application, exposing this
     functionality using a simple webservice API that can be accessed
     from any number of development environments. In particular, it is
-    possible to combine pazpar2 either with your server-side dynamic
+    possible to combine Pazpar2 either with your server-side dynamic
     website scripting, with scripting or code running in the browser, or
     with any combination of the two. Pazpar2 is an excellent tool for
     building advanced, Ajax-based user interfaces for metasearch
     functionality, but it isn't a requirement -- you can choose to use
-    pazpar2 entirely as a backend to your regular server-side scripting.
-    When you do use pazpar2 in conjunction
+    Pazpar2 entirely as a backend to your regular server-side scripting.
+    When you do use Pazpar2 in conjunction
     with browser scripting (JavaScript/Ajax, Flash, applets,
     etc.), there are	special considerations.
    </para>
@@ -316,12 +316,12 @@
     server-side scripting. Because the security sandbox environment of
     most browser-side programming environments only allows communication
     with the server from which the enclosing HTML page or object
-    originated, pazpar2 is designed so that it can act as a transparent
+    originated, Pazpar2 is designed so that it can act as a transparent
     proxy in front of an existing webserver (see <xref
      linkend="pazpar2_conf"/> for details). 
     In this mode, all regular
     HTTP requests are transparently passed through to your webserver,
-    while pazpar2 only intercepts search-related webservice requests.
+    while Pazpar2 only intercepts search-related webservice requests.
    </para>
 
    <para>
@@ -331,7 +331,7 @@
    </para>
 
    <para>
-    pazpar2 can also work behind
+    Pazpar2 can also work behind
     a reverse Proxy. Refer to <xref linkend="installation.apache2proxy"/>)
     for more information.
     This allows your existing HTTP server to operate on port 80 as usual.
@@ -344,11 +344,11 @@
     implement data import functionality, emailing results, history
     lists, personal citation lists, interlibrary loan functionality
     ,etc. Fortunately, it is simple to exchange information between
-    pazpar2, your browser scripting, and backend server-side scripting.
+    Pazpar2, your browser scripting, and backend server-side scripting.
     You can send a session ID and possibly a record ID from your browser
-    code to your server code, and from there use pazpar2s webservice API
+    code to your server code, and from there use Pazpar2s webservice API
     to access result sets or individual records. You could even 'hide'
-    all of pazpar2s functionality between your own API implemented on
+    all of Pazpar2s functionality between your own API implemented on
     the server-side, and access that from the browser or elsewhere. The
     possibilities are just about endless.
    </para>
@@ -362,19 +362,19 @@
     that they are organized in any particular way. The only assumption
     is that data comes packaged in a form that the software can work
     with (presently, that means XML or MARC), and that you can provide
-    the necessary information to massage it into pazpar2's internal
+    the necessary information to massage it into Pazpar2's internal
     record abstraction.
    </para>
 
    <para>
-    Handling retrieval records in pazpar2 is a two-step process. First,
+    Handling retrieval records in Pazpar2 is a two-step process. First,
     you decide which data elements of the source record you are
     interested in, and you specify any desired massaging or combining of
     elements using an XSLT stylesheet (MARC records are automatically
     normalized to MARCXML before this step). If desired, you can run
     multiple XSLT stylesheets in series to accomplish this, but the
     output of the last one should be a representation of the record in a
-    schema that pazpar2 understands.
+    schema that Pazpar2 understands.
    </para>
 
    <para>
@@ -425,10 +425,10 @@
   <section id="client">
    <title>Client development overview</title>
    <para>
-    You can use pazpar2 from any environment that allows you to use
+    You can use Pazpar2 from any environment that allows you to use
     webservices. The initial goal of the software was to support
     Ajax-based applications, but there literally are no limits to what
-    you can do. You can use pazpar2 from Javascript, Flash, Java, etc.,
+    you can do. You can use Pazpar2 from Javascript, Flash, Java, etc.,
     on the browser side, and from any development environment on the
     server side, and you can pass session tokens and record IDs freely
     around between these environments to build sophisticated applications.
@@ -436,7 +436,7 @@
    </para>
 
    <para>
-    The webservice API of pazpar2 is described in detail in <xref
+    The webservice API of Pazpar2 is described in detail in <xref
      linkend="pazpar2_protocol"/>.
    </para>
 
@@ -458,7 +458,7 @@
     to handle a broad range of different server behavior, through
     configurable query mapping and record normalization. If you develop
     configuration, stylesheets, etc., for a new type of resources, we
-    encourage you to share your work. But you can also use pazpar2 to
+    encourage you to share your work. But you can also use Pazpar2 to
     connect to hundreds of resources that do not support standard
     protocols.
    </para>
@@ -466,7 +466,7 @@
    <para>
     For a growing number of resources, Z39.50 is all you need. Over the
     last few years, a number of commercial, full-text resources have
-    implemented Z39.50. These can be used through pazpar2 with little or
+    implemented Z39.50. These can be used through Pazpar2 with little or
     no effort. Resources that use non-standard record formats will
     require a bit of XSLT work, but that's all.
    </para>
@@ -495,11 +495,11 @@
    <para>
     But the bottom line is that working with non-standard resources in
     metasearching is really, really hard. If you want to build a
-    project with pazpar2, and you need access to resources with
+    project with Pazpar2, and you need access to resources with
     non-standard interfaces, we can help. We run gateways to more than
     2,000 popular, commercial databases and other resources,
     making it simple 
-    to plug them directly into pazpar2. For a small annual fee per
+    to plug them directly into Pazpar2. For a small annual fee per
     database, we can help you establish connections to your licensed
     resources. Meanwhile, you can help! If you build your own
     standards-compliant gateways, host them for others, or share the
@@ -509,7 +509,7 @@
 
    <para>
     There are those who will ask us why we are using Z39.50 as our
-    switchboard langyage rather than a different protocol. Basically,
+    switchboard language rather than a different protocol. Basically,
     we believe that Z39.50 is presently the most widely implemented 
     information retrieval protocol that has the level of functionality
     required to support a good metasearching experience (structured
@@ -522,17 +522,18 @@
   <section id="unicode">
    <title>Unicode Compliance</title>
    <para>
-    Pazpar2 is unicode compliant and language and locale aware to
-    the exted the used backend Z39.50 targets are. Just a few bad
-    behaving targets can spoil the search experience considerably
-    if for example Greek, Russian or otherwise non 7-bit ASCII
+    Pazpar2 is Unicode compliant and language and locale aware but relies
+    on character encoding for the targets to be specified correctly if
+    the targets themselves are not UTF-8 based (most aren't).
+    Just a few bad behaving targets can spoil the search experience
+    considerably if for example Greek, Russian or otherwise non 7-bit ASCII
     search terms are entered. In these cases some targets return
-    records irrelevant to the query, and the result screens wil be
+    records irrelevant to the query, and the result screens will be
     cluttered with noise.
    </para>
    <para>
     While noise from misbehaving targets can not be removed, it can
-    be reduced using truely unicode based ranking. This is an
+    be reduced using truly Unicode based ranking. This is an
     option which is available to the system administrator if ICU
     support is compiled into Pazpar2, see
     <xref linkend="installation"/> for details.
@@ -544,7 +545,7 @@
    </para>
   </section>
 
- </chapter> <!-- Using pazpar2 -->
+ </chapter> <!-- Using Pazpar2 -->
 
  <reference id="reference">
   <title>Reference</title>
