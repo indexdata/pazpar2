@@ -48,7 +48,7 @@ Description: Pazpar2 portal test1
  .
  This is a simple metasearch interface using Pazpar2 that is using
  Apache2 as frontend HTTP server. When installed, this service is
- available at http://host/pazpar2-test1/ .
+ available at http://host/pazpar2/test1/ .
 
 Package: pazpar2-jsdemo
 Architecture: all
@@ -59,4 +59,4 @@ Description: Pazpar2 demo using the pz2.js library
  ranking, record sorting, and faceted results.
  .
  This is a metasearch interface using Pazpar2 JavaScript library pz2.js
- library. Is available at http://host/pazpar2-jsdemo/ .
+ library. Is available at http://host/pazpar2/jsdemo/ .

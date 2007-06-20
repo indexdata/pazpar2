@@ -1,4 +1,4 @@
-/* $Id: search.js,v 1.13 2007-06-19 12:50:02 adam Exp $
+/* $Id: search.js,v 1.14 2007-06-20 19:27:18 adam Exp $
  * ---------------------------------------------------
  * Javascript container
  */
@@ -65,7 +65,7 @@ function session_started()
 function start_session()
 {
     xinitSession = GetXmlHttpObject();
-    var url="search.pz2?";
+    var url="/pazpar2/search.pz2?";
     url += "command=init";
     xinitSession.onreadystatechange=session_started;
     xinitSession.open("GET", url);
@@ -78,7 +78,7 @@ function ping_session()
 {
     if (!session)
 	return;
-    var url = "search.pz2?command=ping&session=" + session;
+    var url = "/pazpar2/search.pz2?command=ping&session=" + session;
     SendXmlHttpObject(xpingSession = GetXmlHttpObject(), url, session_pinged);
 }
 
@@ -126,7 +126,7 @@ function load_targets()
 	alert("Please enter a target definition file name");
 	return;
     }
-    var url="search.pz2?" +
+    var url="/pazpar2/search.pz2?" +
     	"command=load" +
 	"&session=" + session +
 	"&name=" + fn;
@@ -207,7 +207,7 @@ function show_records()
 function check_search()
 {
     clearTimeout(searchtimer);
-    var url = "search.pz2?" +
+    var url = "/pazpar2/search.pz2?" +
         "command=show" +
 	"&start=" + document.search.startrec.value +
 	"&num=" + recstoshow +
@@ -297,7 +297,7 @@ function show_termlist()
 
 function check_termlist()
 {
-    var url = "search.pz2?" +
+    var url = "/pazpar2/search.pz2?" +
         "command=termlist" +
 	"&session=" + session +
 	"&num=20" +
@@ -343,7 +343,7 @@ function show_stat()
 
 function check_stat()
 {
-    var url = "search.pz2?" +
+    var url = "/pazpar2/search.pz2?" +
         "command=stat" +
 	"&session=" + session;
     xstat = GetXmlHttpObject();
@@ -385,7 +385,7 @@ function start_search()
 	return;
     }
     var query = escape(document.getElementById('query').value);
-    var url = "search.pz2?" +
+    var url = "/pazpar2/search.pz2?" +
         "command=search" +
 	"&session=" + session +
 	"&query=" + query;
