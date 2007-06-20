@@ -1,7 +1,24 @@
 #!/bin/sh
 set -e
-if [ ! -f /etc/apache2/mods-enabled/proxy_http.load ]; then
-	a2enmod proxy_http
+
+if [ "$1" != "configure" ]; then
+    exit 0
 fi
 
+reload_apache()
+{
+    if apache2ctl configtest 2>/dev/null; then
+	invoke-rc.d apache2 force-reload || true
+    else
+	echo "Your apache2 configuration is broken, so we're not restarting it for you."
+    fi
+}
+
+if [ -e /etc/apache2/apache2.conf ]; then
+    if [ ! -f /etc/apache2/mods-enabled/proxy_http.load ]; then
+	a2enmod proxy_http || true
+    fi
+    
+    reload_apache
+fi
 exit 0
