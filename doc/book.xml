@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: book.xml,v 1.20 2007-06-20 08:25:58 adam Exp $ -->
+<!-- $Id: book.xml,v 1.21 2007-06-20 08:37:10 adam Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -183,8 +183,8 @@
    </variablelist>
   </para>
   <para>
-   In order to compile Pazpar2 an ANSI C compiler is
-   required. The requirements should be the same as for YAZ.
+   In order to compile Pazpar2, a C compiler which supports C99 or later
+   is required.
   </para>
 
   <section id="installation.unix">
@@ -240,11 +240,14 @@
      ../src/pazpar2 -f pazpar2.cfg -t edu.xml
     </screen>
     This will start a Pazpar2 listener on port 8004. It will proxy 
-    HTTP requests to localhost - port 80, which we asssume will be the regular
+    HTTP requests to localhost - port 80, which we assume will be the regular
     HTTP server on the system. Inspect and modify pazpar2.cfg as needed
-    if this is to be changed. Make a new console and move to the 
-    other stuff. For installation of Pazpar2 as a daemon, refer to the
-    manpage of Pazpar2.
+    if this is to be changed. The -t option specifies the list of targets
+    to use for searches.
+   </para>
+   <para>
+    Make a new console and move to the other stuff.
+    For more information about pazpar2 options refer to the manpage.
    </para>
 
    <para>
