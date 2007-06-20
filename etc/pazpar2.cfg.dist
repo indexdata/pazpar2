@@ -3,7 +3,7 @@
 
 <server>
   <listen port="9004"/>
-  <proxy host="us1.indexdata.com"/>
+  <proxy host="localhost:80"/>
   <settings src="../etc/settings"/>
 
   <service>
