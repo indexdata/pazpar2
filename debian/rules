@@ -79,7 +79,7 @@ binary-arch: build install
 	cp $(CURDIR)/debian/pazpar2.cfg $(CURDIR)/debian/pazpar2/etc/pazpar2/
 	cp etc/*.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/settings/
 	cp etc/*.xsl $(CURDIR)/debian/pazpar2/etc/pazpar2/
-	cp $(CURDIR)/debian/ap2pazpar2.cfg $(CURDIR)/debian/pazpar2-test1/etc/apache2/conf.d
+	cp $(CURDIR)/debian/ap2pazpar2.cfg $(CURDIR)/debian/pazpar2-apache2/etc/apache2/conf.d
 	cp www/test1/index.html $(CURDIR)/debian/pazpar2-test1/usr/share/pazpar2-test1/
 	cp www/test1/search.js $(CURDIR)/debian/pazpar2-test1/usr/share/pazpar2-test1/
 	cp $(CURDIR)/debian/ap2test1.cfg $(CURDIR)/debian/pazpar2-test1/etc/apache2/conf.d

@@ -1,3 +1,9 @@
+pazpar2 (0.1-5) unstable; urgency=low
+
+  * File ap2pazpar2.cfg part of pazpar2-apache2.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Wed, 20 Jun 2007 07:54:52 +0200
+
 pazpar2 (0.1-4) unstable; urgency=low
 
   * Added package pazpar2-apache2.
