@@ -3,8 +3,11 @@ Makefile.in
 aclocal.m4
 ChangeLog
 autom4te.cache
+*-stamp
 config.cache
 config.log
 config.status
+config.guess
+config.sub
 configure
 Doxyfile
