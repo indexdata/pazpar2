@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: book.xml,v 1.19 2007-06-20 08:22:13 adam Exp $ -->
+<!-- $Id: book.xml,v 1.20 2007-06-20 08:25:58 adam Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -434,10 +434,10 @@
     you decide which data elements of the source record you are
     interested in, and you specify any desired massaging or combining of
     elements using an XSLT stylesheet (MARC records are automatically
-    normalized to MARCXML before this step). If desired, you can run
-    multiple XSLT stylesheets in series to accomplish this, but the
-    output of the last one should be a representation of the record in a
-    schema that Pazpar2 understands.
+    normalized to <ulink url="&url.marcxml;">MARCXML</ulink> before this step).
+    If desired, you can run multiple XSLT stylesheets in series to accomplish
+    this, but the output of the last one should be a representation of the
+    record in a schema that Pazpar2 understands.
    </para>
 
    <para>
