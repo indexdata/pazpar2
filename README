@@ -1,37 +1,10 @@
-How to use this:
+Pazpar2 is a high-performance, user interface-independent, data
+model-independent metasearching middleware featuring merging, relevance
+ranking, record sorting, and faceted results.
 
-Usage: pazpar2 -f configfile -h [listen-host:]listen-port -p host-to-proxy -s targetfile
+Copyright (C) 2007, Index Data. See the file LICENSE for details.
 
-The host-to-proxy is the webserver where the user interface script
-lives. It is used both for domain-name lookup and the contents of
-the Host: header in rerquests that are proxied, so it's important
-that the hostname is recognized by the webserver.
+$Id: README,v 1.12 2007-06-20 06:47:09 adam Exp $
 
-There are a few main target files:
-
-test.pz: Single target, localhost:9999/Default -- use with
-	yaz-ztest or a local Zebra test.
-
-slow.pz: Single target, localhost:9999/Slow -- triggers a slow
-	search response, useful for testing some stuff.
-
-bibs.pz: A small set of serious catalogs in the US and Canada.
-
-many.pz: Obscenely many catalogs.
-
-Example:
-
-Testing against ztest with Apache running on localhost port 80, pazpar
-running on 8000. DocumentRoot in /var/www.
-
-Fire up yaz-ztest
-	yaz-ztest
-
-Fire up pazpar2
-	sudo cp -a www/* /var/www
-	cd etc
-	cp pazpar2.cfg.dist pazpart2.cfg # edit port + proxy
-	../src/pazpar2 -f pazpar2.cfg -t testserver.xml
-
-Fire up your browser:
-	http://localhost:8000/test1/index.html
+Installation instructions and documentation is found in directory 'doc' and
+on-line at http://www.indexdata.com/pazpar2/ .
