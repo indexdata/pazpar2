@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: book.xml,v 1.18 2007-06-20 07:41:58 adam Exp $ -->
+<!-- $Id: book.xml,v 1.19 2007-06-20 08:22:13 adam Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -146,13 +146,19 @@
  <chapter id="installation">
   <title>Installation</title>
   <para>
+   The Pazpar2 package very small. It includes documentation as well
+   as the Pazpar2 server. The package also includes a simple user
+   interface test1 which consists of a single HTML page and a single
+   JavaScript file to illustrate the use of Pazpar2.
+  </para>
+  <para>
    Pazpar2 depends on the following tools/libraries:
    <variablelist>
     <varlistentry><term><ulink url="&url.yaz;">YAZ</ulink></term>
      <listitem>
       <para>
-       The popular Z39.50 toolkit for the C language. YAZ must be
-       compiled with Libxml2/Libxslt support.
+       The popular Z39.50 toolkit for the C language.
+       YAZ <emphasis>must</emphasis> be compiled with Libxml2/Libxslt support.
       </para>
      </listitem>
     </varlistentry>
@@ -187,8 +193,9 @@
     The latest source code for Pazpar2 is available from
     <ulink url="&url.pazpar2.download;"/>.
      Only few systems have none of the required
-     tools binary packages. If, for example, Libxml2/libXSLT are already
-    installed as development packages use these.
+     tools binary packages.
+     If, for example, Libxml2/libXSLT libraries
+    are already installed as development packages use these.
    </para>
    
    <para>
@@ -204,6 +211,62 @@
     su
     make install
    </screen>
+   <para>
+    The <literal>make install</literal> will install manpages as well as the
+    Pazpar2 server, <literal>pazpar2</literal>, 
+    in PREFIX<literal>/sbin</literal>.
+    By default, PREFIX is <literal>/usr/local/</literal> . This can be
+    changed with configure option <option>--prefix</option>.
+   </para>
+  </section>
+
+  <section id="installation.test1">
+   <title>Installation of test1 interface</title>
+   <para>
+    In this section we outline how to install a simple interface that
+    is part of the Pazpar2 source package. Note that Debian users can
+    save time by just installing package <literal>pazpar2-test1</literal>.
+   </para>
+   <para>
+    A web server must be installed and running on the system, such as Apache.
+   </para>
+
+   <para>
+    Start the Pazpar2 daemon using the 'in-source' binary of the Pazpar2
+    daemon.
+    <screen>
+     cd etc
+     cp pazpar2.cfg.dist pazpar2.cfg
+     ../src/pazpar2 -f pazpar2.cfg -t edu.xml
+    </screen>
+    This will start a Pazpar2 listener on port 8004. It will proxy 
+    HTTP requests to localhost - port 80, which we asssume will be the regular
+    HTTP server on the system. Inspect and modify pazpar2.cfg as needed
+    if this is to be changed. Make a new console and move to the 
+    other stuff. For installation of Pazpar2 as a daemon, refer to the
+    manpage of Pazpar2.
+   </para>
+
+   <para>
+    The test1 UI is located in <literal>www/test1</literal>. Ensure this
+    directory is available to the web server by either copying 
+    <literal>test1</literal> to the document root, create a symlink or
+    use Apache's <literal>Alias</literal> directive.
+   </para>
+
+   <para>
+    The interface test1 interface should now be available on port 8004.
+   </para>
+   <para>
+    If you don't see the test1 interface. See if test1 is really available
+    on the same URL but on port 80. If it's not, the Apache configuration
+    (or other) is not correct. 
+   </para>
+   <para>
+    In order to use Apache as frontend for the interface on port 80
+    for public access etc., refer to 
+    <xref linkend="installation.apache2proxy"/>.
+   </para>
   </section>
 
   <section id="installation.debian">
