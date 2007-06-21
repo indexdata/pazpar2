@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.37 2007-06-21 09:42:46 adam Exp $
+** $Id: pz2.js,v 1.38 2007-06-21 14:05:41 adam Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -37,7 +37,7 @@ var pz2 = function(paramArray) {
     if( __myself.stylesheet ) {
         var request = new pzHttpRequest( __myself.stylesheet );
         request.get(
-                {},
+                [],
                 function ( doc ) {
                     __myself.xslDoc = doc;
                 }
@@ -142,7 +142,7 @@ pz2.prototype =
         } else {
             var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
             request.get(
-                { "command": "init" },
+                [ { "command": "init" } ],
                 function(data) {
                     if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
                         if ( data.getElementsByTagName("protocol")[0].childNodes[0].nodeValue != __myself.suppProtoVer )
@@ -167,7 +167,7 @@ pz2.prototype =
             // session is not initialized code here
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         request.get(
-            { "command": "ping", "session": __myself.sessionID },
+            [ { "command": "ping", "session": __myself.sessionID } ],
             function(data) {
                 if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
                     __myself.pingStatusOK = true;
@@ -200,10 +200,10 @@ pz2.prototype =
         else
             throw new Error("You need to supply query to the search command");
 
-        if( filter !== undefined )
-            var searchParams = { "command": "search", "session": __myself.sessionID, "query": __myself.currQuery, "filter": filter };
-        else
-            var searchParams = { "command": "search", "session": __myself.sessionID, "query": __myself.currQuery };
+	var searchParams = [{ "command": "search", "query": __myself.currQuery }];
+	searchParams.push({"session":__myself.sessionID});
+	if (filter !== undefined)
+	    searchParams.push({"filter": filter});
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         request.get(
             searchParams,
@@ -237,7 +237,7 @@ pz2.prototype =
         clearTimeout(__myself.statTimer);
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         request.get(
-            { "command": "stat", "session": __myself.sessionID },
+            [ { "command": "stat", "session": __myself.sessionID } ],
             function(data) {
                 if ( data.getElementsByTagName("stat") ) {
                     var activeClients = Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue );
@@ -285,8 +285,8 @@ pz2.prototype =
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         var context = this;
         request.get(
-            { "command": "show", "session": __myself.sessionID, "start": __myself.currentStart,
-              "num": __myself.currentNum, "sort": __myself.currentSort, "block": 1 },
+            [ { "command": "show", "session": __myself.sessionID, "start": __myself.currentStart,
+              "num": __myself.currentNum, "sort": __myself.currentSort, "block": 1 } ],
             function(data) {
                 if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
                     // first parse the status data send along with records
@@ -353,7 +353,7 @@ pz2.prototype =
             __myself.currRecID = id;
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         request.get(
-            { "command": "record", "session": __myself.sessionID, "id": __myself.currRecID },
+            [ { "command": "record", "session": __myself.sessionID, "id": __myself.currRecID } ],
             function(data) {
                 var recordNode;
                 var record = new Array();
@@ -410,7 +410,7 @@ pz2.prototype =
         clearTimeout(__myself.termTimer);
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         request.get(
-            { "command": "termlist", "session": __myself.sessionID, "name": __myself.termKeys },
+            [ { "command": "termlist", "session": __myself.sessionID, "name": __myself.termKeys } ],
             function(data) {
                 if ( data.getElementsByTagName("termlist") ) {
                     var activeClients = Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue );
@@ -462,7 +462,7 @@ pz2.prototype =
         clearTimeout(__myself.bytargetTimer);
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         request.get(
-            { "command": "bytarget", "session": __myself.sessionID },
+            [ { "command": "bytarget", "session": __myself.sessionID } ],
             function(data) {
                 if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
                     var targetNodes = data.getElementsByTagName("target");
@@ -562,15 +562,15 @@ pzHttpRequest.prototype =
     _urlAppendParams: function (params)
     {
         var getUrl = this.url;
-        var paramArr = new Array();
 
-        for ( var key in params ) {
-            paramArr.push(key + '=' + encodeURI(params[key]) );
-        }
-
-        if ( paramArr.length )
-            getUrl += '?' + paramArr.join('&');
-
+	var sep = '?';
+	for (var i = 0; i < params.length; i++) {
+	    var el = params[i];
+	    for (var key in el) {
+		getUrl += sep + key + '=' + encodeURI(el[key]);
+		sep = '&';
+	    }
+	}
         return getUrl;
     },
 
