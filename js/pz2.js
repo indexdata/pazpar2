@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.36 2007-06-13 17:25:02 jakub Exp $
+** $Id: pz2.js,v 1.37 2007-06-21 09:42:46 adam Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -30,7 +30,7 @@ var pz2 = function(paramArray) {
 
     //supported pazpar2's protocol version
     __myself.suppProtoVer = '1';
-    __myself.pz2String = "search.pz2";
+    __myself.pz2String = paramArray.pazpar2path || "search.pz2";
     __myself.stylesheet = paramArray.detailstylesheet || null;
 
     //load stylesheet if required in async mode
