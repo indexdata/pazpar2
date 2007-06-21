@@ -1,0 +1,141 @@
+<!-- $Id: index.html,v 1.1 2007-06-21 09:44:17 adam Exp $ -->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+ 
+ <head>
+  <title>Exemplary pazpar2 client [using pz2.js]</title>
+  <style type="text/css">
+    
+    html {
+        overflow-y: scroll;
+    }
+
+    body {
+        font-family: tahoma, arial, sans-serif;
+        font-size: small;
+    }
+
+    hr {
+        border: 0;
+        color: gray;
+        background-color: gray;
+        height: 1px;
+    }
+
+    thead {
+        font-weight: bold;
+    }
+
+    .jslink {
+        cursor: pointer;
+    }
+
+    .jslink:hover {
+        text-decoration: underline;
+    }
+
+    #heading {
+        background-color: #ff8c71;
+        border-color: #ff8c71;
+        color: #ffffff;
+        font-size: large;
+    }
+    
+    input#button {
+        border: 3px groove #3171f2;
+        background-color: #6b9bfd;
+        padding: 1px;
+        width: 5em;
+        color: #FFFFFF;
+        font-weight: bold;
+        font-size: 12px;
+        margin-left: 8px;
+        cursor: pointer;
+    }
+
+    input#query {
+        border: 2px inset #ff613c;
+        padding: 3px;
+        font-size: 12px;
+    }
+
+    div.termtitle {
+        margin: 4px;
+        font-weight: bold;
+    }
+
+    div.record {
+        padding: 5px;
+    }
+
+    div.details {
+        border: 3px dashed gray;
+        padding: 5px;
+        margin: 4px;
+    }
+
+    #targetview {
+        padding: 6px;
+    }
+
+  </style>
+  <script type="text/javascript" src="/pazpar2/js/pz2.js"></script>
+  <script type="text/javascript" src="example_client.js"></script>
+ </head>
+ 
+ <body onload="domReady();">
+
+  <span class="jslink" onclick="switchView('recordview')">Records Browser</span>
+  <span> | </span>
+  <span class="jslink" onclick="switchView('targetview')">Targets Information</span>
+
+  <br/><br/>
+  
+  <table id="heading" width="100%" border="0" cellpadding="6" cellspacing="0">
+   <tr>
+    <td width="250" height="100" align="center"><b>PazPar2</b></td>
+    <td>
+     <form id="searchForm" name="search">
+      <input id="query" type="text" size="50"/>
+      <input id="button" type="submit" value="Search"/>
+     </form>
+    </td>
+   </tr>
+  </table>
+  
+  <div id="recordview">
+
+   <table width="100%" border="0" cellpadding="6" cellspacing="0">
+    <tr>
+     <td width="250" valign="top">
+      <div id="termlist"></div>
+     </td>
+     <td valign="top">
+      <div id="body"></div>
+     </td>
+    </tr>
+   </table>
+
+   <br/>
+   <hr/>
+   <b>STATUS INFO:</b>
+   <br/>
+   <br/>
+   <div id="stat"></div>
+  
+  </div>
+  
+  <div id="targetview" style="display: none">
+
+    <hr/>
+    <b>TARGET INFO:</b>
+    <hr/>
+    <table id="bytarget"></table>
+
+  </div>
+
+ </body>
+</html>
