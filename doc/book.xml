@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: book.xml,v 1.21 2007-06-20 08:37:10 adam Exp $ -->
+<!-- $Id: book.xml,v 1.22 2007-06-22 12:45:28 adam Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -35,7 +35,7 @@
     and faceted results.
    </simpara>
    <simpara>
-    This document is a guide and reference to Pazpar version &version;.
+    This document is a guide and reference to Pazpar2 version &version;.
    </simpara>
    <simpara>
     <inlinemediaobject>
@@ -55,7 +55,7 @@
   <para>
    Pazpar2 is a stand-alone metasearch client with a web-service API, designed
    to be used either from a browser-based client (JavaScript, Flash, Java,
-   etc.), from from server-side code, or any combination of the two.
+   etc.), from server-side code, or any combination of the two.
    Pazpar2 is a highly optimized client designed to
    search many resources in parallel. It implements record merging,
    relevance-ranking and sorting by arbitrary data content, and facet
