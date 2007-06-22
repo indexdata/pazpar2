@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.38 2007-06-21 14:05:41 adam Exp $
+** $Id: pz2.js,v 1.39 2007-06-22 10:52:09 adam Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -32,7 +32,11 @@ var pz2 = function(paramArray) {
     __myself.suppProtoVer = '1';
     __myself.pz2String = paramArray.pazpar2path || "search.pz2";
     __myself.stylesheet = paramArray.detailstylesheet || null;
-
+    __myself.useSessions = true;
+    if (paramArray.usesessions != undefined) {
+         __myself.useSessions = paramArray.usesessions;
+    }
+	
     //load stylesheet if required in async mode
     if( __myself.stylesheet ) {
         var request = new pzHttpRequest( __myself.stylesheet );
@@ -43,7 +47,7 @@ var pz2 = function(paramArray) {
                 }
         );
     }
-
+	
     // at least one callback required
     if ( !paramArray )
         throw new Error("An array with parameters has to be suplied when instantiating a class");
@@ -134,12 +138,12 @@ pz2.prototype =
     init: function ( sessionId ) 
     {
         __myself.reset();
+
         if ( sessionId != undefined ) {
             __myself.initStatusOK = true;
             __myself.sessionID = sessionId;
             __myself.ping();
-
-        } else {
+        } else if (__myself.useSessions) {
             var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
             request.get(
                 [ { "command": "init" } ],
@@ -567,8 +571,10 @@ pzHttpRequest.prototype =
 	for (var i = 0; i < params.length; i++) {
 	    var el = params[i];
 	    for (var key in el) {
-		getUrl += sep + key + '=' + encodeURI(el[key]);
-		sep = '&';
+		if (el[key] != null) {
+		    getUrl += sep + key + '=' + encodeURI(el[key]);
+		    sep = '&';
+		}
 	    }
 	}
         return getUrl;
