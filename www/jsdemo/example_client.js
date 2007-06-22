@@ -1,5 +1,5 @@
 /* A very simple client that shows a basic usage of the pz2.js
-** $Id: example_client.js,v 1.1 2007-06-21 09:44:17 adam Exp $
+** $Id: example_client.js,v 1.2 2007-06-22 10:54:46 adam Exp $
 */
 
 // create a parameters array and pass it to the pz2's constructor
@@ -13,6 +13,7 @@ my_paz = new pz2( { "onshow": my_onshow,
                     "onterm": my_onterm,
                     "termlist": "subject,author",
                     "onbytarget": my_onbytarget,
+	 	    "usesessions" : true,
                     "onrecord": my_onrecord } );
 // some state vars
 var curPage = 1;
