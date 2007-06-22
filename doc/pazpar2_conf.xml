@@ -8,7 +8,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.26 2007-06-06 12:02:48 marc Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.27 2007-06-22 13:18:23 adam Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -31,275 +31,276 @@
  </refsynopsisdiv>
  
  <refsect1><title>DESCRIPTION</title>
-   <para>
-     The pazpar2 configuration file, together with any referenced XSLT files,
-     govern pazpar2's behavior as a client, and control the normalization and
-     extraction of data elements from incoming result records, for the
-     purposes of merging, sorting, facet analysis, and display.
-    </para>
-
-    <para>
-      The file is specified using the option -f on the pazpar2 command line.
-      There is not presently a way to reload the configuration file without
-      restarting pazpar2, although this will most likely be added some time
-      in the future.
-    </para>
+  <para>
+   The Pazpar2 configuration file, together with any referenced XSLT files,
+   govern Pazpar2's behavior as a client, and control the normalization and
+   extraction of data elements from incoming result records, for the
+   purposes of merging, sorting, facet analysis, and display.
+  </para>
+  
+  <para>
+   The file is specified using the option -f on the Pazpar2 command line.
+   There is not presently a way to reload the configuration file without
+   restarting Pazpar2, although this will most likely be added some time
+   in the future.
+  </para>
  </refsect1>
-
+ 
  <refsect1><title>FORMAT</title>
+  <para>
+   The configuration file is XML-structured. It must be valid XML. All
+   elements specific to Pazpar2 should belong to the namespace
+   <literal>http://www.indexdata.com/pazpar2/1.0</literal> 
+   (this is assumed in the
+   following examples). The root element is named <literal>pazpar2</literal>.
+   Under the  root element are a number of elements which group categories of
+   information. The categories are described below.
+  </para>
+  
+  <refsect2 id="config-server"><title>server</title>
    <para>
-     The configuration file is XML-structured. It must be valid XML. All
-     elements specific to pazpar2 should belong to the namespace
-     "http://www.indexdata.com/pazpar2/1.0" (this is assumed in the
-     following examples). The root element is named 'pazpar2'. Under the
-     root element are a number of elements which group categories of
-     information. The categories are described below.
-    </para>
-
-    <refsect2 id="config-server"><title>server</title>
+    This section governs overall behavior of the client. The data
+    elements are described below.
+   </para>
+   <variablelist> <!-- level 1 -->
+    <varlistentry>
+     <term>listen</term>
+     <listitem>
       <para>
-        This section governs overall behavior of the client. The data
-	elements are described below.
+       Configures the webservice -- this controls how you can connect
+       to Pazpar2 from your browser or server-side code. The
+       attributes 'host' and 'port' control the binding of the
+       server. The 'host' attribute can be used to bind the server to
+       a secondary IP address of your system, enabling you to run
+       Pazpar2 on port 80 alongside a conventional web server. You
+       can override this setting on the command line using the option -h.
       </para>
-      <variablelist> <!-- level 1 -->
-        <varlistentry>
-	  <term>listen</term>
-	  <listitem>
+     </listitem>
+    </varlistentry>
+    
+    <varlistentry>
+     <term>proxy</term>
+     <listitem>
+      <para>
+       If this item is given, Pazpar2 will forward all incoming HTTP
+       requests that do not contain the filename 'search.pz2' to the
+       host and port specified using the 'host' and 'port'
+       attributes. The 'myurl' attribute is required, and should provide
+       the base URL of the server. Generally, the HTTP URL for the host
+       specified in the 'listen' parameter. This functionality is
+       crucial if you wish to use
+       Pazpar2 in conjunction with browser-based code (JS, Flash,
+       applets, etc.) which operates in a security sandbox. Such code
+       can only connect to the same server from which the enclosing
+       HTML page originated. Pazpar2s proxy functionality enables you
+       to host all of the main pages (plus images, CSS, etc) of your
+       application on a conventional webserver, while efficiently
+       processing webservice requests for metasearch status, results,
+       etc.
+      </para>
+     </listitem>
+    </varlistentry>
+    
+    <varlistentry>
+     <term>icu_chain</term>
+     <listitem>
+      <para>
+       Definition of ICU tokenization and normalization rules
+       are used if ICU support is compiled in.  The 'id'
+       attribute is currently not used, and the 'locale'
+       attribute must be set to one of the locale strings
+       defined in ICU. The child elements listed below can be
+       in any order, except the 'index' element which logically
+       belongs to the end of the list. The stated tokenization,
+       normalization and charmapping instructions are performed
+       in order from top to bottom. 
+      </para>
+      <variablelist> <!-- Level 2 -->
+       <varlistentry><term>casemap</term>
+	<listitem>
+	 <para>
+	  The attribute 'rule' defines the direction of the
+	  per-character casemapping, allowed values are "l"
+	  (lower), "u" (upper), "t" (title).  
+	 </para>
+	</listitem>
+       </varlistentry>
+       <varlistentry><term>normalize</term>
+	<listitem>
+	 <para>
+	  Normalization and transformation of tokens follows
+	  the rules defined in the 'rule' attribute. For
+	  possible values we refer to the extensive ICU
+	  documentation found at the 
+	  <ulink url="&url.icu.transform;">ICU
+	   transformation</ulink> home page. Set filtering
+	  principles are explained at the 
+	  <ulink url="&url.icu.unicode.set;">ICU set and
+	   filtering</ulink> page.
+	 </para>
+	</listitem>
+       </varlistentry>
+       <varlistentry><term>tokenize</term>
+	<listitem>
+	 <para>
+	  Tokenization is the only rule in the ICU chain
+	  which splits one token into multiple tokens. The
+	  'rule' attribute may have the following values:
+	  "s" (sentence), "l" (line-break), "w" (word), and
+	  "c" (character), the later probably not being
+	  very useful in a pruning Pazpar2 installation. 
+	 </para>
+	</listitem>
+       </varlistentry>
+       <varlistentry><term>index</term>
+	<listitem>
+	 <para>
+	  Finally the 'index' element instruction - without
+	  any 'rule' attribute - is used to store the tokens
+	  after chain processing in the relevance ranking
+	  unit of Pazpar2. It will always be the last
+	  instruction in the chain.
+	 </para>
+	</listitem>
+       </varlistentry>
+      </variablelist>
+     </listitem>
+    </varlistentry>
+    
+    <varlistentry>
+     <term>service</term>
+     <listitem>
+      <para>
+       This nested element controls the behavior of Pazpar2 with
+       respect to your data model. In Pazpar2, incoming records are
+       normalized, using XSLT, into an internal representation.
+       The 'service' section controls the further processing and
+       extraction of data from the internal representation, primarily
+       through the 'metadata' sub-element.
+      </para>
+      
+      <variablelist> <!-- Level 2 -->
+       <varlistentry><term>metadata</term>
+	<listitem>
+	 <para>
+	  One of these elements is required for every data element in
+	  the internal representation of the record (see
+	  <xref linkend="data_model"/>. It governs
+	  subsequent processing as pertains to sorting, relevance
+	  ranking, merging, and display of data elements. It supports
+	  the following attributes:
+	 </para>
+	 
+	 <variablelist> <!-- level 3 -->
+	  <varlistentry><term>name</term>
+	   <listitem>
 	    <para>
-	      Configures the webservice -- this controls how you can connect
-	      to pazpar2 from your browser or server-side code. The
-	      attributes 'host' and 'port' control the binding of the
-	      server. The 'host' attribute can be used to bind the server to
-	      a secondary IP address of your system, enabling you to run
-	      pazpar2 on port 80 alongside a conventional web server. You
-	      can override this setting on the command lineusing the option -h.
+	     This is the name of the data element. It is matched
+	     against the 'type' attribute of the
+	     'metadata' element 
+	     in the normalized record. A warning is produced if
+	     metadata elements with an unknown name are
+	     found in the 
+	     normalized record. This name is also used to
+	     represent 
+	     data elements in the records returned by the
+	     webservice API, and to name sort lists and browse
+	     facets.
 	    </para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term>proxy</term>
-	  <listitem>
+	   </listitem>
+	  </varlistentry>
+	  
+	  <varlistentry><term>type</term>
+	   <listitem>
 	    <para>
-	      If this item is given, pazpar2 will forward all incoming HTTP
-	      requests that do not contain the filename 'search.pz2' to the
-	      host and port specified using the 'host' and 'port'
-	      attributes. The 'myurl' attribute is required, and should provide
-	      the base URL of the server. Generally, the HTTP URL for the host
-	      specified in the 'listen' parameter. This functionality is
-	      crucial if you wish to use
-	      pazpar2 in conjunction with browser-based code (JS, Flash,
-	      applets, etc.) which operates in a security sandbox. Such code
-	      can only connect to the same server from which the enclosing
-	      HTML page originated. Pazpar2s proxy functionality enables you
-	      to host all of the main pages (plus images, CSS, etc) of your
-	      application on a conventional webserver, while efficiently
-	      processing webservice requests for metasearch status, results,
-	      etc.
+	     The type of data element. This value governs any
+	     normalization or special processing that might take
+	     place on an element. Possible values are 'generic'
+	     (basic string), 'year' (a range is computed if
+	     multiple years are found in the record). Note: This
+	     list is likely to increase in the future.
 	    </para>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term>icu_chain</term>
-	  <listitem>
+	   </listitem>
+	  </varlistentry>
+	  
+	  <varlistentry><term>brief</term>
+	   <listitem>
 	    <para>
-	      Definition of ICU tokenization and normalization rules
-	      are used if ICU support is compiled in.  The 'id'
-	      attribute is currently not used, and the 'locale'
-	      attribute must be set to one of the locale strings
-	      defined in ICU. The child elements listed below can be
-	      in any order, except the 'index' element which logically
-	      belongs to the end of the list. The stated tokenization,
-	      normalization and charmapping instructions are performed
-	      in order from top to bottom. 
+	     If this is set to 'yes', then the data element is
+	     includes in brief records in the webservice API. Note
+	     that this only makes sense for metadata elements that
+	     are merged (see below). The default value is 'no'.
 	    </para>
-	    <variablelist> <!-- Level 2 -->
-	      <varlistentry><term>casemap</term>
-	        <listitem>
-		  <para>
-                    The attribure 'rule' defines the direction of the
-                    per-character casemapping, allowed values are "l"
-                    (lower), "u" (upper), "t" (title).  
-                  </para>
-                </listitem>
-               </varlistentry>
-	      <varlistentry><term>normalize</term>
-	        <listitem>
-		  <para>
-                    Normalization and transformation of tokens follows
-                    the rules defined in the 'rule' attribute. For
-                    possible values we refer to the extensive ICU
-                    documentation found at the 
-                   <ulink url="&url.icu.transform;">ICU
-                    transformation</ulink> home page. Set filtering
-                    principles are explained at the 
-                   <ulink url="&url.icu.unicode.set;">ICU set and
-                    filtering</ulink> page.
-                  </para>
-                </listitem>
-               </varlistentry>
-	      <varlistentry><term>tokenize</term>
-	        <listitem>
-		  <para>
-                    Tokenization is the only rule in the ICU chain
-                    which splits one token into multiple tokens. The
-                    'rule' attribute may have the following values:
-                    "s" (sentence), "l" (line-break), "w" (word), and
-                    "c" (character), the later probably not beeing
-                    very useful in a runing pazpar2 installation. 
-                  </para>
-                </listitem>
-               </varlistentry>
-	      <varlistentry><term>index</term>
-	        <listitem>
-		  <para>
-                   Finally the 'index' element instruction - without
-                   any 'rule' attribute - is used to store the tokens
-                   after chain processing in the relevance ranking
-                   unit of Pazpar2. It will always be the last
-                   instruction in the chain.
-                  </para>
-                </listitem>
-               </varlistentry>
-             </variablelist>
-	  </listitem>
-	</varlistentry>
-
-	<varlistentry>
-	  <term>service</term>
-	  <listitem>
+	   </listitem>
+	  </varlistentry>
+	  
+	  <varlistentry><term>sortkey</term>
+	   <listitem>
 	    <para>
-	      This nested element controls the behavior of pazpar2 with
-	      respect to your data model. In pazpar2, incoming records are
-	      normalized, using XSLT, into an internal representation.
-	      The 'service' section controls the further processing and
-	      extraction of data from the internal representation, primarily
-	      through the 'metdata' sub-element.
+	     Specifies that this data element is to be used for
+	     sorting. The possible values are 'numeric' (numeric
+	     value), 'skiparticle' (string; skip common, leading
+	     articles), and 'no' (no sorting). The default value is
+	     'no'.
 	    </para>
-
-	    <variablelist> <!-- Level 2 -->
-	      <varlistentry><term>metadata</term>
-	        <listitem>
-		  <para>
-		    One of these elements is required for every data element in
-		    the internal representation of the record (see
-		    <xref linkend="data_model"/>. It governs
-		    subsequent processing as pertains to sorting, relevance
-		    ranking, merging, and display of data elements. It supports
-		    the following attributes:
-		  </para>
-
-		  <variablelist> <!-- level 3 -->
-		    <varlistentry><term>name</term>
-		      <listitem>
-			<para>
-			  This is the name of the data element. It is matched
-			  against the 'type' attribute of the
-			  'metadata' element 
-			  in the normalized record. A warning is produced if
-			  metdata elements with an unknown name are
-			  found in the 
-			  normalized record. This name is also used to
-			  represent 
-			  data elements in the records returned by the
-			  webservice API, and to name sort lists and browse
-			  facets.
-			</para>
-		      </listitem>
-		    </varlistentry>
-
-		    <varlistentry><term>type</term>
-		     <listitem>
-			<para>
-			  The type of data element. This value governs any
-			  normalization or special processing that might take
-			  place on an element. Possible values are 'generic'
-			  (basic string), 'year' (a range is computed if
-			  multiple years are found in the record). Note: This
-			  list is likely to increase in the future.
-			</para>
-		      </listitem>
-		    </varlistentry>
-
-		    <varlistentry><term>brief</term>
-		      <listitem>
-			<para>
-			  If this is set to 'yes', then the data element is
-			  includes in brief records in the webservice API. Note
-			  that this only makes sense for metadata elements that
-			  are merged (see below). The default value is 'no'.
-			</para>
-		      </listitem>
-		    </varlistentry>
-
-		    <varlistentry><term>sortkey</term>
-		      <listitem>
-			<para>
-			  Specifies that this data element is to be used for
-			  sorting. The possible values are 'numeric' (numeric
-			  value), 'skiparticle' (string; skip common, leading
-			  articles), and 'no' (no sorting). The default value is
-			  'no'.
-			</para>
-		      </listitem>
-		    </varlistentry>
-
-		    <varlistentry><term>rank</term>
-		      <listitem>
-			<para>
-			  Specifies that this element is to be used to
-			  help rank 
-			  records against the user's query (when ranking is
-			  requested). The value is an integer, used as a
-			  multiplier against the basic TF*IDF score. A value of
-			  1 is the base, higher values give additional
-			  weight to 
-			  elements of this type. The default is '0', which
-			  excludes this element from the rank calculation.
-			</para>
-		      </listitem>
-		    </varlistentry>
-
-		    <varlistentry><term>termlist</term>
-		      <listitem>
-			<para>
-			  Specifies that this element is to be used as a
-			  termlist, or browse facet. Values are tabulated from
-			  incoming records, and a highscore of values (with
-			  their associated frequency) is made available to the
-			  client through the webservice API. 
-                          The possible values
-			  are 'yes' and 'no' (default).
-			</para>
-		      </listitem>
-		    </varlistentry>
-
-		    <varlistentry><term>merge</term>
-		      <listitem>
-			<para>
-			  This governs whether, and how elements are extracted
-			  from individual records and merged into cluster
-			  records. The possible values are: 'unique' (include
-			  all unique elements), 'longest' (include only the
-			  longest element (strlen), 'range' (calculate a range
-			  of values across al matching records), 'all' (include
-			  all elements), or 'no' (don't merge; this is the
+	   </listitem>
+	  </varlistentry>
+	  
+	  <varlistentry><term>rank</term>
+	   <listitem>
+	    <para>
+	     Specifies that this element is to be used to
+	     help rank 
+	     records against the user's query (when ranking is
+	     requested). The value is an integer, used as a
+	     multiplier against the basic TF*IDF score. A value of
+	     1 is the base, higher values give additional
+	     weight to 
+	     elements of this type. The default is '0', which
+	     excludes this element from the rank calculation.
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	  
+	  <varlistentry><term>termlist</term>
+	   <listitem>
+	    <para>
+	     Specifies that this element is to be used as a
+	     termlist, or browse facet. Values are tabulated from
+	     incoming records, and a highscore of values (with
+	     their associated frequency) is made available to the
+	     client through the webservice API. 
+	     The possible values
+	     are 'yes' and 'no' (default).
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	  
+	  <varlistentry><term>merge</term>
+	   <listitem>
+	    <para>
+	     This governs whether, and how elements are extracted
+	     from individual records and merged into cluster
+	     records. The possible values are: 'unique' (include
+	     all unique elements), 'longest' (include only the
+	     longest element (strlen), 'range' (calculate a range
+	     of values across all matching records), 'all' (include
+	     all elements), or 'no' (don't merge; this is the
 			  default);
-			</para>
-		      </listitem>
-		    </varlistentry>
-		  </variablelist> <!-- attributes to metadata -->
-
-		</listitem>
-	      </varlistentry>
-	    </variablelist>     <!-- Data elements in service directive -->
-	  </listitem>
-	</varlistentry>
-      </variablelist>           <!-- Data elements in server directive -->
-    </refsect2>
-
-  </refsect1>
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	 </variablelist> <!-- attributes to metadata -->
+	 
+	</listitem>
+       </varlistentry>
+      </variablelist>     <!-- Data elements in service directive -->
+     </listitem>
+    </varlistentry>
+   </variablelist>           <!-- Data elements in server directive -->
+  </refsect2>
+  
+ </refsect1>
  
  <refsect1><title>EXAMPLE</title>
   <para>Below is a working example configuration:
@@ -335,209 +336,212 @@
 
 </pazpar2>
 ]]></screen>
-   </para>
+  </para>
  </refsect1> 
-
+ 
  <refsect1 id="target_settings"><title>TARGET SETTINGS</title>
+  <para>
+   Pazpar2 features a cunning scheme by which you can associate various
+   kinds of attributes, or settings with search targets. This can be done
+   through XML files which are read at startup; each file can associate
+   one or more settings with one or more targets. The file format is generic
+   in nature, designed to support a wide range of application requirements. The
+   settings can be purely technical things, like, how to perform a title
+   search against a given target, or it can associate arbitrary name=value
+   pairs with groups of targets -- for instance, if you would like to
+   place all commercial full-text bases in one group for selection
+   purposes, or you would like to control what targets are accessible
+   to users by default.
+  </para>
+  
+  <para>
+   During startup, Pazpar2 will recursively read a specified directory
+   (can be identified in the pazpar2.cfg file or on the command line), and
+   process any settings files found therein.
+  </para>
+  
+  <para>
+   Clients of the Pazpar2 webservice interface can selectively override
+   settings for individual targets within the scope of one session. This
+   can be used in conjunction with an external authentication system to
+   determine which resources are to be accessible to which users. Pazpar2
+   itself has no notion of end-users, and so can be used in conjunction
+   with any type of authentication system. Similarly, the authentication
+   tokens submitted to access-controlled search targets can similarly be
+   overridden, to allow use of Pazpar2 in a consortial or multi-library
+   environment, where different end-users may need to be represented to
+   some search targets in different ways. This, again, can be managed
+   using an external database or other lookup mechanism. Setting overrides
+   can be performed either using the 'init' or the 'settings' webservice
+   command.
+  </para>
+  
+  <para>
+   In fact, every setting that applies to a database (except pz:id, which
+   can only be used for filtering targets to use for a search) can be overridden
+   on a per-session basis. This allows the client to override specific CCL fields
+   for searching, etc., to meet the needs of a session or user.
+  </para>
+  
+  <para>
+   Finally, as an extreme case of this, the webservice client can
+   introduce entirely new targets, on the fly, as part of the init or
+   settings command. This is useful if you desire to manage information
+   about your search targets in a separate application such as a database.
+   You do not need any static settings file whatsoever to run Pazpar2 -- as
+   long as the webservice client is prepared to supply the necessary
+   information at the beginning of every session.
+  </para>
+  
+  <note>
    <para>
-     Pazpar2 features a cunning scheme by which you can associate various
-     kinds of attributes, or settings with search targets. This can be done
-     through XML files which are read at startup; each file can associate
-     one or more settings with one or more targets. The file format is generic
-     in nature, designed to support a wide range of application requirements. The
-     settings can be purely technical things, like, how to perform a title
-     search against a given target, or it can associate arbitrary name=value
-     pairs with groups of targets -- for instance, if you would like to
-     place all commercial full-text bases in one group for selection
-     purposes, or you would like to control what targets are accessible
-     to users by default.
+    The following discussion of practical issues related to session and settings
+    management are cast in terms of a user interface based on Ajax/Javascript
+    technology. It would apply equally well to many other kinds of browser-based logic.
    </para>
+  </note>
+  
+  <para>
+   Typically, a Javascript client is not allowed to  directly alter the parameters
+   of a session. There are two reasons for this. One has to do with access
+   to information; typically, information about a user will be stored in a
+   system on the server side, or it will be accessible in some way from the server.
+   However, since the Javascript client cannot be entirely trusted (some hostile
+   agent might in fact 'pretend' to be a regular ws client), it is more robust
+   to control session settings from scripting that you run as part of your
+   webserver. Typically, this can be handled during the session initialization,
+   as follows:
+  </para>
+  
+  <para>
+   Step 1: The Javascript client loads, and asks the webserver for a new Pazpar2
+   session ID. This can be done using a Javascript call, for instance. Note that
+   it is possible to submit Ajax HTTPXmlRequest calls either to Pazpar2 or to the
+   webserver that Pazpar2 is proxying for. See (XXX Insert link to Pazpar2 protocol).
+    </para>
+  
+  <para>
+   Step 2: Code on the webserver authenticates the user, by database lookup,
+   LDAP access, NCIP, etc. Determines which resources the user has access to,
+   and any user-specific parameters that are to be applied during this session.
+  </para>
+  
+  <para>
+   Step 3: The webserver initializes a new Pazpar2 settings, and sets user-specific
+   parameters as necessary, using the init webservice command. A new session ID is
+   returned.
+  </para>
+  
+  <para>
+   Step 4: The webserver returns this session ID to the Javascript client, which then
+   uses the session ID to submit searches, show results, etc.
+  </para>
+  
+  <para>
+   Step 5: When the Javascript client ceases to use the session, Pazpar2 destroys
+   any session-specific information.
+  </para>
 
+  <refsect2><title>SETTINGS FILE FORMAT</title>
    <para>
-     During startup, pazpar2 will recursively read a specified directory
-     (can be identified in the pazpar2.cfg file or on the command line), and
-     process any settings files found therein.
+    Each file contains a root element named &lt;settings&gt;. It may
+    contain one or more &lt;set&gt; elements. The settings and set
+    elements may contain the following attributes. Attributes in the set node
+    overrides those in the setting root element. Each set node must
+    specify (directly, or inherited from the parent node) at least a
+    target, name, and value.
    </para>
-
+   
+   <variablelist> 
+    <varlistentry>
+     <term>target</term>
+     <listitem>
+      <para>
+       This specifies the search target to which this setting should be
+       applied. Targets are identified by their Z39.50 URL, generally
+       including the host, port, and database name, (e.g.
+       <literal>bagel.indexdata.com:210/marc</literal>).
+       Two wildcard forms are accepted:
+       * (asterisk) matches all known targets;
+       <literal>bagel.indexdata.com:210/*</literal> matches all
+       known databases on the given host.
+      </para>
+      <para>
+       A precedence system determines what happens if there are
+       overlapping values for the same setting name for the same
+       target. A setting for a specific target name overrides a
+       setting which specifies target using a wildcard. This makes it
+       easy to set defaults for all targets, and then override them
+       for specific targets or hosts. If there are
+       multiple overlapping settings with the same name and target
+       value, the 'precedence' attribute determines what happens.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>name</term>
+     <listitem>
+      <para>
+       The name of the setting. This can be anything you like.
+       However, Pazpar2 reserves a number of setting names for
+       specific purposes, all starting with 'pz:', and it is a good
+       idea to avoid that prefix if you make up your own setting
+       names. See below for a list of reserved variables.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>value</term>
+     <listitem>
+      <para>
+       The value of the setting. Generally, this can be anything you
+       want -- however, some of the reserved settings may expect
+       specific kinds of values.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>precedence</term>
+     <listitem>
+      <para>
+       This should be an integer. If not provided, the default value
+       is 0. If two (or more) settings have the same content for
+       target and name, the precedence value determines the outcome.
+       If both settings have the same precedence value, they are both
+       applied to the target(s). If one has a higher value, then the
+       value of that setting is applied, and the other one is ignored.
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+   
    <para>
-     Clients of the pazpar2 webservice interface can selectively override
-     settings for individual targets within the scope of one session. This
-     can be used in conjunction with an external authentication system to
-     determine which resources are to be accessible to which users. Pazpar2
-     itself has no notion of end-users, and so can be used in conjunction
-     with any type of authentication system. Similarly, the authentication
-     tokens submitted to access-controlled search targets can similarly be
-     overriden, to allow use of pazpar2 in a consortial or multi-library
-     environment, where different end-users may need to be represented to
-     some search targets in different ways. This, again, can be managed
-     using an external database or other lookup mechanism. Setting overrides
-     can be performed either using the 'init' or the 'settings' webservice
-     command (see XXX ref to pazpar2 protocol).
-    </para>
-
-    <para>
-      In fact, every setting that applies to a database (except pz:id, which
-      can only be used for filtering targets to use for a search) can be overriden
-      on a per-session basis. This allows the client to override specific CCL fields
-      for searching, etc., to meet the needs of a session or user.
-    </para>
-
-    <para>
-      Finally, as an extreme case of this, the webservice client can
-      introduce entirely new targets, on the fly, as part of the init or
-      settings command. This is useful if you desire to manage information
-      about your search targets in a separate application such as a database.
-      You do not need any static settings file whatsoever to run pazpar2 -- as
-      long as the webservice client is prepared to supply the necessary
-      information at the beginning of every session.
-    </para>
-
-    <para>
-      NOTE: The following discussion of practical issues related to session and settings
-      management are cast in terms of a user interface based on Ajax/Javascript
-      technology. It would apply equally well to many other kinds of browser-based logic.
-    </para>
-
-    <para>
-      Typically, a Javascript client is not allowed to  directly alter the parameters
-      of a session. There are two reasons for this. One has to do with access
-      to information; typically, information about a user will be stored in a
-      system on the server side, or it will be accessible in some way from the server.
-      However, since the Javascript client cannot be entirely trusted (some hostile
-      agent might in fact 'pretend' to be a regular ws client), it is more robust
-      to control session sesttings from scripting that you run as part of your
-      webserver. Typically, this can be handled during the session initialization,
-      as follows:
-    </para>
-
-    <para>
-      Step 1: The Javascript client loads, and asks the webserver for a new pazpar2
-      session ID. This can be done using a Javascript call, for instance. Note that
-      it is possible to submit Ajax HTTPXmlRequest calls either to pazpar2 or to the
-      webserver that pazpar2 is proxying for. See (XXX Insert link to pazpar2 protocol).
-    </para>
-
-    <para>
-      Step 2: Code on the webserver authenticates the user, by database lookup,
-      LDAP access, NCIP, etc. Determines which resources the user has access to,
-      and any user-specific parameters that are to be applied during this session.
-    </para>
-
-    <para>
-      Step 3: The webserver initializes a new pazpar2 settings, and sets user-specific
-      parameters as necessary, using the init webservice command. A new session ID is
-      returned.
-    </para>
-
-    <para>
-      Step 4: The webserver returns this session ID to the Javascript client, which then
-      uses the session ID to submit searches, show results, etc.
-    </para>
-
-    <para>
-      Step 5: When the Javascript client ceases to use the session, pazpar2 destroys
-      any session-specific information.
-    </para>
-
-   <refsect2><title>SETTINGS FILE FORMAT</title>
-     <para>
-       Each file contains a root element named &lt;settings&gt;. It may
-       contain one or more &lt;set&gt; elements. The settings and set
-       elements may contain the following attributes. Attributes in the set node
-       overrides those in the setting root element. Each set node must
-       specify (directly, or inherited from the parent node) at least a
-       target, name, and value.
-     </para>
-
-     <variablelist> 
-       <varlistentry>
-	 <term>target</term>
-	 <listitem>
-	   <para>
-	     This specifies the search target to which this setting should be
-	     applied. Targets are identified by their Z39.50 URL, generally
-	     including the host, port, and database name, (e.g.
-	     bagel.indexdata.com:210/marc). Two wildcard forms are accepted:
-	     * (asterisk) matches all known targets;
-	     bagel.indexdata.com:210/* matches all known databases on the given
-	     host.
-	   </para>
-	   <para>
-	     A precedence system determines what happens if there are
-	     overlapping values for the same setting name for the same
-	     target. A setting for a specific target name overrides a
-	     setting whch specifies target using a wildcard. This makes it
-	     easy to set defaults for all targets, and then override them
-	     for specific targets or hosts. If there are
-	     multiple overlapping settings with the same name and target
-	     value, the 'precedence' attribute determines what happens.
-	    </para>
-	 </listitem>
-       </varlistentry>
-	<varlistentry>
-	  <term>name</term>
-	  <listitem>
-	    <para>
-	      The name of the setting. This can be anything you like.
-	      However, pazpar2 reserves a number of setting names for
-	      specific purposes, all starting with 'pz:', and it is a good
-	      idea to avoid that prefix if you make up your own setting
-	      names. See below for a list of reserved variables.
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>value</term>
-	  <listitem>
-	    <para>
-	      The value of the setting. Generally, this can be anything you
-	      want -- however, some of the reserved settings may expect
-	      specific kinds of values.
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>precedence</term>
-	  <listitem>
-	    <para>
-	      This should be an integer. If not provided, the default value
-	      is 0. If two (or more) settings have the same content for
-	      target and name, the precedence value determines the outcome.
-	      If both settings have the same precedence value, they are both
-	      applied to the target(s). If one has a higher value, then the
-	      value of that setting is applied, and the other one is ignored.
-	    </para>
-	  </listitem>
-	</varlistentry>
-      </variablelist>
-
-      <para>
-        By setting defaults for target, name, or value in the root
-	settings node, you can use the settings files in many different
-	ways. For instance, you can use a single file to set defaults for
-	many different settings, like search fields, retrieval syntaxes,
-	etc. You can have one file per server, which groups settings for
-	that server or target. You could also have one file which associates
-	a number of targets with a given setting, for instance, to associate
-	many databases with a given category or class that makes sense
-	within your application.
-      </para>
-
-      <para>
-        The following examples illustrate uses of the settings system to
-	associate settings with targets to meet different requirements.
-      </para>
-
-      <para>
-        The example below associates a set of default values that can be
-	used across many targets. Note the wildcard for targets.
-	This associates the given settings with all targets for which no
-	other information is provided.
-        <screen><![CDATA[
+    By setting defaults for target, name, or value in the root
+    settings node, you can use the settings files in many different
+    ways. For instance, you can use a single file to set defaults for
+    many different settings, like search fields, retrieval syntaxes,
+    etc. You can have one file per server, which groups settings for
+    that server or target. You could also have one file which associates
+    a number of targets with a given setting, for instance, to associate
+    many databases with a given category or class that makes sense
+    within your application.
+   </para>
+   
+   <para>
+    The following examples illustrate uses of the settings system to
+    associate settings with targets to meet different requirements.
+   </para>
+   
+   <para>
+    The example below associates a set of default values that can be
+    used across many targets. Note the wildcard for targets.
+    This associates the given settings with all targets for which no
+    other information is provided.
+    <screen><![CDATA[
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: pazpar2_conf.xml,v 1.26 2007-06-06 12:02:48 marc Exp $ -->
+  <!-- $Id: pazpar2_conf.xml,v 1.27 2007-06-22 13:18:23 adam Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
@@ -562,13 +566,13 @@
 </settings>
 
 	]]></screen>
-      </para>
-
-      <para>
-        The next example shows certain settings overriden for one target,
-	one which returns XML records containing DublinCore elements, and
-	which furthermore requires a username/password.
-	<screen><![CDATA[
+   </para>
+   
+   <para>
+    The next example shows certain settings overridden for one target,
+    one which returns XML records containing DublinCore elements, and
+    which furthermore requires a username/password.
+    <screen><![CDATA[
 <settings target="funkytarget.com:210/db1">
   <set name="pz:requestsyntax" value="xml"/>
   <set name="pz:nativesyntax" value="xml"/>
@@ -577,152 +581,152 @@
   <set name="pz:authentication" value="myuser/password"/>
 </settings>
 	]]></screen>
-      </para>
-
-      <para>
-        The following example associates a specific name/value combination
-	with a number of targets. The targets below are access-restricted,
-	and can only be used by users with special credentials.
-        <screen><![CDATA[
+   </para>
+   
+   <para>
+    The following example associates a specific name/value combination
+    with a number of targets. The targets below are access-restricted,
+    and can only be used by users with special credentials.
+    <screen><![CDATA[
 <settings name="pz:allow" value="0">
   <set target="funkytarget.com:210/*"/>
   <set target="commercial.com:2100/expensiveDb"/>
 </settings>
 	]]></screen>
-      </para>
-
-    </refsect2>
-
-    <refsect2><title>RESERVED SETTING NAMES</title>
+   </para>
+   
+  </refsect2>
+  
+  <refsect2><title>RESERVED SETTING NAMES</title>
+   <para>
+    The following setting names are reserved by Pazpar2 to control the
+    behavior of the client function.
+   </para>
+   
+   <variablelist>
+    <varlistentry>
+     <term>pz:cclmap:xxx</term>
+     <listitem>
       <para>
-        The following setting names are reserved by pazpar2 to control the
-	behavior of the client function.
+       This establishes a CCL field definition or other setting, for
+       the purpose of mapping end-user queries. XXX is the field or
+       setting name, and the value of the setting provides parameters
+       (e.g. parameters to send to the server, etc.). Please consult
+       the YAZ manual for a full overview of the many capabilities of
+       the powerful and flexible CCL parser.
       </para>
-
-      <variablelist>
-        <varlistentry>
-	  <term>pz:cclmap:xxx</term>
-	  <listitem>
-	    <para>
-	      This establishes a CCL field definition or other setting, for
-	      the purpose of mapping end-user queries. XXX is the field or
-	      setting name, and the value of the setting provides parameters
-	      (e.g. parameters to send to the server, etc.). Please consult
-	      the YAZ manual for a full overview of the many capabilities of
-	      the powerful and flexible CCL parser.
-	    </para>
-	    <para>
-	      Note that it is easy to etablish a set of default parameters,
-	      and then override them individually for a given target.
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>pz:requestsyntax</term>
-	  <listitem>
-	    <para>
-	      This specifies the record syntax to use when requesting
-	      records from a given server. The value can be a symbolic name like
-	      marc21 or xml, or it can be a Z39.50-style dot-separated OID.
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>pz:elements</term>
-	  <listitem>
-	    <para>
-	      The element set name to be used when retrieving records from a
-	      server (not yet implemented).
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>pz:piggyback</term>
-	  <listitem>
-	    <para>
-	      Piggybacking enables the server to retrieve records from the
-	      server as part of the search response in Z39.50. Almost all
-	      servers support this (or fail it gracefully), but a few
-	      servers will produce undesirable results.
-	      Set to '1' to enable piggybacking, '0' to disable it. Default
-	      is 1 (piggybacking enabled).
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>pz:nativesyntax</term>
-	  <listitem>
-	    <para>
-	      The representation (syntax) of the retrieval records. Currently
-	      recognized values are iso2709 and xml.
-	    </para>
-	    <para>
-	      For iso2709, can also specify a native character set, e.g. "iso2709;latin-1".
-	      If no character set is provided, MARC-8 is assumed.
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>pz:xslt</term>
-	  <listitem>
-	    <para>
-	      Provides the path of an XSLT stylesheet which will be used to
-	      map incoming records to the internal representation.
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>pz:authentication</term>
-	  <listitem>
-	    <para>
-	      Sets an authentication string for a given server. See the section on
-	      authorization and authentication for discussion.
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>pz:allow</term>
-	  <listitem>
-	    <para>
-	      Allows or denies access to the resources it is applied to. Possible
-	      values are '0' and '1'. The default is '1' (allow access to this resource).
-	      See the manual section on authorization and authentication for discussion
-	      about how to use this setting.
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>pz:maxrecs</term>
-	  <listitem>
-	    <para>
-	      Controls the maximum number of records to be retrieved from a
-	      server. The default is 100 (not yet implemented).
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>pz:id</term>
-	  <listitem>
-	    <para>
-	      This setting can't be 'set' -- it contains the ID (normally
-	      ZURL) for a given target, and is useful for filtering --
-	      specifically when you want to select one or more specific
-	      targets in the search command.
-	    </para>
-	  </listitem>
-	</varlistentry>
-	<varlistentry>
-	  <term>pz:zproxy</term>
-	  <listitem>
-	    <para>
-	      The 'pz:zproxy' setting has the value syntax 
-              'host.internet.adress:port', it is used to tunnel Z39.50
-              requests through the named Z39.50 proxy.
-	    </para>
-	  </listitem>
-	</varlistentry>
-      </variablelist>
-    </refsect2>
+      <para>
+       Note that it is easy to establish a set of default parameters,
+       and then override them individually for a given target.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>pz:requestsyntax</term>
+     <listitem>
+      <para>
+       This specifies the record syntax to use when requesting
+       records from a given server. The value can be a symbolic name like
+       marc21 or xml, or it can be a Z39.50-style dot-separated OID.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>pz:elements</term>
+     <listitem>
+      <para>
+       The element set name to be used when retrieving records from a
+       server (not yet implemented).
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>pz:piggyback</term>
+     <listitem>
+      <para>
+       Piggybacking enables the server to retrieve records from the
+       server as part of the search response in Z39.50. Almost all
+       servers support this (or fail it gracefully), but a few
+       servers will produce undesirable results.
+       Set to '1' to enable piggybacking, '0' to disable it. Default
+       is 1 (piggybacking enabled).
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>pz:nativesyntax</term>
+     <listitem>
+      <para>
+       The representation (syntax) of the retrieval records. Currently
+       recognized values are iso2709 and xml.
+      </para>
+      <para>
+       For iso2709, can also specify a native character set, e.g. "iso2709;latin-1".
+       If no character set is provided, MARC-8 is assumed.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>pz:xslt</term>
+     <listitem>
+      <para>
+       Provides the path of an XSLT stylesheet which will be used to
+       map incoming records to the internal representation.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>pz:authentication</term>
+     <listitem>
+      <para>
+       Sets an authentication string for a given server. See the section on
+       authorization and authentication for discussion.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>pz:allow</term>
+     <listitem>
+      <para>
+       Allows or denies access to the resources it is applied to. Possible
+       values are '0' and '1'. The default is '1' (allow access to this resource).
+       See the manual section on authorization and authentication for discussion
+       about how to use this setting.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>pz:maxrecs</term>
+     <listitem>
+      <para>
+       Controls the maximum number of records to be retrieved from a
+       server. The default is 100 (not yet implemented).
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>pz:id</term>
+     <listitem>
+      <para>
+       This setting can't be 'set' -- it contains the ID (normally
+       ZURL) for a given target, and is useful for filtering --
+       specifically when you want to select one or more specific
+       targets in the search command.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>pz:zproxy</term>
+     <listitem>
+      <para>
+       The 'pz:zproxy' setting has the value syntax 
+       'host.internet.adress:port', it is used to tunnel Z39.50
+       requests through the named Z39.50 proxy.
+      </para>
+     </listitem>
+    </varlistentry>
+   </variablelist>
+  </refsect2>
 
  </refsect1>
 </refentry>

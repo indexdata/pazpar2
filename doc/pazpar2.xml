@@ -8,7 +8,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2.xml,v 1.6 2007-06-18 12:55:43 adam Exp $ -->
+<!-- $Id: pazpar2.xml,v 1.7 2007-06-22 13:18:23 adam Exp $ -->
 <refentry id="pazpar2">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -39,7 +39,7 @@
  </refsynopsisdiv>
  
  <refsect1><title>DESCRIPTION</title>
-  <para><command>pazpar2</command> is the pazpar2 Metasearch daemon
+  <para><command>pazpar2</command> is the Pazpar2 Metasearch daemon
    and server.
    In normal operation it acts as a simple HTTP server which serves
    the Pazpar2 protocol.
@@ -66,7 +66,7 @@
    <varlistentry>
     <term><option>-D</option></term>
     <listitem>
-     <para>Puts the pazpar2 server in the background.</para>
+     <para>Puts the Pazpar2 server in the background.</para>
     </listitem>
    </varlistentry>
    <varlistentry>
@@ -74,7 +74,7 @@
     <listitem>
      <para>
       Specifies main configuration. This option must be specified
-      in order for pazpar2 to operate normally.
+      in order for Pazpar2 to operate normally.
      </para>
     </listitem>
    </varlistentry>
@@ -82,7 +82,7 @@
     <term><option>-l <replaceable>logfile</replaceable></option></term>
     <listitem>
      <para>
-      Specifies log file. The log file must be specified when pazpar2
+      Specifies log file. The log file must be specified when Pazpar2
       is running in the background (-D).
      </para>
     </listitem>
@@ -91,8 +91,8 @@
     <term><option>-p <replaceable>pidfile</replaceable></option></term>
     <listitem>
      <para>
-      Specifies PID file. If pazpar2 is started and configured properly
-      the file given holds the process ID of the pazpar2 process.
+      Specifies PID file. If Pazpar2 is started and configured properly
+      the file given holds the process ID of the Pazpar2 process.
      </para>
     </listitem>
    </varlistentry>
@@ -111,7 +111,7 @@
     <term><option>-u <replaceable>uid</replaceable></option></term>
     <listitem>
      <para>
-      Specifies that pazpar2 change user to the
+      Makes the Pazpar2 server change user ID to the
       <replaceable>uid</replaceable> given.
       This, normally, require root privilege.
      </para>
@@ -122,9 +122,9 @@
     <term><option>-X</option></term>
     <listitem>
      <para>
-      Makes the pazpar2 server operate in debugging mode. This prevents pazpar2 
-      from making separate threads and processes. This option
-      should not be used in production.
+      Makes the Pazpar2 server operate in debugging mode.
+      This prevents Pazpar2 from making separate threads and processes.
+      This option should not be used in production.
      </para>
     </listitem>
    </varlistentry>

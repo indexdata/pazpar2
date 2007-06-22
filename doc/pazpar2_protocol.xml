@@ -8,7 +8,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2_protocol.xml,v 1.8 2007-06-04 10:34:06 adam Exp $ -->
+<!-- $Id: pazpar2_protocol.xml,v 1.9 2007-06-22 13:18:23 adam Exp $ -->
 <refentry id="pazpar2_protocol">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -33,7 +33,7 @@
    using the proxy setting.
    This way, a regular webserver can host the user interface (itself dynamic
    or static HTML), and AJAX-style calls can be used from JS (or any other client-based
-   scripting environment) to interact with the search logic in pazpar2. 
+   scripting environment) to interact with the search logic in Pazpar2. 
   </para>
   <para>
    Each command is described in sub sections to follow.
@@ -88,34 +88,36 @@
    </para>
   </refsect2>
   <refsect2 id="command-settings">
-    <title>settings</title>
+   <title>settings</title>
+   <para>
+    The settings command applies session-specific settings to one or more
+    databases. A typical function of this is to enable access to
+    restricted resources for registered users, or to set a user- or
+    library-specific username/password to use against a target. Each
+    setting parameter has the form name[target]=value, where name is the
+    name of the setting (e.g. pz:authentication), target is a target ID,
+    or possibly a wildcard, and value is the desired value for the
+    setting.
+   </para>
+   
+   <para>
+    Because the settings command manipulates potentially sensitive
+    information, it is possible to configure Pazpar2 to only allow access
+    to this command from a trusted site -- usually from server-side
+    scripting, which in turn is responsible for authenticating the user,
+    and possibly determining which resources he has access to, etc.
+   </para>
+   
+   <note>
     <para>
-      The settings command applies session-specific settings to one or more
-      databases. A typical function of this is to enable access to
-      restricted resources for registered users, or to set a user- or
-      library-specific username/password to use against a target. Each
-      setting parameter has the form name[target]=value, where name is the
-      name of the setting (e.g. pz:authentication), target is a target ID,
-      or possibly a wildcard, and value is the desired value for the
-      setting.
+     As a shortcut, it is also possible to override settings directly in
+     the init command.
     </para>
-
-    <para>
-      Because the settings command manipulates potentially sensitive
-      information, it is possible to configure pazpar2 to only allow access
-      to this command from a trusted site -- usually from server-side
-      scripting, which in turn is responsible for authenticating the user,
-      and possibly determining which resources he has access to, etc.
-    </para>
-
-    <para>
-      Note: As a shortcut, it is also possible to override settings directly in
-      the init command.
-    </para>
-
-    <para>
-      Example:
-      <screen><![CDATA[
+   </note>
+   
+   <para>
+    Example:
+    <screen><![CDATA[
        search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
       ]]></screen>
     Response:
@@ -130,7 +132,7 @@
   <refsect2 id="command-search"><title>search</title>
    <para>
     Launches a search, parameters:
-
+    
     <variablelist>
      <varlistentry>
       <term>session</term>
@@ -250,19 +252,19 @@ search.pz2?session=2044502273&command=stat
      </varlistentry>
 
      <varlistentry>
-       <term>sort</term>
-       <listitem>
-         <para>
-	   Specifies sort criteria. The argument is a comma-separated list
-	   (no whitespace allowed) of sort fields, with the highest-priority
-	   field first. A sort field may be followed by a colon followed by
-	   the number '0' or '1', indicating whether results should be sorted in
-	   increasing or decreasing order according to that field. 0==Decreasing is
-	   the default.
-	 </para>
-	</listitem>
-      </varlistentry>
-
+      <term>sort</term>
+      <listitem>
+       <para>
+	Specifies sort criteria. The argument is a comma-separated list
+	(no whitespace allowed) of sort fields, with the highest-priority
+	field first. A sort field may be followed by a colon followed by
+	the number '0' or '1', indicating whether results should be sorted in
+	increasing or decreasing order according to that field. 0==Decreasing is
+	the default.
+       </para>
+      </listitem>
+     </varlistentry>
+     
     </variablelist>
    </para>
    <para>
@@ -307,7 +309,7 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
       <listitem>
        <para>
 	Session ID
-	</para>
+       </para>
       </listitem>
      </varlistentry>
 
@@ -414,7 +416,7 @@ Output:
       <term>session</term>
       <listitem>
        <para>
-          Session Id.
+	Session Id.
 	</para>
       </listitem>
      </varlistentry>
@@ -441,11 +443,11 @@ search.pz2?session=605047297&command=record&id=3
   <!-- ... more target nodes below as necessary -->
 </bytarget>
 ]]></screen>
-
-   The following client states are defined: Client_Connecting,
-   Client_Connected, Client_Idle, Client_Initializing, Client_Searching,
-   Client_Searching, Client_Presenting, Client_Error, Client_Failed,
-   Client_Disconnected, Client_Stopped.
+    
+    The following client states are defined: Client_Connecting,
+    Client_Connected, Client_Idle, Client_Initializing, Client_Searching,
+    Client_Searching, Client_Presenting, Client_Error, Client_Failed,
+    Client_Disconnected, Client_Stopped.
    </para>
   </refsect2>
 
