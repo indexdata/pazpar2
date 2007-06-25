@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.39 2007-06-22 10:52:09 adam Exp $
+** $Id: pz2.js,v 1.40 2007-06-25 07:23:56 adam Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -161,7 +161,9 @@ pz2.prototype =
                         setTimeout("__myself.init()", 1000);
                 }
             );
-        }
+        } else {
+            __myself.initStatusOK = true;
+	}
     },
     // no need to ping explicitly
     ping: function () 
