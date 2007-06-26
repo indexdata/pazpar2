@@ -1,4 +1,4 @@
-/* $Id: connection.c,v 1.4 2007-06-06 11:49:48 marc Exp $
+/* $Id: connection.c,v 1.5 2007-06-26 13:03:46 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -150,6 +150,20 @@ static void connection_handler(IOCHAN i, int event)
         return;
     }
 
+    if (event & EVENT_TIMEOUT)
+    {
+        if (co->state == Conn_Connecting)
+        {
+            yaz_log(YLOG_WARN,  "connect timeout %s", client_get_url(cl));
+            client_fatal(cl);
+        }
+        else
+        {
+            yaz_log(YLOG_LOG,  "idle timeout %s", client_get_url(cl));
+            connection_destroy(co);
+        }
+        return;
+    }
     if (co->state == Conn_Connecting && event & EVENT_OUTPUT)
     {
 	int errcode;
@@ -167,6 +181,7 @@ static void connection_handler(IOCHAN i, int event)
 	    co->state = Conn_Open;
             if (cl)
                 client_set_state(cl, Client_Connected);
+            iochan_settimeout(i, 180);
 	}
     }
 
@@ -366,6 +381,7 @@ int connection_connect(struct connection *con)
     con->link = link;
     con->state = Conn_Connecting;
     con->iochan = iochan_create(cs_fileno(link), connection_handler, 0);
+    iochan_settimeout(con->iochan, 30);
     iochan_setdata(con->iochan, con);
     pazpar2_add_channel(con->iochan);
 
