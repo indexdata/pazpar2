@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.34 2007-06-15 19:35:17 adam Exp $
+/* $Id: http.c,v 1.35 2007-06-26 13:01:07 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -421,6 +421,7 @@ struct http_request *http_parse_request(struct http_channel *c,
             a = nmem_malloc(c->nmem, sizeof(struct http_argument));
             *(equal++) = '\0';
             a->name = nmem_strdup(c->nmem, p2);
+            urldecode(a->name, a->name);
             urldecode(equal, equal);
             a->value = nmem_strdup(c->nmem, equal);
             a->next = r->arguments;
