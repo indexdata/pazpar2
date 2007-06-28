@@ -79,6 +79,7 @@ binary-arch: build install
 	mv $(CURDIR)/debian/pazpar2/usr/share/doc/pazpar2/* $(CURDIR)/debian/pazpar2-doc/usr/share/doc/pazpar2-doc
 	# pazpar2-apache2 package
 	cp $(CURDIR)/debian/pazpar2.cfg $(CURDIR)/debian/pazpar2/etc/pazpar2/
+	cp etc/settings/*.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/settings/
 	cp etc/*.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/settings/
 	cp etc/*.xsl $(CURDIR)/debian/pazpar2/etc/pazpar2/
 	cp $(CURDIR)/debian/ap2pazpar2.cfg $(CURDIR)/debian/pazpar2-apache2/etc/apache2/conf.d

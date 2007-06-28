@@ -1,3 +1,9 @@
+pazpar2 (1.0.0-3) unstable; urgency=low
+
+  * Copy settings/*.xml to /etc/pazpar2/settings - including defaults.xml.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Thu, 28 Jun 2007 10:50:03 +0200
+
 pazpar2 (1.0.0-2) unstable; urgency=low
 
   * Make /usr/share/pazpar2 available as /pazpar2 in pazpar2-apache.
