@@ -1,4 +1,4 @@
-/* $Id: database.h,v 1.7 2007-04-22 15:00:56 adam Exp $
+/* $Id: database.h,v 1.8 2007-06-28 09:36:10 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -27,8 +27,8 @@ struct database *find_database(const char *id, int new);
 int database_match_criteria(struct session_database *db, struct database_criterion *cl);
 int session_grep_databases(struct session *se, struct database_criterion *cl,
         void (*fun)(void *context, struct session_database *db));
-int grep_databases(void *context, struct database_criterion *cl,
-        void (*fun)(void *context, struct database *db));
+int predef_grep_databases(void *context, struct database_criterion *cl,
+			  void (*fun)(void *context, struct database *db));
 int match_zurl(const char *zurl, const char *pattern);
 
 #endif

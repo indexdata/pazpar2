@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.23 2007-06-06 11:49:48 marc Exp $
+/* $Id: settings.c,v 1.24 2007-06-28 09:36:10 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -352,7 +352,7 @@ static void update_database(void *context, struct database *db)
 // This is used in pass 2 to assign name/value pairs to databases
 static void update_databases(struct setting *set)
 {
-    grep_databases(set, 0, update_database);
+    predef_grep_databases(set, 0, update_database);
 }
 
 // This simply copies the 'hard' (application-specific) settings

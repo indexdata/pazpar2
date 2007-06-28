@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.46 2007-06-19 10:16:15 adam Exp $
+/* $Id: logic.c,v 1.47 2007-06-28 09:36:10 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -594,7 +594,7 @@ static void session_database_destroy(struct session_database *sdb)
 void session_init_databases(struct session *se)
 {
     se->databases = 0;
-    grep_databases(se, 0, session_init_databases_fun);
+    predef_grep_databases(se, 0, session_init_databases_fun);
 }
 
 // Probably session_init_databases_fun should be refactored instead of
@@ -701,7 +701,7 @@ struct session *new_session(NMEM nmem)
     session->session_nmem = nmem;
     session->nmem = nmem_create();
     session->wrbuf = wrbuf_alloc();
-    session_init_databases(session);
+    session->databases = 0;
     for (i = 0; i <= SESSION_WATCH_MAX; i++)
     {
         session->watchlist[i].data = 0;

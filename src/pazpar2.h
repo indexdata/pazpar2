@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.43 2007-06-18 11:10:20 adam Exp $
+/* $Id: pazpar2.h,v 1.44 2007-06-28 09:36:10 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -170,6 +170,7 @@ struct hitsbytarget *hitsbytarget(struct session *s, int *count);
 int select_targets(struct session *se, struct database_criterion *crit);
 struct session *new_session(NMEM nmem);
 void destroy_session(struct session *s);
+void session_init_databases(struct session *s);
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
 enum pazpar2_error_code search(struct session *s, char *query, 

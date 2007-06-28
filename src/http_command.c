@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.54 2007-06-15 19:35:17 adam Exp $
+/* $Id: http_command.c,v 1.55 2007-06-28 09:36:10 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.54 2007-06-15 19:35:17 adam Exp $
+ * $Id: http_command.c,v 1.55 2007-06-28 09:36:10 adam Exp $
  */
 
 #include <stdio.h>
@@ -243,10 +243,15 @@ static void cmd_init(struct http_channel *c)
 {
     unsigned int sesid;
     char buf[1024];
+    const char *clear = http_argbyname(c->request, "clear");
     struct http_session *s = http_session_create();
     struct http_response *rs = c->response;
 
     yaz_log(YLOG_DEBUG, "HTTP Session init");
+    if (!clear || *clear == '0')
+        session_init_databases(s->psession);
+    else
+        yaz_log(YLOG_LOG, "No databases preloaded");
     sesid = make_sessionid();
     s->session_id = sesid;
     if (process_settings(s->psession, c->request, c->response) < 0)

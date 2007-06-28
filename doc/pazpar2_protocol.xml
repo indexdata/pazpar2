@@ -8,7 +8,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2_protocol.xml,v 1.9 2007-06-22 13:18:23 adam Exp $ -->
+<!-- $Id: pazpar2_protocol.xml,v 1.10 2007-06-28 09:36:11 adam Exp $ -->
 <refentry id="pazpar2_protocol">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -61,7 +61,19 @@
    <para>
      The init command may take a number of setting parameters, similar to
      the 'settings' command described below. These settings are immediately
-     applied to the new session.
+     applied to the new session. Other parameters for init are:
+    <variablelist>
+     <varlistentry>
+      <term>clear</term>
+      <listitem>
+       <para>
+	If this is defined and the value is non-zero, the session will
+	not use the predefined databases in the configuration; only those
+	specified in the settings parameters (per session databases).
+	</para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
    </para>
   </refsect2>
   

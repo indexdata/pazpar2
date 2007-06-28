@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.28 2007-05-25 03:58:04 quinn Exp $
+/* $Id: database.c,v 1.29 2007-06-28 09:36:10 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -259,8 +259,8 @@ int session_grep_databases(struct session *se, struct database_criterion *cl,
     return i;
 }
 
-int grep_databases(void *context, struct database_criterion *cl,
-        void (*fun)(void *context, struct database *db))
+int predef_grep_databases(void *context, struct database_criterion *cl,
+                          void (*fun)(void *context, struct database *db))
 {
     struct database *p;
     int i = 0;
