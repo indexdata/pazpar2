@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.42 2007-07-02 12:52:03 jakub Exp $
+** $Id: pz2.js,v 1.43 2007-07-02 20:55:07 adam Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -352,24 +352,35 @@ pz2.prototype =
             }
         );
     },
-    record: function(id)
+    record: function(id,offset)
     {
-        if( !__myself.searchStatusOK )
+        if( !__myself.searchStatusOK && __myself.useSessions)
             return;
 
         if( id !== undefined )
             __myself.currRecID = id;
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
+
+	var recordParams = { "command": "record", "session": __myself.sessionID, "id": __myself.currRecID };
+	if (offset !== undefined) {
+		recordParams["offset"] = offset;
+		recordParams["syntax"] = "usmarc";
+		recordParams["esn"] = "F";
+	}
+	__myself.currRecOffset = offset;
         request.get(
-            { "command": "record", "session": __myself.sessionID, "id": __myself.currRecID },
+	    recordParams,
             function(data) {
                 var recordNode;
                 var record = new Array();
-                if ( recordNode = data.getElementsByTagName("record")[0] ) {
+                record['xmlDoc'] = data;
+		if (__myself.currRecOffset !== undefined) {
+                    record['offset'] = __myself.currRecOffset;
+                    __myself.recordCallback(record);
+                } else if ( recordNode = data.getElementsByTagName("record")[0] ) {
                     // if stylesheet was fetched do not parse the response
                     if ( __myself.xslDoc ) {
                         record['recid'] = recordNode.getElementsByTagName("recid")[0].firstChild.nodeValue;
-                        record['xmlDoc'] = data;
                         record['xslDoc'] = __myself.xslDoc;
                     } else {
                         for ( i = 0; i < recordNode.childNodes.length; i++) {
