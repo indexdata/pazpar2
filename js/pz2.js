@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.41 2007-07-02 10:16:46 jakub Exp $
+** $Id: pz2.js,v 1.42 2007-07-02 12:52:03 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -207,10 +207,11 @@ pz2.prototype =
         else
             throw new Error("You need to supply query to the search command");
 
-	var searchParams = [{ "command": "search", "query": __myself.currQuery }];
-	searchParams.push({"session":__myself.sessionID});
-	if (filter !== undefined)
-	    searchParams.push({"filter": filter});
+	var searchParams = { "command": "search", "query": __myself.currQuery, "session": __myself.sessionID };
+	
+        if (filter !== undefined)
+	    searchParams["filter"] = filter;
+        
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         request.get(
             searchParams,
