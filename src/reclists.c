@@ -1,4 +1,4 @@
-/* $Id: reclists.c,v 1.17 2007-05-11 06:48:32 adam Exp $
+/* $Id: reclists.c,v 1.18 2007-07-02 20:55:50 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -212,7 +212,7 @@ void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
 
 struct record_cluster *reclist_read_record(struct reclist *l)
 {
-    if (l->pointer < l->num_records)
+    if (l && l->pointer < l->num_records)
         return l->flatlist[l->pointer++];
     else
         return 0;
@@ -220,7 +220,8 @@ struct record_cluster *reclist_read_record(struct reclist *l)
 
 void reclist_rewind(struct reclist *l)
 {
-    l->pointer = 0;
+    if (l)
+        l->pointer = 0;
 }
 
 // Jenkins one-at-a-time hash (from wikipedia)
