@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.35 2007-06-26 13:01:07 adam Exp $
+/* $Id: http.c,v 1.36 2007-07-03 10:10:14 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -367,10 +367,15 @@ struct http_request *http_parse_request(struct http_channel *c,
     char *buf = tmp;
 
     if (len > 4096)
+    {
+        yaz_log(YLOG_WARN, "http_parse_request len > 4096 (%d)", len);
         return 0;
+    }
     if (http_buf_read(queue, buf, len) < len)
+    {
+        yaz_log(YLOG_WARN, "http_buf_read < len 4096 (%d)", len);
         return 0;
-
+    }
     r->search = "";
     r->channel = c;
     r->arguments = 0;
@@ -437,7 +442,10 @@ struct http_request *http_parse_request(struct http_channel *c,
     {
         buf += 5;
         if (!(p = strstr(buf, "\r\n")))
+        {
+            yaz_log(YLOG_WARN, "Did not see \\r\\n (1)");
             return 0;
+        }
         *(p++) = '\0';
         p++;
         strcpy(r->http_version, buf);
@@ -449,7 +457,10 @@ struct http_request *http_parse_request(struct http_channel *c,
     while (*buf)
     {
         if (!(p = strstr(buf, "\r\n")))
+        {
+            yaz_log(YLOG_WARN, "Did not see \\r\\n (2)");
             return 0;
+        }
         if (p == buf)
             break;
         else
