@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2_protocol.xml,v 1.12 2007-07-02 20:02:48 adam Exp $ -->
+<!-- $Id: pazpar2_protocol.xml,v 1.13 2007-07-03 13:02:32 adam Exp $ -->
 <refentry id="pazpar2_protocol">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -160,6 +160,14 @@
       <listitem>
        <para>
 	CCL query
+	</para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>filter</term>
+      <listitem>
+       <para>
+	Filtering.
 	</para>
       </listitem>
      </varlistentry>
