@@ -1,7 +1,7 @@
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: defaults.xml,v 1.5 2007-04-17 12:53:44 jakub Exp $ -->
+  <!-- $Id: defaults.xml,v 1.6 2007-07-03 11:41:22 adam Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
@@ -24,5 +24,8 @@
 
   <set name="pz:nativesyntax" value="iso2709"/>
   <set name="pz:xslt" value="../etc/marc21.xsl"/>
+
+  <!-- APDU log, use value="1" to enable -->
+  <set name="pz:apdulog" value="0"/>
 
 </settings>
