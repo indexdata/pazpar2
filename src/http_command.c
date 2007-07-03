@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.55 2007-06-28 09:36:10 adam Exp $
+/* $Id: http_command.c,v 1.56 2007-07-03 11:21:48 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.55 2007-06-28 09:36:10 adam Exp $
+ * $Id: http_command.c,v 1.56 2007-07-03 11:21:48 adam Exp $
  */
 
 #include <stdio.h>
@@ -500,7 +500,7 @@ static void show_raw_record_error(void *data, const char *addinfo)
 
     http_remove_observer(obs);
 
-    error(rs, PAZPAR2_NOT_IMPLEMENTED, addinfo);
+    error(rs, PAZPAR2_RECORD_FAIL, addinfo);
 }
 
 static void show_raw_record_ok(void *data, const char *buf, size_t sz)

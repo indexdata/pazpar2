@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.12 2007-06-19 12:25:29 adam Exp $
+/* $Id: client.c,v 1.13 2007-07-03 11:21:48 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -108,6 +108,18 @@ static struct client *client_freelist = 0;
 
 static int send_apdu(struct client *c, Z_APDU *a)
 {
+    struct session_database *sdb = client_get_database(c);
+    const char *apdulog = session_setting_oneval(sdb, PZ_APDULOG);
+    if (apdulog && *apdulog && *apdulog != '0')
+    {
+        ODR p = odr_createmem(ODR_PRINT);
+        yaz_log(YLOG_LOG, "send APDU %s", client_get_url(c));
+
+        odr_setprint(p, yaz_log_file());
+        z_APDU(p, &a, 0, 0);
+        odr_setprint(p, stderr);
+        odr_destroy(p);
+    }
     return connection_send_apdu(client_get_connection(c), a);
 }
 
@@ -235,7 +247,16 @@ int client_show_raw_begin(struct client *cl, int position,
         cl->show_raw->esn = xstrdup(esn);
     else
         cl->show_raw->esn = 0;
-    client_continue(cl);
+    
+
+    if (cl->state == Client_Failed || cl->state == Client_Disconnected)
+    {
+        client_show_raw_error(cl, "not connected");
+    }
+    else
+    {
+        client_continue(cl);
+    }
     return 0;
 }
 
@@ -271,8 +292,8 @@ void client_send_raw_present(struct client *cl)
 
     assert(cl->show_raw);
 
-    yaz_log(YLOG_DEBUG, "Trying to present %d record(s) from %d",
-            toget, start);
+    yaz_log(YLOG_DEBUG, "%s: trying to present %d record(s) from %d",
+            client_get_url(cl), toget, start);
 
     a->u.presentRequest->resultSetStartPoint = &start;
     a->u.presentRequest->numberOfRecordsRequested = &toget;
@@ -747,7 +768,6 @@ void client_continue(struct client *cl)
     if (cl->state == Client_Connected) {
         client_init_request(cl);
     }
-
     if (cl->state == Client_Idle)
     {
         struct session *se = client_get_session(cl);

@@ -1,4 +1,4 @@
-/* $Id: connection.c,v 1.5 2007-06-26 13:03:46 adam Exp $
+/* $Id: connection.c,v 1.6 2007-07-03 11:21:48 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -209,6 +209,8 @@ static void connection_handler(IOCHAN i, int event)
             if (client_is_our_response(cl))
             {
                 Z_APDU *a;
+                struct session_database *sdb = client_get_database(cl);
+                const char *apdulog = session_setting_oneval(sdb, PZ_APDULOG);
 
                 odr_reset(global_parameters.odr_in);
                 odr_setbuf(global_parameters.odr_in, co->ibuf, len, 0);
@@ -216,6 +218,17 @@ static void connection_handler(IOCHAN i, int event)
                 {
                     client_fatal(cl);
                     return;
+                }
+
+                if (apdulog && *apdulog && *apdulog != '0')
+                {
+                    ODR p = odr_createmem(ODR_PRINT);
+                    yaz_log(YLOG_LOG, "recv APDU %s", client_get_url(cl));
+                    
+                    odr_setprint(p, yaz_log_file());
+                    z_APDU(p, &a, 0, 0);
+                    odr_setprint(p, stderr);
+                    odr_destroy(p);
                 }
                 switch (a->which)
                 {

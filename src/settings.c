@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.24 2007-06-28 09:36:10 adam Exp $
+/* $Id: settings.c,v 1.25 2007-07-03 11:21:48 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -60,6 +60,7 @@ static char *hard_settings[] = {
     "pz:queryencoding",
     "pz:ip",
     "pz:zproxy",
+    "pz:apdulog",
     0
 };
 

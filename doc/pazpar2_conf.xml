@@ -8,7 +8,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.27 2007-06-22 13:18:23 adam Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.28 2007-07-03 11:21:48 adam Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -541,7 +541,7 @@
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: pazpar2_conf.xml,v 1.27 2007-06-22 13:18:23 adam Exp $ -->
+  <!-- $Id: pazpar2_conf.xml,v 1.28 2007-07-03 11:21:48 adam Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
@@ -722,6 +722,16 @@
        The 'pz:zproxy' setting has the value syntax 
        'host.internet.adress:port', it is used to tunnel Z39.50
        requests through the named Z39.50 proxy.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:apdulog</term>
+     <listitem>
+      <para>
+       If the 'pz:apdulog' setting is defined and has other value than 0,
+       then Z39.50 APDUs are written to the log.
       </para>
      </listitem>
     </varlistentry>
