@@ -1,3 +1,12 @@
+--- 1.0.1 2007/07/03
+
+Improved handling of socket timeout for Z39.50 connections. 
+
+Misc documentation updates and spell fixes.
+
+Debian package pazpar2 creates log rotate entry.
+
+Debian package pazpar2-apache2 reloads Apache2.
 
 jsdemo included in distribution. It illustrates the use of the js/pz2.js
 JavaScript library.
