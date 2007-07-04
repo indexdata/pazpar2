@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.47 2007-06-28 09:36:10 adam Exp $
+/* $Id: logic.c,v 1.48 2007-07-04 12:07:49 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -497,6 +497,8 @@ enum pazpar2_error_code search(struct session *se,
                                const char **addinfo)
 {
     int live_channels = 0;
+    int no_working = 0;
+    int no_failed = 0;
     struct client *cl;
     struct database_criterion *criteria;
 
@@ -528,17 +530,22 @@ enum pazpar2_error_code search(struct session *se,
             *addinfo = client_get_database(cl)->database->url;
             return PAZPAR2_CONFIG_TARGET;
         }
-        // Query must parse for all targets
+        // Parse query for target
         if (client_parse_query(cl, query) < 0)
+            no_failed++;
+        else
         {
-            *addinfo = "query";
-            return PAZPAR2_MALFORMED_PARAMETER_VALUE;
+            no_working++;
+            client_prep_connection(cl);
         }
     }
 
-    for (cl = se->clients; cl; cl = client_next_in_session(cl))
-        client_prep_connection(cl);
-
+    // If no queries could be mapped, we signal an error
+    if (no_working == 0)
+    {
+        *addinfo = "query";
+        return PAZPAR2_MALFORMED_PARAMETER_VALUE;
+    }
     return PAZPAR2_NO_ERROR;
 }
 

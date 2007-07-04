@@ -1,3 +1,7 @@
+Loose the query parsing so that Pazpar2 only returns error if _all_
+query conversions fail (rather than _any_). This means targets that do
+not support some fields are ignored in a search.
+
 --- 1.0.1 2007/07/03
 
 Improved handling of socket timeout for Z39.50 connections. 
