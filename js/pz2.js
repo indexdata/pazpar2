@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.43 2007-07-02 20:55:07 adam Exp $
+** $Id: pz2.js,v 1.44 2007-07-04 12:33:51 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -40,13 +40,7 @@ var pz2 = function(paramArray) {
     //load stylesheet if required in async mode
     if( __myself.stylesheet ) {
         var request = new pzHttpRequest( __myself.stylesheet );
-        request.async = false;
-        request.get(
-                [],
-                function ( doc ) {
-                    __myself.xslDoc = doc;
-                }
-        );
+        request.get( {}, function ( doc ) { __myself.xslDoc = doc; } );
     }
 	
     // at least one callback required
@@ -558,7 +552,7 @@ pzHttpRequest.prototype =
 {
     get: function ( params, callback ) 
     {
-        this._send( 'GET', params, null, callback );
+        this._send( 'GET', params, '', callback );
     },
 
     post: function ( params, data, callback )
@@ -566,12 +560,21 @@ pzHttpRequest.prototype =
         this._send( 'POST', params, data, callback );
     },
 
+    load: function ()
+    {
+        this.async = false;
+        this.request.open( 'GET', this.url, this.async );
+        this.request.send('');
+        if ( this.request.status == 200 )
+            return this.request.responseXML;
+    },
+
     _send: function ( type, params, data, callback )
     {
         this.callback = callback;
         var context = this;
+        this.async = true;
         this.request.open( type, this._urlAppendParams(params), this.async );
-        //this.request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         this.request.onreadystatechange = function () {
             context._handleResponse();
         }
