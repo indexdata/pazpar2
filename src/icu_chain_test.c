@@ -415,9 +415,8 @@ static void print_info(const struct config_t *p_config)
 
 static void process_text_file(const struct config_t *p_config)
 {
-    char * line = 0;
-    size_t line_cap = 0;
-    ssize_t line_len;
+    char *line = 0;
+    char linebuf[1024];
  
     xmlDoc *doc = xmlParseFile(config.conffile);  
     xmlNode *xml_node = xmlDocGetRootElement(doc);
@@ -441,7 +440,8 @@ static void process_text_file(const struct config_t *p_config)
                 "<tokens>\n");
     
     // read input lines for processing
-    while ((line_len = getline(&line, &line_cap, config.infile)) != -1) {
+    while ((line=fgets(linebuf, sizeof(linebuf)-1, config.infile)))
+    {
         success = icu_chain_assign_cstr(config.chain, line, &status);
         line_count++;
 
