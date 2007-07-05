@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.14 2007-07-05 18:40:24 adam Exp $
+/* $Id: client.c,v 1.15 2007-07-05 18:46:03 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -497,9 +497,7 @@ void client_init_response(struct client *cl, Z_APDU *a)
     yaz_log(YLOG_DEBUG, "Init response %s", cl->database->database->url);
 
     if (*r->result)
-    {
 	cl->state = Client_Idle;
-    }
     else
         cl->state = Client_Failed; // FIXME need to do something to the connection
 }
