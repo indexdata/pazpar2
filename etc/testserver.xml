@@ -1,7 +1,7 @@
-<settings target="localhost:9999/Slow">
+<settings target="localhost:9999/Default">
 
   <!-- Simple test against a local test server (could be yaz-ztest) -->
-  <!-- $Id: testserver.xml,v 1.3 2007-06-19 12:19:30 adam Exp $ -->
+  <!-- $Id: testserver.xml,v 1.4 2007-07-05 19:39:50 quinn Exp $ -->
 
   <set name="pz:name" value="Local Test"/>
 
