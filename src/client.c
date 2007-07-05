@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.13 2007-07-03 11:21:48 adam Exp $
+/* $Id: client.c,v 1.14 2007-07-05 18:40:24 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -284,26 +284,19 @@ static void client_show_raw_cancel(struct client *cl)
     }
 }
 
-void client_send_raw_present(struct client *cl)
+static void client_present_syntax(Z_APDU *a, const char *syntax)
 {
-    Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_presentRequest);
-    int toget = 1;
-    int start = cl->show_raw->position;
-
-    assert(cl->show_raw);
-
-    yaz_log(YLOG_DEBUG, "%s: trying to present %d record(s) from %d",
-            client_get_url(cl), toget, start);
-
-    a->u.presentRequest->resultSetStartPoint = &start;
-    a->u.presentRequest->numberOfRecordsRequested = &toget;
-
-    if (cl->show_raw->syntax)  // syntax is optional
+    // empty string for syntax OMITS preferredRecordSyntax (OPTIONAL)
+    if (syntax && *syntax)
         a->u.presentRequest->preferredRecordSyntax =
             yaz_string_to_oid_odr(yaz_oid_std(),
-                                  CLASS_RECSYN, cl->show_raw->syntax,
+                                  CLASS_RECSYN, syntax,
                                   global_parameters.odr_out);
-    if (cl->show_raw->esn)  // element set is optional
+}
+
+static void client_present_elements(Z_APDU *a, const char *elements)
+{
+    if (elements && *elements)  // element set is optional
     {
         Z_ElementSetNames *elementSetNames =
             odr_malloc(global_parameters.odr_out, sizeof(*elementSetNames));
@@ -316,8 +309,39 @@ void client_send_raw_present(struct client *cl)
 
         elementSetNames->which = Z_ElementSetNames_generic;
         elementSetNames->u.generic = 
-            odr_strdup(global_parameters.odr_out, cl->show_raw->esn);
+            odr_strdup(global_parameters.odr_out, elements);
     }
+}
+
+void client_send_raw_present(struct client *cl)
+{
+    struct session_database *sdb = client_get_database(cl);
+    Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_presentRequest);
+    int toget = 1;
+    int start = cl->show_raw->position;
+    const char *syntax = 0;
+    const char *elements = 0;
+
+    assert(cl->show_raw);
+
+    yaz_log(YLOG_DEBUG, "%s: trying to present %d record(s) from %d",
+            client_get_url(cl), toget, start);
+
+    a->u.presentRequest->resultSetStartPoint = &start;
+    a->u.presentRequest->numberOfRecordsRequested = &toget;
+
+    if (cl->show_raw->syntax)
+        syntax = cl->show_raw->syntax;
+    else
+        syntax = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
+
+    client_present_syntax(a, syntax);
+    if (cl->show_raw->esn)
+        elements = cl->show_raw->esn;
+    else
+        elements = session_setting_oneval(sdb, PZ_ELEMENTS);
+    client_present_elements(a, elements);
+
     if (send_apdu(cl, a) >= 0)
     {
         cl->show_raw->active = 1;
@@ -337,7 +361,8 @@ void client_send_present(struct client *cl)
     Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_presentRequest);
     int toget;
     int start = cl->records + 1;
-    char *recsyn;
+    const char *syntax = 0;
+    const char *elements = 0;
 
     toget = global_parameters.chunk;
     if (toget > global_parameters.toget - cl->records)
@@ -351,13 +376,11 @@ void client_send_present(struct client *cl)
     a->u.presentRequest->resultSetStartPoint = &start;
     a->u.presentRequest->numberOfRecordsRequested = &toget;
 
-    if ((recsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX)))
-    {
-        a->u.presentRequest->preferredRecordSyntax =
-            yaz_string_to_oid_odr(yaz_oid_std(),
-                                  CLASS_RECSYN, recsyn,
-                                  global_parameters.odr_out);
-    }
+    syntax = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
+    client_present_syntax(a, syntax);
+
+    elements = session_setting_oneval(sdb, PZ_ELEMENTS);
+    client_present_elements(a, elements);
 
     if (send_apdu(cl, a) >= 0)
 	cl->state = Client_Presenting;
@@ -376,7 +399,6 @@ void client_send_search(struct client *cl)
     char **databaselist;
     Z_Query *zquery;
     int ssub = 0, lslb = 100000, mspn = 10;
-    char *recsyn = 0;
     char *piggyback = 0;
     char *queryenc = 0;
     yaz_iconv_t iconv = 0;
@@ -413,12 +435,24 @@ void client_send_search(struct client *cl)
     if (!(piggyback = session_setting_oneval(sdb, PZ_PIGGYBACK)) 
         || *piggyback == '1')
     {
-        if ((recsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX)))
+        const char *elements = session_setting_oneval(sdb, PZ_ELEMENTS);
+        const char *recsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
+        if (recsyn && *recsyn)
         {
             a->u.searchRequest->preferredRecordSyntax =
                 yaz_string_to_oid_odr(yaz_oid_std(),
                                       CLASS_RECSYN, recsyn,
                                       global_parameters.odr_out);
+        }
+        if (elements && *elements)
+        {
+            Z_ElementSetNames *esn =
+                odr_malloc(global_parameters.odr_out, sizeof(*esn));
+            esn->which = Z_ElementSetNames_generic;
+            esn->u.generic = odr_strdup(global_parameters.odr_out, elements);
+
+            a->u.searchRequest->smallSetElementSetNames = esn;
+            a->u.searchRequest->mediumSetElementSetNames = esn;
         }
         a->u.searchRequest->smallSetUpperBound = &ssub;
         a->u.searchRequest->largeSetLowerBound = &lslb;
