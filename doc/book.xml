@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: book.xml,v 1.22 2007-06-22 12:45:28 adam Exp $ -->
+<!-- $Id: book.xml,v 1.23 2007-07-06 20:15:06 adam Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -277,7 +277,7 @@
    <para>
     Index Data provides Debian packages for Pazpar2. These are prepared
     for Debian versions Etch and Lenny (as of 2007).
-    Theses packages are available at
+    These packages are available at
     <ulink url="&url.pazpar2.download.debian;"/>.
    </para>
   </section>
