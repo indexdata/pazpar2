@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2_protocol.xml,v 1.13 2007-07-03 13:02:32 adam Exp $ -->
+<!-- $Id: pazpar2_protocol.xml,v 1.14 2007-07-06 20:13:22 adam Exp $ -->
 <refentry id="pazpar2_protocol">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -322,7 +322,9 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
   <refsect2 id="command-record">
    <title>record</title>
    <para>
-    Retrieves a detailed record. Parameters:
+    Retrieves a detailed record. Unlike the 
+    <link linkend="command-show">show</link> command, this command 
+    returns metadata records before merging takes place. Parameters:
 
     <variablelist>
      <varlistentry>
@@ -343,6 +345,50 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
 	</para>
       </listitem>
      </varlistentry>
+
+     <varlistentry>
+      <term>offset</term>
+      <listitem>
+       <para>
+	This optional parameter is an integer which, when given, makes
+	Pazpar2 return the raw record for a target. The raw record
+	from first target is numbered 0, second numbered 1, etc.
+	When a raw record is returned Pazpar2 will XSLT transform the
+	record but an XML version is returned. All ISO2709 records are
+	returned as MARCXML. OPAC records are returned as YAZ'
+	OPAC with an MARCXML sibling.
+       </para>
+       <para>
+	When offset is not given the Pazpar2 metadata for the record
+	is returned and with metadata for each targets' data specified
+	in a 'location' list.
+       </para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term>syntax</term>
+      <listitem>
+       <para>
+	This optional parameter is the record syntax used for raw 
+	transfer (i.e. when offset is specified). If syntax is not given,
+	but offset is used, the value of pz:requestsyntax is used.
+       </para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term>esn</term>
+      <listitem>
+       <para>
+	This optional parameter is the element set name used to retrieval
+	of a raw record (i.e. when offset is specified).
+	If esn is not given, but offset is used, the value of pz:elements
+	is used.
+       </para>
+      </listitem>
+     </varlistentry>
+
     </variablelist>
    </para>
    <para> 
@@ -460,7 +506,7 @@ Output:
    <para> 
     Example:
     <screen><![CDATA[
-search.pz2?session=605047297&command=record&id=3
+search.pz2?session=605047297&command=bytarget&id=3
 ]]></screen>
 
     Example output:
@@ -486,6 +532,22 @@ search.pz2?session=605047297&command=record&id=3
    </para>
   </refsect2>
 
+ </refsect1>
+ <refsect1><title>SEE ALSO</title>
+  <para>
+   Pazpar2:
+   <citerefentry>
+    <refentrytitle>pazpar2</refentrytitle>
+    <manvolnum>8</manvolnum>
+   </citerefentry>
+  </para>
+  <para>
+   Pazpar2 Configuration:
+   <citerefentry>
+    <refentrytitle>pazpar2_conf</refentrytitle>
+    <manvolnum>5</manvolnum>
+   </citerefentry>
+  </para>
  </refsect1>
 </refentry>
 
