@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.48 2007-07-04 12:07:49 adam Exp $
+/* $Id: logic.c,v 1.49 2007-07-06 14:31:06 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -169,6 +169,18 @@ xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec)
                     db->url);
             return 0;
         }
+    }
+    else if (rec->which == Z_External_OPAC)
+    {
+        /* OPAC gets converted to XML too */
+        WRBUF wrbuf_opac = wrbuf_alloc();
+        yaz_display_OPAC(wrbuf_opac, rec->u.opac, 0);
+
+        rdoc = xmlParseMemory((char*) wrbuf_buf(wrbuf_opac),
+                              wrbuf_len(wrbuf_opac));
+        if (!rdoc)
+            yaz_log(YLOG_WARN, "Unable to parse OPAC XML");
+        wrbuf_destroy(wrbuf_opac);
     }
     else if (oid && yaz_oid_is_iso2709(oid))
     {
