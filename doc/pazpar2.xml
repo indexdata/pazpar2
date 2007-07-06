@@ -8,7 +8,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2.xml,v 1.7 2007-06-22 13:18:23 adam Exp $ -->
+<!-- $Id: pazpar2.xml,v 1.8 2007-07-06 20:12:22 adam Exp $ -->
 <refentry id="pazpar2">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -134,11 +134,41 @@
  </refsect1>
  
  <refsect1><title>EXAMPLES</title>
-  <para>None yet</para>
+  <para>The Debian package of pazpar2 starts the server with:
+   <screen>
+    pazpar2 -D -f /etc/pazpar2/pazpar2.cfg -l /var/log/pazpar2.log -p /var/run/pazpar2.pid -u nobody
+   </screen>
+   (one line). 
+  </para>
+  <para>
+   This will put pazpar2 in the background (-D), read config from from
+   <filename>/etc/pazpar2/pazpar2.cfg</filename>, log messages to
+   <filename>/var/log/pazpar2.log</filename>, create PID file with in
+   <filename>/var/run/pazpar2.pid</filename>. When the daemon is properly
+   started, the server will change effective user ID to nobody.
+  </para>
+  <para>
+   The server can be terminated with:
+   <screen>
+    kill `cat /var/run/pazpar2.pid`
+   </screen>
+  </para>
+  <para>
+   If Pazpar2 is to be debugged using GDB, we use option -X:
+   <screen>
+    cd pazpar2/src
+    gdb ./pazpar2
+    (gdb) run -X -f ../etc/pazpar2.cfg
+   </screen>
+  </para>
  </refsect1> 
  
  <refsect1><title>FILES</title>
-  <para></para>
+  <para><filename>/usr/sbin/pazpar2</filename>: pazpar2 daemon</para>
+
+  <para><filename>/usr/share/pazpar2</filename>: pazpar2 shared files</para>
+
+  <para><filename>/etc/pazpar2</filename>: pazpar2 config area</para>
  </refsect1>
  
  <refsect1><title>SEE ALSO</title>
@@ -150,7 +180,7 @@
    </citerefentry>
   </para>
   <para>
-   Pazpar2 protocol:.
+   Pazpar2 protocol:
    <citerefentry>
     <refentrytitle>pazpar2_protocol</refentrytitle>
     <manvolnum>7</manvolnum>
