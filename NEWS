@@ -1,3 +1,5 @@
+Fixes for compilation on cygwin.
+
 Z39.50 client code uses pz:elements. pz:elements was recognized in
 earlier Pazpar2 versions but it was not used for anything.
 

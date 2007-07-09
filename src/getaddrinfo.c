@@ -1,4 +1,4 @@
-/* $Id: getaddrinfo.c,v 1.5 2007-04-23 21:05:23 adam Exp $
+/* $Id: getaddrinfo.c,v 1.6 2007-07-09 20:00:41 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -54,7 +54,11 @@ void perform_getaddrinfo(struct work *w)
 {
     int res = 0;
     char *port;
+#if HAVE_GETADDRINFO
     struct addrinfo *addrinfo, hints;
+#else
+    struct hostent *hp;
+#endif
     char *hostport = xstrdup(w->hostport);
     
     if ((port = strchr(hostport, ':')))
@@ -62,6 +66,7 @@ void perform_getaddrinfo(struct work *w)
     else
         port = "210";
     
+#if HAVE_GETADDRINFO
     hints.ai_flags = 0;
     hints.ai_family = PF_INET;
     hints.ai_socktype = SOCK_STREAM;
@@ -90,6 +95,24 @@ void perform_getaddrinfo(struct work *w)
         w->ipport = xstrdup(ipport);
         yaz_log(log_level, "Resolved %s -> %s", hostport, ipport);
     }
+#else
+    hp = gethostbyname(hostport);
+    if (!hp)
+    {
+        yaz_log(YLOG_WARN|YLOG_ERRNO, "Failed to resolve %s", hostport);
+    }
+    else
+    {
+        char ipport[128];
+        unsigned char addrbuf[4];
+
+        memcpy(addrbuf, *hp->h_addr_list, 4 * sizeof(unsigned char));
+        sprintf(ipport, "%u.%u.%u.%u:%s",
+                addrbuf[0], addrbuf[1], addrbuf[2], addrbuf[3], port);
+        w->ipport = xstrdup(ipport);
+        yaz_log(log_level, "Resolved %s -> %s", hostport, ipport);
+    }
+#endif
     xfree(hostport);
 }
 
