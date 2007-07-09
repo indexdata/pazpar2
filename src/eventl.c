@@ -1,4 +1,4 @@
-/* $Id: eventl.c,v 1.6 2007-04-20 11:43:43 adam Exp $
+/* $Id: eventl.c,v 1.7 2007-07-09 19:30:35 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -42,6 +42,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #else
 #include <unistd.h>
 #endif
+#include <sys/time.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
