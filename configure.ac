@@ -3,7 +3,7 @@
 
 # Autoconf and automake setup
 AC_PREREQ(2.59)
-AC_INIT([pazpar2],[1.0.1],[pazpar2-help@indexdata.dk])
+AC_INIT([pazpar2],[1.0.2],[pazpar2-help@indexdata.dk])
 
 AC_CONFIG_HEADERS(src/cconfig.h)
 
@@ -24,6 +24,7 @@ if test -z "$YAZLIB"; then
 fi
 YAZ_DOC
 
+AC_CHECK_FUNCS([getaddrinfo])
 AC_CHECK_ICU(3.6, [], 
     AC_MSG_WARN([For ICU internationalizing support please install libicu36-dev or similar]))
 
