@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.44 2007-07-04 12:33:51 jakub Exp $
+** $Id: pz2.js,v 1.45 2007-07-10 10:17:17 adam Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -358,8 +358,6 @@ pz2.prototype =
 	var recordParams = { "command": "record", "session": __myself.sessionID, "id": __myself.currRecID };
 	if (offset !== undefined) {
 		recordParams["offset"] = offset;
-		recordParams["syntax"] = "usmarc";
-		recordParams["esn"] = "F";
 	}
 	__myself.currRecOffset = offset;
         request.get(
