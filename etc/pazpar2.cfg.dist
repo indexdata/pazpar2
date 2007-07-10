@@ -12,6 +12,7 @@
     <metadata name="isbn"/>
     <metadata name="date" brief="yes" sortkey="numeric" type="year" merge="range"
 	    termlist="yes"/>
+    <metadata name="citation"/>
     <metadata name="author" brief="yes" termlist="yes" merge="longest" rank="2"/>
     <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
     <metadata name="id"/>
@@ -19,7 +20,5 @@
     <metadata name="description" merge="longest" rank="3"/>
   </service>
 </server>
-
-<targetprofiles type="local" src="../zeerex/records/"/>
 
 </pazpar2>

@@ -1,5 +1,5 @@
 <settings target="*">
-  <!-- $Id: edu.xml,v 1.2 2007-06-19 12:18:50 adam Exp $ -->
+  <!-- $Id: edu.xml,v 1.3 2007-07-10 13:43:07 adam Exp $ -->
   <!-- based on edu.pz -->
   <set target="acorn.library.vanderbilt.edu:2200/ACORN" name="pz:name" value="Vanderbilt U"/>
   <set target="advance.biblio.polymtl.ca:210/ADVANCE" name="pz:name" value="Ecole Polytechnique Montreal"/>
@@ -67,7 +67,7 @@
   <!-- Retrieval settings -->
 
   <set name="pz:requestsyntax" value="marc21"/>
-  <!-- <set name="pz:elements" value="F"/> NOT YET IMPLEMENTED -->
+  <set name="pz:elements" value="F"/>
 
   <!-- Result normalization settings -->
 
