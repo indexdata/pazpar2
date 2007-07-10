@@ -1,4 +1,4 @@
-## $Id: Makefile.am,v 1.6 2007-07-10 09:40:06 adam Exp $
+## $Id: Makefile.am,v 1.7 2007-07-10 09:44:00 adam Exp $
 ## docdir=$(datadir)/doc/@PACKAGE@
 
 SUBDIRS = common
@@ -73,5 +73,5 @@ install-data-hook:
 	done
 
 uninstall-hook:
-	rm -r $(DESTDIR)/$(docdir)
+	rm -r $(DESTDIR)$(docdir)
 
