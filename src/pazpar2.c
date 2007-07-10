@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.91 2007-06-18 12:37:39 adam Exp $
+/* $Id: pazpar2.c,v 1.92 2007-07-10 09:19:32 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
     int ret;
     int log_file_in_use = 0;
     char *arg;
-    const char *pidfile = "pazpar2.pid";
+    const char *pidfile = 0;
     const char *uid = 0;
 
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)

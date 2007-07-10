@@ -2,4 +2,3 @@
 *.dif
 Makefile
 Makefile.in
-pazpar2.pid
