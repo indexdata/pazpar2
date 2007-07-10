@@ -1,7 +1,7 @@
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: defaults.xml,v 1.6 2007-07-03 11:41:22 adam Exp $ -->
+  <!-- $Id: defaults.xml,v 1.7 2007-07-10 10:20:56 adam Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
@@ -18,7 +18,7 @@
   <!-- Retrieval settings -->
 
   <set name="pz:requestsyntax" value="marc21"/>
-  <!-- <set name="pz:elements" value="F"/> NOT YET IMPLEMENTED -->
+  <set name="pz:elements" value="F"/>
 
   <!-- Result normalization settings -->
 
