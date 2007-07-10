@@ -8,7 +8,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2.xml,v 1.8 2007-07-06 20:12:22 adam Exp $ -->
+<!-- $Id: pazpar2.xml,v 1.9 2007-07-10 09:18:49 adam Exp $ -->
 <refentry id="pazpar2">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -143,7 +143,7 @@
   <para>
    This will put pazpar2 in the background (-D), read config from from
    <filename>/etc/pazpar2/pazpar2.cfg</filename>, log messages to
-   <filename>/var/log/pazpar2.log</filename>, create PID file with in
+   <filename>/var/log/pazpar2.log</filename>, create PID file
    <filename>/var/run/pazpar2.pid</filename>. When the daemon is properly
    started, the server will change effective user ID to nobody.
   </para>
