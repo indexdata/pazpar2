@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.49 2007-07-06 14:31:06 adam Exp $
+/* $Id: logic.c,v 1.50 2007-07-11 19:41:40 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -934,6 +934,30 @@ void pazpar2_event_loop()
     event_loop(&channel_list);
 }
 
+static struct record_metadata *record_metadata_init(
+    NMEM nmem, char *value, enum conf_metadata_type type)
+{
+    struct record_metadata *rec_md = record_metadata_create(nmem);
+    if (type == Metadata_type_generic)
+    {
+        char * p = value;
+        p = normalize7bit_generic(p, " ,/.:([");
+        
+        rec_md->data.text = nmem_strdup(nmem, p);
+    }
+    else if (type == Metadata_type_year)
+    {
+        int first, last;
+        if (extract7bit_years((char *) value, &first, &last) < 0)
+            return 0;
+        rec_md->data.number.min = first;
+        rec_md->data.number.max = last;
+    }
+    else
+        return 0;
+    return rec_md;
+}
+
 struct record *ingest_record(struct client *cl, Z_External *rec,
                              int record_no)
 {
@@ -1001,7 +1025,6 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             struct record_metadata *rec_md = 0;
             int md_field_id = -1;
             int sk_field_id = -1;
-            int first, last;
 
             type = xmlGetProp(n, (xmlChar *) "type");
             value = xmlNodeListGetString(xdoc, n->children, 1);
@@ -1025,37 +1048,22 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 ser_sk = &service->sortkeys[sk_field_id];
             }
 
-            // Find out where we are putting it - based on merge or not
-            if (ser_md->merge == Metadata_merge_no)
-                wheretoput = &record->metadata[md_field_id];
-            else
-                wheretoput = &cluster->metadata[md_field_id];
-            
-            // create new record_metadata
-            rec_md = record_metadata_create(se->nmem);
-
-            // and polulate with data:
-            // type based charmapping decisions follow here
-            if (ser_md->type == Metadata_type_generic)
+            // non-merged metadata
+            rec_md = record_metadata_init(se->nmem, (char *) value,
+                                          ser_md->type);
+            if (!rec_md)
             {
-
-                char * p = (char *) value;
-                p = normalize7bit_generic(p, " ,/.:([");
-                
-                rec_md->data.text = nmem_strdup(se->nmem, p);
-
-            }
-            else if (ser_md->type == Metadata_type_year)
-            {
-                if (extract7bit_years((char *) value, &first, &last) < 0)
-                    continue;
-            }
-            else
-            {
-                yaz_log(YLOG_WARN, 
-                        "Unknown type in metadata element %s", type);
+                yaz_log(YLOG_WARN, "bad metadata data '%s' for element '%s'",
+                        value, type);
                 continue;
             }
+            rec_md->next = record->metadata[md_field_id];
+            record->metadata[md_field_id] = rec_md;
+
+            // merged metadata
+            rec_md = record_metadata_init(se->nmem, (char *) value,
+                                          ser_md->type);
+            wheretoput = &cluster->metadata[md_field_id];
 
             // and polulate with data:
             // assign cluster or record based on merge action
@@ -1092,8 +1100,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                     }
                 }
             }
-            else if (ser_md->merge == Metadata_merge_all 
-                     || ser_md->merge == Metadata_merge_no)
+            else if (ser_md->merge == Metadata_merge_all)
             {
                 rec_md->next = *wheretoput;
                 *wheretoput = rec_md;
@@ -1103,18 +1110,18 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 if (!*wheretoput)
                 {
                     *wheretoput = rec_md;
-                    (*wheretoput)->data.number.min = first;
-                    (*wheretoput)->data.number.max = last;
                     if (ser_sk)
                         cluster->sortkeys[sk_field_id] 
                             = &rec_md->data;
                 }
                 else
                 {
-                    if (first < (*wheretoput)->data.number.min)
-                        (*wheretoput)->data.number.min = first;
-                    if (last > (*wheretoput)->data.number.max)
-                        (*wheretoput)->data.number.max = last;
+                    int this_min = rec_md->data.number.min;
+                    int this_max = rec_md->data.number.max;
+                    if (this_min < (*wheretoput)->data.number.min)
+                        (*wheretoput)->data.number.min = this_min;
+                    if (this_max > (*wheretoput)->data.number.max)
+                        (*wheretoput)->data.number.max = this_max;
                 }
 #ifdef GAGA
                 if (ser_sk)
@@ -1139,11 +1146,11 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                 if (ser_md->type == Metadata_type_year)
                 {
                     char year[64];
-                    sprintf(year, "%d", last);
+                    sprintf(year, "%d", rec_md->data.number.max);
                     add_facet(se, (char *) type, year);
-                    if (first != last)
+                    if (rec_md->data.number.max != rec_md->data.number.min)
                     {
-                        sprintf(year, "%d", first);
+                        sprintf(year, "%d", rec_md->data.number.min);
                         add_facet(se, (char *) type, year);
                     }
                 }
