@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.45 2007-07-10 10:17:17 adam Exp $
+** $Id: pz2.js,v 1.46 2007-07-12 11:49:20 sondberg Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -346,8 +346,17 @@ pz2.prototype =
             }
         );
     },
-    record: function(id,offset)
+    record: function(id,offset, params)
     {
+        if ( params == undefined )
+            params = {};
+
+        if ( params.callback != undefined ) {
+            callback = params.callback;
+        } else {
+            callback = __myself.recordCallback;
+        }
+
         if( !__myself.searchStatusOK && __myself.useSessions)
             return;
 
@@ -359,6 +368,11 @@ pz2.prototype =
 	if (offset !== undefined) {
 		recordParams["offset"] = offset;
 	}
+
+        if (params.syntax != undefined) {
+            recordParams['syntax'] = params.syntax;
+        }
+
 	__myself.currRecOffset = offset;
         request.get(
 	    recordParams,
@@ -368,7 +382,7 @@ pz2.prototype =
                 record['xmlDoc'] = data;
 		if (__myself.currRecOffset !== undefined) {
                     record['offset'] = __myself.currRecOffset;
-                    __myself.recordCallback(record);
+                    callback(record);
                 } else if ( recordNode = data.getElementsByTagName("record")[0] ) {
                     // if stylesheet was fetched do not parse the response
                     if ( __myself.xslDoc ) {
@@ -404,7 +418,7 @@ pz2.prototype =
                         }
                     }
                     
-                    __myself.recordCallback(record);
+                    callback(record);
                 }
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
