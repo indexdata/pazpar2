@@ -1,4 +1,4 @@
-/* $Id: connection.c,v 1.6 2007-07-03 11:21:48 adam Exp $
+/* $Id: connection.c,v 1.7 2007-07-12 08:01:06 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -145,7 +145,6 @@ static void connection_handler(IOCHAN i, int event)
         se = client_get_session(cl);
     else
     {
-        yaz_log(YLOG_WARN, "Destroying orphan connection");
         connection_destroy(co);
         return;
     }
