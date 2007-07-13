@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.15 2007-07-05 18:46:03 adam Exp $
+/* $Id: client.c,v 1.16 2007-07-13 13:16:57 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -249,9 +249,13 @@ int client_show_raw_begin(struct client *cl, int position,
         cl->show_raw->esn = 0;
     
 
-    if (cl->state == Client_Failed || cl->state == Client_Disconnected)
+    if (cl->state == Client_Failed)
     {
-        client_show_raw_error(cl, "not connected");
+        client_show_raw_error(cl, "client failed");
+    }
+    else if (cl->state == Client_Disconnected)
+    {
+        client_show_raw_error(cl, "client disconnected");
     }
     else
     {
