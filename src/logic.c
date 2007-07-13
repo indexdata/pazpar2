@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.50 2007-07-11 19:41:40 adam Exp $
+/* $Id: logic.c,v 1.51 2007-07-13 09:25:41 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -172,22 +172,33 @@ xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec)
     }
     else if (rec->which == Z_External_OPAC)
     {
-        /* OPAC gets converted to XML too */
-        WRBUF wrbuf_opac = wrbuf_alloc();
-        yaz_display_OPAC(wrbuf_opac, rec->u.opac, 0);
-
-        rdoc = xmlParseMemory((char*) wrbuf_buf(wrbuf_opac),
-                              wrbuf_len(wrbuf_opac));
-        if (!rdoc)
-            yaz_log(YLOG_WARN, "Unable to parse OPAC XML");
-        wrbuf_destroy(wrbuf_opac);
+        if (!sdb->yaz_marc)
+        {
+            yaz_log(YLOG_WARN, "MARC decoding not configured");
+            return 0;
+        }
+        else
+        {
+            /* OPAC gets converted to XML too */
+            WRBUF wrbuf_opac = wrbuf_alloc();
+            /* MARCXML inside the OPAC XML. Charset is in effect because we
+               use the yaz_marc handle */
+            yaz_marc_xml(sdb->yaz_marc, YAZ_MARC_MARCXML);
+            yaz_opac_decode_wrbuf(sdb->yaz_marc, rec->u.opac, wrbuf_opac);
+            
+            rdoc = xmlParseMemory((char*) wrbuf_buf(wrbuf_opac),
+                                  wrbuf_len(wrbuf_opac));
+            if (!rdoc)
+                yaz_log(YLOG_WARN, "Unable to parse OPAC XML");
+            wrbuf_destroy(wrbuf_opac);
+        }
     }
     else if (oid && yaz_oid_is_iso2709(oid))
     {
         /* ISO2709 gets converted to MARCXML */
         if (!sdb->yaz_marc)
         {
-            yaz_log(YLOG_FATAL, "Unable to handle ISO2709 record");
+            yaz_log(YLOG_WARN, "MARC decoding not configured");
             return 0;
         }
         else
