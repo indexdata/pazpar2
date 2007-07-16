@@ -8,7 +8,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2.xml,v 1.9 2007-07-10 09:18:49 adam Exp $ -->
+<!-- $Id: pazpar2.xml,v 1.10 2007-07-16 08:58:12 adam Exp $ -->
 <refentry id="pazpar2">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -30,6 +30,7 @@
    <arg choice="opt"><option>-d</option></arg>
    <arg choice="opt"><option>-D</option></arg>
    <arg choice="opt"><option>-f <replaceable>config</replaceable></option></arg>
+   <arg choice="opt"><option>-h <replaceable>ip:port</replaceable></option></arg>
    <arg choice="opt"><option>-l <replaceable>logfile</replaceable></option></arg>
    <arg choice="opt"><option>-p <replaceable>pidfile</replaceable></option></arg>
    <arg choice="opt"><option>-t <replaceable>path</replaceable></option></arg>
@@ -58,8 +59,8 @@
     <term><option>-d</option></term>
     <listitem>
      <para>
-      Enables dump of XML records. It is useful if stylesheets are
-      being debugged.
+      Enables dump of normalized XML records to the current log file.
+      It is useful if stylesheets are being debugged.
      </para>
     </listitem>
    </varlistentry>
@@ -75,6 +76,17 @@
      <para>
       Specifies main configuration. This option must be specified
       in order for Pazpar2 to operate normally.
+     </para>
+    </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term><option>-h <replaceable>ip:port</replaceable></option></term>
+    <listitem>
+     <para>
+      Specifies the HTTP listener binding address.
+      The <replaceable>ip</replaceable>
+      may be a hostname or <literal>@</literal> for "any" address.
+      The <replaceable>port</replaceable> is an integer.
      </para>
     </listitem>
    </varlistentry>
