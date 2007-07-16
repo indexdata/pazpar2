@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: pazpar2.cfg.dist,v 1.13 2007-07-16 15:21:29 adam Exp $ -->
+<!-- $Id: pazpar2.cfg.dist,v 1.14 2007-07-16 16:43:45 adam Exp $ -->
 <pazpar2 xmlns="http://www.indexdata.com/pazpar2/1.0">
   
   <server>
@@ -48,7 +48,7 @@
 
       <metadata name="description" merge="longest" rank="3"/>
       <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
-      <metadata name="electronic-url"/>
+      <metadata name="electronic-url" merge="unique"/>
       <metadata name="electronic-text"/>
       <metadata name="electronic-note"/>
       <metadata name="citation"/>
