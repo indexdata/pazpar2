@@ -1,5 +1,5 @@
 /* A very simple client that shows a basic usage of the pz2.js
-** $Id: example_client.js,v 1.2 2007-06-22 10:54:46 adam Exp $
+** $Id: example_client.js,v 1.3 2007-07-16 09:39:56 adam Exp $
 */
 
 // create a parameters array and pass it to the pz2's constructor
@@ -62,11 +62,18 @@ function my_onshow(data) {
     
     for (var i = 0; i < data.hits.length; i++) {
         var hit = data.hits[i];
-        body.innerHTML += '<div class="record" id="rec_' + hit.recid + '" onclick="showDetails(this.id)">'
-                        +'<span>' + (i + 1 + recPerPage * ( curPage - 1)) + '. </span>'
-                        +'<span class="jslink"><b>' + hit["md-title"] +
-                        ' </b></span> by <span><i>' + hit["md-author"] + '</i></span></div>';
-
+	var html = '<div class="record" id="rec_' + hit.recid + '" onclick="showDetails(this.id)">'
+                    +'<span>' + (i + 1 + recPerPage * ( curPage - 1)) + '. </span>'
+                    +'<span class="jslink"><b>' + hit["md-title"] +
+                    ' </b></span>'; 
+	if (hit["md-title-remainder"] !== undefined) {
+	    html += '<span>' + hit["md-title-remainder"] + '</span>';
+	}
+	if (hit["md-title-responsibility"] !== undefined) {
+	    html += '<span><i>' + hit["md-title-responsibility"] + '</i></span>';
+	}
+	html += '</div>';
+	body.innerHTML += html;
         if ( hit.recid == curDetRecId ) {
             drawCurDetails();
         }
@@ -163,6 +170,7 @@ function drawCurDetails ()
                             '"><table><tr><td><b>Ttle</b></td><td><b>:</b> '+data["md-title"] +
                             "</td></tr><tr><td><b>Date</b></td><td><b>:</b> " + data["md-date"] +
                             "</td></tr><tr><td><b>Author</b></td><td><b>:</b> " + data["md-author"] +
+                            '</td></tr><tr><td><b>URL</b></td><td><b>:</b> <a href="' + data["md-url"] + '">' + data["md-url"] + '</a>' +
                             "</td></tr><tr><td><b>Subject</b></td><td><b>:</b> " + data["md-subject"] + 
                             "</td></tr><tr><td><b>Location</b></td><td><b>:</b> " + data["location"][0].name + 
                             "</td></tr></table></div>";

@@ -1,7 +1,7 @@
-5,7c5,6
-<   <listen port="9004"/>
-<   <proxy host="localhost:80"/>
-<   <settings src="../etc/settings"/>
+6,8c6,7
+<     <listen port="9004"/>
+<     <proxy host="localhost:80"/>
+<     <settings src="../etc/settings"/>
 ---
->   <listen port="8004"/>
->   <settings src="/etc/pazpar2/settings/edu.xml"/>
+>     <listen port="8004"/>
+>     <settings src="/etc/pazpar2/settings/edu.xml"/>
