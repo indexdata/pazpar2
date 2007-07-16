@@ -1,4 +1,4 @@
-/* $Id: record.h,v 1.10 2007-06-13 21:29:04 adam Exp $
+/* $Id: record.h,v 1.11 2007-07-16 17:01:46 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -108,7 +108,7 @@ struct record_cluster
     int relevance;
     int *term_frequency_vec;
     // Set-specific ID for this record
-    int recid; 
+    char *recid;
     struct record *records;
 };
 

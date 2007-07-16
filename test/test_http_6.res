@@ -1,5 +1,5 @@
 <record>
-<recid>0</recid>
+<recid>title how to program a computer author jack collins medium book</recid>
 
 <md-title>How to program a computer</md-title>
 <md-author>Jack Collins</md-author>

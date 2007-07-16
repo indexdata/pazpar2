@@ -1,5 +1,5 @@
 /* A very simple client that shows a basic usage of the pz2.js
-** $Id: example_client.js,v 1.3 2007-07-16 09:39:56 adam Exp $
+** $Id: example_client.js,v 1.4 2007-07-16 17:01:46 adam Exp $
 */
 
 // create a parameters array and pass it to the pz2's constructor
@@ -19,7 +19,7 @@ my_paz = new pz2( { "onshow": my_onshow,
 var curPage = 1;
 var recPerPage = 20;
 var totalRec = 0;
-var curDetRecId = -1;
+var curDetRecId = '';
 var curDetRecData = null;
 
 // wait until the DOM is ready
@@ -34,7 +34,7 @@ function domReady ()
 function onFormSubmitEventHandler() 
 {
     curPage = 1;
-    curDetRecId = -1;
+    curDetRecId = '';
     totalRec = 0;
     my_paz.search(document.search.query.value, recPerPage, 'relevance');
     return false;
@@ -142,7 +142,7 @@ function my_onbytarget(data) {
 
 // detailed record drawing
 function showDetails ( prefixRecId ) {
-    var recId = Number(prefixRecId.replace('rec_', ''));
+    var recId = prefixRecId.replace('rec_', '');
     
     // remove current detailed view if any
     var detRecordDiv = document.getElementById('det_'+curDetRecId);
@@ -152,7 +152,7 @@ function showDetails ( prefixRecId ) {
 
     // if the same clicked do not redraw
     if ( recId == curDetRecId ) {
-        curDetRecId = -1;
+        curDetRecId = '';
         return;
     }
 
@@ -170,7 +170,7 @@ function drawCurDetails ()
                             '"><table><tr><td><b>Ttle</b></td><td><b>:</b> '+data["md-title"] +
                             "</td></tr><tr><td><b>Date</b></td><td><b>:</b> " + data["md-date"] +
                             "</td></tr><tr><td><b>Author</b></td><td><b>:</b> " + data["md-author"] +
-                            '</td></tr><tr><td><b>URL</b></td><td><b>:</b> <a href="' + data["md-url"] + '">' + data["md-url"] + '</a>' +
+                            '</td></tr><tr><td><b>URL</b></td><td><b>:</b> <a href="' + data["md-electronic-url"] + '">' + data["md-electronic-url"] + '</a>' +
                             "</td></tr><tr><td><b>Subject</b></td><td><b>:</b> " + data["md-subject"] + 
                             "</td></tr><tr><td><b>Location</b></td><td><b>:</b> " + data["location"][0].name + 
                             "</td></tr></table></div>";

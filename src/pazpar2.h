@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.44 2007-06-28 09:36:10 adam Exp $
+/* $Id: pazpar2.h,v 1.45 2007-07-16 17:01:46 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -177,7 +177,7 @@ enum pazpar2_error_code search(struct session *s, char *query,
                                char *filter, const char **addinfo);
 struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, int start,
         int *num, int *total, int *sumhits, NMEM nmem_show);
-struct record_cluster *show_single(struct session *s, int id);
+struct record_cluster *show_single(struct session *s, const char *id);
 struct termlist_score **termlist(struct session *s, const char *name, int *num);
 int session_set_watch(struct session *s, int what, session_watchfun fun, void *data, struct http_channel *c);
 int session_active_clients(struct session *s);

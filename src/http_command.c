@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.56 2007-07-03 11:21:48 adam Exp $
+/* $Id: http_command.c,v 1.57 2007-07-16 17:01:46 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.56 2007-07-03 11:21:48 adam Exp $
+ * $Id: http_command.c,v 1.57 2007-07-16 17:01:46 adam Exp $
  */
 
 #include <stdio.h>
@@ -533,8 +533,6 @@ static void cmd_record(struct http_channel *c)
     const char *idstr = http_argbyname(rq, "id");
     const char *offsetstr = http_argbyname(rq, "offset");
     
-    int id;
-
     if (!s)
         return;
     if (!idstr)
@@ -543,8 +541,7 @@ static void cmd_record(struct http_channel *c)
         return;
     }
     wrbuf_rewind(c->wrbuf);
-    id = atoi(idstr);
-    if (!(rec = show_single(s->psession, id)))
+    if (!(rec = show_single(s->psession, idstr)))
     {
         error(rs, PAZPAR2_RECORD_MISSING, idstr);
         return;
@@ -582,7 +579,7 @@ static void cmd_record(struct http_channel *c)
     else
     {
         wrbuf_puts(c->wrbuf, "<record>\n");
-        wrbuf_printf(c->wrbuf, "<recid>%d</recid>\n", rec->recid);
+        wrbuf_printf(c->wrbuf, "<recid>%s</recid>\n", rec->recid);
         write_metadata(c->wrbuf, service, rec->metadata, 1);
         for (r = rec->records; r; r = r->next)
             write_subrecord(r, c->wrbuf, service, 1);
@@ -650,7 +647,7 @@ static void show_records(struct http_channel *c, int active)
             write_subrecord(p, c->wrbuf, service, 0); // subrecs w/o details
         if (ccount > 1)
             wrbuf_printf(c->wrbuf, "<count>%d</count>\n", ccount);
-        wrbuf_printf(c->wrbuf, "<recid>%d</recid>\n", rec->recid);
+        wrbuf_printf(c->wrbuf, "<recid>%s</recid>\n", rec->recid);
         wrbuf_puts(c->wrbuf, "</hit>\n");
     }
 

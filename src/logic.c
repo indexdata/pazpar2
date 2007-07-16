@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.53 2007-07-16 09:09:56 adam Exp $
+/* $Id: logic.c,v 1.54 2007-07-16 17:01:46 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -797,13 +797,13 @@ void report_nmem_stats(void)
 }
 #endif
 
-struct record_cluster *show_single(struct session *s, int id)
+struct record_cluster *show_single(struct session *s, const char *id)
 {
     struct record_cluster *r;
 
     reclist_rewind(s->reclist);
     while ((r = reclist_read_record(s->reclist)))
-        if (r->recid == id)
+        if (!strcmp(r->recid, id))
             return r;
     return 0;
 }
@@ -1016,7 +1016,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                              record, (char *) mergekey_norm, 
                              &se->total_merged);
     if (global_parameters.dump_records)
-        yaz_log(YLOG_LOG, "Cluster id %d from %s (#%d)", cluster->recid,
+        yaz_log(YLOG_LOG, "Cluster id %s from %s (#%d)", cluster->recid,
                 client_get_database(cl)->database->url, record_no);
     if (!cluster)
     {

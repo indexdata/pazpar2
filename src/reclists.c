@@ -1,4 +1,4 @@
-/* $Id: reclists.c,v 1.18 2007-07-02 20:55:50 adam Exp $
+/* $Id: reclists.c,v 1.19 2007-07-16 17:01:46 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -268,7 +268,7 @@ struct reclist *reclist_create(NMEM nmem, int numrecs)
 struct record_cluster *reclist_insert( struct reclist *l,
                                        struct conf_service *service, 
                                        struct record  *record,
-                                       const char *merge_key, int *total)
+                                       char *merge_key, int *total)
 {
     unsigned int bucket;
     struct reclist_bucket **p;
@@ -305,10 +305,11 @@ struct record_cluster *reclist_insert( struct reclist *l,
         new->record = newc;
         new->next = 0;
         newc->records = record;
-        newc->merge_key = (char *) merge_key;
+        newc->merge_key = merge_key;
         newc->relevance = 0;
         newc->term_frequency_vec = 0;
-        newc->recid = (*total)++;
+        newc->recid = merge_key;
+        (*total)++;
         newc->metadata = nmem_malloc(l->nmem,
                 sizeof(struct record_metadata*) * service->num_metadata);
         memset(newc->metadata, 0, 
