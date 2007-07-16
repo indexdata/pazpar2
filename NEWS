@@ -1,3 +1,5 @@
+Option -d dumps records to the current log file instead of stderr.
+
 Fixes for compilation on cygwin.
 
 Z39.50 client code uses pz:elements. pz:elements was recognized in
