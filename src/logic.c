@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.52 2007-07-16 09:00:22 adam Exp $
+/* $Id: logic.c,v 1.53 2007-07-16 09:09:56 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -248,7 +248,7 @@ xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec)
         FILE *lf = yaz_log_file();
         if (lf)
         {
-            yaz_log(YLOG_LOG, "Normalized record from %s", db->url);
+            yaz_log(YLOG_LOG, "Un-normalized record from %s", db->url);
 #if LIBXML_VERSION >= 20600
             xmlDocFormatDump(lf, rdoc, 1);
 #else
@@ -288,13 +288,19 @@ xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec)
         }
         if (global_parameters.dump_records)
         {
-            fprintf(stderr, "Record from %s\n----------------\n", 
-                    sdb->database->url);
+            FILE *lf = yaz_log_file();
+            
+            if (lf)
+            {
+                yaz_log(YLOG_LOG, "Normalized record from %s", 
+                        sdb->database->url);
 #if LIBXML_VERSION >= 20600
-            xmlDocFormatDump(stderr, rdoc, 1);
+                xmlDocFormatDump(lf, rdoc, 1);
 #else
-            xmlDocDump(stderr, rdoc);
+                xmlDocDump(lf, rdoc);
 #endif
+                fprintf(lf, "\n");
+            }
         }
     }
     return rdoc;
