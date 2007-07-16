@@ -8,7 +8,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2.xml,v 1.10 2007-07-16 08:58:12 adam Exp $ -->
+<!-- $Id: pazpar2.xml,v 1.11 2007-07-16 09:10:05 adam Exp $ -->
 <refentry id="pazpar2">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -59,7 +59,7 @@
     <term><option>-d</option></term>
     <listitem>
      <para>
-      Enables dump of normalized XML records to the current log file.
+      Enables dump of XML records to the current log file.
       It is useful if stylesheets are being debugged.
      </para>
     </listitem>
