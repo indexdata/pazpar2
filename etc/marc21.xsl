@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: marc21.xsl,v 1.14 2007-07-16 09:39:55 adam Exp $ -->
+<!-- $Id: marc21.xsl,v 1.15 2007-07-16 15:21:29 adam Exp $ -->
 <xsl:stylesheet
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -13,13 +13,42 @@
 -->  
   
   <xsl:template match="/marc:record">
-    <pz:record>
+    <xsl:variable name="title_medium" select="marc:datafield[@tag='245']/marc:subfield[@code='h']"/>
+    <xsl:variable name="journal_title" select="marc:datafield[@tag='773']/marc:subfield[@code='t']"/>
+    <xsl:variable name="electronic_location_url" select="marc:datafield[@tag='856']/marc:subfield[@code='u']"/>
+    <xsl:variable name="fulltext_a" select="marc:datafield[@tag='900']/marc:subfield[@code='a']"/>
+    <xsl:variable name="fulltext_b" select="marc:datafield[@tag='900']/marc:subfield[@code='b']"/>
+    <xsl:variable name="medium">
+      <xsl:choose>
+	<xsl:when test="$title_medium">
+	  <xsl:value-of select="substring-after(substring-before($title_medium,']'),'[')"/>
+	</xsl:when>
+	<xsl:when test="$fulltext_a">
+	  <xsl:text>electronic resource</xsl:text>
+	</xsl:when>
+	<xsl:when test="$fulltext_b">
+	  <xsl:text>electronic resource</xsl:text>
+	</xsl:when>
+	<xsl:when test="$electronic_location_url">
+	  <xsl:text>electronic resource</xsl:text>
+	</xsl:when>
+	<xsl:when test="$journal_title">
+	  <xsl:text>article</xsl:text>
+	</xsl:when>
+	<xsl:otherwise>
+	  <xsl:text>book</xsl:text>
+	</xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
 
+    <pz:record>
       <xsl:attribute name="mergekey">
         <xsl:text>title </xsl:text>
 	<xsl:value-of select="marc:datafield[@tag='245']/marc:subfield[@code='a']"/>
 	<xsl:text> author </xsl:text>
 	<xsl:value-of select="marc:datafield[@tag='100']/marc:subfield[@code='a']"/>
+	<xsl:text> medium </xsl:text>
+	<xsl:value-of select="$medium"/>
       </xsl:attribute>
 
       <xsl:for-each select="marc:controlfield[@tag='001']">
@@ -176,8 +205,14 @@
       </xsl:for-each>
 
       <xsl:for-each select="marc:datafield[@tag='856']">
-	<pz:metadata type="url">
+	<pz:metadata type="electronic-url">
 	  <xsl:value-of select="marc:subfield[@code='u']"/>
+	</pz:metadata>
+	<pz:metadata type="electronic-text">
+	  <xsl:value-of select="marc:subfield[@code='y']"/>
+	</pz:metadata>
+	<pz:metadata type="electronic-note">
+	  <xsl:value-of select="marc:subfield[@code='z']"/>
 	</pz:metadata>
       </xsl:for-each>
 
@@ -190,6 +225,21 @@
 	</pz:metadata>
       </xsl:for-each>
 
+      <pz:metadata type="medium">
+	<xsl:value-of select="$medium"/>
+      </pz:metadata>
+      
+      <xsl:if test="$fulltext_a">
+	<pz:metadata type="fulltext">
+	  <xsl:value-of select="$fulltext_a"/>
+	</pz:metadata>
+      </xsl:if>
+
+      <xsl:if test="$fulltext_b">
+	<pz:metadata type="fulltext">
+	  <xsl:value-of select="$fulltext_b"/>
+	</pz:metadata>
+      </xsl:if>
     </pz:record>
   </xsl:template>
 
