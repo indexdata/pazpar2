@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: test_http.sh,v 1.7 2007-05-23 21:58:29 adam Exp $
+# $Id: test_http.sh,v 1.8 2007-07-18 13:39:11 adam Exp $
 #
 # Regression test using pazpar2 against z3950.indexdata.com/marc
 # Reads Pazpar2 URLs from test_http_urls
@@ -19,6 +19,9 @@ fi
 if test -x /usr/bin/lynx; then
     lynx=/usr/bin/lynx
 fi
+
+rm -f marc21.xsl
+ln -s ${srcdir}/../etc/marc21.xsl
 
 # Fire up pazpar2
 rm -f pazpar2.log
