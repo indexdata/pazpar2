@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.54 2007-07-16 17:01:46 adam Exp $
+/* $Id: logic.c,v 1.55 2007-07-18 13:37:30 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -46,6 +46,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <yaz/query-charset.h>
 #include <yaz/querytowrbuf.h>
 #include <yaz/oid_db.h>
+#include <yaz/snprintf.h>
 
 #if HAVE_CONFIG_H
 #include "cconfig.h"
@@ -372,7 +373,30 @@ static int prepare_map(struct session *se, struct session_database *sdb)
         char **stylesheets;
         struct database_retrievalmap **m = &sdb->map;
         int num, i;
+        char auto_stylesheet[256];
 
+        if (!strcmp(s, "auto"))
+        {
+            char *request_syntax = session_setting_oneval(sdb,
+                                                          PZ_REQUESTSYNTAX);
+            if (request_syntax)
+            {
+                char *cp;
+                yaz_snprintf(auto_stylesheet, sizeof(auto_stylesheet),
+                             "%s.xsl", request_syntax);
+                for (cp = auto_stylesheet; *cp; cp++)
+                {
+                    /* deliberately only consider ASCII */
+                    if (*cp > 32 && *cp < 127)
+                        *cp = tolower(*cp);
+                }
+                s = auto_stylesheet;
+            }
+            else
+            {
+                yaz_log(YLOG_WARN, "No pz:requestsyntax for auto stylesheet");
+            }
+        }
         nmem_strsplit(se->session_nmem, ",", s, &stylesheets, &num);
         for (i = 0; i < num; i++)
         {
