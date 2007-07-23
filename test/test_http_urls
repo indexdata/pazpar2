@@ -6,3 +6,5 @@ http://localhost:9763/search.pz2?session=1&command=search&query=computer
 http://localhost:9763/search.pz2?session=1&command=show&start=0&number=1&block=1
 http://localhost:9763/search.pz2?session=1&command=record&id=title+how+to+program+a+computer+author+jack+collins+medium+book
 http://localhost:9763/search.pz2?session=1&command=record&id=title+how+to+program+a+computer+author+jack+collins+medium+book&offset=0
+http://localhost:9763/search.pz2?session=1&command=show&start=0&number=1&sort=title:0
+http://localhost:9763/search.pz2?session=1&command=show&start=0&number=1&sort=title:1
