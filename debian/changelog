@@ -1,3 +1,9 @@
+pazpar2 (1.0.2-2) unstable; urgency=low
+
+  * Sorting by year.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Mon, 23 Jul 2007 14:28:13 +0200
+
 pazpar2 (1.0.2-1) unstable; urgency=low
 
   * Upstream.
