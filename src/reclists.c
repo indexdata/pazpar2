@@ -1,4 +1,4 @@
-/* $Id: reclists.c,v 1.19 2007-07-16 17:01:46 adam Exp $
+/* $Id: reclists.c,v 1.20 2007-07-23 12:23:30 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -169,10 +169,12 @@ static int reclist_cmp(const void *p1, const void *p2)
     struct record_cluster *r1 = (*(struct record_cluster**) p1);
     struct record_cluster *r2 = (*(struct record_cluster**) p2);
     struct reclist_sortparms *s;
+    int res = 0;
 
-    for (s = sortparms; s; s = s->next)
+    for (s = sortparms; s && res == 0; s = s->next)
     {
-        int res;
+        union data_types *ut1 = r1->sortkeys[s->offset];
+        union data_types *ut2 = r2->sortkeys[s->offset];
         switch (s->type)
         {
             char *s1, *s2;
@@ -181,25 +183,36 @@ static int reclist_cmp(const void *p1, const void *p2)
                 res = r2->relevance - r1->relevance;
                 break;
             case Metadata_sortkey_string:
-                s1 = r1->sortkeys[s->offset] ? r1->sortkeys[s->offset]->text : "";
-                s2 = r2->sortkeys[s->offset] ? r2->sortkeys[s->offset]->text : "";
+                s1 = ut1 ? ut1->text : "";
+                s2 = ut2 ? ut2->text : "";
                 res = strcmp(s2, s1);
+                if (res)
+                {
+                    if (s->increasing)
+                        res *= -1;
+                }
                 break;
             case Metadata_sortkey_numeric:
-                res = 0;
+                if (ut1 && ut2)
+                {
+                    if (s->increasing)
+                        res = ut1->number.min  - ut2->number.min;
+                    else
+                        res = ut2->number.max  - ut1->number.max;
+                }
+                else if (ut1 && !ut2)
+                    res = -1;
+                else if (!ut1 && ut2)
+                    res = 1;
+                else
+                    res = 0;
                 break;
             default:
                 yaz_log(YLOG_FATAL, "Bad sort type: %d", s->type);
                 exit(1);
         }
-        if (res)
-        {
-            if (s->increasing)
-                res *= -1;
-            return res;
-        }
     }
-    return 0;
+    return res;
 }
 
 void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
