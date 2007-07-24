@@ -1,5 +1,5 @@
 /* A very simple client that shows a basic usage of the pz2.js
-** $Id: example_client.js,v 1.4 2007-07-16 17:01:46 adam Exp $
+** $Id: example_client.js,v 1.5 2007-07-24 08:15:12 jakub Exp $
 */
 
 // create a parameters array and pass it to the pz2's constructor
@@ -94,16 +94,16 @@ function my_onterm(data) {
     termlist.innerHTML = "<hr/><b>TERMLISTS:</b><hr/>";
     termlist.innerHTML += '<div class="termtitle">.::Subjects</div>';
     for (var i = 0; i < data.subject.length; i++ ) {
-        termlist.innerHTML += '<span>' 
+        termlist.innerHTML += '<span class="jslink" onclick="limitQuery(\'su\', this.firstChild.nodeValue)">' 
                             + data.subject[i].name 
-                            + ' </span><span> (' 
+                            + '</span><span>  (' 
                             + data.subject[i].freq 
                             + ')</span><br/>';
     }
     termlist.innerHTML += "<hr/>";
     termlist.innerHTML += '<div class="termtitle">.::Authors</div>';
     for (var i = 0; i < data.author.length; i++ ) {
-        termlist.innerHTML += '<span>' 
+        termlist.innerHTML += '<span class="jslink" onclick="limitQuery(\'au\', this.firstChild.nodeValue)">' 
                             + data.author[i].name 
                             + ' </span><span> (' 
                             + data.author[i].freq 
@@ -176,6 +176,12 @@ function drawCurDetails ()
                             "</td></tr></table></div>";
 }
 
+// limit the query after clicking the facet
+function limitQuery (field, value)
+{
+    document.search.query.value += ' and ' + field + '="' + value + '"';
+    onFormSubmitEventHandler();
+}
 
 // simple paging functions
 
