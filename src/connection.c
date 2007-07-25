@@ -1,4 +1,4 @@
-/* $Id: connection.c,v 1.8 2007-07-25 11:41:32 adam Exp $
+/* $Id: connection.c,v 1.9 2007-07-25 13:27:06 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -289,20 +289,25 @@ void connect_resolver_host(struct host *host)
                 connection_destroy(con);
                 /* start all over .. at some point it will be NULL */
                 con = host->connections;
+                continue;
             }
             else if (!con->client)
             {
-                yaz_log(YLOG_WARN, "connect_unresolved_host : ophan client");
                 connection_destroy(con);
                 /* start all over .. at some point it will be NULL */
                 con = host->connections;
+                continue;
             }
             else
             {
                 connection_connect(con);
-                con = con->next;
             }
         }
+        else
+        {
+            yaz_log(YLOG_LOG, "connect_resolver_host: state=%d", con->state);
+        }
+        con = con->next;
     }
 }
 
