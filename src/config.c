@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.37 2007-06-19 10:15:44 adam Exp $
+/* $Id: config.c,v 1.38 2007-07-25 11:00:26 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.37 2007-06-19 10:15:44 adam Exp $ */
+/* $Id: config.c,v 1.38 2007-07-25 11:00:26 adam Exp $ */
 
 #include <string.h>
 
@@ -406,8 +406,6 @@ static struct conf_server *parse_server(xmlNode *node)
     server->proxy_host = 0;
     server->proxy_port = 0;
     server->myurl = 0;
-    //server->zproxy_host = 0;
-    //server->zproxy_port = 0;
     server->service = 0;
     server->next = 0;
     server->settings = 0;
