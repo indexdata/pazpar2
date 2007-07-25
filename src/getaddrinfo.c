@@ -1,4 +1,4 @@
-/* $Id: getaddrinfo.c,v 1.7 2007-07-25 11:41:32 adam Exp $
+/* $Id: getaddrinfo.c,v 1.8 2007-07-25 13:20:46 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -66,8 +66,6 @@ void perform_getaddrinfo(struct work *w)
     else
         port = "210";
 
-    yaz_log(YLOG_LOG, "Resolving %s", w->hostport);
-    sleep(10);
 #if HAVE_GETADDRINFO
     hints.ai_flags = 0;
     hints.ai_family = PF_INET;
