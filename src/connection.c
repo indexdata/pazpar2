@@ -1,4 +1,4 @@
-/* $Id: connection.c,v 1.7 2007-07-12 08:01:06 adam Exp $
+/* $Id: connection.c,v 1.8 2007-07-25 11:41:32 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -180,7 +180,7 @@ static void connection_handler(IOCHAN i, int event)
 	    co->state = Conn_Open;
             if (cl)
                 client_set_state(cl, Client_Connected);
-            iochan_settimeout(i, 180);
+            iochan_settimeout(i, global_parameters.z3950_session_timeout);
 	}
     }
 
@@ -393,7 +393,7 @@ int connection_connect(struct connection *con)
     con->link = link;
     con->state = Conn_Connecting;
     con->iochan = iochan_create(cs_fileno(link), connection_handler, 0);
-    iochan_settimeout(con->iochan, 30);
+    iochan_settimeout(con->iochan, global_parameters.z3950_connect_timeout);
     iochan_setdata(con->iochan, con);
     pazpar2_add_channel(con->iochan);
 

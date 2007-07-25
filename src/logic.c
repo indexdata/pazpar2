@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.55 2007-07-18 13:37:30 adam Exp $
+/* $Id: logic.c,v 1.56 2007-07-25 11:41:32 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -93,9 +93,10 @@ struct parameters global_parameters =
     100,
     MAX_CHUNK,
     0,
-    0
+    0,
+    180,
+    30
 };
-
 
 // Recursively traverse query structure to extract terms.
 void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)

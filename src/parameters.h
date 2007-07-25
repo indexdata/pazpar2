@@ -1,4 +1,4 @@
-/* $Id: parameters.h,v 1.4 2007-06-06 11:56:35 marc Exp $
+/* $Id: parameters.h,v 1.5 2007-07-25 11:41:32 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -42,6 +42,8 @@ struct parameters {
     int chunk;
     ODR odr_out;
     ODR odr_in;
+    int z3950_session_timeout;
+    int z3950_connect_timeout;
 };
 extern struct parameters global_parameters;
 
