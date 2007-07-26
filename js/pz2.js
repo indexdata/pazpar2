@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.48 2007-07-18 13:40:56 adam Exp $
+** $Id: pz2.js,v 1.49 2007-07-26 13:47:52 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -650,6 +650,116 @@ pzHttpRequest.prototype =
         }
     }
 };
+
+/*
+*********************************************************************************
+** XML HELPER CLASS ************************************************************
+*********************************************************************************
+*/
+
+// DOMDocument
+
+if ( window.ActiveXObject) {
+    var DOMDoc = document;
+} else {
+    var DOMDoc = Document.prototype;
+}
+
+DOMDoc.newXmlDoc = function ( root )
+{
+    var doc;
+
+    if (document.implementation && document.implementation.createDocument) {
+        doc = document.implementation.createDocument('', root, null);
+    } else if ( window.ActiveXObject ) {
+        doc = new ActiveXObject("MSXML2.DOMDocument");
+        doc.loadXML('<' + root + '/>');
+    } else {
+        throw new Error ('No XML support in this browser');
+    }
+
+    return doc;
+}
+
+   
+DOMDoc.parseXmlFromString = function ( xmlString ) 
+{
+    var doc;
+
+    if ( window.DOMParser ) {
+        var parser = new DOMParser();
+        doc = parser.parseFromString( xmlString, "text/xml");
+    } else if ( window.ActiveXObject ) {
+        doc = new ActiveXObject("MSXML2.DOMDocument");
+        doc.loadXML( xmlString );
+    } else {
+        throw new Error ("No XML parsing support in this browser.");
+    }
+
+    return doc;
+}
+
+// DOMElement
+
+Element_removeFromDoc = function (DOM_Element)
+{
+    DOM_Element.parentNode.removeChild(DOM_Element);
+}
+
+Element_emptyChildren = function (DOM_Element)
+{
+    while( DOM_Element.firstChild ) {
+        DOM_Element.removeChild( DOM_Element.firstChild )
+    }
+}
+
+Element_appendTransformResult = function ( DOM_Element, xmlDoc, xslDoc )
+{
+    if ( window.XSLTProcessor ) {
+        var proc = new XSLTProcessor();
+        proc.importStylesheet( xslDoc );
+        var docFrag = false;
+        docFrag = proc.transformToFragment( xmlDoc, DOM_Element.ownerDocument );
+        DOM_Element.appendChild(docFrag);
+    } else if ( window.ActiveXObject ) {
+        DOM_Element.innerHTML = xmlDoc.transformNode( xslDoc );
+    } else {
+        alert( 'Unable to perform XSLT transformation in this browser' );
+    }
+}
+ 
+Element_appendTextNode = function (DOM_Element, tagName, textContent )
+{
+    var node = DOM_Element.ownerDocument.createElement(tagName);
+    var text = DOM_Element.ownerDocument.createTextNode(textContent);
+
+    DOM_Element.appendChild(node);
+    node.appendChild(text);
+
+    return node;
+}
+
+Element_setTextContent = function ( DOM_Element, textContent )
+{
+    if (typeof DOM_Element.textContent !== "undefined") {
+        DOM_Element.textContent = textContent;
+    } else if (typeof DOM_Element.innerText !== "undefined" ) {
+        DOM_Element.innerText = textContent;
+    } else {
+        throw new Error("Cannot set text content of the node, no such method.");
+    }
+}
+
+Element_getTextContent = function (DOM_Element)
+{
+    if (DOM_Element.textContent) {
+        return DOM_Element.textContent;
+    } else if (DOM_Element.text ) {
+        return DOM_Element.text;
+    } else {
+        throw new Error("Cannot get text content of the node, no such method.");
+    }
+}
 
 /*
 *********************************************************************************
