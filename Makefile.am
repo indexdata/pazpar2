@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.14 2007-07-16 12:31:09 adam Exp $
+# $Id: Makefile.am,v 1.15 2007-07-27 09:07:49 marc Exp $
 
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
@@ -27,4 +27,8 @@ showdox:
 	doxygen
 	galeon file:///`pwd`/$(top_srcdir)/dox/html/index.html &
 
-.PHONY: cvs2cl dox showdox
+debian:
+	dpkg-buildpackage -rfakeroot
+
+
+.PHONY: cvs2cl dox showdox debian
