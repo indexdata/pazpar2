@@ -1,4 +1,4 @@
-/* $Id: test_record.c,v 1.7 2007-06-13 21:30:08 adam Exp $
+/* $Id: test_record.c,v 1.8 2007-07-30 23:16:33 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -59,19 +59,19 @@ void test_record(int argc, char **argv)
 
   YAZ_CHECK(conf_service_add_metadata(nmem, service, 0, "title",
                             Metadata_type_generic, Metadata_merge_unique,
-                            1, 1, 1, 0));
+                            Metadata_setting_no, 1, 1, 1, 0));
 
   YAZ_CHECK(conf_service_add_metadata(nmem, service, 1, "author",
                             Metadata_type_generic, Metadata_merge_longest,
-                            1, 1, 1, 0));
+                            Metadata_setting_no,1, 1, 1, 0));
 
   YAZ_CHECK(conf_service_add_metadata(nmem, service, 2, "isbn",
                             Metadata_type_number, Metadata_merge_no,
-                            1, 1, 1, 0));
+                            Metadata_setting_no, 1, 1, 1, 0));
 
   YAZ_CHECK(conf_service_add_metadata(nmem, service, 3, "year",
                             Metadata_type_year, Metadata_merge_range,
-                            1, 1, 1, 0));
+                            Metadata_setting_no, 1, 1, 1, 0));
 
   YAZ_CHECK(conf_service_add_sortkey(nmem, service, 0, "relevance",
                                      Metadata_sortkey_relevance));

@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.57 2007-07-30 11:52:08 quinn Exp $
+/* $Id: logic.c,v 1.58 2007-07-30 23:16:33 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -262,6 +262,44 @@ xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec)
     return rdoc;
 }
 
+#define MAX_XSLT_ARGS 16
+
+// Add static values from session database settings if applicable
+static void insert_settings_parameters(struct session_database *sdb,
+        struct session *se, char **parms)
+{
+    struct conf_service *service = global_parameters.server->service;
+    int i;
+    int nparms = 0;
+    int offset = 0;
+
+    for (i = 0; i < service->num_metadata; i++)
+    {
+        struct conf_metadata *md = &service->metadata[i];
+        int setting;
+
+        if (md->setting == Metadata_setting_parameter &&
+                (setting = settings_offset(md->name)) > 0)
+        {
+            char *val = session_setting_oneval(sdb, setting);
+            if (val && nparms < MAX_XSLT_ARGS)
+            {
+                char *buf;
+                int len = strlen(val);
+                buf = nmem_malloc(se->nmem, len + 3);
+                buf[0] = '\'';
+                strcpy(buf + 1, val);
+                buf[len+1] = '\'';
+                buf[len+2] = '\0';
+                parms[offset++] = md->name;
+                parms[offset++] = buf;
+                nparms++;
+            }
+        }
+    }
+    parms[offset] = 0;
+}
+
 // Add static values from session database settings if applicable
 static void insert_settings_values(struct session_database *sdb, xmlDoc *doc)
 {
@@ -288,7 +326,8 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc)
     }
 }
 
-xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec)
+xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
+        Z_External *rec)
 {
     struct database_retrievalmap *m;
     xmlDoc *rdoc = record_to_xml(sdb, rec);
@@ -300,7 +339,11 @@ xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec)
             
             {
                 xmlNodePtr root = 0;
-                new = xsltApplyStylesheet(m->stylesheet, rdoc, 0);
+                char *parms[MAX_XSLT_ARGS*2+1];
+
+                insert_settings_parameters(sdb, se, parms);
+
+                new = xsltApplyStylesheet(m->stylesheet, rdoc, (const char **) parms);
                 root= xmlDocGetRootElement(new);
                 if (!new || !root || !(root->children))
                 {
@@ -1037,7 +1080,8 @@ static struct record_metadata *record_metadata_init(
 struct record *ingest_record(struct client *cl, Z_External *rec,
                              int record_no)
 {
-    xmlDoc *xdoc = normalize_record(client_get_database(cl), rec);
+    xmlDoc *xdoc = normalize_record(client_get_database(cl),
+        client_get_session(cl), rec);
     xmlNode *root, *n;
     struct record *record;
     struct record_cluster *cluster;

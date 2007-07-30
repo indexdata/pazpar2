@@ -1,4 +1,4 @@
-/* $Id: test_config.c,v 1.3 2007-04-25 07:00:33 marc Exp $
+/* $Id: test_config.c,v 1.4 2007-07-30 23:16:33 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -47,47 +47,56 @@ void test_conf_service(int argc, char **argv)
   YAZ_CHECK(!conf_service_add_metadata(0, service, 0, "dead_nmem",
                                       Metadata_type_generic,
                                       Metadata_merge_unique,
+                                      Metadata_setting_no,
                                       1, 1, 1, 0));
 
   YAZ_CHECK(!conf_service_add_metadata(nmem, 0, 0, "service_needed",
                                        Metadata_type_generic, 
                                        Metadata_merge_unique,
+                                       Metadata_setting_no,
                                        1, 1, 1, 0));
 
   YAZ_CHECK(!conf_service_add_metadata(nmem, service, -1, "out_of_bounds",
                                        Metadata_type_generic,
                                        Metadata_merge_unique,
+                                       Metadata_setting_no,
                                        1, 1, 1, 0));
 
   YAZ_CHECK(!conf_service_add_metadata(nmem, service, 4, "out_of_bounds",
                                        Metadata_type_generic,
                                        Metadata_merge_unique,
+                                       Metadata_setting_no,
                                        1, 1, 1, 0));
 
   YAZ_CHECK(!conf_service_add_metadata(nmem, service, 0, 0,  //missing name
                                        Metadata_type_generic,
                                        Metadata_merge_unique,
+                                       Metadata_setting_no,
                                        1, 1, 1, 0));
 
   // expected metadata sucesses
   YAZ_CHECK(conf_service_add_metadata(nmem, service, 0, "title",
                                       Metadata_type_generic,
                                       Metadata_merge_unique,
+                                       Metadata_setting_no,
                                       1, 1, 1, 0));
 
   YAZ_CHECK(conf_service_add_metadata(nmem, service, 1, "author",
                                       Metadata_type_generic,
                                       Metadata_merge_longest,
+                                       Metadata_setting_no,
                                       1, 1, 1, 0));
 
   YAZ_CHECK(conf_service_add_metadata(nmem, service, 2, "isbn",
                                       Metadata_type_number,
                                       Metadata_merge_no,
+                                       Metadata_setting_no,
                                       1, 1, 1, 0));
 
   YAZ_CHECK(conf_service_add_metadata(nmem, service, 3, "year",
                                       Metadata_type_year,
                                       Metadata_merge_range,
+                                       Metadata_setting_no,
                                       1, 1, 1, 0));
 
 

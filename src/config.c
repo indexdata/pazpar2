@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.39 2007-07-30 11:52:08 quinn Exp $
+/* $Id: config.c,v 1.40 2007-07-30 23:16:33 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.39 2007-07-30 11:52:08 quinn Exp $ */
+/* $Id: config.c,v 1.40 2007-07-30 23:16:33 quinn Exp $ */
 
 #include <string.h>
 
@@ -338,7 +338,7 @@ static struct conf_service *parse_service(xmlNode *node)
                 else if (!strcmp((const char *) xml_setting, "postproc"))
                     setting = Metadata_setting_postproc;
                 else if (!strcmp((const char *) xml_setting, "parameter"))
-                    setting = Metadata_setting_no;
+                    setting = Metadata_setting_parameter;
                 else
                 {
                     yaz_log(YLOG_FATAL,

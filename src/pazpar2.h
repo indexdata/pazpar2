@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.45 2007-07-16 17:01:46 adam Exp $
+/* $Id: pazpar2.h,v 1.46 2007-07-30 23:16:33 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -192,7 +192,8 @@ void pazpar2_event_loop(void);
 
 int host_getaddrinfo(struct host *host);
 
-xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec);
+xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
+        Z_External *rec);
 xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec);
 
 struct record *ingest_record(struct client *cl, Z_External *rec,

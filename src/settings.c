@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.25 2007-07-03 11:21:48 adam Exp $
+/* $Id: settings.c,v 1.26 2007-07-30 23:16:33 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -366,6 +366,30 @@ static void initialize_hard_settings(struct setting_dictionary *dict)
     dict->num = dict->size;
 }
 
+// Read any settings names introduced in service definition (config) and add to dictionary
+// This is done now to avoid errors if user settings are declared in session overrides
+static void initialize_soft_settings()
+{
+    struct conf_service *service = config->servers->service;
+    int i;
+
+    for (i = 0; i < service->num_metadata; i++)
+    {
+        struct setting set;
+        struct conf_metadata *md = &service->metadata[i];
+
+        if (md->setting == Metadata_setting_no)
+            continue;
+
+        set.precedence = 0;
+        set.target = "";
+        set.name = md->name;
+        set.value = "";
+        set.next = 0;
+        prepare_dictionary(&set);
+    }
+}
+
 // If we ever decide we need to be able to specify multiple settings directories,
 // the two calls to read_settings must be split -- so the dictionary is prepared
 // for the contents of every directory before the databases are updated.
@@ -386,6 +410,7 @@ void init_settings(void)
     memset(new, 0, sizeof(*new));
     initialize_hard_settings(new);
     dictionary = new;
+    initialize_soft_settings();
 }
 
 /*
