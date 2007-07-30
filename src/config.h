@@ -1,4 +1,4 @@
-/* $Id: config.h,v 1.25 2007-06-08 13:58:46 adam Exp $
+/* $Id: config.h,v 1.26 2007-07-30 11:52:08 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -54,7 +54,12 @@ enum conf_sortkey_type {
     Metadata_sortkey_string         // Flat string
 };
 
-
+// This controls the ability to insert 'static' values from settings into retrieval recs
+enum conf_setting_type {
+    Metadata_setting_no,
+    Metadata_setting_postproc,      // Insert setting value into normalized record
+    Metadata_setting_parameter      // Expose value to normalization stylesheets
+};
 
 // Describes known metadata elements and how they are to be manipulated
 // An array of these structure provides a 'map' against which
@@ -72,6 +77,7 @@ struct conf_metadata
                         // into service/record_cluster->sortkey array
     enum conf_metadata_type type;
     enum conf_metadata_merge merge;
+    enum conf_setting_type setting; // Value is to be taken from session/db settings?
 };
 
 
@@ -81,6 +87,7 @@ struct conf_metadata * conf_metadata_assign(NMEM nmem,
                                             const char *name,
                                             enum conf_metadata_type type,
                                             enum conf_metadata_merge merge,
+                                            enum conf_setting_type setting,
                                             int brief,
                                             int termlist,
                                             int rank,
@@ -118,12 +125,14 @@ struct conf_service
 struct conf_service * conf_service_create(NMEM nmem, 
                                           int num_metadata, int num_sortkeys);
 
+
 struct conf_metadata* conf_service_add_metadata(NMEM nmem, 
                                                 struct conf_service *service,
                                                 int field_id,
                                                 const char *name,
                                                 enum conf_metadata_type type,
                                                 enum conf_metadata_merge merge,
+                                                enum conf_setting_type setting,
                                                 int brief,
                                                 int termlist,
                                                 int rank,

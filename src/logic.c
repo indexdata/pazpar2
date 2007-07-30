@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.56 2007-07-25 11:41:32 adam Exp $
+/* $Id: logic.c,v 1.57 2007-07-30 11:52:08 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -262,13 +262,40 @@ xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec)
     return rdoc;
 }
 
+// Add static values from session database settings if applicable
+static void insert_settings_values(struct session_database *sdb, xmlDoc *doc)
+{
+    struct conf_service *service = global_parameters.server->service;
+    int i;
+
+    for (i = 0; i < service->num_metadata; i++)
+    {
+        struct conf_metadata *md = &service->metadata[i];
+        int offset;
+
+        if (md->setting == Metadata_setting_postproc &&
+                (offset = settings_offset(md->name)) > 0)
+        {
+            char *val = session_setting_oneval(sdb, offset);
+            if (val)
+            {
+                xmlNode *r = xmlDocGetRootElement(doc);
+                xmlNode *n = xmlNewTextChild(r, 0, (xmlChar *) "metadata",
+                        (xmlChar *) val);
+                xmlSetProp(n, (xmlChar *) "type", (xmlChar *) md->name);
+            }
+        }
+    }
+}
+
 xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec)
 {
     struct database_retrievalmap *m;
     xmlDoc *rdoc = record_to_xml(sdb, rec);
     if (rdoc)
     {
-        for (m = sdb->map; m; m = m->next){
+        for (m = sdb->map; m; m = m->next)
+        {
             xmlDoc *new = 0;
             
             {
@@ -288,6 +315,9 @@ xmlDoc *normalize_record(struct session_database *sdb, Z_External *rec)
             xmlFreeDoc(rdoc);
             rdoc = new;
         }
+
+        insert_settings_values(sdb, rdoc);
+
         if (global_parameters.dump_records)
         {
             FILE *lf = yaz_log_file();

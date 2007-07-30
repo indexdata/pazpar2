@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.38 2007-07-25 11:00:26 adam Exp $
+/* $Id: config.c,v 1.39 2007-07-30 11:52:08 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.38 2007-07-25 11:00:26 adam Exp $ */
+/* $Id: config.c,v 1.39 2007-07-30 11:52:08 quinn Exp $ */
 
 #include <string.h>
 
@@ -52,6 +52,7 @@ struct conf_metadata * conf_metadata_assign(NMEM nmem,
                                             const char *name,
                                             enum conf_metadata_type type,
                                             enum conf_metadata_merge merge,
+                                            enum conf_setting_type setting,
                                             int brief,
                                             int termlist,
                                             int rank,
@@ -74,6 +75,7 @@ struct conf_metadata * conf_metadata_assign(NMEM nmem,
     else
         metadata->merge = merge;    
 
+    metadata->setting = setting;
     metadata->brief = brief;   
     metadata->termlist = termlist;
     metadata->rank = rank;    
@@ -128,6 +130,7 @@ struct conf_metadata* conf_service_add_metadata(NMEM nmem,
                                                 const char *name,
                                                 enum conf_metadata_type type,
                                                 enum conf_metadata_merge merge,
+                                                enum conf_setting_type setting,
                                                 int brief,
                                                 int termlist,
                                                 int rank,
@@ -141,7 +144,7 @@ struct conf_metadata* conf_service_add_metadata(NMEM nmem,
 
     //md = &((service->metadata)[field_id]);
     md = service->metadata + field_id;
-    md = conf_metadata_assign(nmem, md, name, type, merge, 
+    md = conf_metadata_assign(nmem, md, name, type, merge, setting,
                              brief, termlist, rank, sortkey_offset);
     return md;
 }
@@ -242,14 +245,16 @@ static struct conf_service *parse_service(xmlNode *node)
             xmlChar *xml_type = xmlGetProp(n, (xmlChar *) "type");
             xmlChar *xml_termlist = xmlGetProp(n, (xmlChar *) "termlist");
             xmlChar *xml_rank = xmlGetProp(n, (xmlChar *) "rank");
+            xmlChar *xml_setting = xmlGetProp(n, (xmlChar *) "setting");
 
             enum conf_metadata_type type = Metadata_type_generic;
             enum conf_metadata_merge merge = Metadata_merge_no;
+            enum conf_setting_type setting = Metadata_setting_no;
+            enum conf_sortkey_type sk_type = Metadata_sortkey_relevance;
             int brief = 0;
             int termlist = 0;
             int rank = 0;
             int sortkey_offset = 0;
-            enum conf_sortkey_type sk_type = Metadata_sortkey_relevance;
             
             // now do the parsing logic
             if (!xml_name)
@@ -326,6 +331,22 @@ static struct conf_service *parse_service(xmlNode *node)
             else
                 merge = Metadata_merge_no;
 
+            if (xml_setting)
+            {
+                if (!strcmp((const char *) xml_setting, "no"))
+                    setting = Metadata_setting_no;
+                else if (!strcmp((const char *) xml_setting, "postproc"))
+                    setting = Metadata_setting_postproc;
+                else if (!strcmp((const char *) xml_setting, "parameter"))
+                    setting = Metadata_setting_no;
+                else
+                {
+                    yaz_log(YLOG_FATAL,
+                        "Unknown value for medadata/setting: %s", xml_setting);
+                    return 0;
+                }
+            }
+
             // add a sortkey if so specified
             if (xml_sortkey && strcmp((const char *) xml_sortkey, "no"))
             {
@@ -359,7 +380,7 @@ static struct conf_service *parse_service(xmlNode *node)
             // metadata known, assign values
             conf_service_add_metadata(nmem, service, md_node,
                                       (const char *) xml_name,
-                                      type, merge,
+                                      type, merge, setting,
                                       brief, termlist, rank, sortkey_offset);
 
             xmlFree(xml_name);
