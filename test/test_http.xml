@@ -1,7 +1,7 @@
 <settings target="z3950.indexdata.com/marc">
 
   <!-- Used by test test_http.sh -->
-  <!-- $Id: test_http.xml,v 1.4 2007-07-30 11:52:08 quinn Exp $ -->
+  <!-- $Id: test_http.xml,v 1.5 2007-07-31 22:35:41 quinn Exp $ -->
 
   <set name="pz:name" value="Local Test"/>
 
@@ -25,8 +25,9 @@
   <set name="pz:nativesyntax" value="iso2709"/>
   <set name="pz:xslt" value="auto"/>
 
-  <!-- Example of application-specific setting -->
+  <!-- Examples of application-specific setting -->
   <!-- Available in output record and/or normalization stylesheet -->
   <set name="test-usersetting" value="XXXXXXXXXX"/>
+  <set name="test" value="YYYYYYYYY"/>
 
 </settings>

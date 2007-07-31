@@ -1,3 +1,9 @@
+Exposed user setting values (i.e. non-pz: names) to the record systems in two
+ways: Either as parameters to the normalization stylesheets (which would allow the
+programmer to postprocess or use the values in any way) or after the normalization
+step, in which case values are made part of the normalized record (and available for
+sorting, termlists, display, or other interface-related use.
+
 Implemented sorting by year.
 
 Option -d dumps records to the current log file instead of stderr.

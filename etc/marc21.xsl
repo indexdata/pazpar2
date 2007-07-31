@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: marc21.xsl,v 1.15 2007-07-16 15:21:29 adam Exp $ -->
+<!-- $Id: marc21.xsl,v 1.16 2007-07-31 22:35:40 quinn Exp $ -->
 <xsl:stylesheet
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:pz="http://www.indexdata.com/pazpar2/1.0"
     xmlns:marc="http://www.loc.gov/MARC21/slim">
+
   
   <xsl:output indent="yes" method="xml" version="1.0" encoding="UTF-8"/>
 
