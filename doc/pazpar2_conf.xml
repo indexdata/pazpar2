@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.29 2007-07-06 20:12:40 adam Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.30 2007-08-01 11:48:26 quinn Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -291,6 +291,30 @@
 	    </para>
 	   </listitem>
 	  </varlistentry>
+
+	  <varlistentry><term>setting</term>
+	   <listitem>
+	    <para>
+	      This attribute allows you to make use of static database
+	      settings in the processing of records. Three possible values
+	      are allowed. 'no' is the default and doesn't do anything.
+	      'postproc' copies the value of a setting with the same name
+	      into the output of the normalization stylesheet(s). 'parameter'
+	      makes the value of a setting with the same name available 
+	      as a parameter to the normalization stylesheet, so you
+	      can further process the value inside of the stylesheet, or use
+	      the value to decide how to deal with other data values.
+	    </para>
+	    <para>
+	    </para>
+	      The purpose of using settings in this way can either be to
+	      control the behavior of normalization stylesheet in a database-
+	      dependent way, or to easily make database-dependent values
+	      available to display-logic in your user interface, without having
+	      to implement complicated interactions between the user interface
+	      and your configuration system.
+	   </listitem>
+	  </varlistentry>
 	 </variablelist> <!-- attributes to metadata -->
 	 
 	</listitem>
@@ -352,7 +376,9 @@
    pairs with groups of targets -- for instance, if you would like to
    place all commercial full-text bases in one group for selection
    purposes, or you would like to control what targets are accessible
-   to users by default.
+   to users by default. Per-database settings values can even be used
+   to drive sorting, facet/termlist generation, or end-user interface display
+   logic.
   </para>
   
   <para>
@@ -542,7 +568,7 @@
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: pazpar2_conf.xml,v 1.29 2007-07-06 20:12:40 adam Exp $ -->
+  <!-- $Id: pazpar2_conf.xml,v 1.30 2007-08-01 11:48:26 quinn Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
