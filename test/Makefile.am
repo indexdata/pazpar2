@@ -1,8 +1,8 @@
-# $Id: Makefile.am,v 1.2 2007-05-15 21:40:57 adam Exp $
+# $Id: Makefile.am,v 1.3 2007-08-12 10:36:33 adam Exp $
 
 check_SCRIPTS = test_http.sh
 
-EXTRA_DIST = test_http.xml test_http.cfg test_http_urls $(check_SCRIPTS)
+EXTRA_DIST = marc21.xsl test_http.xml test_http.cfg test_http_urls $(check_SCRIPTS)
 
 TESTS = $(check_SCRIPTS)
 
