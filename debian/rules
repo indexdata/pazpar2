@@ -90,6 +90,7 @@ binary-arch: build install
 	# pazpar2-jsdemo package
 	cp www/jsdemo/*.html $(CURDIR)/debian/pazpar2-jsdemo/usr/share/pazpar2/jsdemo/
 	cp www/jsdemo/*.js $(CURDIR)/debian/pazpar2-jsdemo/usr/share/pazpar2/jsdemo/
+	cp www/jsdemo/*.gif $(CURDIR)/debian/pazpar2-jsdemo/usr/share/pazpar2/jsdemo/
 	dh_installchangelogs NEWS
 	dh_installdocs
 	dh_installexamples
