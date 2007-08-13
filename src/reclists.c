@@ -1,4 +1,4 @@
-/* $Id: reclists.c,v 1.20 2007-07-23 12:23:30 adam Exp $
+/* $Id: reclists.c,v 1.21 2007-08-13 12:42:45 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -110,7 +110,7 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms)
         const char *cpp;
         int increasing;
         int i;
-        int offset;
+        int offset = 0;
         enum conf_sortkey_type type;
         struct reclist_sortparms *new;
 
@@ -129,7 +129,6 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms)
         if (!strcmp(parm, "relevance"))
         {
             type = Metadata_sortkey_relevance;
-            offset = -1;
         }
         else
         {
