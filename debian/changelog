@@ -1,3 +1,9 @@
+pazpar2 (1.0.2-3) unstable; urgency=low
+
+  * Includes fix of bug #1348.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Mon, 13 Aug 2007 14:12:50 +0200
+
 pazpar2 (1.0.2-2) unstable; urgency=low
 
   * Sorting by year.
