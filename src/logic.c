@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.59 2007-08-13 12:12:30 adam Exp $
+/* $Id: logic.c,v 1.60 2007-08-13 13:27:04 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -647,22 +647,21 @@ enum pazpar2_error_code search(struct session *se,
 
     *addinfo = 0;
     nmem_reset(se->nmem);
+    se->relevance = 0;
+    se->total_records = se->total_hits = se->total_merged = 0;
+    se->reclist = 0;
+    se->num_termlists = 0;
     criteria = parse_filter(se->nmem, filter);
     se->requestid++;
     live_channels = select_targets(se, criteria);
     if (live_channels)
     {
         int maxrecs = live_channels * global_parameters.toget;
-        se->num_termlists = 0;
         se->reclist = reclist_create(se->nmem, maxrecs);
-        // This will be initialized in send_search()
-        se->total_records = se->total_hits = se->total_merged = 0;
         se->expected_maxrecs = maxrecs;
     }
     else
         return PAZPAR2_NO_TARGETS;
-
-    se->relevance = 0;
 
     for (cl = se->clients; cl; cl = client_next_in_session(cl))
     {
