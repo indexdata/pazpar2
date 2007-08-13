@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.58 2007-07-30 23:16:33 quinn Exp $
+/* $Id: logic.c,v 1.59 2007-08-13 12:12:30 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -191,7 +191,18 @@ xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec)
             rdoc = xmlParseMemory((char*) wrbuf_buf(wrbuf_opac),
                                   wrbuf_len(wrbuf_opac));
             if (!rdoc)
+            {
                 yaz_log(YLOG_WARN, "Unable to parse OPAC XML");
+                /* Was used to debug bug #1348 */
+#if 0
+                FILE *f = fopen("/tmp/opac.xml.txt", "wb");
+                if (f)
+                {
+                    fwrite(wrbuf_buf(wrbuf_opac), 1, wrbuf_len(wrbuf_opac), f);
+                    fclose(f);
+                }
+#endif
+            }
             wrbuf_destroy(wrbuf_opac);
         }
     }
@@ -223,7 +234,6 @@ xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec)
                 return 0;
             }
             
-            yaz_marc_write_using_libxml2(sdb->yaz_marc, 1);
             if (yaz_marc_write_xml(sdb->yaz_marc, &res,
                                    "http://www.loc.gov/MARC21/slim", 0, 0) < 0)
             {
