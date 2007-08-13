@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: test_http.sh,v 1.9 2007-07-30 23:06:01 quinn Exp $
+# $Id: test_http.sh,v 1.10 2007-08-13 12:51:00 adam Exp $
 #
 # Regression test using pazpar2 against z3950.indexdata.com/marc
 # Reads Pazpar2 URLs from test_http_urls
@@ -22,11 +22,18 @@ fi
 
 # Fire up pazpar2
 rm -f pazpar2.log
-../src/pazpar2 -X -l pazpar2.log -f ${srcdir}/test_http.cfg -t ${srcdir}/test_http.xml >extra_pazpar2.log 2>&1 &
+
+if test "$usevalgrind"; then
+    valgrind --log-file=valgrind ../src/pazpar2 -X -l pazpar2.log -f ${srcdir}/test_http.cfg -t ${srcdir}/test_http.xml >extra_pazpar2.log 2>&1 &
+else
+    ../src/pazpar2 -X -l pazpar2.log -f ${srcdir}/test_http.cfg -t ${srcdir}/test_http.xml >extra_pazpar2.log 2>&1 &
+fi
+
+
 PP2PID=$!
 
 # Give it a chance to start properly..
-sleep 1
+sleep 3
 
 # Set to success by default.. Will be set to non-zero in case of failure
 code=0
