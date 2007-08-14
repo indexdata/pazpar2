@@ -1,4 +1,4 @@
-/* $Id: connection.c,v 1.9 2007-07-25 13:27:06 adam Exp $
+/* $Id: connection.c,v 1.10 2007-08-14 14:03:02 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -60,6 +60,7 @@ struct connection {
     char *ibuf;
     int ibufsize;
     char *authentication; // Empty string or authentication string if set
+    char *zproxy;
     enum {
         Conn_Resolving,
         Conn_Connecting,
@@ -103,6 +104,8 @@ void connection_destroy(struct connection *co)
     {
         client_disconnect(co->client);
     }
+    xfree(co->zproxy);
+    co->zproxy = 0;
     co->next = connection_freelist;
     connection_freelist = co;
 }
@@ -127,6 +130,7 @@ struct connection *connection_create(struct client *cl)
     new->host->connections = new;
     new->client = cl;
     new->authentication = "";
+    new->zproxy = 0;
     client_set_connection(cl, new);
     new->link = 0;
     new->state = Conn_Resolving;
@@ -362,8 +366,12 @@ int connection_connect(struct connection *con)
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to create comstack");
         return -1;
     }
-    
-    if (!zproxy || 0 == strlen(zproxy)){
+
+    if (zproxy && *zproxy)
+        con->zproxy = xstrdup(zproxy);
+
+    if (!con->zproxy)
+    {
         /* no Z39.50 proxy needed - direct connect */
         yaz_log(YLOG_DEBUG, "Connection create %s", connection_get_url(con));
         
@@ -377,13 +385,13 @@ int connection_connect(struct connection *con)
     } else {
         /* Z39.50 proxy connect */
         yaz_log(YLOG_DEBUG, "Connection create %s proxy %s", 
-                connection_get_url(con), zproxy);
+                connection_get_url(con), con->zproxy);
         
-        if (!(addr = cs_straddr(link, zproxy)))
+        if (!(addr = cs_straddr(link, con->zproxy)))
         {
             yaz_log(YLOG_WARN|YLOG_ERRNO, 
                     "Lookup of ZProxy IP address %s failed", 
-                    zproxy);
+                    con->zproxy);
             return -1;
         }
     }
@@ -424,6 +432,11 @@ int client_prep_connection(struct client *cl)
     struct connection *co;
     struct session *se = client_get_session(cl);
     struct host *host = client_get_host(cl);
+    struct session_database *sdb = client_get_database(cl);
+    char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
+
+    if (zproxy && zproxy[0] == '\0')
+        zproxy = 0;
 
     co = client_get_connection(cl);
 
@@ -439,7 +452,12 @@ int client_prep_connection(struct client *cl)
                 !strcmp(co->authentication,
                     session_setting_oneval(client_get_database(cl),
                     PZ_AUTHENTICATION)))
-                break;
+            {
+                if (zproxy == 0 && co->zproxy == 0)
+                    break;
+                if (zproxy && co->zproxy && !strcmp(zproxy, co->zproxy))
+                    break;
+            }
         if (co)
         {
             connection_release(co);
