@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.49 2007-07-26 13:47:52 jakub Exp $
+** $Id: pz2.js,v 1.50 2007-08-14 14:23:32 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -181,7 +181,7 @@ pz2.prototype =
             }
         );
     },
-    search: function (query, num, sort, filter)
+    search: function (query, num, sort, filter, showfrom)
     {
         clearTimeout(__myself.statTimer);
         clearTimeout(__myself.showTimer);
@@ -200,6 +200,11 @@ pz2.prototype =
             __myself.currQuery = query;
         else
             throw new Error("You need to supply query to the search command");
+        
+        if ( showfrom !== undefined )
+            var start = showfrom;
+        else
+            var start = 0;
 
 	var searchParams = { "command": "search", "query": __myself.currQuery, "session": __myself.sessionID };
 	
@@ -213,7 +218,7 @@ pz2.prototype =
                 if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
                     __myself.searchStatusOK = true;
                     //piggyback search
-                    __myself.show(0, num, sort);
+                    __myself.show(start, num, sort);
                     if ( __myself.statCallback )
                         __myself.stat();
                         //__myself.statTimer = setTimeout("__myself.stat()", __myself.statTime / 4);
