@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: marc21.xsl,v 1.18 2007-08-16 02:56:33 quinn Exp $ -->
+<!-- $Id: marc21.xsl,v 1.19 2007-08-16 03:12:42 quinn Exp $ -->
 <xsl:stylesheet
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -200,7 +200,10 @@
       </xsl:for-each>
       
       <xsl:for-each select="marc:datafield[@tag='650' or @tag='653']">
-	<pz:metadata type="subject">
+        <pz:metadata type="subject">
+	  <xsl:value-of select="marc:subfield[@code='a']"/>
+	</pz:metadata>
+	<pz:metadata type="subject-long">
 	  <xsl:for-each select="marc:subfield">
 	    <xsl:if test="position() > 1">
 	      <xsl:text>, </xsl:text>
