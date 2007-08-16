@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: marc21.xsl,v 1.19 2007-08-16 03:12:42 quinn Exp $ -->
+<!-- $Id: marc21.xsl,v 1.20 2007-08-16 12:40:01 jakub Exp $ -->
 <xsl:stylesheet
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -12,6 +12,7 @@
 <!-- Extract metadata from MARC21/USMARC 
       http://www.loc.gov/marc/bibliographic/ecbdhome.html
 -->  
+  <xsl:include href="pz2-ourl-marc21.xsl" />
   
   <xsl:template match="/marc:record">
     <xsl:variable name="title_medium" select="marc:datafield[@tag='245']/marc:subfield[@code='h']"/>
@@ -52,6 +53,7 @@
 	<xsl:value-of select="$medium"/>
       </xsl:attribute>
 
+      
       <xsl:for-each select="marc:controlfield[@tag='001']">
         <pz:metadata type="id">
           <xsl:value-of select="."/>
@@ -249,7 +251,13 @@
 	  <xsl:value-of select="$fulltext_b"/>
 	</pz:metadata>
       </xsl:if>
+
+        <pz:metadata type="open-url">
+            <xsl:call-template name="insert-md-openurl" />
+        </pz:metadata>
+
     </pz:record>
+
   </xsl:template>
 
 </xsl:stylesheet>
