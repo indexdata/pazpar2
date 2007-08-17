@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.16 2007-07-13 13:16:57 adam Exp $
+/* $Id: client.c,v 1.17 2007-08-17 12:25:26 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -404,8 +404,7 @@ void client_send_search(struct client *cl)
     Z_Query *zquery;
     int ssub = 0, lslb = 100000, mspn = 10;
     char *piggyback = 0;
-    char *queryenc = 0;
-    yaz_iconv_t iconv = 0;
+    char *queryenc = session_setting_oneval(sdb, PZ_QUERYENCODING);
 
     yaz_log(YLOG_DEBUG, "Sending search to %s", sdb->database->url);
 
@@ -418,8 +417,9 @@ void client_send_search(struct client *cl)
                                    client_get_pquery(cl));
 
     // converting to target encoding
-    if ((queryenc = session_setting_oneval(sdb, PZ_QUERYENCODING))){
-        iconv = yaz_iconv_open(queryenc, "UTF-8");
+    if (queryenc && *queryenc)
+    {
+        yaz_iconv_t iconv = yaz_iconv_open(queryenc, "UTF-8");
         if (iconv){
             yaz_query_charset_convert_rpnquery(zquery->u.type_1, 
                                                global_parameters.odr_out, 
@@ -925,6 +925,7 @@ int client_parse_query(struct client *cl, const char *query)
 
     if (!ccl_map)
         return -1;
+
     cn = ccl_find_str(ccl_map, query, &cerror, &cpos);
     ccl_qual_rm(&ccl_map);
     if (!cn)
