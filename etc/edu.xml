@@ -1,5 +1,5 @@
 <settings target="*">
-  <!-- $Id: edu.xml,v 1.3 2007-07-10 13:43:07 adam Exp $ -->
+  <!-- $Id: edu.xml,v 1.4 2007-08-17 11:29:36 jakub Exp $ -->
   <!-- based on edu.pz -->
   <set target="acorn.library.vanderbilt.edu:2200/ACORN" name="pz:name" value="Vanderbilt U"/>
   <set target="advance.biblio.polymtl.ca:210/ADVANCE" name="pz:name" value="Ecole Polytechnique Montreal"/>
@@ -74,4 +74,5 @@
   <set name="pz:nativesyntax" value="iso2709"/>
   <set name="pz:xslt" value="marc21.xsl"/>
 
+  <set name="open_url_resolver" value="http://someresolver.com"/>
 </settings>

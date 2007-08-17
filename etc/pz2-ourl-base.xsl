@@ -7,11 +7,12 @@
     xmlns:str="http://exslt.org/strings"
     extension-element-prefixes="str">
 
-  <xsl:variable name="resolver">http://zeus.lib.uoc.gr:3210/sfxtst3</xsl:variable>
+  <xsl:param name="open_url_resolver"/>
+  <!--<xsl:variable name="resolver">http://zeus.lib.uoc.gr:3210/sfxtst3</xsl:variable>-->
  
   <xsl:template name="insert-md-openurl">
   
-    <xsl:value-of select="$resolver" /><xsl:text>?generatedby=pz2</xsl:text>
+    <xsl:value-of select="$open_url_resolver" /><xsl:text>?generatedby=pz2</xsl:text>
     <xsl:call-template name="ou-parse-author" />
     <xsl:call-template name="ou-parse-date" />
     <xsl:call-template name="ou-parse-volume" />
