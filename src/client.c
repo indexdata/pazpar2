@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.17 2007-08-17 12:25:26 adam Exp $
+/* $Id: client.c,v 1.18 2007-08-17 12:39:11 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -403,8 +403,8 @@ void client_send_search(struct client *cl)
     char **databaselist;
     Z_Query *zquery;
     int ssub = 0, lslb = 100000, mspn = 10;
-    char *piggyback = 0;
-    char *queryenc = session_setting_oneval(sdb, PZ_QUERYENCODING);
+    const char *piggyback = session_setting_oneval(sdb, PZ_PIGGYBACK);
+    const char *queryenc = session_setting_oneval(sdb, PZ_QUERYENCODING);
 
     yaz_log(YLOG_DEBUG, "Sending search to %s", sdb->database->url);
 
@@ -436,8 +436,7 @@ void client_send_search(struct client *cl)
     for (ndb = 0; sdb->database->databases[ndb]; ndb++)
 	databaselist[ndb] = sdb->database->databases[ndb];
 
-    if (!(piggyback = session_setting_oneval(sdb, PZ_PIGGYBACK)) 
-        || *piggyback == '1')
+    if (!piggyback || *piggyback == '1')
     {
         const char *elements = session_setting_oneval(sdb, PZ_ELEMENTS);
         const char *recsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
@@ -743,7 +742,7 @@ int client_is_our_response(struct client *cl)
 static void init_authentication(struct client *cl, Z_InitRequest *req)
 {
     struct session_database *sdb = client_get_database(cl);
-    char *auth = session_setting_oneval(sdb, PZ_AUTHENTICATION);
+    const char *auth = session_setting_oneval(sdb, PZ_AUTHENTICATION);
 
     if (*auth)
     {
@@ -752,7 +751,7 @@ static void init_authentication(struct client *cl, Z_InitRequest *req)
         Z_IdAuthentication *idAuth = odr_malloc(global_parameters.odr_out,
                 sizeof(*idAuth));
         idAuth->which = Z_IdAuthentication_open;
-        idAuth->u.open = auth;
+        idAuth->u.open = odr_strdup(global_parameters.odr_out, auth);
         req->idAuthentication = idAuth;
         connection_set_authentication(co, nmem_strdup(se->session_nmem, auth));
     }
@@ -763,8 +762,8 @@ static void init_zproxy(struct client *cl, Z_InitRequest *req)
     struct session_database *sdb = client_get_database(cl);
     char *ztarget = sdb->database->url;
     //char *ztarget = sdb->url;    
-    char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
-
+    const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
+    
     if (*zproxy)
         yaz_oi_set_string_oid(&req->otherInfo,
                               global_parameters.odr_out,

@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.61 2007-08-16 11:30:45 adam Exp $
+/* $Id: logic.c,v 1.62 2007-08-17 12:39:11 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -291,7 +291,7 @@ static void insert_settings_parameters(struct session_database *sdb,
         if (md->setting == Metadata_setting_parameter &&
                 (setting = settings_offset(md->name)) > 0)
         {
-            char *val = session_setting_oneval(sdb, setting);
+            const char *val = session_setting_oneval(sdb, setting);
             if (val && nparms < MAX_XSLT_ARGS)
             {
                 char *buf;
@@ -324,7 +324,7 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc)
         if (md->setting == Metadata_setting_postproc &&
                 (offset = settings_offset(md->name)) > 0)
         {
-            char *val = session_setting_oneval(sdb, offset);
+            const char *val = session_setting_oneval(sdb, offset);
             if (val)
             {
                 xmlNode *r = xmlDocGetRootElement(doc);
@@ -393,7 +393,7 @@ xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
 
 // Retrieve first defined value for 'name' for given database.
 // Will be extended to take into account user associated with session
-char *session_setting_oneval(struct session_database *db, int offset)
+const char *session_setting_oneval(struct session_database *db, int offset)
 {
     if (!db->settings[offset])
         return "";
@@ -405,7 +405,7 @@ char *session_setting_oneval(struct session_database *db, int offset)
 // Initialize YAZ Map structures for MARC-based targets
 static int prepare_yazmarc(struct session_database *sdb)
 {
-    char *s;
+    const char *s;
 
     if (!sdb->settings)
     {
@@ -445,7 +445,7 @@ static int prepare_yazmarc(struct session_database *sdb)
 // setting. However, this is not a realistic use scenario.
 static int prepare_map(struct session *se, struct session_database *sdb)
 {
-   char *s;
+    const char *s;
 
     if (!sdb->settings)
     {
@@ -461,8 +461,8 @@ static int prepare_map(struct session *se, struct session_database *sdb)
 
         if (!strcmp(s, "auto"))
         {
-            char *request_syntax = session_setting_oneval(sdb,
-                                                          PZ_REQUESTSYNTAX);
+            const char *request_syntax = session_setting_oneval(
+                sdb, PZ_REQUESTSYNTAX);
             if (request_syntax)
             {
                 char *cp;
@@ -866,7 +866,8 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count)
     *count = 0;
     for (cl = se->clients; cl; cl = client_next_in_session(cl))
     {
-        char *name = session_setting_oneval(client_get_database(cl), PZ_NAME);
+        const char *name = session_setting_oneval(client_get_database(cl),
+                                                  PZ_NAME);
 
         res[*count].id = client_get_database(cl)->database->url;
         res[*count].name = *name ? name : "Unknown";

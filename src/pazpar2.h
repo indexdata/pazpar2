@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.46 2007-07-30 23:16:33 quinn Exp $
+/* $Id: pazpar2.h,v 1.47 2007-08-17 12:39:11 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -158,7 +158,7 @@ struct statistics {
 
 struct hitsbytarget {
     char *id;
-    char *name;
+    const char *name;
     int hits;
     int diagnostic;
     int records;
@@ -182,7 +182,7 @@ struct termlist_score **termlist(struct session *s, const char *name, int *num);
 int session_set_watch(struct session *s, int what, session_watchfun fun, void *data, struct http_channel *c);
 int session_active_clients(struct session *s);
 void session_apply_setting(struct session *se, char *dbname, char *setting, char *value);
-char *session_setting_oneval(struct session_database *db, int offset);
+const char *session_setting_oneval(struct session_database *db, int offset);
 
 void start_http_listener(void);
 void start_proxy(void);

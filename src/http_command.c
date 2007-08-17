@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.57 2007-07-16 17:01:46 adam Exp $
+/* $Id: http_command.c,v 1.58 2007-08-17 12:39:11 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.57 2007-07-16 17:01:46 adam Exp $
+ * $Id: http_command.c,v 1.58 2007-08-17 12:39:11 adam Exp $
  */
 
 #include <stdio.h>
@@ -477,7 +477,8 @@ static void write_metadata(WRBUF w, struct conf_service *service,
 static void write_subrecord(struct record *r, WRBUF w,
         struct conf_service *service, int show_details)
 {
-    char *name = session_setting_oneval(client_get_database(r->client), PZ_NAME);
+    const char *name = session_setting_oneval(
+        client_get_database(r->client), PZ_NAME);
 
     wrbuf_puts(w, "<location id=\"");
     wrbuf_xmlputs(w, client_get_database(r->client)->database->url);
