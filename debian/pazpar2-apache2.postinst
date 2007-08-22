@@ -18,6 +18,14 @@ if [ -e /etc/apache2/apache2.conf ]; then
     if [ ! -f /etc/apache2/mods-enabled/proxy_http.load ]; then
 	a2enmod proxy_http || true
     fi
+
+    if [ -d /etc/apache2/conf.d ]; then
+	ln -sf /etc/pazpar2/ap2pazpar2.cfg /etc/apache2/conf.d/pazpar2
+	
+	if [ -f /etc/apache2/conf.d/ap2pazpar2.cfg ]; then
+	    rm /etc/apache2/conf.d/ap2pazpar2.cfg
+	fi
+    fi
     
     reload_apache
 fi
