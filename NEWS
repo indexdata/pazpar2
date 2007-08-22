@@ -1,3 +1,5 @@
+--- 1.0.2 2007/08/22
+
 Exposed user setting values (i.e. non-pz: names) to the record systems in two
 ways: Either as parameters to the normalization stylesheets (which would allow the
 programmer to postprocess or use the values in any way) or after the normalization
