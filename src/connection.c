@@ -1,4 +1,4 @@
-/* $Id: connection.c,v 1.10 2007-08-14 14:03:02 adam Exp $
+/* $Id: connection.c,v 1.11 2007-08-28 21:11:21 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -335,7 +335,7 @@ int connection_send_apdu(struct connection *co, Z_APDU *a)
     else if (r == 1)
     {
         fprintf(stderr, "cs_put incomplete (ParaZ does not handle that)\n");
-        exit(1);
+        return -1;;
     }
     odr_reset(global_parameters.odr_out); /* release the APDU structure  */
     co->state = Conn_Waiting;
@@ -356,7 +356,7 @@ int connection_connect(struct connection *con)
     int res;
 
     struct session_database *sdb = client_get_database(con->client);
-    char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
+    const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
 
     assert(host->ipport);
     assert(con);
@@ -433,7 +433,7 @@ int client_prep_connection(struct client *cl)
     struct session *se = client_get_session(cl);
     struct host *host = client_get_host(cl);
     struct session_database *sdb = client_get_database(cl);
-    char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
+    const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
 
     if (zproxy && zproxy[0] == '\0')
         zproxy = 0;

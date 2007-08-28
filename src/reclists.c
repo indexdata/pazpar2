@@ -1,4 +1,4 @@
-/* $Id: reclists.c,v 1.21 2007-08-13 12:42:45 adam Exp $
+/* $Id: reclists.c,v 1.22 2007-08-28 21:11:21 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -207,8 +207,8 @@ static int reclist_cmp(const void *p1, const void *p2)
                     res = 0;
                 break;
             default:
-                yaz_log(YLOG_FATAL, "Bad sort type: %d", s->type);
-                exit(1);
+                yaz_log(YLOG_WARN, "Bad sort type: %d", s->type);
+                res = 0;
         }
     }
     return res;
