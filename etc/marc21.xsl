@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: marc21.xsl,v 1.20 2007-08-16 12:40:01 jakub Exp $ -->
+<!-- $Id: marc21.xsl,v 1.21 2007-08-28 16:47:30 quinn Exp $ -->
 <xsl:stylesheet
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -252,9 +252,11 @@
 	</pz:metadata>
       </xsl:if>
 
+      <xsl:if test="$open_url_resolver">
         <pz:metadata type="open-url">
             <xsl:call-template name="insert-md-openurl" />
         </pz:metadata>
+      </xsl:if>
 
     </pz:record>
 
