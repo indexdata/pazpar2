@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.50 2007-08-14 14:23:32 jakub Exp $
+** $Id: pz2.js,v 1.51 2007-08-30 13:24:37 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -24,28 +24,27 @@ if (!window['Node']) {
 if(typeof window.pz2 == "undefined") {
 window.undefined = window.undefined;
 
-var pz2 = function(paramArray) {
+var pz2 = function ( paramArray )
+{
+    
+    // at least one callback required
+    if ( !paramArray )
+        throw new Error("Pz2.js: An array with parameters has to be suplied when instantiating a class");
+    
     //for convenience
     __myself = this;
 
     //supported pazpar2's protocol version
     __myself.suppProtoVer = '1';
     __myself.pz2String = paramArray.pazpar2path || "/pazpar2/search.pz2";
-    __myself.stylesheet = paramArray.detailstylesheet || null;
     __myself.useSessions = true;
-    if (paramArray.usesessions != undefined) {
-         __myself.useSessions = paramArray.usesessions;
-    }
-	
+    
+    __myself.stylesheet = paramArray.detailstylesheet || null;
     //load stylesheet if required in async mode
     if( __myself.stylesheet ) {
         var request = new pzHttpRequest( __myself.stylesheet );
         request.get( {}, function ( doc ) { __myself.xslDoc = doc; } );
     }
-	
-    // at least one callback required
-    if ( !paramArray )
-        throw new Error("An array with parameters has to be suplied when instantiating a class");
     
     __myself.errorHandler = paramArray.errorhandler || null;
     
@@ -62,23 +61,25 @@ var pz2 = function(paramArray) {
     
     // some configurational stuff
     __myself.keepAlive = 50000;
+    
+    if ( paramArray.keepAlive < __myself.keepAlive )
+        __myself.keepAlive = paramArray.keepAlive;
 
     __myself.sessionID = null;
     __myself.initStatusOK = false;
     __myself.pingStatusOK = false;
     __myself.searchStatusOK = false;
-
-    if ( paramArray.keepAlive < __myself.keepAlive )
-        __myself.keepAlive = paramArray.keepAlive;
-
+    
     // for sorting
     __myself.currentSort = "relevance";
+
     // where are we?
     __myself.currentStart = 0;
     __myself.currentNum = 20;
 
     // last full record retrieved
     __myself.currRecID = null;
+    
     // current query
     __myself.currQuery = null;
 
@@ -103,13 +104,21 @@ var pz2 = function(paramArray) {
     // active clients, updated by stat and show
     // might be an issue since bytarget will poll accordingly
     __myself.activeClients = 1;
-    
-    // auto init session?
-    if (paramArray.autoInit !== false)
+
+    // if in proxy mode no need to init
+    if (paramArray.usesessions != undefined) {
+         __myself.useSessions = paramArray.usesessions;
+        __myself.initStatusOK = true;
+    }
+    // else, auto init session or wait for a user init?
+    if (__myself.useSessions && paramArray.autoInit !== false) {
         __myself.init();
+    }
 };
+
 pz2.prototype = 
 {
+    // stop activity by clearing tiemouts 
    stop: function ()
    {
        clearTimeout(__myself.statTimer);
@@ -118,33 +127,39 @@ pz2.prototype =
        clearTimeout(__myself.bytargetTimer);
     },
     
+    // reset status variables
     reset: function ()
-    {
-        __myself.sessionID = null;
-        __myself.initStatusOK = false;
-        __myself.pingStatusOK = false;
+    {   
+        if ( __myself.useSessions ) {
+            __myself.sessionID = null;
+            __myself.initStatusOK = false;
+            __myself.pingStatusOK = false;
+        }
         __myself.searchStatusOK = false;
-
         __myself.stop();
             
         if ( __myself.resetCallback )
                 __myself.resetCallback();
     },
+
     init: function ( sessionId ) 
     {
         __myself.reset();
-
-        if ( sessionId != undefined ) {
+        
+        // session id as a param
+        if ( sessionId != undefined && __myself.useSessions ) {
             __myself.initStatusOK = true;
             __myself.sessionID = sessionId;
             __myself.ping();
+        // old school direct pazpar2 init
         } else if (__myself.useSessions) {
             var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
             request.get(
                 { "command": "init" },
                 function(data) {
                     if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
-                        if ( data.getElementsByTagName("protocol")[0].childNodes[0].nodeValue != __myself.suppProtoVer )
+                        if ( data.getElementsByTagName("protocol")[0].childNodes[0].nodeValue 
+                            != __myself.suppProtoVer )
                             throw new Error("Server's protocol not supported by the client");
                         __myself.initStatusOK = true;
                         __myself.sessionID = data.getElementsByTagName("session")[0].childNodes[0].nodeValue;
@@ -156,6 +171,7 @@ pz2.prototype =
                         setTimeout("__myself.init()", 1000);
                 }
             );
+        // when through proxy no need to init
         } else {
             __myself.initStatusOK = true;
 	}
@@ -163,9 +179,11 @@ pz2.prototype =
     // no need to ping explicitly
     ping: function () 
     {
-        if( !__myself.initStatusOK )
-            return;
+        // pinging only makes sense when using pazpar2 directly
+        if( !__myself.initStatusOK || !__myself.useSessions )
+            throw new Error('Pz2.js: Ping not allowed (proxy mode) or session not initialized.');
             // session is not initialized code here
+        
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         request.get(
             { "command": "ping", "session": __myself.sessionID },
@@ -193,13 +211,14 @@ pz2.prototype =
         __myself.bytargetCounter = 0;
         __myself.statCounter = 0;
         
+        // no proxy mode
         if( !__myself.initStatusOK )
-            return;
+            throw new Error('Pz2.js: session not initialized.');
         
         if( query !== undefined )
             __myself.currQuery = query;
         else
-            throw new Error("You need to supply query to the search command");
+            throw new Error("Pz2.js: no query supplied to the search command.");
         
         if ( showfrom !== undefined )
             var start = showfrom;
@@ -239,9 +258,11 @@ pz2.prototype =
     stat: function()
     {
         if( !__myself.initStatusOK )
-            return;
+            throw new Error('Pz2.js: session not initialized.');
+        
         // if called explicitly takes precedence
         clearTimeout(__myself.statTimer);
+        
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         request.get(
             { "command": "stat", "session": __myself.sessionID },
@@ -266,7 +287,6 @@ pz2.prototype =
 		    var delay = __myself.statTime + __myself.statCounter * __myself.dumpFactor;
                     if ( activeClients > 0 )
                         __myself.statTimer = setTimeout("__myself.stat()", delay);
-                    
                     __myself.statCallback(stat);
                 }
                 else
@@ -278,8 +298,9 @@ pz2.prototype =
     },
     show: function(start, num, sort)
     {
-        if( !__myself.searchStatusOK )
-            return;
+        if( !__myself.searchStatusOK && __myself.useSessions )
+            throw new Error('Pz2.js: show command has to be preceded with a search command.');
+        
         // if called explicitly takes precedence
         clearTimeout(__myself.showTimer);
         
@@ -289,6 +310,7 @@ pz2.prototype =
             __myself.currentStart = Number( start );
         if( num !== undefined )
             __myself.currentNum = Number( num );
+
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         var context = this;
         request.get(
@@ -351,8 +373,12 @@ pz2.prototype =
             }
         );
     },
-    record: function(id,offset, params)
+    record: function(id, offset, params)
     {
+        // we may call record with no previous search if in proxy mode
+        if( !__myself.searchStatusOK && __myself.useSessions)
+           throw new Error('Pz2.js: record command has to be preceded with a search command.'); 
+
         if ( params == undefined )
             params = {};
 
@@ -361,22 +387,24 @@ pz2.prototype =
         } else {
             callback = __myself.recordCallback;
         }
-
+        
+        // what is that?
         if ( params['handle'] == undefined )
             handle = {};
         else
             handle = params['handle'];
 
-        if( !__myself.searchStatusOK && __myself.useSessions)
-            return;
-
         if( id !== undefined )
             __myself.currRecID = id;
+        
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
 
-	var recordParams = { "command": "record", "session": __myself.sessionID, "id": __myself.currRecID };
-	if (offset !== undefined) {
-		recordParams["offset"] = offset;
+	var recordParams = { "command": "record", 
+                            "session": __myself.sessionID,
+                            "id": __myself.currRecID };
+	
+        if (offset !== undefined) {
+	    recordParams["offset"] = offset;
 	}
 
         if (params.syntax != undefined) {
@@ -384,6 +412,7 @@ pz2.prototype =
         }
 
 	__myself.currRecOffset = offset;
+
         request.get(
 	    recordParams,
             function(data) {
@@ -437,12 +466,15 @@ pz2.prototype =
             }
         );
     },
+
     termlist: function()
     {
-        if( !__myself.searchStatusOK )
-            return;
+        if( !__myself.searchStatusOK && __.myself.useSessions )
+            throw new Error('Pz2.js: termlist command has to be preceded with a search command.');
+
         // if called explicitly takes precedence
         clearTimeout(__myself.termTimer);
+        
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         request.get(
             { "command": "termlist", "session": __myself.sessionID, "name": __myself.termKeys },
@@ -491,10 +523,16 @@ pz2.prototype =
     },
     bytarget: function()
     {
+        if( !__myself.initStatusOK && __myself.useSessions )
+            throw new Error('Pz2.js: bytarget command has to be preceded with a search command.');
+        
+        // no need to continue
         if( !__myself.searchStatusOK )
             return;
+
         // if called explicitly takes precedence
         clearTimeout(__myself.bytargetTimer);
+        
         var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         request.get(
             { "command": "bytarget", "session": __myself.sessionID },
@@ -527,12 +565,14 @@ pz2.prototype =
             }
         );
     },
+    
     // just for testing, probably shouldn't be here
     showNext: function(page)
     {
         var step = page || 1;
         __myself.show( ( step * __myself.currentNum ) + __myself.currentStart );     
     },
+
     showPrev: function(page)
     {
         if (__myself.currentStart == 0 )
@@ -541,6 +581,7 @@ pz2.prototype =
         var newStart = __myself.currentStart - (step * __myself.currentNum );
         __myself.show( newStart > 0 ? newStart : 0 );
     },
+
     showPage: function(pageNum)
     {
         //var page = pageNum || 1;
@@ -620,16 +661,16 @@ pzHttpRequest.prototype =
 
     _handleResponse: function ()
     {
-        if ( this.request.readyState == 4 ) {
-            if ( this.request.status == 200 ) {
-                this.callback( this.request.responseXML );
-            }
-            // pz errors
-            else if ( this.request.status == 417 ) {
-                var errMsg = this.request.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue;
+        if ( this.request.readyState == 4 ) { 
+            // pick up pazpr2 errors first
+            if ( this.request.responseXML 
+                && this.request.responseXML.documentElement.nodeName == 'error'
+                && this.request.responseXML.getElementsByTagName("error").length ) {
+                var errAddInfo = this.request.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue;
+                var errMsg = this.request.responseXML.getElementsByTagName("error")[0].getAttribute("msg");
                 var errCode = this.request.responseXML.getElementsByTagName("error")[0].getAttribute("code");
             
-                var err = new Error(errMsg);
+                var err = new Error(errMsg + ': ' + errAddInfo);
                 err.code = errCode;
 	    
                 if (this.errorHandler) {
@@ -638,10 +679,11 @@ pzHttpRequest.prototype =
                 else {
                     throw err;
                 }
-            }
-            else {
-                var err = new Error("XMLHttpRequest error. STATUS: " 
-                            + this.request.status + " STATUS TEXT: " 
+            } else if ( this.request.status == 200 ) {
+                this.callback( this.request.responseXML );
+            } else {
+                var err = new Error("Pz2.js: HTTP request error (AJAX). Code: " 
+                            + this.request.status + " Info: " 
                             + this.request.statusText );
                 err.code = 'HTTP';
                 
@@ -757,7 +799,7 @@ Element_setTextContent = function ( DOM_Element, textContent )
 
 Element_getTextContent = function (DOM_Element)
 {
-    if (DOM_Element.textContent) {
+    if ( typeof DOM_Element.textContent != 'undefined' ) {
         return DOM_Element.textContent;
     } else if (DOM_Element.text ) {
         return DOM_Element.text;
