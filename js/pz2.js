@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.51 2007-08-30 13:24:37 jakub Exp $
+** $Id: pz2.js,v 1.52 2007-08-30 13:43:43 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -469,7 +469,7 @@ pz2.prototype =
 
     termlist: function()
     {
-        if( !__myself.searchStatusOK && __.myself.useSessions )
+        if( !__myself.searchStatusOK && __myself.useSessions )
             throw new Error('Pz2.js: termlist command has to be preceded with a search command.');
 
         // if called explicitly takes precedence
