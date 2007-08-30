@@ -1,4 +1,4 @@
-/* $Id: icu_chain_test.c,v 1.6 2007-07-05 18:40:24 adam Exp $
+/* $Id: icu_chain_test.c,v 1.7 2007-08-30 08:45:08 marc Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -64,6 +64,17 @@ void print_option_error(const struct config_t *p_config)
             "./icu_chain_test -p c\n"
             "./icu_chain_test -p l -x\n"
             "./icu_chain_test -p t -x\n"
+            "\n"
+            "Example ICU chain XML configuration file:\n"
+            "<icu_chain id=\"en:word\" locale=\"en\">\n"
+            "  <normalize rule=\"[:Control:] Any-Remove\"/>\n"
+            "  <tokenize rule=\"l\"/>\n"
+            "  <normalize rule=\"[[:WhiteSpace:][:Punctuation:]] Remove\"/>\n"
+            "  <display/>\n"
+            "  <casemap rule=\"l\"/>\n"
+            "  <index/>\n"
+            "  <sortkey/>\n"
+            "</icu_chain>\n"
           );
     exit(1);
 }
@@ -139,12 +150,14 @@ static void print_icu_converters(const struct config_t *p_config)
                 count, ucnv_getDefaultName());
     else {    
         fprintf(config.outfile, "Available ICU converters: %d\n", count);
-        fprintf(config.outfile, "Default ICU Converter is: '%s'\n", ucnv_getDefaultName());
+        fprintf(config.outfile, "Default ICU Converter is: '%s'\n", 
+                ucnv_getDefaultName());
     }
     
     for(i=0;i<count;i++){
         if (p_config->xmloutput)
-            fprintf(config.outfile, "<converter id=\"%s\"/>\n", ucnv_getAvailableName(i));
+            fprintf(config.outfile, "<converter id=\"%s\"/>\n", 
+                    ucnv_getAvailableName(i));
         else     
             fprintf(config.outfile, "%s ", ucnv_getAvailableName(i));
     }
@@ -440,12 +453,23 @@ static void process_text_file(const struct config_t *p_config)
     UErrorCode status = U_ZERO_ERROR;
     int success = 0;
     
+    if (! xml_node) {   
+        printf("Could not parse XML config file '%s' \n",
+                config.conffile);
+        exit (1);
+    }
+
     
     config.chain = icu_chain_xml_config(xml_node, &status);
 
     if (config.chain && U_SUCCESS(status))
         success = 1;
-
+    else {   
+        printf("Could not set up ICU chain from config file '%s' \n",
+                config.conffile);
+        exit (1);
+    }
+    
     if (p_config->xmloutput)
         fprintf(config.outfile,
                 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
