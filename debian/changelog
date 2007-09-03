@@ -1,3 +1,9 @@
+pazpar2 (1.0.2-6) unstable; urgency=low
+
+  * Changes to enable pz2.js for proxying.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Mon,  3 Sep 2007 10:12:22 +0200
+
 pazpar2 (1.0.2-5) unstable; urgency=low
 
   * Create a symlink rather than a file in /etc/apache2/conf.d .
