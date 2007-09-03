@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.52 2007-08-30 13:43:43 jakub Exp $
+** $Id: pz2.js,v 1.53 2007-09-03 20:13:22 adam Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -36,7 +36,10 @@ var pz2 = function ( paramArray )
 
     //supported pazpar2's protocol version
     __myself.suppProtoVer = '1';
-    __myself.pz2String = paramArray.pazpar2path || "/pazpar2/search.pz2";
+    if (typeof paramArray.pazpar2path != "undefined")
+        __myself.pz2String = paramArray.pazpar2path;
+    else
+        __myself.pz2String = "/pazpar2/search.pz2";
     __myself.useSessions = true;
     
     __myself.stylesheet = paramArray.detailstylesheet || null;
