@@ -1,3 +1,9 @@
+pazpar2 (1.0.2-7) unstable; urgency=low
+
+  * Fix pazpar2path setting so that empty string is allowed.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Mon,  3 Sep 2007 15:18:37 +0200
+
 pazpar2 (1.0.2-6) unstable; urgency=low
 
   * Changes to enable pz2.js for proxying.
