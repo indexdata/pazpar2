@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.60 2007-09-05 08:40:12 adam Exp $
+/* $Id: http_command.c,v 1.61 2007-09-05 09:13:32 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.60 2007-09-05 08:40:12 adam Exp $
+ * $Id: http_command.c,v 1.61 2007-09-05 09:13:32 adam Exp $
  */
 
 #include <stdio.h>
@@ -596,7 +596,6 @@ static void cmd_record_ready(void *data)
 {
     struct http_channel *c = (struct http_channel *) data;
 
-    yaz_log(YLOG_LOG, "cmd_records_ready chan=%p", c);
     cmd_record(c);
 }
 
