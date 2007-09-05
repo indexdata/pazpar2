@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.47 2007-08-17 12:39:11 adam Exp $
+/* $Id: pazpar2.h,v 1.48 2007-09-05 07:24:04 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -166,7 +166,7 @@ struct hitsbytarget {
     int connected;
 };
 
-struct hitsbytarget *hitsbytarget(struct session *s, int *count);
+struct hitsbytarget *hitsbytarget(struct session *s, int *count, NMEM nmem);
 int select_targets(struct session *se, struct database_criterion *crit);
 struct session *new_session(NMEM nmem);
 void destroy_session(struct session *s);

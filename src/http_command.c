@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.58 2007-08-17 12:39:11 adam Exp $
+/* $Id: http_command.c,v 1.59 2007-09-05 07:24:04 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.58 2007-08-17 12:39:11 adam Exp $
+ * $Id: http_command.c,v 1.59 2007-09-05 07:24:04 adam Exp $
  */
 
 #include <stdio.h>
@@ -286,13 +286,13 @@ static int cmp_ht(const void *p1, const void *p2)
 }
 
 // This implements functionality somewhat similar to 'bytarget', but in a termlist form
-static void targets_termlist(WRBUF wrbuf, struct session *se, int num)
+static void targets_termlist(WRBUF wrbuf, struct session *se, int num,
+                             NMEM nmem)
 {
     struct hitsbytarget *ht;
     int count, i;
 
-    if (!(ht = hitsbytarget(se, &count)))
-        return;
+    ht = hitsbytarget(se, &count, nmem);
     qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht);
     for (i = 0; i < count && i < num && ht[i].hits > 0; i++)
     {
@@ -367,7 +367,7 @@ static void cmd_termlist(struct http_channel *c)
         wrbuf_xmlputs(c->wrbuf, tname);
         wrbuf_puts(c->wrbuf, "\">\n");
         if (!strcmp(tname, "xtargets"))
-            targets_termlist(c->wrbuf, s->psession, num);
+            targets_termlist(c->wrbuf, s->psession, num, c->nmem);
         else
         {
             p = termlist(s->psession, tname, &len);
@@ -409,11 +409,7 @@ static void cmd_bytarget(struct http_channel *c)
 
     if (!s)
         return;
-    if (!(ht = hitsbytarget(s->psession, &count)))
-    {
-        error(rs, PAZPAR2_HITCOUNTS_FAILED, 0);
-        return;
-    }
+    ht = hitsbytarget(s->psession, &count, c->nmem);
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, "<bytarget><status>OK</status>");
 

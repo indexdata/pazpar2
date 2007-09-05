@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.62 2007-08-17 12:39:11 adam Exp $
+/* $Id: logic.c,v 1.63 2007-09-05 07:24:04 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -858,11 +858,16 @@ struct session *new_session(NMEM nmem)
     return session;
 }
 
-struct hitsbytarget *hitsbytarget(struct session *se, int *count)
+struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
 {
-    static struct hitsbytarget res[1000]; // FIXME MM
+    struct hitsbytarget *res = 0;
     struct client *cl;
+    size_t sz = 0;
 
+    for (cl = se->clients; cl; cl = client_next_in_session(cl))
+        sz++;
+
+    res = nmem_malloc(nmem, sizeof(*res) * sz);
     *count = 0;
     for (cl = se->clients; cl; cl = client_next_in_session(cl))
     {
@@ -878,7 +883,6 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count)
         res[*count].connected  = client_get_connection(cl) ? 1 : 0;
         (*count)++;
     }
-
     return res;
 }
 

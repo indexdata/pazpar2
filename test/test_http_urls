@@ -20,4 +20,5 @@ http://localhost:9763/search.pz2?session=2&command=search&query=computer
 http://localhost:9763/search.pz2?session=2&command=show&start=0&number=1&block=1
 http://localhost:9763/search.pz2?session=2&command=search&query=kubiak%20stanis%C5%82aw
 http://localhost:9763/search.pz2?session=2&command=search&query=kubiak%20sts%C5%82aw
+http://localhost:9763/search.pz2?session=2&command=bytarget
 
