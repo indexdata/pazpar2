@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.18 2007-08-17 12:39:11 adam Exp $
+/* $Id: client.c,v 1.19 2007-09-05 08:40:12 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -581,7 +581,9 @@ static void ingest_records(struct client *cl, Z_Records *r)
             continue;
     }
     if (rlist->num_records)
-        session_alert_watch(s, SESSION_WATCH_RECORDS);
+        session_alert_watch(s, SESSION_WATCH_SHOW);
+    if (rlist->num_records)
+        session_alert_watch(s, SESSION_WATCH_RECORD);
 
 #if USE_TIMING
     yaz_timing_stop(t);

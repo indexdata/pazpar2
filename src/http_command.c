@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.59 2007-09-05 07:24:04 adam Exp $
+/* $Id: http_command.c,v 1.60 2007-09-05 08:40:12 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.59 2007-09-05 07:24:04 adam Exp $
+ * $Id: http_command.c,v 1.60 2007-09-05 08:40:12 adam Exp $
  */
 
 #include <stdio.h>
@@ -519,6 +519,8 @@ void show_raw_reset(void *data, struct http_channel *c)
     client_show_raw_reset(client);
 }
 
+static void cmd_record_ready(void *data);
+
 static void cmd_record(struct http_channel *c)
 {
     struct http_response *rs = c->response;
@@ -540,7 +542,11 @@ static void cmd_record(struct http_channel *c)
     wrbuf_rewind(c->wrbuf);
     if (!(rec = show_single(s->psession, idstr)))
     {
-        error(rs, PAZPAR2_RECORD_MISSING, idstr);
+        if (session_set_watch(s->psession, SESSION_WATCH_RECORD,
+                              cmd_record_ready, c, c) != 0)
+        {
+            error(rs, PAZPAR2_RECORD_MISSING, idstr);
+        }
         return;
     }
     if (offsetstr)
@@ -584,6 +590,14 @@ static void cmd_record(struct http_channel *c)
         rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
         http_send_response(c);
     }
+}
+
+static void cmd_record_ready(void *data)
+{
+    struct http_channel *c = (struct http_channel *) data;
+
+    yaz_log(YLOG_LOG, "cmd_records_ready chan=%p", c);
+    cmd_record(c);
 }
 
 static void show_records(struct http_channel *c, int active)
@@ -678,13 +692,12 @@ static void cmd_show(struct http_channel *c)
         if (status && (!s->psession->reclist || !s->psession->reclist->num_records))
         {
             // if there is already a watch/block. we do not block this one
-            if (session_set_watch(s->psession,
-                                  SESSION_WATCH_RECORDS,
-                                  show_records_ready, c, c) == 0)
+            if (session_set_watch(s->psession, SESSION_WATCH_SHOW,
+                                  show_records_ready, c, c) != 0)
             {
                 yaz_log(YLOG_DEBUG, "Blocking on cmd_show");
-                return;
             }
+            return;
         }
     }
 

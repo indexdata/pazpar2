@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.63 2007-09-05 07:24:04 adam Exp $
+/* $Id: logic.c,v 1.64 2007-09-05 08:40:12 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -551,13 +551,21 @@ int session_set_watch(struct session *s, int what,
 
 void session_alert_watch(struct session *s, int what)
 {
-    if (!s->watchlist[what].fun)
-        return;
-    http_remove_observer(s->watchlist[what].obs);
-    (*s->watchlist[what].fun)(s->watchlist[what].data);
-    s->watchlist[what].fun = 0;
-    s->watchlist[what].data = 0;
-    s->watchlist[what].obs = 0;
+    if (s->watchlist[what].fun)
+    {
+        /* our watch is no longer associated with http_channel */
+        http_remove_observer(s->watchlist[what].obs);
+        session_watchfun fun = s->watchlist[what].fun;
+        void *data = s->watchlist[what].data;
+
+        /* reset watch before fun is invoked - in case fun wants to set
+           it again */
+        s->watchlist[what].fun = 0;
+        s->watchlist[what].data = 0;
+        s->watchlist[what].obs = 0;
+
+        fun(data);
+    }
 }
 
 //callback for grep_databases

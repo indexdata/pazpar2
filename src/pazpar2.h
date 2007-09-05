@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.48 2007-09-05 07:24:04 adam Exp $
+/* $Id: pazpar2.h,v 1.49 2007-09-05 08:40:12 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -104,8 +104,11 @@ struct session_database
     struct session_database *next;
 };
 
-#define SESSION_WATCH_RECORDS   0
-#define SESSION_WATCH_MAX       0
+
+
+#define SESSION_WATCH_SHOW      0
+#define SESSION_WATCH_RECORD    1
+#define SESSION_WATCH_MAX       1
 
 #define SESSION_MAX_TERMLISTS 10
 
