@@ -1,23 +1,23 @@
-/* $Id: normalize7bit.c,v 1.2 2007-04-27 12:17:04 marc Exp $
+/* $Id: normalize7bit.c,v 1.3 2007-09-07 10:27:14 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
-This file is part of Pazpar2.
+   This file is part of Pazpar2.
 
-Pazpar2 is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free
-Software Foundation; either version 2, or (at your option) any later
-version.
+   Pazpar2 is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2, or (at your option) any later
+   version.
 
-Pazpar2 is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-for more details.
+   Pazpar2 is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+   for more details.
 
-You should have received a copy of the GNU General Public License
-along with Pazpar2; see the file LICENSE.  If not, write to the
-Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
-02111-1307, USA.
- */
+   You should have received a copy of the GNU General Public License
+   along with Pazpar2; see the file LICENSE.  If not, write to the
+   Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA.
+*/
 
 /** \file normalize7bit.c
     \brief char and string normalization for 7bit ascii only
@@ -37,12 +37,12 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 char * normalize7bit_generic(char * str, const char * rm_chars)
 {
     char *p, *pe;
-                for (p = str; *p && isspace(*p); p++)
-                    ;
-                for (pe = p + strlen(p) - 1;
-                        pe > p && strchr(rm_chars, *pe); pe--)
-                    *pe = '\0';
-                return p;
+    for (p = str; *p && isspace(*p); p++)
+        ;
+    for (pe = p + strlen(p) - 1;
+         pe > p && strchr(rm_chars, *pe); pe--)
+        *pe = '\0';
+    return p;
 }
 
 
@@ -84,7 +84,7 @@ char * normalize7bit_mergekey(char *buf, int skiparticle)
             *(pout--) = '\0';
         }
         while (pout > buf && *pout == ' ');
-
+    
     return buf;
 }
 

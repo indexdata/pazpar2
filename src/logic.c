@@ -1,23 +1,23 @@
-/* $Id: logic.c,v 1.64 2007-09-05 08:40:12 adam Exp $
+/* $Id: logic.c,v 1.65 2007-09-07 10:27:14 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
-This file is part of Pazpar2.
+   This file is part of Pazpar2.
 
-Pazpar2 is free software; you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free
-Software Foundation; either version 2, or (at your option) any later
-version.
+   Pazpar2 is free software; you can redistribute it and/or modify it under
+   the terms of the GNU General Public License as published by the Free
+   Software Foundation; either version 2, or (at your option) any later
+   version.
 
-Pazpar2 is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or
-FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-for more details.
+   Pazpar2 is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or
+   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+   for more details.
 
-You should have received a copy of the GNU General Public License
-along with Pazpar2; see the file LICENSE.  If not, write to the
-Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
-02111-1307, USA.
- */
+   You should have received a copy of the GNU General Public License
+   along with Pazpar2; see the file LICENSE.  If not, write to the
+   Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
+   02111-1307, USA.
+*/
 
 /** \file logic.c
     \brief high-level logic; mostly user sessions and settings
@@ -107,20 +107,20 @@ void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
 
     switch (n->kind)
     {
-        case CCL_RPN_AND:
-        case CCL_RPN_OR:
-        case CCL_RPN_NOT:
-        case CCL_RPN_PROX:
-            pull_terms(nmem, n->u.p[0], termlist, num);
-            pull_terms(nmem, n->u.p[1], termlist, num);
-            break;
-        case CCL_RPN_TERM:
-            nmem_strsplit(nmem, " ", n->u.t.term, &words, &numwords);
-            for (i = 0; i < numwords; i++)
-                termlist[(*num)++] = words[i];
-            break;
-        default: // NOOP
-            break;
+    case CCL_RPN_AND:
+    case CCL_RPN_OR:
+    case CCL_RPN_NOT:
+    case CCL_RPN_PROX:
+        pull_terms(nmem, n->u.p[0], termlist, num);
+        pull_terms(nmem, n->u.p[1], termlist, num);
+        break;
+    case CCL_RPN_TERM:
+        nmem_strsplit(nmem, " ", n->u.t.term, &words, &numwords);
+        for (i = 0; i < numwords; i++)
+            termlist[(*num)++] = words[i];
+        break;
+    default: // NOOP
+        break;
     }
 }
 
@@ -276,7 +276,7 @@ xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec)
 
 // Add static values from session database settings if applicable
 static void insert_settings_parameters(struct session_database *sdb,
-        struct session *se, char **parms)
+                                       struct session *se, char **parms)
 {
     struct conf_service *service = global_parameters.server->service;
     int i;
@@ -289,7 +289,7 @@ static void insert_settings_parameters(struct session_database *sdb,
         int setting;
 
         if (md->setting == Metadata_setting_parameter &&
-                (setting = settings_offset(md->name)) > 0)
+            (setting = settings_offset(md->name)) > 0)
         {
             const char *val = session_setting_oneval(sdb, setting);
             if (val && nparms < MAX_XSLT_ARGS)
@@ -322,14 +322,14 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc)
         int offset;
 
         if (md->setting == Metadata_setting_postproc &&
-                (offset = settings_offset(md->name)) > 0)
+            (offset = settings_offset(md->name)) > 0)
         {
             const char *val = session_setting_oneval(sdb, offset);
             if (val)
             {
                 xmlNode *r = xmlDocGetRootElement(doc);
                 xmlNode *n = xmlNewTextChild(r, 0, (xmlChar *) "metadata",
-                        (xmlChar *) val);
+                                             (xmlChar *) val);
                 xmlSetProp(n, (xmlChar *) "type", (xmlChar *) md->name);
             }
         }
@@ -337,7 +337,7 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc)
 }
 
 xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
-        Z_External *rec)
+                         Z_External *rec)
 {
     struct database_retrievalmap *m;
     xmlDoc *rdoc = record_to_xml(sdb, rec);
@@ -791,10 +791,10 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     }
     // Jakub: This breaks the filter setting.
     /*if (offset == PZ_ID)
-    {
-        yaz_log(YLOG_WARN, "No need to set pz:id setting. Ignoring");
-        return;
-    }*/
+      {
+      yaz_log(YLOG_WARN, "No need to set pz:id setting. Ignoring");
+      return;
+      }*/
     new->precedence = 0;
     new->target = dbname;
     new->name = setting;
@@ -806,23 +806,23 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     // (happens when a search starts and client connections are prepared)
     switch (offset)
     {
-        case PZ_NATIVESYNTAX:
-            if (sdb->yaz_marc)
-            {
-                yaz_marc_destroy(sdb->yaz_marc);
-                sdb->yaz_marc = 0;
-            }
-            break;
-        case PZ_XSLT:
-            if (sdb->map)
-            {
-                struct database_retrievalmap *m;
-                // We don't worry about the map structure -- it's in nmem
-                for (m = sdb->map; m; m = m->next)
-                    xsltFreeStylesheet(m->stylesheet);
-                sdb->map = 0;
-            }
-            break;
+    case PZ_NATIVESYNTAX:
+        if (sdb->yaz_marc)
+        {
+            yaz_marc_destroy(sdb->yaz_marc);
+            sdb->yaz_marc = 0;
+        }
+        break;
+    case PZ_XSLT:
+        if (sdb->map)
+        {
+            struct database_retrievalmap *m;
+            // We don't worry about the map structure -- it's in nmem
+            for (m = sdb->map; m; m = m->next)
+                xsltFreeStylesheet(m->stylesheet);
+            sdb->map = 0;
+        }
+        break;
     }
 }
 
@@ -933,7 +933,7 @@ struct record_cluster **show(struct session *s, struct reclist_sortparms *sp,
                              NMEM nmem_show)
 {
     struct record_cluster **recs = nmem_malloc(nmem_show, *num 
-                                       * sizeof(struct record_cluster *));
+                                               * sizeof(struct record_cluster *));
     struct reclist_sortparms *spp;
     int i;
 #if USE_TIMING    
@@ -1001,14 +1001,14 @@ void statistics(struct session *se, struct statistics *stat)
             stat->num_no_connection++;
         switch (client_get_state(cl))
         {
-            case Client_Connecting: stat->num_connecting++; break;
-            case Client_Initializing: stat->num_initializing++; break;
-            case Client_Searching: stat->num_searching++; break;
-            case Client_Presenting: stat->num_presenting++; break;
-            case Client_Idle: stat->num_idle++; break;
-            case Client_Failed: stat->num_failed++; break;
-            case Client_Error: stat->num_error++; break;
-            default: break;
+        case Client_Connecting: stat->num_connecting++; break;
+        case Client_Initializing: stat->num_initializing++; break;
+        case Client_Searching: stat->num_searching++; break;
+        case Client_Presenting: stat->num_presenting++; break;
+        case Client_Idle: stat->num_idle++; break;
+        case Client_Failed: stat->num_failed++; break;
+        case Client_Error: stat->num_error++; break;
+        default: break;
         }
         count++;
     }
@@ -1103,7 +1103,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                              int record_no)
 {
     xmlDoc *xdoc = normalize_record(client_get_database(cl),
-        client_get_session(cl), rec);
+                                    client_get_session(cl), rec);
     xmlNode *root, *n;
     struct record *record;
     struct record_cluster *cluster;
@@ -1226,7 +1226,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             {
                 if (!*wheretoput 
                     || strlen(rec_md->data.text) 
-                       > strlen((*wheretoput)->data.text))
+                    > strlen((*wheretoput)->data.text))
                 {
                     *wheretoput = rec_md;
                     if (ser_sk)
@@ -1237,7 +1237,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                                 nmem_malloc(se->nmem, 
                                             sizeof(union data_types));
                         normalize7bit_mergekey(s,
-                             (ser_sk->type == Metadata_sortkey_skiparticle));
+                                               (ser_sk->type == Metadata_sortkey_skiparticle));
                         cluster->sortkeys[sk_field_id]->text = s;
                     }
                 }
