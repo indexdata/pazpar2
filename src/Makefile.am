@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.28 2007-06-18 12:37:54 adam Exp $
+# $Id: Makefile.am,v 1.29 2007-09-07 10:46:33 adam Exp $
 
 sbin_PROGRAMS = pazpar2
 
@@ -9,7 +9,8 @@ check_PROGRAMS = test_config \
       test_record \
       test_reclists \
       test_relevance \
-      test_sel_thread
+      test_sel_thread \
+      test_normalize
 
 TESTS = $(check_PROGRAMS)
 
@@ -57,4 +58,7 @@ test_sel_thread_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
 
 test_icu_I18N_SOURCES = test_icu_I18N.c
 test_icu_I18N_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
+
+test_normalize_SOURCES = test_normalize.c
+test_normalize_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
 

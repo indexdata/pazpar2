@@ -1,4 +1,4 @@
-/* $Id: normalize7bit.c,v 1.3 2007-09-07 10:27:14 adam Exp $
+/* $Id: normalize7bit.c,v 1.4 2007-09-07 10:46:33 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -34,6 +34,7 @@
 #include "normalize7bit.h"
 
 
+/** \brief removes leading whitespace.. Removes suffix cahrs in rm_chars */
 char * normalize7bit_generic(char * str, const char * rm_chars)
 {
     char *p, *pe;
