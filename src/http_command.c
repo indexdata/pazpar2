@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.61 2007-09-05 09:13:32 adam Exp $
+/* $Id: http_command.c,v 1.62 2007-09-10 16:25:50 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.61 2007-09-05 09:13:32 adam Exp $
+ * $Id: http_command.c,v 1.62 2007-09-10 16:25:50 adam Exp $
  */
 
 #include <stdio.h>
@@ -455,7 +455,7 @@ static void write_metadata(WRBUF w, struct conf_service *service,
             switch (cmd->type)
             {
                 case Metadata_type_generic:
-                    wrbuf_xmlputs(w, md->data.text);
+                    wrbuf_xmlputs(w, md->data.text.disp);
                     break;
                 case Metadata_type_year:
                     wrbuf_printf(w, "%d", md->data.number.min);

@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.30 2007-08-01 11:48:26 quinn Exp $ -->
+<!-- $Id: pazpar2_conf.xml,v 1.31 2007-09-10 16:25:49 adam Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -103,11 +103,11 @@
     </varlistentry>
     
     <varlistentry>
-     <term>icu_chain</term>
+     <term>relevance</term>
      <listitem>
       <para>
-       Definition of ICU tokenization and normalization rules
-       are used if ICU support is compiled in.  The 'id'
+       Specifies ICU tokenization and normalization rules
+       for tokens that are used in Pazpar2's relevance ranking.  The 'id'
        attribute is currently not used, and the 'locale'
        attribute must be set to one of the locale strings
        defined in ICU. The child elements listed below can be
@@ -165,6 +165,28 @@
 	</listitem>
        </varlistentry>
       </variablelist>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>sort</term>
+     <listitem>
+      <para>
+       Specifies ICU tokenization and normalization rules
+       for tokens that are used in Pazpar2's sorting. The contents
+       is similar to that of <literal>relevance</literal>.
+      </para>
+     </listitem>
+    </varlistentry>
+    
+    <varlistentry>
+     <term>mergekey</term>
+     <listitem>
+      <para>
+       Specifies ICU tokenization and normalization rules
+       for tokens that are used in Pazpar2's mergekey. The contents
+       is similar to that of <literal>relevance</literal>.
+      </para>
      </listitem>
     </varlistentry>
     
@@ -568,7 +590,7 @@
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: pazpar2_conf.xml,v 1.30 2007-08-01 11:48:26 quinn Exp $ -->
+  <!-- $Id: pazpar2_conf.xml,v 1.31 2007-09-10 16:25:49 adam Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>

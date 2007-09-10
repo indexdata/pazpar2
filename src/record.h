@@ -1,4 +1,4 @@
-/* $Id: record.h,v 1.11 2007-07-16 17:01:46 adam Exp $
+/* $Id: record.h,v 1.12 2007-09-10 16:25:50 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -28,7 +28,10 @@ struct client;
 struct conf_service;
 
 union data_types {
-    char *text;
+    struct {
+        const char *disp;
+        const char *sort;
+    } text;
     struct {
         int min;
         int max;

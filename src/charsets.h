@@ -1,4 +1,4 @@
-/* $Id: charsets.h,v 1.2 2007-05-23 14:44:18 marc Exp $
+/* $Id: charsets.h,v 1.3 2007-09-10 16:25:50 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -26,12 +26,15 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #ifndef PAZPAR_CHARSETS_H
 #define PAZPAR_CHARSETS_H
 
+#include <yaz/wrbuf.h>
+#include <yaz/xmltypes.h>
 
 struct icu_chain;
 
 typedef struct pp2_charset_s *pp2_charset_t;
 typedef struct pp2_relevance_token_s *pp2_relevance_token_t;
 
+pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node);
 pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn);
 void pp2_charset_destroy(pp2_charset_t pct);
 
@@ -39,6 +42,16 @@ pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
                                              const char *buf);
 void pp2_relevance_token_destroy(pp2_relevance_token_t prt);
 const char *pp2_relevance_token_next(pp2_relevance_token_t prt);
+const char *pp2_get_sort(pp2_relevance_token_t prt, int skip_article);
+
+#if 0
+typedef int pp2_charset_normalize_t(pp2_charset_t pct,
+                                    const char *buf,
+                                    WRBUF norm_str, WRBUF sort_str,
+                                    int skip_article);
+
+pp2_charset_normalize_t pp2_charset_metadata_norm;
+#endif
 
 #endif
 

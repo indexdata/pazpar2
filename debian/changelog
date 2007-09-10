@@ -1,3 +1,10 @@
+pazpar2 (1.0.2-9) unstable; urgency=low
+
+  * ICU enabled by default for the Debian package.
+  * ICU for sorting.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Mon, 10 Sep 2007 10:44:03 +0200
+
 pazpar2 (1.0.2-8) unstable; urgency=low
 
   * Bug fixes #1395, #1507.

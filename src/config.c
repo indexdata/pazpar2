@@ -1,4 +1,4 @@
-/* $Id: config.c,v 1.40 2007-07-30 23:16:33 quinn Exp $
+/* $Id: config.c,v 1.41 2007-09-10 16:25:50 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -19,7 +19,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 02111-1307, USA.
  */
 
-/* $Id: config.c,v 1.40 2007-07-30 23:16:33 quinn Exp $ */
+/* $Id: config.c,v 1.41 2007-09-10 16:25:50 adam Exp $ */
 
 #include <string.h>
 
@@ -430,11 +430,9 @@ static struct conf_server *parse_server(xmlNode *node)
     server->service = 0;
     server->next = 0;
     server->settings = 0;
-
-#ifdef HAVE_ICU
-    server->icu_chn = 0;
-#endif // HAVE_ICU
-
+    server->relevance_pct = 0;
+    server->sort_pct = 0;
+    server->mergekey_pct = 0;
 
     for (n = node->children; n; n = n->next)
     {
@@ -483,34 +481,17 @@ static struct conf_server *parse_server(xmlNode *node)
             if (!(server->settings = parse_settings(n)))
                 return 0;
         }
-        else if (!strcmp((const char *) n->name, "icu_chain"))
+        else if (!strcmp((const char *) n->name, "relevance"))
         {
-#ifdef HAVE_ICU
-            UErrorCode status = U_ZERO_ERROR;
-            struct icu_chain *chain = icu_chain_xml_config(n, &status);
-            if (!chain || U_FAILURE(status)){
-                //xmlDocPtr icu_doc = 0;
-                //xmlChar *xmlstr = 0;
-                //int size = 0;
-                //xmlDocDumpMemory(icu_doc, size);
-                
-                yaz_log(YLOG_FATAL, "Could not parse ICU chain config:\n"
-                        "<%s>\n ... \n</%s>",
-                        n->name, n->name);
-                return 0;
-            }
-            server->icu_chn = chain;
-#else // HAVE_ICU
-            yaz_log(YLOG_FATAL, "Error: ICU support requested with element:\n"
-                    "<%s>\n ... \n</%s>",
-                    n->name, n->name);
-            yaz_log(YLOG_FATAL, 
-                    "But no ICU support compiled into pazpar2 server.");
-            yaz_log(YLOG_FATAL, 
-                    "Please install libicu36-dev and icu-doc or similar, "
-                    "re-configure and re-compile");            
-            return 0;
-#endif // HAVE_ICU
+            server->relevance_pct = pp2_charset_create_xml(n->children);
+        }
+        else if (!strcmp((const char *) n->name, "sort"))
+        {
+            server->sort_pct = pp2_charset_create_xml(n->children);
+        }
+        else if (!strcmp((const char *) n->name, "mergekey"))
+        {
+            server->mergekey_pct = pp2_charset_create_xml(n->children);
         }
         else if (!strcmp((const char *) n->name, "service"))
         {
@@ -525,6 +506,12 @@ static struct conf_server *parse_server(xmlNode *node)
             return 0;
         }
     }
+    if (!server->relevance_pct)
+        server->relevance_pct = pp2_charset_create(0);
+    if (!server->sort_pct)
+        server->sort_pct = pp2_charset_create(0);
+    if (!server->mergekey_pct)
+        server->mergekey_pct = pp2_charset_create(0);
     return server;
 }
 

@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.49 2007-09-05 08:40:12 adam Exp $
+/* $Id: pazpar2.h,v 1.50 2007-09-10 16:25:50 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -96,7 +96,6 @@ struct database_retrievalmap {
 // for that session
 struct session_database
 {
-    pp2_charset_t pct;
     struct database *database;
     struct setting **settings;
     yaz_marc_t yaz_marc;

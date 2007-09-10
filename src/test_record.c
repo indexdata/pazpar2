@@ -1,4 +1,4 @@
-/* $Id: test_record.c,v 1.8 2007-07-30 23:16:33 quinn Exp $
+/* $Id: test_record.c,v 1.9 2007-09-10 16:25:50 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -45,7 +45,8 @@ void test_record(int argc, char **argv)
   struct client *client = 0;
   char * bla = "blabla";
   union data_types data_text;
-  data_text.text = bla;
+  data_text.text.disp = bla;
+  data_text.text.sort = bla;
 
   
   union data_types data_num;

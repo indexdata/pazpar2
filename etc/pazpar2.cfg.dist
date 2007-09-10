@@ -1,11 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: pazpar2.cfg.dist,v 1.18 2007-08-17 11:29:36 jakub Exp $ -->
+<!-- $Id: pazpar2.cfg.dist,v 1.19 2007-09-10 16:25:50 adam Exp $ -->
 <pazpar2 xmlns="http://www.indexdata.com/pazpar2/1.0">
   
   <server>
     <listen port="9004"/>
     <proxy host="localhost:80"/>
     <settings src="../etc/settings"/>
+
+    <relevance>
+      <icu_chain id="relevance" locale="el">
+	<normalize rule="[:Control:] Any-Remove"/>
+	<tokenize rule="l"/>
+	<normalize rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
+	<casemap rule="l"/>
+	<index/>
+      </icu_chain>
+    </relevance>
+
+    <sort>
+      <icu_chain id="sort" locale="el">
+	<normalize rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
+	<casemap rule="l"/>
+	<sortkey/>
+      </icu_chain>
+    </sort>
+    
+    <mergekey>
+      <icu_chain id="mergekey" locale="el">
+	<tokenize rule="l"/>
+	<normalize rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
+	<casemap rule="l"/>
+	<index/>
+      </icu_chain>
+    </mergekey>
     
     <service>
       <!-- we try to keep same order as in marc21.xsl -->

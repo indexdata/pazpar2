@@ -1,4 +1,4 @@
-/* $Id: config.h,v 1.26 2007-07-30 11:52:08 quinn Exp $
+/* $Id: config.h,v 1.27 2007-09-10 16:25:50 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -27,11 +27,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <libxslt/xsltutils.h>
 
 #include <yaz/nmem.h>
-
-#ifdef HAVE_ICU
-#include "icu_I18N.h"
-#endif // HAVE_ICU
-
+#include "charsets.h"
 
 enum conf_metadata_type {
     Metadata_type_generic,    // Generic text field
@@ -159,9 +155,9 @@ struct conf_server
     char *myurl;
     char *settings;
 
-#ifdef HAVE_ICU
-    struct icu_chain * icu_chn;
-#endif // HAVE_ICU
+    pp2_charset_t relevance_pct;
+    pp2_charset_t sort_pct;
+    pp2_charset_t mergekey_pct;
 
     struct conf_service *service;
     struct conf_server *next;

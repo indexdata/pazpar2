@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.19 2007-09-05 08:40:12 adam Exp $
+/* $Id: client.c,v 1.20 2007-09-10 16:25:50 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -946,9 +946,10 @@ int client_parse_query(struct client *cl, const char *query)
         // Initialize relevance structure with query terms
         char *p[512];
         extract_terms(se->nmem, cn, p);
-        se->relevance = relevance_create(client_get_database(cl)->pct,
-                                         se->nmem, (const char **) p,
-                                         se->expected_maxrecs);
+        se->relevance = relevance_create(
+            global_parameters.server->relevance_pct,
+            se->nmem, (const char **) p,
+            se->expected_maxrecs);
     }
 
     ccl_rpn_delete(cn);
