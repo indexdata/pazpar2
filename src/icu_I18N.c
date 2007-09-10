@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.c,v 1.22 2007-05-25 13:27:21 marc Exp $
+/* $Id: icu_I18N.c,v 1.23 2007-09-10 16:04:20 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -82,7 +82,6 @@ struct icu_buf_utf16 * icu_buf_utf16_create(size_t capacity)
     }
     return buf16;
 };
-
 
 struct icu_buf_utf16 * icu_buf_utf16_resize(struct icu_buf_utf16 * buf16,
                                             size_t capacity)
@@ -172,8 +171,6 @@ struct icu_buf_utf8 * icu_buf_utf8_resize(struct icu_buf_utf8 * buf8,
                 buf8->utf8 
                     = (uint8_t *) realloc(buf8->utf8, 
                                           sizeof(uint8_t) * capacity);
-            buf8->utf8[0] = (uint8_t) 0;
-            buf8->utf8_len = 0;
             buf8->utf8_cap = capacity;
         } 
         else { 
@@ -205,6 +202,16 @@ struct icu_buf_utf8 * icu_buf_utf8_copy(struct icu_buf_utf8 * dest8,
     return dest8;
 };
 
+
+const char *icu_buf_utf8_to_cstr(struct icu_buf_utf8 *src8)
+{
+    if (!src8 || src8->utf8_len == 0)
+        return "";
+    if (src8->utf8_len == src8->utf8_cap)
+        src8 = icu_buf_utf8_resize(src8, src8->utf8_len * 2 + 1);
+    src8->utf8[src8->utf8_len] = '\0';
+    return (const char *) src8->utf8;
+}
 
 
 void icu_buf_utf8_destroy(struct icu_buf_utf8 * buf8)
@@ -241,7 +248,7 @@ UErrorCode icu_utf16_from_utf8(struct icu_buf_utf16 * dest16,
 
     //if (*status != U_BUFFER_OVERFLOW_ERROR
     if (U_SUCCESS(*status)  
-        && utf16_len < dest16->utf16_cap)
+        && utf16_len <= dest16->utf16_cap)
         dest16->utf16_len = utf16_len;
     else {
         dest16->utf16[0] = (UChar) 0;
@@ -279,7 +286,7 @@ UErrorCode icu_utf16_from_utf8_cstr(struct icu_buf_utf16 * dest16,
 
     //  if (*status != U_BUFFER_OVERFLOW_ERROR
     if (U_SUCCESS(*status)  
-        && utf16_len < dest16->utf16_cap)
+        && utf16_len <= dest16->utf16_cap)
         dest16->utf16_len = utf16_len;
     else {
         dest16->utf16[0] = (UChar) 0;
@@ -316,7 +323,7 @@ UErrorCode icu_utf16_to_utf8(struct icu_buf_utf8 * dest8,
 
     //if (*status != U_BUFFER_OVERFLOW_ERROR
     if (U_SUCCESS(*status)  
-        && utf8_len < dest8->utf8_cap)
+        && utf8_len <= dest8->utf8_cap)
         dest8->utf8_len = utf8_len;
     else {
         dest8->utf8[0] = (uint8_t) 0;
@@ -445,7 +452,7 @@ int icu_utf16_casemap(struct icu_buf_utf16 * dest16,
     }
     
     if (U_SUCCESS(*status)
-        && dest16_len < dest16->utf16_cap)
+        && dest16_len <= dest16->utf16_cap)
         dest16->utf16_len = dest16_len;
     else {
         dest16->utf16[0] = (UChar) 0;
@@ -1174,7 +1181,7 @@ int icu_chain_get_token_count(struct icu_chain * chain)
 const char * icu_chain_get_display(struct icu_chain * chain)
 {
     if (chain->display8)
-        return (const char *) chain->display8->utf8;
+        return icu_buf_utf8_to_cstr(chain->display8);
     
     return 0;
 };
@@ -1182,7 +1189,7 @@ const char * icu_chain_get_display(struct icu_chain * chain)
 const char * icu_chain_get_norm(struct icu_chain * chain)
 {
     if (chain->norm8)
-        return (const char *) chain->norm8->utf8;
+        return icu_buf_utf8_to_cstr(chain->norm8);
     
     return 0;
 };
@@ -1190,7 +1197,7 @@ const char * icu_chain_get_norm(struct icu_chain * chain)
 const char * icu_chain_get_sort(struct icu_chain * chain)
 {
     if (chain->sort8)
-        return (const char *) chain->sort8->utf8;
+        return icu_buf_utf8_to_cstr(chain->sort8);
     
     return 0;
 };
