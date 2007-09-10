@@ -1,4 +1,4 @@
-/* $Id: icu_I18N.h,v 1.17 2007-05-25 13:27:21 marc Exp $
+/* $Id: icu_I18N.h,v 1.18 2007-09-10 16:05:48 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -21,8 +21,6 @@
 
 #ifndef ICU_I18NL_H
 #define ICU_I18NL_H
-
-#ifdef HAVE_ICU
 
 #include <yaz/nmem.h>
 
@@ -283,5 +281,4 @@ const char * icu_chain_get_sort(struct icu_chain * chain);
 
 
 
-#endif // HAVE_ICU
 #endif // ICU_I18NL_H
