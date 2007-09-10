@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.5 2007-09-10 16:25:51 adam Exp $
+# $Id: Makefile.am,v 1.6 2007-09-10 16:34:45 adam Exp $
 
 check_SCRIPTS = test_http.sh test_icu.sh
 
@@ -13,5 +13,5 @@ CONFIG_CLEAN_FILES=*.log *.dif
 
 dist-hook:
 	cp ${srcdir}/test_http_*.res $(distdir)
-	cp ${srcdir}/test_url_*.res $(distdir)
+	cp ${srcdir}/test_icu_*.res $(distdir)
 
