@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.53 2007-09-03 20:13:22 adam Exp $
+** $Id: pz2.js,v 1.54 2007-09-10 13:18:53 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -804,7 +804,7 @@ Element_getTextContent = function (DOM_Element)
 {
     if ( typeof DOM_Element.textContent != 'undefined' ) {
         return DOM_Element.textContent;
-    } else if (DOM_Element.text ) {
+    } else if (typeof DOM_Element.text != 'undefined') {
         return DOM_Element.text;
     } else {
         throw new Error("Cannot get text content of the node, no such method.");
