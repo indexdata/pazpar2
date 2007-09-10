@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.92 2007-07-10 09:19:32 adam Exp $
+/* $Id: pazpar2.c,v 1.93 2007-09-10 08:42:48 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -50,6 +50,22 @@ void child_handler(void *data)
 
 }
 
+static void show_version(void)
+{
+    char yaz_version_str[80];
+    printf("Pazpar2 " VERSION "\n");
+
+    yaz_version(yaz_version_str, 0);
+
+    printf("Configuration:");
+#if HAVE_ICU
+    printf(" icu:?");
+#endif
+    printf(" yaz:%s", yaz_version_str);
+    printf("\n");
+    exit(0);
+}            
+
 int main(int argc, char **argv)
 {
     int daemon = 0;
@@ -64,7 +80,7 @@ int main(int argc, char **argv)
 
     yaz_log_init_prefix("pazpar2");
 
-    while ((ret = options("dDf:h:l:p:t:u:X", argv, argc, &arg)) != -2)
+    while ((ret = options("dDf:h:l:p:t:u:VX", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -94,6 +110,8 @@ int main(int argc, char **argv)
         case 'u':
             uid = arg;
             break;
+        case 'V':
+            show_version();
         case 'X':
             global_parameters.debug_mode = 1;
             break;
@@ -107,6 +125,7 @@ int main(int argc, char **argv)
                     "    -p pidfile              PID file\n"
                     "    -t settings\n"
                     "    -u uid\n"
+                    "    -V                      show version\n"
                     "    -X                      debug mode\n"
                 );
             exit(1);
