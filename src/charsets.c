@@ -1,4 +1,4 @@
-/* $Id: charsets.c,v 1.6 2007-09-10 16:25:50 adam Exp $
+/* $Id: charsets.c,v 1.7 2007-09-12 07:03:03 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -90,7 +90,7 @@ pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
 #else // HAVE_ICU
     yaz_log(YLOG_FATAL, "Error: ICU support requested with element:\n"
             "<%s>\n ... \n</%s>",
-            n->name, n->name);
+            xml_node->name, xml_node->name);
     yaz_log(YLOG_FATAL, 
             "But no ICU support compiled into pazpar2 server.");
     yaz_log(YLOG_FATAL, 
