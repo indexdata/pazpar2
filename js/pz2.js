@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.55 2007-09-11 15:52:13 jakub Exp $
+** $Id: pz2.js,v 1.56 2007-09-12 08:57:14 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -655,7 +655,7 @@ pzHttpRequest.prototype =
         var el = params;
         for (var key in el) {
             if (el[key] != null) {
-                getUrl += sep + key + '=' + encodeURI(el[key]);
+                getUrl += sep + key + '=' + escape(el[key]);
                 sep = '&';
             }
         }
