@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.56 2007-09-12 08:57:14 jakub Exp $
+** $Id: pz2.js,v 1.57 2007-09-14 09:46:49 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -655,7 +655,7 @@ pzHttpRequest.prototype =
         var el = params;
         for (var key in el) {
             if (el[key] != null) {
-                getUrl += sep + key + '=' + escape(el[key]);
+                getUrl += sep + key + '=' + encodeURIComponent(el[key]);
                 sep = '&';
             }
         }
@@ -669,11 +669,13 @@ pzHttpRequest.prototype =
             if ( this.request.responseXML 
                 && this.request.responseXML.documentElement.nodeName == 'error'
                 && this.request.responseXML.getElementsByTagName("error").length ) {
-                var errAddInfo = this.request.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue;
+                var errAddInfo = '';
+                if ( this.request.responseXML.getElementsByTagName("error")[0].childNodes.length )
+                    errAddInfo = ': ' + this.request.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue;
                 var errMsg = this.request.responseXML.getElementsByTagName("error")[0].getAttribute("msg");
                 var errCode = this.request.responseXML.getElementsByTagName("error")[0].getAttribute("code");
             
-                var err = new Error(errMsg + ': ' + errAddInfo);
+                var err = new Error(errMsg + errAddInfo);
                 err.code = errCode;
 	    
                 if (this.errorHandler) {
