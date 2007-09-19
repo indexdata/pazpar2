@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.20 2007-09-10 16:25:50 adam Exp $
+/* $Id: client.c,v 1.21 2007-09-19 13:00:01 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -137,6 +137,12 @@ enum client_state client_get_state(struct client *cl)
 void client_set_state(struct client *cl, enum client_state st)
 {
     cl->state = st;
+    if (cl->session)
+    {
+        int no_active = session_active_clients(cl->session);
+        if (no_active == 0)
+            session_alert_watch(cl->session, SESSION_WATCH_SHOW);
+    }
 }
 
 static void client_show_raw_error(struct client *cl, const char *addinfo);
@@ -147,7 +153,7 @@ void client_fatal(struct client *cl)
     client_show_raw_error(cl, "client connection failure");
     yaz_log(YLOG_WARN, "Fatal error from %s", client_get_url(cl));
     connection_destroy(cl->connection);
-    cl->state = Client_Error;
+    client_set_state(cl, Client_Error);
 }
 
 

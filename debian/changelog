@@ -1,3 +1,9 @@
+pazpar2 (1.0.3-2) unstable; urgency=low
+
+  * Terminate blocking show if active clients reaches zero.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Wed, 19 Sep 2007 14:55:45 +0200
+
 pazpar2 (1.0.3-1) unstable; urgency=low
 
   * Upstream.
