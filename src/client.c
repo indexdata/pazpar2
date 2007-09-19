@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.21 2007-09-19 13:00:01 adam Exp $
+/* $Id: client.c,v 1.22 2007-09-19 13:23:35 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -612,7 +612,13 @@ void client_search_response(struct client *cl, Z_APDU *a)
     if (*r->searchStatus)
     {
 	cl->hits = *r->resultCount;
-        se->total_hits += cl->hits;
+        if (cl->hits < 0)
+        {
+            yaz_log(YLOG_WARN, "Target %s returns hit count %d",
+                    cl->database->database->url, cl->hits);
+        }
+        else
+            se->total_hits += cl->hits;
         if (r->presentStatus && !*r->presentStatus && r->records)
         {
             yaz_log(YLOG_DEBUG, "Records in search response %s", 

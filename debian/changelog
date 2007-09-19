@@ -1,3 +1,9 @@
+pazpar2 (1.0.3-3) unstable; urgency=low
+
+  * Deal with bad hit counts.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Wed, 19 Sep 2007 15:23:04 +0200
+
 pazpar2 (1.0.3-2) unstable; urgency=low
 
   * Terminate blocking show if active clients reaches zero.
