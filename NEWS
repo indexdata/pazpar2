@@ -1,3 +1,5 @@
+--- 1.0.3 2007/09/19
+
 ICU is used for tokenization and normalization of the following: mergekey,
 sorting, relevance terms.
 

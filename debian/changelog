@@ -1,3 +1,9 @@
+pazpar2 (1.0.3-1) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Wed, 19 Sep 2007 11:44:26 +0200
+
 pazpar2 (1.0.2-9) unstable; urgency=low
 
   * ICU enabled by default for the Debian package.
