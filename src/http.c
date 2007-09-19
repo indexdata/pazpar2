@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.36 2007-07-03 10:10:14 adam Exp $
+/* $Id: http.c,v 1.37 2007-09-19 09:49:22 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -1049,11 +1049,6 @@ void http_init(const char *addr)
         
         memcpy(&myaddr.sin_addr.s_addr, he->h_addr_list[0], he->h_length);
         port = atoi(pp + 1);
-
-        yaz_log(YLOG_LOG, "HTTP address  %s:%d", 
-                "" == he->h_addr_list[0] ? he->h_addr_list[0] : "127.0.0.1" , 
-                    port);
-
     }
     else
     {
