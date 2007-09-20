@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2_protocol.xml,v 1.14 2007-07-06 20:13:22 adam Exp $ -->
+<!-- $Id: pazpar2_protocol.xml,v 1.15 2007-09-20 08:13:26 adam Exp $ -->
 <refentry id="pazpar2_protocol">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -528,7 +528,7 @@ search.pz2?session=605047297&command=bytarget&id=3
     The following client states are defined: Client_Connecting,
     Client_Connected, Client_Idle, Client_Initializing, Client_Searching,
     Client_Searching, Client_Presenting, Client_Error, Client_Failed,
-    Client_Disconnected, Client_Stopped.
+    Client_Disconnected, Client_Stopped, Client_Continue.
    </para>
   </refsect2>
 

@@ -1,4 +1,4 @@
-/* $Id: connection.c,v 1.11 2007-08-28 21:11:21 quinn Exp $
+/* $Id: connection.c,v 1.12 2007-09-20 08:13:27 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -261,7 +261,7 @@ static void connection_handler(IOCHAN i, int event)
             else  // we throw away response and go to idle mode
             {
                 yaz_log(YLOG_DEBUG, "Ignoring result of expired operation");
-                client_set_state(cl, Client_Idle);
+                client_set_state(cl, Client_Continue);
             }
 	}
 	/* if len==1 we do nothing but wait for more input */
@@ -477,8 +477,9 @@ int client_prep_connection(struct client *cl)
         else if (co->state == Conn_Open)
         {
             if (client_get_state(cl) == Client_Error 
-                || client_get_state(cl) == Client_Disconnected)
-                client_set_state(cl, Client_Idle);
+                || client_get_state(cl) == Client_Disconnected
+                || client_get_state(cl) == Client_Idle)
+                client_set_state(cl, Client_Continue);
             iochan_setflag(co->iochan, EVENT_OUTPUT);
         }
         return 1;

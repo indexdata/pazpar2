@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.22 2007-09-19 13:23:35 adam Exp $
+/* $Id: client.c,v 1.23 2007-09-20 08:13:27 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -101,7 +101,8 @@ static const char *client_states[] = {
     "Client_Error",
     "Client_Failed",
     "Client_Disconnected",
-    "Client_Stopped"
+    "Client_Stopped",
+    "Client_Continue"
 };
 
 static struct client *client_freelist = 0;
@@ -817,7 +818,7 @@ void client_continue(struct client *cl)
     if (cl->state == Client_Connected) {
         client_init_request(cl);
     }
-    if (cl->state == Client_Idle)
+    if (cl->state == Client_Continue || cl->state == Client_Idle)
     {
         struct session *se = client_get_session(cl);
         if (cl->requestid != se->requestid && cl->pquery) {
@@ -833,6 +834,8 @@ void client_continue(struct client *cl)
             cl->records < cl->hits) {
             client_send_present(cl);
         }
+        else
+            client_set_state(cl, Client_Idle);
     }
 }
 
@@ -977,7 +980,8 @@ void client_set_session(struct client *cl, struct session *se)
 
 int client_is_active(struct client *cl)
 {
-    if (cl->connection && (cl->state == Client_Connecting ||
+    if (cl->connection && (cl->state == Client_Continue ||
+                           cl->state == Client_Connecting ||
                            cl->state == Client_Initializing ||
                            cl->state == Client_Searching ||
                            cl->state == Client_Presenting))

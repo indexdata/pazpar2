@@ -1,4 +1,4 @@
-/* $Id: client.h,v 1.3 2007-06-15 19:35:17 adam Exp $
+/* $Id: client.h,v 1.4 2007-09-20 08:13:27 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -40,7 +40,8 @@ enum client_state
     Client_Error,
     Client_Failed,
     Client_Disconnected,
-    Client_Stopped
+    Client_Stopped,
+    Client_Continue
 };
 
 int client_show_raw_begin(struct client *cl, int position,
