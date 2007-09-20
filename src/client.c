@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.24 2007-09-20 08:34:50 adam Exp $
+/* $Id: client.c,v 1.25 2007-09-20 09:22:37 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -982,6 +982,7 @@ int client_is_active(struct client *cl)
 {
     if (cl->connection && (cl->state == Client_Continue ||
                            cl->state == Client_Connecting ||
+                           cl->state == Client_Connected ||
                            cl->state == Client_Initializing ||
                            cl->state == Client_Searching ||
                            cl->state == Client_Presenting))

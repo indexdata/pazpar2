@@ -1,3 +1,9 @@
+pazpar2 (1.0.3-5) unstable; urgency=low
+
+  * More active client trickery. Bug #1628 again.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Thu, 20 Sep 2007 10:36:11 +0200
+
 pazpar2 (1.0.3-4) unstable; urgency=low
 
   * Fixed bug #1628.
