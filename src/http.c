@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.37 2007-09-19 09:49:22 adam Exp $
+/* $Id: http.c,v 1.38 2007-09-23 15:39:24 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -52,6 +52,8 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "http.h"
 #include "http_command.h"
 
+#define MAX_HTTP_HEADER 4096
+
 static void proxy_io(IOCHAN i, int event);
 static struct http_channel *http_create(const char *addr);
 static void http_destroy(IOCHAN i);
@@ -69,6 +71,16 @@ struct http_channel_observer_s {
     struct http_channel_observer_s *next;
     struct http_channel *chan;
 };
+
+
+static const char *http_lookup_header(struct http_header *header,
+                                      const char *name)
+{
+    for (; header; header = header->next)
+        if (!strcasecmp(name, header->name))
+            return header->value;
+    return 0;
+}
 
 static struct http_buf *http_buf_create()
 {
@@ -151,7 +163,7 @@ static struct http_buf *http_buf_bywrbuf(WRBUF wrbuf)
 
 // Non-destructively collapse chain of buffers into a string (max *len)
 // Return
-static int http_buf_peek(struct http_buf *b, char *buf, int len)
+static void http_buf_peek(struct http_buf *b, char *buf, int len)
 {
     int rd = 0;
     while (b && rd < len)
@@ -164,7 +176,14 @@ static int http_buf_peek(struct http_buf *b, char *buf, int len)
         b = b->next;
     }
     buf[rd] = '\0';
-    return rd;
+}
+
+static int http_buf_size(struct http_buf *b)
+{
+    int sz = 0;
+    for (; b; b = b->next)
+        sz += b->len;
+    return sz;
 }
 
 // Ddestructively munch up to len  from head of queue.
@@ -276,20 +295,38 @@ struct http_response *http_create_response(struct http_channel *c)
 }
 
 // Check if buf contains a package (minus payload)
-static int package_check(const char *buf)
+static int package_check(const char *buf, int sz)
 {
+    int content_len = 0;
     int len = 0;
+
     while (*buf) // Check if we have a sequence of lines terminated by an empty line
     {
-        char *b = strstr(buf, "\r\n");
+        const char *b = strstr(buf, "\r\n");
 
         if (!b)
             return 0;
 
         len += (b - buf) + 2;
         if (b == buf)
-            return len;
+        {
+            if (len + content_len <= sz)
+                return len + content_len;
+            return 0;
+        }
         buf = b + 2;
+        // following first skip of \r\n so that we don't consider Method
+        if (!strncasecmp(buf, "Content-Length:", 15))
+        {
+            const char *cp = buf+15;
+            while (*cp == ' ')
+                cp++;
+            content_len = 0;
+            while (*cp && isdigit(*cp))
+                content_len = content_len*10 + (*cp++ - '0');
+            if (content_len < 0) /* prevent negative offsets */
+                content_len = 0;
+        }
     }
     return 0;
 }
@@ -300,20 +337,20 @@ static int package_check(const char *buf)
 // other than an empty GET
 static int request_check(struct http_buf *queue)
 {
-    char tmp[4096];
+    char tmp[MAX_HTTP_HEADER];
 
-    http_buf_peek(queue, tmp, 4096);
-    return package_check(tmp);
+    http_buf_peek(queue, tmp, MAX_HTTP_HEADER-1);
+    return package_check(tmp, http_buf_size(queue));
 }
 
 struct http_response *http_parse_response_buf(struct http_channel *c, const char *buf, int len)
 {
-    char tmp[4096];
+    char tmp[MAX_HTTP_HEADER];
     struct http_response *r = http_create_response(c);
     char *p, *p2;
     struct http_header **hp = &r->headers;
 
-    if (len >= 4096)
+    if (len >= MAX_HTTP_HEADER)
         return 0;
     memcpy(tmp, buf, len);
     for (p = tmp; *p && *p != ' '; p++) // Skip HTTP version
@@ -357,29 +394,62 @@ struct http_response *http_parse_response_buf(struct http_channel *c, const char
     return r;
 }
 
+static int http_parse_arguments(struct http_request *r, NMEM nmem,
+                                const char *args)
+{
+    const char *p2 = args;
+
+    while (*p2)
+    {
+        struct http_argument *a;
+        const char *equal = strchr(p2, '=');
+        const char *eoa = strchr(p2, '&');
+        if (!equal)
+        {
+            yaz_log(YLOG_WARN, "Expected '=' in argument");
+            return -1;
+        }
+        if (!eoa)
+            eoa = equal + strlen(equal); // last argument
+        else if (equal > eoa)
+        {
+            yaz_log(YLOG_WARN, "Missing '&' in argument");
+            return -1;
+        }
+        a = nmem_malloc(nmem, sizeof(struct http_argument));
+        a->name = nmem_strdupn(nmem, p2, equal - p2);
+        a->value = nmem_strdupn(nmem, equal+1, eoa - equal - 1);
+        urldecode(a->name, a->name);
+        urldecode(a->value, a->value);
+        a->next = r->arguments;
+        r->arguments = a;
+        p2 = eoa;
+        while (*p2 == '&')
+            p2++;
+    }
+    return 0;
+}
+
 struct http_request *http_parse_request(struct http_channel *c,
                                         struct http_buf **queue,
                                         int len)
 {
     struct http_request *r = nmem_malloc(c->nmem, sizeof(*r));
     char *p, *p2;
-    char tmp[4096];
-    char *buf = tmp;
+    char *start = nmem_malloc(c->nmem, len+1);
+    char *buf = start;
 
-    if (len > 4096)
-    {
-        yaz_log(YLOG_WARN, "http_parse_request len > 4096 (%d)", len);
-        return 0;
-    }
     if (http_buf_read(queue, buf, len) < len)
     {
-        yaz_log(YLOG_WARN, "http_buf_read < len 4096 (%d)", len);
+        yaz_log(YLOG_WARN, "http_buf_read < len (%d)", len);
         return 0;
     }
     r->search = "";
     r->channel = c;
     r->arguments = 0;
     r->headers = 0;
+    r->content_buf = 0;
+    r->content_len = 0;
     // Parse first line
     for (p = buf, p2 = r->method; *p && *p != ' ' && p - buf < 19; p++)
         *(p2++) = *p;
@@ -409,30 +479,7 @@ struct http_request *http_parse_request(struct http_channel *c,
     {
         r->search = nmem_strdup(c->nmem, p2);
         // Parse Arguments
-        while (*p2)
-        {
-            struct http_argument *a;
-            char *equal = strchr(p2, '=');
-            char *eoa = strchr(p2, '&');
-            if (!equal)
-            {
-                yaz_log(YLOG_WARN, "Expected '=' in argument");
-                return 0;
-            }
-            if (!eoa)
-                eoa = equal + strlen(equal); // last argument
-            else
-                *(eoa++) = '\0';
-            a = nmem_malloc(c->nmem, sizeof(struct http_argument));
-            *(equal++) = '\0';
-            a->name = nmem_strdup(c->nmem, p2);
-            urldecode(a->name, a->name);
-            urldecode(equal, equal);
-            a->value = nmem_strdup(c->nmem, equal);
-            a->next = r->arguments;
-            r->arguments = a;
-            p2 = eoa;
-        }
+        http_parse_arguments(r, c->nmem, p2);
     }
     buf = p;
 
@@ -462,7 +509,10 @@ struct http_request *http_parse_request(struct http_channel *c,
             return 0;
         }
         if (p == buf)
+        {
+            buf += 2;
             break;
+        }
         else
         {
             struct http_header *h = nmem_malloc(c->nmem, sizeof(*h));
@@ -485,6 +535,18 @@ struct http_request *http_parse_request(struct http_channel *c,
         }
     }
 
+    if (buf < start + len)
+    {
+        const char *content_type = http_lookup_header(r->headers,
+                                                      "Content-Type");
+        r->content_len = start + len - buf;
+        r->content_buf = buf;
+
+        if (!strcmp(content_type, "application/x-www-form-urlencoded"))
+        {
+            http_parse_arguments(r, c->nmem, r->content_buf);
+        }
+    }
     return r;
 }
 
@@ -530,20 +592,10 @@ static struct http_buf *http_serialize_request(struct http_request *r)
 {
     struct http_channel *c = r->channel;
     struct http_header *h;
-    struct http_argument *a;
 
     wrbuf_rewind(c->wrbuf);
-    wrbuf_printf(c->wrbuf, "%s %s", r->method, r->path);
-
-    if (r->arguments)
-    {
-        wrbuf_putc(c->wrbuf, '?');
-        for (a = r->arguments; a; a = a->next) {
-            if (a != r->arguments)
-                wrbuf_putc(c->wrbuf, '&');
-            wrbuf_printf(c->wrbuf, "%s=%s", a->name, a->value);
-        }
-    }
+    wrbuf_printf(c->wrbuf, "%s %s%s%s", r->method, r->path,
+                 *r->search ? "?" : "", r->search);
 
     wrbuf_printf(c->wrbuf, " HTTP/%s\r\n", r->http_version);
 
@@ -551,7 +603,14 @@ static struct http_buf *http_serialize_request(struct http_request *r)
         wrbuf_printf(c->wrbuf, "%s: %s\r\n", h->name, h->value);
 
     wrbuf_puts(c->wrbuf, "\r\n");
-    
+
+    if (r->content_buf)
+        wrbuf_write(c->wrbuf, r->content_buf, r->content_len);
+
+#if 0
+    yaz_log(YLOG_LOG, "WRITING TO PROXY:\n%s\n----",
+            wrbuf_cstr(c->wrbuf));
+#endif
     return http_buf_bywrbuf(c->wrbuf);
 }
 
@@ -646,10 +705,8 @@ static int http_proxy(struct http_request *rq)
     }
 
     // Do _not_ modify Host: header, just checking it's existence
-    for (hp = rq->headers; hp; hp = hp->next)
-        if (!strcmp(hp->name, "Host"))
-            break;
-    if (!hp)
+
+    if (!http_lookup_header(rq->headers, "Host"))
     {
         yaz_log(YLOG_WARN, "Failed to find Host header in proxy");
         return -1;
@@ -672,6 +729,7 @@ static int http_proxy(struct http_request *rq)
     }
     
     requestbuf = http_serialize_request(rq);
+
     http_buf_enqueue(&p->oqueue, requestbuf);
     iochan_setflag(p->iochan, EVENT_OUTPUT);
     return 0;
@@ -724,39 +782,35 @@ static void http_io(IOCHAN i, int event)
             htbuf->len = res;
             http_buf_enqueue(&hc->iqueue, htbuf);
 
-            if (hc->state == Http_Busy)
-                return;
-            if ((reqlen = request_check(hc->iqueue)) <= 2)
-                return;
-
-            nmem_reset(hc->nmem);
-            if (!(hc->request = http_parse_request(hc, &hc->iqueue, reqlen)))
+            while (1)
             {
-                yaz_log(YLOG_WARN, "Failed to parse request");
-                http_destroy(i);
-                return;
+                if (hc->state == Http_Busy)
+                    return;
+                if ((reqlen = request_check(hc->iqueue)) <= 2)
+                    return;
+                // we have a complete HTTP request
+                nmem_reset(hc->nmem);
+                if (!(hc->request = http_parse_request(hc, &hc->iqueue, reqlen)))
+                {
+                    yaz_log(YLOG_WARN, "Failed to parse request");
+                    http_destroy(i);
+                    return;
+                }
+                hc->response = 0;
+                yaz_log(YLOG_LOG, "Request: %s %s%s%s", hc->request->method,
+                        hc->request->path,
+                        *hc->request->search ? "?" : "",
+                        hc->request->search);
+                if (http_weshouldproxy(hc->request))
+                    http_proxy(hc->request);
+                else
+                {
+                    // Execute our business logic!
+                    hc->state = Http_Busy;
+                    http_command(hc);
+                }
             }
-            hc->response = 0;
-            yaz_log(YLOG_LOG, "Request: %s %s%s%s", hc->request->method,
-                    hc->request->path,
-                    *hc->request->search ? "?" : "",
-                    hc->request->search);
-            if (http_weshouldproxy(hc->request))
-                http_proxy(hc->request);
-            else
-            {
-                // Execute our business logic!
-                hc->state = Http_Busy;
-                http_command(hc);
-            }
-            if (hc->iqueue)
-            {
-                yaz_log(YLOG_DEBUG, "We think we have more input to read. Forcing event");
-                iochan_setevent(i, EVENT_INPUT);
-            }
-
             break;
-
         case EVENT_OUTPUT:
             if (hc->oqueue)
             {
@@ -866,19 +920,19 @@ static void proxy_io(IOCHAN pi, int event)
                         struct http_response *res = http_parse_response_buf(hc, htbuf->buf, len);
                         if (res)
                         {
-                            struct http_header *h;
-                            for (h = res->headers; h; h = h->next)
-                                if (!strcmp(h->name, "Location"))
-                                {
-                                    // We found a location header. Rewrite it.
-                                    struct http_buf *buf;
-                                    h->value = sub_hostname(hc, h->value);
-                                    buf = http_serialize_response(hc, res);
-                                    yaz_log(YLOG_LOG, "Proxy rewrite");
-                                    http_buf_enqueue(&hc->oqueue, buf);
-                                    htbuf->offset = len;
-                                    break;
-                                }
+                            const char *location = http_lookup_header(
+                                res->header, "Location");
+                            if (location)
+                            {
+                                // We found a location header. Rewrite it.
+                                struct http_buf *buf;
+                                h->value = sub_hostname(hc, location);
+                                buf = http_serialize_response(hc, res);
+                                yaz_log(YLOG_LOG, "Proxy rewrite");
+                                http_buf_enqueue(&hc->oqueue, buf);
+                                htbuf->offset = len;
+                                break;
+                            }
                         }
                     }
                     pc->first_response = 0;

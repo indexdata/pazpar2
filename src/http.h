@@ -1,4 +1,4 @@
-/* $Id: http.h,v 1.9 2007-06-15 19:35:17 adam Exp $
+/* $Id: http.h,v 1.10 2007-09-23 15:39:24 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -84,6 +84,8 @@ struct http_request
     char method[20];
     char *path;
     char *search;
+    char *content_buf;
+    int content_len;
     struct http_header *headers;
     struct http_argument *arguments;
 };
