@@ -1,4 +1,4 @@
-/* $Id: http.h,v 1.10 2007-09-23 15:39:24 adam Exp $
+/* $Id: http.h,v 1.11 2007-09-26 08:53:53 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -46,6 +46,7 @@ struct http_channel
         Http_Idle,
         Http_Busy      // Don't process new HTTP requests while we're busy
     } state;
+    int keep_alive;
     NMEM nmem;
     WRBUF wrbuf;
     struct http_request *request;

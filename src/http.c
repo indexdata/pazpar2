@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.38 2007-09-23 15:39:24 adam Exp $
+/* $Id: http.c,v 1.39 2007-09-26 08:53:53 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -23,6 +23,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/uio.h>
+#include <yaz/snprintf.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <strings.h>
@@ -294,27 +295,48 @@ struct http_response *http_create_response(struct http_channel *c)
     return r;
 }
 
+
+static const char *next_crlf(const char *cp, size_t *skipped)
+{
+    const char *next_cp = strchr(cp, '\n');
+    if (next_cp)
+    {
+        if (next_cp > cp && next_cp[-1] == '\r')
+            *skipped = next_cp - cp - 1;
+        else
+            *skipped = next_cp - cp;
+        next_cp++;
+    }
+    return next_cp;
+}
+
 // Check if buf contains a package (minus payload)
 static int package_check(const char *buf, int sz)
 {
     int content_len = 0;
     int len = 0;
 
-    while (*buf) // Check if we have a sequence of lines terminated by an empty line
+    while (*buf)
     {
-        const char *b = strstr(buf, "\r\n");
+        size_t skipped = 0;
+        const char *b = next_crlf(buf, &skipped);
 
         if (!b)
-            return 0;
-
-        len += (b - buf) + 2;
-        if (b == buf)
         {
+            // we did not find CRLF.. See if buffer is too large..
+            if (sz >= MAX_HTTP_HEADER-1)
+                return MAX_HTTP_HEADER-1; // yes. Return that (will fail later)
+            break;
+        }
+        len += (b - buf);
+        if (skipped == 0)
+        {
+            // CRLF CRLF , i.e. end of header
             if (len + content_len <= sz)
                 return len + content_len;
-            return 0;
+            break;
         }
-        buf = b + 2;
+        buf = b;
         // following first skip of \r\n so that we don't consider Method
         if (!strncasecmp(buf, "Content-Length:", 15))
         {
@@ -328,18 +350,17 @@ static int package_check(const char *buf, int sz)
                 content_len = 0;
         }
     }
-    return 0;
+    return 0;     // incomplete request
 }
 
 // Check if we have a request. Return 0 or length
-// (including trailing CRNL) FIXME: Does not deal gracefully with requests
-// carrying payload but this is kind of OK since we will reject anything
-// other than an empty GET
 static int request_check(struct http_buf *queue)
 {
     char tmp[MAX_HTTP_HEADER];
 
+    // only peek at the header..
     http_buf_peek(queue, tmp, MAX_HTTP_HEADER-1);
+    // still we only return non-zero if the complete request is received..
     return package_check(tmp, http_buf_size(queue));
 }
 
@@ -487,15 +508,15 @@ struct http_request *http_parse_request(struct http_channel *c,
         strcpy(r->http_version, "1.0");
     else
     {
-        buf += 5;
-        if (!(p = strstr(buf, "\r\n")))
-        {
-            yaz_log(YLOG_WARN, "Did not see \\r\\n (1)");
+        size_t skipped;
+        buf += 5; // strlen("HTTP/")
+
+        p = (char*) next_crlf(buf, &skipped);
+        if (!p || skipped < 3 || skipped > 5)
             return 0;
-        }
-        *(p++) = '\0';
-        p++;
-        strcpy(r->http_version, buf);
+
+        memcpy(r->http_version, buf, skipped);
+        r->http_version[skipped] = '\0';
         buf = p;
     }
     strcpy(c->version, r->http_version);
@@ -503,38 +524,57 @@ struct http_request *http_parse_request(struct http_channel *c,
     r->headers = 0;
     while (*buf)
     {
-        if (!(p = strstr(buf, "\r\n")))
+        size_t skipped;
+
+        p = (char *) next_crlf(buf, &skipped);
+        if (!p)
         {
-            yaz_log(YLOG_WARN, "Did not see \\r\\n (2)");
             return 0;
         }
-        if (p == buf)
+        else if (skipped == 0)
         {
-            buf += 2;
+            buf = p;
             break;
         }
         else
         {
+            char *cp;
+            char *n_v = nmem_malloc(c->nmem, skipped+1);
             struct http_header *h = nmem_malloc(c->nmem, sizeof(*h));
-            if (!(p2 = strchr(buf, ':')))
+
+            memcpy(n_v, buf, skipped);
+            n_v[skipped] = '\0';
+
+            if (!(cp = strchr(n_v, ':')))
                 return 0;
-            *(p2++) = '\0';
-            h->name = nmem_strdup(c->nmem, buf);
-            while (isspace(*p2))
-                p2++;
-            if (p2 >= p) // Empty header?
-            {
-                buf = p + 2;
-                continue;
-            }
-            *p = '\0';
-            h->value = nmem_strdup(c->nmem, p2);
+            h->name = nmem_strdupn(c->nmem, n_v, cp - n_v);
+            cp++;
+            while (isspace(*cp))
+                cp++;
+            h->value = nmem_strdup(c->nmem, cp);
             h->next = r->headers;
             r->headers = h;
-            buf = p + 2;
+            buf = p;
         }
     }
 
+    // determine if we do keep alive
+    if (!strcmp(c->version, "1.0"))
+    {
+        const char *v = http_lookup_header(r->headers, "Connection");
+        if (v && !strcmp(v, "Keep-Alive"))
+            c->keep_alive = 1;
+        else
+            c->keep_alive = 0;
+    }
+    else
+    {
+        const char *v = http_lookup_header(r->headers, "Connection");
+        if (v && !strcmp(v, "close"))
+            c->keep_alive = 0;
+        else
+            c->keep_alive = 1;
+    }
     if (buf < start + len)
     {
         const char *content_type = http_lookup_header(r->headers,
@@ -556,14 +596,14 @@ static struct http_buf *http_serialize_response(struct http_channel *c,
     struct http_header *h;
 
     wrbuf_rewind(c->wrbuf);
-    wrbuf_printf(c->wrbuf, "HTTP/1.1 %s %s\r\n", r->code, r->msg);
+    wrbuf_printf(c->wrbuf, "HTTP/%s %s %s\r\n", c->version, r->code, r->msg);
     for (h = r->headers; h; h = h->next)
         wrbuf_printf(c->wrbuf, "%s: %s\r\n", h->name, h->value);
     if (r->payload)
     {
-        wrbuf_printf(c->wrbuf, "Content-length: %d\r\n", r->payload ?
+        wrbuf_printf(c->wrbuf, "Content-Length: %d\r\n", r->payload ?
                 (int) strlen(r->payload) : 0);
-        wrbuf_printf(c->wrbuf, "Content-type: text/xml\r\n");
+        wrbuf_printf(c->wrbuf, "Content-Type: text/xml\r\n");
         if (1)
         {
             xmlDoc *doc = xmlParseMemory(r->payload, strlen(r->payload));
@@ -755,6 +795,22 @@ void http_send_response(struct http_channel *ch)
     }
 }
 
+static void http_error(struct http_channel *hc, int no, const char *msg)
+{
+    struct http_response *rs = http_create_response(hc);
+
+    hc->response = rs;
+    hc->keep_alive = 0;  // not keeping this HTTP session alive
+
+    sprintf(rs->code, "%d", no);
+
+    rs->msg = nmem_strdup(hc->nmem, msg);
+    rs->payload = nmem_malloc(hc->nmem, 100);
+    yaz_snprintf(rs->payload, 99, "<error>HTTP Error %d: %s</error>\n",
+                 no, msg);
+    http_send_response(hc);
+}
+
 static void http_io(IOCHAN i, int event)
 {
     struct http_channel *hc = iochan_getdata(i);
@@ -786,14 +842,15 @@ static void http_io(IOCHAN i, int event)
             {
                 if (hc->state == Http_Busy)
                     return;
-                if ((reqlen = request_check(hc->iqueue)) <= 2)
+                reqlen = request_check(hc->iqueue);
+                if (reqlen <= 2)
                     return;
                 // we have a complete HTTP request
                 nmem_reset(hc->nmem);
                 if (!(hc->request = http_parse_request(hc, &hc->iqueue, reqlen)))
                 {
                     yaz_log(YLOG_WARN, "Failed to parse request");
-                    http_destroy(i);
+                    http_error(hc, 400, "Bad Request");
                     return;
                 }
                 hc->response = 0;
@@ -833,7 +890,7 @@ static void http_io(IOCHAN i, int event)
                     wb->offset += res;
                 }
                 if (!hc->oqueue) {
-                    if (!strcmp(hc->version, "1.0"))
+                    if (!hc->keep_alive)
                     {
                         http_destroy(i);
                         return;
@@ -1027,6 +1084,7 @@ static struct http_channel *http_create(const char *addr)
     r->iochan = 0;
     r->iqueue = r->oqueue = 0;
     r->state = Http_Idle;
+    r->keep_alive = 0;
     r->request = 0;
     r->response = 0;
     if (!addr)
