@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.39 2007-09-26 08:53:53 adam Exp $
+/* $Id: http.c,v 1.40 2007-09-26 09:09:15 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -483,13 +483,13 @@ struct http_request *http_parse_request(struct http_channel *c,
 
     if (!(buf = strchr(buf, ' ')))
     {
-        yaz_log(YLOG_WARN, "Syntax error in request (1)");
+        yaz_log(YLOG_WARN, "Missing Request-URI in HTTP request");
         return 0;
     }
     buf++;
     if (!(p = strchr(buf, ' ')))
     {
-        yaz_log(YLOG_WARN, "Syntax error in request (2)");
+        yaz_log(YLOG_WARN, "HTTP Request-URI not terminated (too long?)");
         return 0;
     }
     *(p++) = '\0';
