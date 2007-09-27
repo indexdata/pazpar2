@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.57 2007-09-14 09:46:49 jakub Exp $
+** $Id: pz2.js,v 1.58 2007-09-27 09:15:48 sondberg Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -751,6 +751,19 @@ DOMDoc.parseXmlFromString = function ( xmlString )
     return doc;
 }
 
+DOMDoc.transformToDoc = function (xmlDoc, xslDoc)
+{
+    if ( window.XSLTProcessor ) {
+        var proc = new XSLTProcessor();
+        proc.importStylesheet( xslDoc );
+        return proc.transformToDocument(xmlDoc);
+    } else if ( window.ActiveXObject ) {
+        return document.parseXmlFromString(xmlDoc.transformNode(xslDoc));
+    } else {
+        alert( 'Unable to perform XSLT transformation in this browser' );
+    }
+}
+ 
 // DOMElement
 
 Element_removeFromDoc = function (DOM_Element)
