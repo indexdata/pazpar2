@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.58 2007-09-27 09:15:48 sondberg Exp $
+** $Id: pz2.js,v 1.59 2007-09-28 10:14:09 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -121,6 +121,20 @@ var pz2 = function ( paramArray )
 
 pz2.prototype = 
 {
+    //error handler for async error throws
+   throwError: function (errMsg, errCode)
+   {
+        var err = new Error(errMsg);
+        if (errCode) err.code = errCode;
+                
+        if (__myself.errorHandler) {
+            __myself.errorHandler(err);
+        }
+        else {
+            throw err;
+        }
+   },
+
     // stop activity by clearing tiemouts 
    stop: function ()
    {
@@ -171,7 +185,8 @@ pz2.prototype =
                     else
                         // if it gets here the http return code was 200 (pz2 errors are 417)
                         // but the response was invalid, it should never occur
-                        setTimeout("__myself.init()", 1000);
+                        // setTimeout("__myself.init()", 1000);
+                        __myself.throwError('Init failed. Malformed WS resonse.', 110);
                 }
             );
         // when through proxy no need to init
@@ -198,7 +213,8 @@ pz2.prototype =
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
                     // but the response was invalid, it should never occur
-                    setTimeout("__myself.ping()", 1000);
+                    // setTimeout("__myself.ping()", 1000);
+                    __myself.throwError('Ping failed. Malformed WS resonse.', 111);
             }
         );
     },
@@ -254,7 +270,8 @@ pz2.prototype =
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
                     // but the response was invalid, it should never occur
-                    setTimeout("__myself.search(__myself.currQuery)", 500);
+                    // setTimeout("__myself.search(__myself.currQuery)", 500);
+                    __myself.throwError('Search failed. Malformed WS resonse.', 112);
             }
         );
     },
@@ -295,7 +312,8 @@ pz2.prototype =
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
                     // but the response was invalid, it should never occur
-                    __myself.statTimer = setTimeout("__myself.stat()", __myself.statTime / 4);
+                    //__myself.statTimer = setTimeout("__myself.stat()", __myself.statTime / 4);
+                    __myself.throwError('Stat failed. Malformed WS resonse.', 113);
             }
         );
     },
@@ -372,7 +390,8 @@ pz2.prototype =
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
                     // but the response was invalid, it should never occur
-                    __myself.showTimer = setTimeout("__myself.show()", __myself.showTime / 4);
+                    // __myself.showTimer = setTimeout("__myself.show()", __myself.showTime / 4);
+                    __myself.throwError('Show failed. Malformed WS resonse.', 114);
             }
         );
     },
@@ -465,7 +484,8 @@ pz2.prototype =
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
                     // but the response was invalid, it should never occur
-                    setTimeout("__myself.record(__myself.currRecID)", 500);
+                    // setTimeout("__myself.record(__myself.currRecID)", 500);
+                    __myself.throwError('Record failed. Malformed WS resonse.', 115);
             }
         );
     },
@@ -519,7 +539,8 @@ pz2.prototype =
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
                     // but the response was invalid, it should never occur
-                    __myself.termTimer = setTimeout("__myself.termlist()", __myself.termTime / 4); 
+                    // __myself.termTimer = setTimeout("__myself.termlist()", __myself.termTime / 4); 
+                    __myself.throwError('Termlist failed. Malformed WS resonse.', 116);
             }
         );
 
@@ -564,7 +585,8 @@ pz2.prototype =
                 else
                     // if it gets here the http return code was 200 (pz2 errors are 417)
                     // but the response was invalid, it should never occur
-                    __myself.bytargetTimer = setTimeout("__myself.bytarget()", __myself.bytargetTime / 4);
+                    // __myself.bytargetTimer = setTimeout("__myself.bytarget()", __myself.bytargetTime / 4);
+                    __myself.throwError('Bytarget failed. Malformed WS resonse.', 117);
             }
         );
     },
