@@ -1,3 +1,9 @@
+pazpar2 (1.0.4-1) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Fri, 28 Sep 2007 14:19:25 +0200
+
 pazpar2 (1.0.3-6) unstable; urgency=low
 
   * HTTP fixes. Bugs #1639, #1665.

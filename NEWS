@@ -1,3 +1,18 @@
+--- 1.0.4 2007/09/28
+
+JavaScript library pzw2.js throws error if WS response (from Pazpar2 or
+other) is malformed (non-wellformed XML or missing Pazpar2 OK status).
+
+Improved diagnostics when Pazpar2 HTTP decoding fails.
+
+Pazpar2 requests may be POSTed as using Content-Type
+application/x-www-form-urlencoded.
+
+Pazpar2 honors LF in HTTP headers.
+
+Handle targets that handle negative hit counts (should not happen, but it
+does).
+
 --- 1.0.3 2007/09/19
 
 ICU is used for tokenization and normalization of the following: mergekey,
