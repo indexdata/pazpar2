@@ -1,4 +1,4 @@
-/* $Id: eventl.c,v 1.7 2007-07-09 19:30:35 adam Exp $
+/* $Id: eventl.c,v 1.8 2007-10-02 07:50:12 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -84,7 +84,7 @@ int event_loop(IOCHAN *iochans)
 	FD_ZERO(&out);
 	FD_ZERO(&except);
 	timeout = &to; /* hang on select */
-	to.tv_sec = 30;
+	to.tv_sec = 15;
 	to.tv_usec = 0;
 	max = 0;
     	for (p = *iochans; p; p = p->next)

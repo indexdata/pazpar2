@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.66 2007-09-10 16:25:50 adam Exp $
+/* $Id: logic.c,v 1.67 2007-10-02 07:50:12 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -95,7 +95,7 @@ struct parameters global_parameters =
     0,
     0,
     180,
-    30
+    15
 };
 
 // Recursively traverse query structure to extract terms.
