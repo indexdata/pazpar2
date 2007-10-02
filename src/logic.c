@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.68 2007-10-02 10:08:39 adam Exp $
+/* $Id: logic.c,v 1.69 2007-10-02 12:11:14 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -525,7 +525,8 @@ static int prepare_session_database(struct session *se,
 }
 
 // called if watch should be removed because http_channel is to be destroyed
-static void session_watch_cancel(void *data, struct http_channel *c)
+static void session_watch_cancel(void *data, struct http_channel *c,
+                                 void *data2)
 {
     struct session_watchentry *ent = data;
 

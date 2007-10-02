@@ -1,4 +1,4 @@
-/* $Id: client.h,v 1.4 2007-09-20 08:13:27 adam Exp $
+/* $Id: client.h,v 1.5 2007-10-02 12:11:14 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -49,8 +49,9 @@ int client_show_raw_begin(struct client *cl, int position,
                           void *data,
                           void (*error_handler)(void *data, const char *addinfo),
                           void (*record_handler)(void *data, const char *buf,
-                                                 size_t sz));
-void client_show_raw_reset(struct client *cl);
+                                                 size_t sz),
+                          void **data2);
+void client_show_raw_remove(struct client *cl, void *rr);
 
 const char *client_get_state_str(struct client *cl);
 enum client_state client_get_state(struct client *cl);

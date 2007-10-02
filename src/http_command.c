@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.63 2007-10-02 10:11:56 adam Exp $
+/* $Id: http_command.c,v 1.64 2007-10-02 12:11:14 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.63 2007-10-02 10:11:56 adam Exp $
+ * $Id: http_command.c,v 1.64 2007-10-02 12:11:14 adam Exp $
  */
 
 #include <stdio.h>
@@ -513,10 +513,10 @@ static void show_raw_record_ok(void *data, const char *buf, size_t sz)
     http_send_response(c);
 }
 
-void show_raw_reset(void *data, struct http_channel *c)
+void show_raw_reset(void *data, struct http_channel *c, void *data2)
 {
     struct client *client = data;
-    client_show_raw_reset(client);
+    client_show_raw_remove(client, data2);
 }
 
 static void cmd_record_ready(void *data);
@@ -566,20 +566,16 @@ static void cmd_record(struct http_channel *c)
         }
         else
         {
+            void *data2;
             http_channel_observer_t obs =
                 http_add_observer(c, r->client, show_raw_reset);
             int ret = 
                 client_show_raw_begin(r->client, r->position, syntax, esn, 
                                       obs /* data */,
                                       show_raw_record_error,
-                                      show_raw_record_ok);
+                                      show_raw_record_ok,
+                                      &data2);
             if (ret == -1)
-            {
-                http_remove_observer(obs);
-                error(rs, PAZPAR2_RECORD_FAIL, "show already active");
-                return;
-            }
-            else if (ret == -2)
             {
                 http_remove_observer(obs);
                 error(rs, PAZPAR2_NO_SESSION, 0);

@@ -1,4 +1,4 @@
-/* $Id: http.h,v 1.11 2007-09-26 08:53:53 adam Exp $
+/* $Id: http.h,v 1.12 2007-10-02 12:11:14 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -114,10 +114,12 @@ struct http_response *http_create_response(struct http_channel *c);
 void http_send_response(struct http_channel *c);
 void urlencode(const char *i, char *o);
 
-typedef void (*http_channel_destroy_t)(void *data, struct http_channel *c);
+typedef void (*http_channel_destroy_t)(void *data, struct http_channel *c,
+                                       void *data2);
 
 http_channel_observer_t http_add_observer(struct http_channel *c, void *data,
                                           http_channel_destroy_t);
+void http_observer_set_data2(http_channel_observer_t obs, void *data2);
 
 void http_remove_observer(http_channel_observer_t obs);
 struct http_channel *http_channel_observer_chan(http_channel_observer_t obs);

@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.27 2007-10-02 10:32:03 adam Exp $
+/* $Id: client.c,v 1.28 2007-10-02 12:11:14 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -89,6 +89,7 @@ struct show_raw {
     void (*error_handler)(void *data, const char *addinfo);
     void (*record_handler)(void *data, const char *buf, size_t sz);
     void *data;
+    struct show_raw *next;
 };
 
 static const char *client_states[] = {
@@ -236,32 +237,35 @@ int client_show_raw_begin(struct client *cl, int position,
                           void *data,
                           void (*error_handler)(void *data, const char *addinfo),
                           void (*record_handler)(void *data, const char *buf,
-                                                 size_t sz))
+                                                 size_t sz),
+                          void **data2)
 {
-    if (cl->show_raw)
-    {   /* raw show already in progress */
-        return -1;
-    }
+    struct show_raw *rr, **rrp;
     if (!cl->connection)
     {   /* the client has no connection */
-        return -2;
+        return -1;
     }
-    cl->show_raw = xmalloc(sizeof(*cl->show_raw));
-    cl->show_raw->position = position;
-    cl->show_raw->active = 0;
-    cl->show_raw->data = data;
-    cl->show_raw->error_handler = error_handler;
-    cl->show_raw->record_handler = record_handler;
+    rr = xmalloc(sizeof(*rr));
+    *data2 = rr;
+    rr->position = position;
+    rr->active = 0;
+    rr->data = data;
+    rr->error_handler = error_handler;
+    rr->record_handler = record_handler;
     if (syntax)
-        cl->show_raw->syntax = xstrdup(syntax);
+        rr->syntax = xstrdup(syntax);
     else
-        cl->show_raw->syntax = 0;
+        rr->syntax = 0;
     if (esn)
-        cl->show_raw->esn = xstrdup(esn);
+        rr->esn = xstrdup(esn);
     else
-        cl->show_raw->esn = 0;
+        rr->esn = 0;
+    rr->next = 0;
     
-
+    for (rrp = &cl->show_raw; *rrp; rrp = &(*rrp)->next)
+        ;
+    *rrp = rr;
+    
     if (cl->state == Client_Failed)
     {
         client_show_raw_error(cl, "client failed");
@@ -277,27 +281,42 @@ int client_show_raw_begin(struct client *cl, int position,
     return 0;
 }
 
-void client_show_raw_reset(struct client *cl)
+void client_show_raw_remove(struct client *cl, void *data)
 {
-    xfree(cl->show_raw);
-    cl->show_raw = 0;
+    struct show_raw *rr = data;
+    struct show_raw **rrp = &cl->show_raw;
+    while (*rrp != rr)
+        rrp = &(*rrp)->next;
+    if (*rrp)
+    {
+        *rrp = rr->next;
+        xfree(rr);
+    }
+}
+
+void client_show_raw_dequeue(struct client *cl)
+{
+    struct show_raw *rr = cl->show_raw;
+
+    cl->show_raw = rr->next;
+    xfree(rr);
 }
 
 static void client_show_raw_error(struct client *cl, const char *addinfo)
 {
-    if (cl->show_raw)
+    while (cl->show_raw)
     {
         cl->show_raw->error_handler(cl->show_raw->data, addinfo);
-        client_show_raw_reset(cl);
+        client_show_raw_dequeue(cl);
     }
 }
 
 static void client_show_raw_cancel(struct client *cl)
 {
-    if (cl->show_raw)
+    while (cl->show_raw)
     {
         cl->show_raw->error_handler(cl->show_raw->data, "cancel");
-        client_show_raw_reset(cl);
+        client_show_raw_dequeue(cl);
     }
 }
 
@@ -555,12 +574,13 @@ static void ingest_raw_records(struct client *cl, Z_Records *r)
     xmlDocDumpMemory(doc, &buf_out, &len_out);
     xmlFreeDoc(doc);
 
-    cl->show_raw->record_handler(cl->show_raw->data,
-                                 (const char *) buf_out, len_out);
-    
+    if (cl->show_raw)
+    {
+        cl->show_raw->record_handler(cl->show_raw->data,
+                                     (const char *) buf_out, len_out);
+        client_show_raw_dequeue(cl);
+    }
     xmlFree(buf_out);
-    xfree(cl->show_raw);
-    cl->show_raw = 0;
 }
 
 static void ingest_records(struct client *cl, Z_Records *r)
