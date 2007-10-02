@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.62 2007-09-10 16:25:50 adam Exp $
+/* $Id: http_command.c,v 1.63 2007-10-02 10:11:56 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.62 2007-09-10 16:25:50 adam Exp $
+ * $Id: http_command.c,v 1.63 2007-10-02 10:11:56 adam Exp $
  */
 
 #include <stdio.h>
@@ -568,13 +568,21 @@ static void cmd_record(struct http_channel *c)
         {
             http_channel_observer_t obs =
                 http_add_observer(c, r->client, show_raw_reset);
-            if (client_show_raw_begin(r->client, r->position, syntax, esn, 
+            int ret = 
+                client_show_raw_begin(r->client, r->position, syntax, esn, 
                                       obs /* data */,
                                       show_raw_record_error,
-                                      show_raw_record_ok))
+                                      show_raw_record_ok);
+            if (ret == -1)
             {
                 http_remove_observer(obs);
-                error(rs, PAZPAR2_RECORD_FAIL, "invalid parameters");
+                error(rs, PAZPAR2_RECORD_FAIL, "show already active");
+                return;
+            }
+            else if (ret == -2)
+            {
+                http_remove_observer(obs);
+                error(rs, PAZPAR2_NO_SESSION, 0);
                 return;
             }
         }

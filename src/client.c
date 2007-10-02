@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.25 2007-09-20 09:22:37 adam Exp $
+/* $Id: client.c,v 1.26 2007-10-02 10:11:56 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -239,7 +239,13 @@ int client_show_raw_begin(struct client *cl, int position,
                                                  size_t sz))
 {
     if (cl->show_raw)
+    {   /* raw show already in progress */
         return -1;
+    }
+    if (!cl->connection)
+    {   /* the client has no connection */
+        return -2;
+    }
     cl->show_raw = xmalloc(sizeof(*cl->show_raw));
     cl->show_raw->position = position;
     cl->show_raw->active = 0;
