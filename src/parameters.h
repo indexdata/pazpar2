@@ -1,4 +1,4 @@
-/* $Id: parameters.h,v 1.5 2007-07-25 11:41:32 adam Exp $
+/* $Id: parameters.h,v 1.6 2007-10-02 10:08:39 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -36,7 +36,6 @@ struct parameters {
     char implementationId[128];
     char implementationName[128];
     char implementationVersion[128];
-    int target_timeout; // seconds
     int session_timeout;
     int toget;
     int chunk;

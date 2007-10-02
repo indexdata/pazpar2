@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.67 2007-10-02 07:50:12 adam Exp $
+/* $Id: logic.c,v 1.68 2007-10-02 10:08:39 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -82,20 +82,19 @@ struct parameters global_parameters =
     "",
     "", 
     0,
-    0, /* dump_records */
-    0, /* debug_mode */
-    30,
+    0,   // dump_records
+    0,   // debug_mode
+    30,  // operations timeout 
     "81",
     "Index Data PazPar2",
     VERSION,
-    600, // 10 minutes
-    60,
+    60,   // session timeout 
     100,
     MAX_CHUNK,
     0,
     0,
-    180,
-    15
+    180, // Z39.50 session timeout
+    15   // Connect timeout
 };
 
 // Recursively traverse query structure to extract terms.
