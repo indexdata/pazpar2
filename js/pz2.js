@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.60 2007-10-02 10:33:18 jakub Exp $
+** $Id: pz2.js,v 1.61 2007-10-02 11:47:50 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -29,93 +29,91 @@ var pz2 = function ( paramArray )
     
     // at least one callback required
     if ( !paramArray )
-        throw new Error("Pz2.js: An array with parameters has to be suplied when instantiating a class");
-    
-    //for convenience
-    __myself = this;
+        throw new Error("Pz2.js: An array with parameters has to be suplied when instantiating a class"); 
 
     //supported pazpar2's protocol version
-    __myself.suppProtoVer = '1';
+    this.suppProtoVer = '1';
     if (typeof paramArray.pazpar2path != "undefined")
-        __myself.pz2String = paramArray.pazpar2path;
+        this.pz2String = paramArray.pazpar2path;
     else
-        __myself.pz2String = "/pazpar2/search.pz2";
-    __myself.useSessions = true;
+        this.pz2String = "/pazpar2/search.pz2";
+    this.useSessions = true;
     
-    __myself.stylesheet = paramArray.detailstylesheet || null;
+    this.stylesheet = paramArray.detailstylesheet || null;
     //load stylesheet if required in async mode
-    if( __myself.stylesheet ) {
-        var request = new pzHttpRequest( __myself.stylesheet );
-        request.get( {}, function ( doc ) { __myself.xslDoc = doc; } );
+    if( this.stylesheet ) {
+        var context = this;
+        var request = new pzHttpRequest( this.stylesheet );
+        request.get( {}, function ( doc ) { context.xslDoc = doc; } );
     }
     
-    __myself.errorHandler = paramArray.errorhandler || null;
+    this.errorHandler = paramArray.errorhandler || null;
     
     // function callbacks
-    __myself.statCallback = paramArray.onstat || null;
-    __myself.showCallback = paramArray.onshow || null;
-    __myself.termlistCallback = paramArray.onterm || null;
-    __myself.recordCallback = paramArray.onrecord || null;
-    __myself.bytargetCallback = paramArray.onbytarget || null;
-    __myself.resetCallback = paramArray.onreset || null;
+    this.statCallback = paramArray.onstat || null;
+    this.showCallback = paramArray.onshow || null;
+    this.termlistCallback = paramArray.onterm || null;
+    this.recordCallback = paramArray.onrecord || null;
+    this.bytargetCallback = paramArray.onbytarget || null;
+    this.resetCallback = paramArray.onreset || null;
 
     // termlist keys
-    __myself.termKeys = paramArray.termlist || "subject";
+    this.termKeys = paramArray.termlist || "subject";
     
     // some configurational stuff
-    __myself.keepAlive = 50000;
+    this.keepAlive = 50000;
     
-    if ( paramArray.keepAlive < __myself.keepAlive )
-        __myself.keepAlive = paramArray.keepAlive;
+    if ( paramArray.keepAlive < this.keepAlive )
+        this.keepAlive = paramArray.keepAlive;
 
-    __myself.sessionID = null;
-    __myself.initStatusOK = false;
-    __myself.pingStatusOK = false;
-    __myself.searchStatusOK = false;
+    this.sessionID = null;
+    this.initStatusOK = false;
+    this.pingStatusOK = false;
+    this.searchStatusOK = false;
     
     // for sorting
-    __myself.currentSort = "relevance";
+    this.currentSort = "relevance";
 
     // where are we?
-    __myself.currentStart = 0;
-    __myself.currentNum = 20;
+    this.currentStart = 0;
+    this.currentNum = 20;
 
     // last full record retrieved
-    __myself.currRecID = null;
+    this.currRecID = null;
     
     // current query
-    __myself.currQuery = null;
+    this.currQuery = null;
 
     //timers
-    __myself.statTime = paramArray.stattime || 1000;
-    __myself.statTimer = null;
-    __myself.termTime = paramArray.termtime || 1000;
-    __myself.termTimer = null;
-    __myself.showTime = paramArray.showtime || 1000;
-    __myself.showTimer = null;
-    __myself.showFastCount = 4;
-    __myself.bytargetTime = paramArray.bytargettime || 1000;
-    __myself.bytargetTimer = null;
+    this.statTime = paramArray.stattime || 1000;
+    this.statTimer = null;
+    this.termTime = paramArray.termtime || 1000;
+    this.termTimer = null;
+    this.showTime = paramArray.showtime || 1000;
+    this.showTimer = null;
+    this.showFastCount = 4;
+    this.bytargetTime = paramArray.bytargettime || 1000;
+    this.bytargetTimer = null;
 
     // counters for each command and applied delay
-    __myself.dumpFactor = 500;
-    __myself.showCounter = 0;
-    __myself.termCounter = 0;
-    __myself.statCounter = 0;
-    __myself.bytargetCounter = 0;
+    this.dumpFactor = 500;
+    this.showCounter = 0;
+    this.termCounter = 0;
+    this.statCounter = 0;
+    this.bytargetCounter = 0;
 
     // active clients, updated by stat and show
     // might be an issue since bytarget will poll accordingly
-    __myself.activeClients = 1;
+    this.activeClients = 1;
 
     // if in proxy mode no need to init
     if (paramArray.usesessions != undefined) {
-         __myself.useSessions = paramArray.usesessions;
-        __myself.initStatusOK = true;
+         this.useSessions = paramArray.usesessions;
+        this.initStatusOK = true;
     }
     // else, auto init session or wait for a user init?
-    if (__myself.useSessions && paramArray.autoInit !== false) {
-        __myself.init();
+    if (this.useSessions && paramArray.autoInit !== false) {
+        this.init();
     }
 };
 
@@ -127,8 +125,8 @@ pz2.prototype =
         var err = new Error(errMsg);
         if (errCode) err.code = errCode;
                 
-        if (__myself.errorHandler) {
-            __myself.errorHandler(err);
+        if (this.errorHandler) {
+            this.errorHandler(err);
         }
         else {
             throw err;
@@ -138,104 +136,117 @@ pz2.prototype =
     // stop activity by clearing tiemouts 
    stop: function ()
    {
-       clearTimeout(__myself.statTimer);
-       clearTimeout(__myself.showTimer);
-       clearTimeout(__myself.termTimer);
-       clearTimeout(__myself.bytargetTimer);
+       clearTimeout(this.statTimer);
+       clearTimeout(this.showTimer);
+       clearTimeout(this.termTimer);
+       clearTimeout(this.bytargetTimer);
     },
     
     // reset status variables
     reset: function ()
     {   
-        if ( __myself.useSessions ) {
-            __myself.sessionID = null;
-            __myself.initStatusOK = false;
-            __myself.pingStatusOK = false;
+        if ( this.useSessions ) {
+            this.sessionID = null;
+            this.initStatusOK = false;
+            this.pingStatusOK = false;
         }
-        __myself.searchStatusOK = false;
-        __myself.stop();
+        this.searchStatusOK = false;
+        this.stop();
             
-        if ( __myself.resetCallback )
-                __myself.resetCallback();
+        if ( this.resetCallback )
+                this.resetCallback();
     },
 
     init: function ( sessionId ) 
     {
-        __myself.reset();
+        this.reset();
         
         // session id as a param
-        if ( sessionId != undefined && __myself.useSessions ) {
-            __myself.initStatusOK = true;
-            __myself.sessionID = sessionId;
-            __myself.ping();
+        if ( sessionId != undefined && this.useSessions ) {
+            this.initStatusOK = true;
+            this.sessionID = sessionId;
+            this.ping();
         // old school direct pazpar2 init
-        } else if (__myself.useSessions) {
-            var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
+        } else if (this.useSessions) {
+            var context = this;
+            var request = new pzHttpRequest(this.pz2String, this.errorHandler);
             request.get(
                 { "command": "init" },
                 function(data) {
-                    if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
-                        if ( data.getElementsByTagName("protocol")[0].childNodes[0].nodeValue 
-                            != __myself.suppProtoVer )
+                    if ( data.getElementsByTagName("status")[0]
+                            .childNodes[0].nodeValue == "OK" ) {
+                        if ( data.getElementsByTagName("protocol")[0]
+                                .childNodes[0].nodeValue 
+                            != context.suppProtoVer )
                             throw new Error("Server's protocol not supported by the client");
-                        __myself.initStatusOK = true;
-                        __myself.sessionID = data.getElementsByTagName("session")[0].childNodes[0].nodeValue;
-                        setTimeout("__myself.ping()", __myself.keepAlive);
+                        context.initStatusOK = true;
+                        context.sessionID = 
+                            data.getElementsByTagName("session")[0]
+                                .childNodes[0].nodeValue;
+                        setTimeout(
+                            function () {
+                                context.ping();
+                            },
+                            context.keepAlive
+                        );
                     }
                     else
-                        // if it gets here the http return code was 200 (pz2 errors are 417)
-                        // but the response was invalid, it should never occur
-                        // setTimeout("__myself.init()", 1000);
-                        __myself.throwError('Init failed. Malformed WS resonse.', 110);
+                        context.throwError('Init failed. Malformed WS resonse.',
+                                            110);
                 }
             );
         // when through proxy no need to init
         } else {
-            __myself.initStatusOK = true;
+            this.initStatusOK = true;
 	}
     },
     // no need to ping explicitly
     ping: function () 
     {
         // pinging only makes sense when using pazpar2 directly
-        if( !__myself.initStatusOK || !__myself.useSessions )
+        if( !this.initStatusOK || !this.useSessions )
             throw new Error('Pz2.js: Ping not allowed (proxy mode) or session not initialized.');
             // session is not initialized code here
         
-        var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
+        var context = this;
+        var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.get(
-            { "command": "ping", "session": __myself.sessionID },
+            { "command": "ping", "session": this.sessionID },
             function(data) {
-                if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
-                    __myself.pingStatusOK = true;
-                    setTimeout("__myself.ping()", __myself.keepAlive);
+                if ( data.getElementsByTagName("status")[0]
+                        .childNodes[0].nodeValue == "OK" ) {
+                    context.pingStatusOK = true;
+                    setTimeout(
+                        function () {
+                            context.ping();
+                        }, 
+                        context.keepAlive
+                    );
                 }
                 else
-                    // if it gets here the http return code was 200 (pz2 errors are 417)
-                    // but the response was invalid, it should never occur
-                    // setTimeout("__myself.ping()", 1000);
-                    __myself.throwError('Ping failed. Malformed WS resonse.', 111);
+                    context.throwError('Ping failed. Malformed WS resonse.',
+                                        111);
             }
         );
     },
     search: function (query, num, sort, filter, showfrom)
     {
-        clearTimeout(__myself.statTimer);
-        clearTimeout(__myself.showTimer);
-        clearTimeout(__myself.termTimer);
-        clearTimeout(__myself.bytargetTimer);
+        clearTimeout(this.statTimer);
+        clearTimeout(this.showTimer);
+        clearTimeout(this.termTimer);
+        clearTimeout(this.bytargetTimer);
         
-        __myself.showCounter = 0;
-        __myself.termCounter = 0;
-        __myself.bytargetCounter = 0;
-        __myself.statCounter = 0;
+        this.showCounter = 0;
+        this.termCounter = 0;
+        this.bytargetCounter = 0;
+        this.statCounter = 0;
         
         // no proxy mode
-        if( !__myself.initStatusOK )
+        if( !this.initStatusOK )
             throw new Error('Pz2.js: session not initialized.');
         
         if( query !== undefined )
-            __myself.currQuery = query;
+            this.currQuery = query;
         else
             throw new Error("Pz2.js: no query supplied to the search command.");
         
@@ -244,112 +255,157 @@ pz2.prototype =
         else
             var start = 0;
 
-	var searchParams = { "command": "search", "query": __myself.currQuery, "session": __myself.sessionID };
+	var searchParams = { 
+            "command": "search",
+            "query": this.currQuery, 
+            "session": this.sessionID 
+        };
 	
         if (filter !== undefined)
 	    searchParams["filter"] = filter;
         
-        var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
+        var context = this;
+        var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.get(
             searchParams,
             function(data) {
-                if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
-                    __myself.searchStatusOK = true;
+                if ( data.getElementsByTagName("status")[0]
+                        .childNodes[0].nodeValue == "OK" ) {
+                    context.searchStatusOK = true;
                     //piggyback search
-                    __myself.show(start, num, sort);
-                    if ( __myself.statCallback )
-                        __myself.stat();
-                        //__myself.statTimer = setTimeout("__myself.stat()", __myself.statTime / 4);
-                    if ( __myself.termlistCallback )
-                        __myself.termlist();
-                        //__myself.termTimer = setTimeout("__myself.termlist()", __myself.termTime / 4);
-                    if ( __myself.bytargetCallback )
-                        __myself.bytarget();
-                        //__myself.bytargetTimer = setTimeout("__myself.bytarget()", __myself.bytargetTime / 4);
+                    context.show(start, num, sort);
+                    if ( context.statCallback )
+                        context.stat();
+                    if ( context.termlistCallback )
+                        context.termlist();
+                    if ( context.bytargetCallback )
+                        context.bytarget();
                 }
                 else
-                    // if it gets here the http return code was 200 (pz2 errors are 417)
-                    // but the response was invalid, it should never occur
-                    // setTimeout("__myself.search(__myself.currQuery)", 500);
-                    __myself.throwError('Search failed. Malformed WS resonse.', 112);
+                    context.throwError('Search failed. Malformed WS resonse.',
+                                        112);
             }
         );
     },
     stat: function()
     {
-        if( !__myself.initStatusOK )
+        if( !this.initStatusOK )
             throw new Error('Pz2.js: session not initialized.');
         
         // if called explicitly takes precedence
-        clearTimeout(__myself.statTimer);
+        clearTimeout(this.statTimer);
         
-        var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
+        var context = this;
+        var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.get(
-            { "command": "stat", "session": __myself.sessionID },
+            { "command": "stat", "session": this.sessionID },
             function(data) {
                 if ( data.getElementsByTagName("stat") ) {
-                    var activeClients = Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue );
-                    __myself.activeClients = activeClients;
+                    var activeClients = 
+                        Number( data.getElementsByTagName("activeclients")[0]
+                                    .childNodes[0].nodeValue );
+                    context.activeClients = activeClients;
                     var stat = {
-                    "activeclients": activeClients,
-                    "hits": Number( data.getElementsByTagName("hits")[0].childNodes[0].nodeValue ),
-                    "records": Number( data.getElementsByTagName("records")[0].childNodes[0].nodeValue ),
-                    "clients": Number( data.getElementsByTagName("clients")[0].childNodes[0].nodeValue ),
-                    "initializing": Number( data.getElementsByTagName("initializing")[0].childNodes[0].nodeValue ),
-                    "searching": Number( data.getElementsByTagName("searching")[0].childNodes[0].nodeValue ),
-                    "presenting": Number( data.getElementsByTagName("presenting")[0].childNodes[0].nodeValue ),
-                    "idle": Number( data.getElementsByTagName("idle")[0].childNodes[0].nodeValue ),
-                    "failed": Number( data.getElementsByTagName("failed")[0].childNodes[0].nodeValue ),
-                    "error": Number( data.getElementsByTagName("error")[0].childNodes[0].nodeValue )
+                        "activeclients": activeClients,
+                        "hits": 
+                            Number( data.getElementsByTagName("hits")[0]
+                                        .childNodes[0].nodeValue ),
+                        "records": 
+                            Number( data.getElementsByTagName("records")[0]
+                                        .childNodes[0].nodeValue ),
+                        "clients": 
+                            Number( data.getElementsByTagName("clients")[0]
+                                        .childNodes[0].nodeValue ),
+                        "initializing": 
+                            Number( data.getElementsByTagName("initializing")[0]
+                                        .childNodes[0].nodeValue ),
+                        "searching": 
+                            Number( data.getElementsByTagName("searching")[0]
+                                        .childNodes[0].nodeValue ),
+                        "presenting": 
+                            Number( data.getElementsByTagName("presenting")[0]
+                                        .childNodes[0].nodeValue ),
+                        "idle": 
+                            Number( data.getElementsByTagName("idle")[0]
+                                        .childNodes[0].nodeValue ),
+                        "failed": 
+                            Number( data.getElementsByTagName("failed")[0]
+                                        .childNodes[0].nodeValue ),
+                        "error": 
+                            Number( data.getElementsByTagName("error")[0]
+                                        .childNodes[0].nodeValue )
                     };
                     
-                    __myself.statCounter++;
-		    var delay = __myself.statTime + __myself.statCounter * __myself.dumpFactor;
+                    context.statCounter++;
+		    var delay = context.statTime 
+                        + context.statCounter * context.dumpFactor;
+                    
                     if ( activeClients > 0 )
-                        __myself.statTimer = setTimeout("__myself.stat()", delay);
-                    __myself.statCallback(stat);
+                        context.statTimer = 
+                            setTimeout( 
+                                function () {
+                                    context.stat();
+                                },
+                                delay
+                            );
+                    context.statCallback(stat);
                 }
                 else
-                    // if it gets here the http return code was 200 (pz2 errors are 417)
-                    // but the response was invalid, it should never occur
-                    //__myself.statTimer = setTimeout("__myself.stat()", __myself.statTime / 4);
-                    __myself.throwError('Stat failed. Malformed WS resonse.', 113);
+                    context.throwError('Stat failed. Malformed WS resonse.',
+                                        113);
             }
         );
     },
     show: function(start, num, sort)
     {
-        if( !__myself.searchStatusOK && __myself.useSessions )
+        if( !this.searchStatusOK && this.useSessions )
             throw new Error('Pz2.js: show command has to be preceded with a search command.');
         
         // if called explicitly takes precedence
-        clearTimeout(__myself.showTimer);
+        clearTimeout(this.showTimer);
         
         if( sort !== undefined )
-            __myself.currentSort = sort;
+            this.currentSort = sort;
         if( start !== undefined )
-            __myself.currentStart = Number( start );
+            this.currentStart = Number( start );
         if( num !== undefined )
-            __myself.currentNum = Number( num );
+            this.currentNum = Number( num );
 
-        var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
         var context = this;
+        var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.get(
-            { "command": "show", "session": __myself.sessionID, "start": __myself.currentStart,
-              "num": __myself.currentNum, "sort": __myself.currentSort, "block": 1 },
+            { 
+                "command": "show", 
+                "session": this.sessionID, 
+                "start": this.currentStart,
+                "num": this.currentNum, 
+                "sort": this.currentSort, 
+                "block": 1 
+            },
             function(data) {
-                if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
+                if ( data.getElementsByTagName("status")[0]
+                        .childNodes[0].nodeValue == "OK" ) {
                     // first parse the status data send along with records
                     // this is strictly bound to the format
-                    var activeClients = Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue );
-                    __myself.activeClients = activeClients; 
+                    var activeClients = 
+                        Number( data.getElementsByTagName("activeclients")[0]
+                                    .childNodes[0].nodeValue );
+                    context.activeClients = activeClients; 
                     var show = {
-                    "activeclients": activeClients,
-                    "merged": Number( data.getElementsByTagName("merged")[0].childNodes[0].nodeValue ),
-                    "total": Number( data.getElementsByTagName("total")[0].childNodes[0].nodeValue ),
-                    "start": Number( data.getElementsByTagName("start")[0].childNodes[0].nodeValue ),
-                    "num": Number( data.getElementsByTagName("num")[0].childNodes[0].nodeValue ),
-                    "hits": []
+                        "activeclients": activeClients,
+                        "merged": 
+                            Number( data.getElementsByTagName("merged")[0]
+                                        .childNodes[0].nodeValue ),
+                        "total": 
+                            Number( data.getElementsByTagName("total")[0]
+                                        .childNodes[0].nodeValue ),
+                        "start": 
+                            Number( data.getElementsByTagName("start")[0]
+                                        .childNodes[0].nodeValue ),
+                        "num": 
+                            Number( data.getElementsByTagName("num")[0]
+                                        .childNodes[0].nodeValue ),
+                        "hits": []
                     };
                     // parse all the first-level nodes for all <hit> tags
                     var hits = data.getElementsByTagName("hit");
@@ -359,8 +415,10 @@ pz2.prototype =
 			show.hits[i]['location'] = new Array();
                         for ( j = 0; j < hits[i].childNodes.length; j++) {
 			    var locCount = 0;
-                            if ( hits[i].childNodes[j].nodeType == Node.ELEMENT_NODE ) {
-				if (hits[i].childNodes[j].nodeName == 'location') {
+                            if ( hits[i].childNodes[j].nodeType 
+                                == Node.ELEMENT_NODE ) {
+				if (hits[i].childNodes[j].nodeName 
+                                    == 'location') {
 				    var locNode = hits[i].childNodes[j];
 				    var id = locNode.getAttribute('id');
 				    show.hits[i]['location'][id] = {
@@ -369,45 +427,51 @@ pz2.prototype =
 				    };
 				}
 				else {
-				    var nodeName = hits[i].childNodes[j].nodeName;
+				    var nodeName = 
+                                        hits[i].childNodes[j].nodeName;
                                     var nodeText = 'ERROR'
                                     if ( hits[i].childNodes[j].firstChild )
-                                        nodeText = hits[i].childNodes[j].firstChild.nodeValue;
+                                        nodeText = 
+                                            hits[i].childNodes[j]
+                                                .firstChild.nodeValue;
 				    show.hits[i][nodeName] = nodeText;
 				}
                             }
                         }
                     }
-                    __myself.showCounter++;
-		    var delay = __myself.showTime;
-		    if (__myself.showCounter > __myself.showFastCount)
-                            delay += __myself.showCounter * __myself.dumpFactor;
+                    context.showCounter++;
+		    var delay = context.showTime;
+		    if (context.showCounter > context.showFastCount)
+                            delay += context.showCounter * context.dumpFactor;
                     if ( activeClients > 0 )
-                        __myself.showTimer = setTimeout("__myself.show()", delay);
+                        context.showTimer = setTimeout(
+                            function () {
+                                context.show();
+                            }, 
+                            delay);
 
-                    __myself.showCallback(show);
+                    context.showCallback(show);
                 }
                 else
-                    // if it gets here the http return code was 200 (pz2 errors are 417)
-                    // but the response was invalid, it should never occur
-                    // __myself.showTimer = setTimeout("__myself.show()", __myself.showTime / 4);
-                    __myself.throwError('Show failed. Malformed WS resonse.', 114);
+                    context.throwError('Show failed. Malformed WS resonse.',
+                                        114);
             }
         );
     },
     record: function(id, offset, params)
     {
         // we may call record with no previous search if in proxy mode
-        if( !__myself.searchStatusOK && __myself.useSessions)
-           throw new Error('Pz2.js: record command has to be preceded with a search command.'); 
-
+        if( !this.searchStatusOK && this.useSessions)
+           throw new Error(
+            'Pz2.js: record command has to be preceded with a search command.'
+            ); 
         if ( params == undefined )
             params = {};
 
         if ( params.callback != undefined ) {
             callback = params.callback;
         } else {
-            callback = __myself.recordCallback;
+            callback = this.recordCallback;
         }
         
         // what is that?
@@ -417,13 +481,14 @@ pz2.prototype =
             handle = params['handle'];
 
         if( id !== undefined )
-            __myself.currRecID = id;
+            this.currRecID = id;
         
-        var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
+        var context = this;
+        var request = new pzHttpRequest(this.pz2String, this.errorHandler);
 
 	var recordParams = { "command": "record", 
-                            "session": __myself.sessionID,
-                            "id": __myself.currRecID };
+                            "session": this.sessionID,
+                            "id": this.currRecID };
 	
         if (offset !== undefined) {
 	    recordParams["offset"] = offset;
@@ -433,7 +498,7 @@ pz2.prototype =
             recordParams['syntax'] = params.syntax;
         }
 
-	__myself.currRecOffset = offset;
+	this.currRecOffset = offset;
 
         request.get(
 	    recordParams,
@@ -441,25 +506,35 @@ pz2.prototype =
                 var recordNode;
                 var record = new Array();
                 record['xmlDoc'] = data;
-		if (__myself.currRecOffset !== undefined) {
-                    record['offset'] = __myself.currRecOffset;
+		if (context.currRecOffset !== undefined) {
+                    record['offset'] = context.currRecOffset;
                     callback(record, handle);
-                } else if ( recordNode = data.getElementsByTagName("record")[0] ) {
+                } else if ( recordNode = 
+                    data.getElementsByTagName("record")[0] ) {
                     // if stylesheet was fetched do not parse the response
-                    if ( __myself.xslDoc ) {
-                        record['recid'] = recordNode.getElementsByTagName("recid")[0].firstChild.nodeValue;
-                        record['xslDoc'] = __myself.xslDoc;
+                    if ( context.xslDoc ) {
+                        record['recid'] = 
+                            recordNode.getElementsByTagName("recid")[0]
+                                .firstChild.nodeValue;
+                        record['xslDoc'] = 
+                            context.xslDoc;
                     } else {
                         for ( i = 0; i < recordNode.childNodes.length; i++) {
-                            if ( recordNode.childNodes[i].nodeType == Node.ELEMENT_NODE
-                                    && recordNode.childNodes[i].nodeName != 'location' ) {
-                                var nodeName = recordNode.childNodes[i].nodeName;
-                                var nodeText = recordNode.childNodes[i].firstChild.nodeValue;
+                            if ( recordNode.childNodes[i].nodeType 
+                                == Node.ELEMENT_NODE
+                                && recordNode.childNodes[i].nodeName 
+                                != 'location' ) {
+                                var nodeName = 
+                                    recordNode.childNodes[i].nodeName;
+                                var nodeText = 
+                                    recordNode.childNodes[i]
+                                        .firstChild.nodeValue;
                                 record[nodeName] = nodeText;                            
                             }
                         }
                         // the location might be empty!!
-                        var locationNodes = recordNode.getElementsByTagName("location");
+                        var locationNodes = 
+                            recordNode.getElementsByTagName("location");
                         record["location"] = new Array();
                         for ( i = 0; i < locationNodes.length; i++ ) {
                             record["location"][i] = {
@@ -468,11 +543,16 @@ pz2.prototype =
                             };
                             
                             for ( j = 0; j < locationNodes[i].childNodes.length; j++) {
-                                if ( locationNodes[i].childNodes[j].nodeType == Node.ELEMENT_NODE ) {
-                                    var nodeName = locationNodes[i].childNodes[j].nodeName;
+                                if ( locationNodes[i].childNodes[j].nodeType 
+                                    == Node.ELEMENT_NODE ) {
+                                    var nodeName = 
+                                        locationNodes[i].childNodes[j].nodeName;
                                     var nodeText = '';
-                                    if (locationNodes[i].childNodes[j].firstChild)
-                                            nodeText = locationNodes[i].childNodes[j].firstChild.nodeValue;
+                                    if (locationNodes[i].childNodes[j]
+                                            .firstChild)
+                                        nodeText = 
+                                            locationNodes[i].childNodes[j]
+                                                .firstChild.nodeValue;
                                     record["location"][i][nodeName] = nodeText;                            
                                 }
                             }
@@ -482,29 +562,34 @@ pz2.prototype =
                     callback(record, handle);
                 }
                 else
-                    // if it gets here the http return code was 200 (pz2 errors are 417)
-                    // but the response was invalid, it should never occur
-                    // setTimeout("__myself.record(__myself.currRecID)", 500);
-                    __myself.throwError('Record failed. Malformed WS resonse.', 115);
+                    context.throwError('Record failed. Malformed WS resonse.',
+                                        115);
             }
         );
     },
 
     termlist: function()
     {
-        if( !__myself.searchStatusOK && __myself.useSessions )
+        if( !this.searchStatusOK && this.useSessions )
             throw new Error('Pz2.js: termlist command has to be preceded with a search command.');
 
         // if called explicitly takes precedence
-        clearTimeout(__myself.termTimer);
+        clearTimeout(this.termTimer);
         
-        var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
+        var context = this;
+        var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.get(
-            { "command": "termlist", "session": __myself.sessionID, "name": __myself.termKeys },
+            { 
+                "command": "termlist", 
+                "session": this.sessionID, 
+                "name": this.termKeys 
+            },
             function(data) {
                 if ( data.getElementsByTagName("termlist") ) {
-                    var activeClients = Number( data.getElementsByTagName("activeclients")[0].childNodes[0].nodeValue );
-                    __myself.activeClients = activeClients;
+                    var activeClients = 
+                        Number( data.getElementsByTagName("activeclients")[0]
+                                    .childNodes[0].nodeValue );
+                    context.activeClients = activeClients;
                     var termList = { "activeclients":  activeClients };
                     var termLists = data.getElementsByTagName("list");
                     //for each termlist
@@ -515,78 +600,101 @@ pz2.prototype =
                         //for each term in the list
                         for (j = 0; j < terms.length; j++) { 
                             var term = {
-                                "name": (terms[j].getElementsByTagName("name")[0].childNodes.length 
-                                                ? terms[j].getElementsByTagName("name")[0].childNodes[0].nodeValue
-                                                : 'ERROR'),
-                                "freq": terms[j].getElementsByTagName("frequency")[0].childNodes[0].nodeValue || 'ERROR'
+                                "name": 
+                                    (terms[j].getElementsByTagName("name")[0]
+                                        .childNodes.length 
+                                    ? terms[j].getElementsByTagName("name")[0]
+                                        .childNodes[0].nodeValue
+                                    : 'ERROR'),
+                                "freq": 
+                                    terms[j]
+                                    .getElementsByTagName("frequency")[0]
+                                    .childNodes[0].nodeValue || 'ERROR'
                             };
 
-                            var termIdNode = terms[j].getElementsByTagName("id");
+                            var termIdNode = 
+                                terms[j].getElementsByTagName("id");
                             if(terms[j].getElementsByTagName("id").length)
-                                term["id"] = termIdNode[0].childNodes[0].nodeValue;
-
+                                term["id"] = 
+                                    termIdNode[0].childNodes[0].nodeValue;
                             termList[listName][j] = term;
                         }
                     }
 
-                    __myself.termCounter++;
-                    var delay = __myself.termTime + __myself.termCounter * __myself.dumpFactor;
+                    context.termCounter++;
+                    var delay = context.termTime 
+                        + context.termCounter * context.dumpFactor;
                     if ( activeClients > 0 )
-                        __myself.termTimer = setTimeout("__myself.termlist()", delay);
+                        context.termTimer = 
+                            setTimeout(
+                                function () {
+                                    context.termlist();
+                                }, 
+                                delay
+                            );
                    
-                   __myself.termlistCallback(termList);
+                   context.termlistCallback(termList);
                 }
                 else
-                    // if it gets here the http return code was 200 (pz2 errors are 417)
-                    // but the response was invalid, it should never occur
-                    // __myself.termTimer = setTimeout("__myself.termlist()", __myself.termTime / 4); 
-                    __myself.throwError('Termlist failed. Malformed WS resonse.', 116);
+                    context.throwError('Termlist failed. Malformed WS resonse.',
+                                        116);
             }
         );
 
     },
     bytarget: function()
     {
-        if( !__myself.initStatusOK && __myself.useSessions )
+        if( !this.initStatusOK && this.useSessions )
             throw new Error('Pz2.js: bytarget command has to be preceded with a search command.');
         
         // no need to continue
-        if( !__myself.searchStatusOK )
+        if( !this.searchStatusOK )
             return;
 
         // if called explicitly takes precedence
-        clearTimeout(__myself.bytargetTimer);
+        clearTimeout(this.bytargetTimer);
         
-        var request = new pzHttpRequest(__myself.pz2String, __myself.errorHandler);
+        var context = this;
+        var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.get(
-            { "command": "bytarget", "session": __myself.sessionID },
+            { "command": "bytarget", "session": this.sessionID },
             function(data) {
-                if ( data.getElementsByTagName("status")[0].childNodes[0].nodeValue == "OK" ) {
+                if ( data.getElementsByTagName("status")[0]
+                        .childNodes[0].nodeValue == "OK" ) {
                     var targetNodes = data.getElementsByTagName("target");
                     var bytarget = new Array();
                     for ( i = 0; i < targetNodes.length; i++) {
                         bytarget[i] = new Array();
                         for( j = 0; j < targetNodes[i].childNodes.length; j++ ) {
-                            if ( targetNodes[i].childNodes[j].nodeType == Node.ELEMENT_NODE ) {
-                                var nodeName = targetNodes[i].childNodes[j].nodeName;
-                                var nodeText = targetNodes[i].childNodes[j].firstChild.nodeValue;
+                            if ( targetNodes[i].childNodes[j].nodeType 
+                                == Node.ELEMENT_NODE ) {
+                                var nodeName = 
+                                    targetNodes[i].childNodes[j].nodeName;
+                                var nodeText = 
+                                    targetNodes[i].childNodes[j]
+                                        .firstChild.nodeValue;
                                 bytarget[i][nodeName] = nodeText;
                             }
                         }
                     }
                     
-                    __myself.bytargetCounter++;
-                    var delay = __myself.bytargetTime + __myself.bytargetCounter * __myself.dumpFactor;
-                    if ( __myself.activeClients > 0 )
-                        __myself.bytargetTimer = setTimeout("__myself.bytarget()", delay);
+                    context.bytargetCounter++;
+                    var delay = context.bytargetTime 
+                        + context.bytargetCounter * context.dumpFactor;
+                    if ( context.activeClients > 0 )
+                        context.bytargetTimer = 
+                            setTimeout(
+                                function () {
+                                    context.bytarget();
+                                }, 
+                                delay
+                            );
 
-                    __myself.bytargetCallback(bytarget);
+                    context.bytargetCallback(bytarget);
                 }
                 else
-                    // if it gets here the http return code was 200 (pz2 errors are 417)
-                    // but the response was invalid, it should never occur
-                    // __myself.bytargetTimer = setTimeout("__myself.bytarget()", __myself.bytargetTime / 4);
-                    __myself.throwError('Bytarget failed. Malformed WS resonse.', 117);
+                    context.throwError('Bytarget failed. Malformed WS resonse.',
+                                        117);
             }
         );
     },
@@ -595,29 +703,29 @@ pz2.prototype =
     showNext: function(page)
     {
         var step = page || 1;
-        __myself.show( ( step * __myself.currentNum ) + __myself.currentStart );     
+        this.show( ( step * this.currentNum ) + this.currentStart );     
     },
 
     showPrev: function(page)
     {
-        if (__myself.currentStart == 0 )
+        if (this.currentStart == 0 )
             return false;
         var step = page || 1;
-        var newStart = __myself.currentStart - (step * __myself.currentNum );
-        __myself.show( newStart > 0 ? newStart : 0 );
+        var newStart = this.currentStart - (step * this.currentNum );
+        this.show( newStart > 0 ? newStart : 0 );
     },
 
     showPage: function(pageNum)
     {
         //var page = pageNum || 1;
-        __myself.show(pageNum * __myself.currentNum);
+        this.show(pageNum * this.currentNum);
     }
 };
 
 /*
-*********************************************************************************
-** AJAX HELPER CLASS ************************************************************
-*********************************************************************************
+********************************************************************************
+** AJAX HELPER CLASS ***********************************************************
+********************************************************************************
 */
 var pzHttpRequest = function ( url, errorHandler ) {
         this.request = null;
