@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.26 2007-10-02 10:11:56 adam Exp $
+/* $Id: client.c,v 1.27 2007-10-02 10:32:03 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -899,7 +899,7 @@ void client_set_connection(struct client *cl, struct connection *con)
 void client_disconnect(struct client *cl)
 {
     if (cl->state != Client_Idle)
-        cl->state = Client_Disconnected;
+        client_set_state(cl, Client_Disconnected);
     client_set_connection(cl, 0);
 }
 
