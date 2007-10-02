@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.61 2007-10-02 11:47:50 jakub Exp $
+** $Id: pz2.js,v 1.62 2007-10-02 12:09:40 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -29,7 +29,7 @@ var pz2 = function ( paramArray )
     
     // at least one callback required
     if ( !paramArray )
-        throw new Error("Pz2.js: An array with parameters has to be suplied when instantiating a class"); 
+        throw new Error("Pz2.js: Array with parameters has to be suplied."); 
 
     //supported pazpar2's protocol version
     this.suppProtoVer = '1';
@@ -178,7 +178,9 @@ pz2.prototype =
                         if ( data.getElementsByTagName("protocol")[0]
                                 .childNodes[0].nodeValue 
                             != context.suppProtoVer )
-                            throw new Error("Server's protocol not supported by the client");
+                            throw new Error(
+                                "Server's protocol not supported by the client"
+                            );
                         context.initStatusOK = true;
                         context.sessionID = 
                             data.getElementsByTagName("session")[0]
@@ -205,9 +207,9 @@ pz2.prototype =
     {
         // pinging only makes sense when using pazpar2 directly
         if( !this.initStatusOK || !this.useSessions )
-            throw new Error('Pz2.js: Ping not allowed (proxy mode) or session not initialized.');
-            // session is not initialized code here
-        
+            throw new Error(
+            'Pz2.js: Ping not allowed (proxy mode) or session not initialized.'
+            );
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.get(
@@ -359,7 +361,9 @@ pz2.prototype =
     show: function(start, num, sort)
     {
         if( !this.searchStatusOK && this.useSessions )
-            throw new Error('Pz2.js: show command has to be preceded with a search command.');
+            throw new Error(
+                'Pz2.js: show command has to be preceded with a search command.'
+            );
         
         // if called explicitly takes precedence
         clearTimeout(this.showTimer);
@@ -542,7 +546,9 @@ pz2.prototype =
                                 "name": locationNodes[i].getAttribute("name")
                             };
                             
-                            for ( j = 0; j < locationNodes[i].childNodes.length; j++) {
+                            for (j = 0; 
+                                j < locationNodes[i].childNodes.length; 
+                                j++) {
                                 if ( locationNodes[i].childNodes[j].nodeType 
                                     == Node.ELEMENT_NODE ) {
                                     var nodeName = 
@@ -571,7 +577,9 @@ pz2.prototype =
     termlist: function()
     {
         if( !this.searchStatusOK && this.useSessions )
-            throw new Error('Pz2.js: termlist command has to be preceded with a search command.');
+            throw new Error(
+            'Pz2.js: termlist command has to be preceded with a search command.'
+            );
 
         // if called explicitly takes precedence
         clearTimeout(this.termTimer);
@@ -645,7 +653,9 @@ pz2.prototype =
     bytarget: function()
     {
         if( !this.initStatusOK && this.useSessions )
-            throw new Error('Pz2.js: bytarget command has to be preceded with a search command.');
+            throw new Error(
+            'Pz2.js: bytarget command has to be preceded with a search command.'
+            );
         
         // no need to continue
         if( !this.searchStatusOK )
@@ -798,12 +808,21 @@ pzHttpRequest.prototype =
             // pick up pazpr2 errors first
             if ( this.request.responseXML 
                 && this.request.responseXML.documentElement.nodeName == 'error'
-                && this.request.responseXML.getElementsByTagName("error").length ) {
+                && this.request.responseXML.getElementsByTagName("error")
+                    .length ) {
                 var errAddInfo = '';
-                if ( this.request.responseXML.getElementsByTagName("error")[0].childNodes.length )
-                    errAddInfo = ': ' + this.request.responseXML.getElementsByTagName("error")[0].childNodes[0].nodeValue;
-                var errMsg = this.request.responseXML.getElementsByTagName("error")[0].getAttribute("msg");
-                var errCode = this.request.responseXML.getElementsByTagName("error")[0].getAttribute("code");
+                if ( this.request.responseXML.getElementsByTagName("error")[0]
+                        .childNodes.length )
+                    errAddInfo = ': ' + 
+                        this.request.responseXML
+                            .getElementsByTagName("error")[0]
+                            .childNodes[0].nodeValue;
+                var errMsg = 
+                    this.request.responseXML.getElementsByTagName("error")[0]
+                        .getAttribute("msg");
+                var errCode = 
+                    this.request.responseXML.getElementsByTagName("error")[0]
+                        .getAttribute("code");
             
                 var err = new Error(errMsg + errAddInfo);
                 err.code = errCode;
@@ -834,9 +853,9 @@ pzHttpRequest.prototype =
 };
 
 /*
-*********************************************************************************
-** XML HELPER CLASS ************************************************************
-*********************************************************************************
+********************************************************************************
+** XML HELPER FUNCTIONS ********************************************************
+********************************************************************************
 */
 
 // DOMDocument
@@ -956,4 +975,5 @@ Element_getTextContent = function (DOM_Element)
     }
 }
 
+/* do not remove trailing bracket */
 }
