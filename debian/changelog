@@ -1,3 +1,9 @@
+pazpar2 (1.0.4-2) unstable; urgency=low
+
+  * Lower connect timeout.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Tue, 02 Oct 2007 10:39:37 +0200
+
 pazpar2 (1.0.4-1) unstable; urgency=low
 
   * Upstream.
