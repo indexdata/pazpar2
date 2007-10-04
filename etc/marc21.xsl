@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: marc21.xsl,v 1.21 2007-08-28 16:47:30 quinn Exp $ -->
+<!-- $Id: marc21.xsl,v 1.22 2007-10-04 12:01:15 adam Exp $ -->
 <xsl:stylesheet
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -141,6 +141,9 @@
         </pz:metadata>
         <pz:metadata type="title-medium">
           <xsl:value-of select="marc:subfield[@code='h']"/>
+        </pz:metadata>
+        <pz:metadata type="title-number-section">
+          <xsl:value-of select="marc:subfield[@code='n']"/>
         </pz:metadata>
       </xsl:for-each>
 
