@@ -1,4 +1,4 @@
-/* $Id: client.c,v 1.28 2007-10-02 12:11:14 adam Exp $
+/* $Id: client.c,v 1.29 2007-10-08 13:19:23 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -84,6 +84,7 @@ struct client {
 struct show_raw {
     int active; // whether this request has been sent to the server
     int position;
+    int binary;
     char *syntax;
     char *esn;
     void (*error_handler)(void *data, const char *addinfo);
@@ -238,7 +239,8 @@ int client_show_raw_begin(struct client *cl, int position,
                           void (*error_handler)(void *data, const char *addinfo),
                           void (*record_handler)(void *data, const char *buf,
                                                  size_t sz),
-                          void **data2)
+                          void **data2,
+                          int binary)
 {
     struct show_raw *rr, **rrp;
     if (!cl->connection)
@@ -252,6 +254,7 @@ int client_show_raw_begin(struct client *cl, int position,
     rr->data = data;
     rr->error_handler = error_handler;
     rr->record_handler = record_handler;
+    rr->binary = binary;
     if (syntax)
         rr->syntax = xstrdup(syntax);
     else
@@ -562,6 +565,21 @@ static void ingest_raw_records(struct client *cl, Z_Records *r)
     {
         client_show_raw_error(cl, "surrogate diagnostic");
         return;
+    }
+
+    if (cl->show_raw && cl->show_raw->binary)
+    {
+        Z_External *rec = npr->u.databaseRecord;
+        if (rec->which == Z_External_octet)
+        {
+            cl->show_raw->record_handler(cl->show_raw->data,
+                                         (const char *)
+                                         rec->u.octet_aligned->buf,
+                                         rec->u.octet_aligned->len);
+            client_show_raw_dequeue(cl);
+        }
+        else
+            client_show_raw_error(cl, "no records");
     }
 
     doc = record_to_xml(client_get_database(cl), npr->u.databaseRecord);

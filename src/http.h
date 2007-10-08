@@ -1,4 +1,4 @@
-/* $Id: http.h,v 1.12 2007-10-02 12:11:14 adam Exp $
+/* $Id: http.h,v 1.13 2007-10-08 13:19:23 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -98,6 +98,7 @@ struct http_response
     struct http_channel *channel;
     struct http_header *headers;
     char *payload;
+    char *content_type;
 };
 
 void http_set_proxyaddr(char *url, char *baseurl);

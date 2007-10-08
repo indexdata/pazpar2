@@ -1,4 +1,4 @@
-/* $Id: http.c,v 1.41 2007-10-02 12:11:14 adam Exp $
+/* $Id: http.c,v 1.42 2007-10-08 13:19:23 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -293,6 +293,7 @@ struct http_response *http_create_response(struct http_channel *c)
     r->channel = c;
     r->headers = 0;
     r->payload = 0;
+    r->content_type = "text/xml";
     return r;
 }
 
@@ -604,8 +605,8 @@ static struct http_buf *http_serialize_response(struct http_channel *c,
     {
         wrbuf_printf(c->wrbuf, "Content-Length: %d\r\n", r->payload ?
                 (int) strlen(r->payload) : 0);
-        wrbuf_printf(c->wrbuf, "Content-Type: text/xml\r\n");
-        if (1)
+        wrbuf_printf(c->wrbuf, "Content-Type: %s\r\n", r->content_type);
+        if (!strcmp(r->content_type, "text/xml"))
         {
             xmlDoc *doc = xmlParseMemory(r->payload, strlen(r->payload));
             if (doc)

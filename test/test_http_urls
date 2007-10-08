@@ -24,3 +24,4 @@ http://localhost:9763/search.pz2?session=2&command=search&query=kubiak%20sts%C5%
 http://localhost:9763/search.pz2?session=2&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
 http://localhost:9763/search.pz2?session=1&command=record&id=title+how+to+program+a+computer+author+jack+collins+medium+book
+http://localhost:9763/search.pz2?session=1&command=record&id=title+how+to+program+a+computer+author+jack+collins+medium+book&offset=0&binary=1

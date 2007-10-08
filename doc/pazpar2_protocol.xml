@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2_protocol.xml,v 1.15 2007-09-20 08:13:26 adam Exp $ -->
+<!-- $Id: pazpar2_protocol.xml,v 1.16 2007-10-08 13:19:22 adam Exp $ -->
 <refentry id="pazpar2_protocol">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -385,6 +385,18 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
 	of a raw record (i.e. when offset is specified).
 	If esn is not given, but offset is used, the value of pz:elements
 	is used.
+       </para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term>binary</term>
+      <listitem>
+       <para>
+	This optional parameter enables "binary" response for retrieval
+	of a raw record (i.e. when offset is specified). For binary
+	responses the record is <emphasis>not</emphasis> converted to
+	XML and the HTTP content type is application/octet-stream.
        </para>
       </listitem>
      </varlistentry>

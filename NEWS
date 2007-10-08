@@ -1,3 +1,5 @@
+Added support for retrieval of records in binary.
+
 --- 1.0.4 2007/09/28
 
 JavaScript library pzw2.js throws error if WS response (from Pazpar2 or
