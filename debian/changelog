@@ -1,3 +1,9 @@
+pazpar2 (1.0.4-4) unstable; urgency=low
+
+  * Added support for retrieval of records in binary.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Tue,  9 Oct 2007 07:48:08 +0200
+
 pazpar2 (1.0.4-3) unstable; urgency=low
 
   * Fixed bug #1644, #1646. Refactor pz2.js code.
