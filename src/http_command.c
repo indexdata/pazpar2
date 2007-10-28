@@ -1,4 +1,4 @@
-/* $Id: http_command.c,v 1.65 2007-10-08 13:19:23 adam Exp $
+/* $Id: http_command.c,v 1.66 2007-10-28 18:55:26 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -20,7 +20,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
  */
 
 /*
- * $Id: http_command.c,v 1.65 2007-10-08 13:19:23 adam Exp $
+ * $Id: http_command.c,v 1.66 2007-10-28 18:55:26 adam Exp $
  */
 
 #include <stdio.h>
@@ -139,20 +139,23 @@ static void error(struct http_response *rs,
                   const char *addinfo)
 {
     struct http_channel *c = rs->channel;
-    char text[1024];
+    WRBUF text = wrbuf_alloc();
     const char *http_status = "417";
     const char *msg = get_msg(code);
-
+    
     rs->msg = nmem_strdup(c->nmem, msg);
     strcpy(rs->code, http_status);
 
-    yaz_snprintf(text, sizeof(text),
-                 "<error code=\"%d\" msg=\"%s\">%s</error>", (int) code,
-                 msg, addinfo ? addinfo : "");
+    wrbuf_printf(text, "<error code=\"%d\" msg=\"%s\">", (int) code,
+               msg);
+    if (addinfo)
+        wrbuf_xmlputs(text, addinfo);
+    wrbuf_puts(text, "</error>");
 
     yaz_log(YLOG_WARN, "HTTP %s %s%s%s", http_status,
             msg, addinfo ? ": " : "" , addinfo ? addinfo : "");
-    rs->payload = nmem_strdup(c->nmem, text);
+    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(text));
+    wrbuf_destroy(text);
     http_send_response(c);
 }
 
