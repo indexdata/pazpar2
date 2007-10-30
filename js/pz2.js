@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.62 2007-10-02 12:09:40 jakub Exp $
+** $Id: pz2.js,v 1.63 2007-10-30 13:41:05 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -417,18 +417,19 @@ pz2.prototype =
                     for (i = 0; i < hits.length; i++) {
                         show.hits[i] = new Array();
 			show.hits[i]['location'] = new Array();
+			var locCount = 0;
                         for ( j = 0; j < hits[i].childNodes.length; j++) {
-			    var locCount = 0;
                             if ( hits[i].childNodes[j].nodeType 
                                 == Node.ELEMENT_NODE ) {
 				if (hits[i].childNodes[j].nodeName 
                                     == 'location') {
 				    var locNode = hits[i].childNodes[j];
 				    var id = locNode.getAttribute('id');
-				    show.hits[i]['location'][id] = {
+				    show.hits[i]['location'][locCount] = {
 					"id": locNode.getAttribute("id"),
 					"name": locNode.getAttribute("name")
 				    };
+                                    locCount++;
 				}
 				else {
 				    var nodeName = 
