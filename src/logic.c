@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.70 2007-10-31 05:29:08 quinn Exp $
+/* $Id: logic.c,v 1.71 2007-10-31 10:22:33 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -1257,7 +1257,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                                              sizeof(union data_types));
                          
                          prt = pp2_relevance_tokenize(
-                         i   global_parameters.server->sort_pct,
+                             global_parameters.server->sort_pct,
                              rec_md->data.text.disp);
 
                          pp2_relevance_token_next(prt);
