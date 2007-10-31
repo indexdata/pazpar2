@@ -1,4 +1,4 @@
-/* $Id: config.h,v 1.27 2007-09-10 16:25:50 adam Exp $
+/* $Id: config.h,v 1.28 2007-10-31 05:29:08 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -32,7 +32,8 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 enum conf_metadata_type {
     Metadata_type_generic,    // Generic text field
     Metadata_type_number,     // A number
-    Metadata_type_year        // A number
+    Metadata_type_year,        // A number
+    Metadata_type_date        // A number
 };
 
 enum conf_metadata_merge {

@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.69 2007-10-02 12:11:14 adam Exp $
+/* $Id: logic.c,v 1.70 2007-10-31 05:29:08 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -1075,11 +1075,16 @@ static struct record_metadata *record_metadata_init(
         rec_md->data.text.disp = nmem_strdup(nmem, p);
         rec_md->data.text.sort = 0;
     }
-    else if (type == Metadata_type_year)
+    else if (type == Metadata_type_year || type == Metadata_type_date)
     {
         int first, last;
-        if (extract7bit_years((char *) value, &first, &last) < 0)
+        int longdate = 0;
+
+        if (type == Metadata_type_date)
+            longdate = 1;
+        if (extract7bit_dates((char *) value, &first, &last, longdate) < 0)
             return 0;
+
         rec_md->data.number.min = first;
         rec_md->data.number.max = last;
     }
@@ -1252,7 +1257,7 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                                              sizeof(union data_types));
                          
                          prt = pp2_relevance_tokenize(
-                             global_parameters.server->sort_pct,
+                         i   global_parameters.server->sort_pct,
                              rec_md->data.text.disp);
 
                          pp2_relevance_token_next(prt);

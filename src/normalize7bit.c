@@ -1,4 +1,4 @@
-/* $Id: normalize7bit.c,v 1.4 2007-09-07 10:46:33 adam Exp $
+/* $Id: normalize7bit.c,v 1.5 2007-10-31 05:29:08 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -91,7 +91,8 @@ char * normalize7bit_mergekey(char *buf, int skiparticle)
 
 // Extract what appears to be years from buf, storing highest and
 // lowest values.
-int extract7bit_years(const char *buf, int *first, int *last)
+// longdate==1, look for YYYYMMDD, longdate=0 look only for YYYY
+int extract7bit_dates(const char *buf, int *first, int *last, int longdate)
 {
     *first = -1;
     *last = -1;
@@ -105,9 +106,11 @@ int extract7bit_years(const char *buf, int *first, int *last)
         len = 0;
         for (e = buf; *e && isdigit(*e); e++)
             len++;
-        if (len == 4)
+        if ((len == 4 && !longdate) || (longdate && len >= 4 && len <= 8))
         {
             int value = atoi(buf);
+            if (longdate && len == 4)
+                value *= 10000; //  should really suffix 0101?
             if (*first < 0 || value < *first)
                 *first = value;
             if (*last < 0 || value > *last)
