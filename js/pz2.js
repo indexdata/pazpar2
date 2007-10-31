@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.63 2007-10-30 13:41:05 jakub Exp $
+** $Id: pz2.js,v 1.64 2007-10-31 10:29:01 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -50,6 +50,7 @@ var pz2 = function ( paramArray )
     this.errorHandler = paramArray.errorhandler || null;
     
     // function callbacks
+    this.initCallback = paramArray.oninit || null;
     this.statCallback = paramArray.onstat || null;
     this.showCallback = paramArray.onshow || null;
     this.termlistCallback = paramArray.onterm || null;
@@ -191,6 +192,8 @@ pz2.prototype =
                             },
                             context.keepAlive
                         );
+                        if ( context.initCallback )
+                            context.initCallback();
                     }
                     else
                         context.throwError('Init failed. Malformed WS resonse.',
