@@ -1,3 +1,10 @@
+pazpar2 (1.0.5-1) unstable; urgency=low
+
+  * prevented crashes in pz2js by testing for XML element children before
+    acessing data content. Fixed LOT2 bug #1811 
+
+ -- Marc Cromme <marc@indexdata.dk>  Thu, 01 Nov 2007 12:05:51 +0100
+
 pazpar2 (1.0.4-4) unstable; urgency=low
 
   * Added support for retrieval of records in binary.
