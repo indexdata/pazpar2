@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.71 2007-10-31 10:22:33 adam Exp $
+/* $Id: logic.c,v 1.72 2007-11-09 10:43:58 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -1266,6 +1266,12 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                          
                          cluster->sortkeys[sk_field_id]->text.disp = 
                              rec_md->data.text.disp;
+                         if (!sort_str)
+                         {
+                             sort_str = rec_md->data.text.disp;
+                             yaz_log(YLOG_WARN, 
+                                     "Could not make sortkey. Bug #1858");
+                         }
                          cluster->sortkeys[sk_field_id]->text.sort = 
                              nmem_strdup(se->nmem, sort_str);
 #if 0
