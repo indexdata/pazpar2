@@ -25,9 +25,10 @@ fi
 YAZ_DOC
 
 AC_CHECK_FUNCS([getaddrinfo])
-AC_CHECK_ICU(3.6, [], 
-    AC_MSG_WARN([For ICU internationalizing support please install libicu36-dev or similar]))
-
+AC_CHECK_ICU([3.6],[
+	ICU_CPPFLAGS="$ICU_CPPFLAGS -D HAVE_ICU=1"],[
+	AC_MSG_WARN([For ICU support please install libicu36-dev or similar])
+])
 dnl Breaks 'make dist'
 dnl ln -sf ../../js/pz2.js www/example/pz2.js
 dnl ln -sf ../../../js/pz2.js www/masterkey/js/pz2.js

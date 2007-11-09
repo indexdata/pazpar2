@@ -1,4 +1,10 @@
+--- 1.0.5 2007/11/09
+
 Added support for retrieval of records in binary.
+
+Fixed bug 1794: Pazpar2 does not return valid XML.
+
+Deal with ICU not returning sortkey (resulted in SEGV before).
 
 --- 1.0.4 2007/09/28
 
