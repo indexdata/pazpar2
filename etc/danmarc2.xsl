@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: danmarc2.xsl,v 1.1 2007-10-04 09:52:28 perhans Exp $ -->
+<!-- $Id: danmarc2.xsl,v 1.2 2007-11-13 10:41:03 perhans Exp $ -->
 <xsl:stylesheet
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:pz="http://www.indexdata.com/pazpar2/1.0"
     xmlns:marc="http://www.loc.gov/MARC21/slim">
 
-  
+
   <xsl:output indent="yes" method="xml" version="1.0" encoding="UTF-8"/>
 
 <!-- Beginnings of Danmarc2 XSL.
-  
+
    This is just USMARC with minor tweaks.. Not complete!
--->  
+-->
   <xsl:include href="pz2-ourl-marc21.xsl" />
-  
+
   <xsl:template match="/marc:record">
     <xsl:variable name="title_medium" select="marc:datafield[@tag='245']/marc:subfield[@code='h']"/>
     <xsl:variable name="journal_title" select="marc:datafield[@tag='773']/marc:subfield[@code='t']"/>
@@ -54,8 +54,8 @@
 	<xsl:value-of select="$medium"/>
       </xsl:attribute>
 
-      
-      <xsl:for-each select="marc:controlfield[@tag='001']">
+
+      <xsl:for-each select="marc:datafield[@tag='001']/marc:subfield[@code='a']">
         <pz:metadata type="id">
           <xsl:value-of select="."/>
         </pz:metadata>
@@ -201,20 +201,15 @@
             <xsl:value-of select="*/text()"/>
         </pz:metadata>
       </xsl:for-each>
-      
+
       <xsl:for-each select="marc:datafield[@tag='650' or @tag='653'
           or @tag='630' or @tag='666']">
-        <pz:metadata type="subject">
-	  <xsl:value-of select="marc:subfield[@code='a']"/>
-	</pz:metadata>
-	<pz:metadata type="subject-long">
+
 	  <xsl:for-each select="marc:subfield">
-	    <xsl:if test="position() > 1">
-	      <xsl:text>, </xsl:text>
-	    </xsl:if>
-	    <xsl:value-of select="."/>
+	  	<pz:metadata type="subject">
+	  		<xsl:value-of select="."/>
+		</pz:metadata>
 	  </xsl:for-each>
-	</pz:metadata>
       </xsl:for-each>
 
       <xsl:for-each select="marc:datafield[@tag='856']">
@@ -241,7 +236,7 @@
       <pz:metadata type="medium">
 	<xsl:value-of select="$medium"/>
       </pz:metadata>
-      
+
       <xsl:if test="$fulltext_a">
 	<pz:metadata type="fulltext">
 	  <xsl:value-of select="$fulltext_a"/>
