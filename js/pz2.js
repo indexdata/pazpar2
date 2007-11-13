@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.66 2007-11-13 12:51:29 jakub Exp $
+** $Id: pz2.js,v 1.67 2007-11-13 13:07:28 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -566,7 +566,7 @@ pz2.prototype =
                                                 .firstChild.nodeValue;
                                     // this is stupid
                                     if (nodeName == 'md-subject') {
-                                        if (record["location"][i]['nodeName']) {
+                                        if (record["location"][i][nodeName]) {
                                             record["location"][i][nodeName]
                                                 .push(nodeText)
                                         } else {
