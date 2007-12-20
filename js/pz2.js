@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.67 2007-11-13 13:07:28 jakub Exp $
+** $Id: pz2.js,v 1.68 2007-12-20 13:09:40 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -466,23 +466,25 @@ pz2.prototype =
             }
         );
     },
-    record: function(id, offset, params)
+    record: function(id, offset, pass_params)
     {
         // we may call record with no previous search if in proxy mode
         if( !this.searchStatusOK && this.useSessions)
            throw new Error(
             'Pz2.js: record command has to be preceded with a search command.'
-            ); 
-        if ( params == undefined )
-            params = {};
+            );
+        var params = {};
+        if ( pass_params != undefined )
+            params = pass_params;
 
+        var callback;
         if ( params.callback != undefined ) {
             callback = params.callback;
         } else {
             callback = this.recordCallback;
         }
         
-        // what is that?
+        var handle;
         if ( params['handle'] == undefined )
             handle = {};
         else
