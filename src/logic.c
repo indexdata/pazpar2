@@ -1,4 +1,4 @@
-/* $Id: logic.c,v 1.72 2007-11-09 10:43:58 adam Exp $
+/* $Id: logic.c,v 1.73 2007-12-22 17:10:37 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
    This file is part of Pazpar2.
@@ -554,9 +554,12 @@ void session_alert_watch(struct session *s, int what)
     if (s->watchlist[what].fun)
     {
         /* our watch is no longer associated with http_channel */
+        void *data;
+        session_watchfun fun;
+
         http_remove_observer(s->watchlist[what].obs);
-        session_watchfun fun = s->watchlist[what].fun;
-        void *data = s->watchlist[what].data;
+        fun = s->watchlist[what].fun;
+        data = s->watchlist[what].data;
 
         /* reset watch before fun is invoked - in case fun wants to set
            it again */
