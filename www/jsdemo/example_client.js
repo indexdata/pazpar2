@@ -1,19 +1,27 @@
 /* A very simple client that shows a basic usage of the pz2.js
-** $Id: example_client.js,v 1.5 2007-07-24 08:15:12 jakub Exp $
+** $Id: example_client.js,v 1.6 2008-01-15 13:59:18 jakub Exp $
 */
 
 // create a parameters array and pass it to the pz2's constructor
 // then register the form submit event with the pz2.search function
 // autoInit is set to true on default
 
+if (document.location.hash == '#nosessions') {
+    var usesessions = false;
+    var pazpar2path = '/masterkey-core/php/p3.php';
+} else {
+    var usesessions = true;
+    var pazpar2path = '/pazpar2/search.pz2';
+}
+
 my_paz = new pz2( { "onshow": my_onshow,
                     "showtime": 500,            //each timer (show, stat, term, bytarget) can be specified this way
-                    "pazpar2path": "/pazpar2/search.pz2",
+                    "pazpar2path": pazpar2path,
                     "onstat": my_onstat,
                     "onterm": my_onterm,
                     "termlist": "subject,author",
                     "onbytarget": my_onbytarget,
-	 	    "usesessions" : true,
+	 	    "usesessions" : usesessions,
                     "onrecord": my_onrecord } );
 // some state vars
 var curPage = 1;
