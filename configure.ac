@@ -2,7 +2,7 @@
 ## Process this file with autoconf to produce a configure script.
 
 # Autoconf and automake setup
-AC_PREREQ(2.59)
+AC_PREREQ(2.60)
 AC_INIT([pazpar2],[1.0.5],[pazpar2-help@indexdata.dk])
 
 AC_CONFIG_HEADERS(src/cconfig.h)
@@ -11,7 +11,7 @@ AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_AUX_DIR([config])
 AC_CANONICAL_SYSTEM
 
-AM_INIT_AUTOMAKE([1.8])
+AM_INIT_AUTOMAKE([1.9])
 
 AC_PROG_CC
 AC_PROG_RANLIB
