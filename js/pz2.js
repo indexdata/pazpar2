@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.68 2007-12-20 13:09:40 jakub Exp $
+** $Id: pz2.js,v 1.69 2008-02-14 12:20:24 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -84,6 +84,9 @@ var pz2 = function ( paramArray )
     
     // current query
     this.currQuery = null;
+
+    //current raw record offset
+    this.currRecOffset = null;
 
     //timers
     this.statTime = paramArray.stattime || 1000;
@@ -416,37 +419,9 @@ pz2.prototype =
                     };
                     // parse all the first-level nodes for all <hit> tags
                     var hits = data.getElementsByTagName("hit");
-                    var hit = new Array();
-                    for (i = 0; i < hits.length; i++) {
-                        show.hits[i] = new Array();
-			show.hits[i]['location'] = new Array();
-			var locCount = 0;
-                        for ( j = 0; j < hits[i].childNodes.length; j++) {
-                            if ( hits[i].childNodes[j].nodeType 
-                                == Node.ELEMENT_NODE ) {
-				if (hits[i].childNodes[j].nodeName 
-                                    == 'location') {
-				    var locNode = hits[i].childNodes[j];
-				    var id = locNode.getAttribute('id');
-				    show.hits[i]['location'][locCount] = {
-					"id": locNode.getAttribute("id"),
-					"name": locNode.getAttribute("name")
-				    };
-                                    locCount++;
-				}
-				else {
-				    var nodeName = 
-                                        hits[i].childNodes[j].nodeName;
-                                    var nodeText = 'ERROR'
-                                    if ( hits[i].childNodes[j].firstChild )
-                                        nodeText = 
-                                            hits[i].childNodes[j]
-                                                .firstChild.nodeValue;
-				    show.hits[i][nodeName] = nodeText;
-				}
-                            }
-                        }
-                    }
+                    for (i = 0; i < hits.length; i++)
+                        show.hits[i] = Element_parseChildNodes(hits[i]);
+                    
                     context.showCounter++;
 		    var delay = context.showTime;
 		    if (context.showCounter > context.showFastCount)
@@ -457,7 +432,7 @@ pz2.prototype =
                                 context.show();
                             }, 
                             delay);
-
+                    global_show = show;
                     context.showCallback(show);
                 }
                 else
@@ -466,127 +441,70 @@ pz2.prototype =
             }
         );
     },
-    record: function(id, offset, pass_params)
+    record: function(id, offset, syntax, handler)
     {
         // we may call record with no previous search if in proxy mode
-        if( !this.searchStatusOK && this.useSessions)
+        if(!this.searchStatusOK && this.useSessions)
            throw new Error(
             'Pz2.js: record command has to be preceded with a search command.'
             );
-        var params = {};
-        if ( pass_params != undefined )
-            params = pass_params;
-
-        var callback;
-        if ( params.callback != undefined ) {
-            callback = params.callback;
-        } else {
-            callback = this.recordCallback;
-        }
         
-        var handle;
-        if ( params['handle'] == undefined )
-            handle = {};
-        else
-            handle = params['handle'];
-
         if( id !== undefined )
             this.currRecID = id;
         
-        var context = this;
-        var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-
-	var recordParams = { "command": "record", 
-                            "session": this.sessionID,
-                            "id": this.currRecID };
+	var recordParams = { 
+            "command": "record", 
+            "session": this.sessionID,
+            "id": this.currRecID 
+        };
 	
-        if (offset !== undefined) {
+	this.currRecOffset = null;
+        if (offset != undefined) {
 	    recordParams["offset"] = offset;
-	}
-
-        if (params.syntax != undefined) {
-            recordParams['syntax'] = params.syntax;
+            this.currRecOffset = offset;
         }
 
-	this.currRecOffset = offset;
+        if (syntax != undefined)
+            recordParams['syntax'] = syntax;
+
+        //overwrite default callback id needed
+        var callback = this.recordCallback;
+        var args = undefined;
+        if (handler != undefined) {
+            callback = handler['callback'];
+            args = handler['args'];
+        }
+        
+        var context = this;
+        var request = new pzHttpRequest(this.pz2String, this.errorHandler);
 
         request.get(
 	    recordParams,
             function(data) {
                 var recordNode;
-                var record = new Array();
-                record['xmlDoc'] = data;
-		if (context.currRecOffset !== undefined) {
+                var record;
+                //raw record
+                if (context.currRecOffset !== null) {
+                    record = new Array();
+                    record['xmlDoc'] = data;
                     record['offset'] = context.currRecOffset;
-                    callback(record, handle);
+                    callback(record, args);
+                //pz2 record
                 } else if ( recordNode = 
                     data.getElementsByTagName("record")[0] ) {
                     // if stylesheet was fetched do not parse the response
                     if ( context.xslDoc ) {
+                        record = new Array();
+                        record['xmlDoc'] = data;
+                        record['xslDoc'] = context.xslDoc;
                         record['recid'] = 
                             recordNode.getElementsByTagName("recid")[0]
                                 .firstChild.nodeValue;
-                        record['xslDoc'] = 
-                            context.xslDoc;
+                    //parse record
                     } else {
-                        for ( i = 0; i < recordNode.childNodes.length; i++) {
-                            if ( recordNode.childNodes[i].nodeType 
-                                == Node.ELEMENT_NODE
-                                && recordNode.childNodes[i].nodeName 
-                                != 'location' ) {
-                                var nodeName = 
-                                    recordNode.childNodes[i].nodeName;
-                                var nodeText = '';
-                                if (recordNode.childNodes[i].firstChild)
-                                    nodeText = recordNode.childNodes[i]
-                                        .firstChild.nodeValue;
-                                record[nodeName] = nodeText;                            
-                            }
-                        }
-                        // the location might be empty!!
-                        var locationNodes = 
-                            recordNode.getElementsByTagName("location");
-                        record["location"] = new Array();
-                        for ( i = 0; i < locationNodes.length; i++ ) {
-                            record["location"][i] = {
-                                "id": locationNodes[i].getAttribute("id"),
-                                "name": locationNodes[i].getAttribute("name")
-                            };
-                            
-                            for (j = 0; 
-                                j < locationNodes[i].childNodes.length; 
-                                j++) {
-                                if ( locationNodes[i].childNodes[j].nodeType 
-                                    == Node.ELEMENT_NODE ) {
-                                    var nodeName = 
-                                        locationNodes[i].childNodes[j].nodeName;
-                                    var nodeText = '';
-                                    if (locationNodes[i].childNodes[j]
-                                            .firstChild)
-                                        nodeText = 
-                                            locationNodes[i].childNodes[j]
-                                                .firstChild.nodeValue;
-                                    // this is stupid
-                                    if (nodeName == 'md-subject') {
-                                        if (record["location"][i][nodeName]) {
-                                            record["location"][i][nodeName]
-                                                .push(nodeText)
-                                        } else {
-                                            record["location"][i][nodeName] 
-                                                = new Array();
-                                            record["location"][i][nodeName]
-                                                .push(nodeText)
-                                        }
-                                    } else {
-                                        record["location"][i][nodeName] 
-                                            = nodeText;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    
-                    callback(record, handle);
+                        record = Element_parseChildNodes(recordNode);
+                    }                    
+                    callback(record, args);
                 }
                 else
                     context.throwError('Record failed. Malformed WS resonse.',
@@ -994,6 +912,45 @@ Element_getTextContent = function (DOM_Element)
     } else {
         throw new Error("Cannot get text content of the node, no such method.");
     }
+}
+
+Element_parseChildNodes = function (node)
+{
+    var parsed = {};
+    var hasChildElems = false;
+
+    if (node.hasChildNodes()) {
+        var children = node.childNodes;
+        for (var i = 0; i < children.length; i++) {
+            var child = children[i];
+            if (child.nodeType == Node.ELEMENT_NODE) {
+                hasChildElems = true;
+                var nodeName = child.nodeName; 
+                if (!(nodeName in parsed))
+                    parsed[nodeName] = [];
+                parsed[nodeName].push(Element_parseChildNodes(child));
+            }
+        }
+    }
+
+    if (node.hasAttributes()) {
+        var attrs = node.attributes;
+        for (var i = 0; i < attrs.length; i++) {
+            var attrName = '@' + attrs[i].nodeName;
+            var attrValue = attrs[i].nodeValue;
+            parsed[attrName] = attrValue;
+        }
+    }
+
+    // if no nested elements, get text content
+    if (node.hasChildNodes() && !hasChildElems) {
+        if (node.hasAttributes()) 
+            parsed['textContent'] = node.firstChild.nodeValue;
+        else
+            parsed = node.firstChild.nodeValue;
+    }
+    
+    return parsed;
 }
 
 /* do not remove trailing bracket */
