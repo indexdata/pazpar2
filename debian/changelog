@@ -1,3 +1,11 @@
+pazpar2 (1.0.5-3) unstable; urgency=low
+
+  * XML parsing in pz2.js rewritten to support multiple md elements of the
+    same type. Particular clients might require changes (MK tested).
+  * Changes to the pz2.js API - record method
+
+ -- Jakub Skoczen <jakub@indexdata.dk>  Thu, 14 Feb 2008 14:32:55 CET
+
 pazpar2 (1.0.5-2) unstable; urgency=low
 
   * Work arounds/fixes for bugs #1634, #1858. 
