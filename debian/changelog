@@ -4,7 +4,7 @@ pazpar2 (1.0.5-3) unstable; urgency=low
     same type. Particular clients might require changes (MK tested).
   * Changes to the pz2.js API - record method
 
- -- Jakub Skoczen <jakub@indexdata.dk>  Thu, 14 Feb 2008 14:32:55 CET
+ -- Jakub Skoczen <jakub@indexdata.dk>  Thu, 14 Feb 2008 14:32:55 +0100
 
 pazpar2 (1.0.5-2) unstable; urgency=low
 
