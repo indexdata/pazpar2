@@ -1,7 +1,7 @@
-<settings target="*">
+<settings target="opencontent.indexdata.com:210/*">
 
   <!-- Metasearching across some of ID's Open Content sources -->
-  <!-- $Id: opencontent.xml,v 1.3 2007-07-10 13:43:07 adam Exp $ -->
+  <!-- $Id: opencontent.xml,v 1.4 2008-02-16 04:32:41 quinn Exp $ -->
 
   <!-- First we introduce the targets -->
 
