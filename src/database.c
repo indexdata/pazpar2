@@ -1,4 +1,4 @@
-/* $Id: database.c,v 1.29 2007-06-28 09:36:10 adam Exp $
+/* $Id: database.c,v 1.30 2008-02-16 04:28:55 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -175,9 +175,11 @@ struct database *find_database(const char *id, int new)
 
 int match_zurl(const char *zurl, const char *pattern)
 {
+    int len;
+
     if (!strcmp(pattern, "*"))
         return 1;
-    else if (!strncmp(pattern, "*/", 2))
+    else if (!strncmp(pattern, "*/", 2))   // host wildcard.. what the heck is that for?
     {
         char *db = strchr(zurl, '/');
         if (!db)
@@ -186,6 +188,13 @@ int match_zurl(const char *zurl, const char *pattern)
             return 1;
         else
             return 0;
+    }
+    else if (*(pattern + (len = strlen(pattern) - 1)) == '*')  // db wildcard
+    {
+        if (!strncmp(pattern, zurl, len))
+            return 1;
+        else
+            return 2;
     }
     else if (!strcmp(pattern, zurl))
         return 1;
