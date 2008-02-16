@@ -1,3 +1,5 @@
+Fixed bug 2100: Database wildcards not working
+
 --- 1.0.5 2007/11/09
 
 Added support for retrieval of records in binary.
