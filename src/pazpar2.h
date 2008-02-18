@@ -1,4 +1,4 @@
-/* $Id: pazpar2.h,v 1.50 2007-09-10 16:25:50 adam Exp $
+/* $Id: pazpar2.h,v 1.51 2008-02-18 19:33:32 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -202,11 +202,6 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                              int record_no);
 void session_alert_watch(struct session *s, int what);
 void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num);
-
-int pazpar2_process(int debug, int daemon,
-                    void (*work)(void *data), void *data,
-                    const char *pidfile, const char *uid);
-
 
 #endif
 

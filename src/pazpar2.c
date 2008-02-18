@@ -1,4 +1,4 @@
-/* $Id: pazpar2.c,v 1.93 2007-09-10 08:42:48 adam Exp $
+/* $Id: pazpar2.c,v 1.94 2008-02-18 19:33:32 adam Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -30,6 +30,7 @@ Free Software Foundation, 59 Temple Place - Suite 330, Boston, MA
 #include "pazpar2.h"
 #include "database.h"
 #include "settings.h"
+#include <yaz/daemon.h>
 
 void child_handler(void *data)
 {
@@ -147,9 +148,11 @@ int main(int argc, char **argv)
     global_parameters.server = config->servers;
 
     start_http_listener();
-    pazpar2_process(global_parameters.debug_mode, daemon,
-                    child_handler, 0 /* child_data */,
-                    pidfile, uid);
+    yaz_daemon("pazpar2",
+               (global_parameters.debug_mode ? YAZ_DAEMON_DEBUG : 0) +
+               (daemon ? YAZ_DAEMON_FORK : 0) + YAZ_DAEMON_KEEPALIVE,
+               child_handler, 0 /* child_data */,
+               pidfile, uid);
     return 0;
 }
 

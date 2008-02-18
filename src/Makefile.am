@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.29 2007-09-07 10:46:33 adam Exp $
+# $Id: Makefile.am,v 1.30 2008-02-18 19:33:32 adam Exp $
 
 sbin_PROGRAMS = pazpar2
 
@@ -32,8 +32,7 @@ libpazpar2_a_SOURCES = config.c config.h eventl.c eventl.h \
 	util.c util.h zeerex.c zeerex.h database.c database.h \
 	settings.h settings.c sel_thread.c sel_thread.h getaddrinfo.c \
 	charsets.c charsets.h \
-	client.c client.h connection.c connection.h host.h parameters.h \
-	process.c
+	client.c client.h connection.c connection.h host.h parameters.h
 
 pazpar2_SOURCES = pazpar2.c
 pazpar2_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
