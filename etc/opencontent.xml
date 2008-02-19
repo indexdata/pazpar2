@@ -1,9 +1,7 @@
+<!-- $Id: opencontent.xml,v 1.5 2008-02-19 10:57:37 jakub Exp $ -->
 <settings target="opencontent.indexdata.com:210/*">
 
-  <!-- Metasearching across some of ID's Open Content sources -->
-  <!-- $Id: opencontent.xml,v 1.4 2008-02-16 04:32:41 quinn Exp $ -->
-
-  <!-- First we introduce the targets -->
+  <!-- Open content targets -->
 
   <set target="opencontent.indexdata.com:210/oaister"
 		  name="pz:name" value="OAIster"/>
@@ -16,10 +14,14 @@
   <set target="opencontent.indexdata.com:210/gutenberg"
   		  name="pz:name" value="Project Gutenberg"/>
 
-  <!-- Then we apply settings to be used across all targets -->
+  <!-- settings apply to all targets -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al 2=102"/>
+
+  <!-- narrower default search for Wikipedia - full field match -->
+  <set target="opencontent.indexdata.com:210/wikipedia"
+    name="pz:cclmap:term" value="u=43 6=2"/>
 
   <!-- field-specific mappings -->
   <set name="pz:cclmap:ti" value="u=4 s=al 2=102"/>
