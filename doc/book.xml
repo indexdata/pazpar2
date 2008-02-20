@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: book.xml,v 1.23 2007-07-06 20:15:06 adam Exp $ -->
+<!-- $Id: book.xml,v 1.24 2008-02-20 13:04:23 jakub Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -515,6 +515,8 @@
     can be fetched using the 'record' command.
    </para>
   </section>
+
+  &sect-ajaxdev;
 
   <section id="nonstandard">
    <title>Connecting to non-standard resources</title>

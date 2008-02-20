@@ -1,5 +1,5 @@
-<!-- $Id: entities.ent,v 1.2 2007-04-10 08:59:35 adam Exp $ -->
+<!-- $Id: entities.ent,v 1.3 2008-02-20 13:04:23 jakub Exp $ -->
 <!-- Manually edited stuff used for all package documentation -->
 <!ENTITY copyright-year "2006-2007">
 <!ENTITY manref SYSTEM "manref.xml">
-
+<!ENTITY sect-ajaxdev SYSTEM "ajaxdev.xml">
