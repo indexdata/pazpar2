@@ -9,7 +9,7 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: book.xml,v 1.24 2008-02-20 13:04:23 jakub Exp $ -->
+<!-- $Id: book.xml,v 1.25 2008-02-20 13:41:50 jakub Exp $ -->
 <book id="book">
  <bookinfo>
   <title>Pazpar2 - User's Guide and Reference</title>
@@ -21,6 +21,9 @@
   </author>
   <author>
    <firstname>Marc</firstname><surname>Cromme</surname>
+  </author>
+  <author>
+   <firstname>Jakub</firstname><surname>Skoczen</surname>
   </author>
   <releaseinfo>&version;</releaseinfo>
   <copyright>
