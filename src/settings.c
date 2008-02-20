@@ -1,4 +1,4 @@
-/* $Id: settings.c,v 1.26 2007-07-30 23:16:33 quinn Exp $
+/* $Id: settings.c,v 1.27 2008-02-20 06:22:32 quinn Exp $
    Copyright (c) 2006-2007, Index Data.
 
 This file is part of Pazpar2.
@@ -72,6 +72,11 @@ struct setting_dictionary
 };
 
 static struct setting_dictionary *dictionary = 0;
+
+// This establishes the precedence of wildcard expressions
+#define SETTING_WILDCARD_NO     0 // No wildcard
+#define SETTING_WILDCARD_DB     1 // Database wildcard 'host:port/*'
+#define SETTING_WILDCARD_YES    2 // Complete wildcard '*'
 
 // Returns size of settings directory
 int settings_num(void)
@@ -246,6 +251,19 @@ static void read_settings(const char *path,
         read_settings_file(path, fun);
 }
 
+// Determines if a ZURL is a wildcard, and what kind
+static int zurl_wildcard(const char *zurl)
+{
+    if (!zurl)
+        return SETTING_WILDCARD_NO;
+    if (*zurl == '*')
+        return SETTING_WILDCARD_YES;
+    else if (*(zurl + strlen(zurl) - 1) == '*')
+        return SETTING_WILDCARD_DB;
+    else
+        return SETTING_WILDCARD_NO;
+}
+
 // Callback. Adds a new entry to the dictionary if necessary
 // This is used in pass 1 to determine layout of dictionary
 // and to load any databases mentioned
@@ -255,7 +273,7 @@ static void prepare_dictionary(struct setting *set)
     char *p;
 
     // If target address is not wildcard, add the database
-    if (*set->target && set->target[strlen(set->target) - 1] != '*')
+    if (*set->target && !zurl_wildcard(set->target))
         find_database(set->target, 0);
 
     // Determine if we already have a dictionary entry
@@ -324,15 +342,15 @@ static void update_database(void *context, struct database *db)
         {
             if (s->precedence < set->precedence)
                 // We discard the value (nmem keeps track of the space)
-                *sp = (*sp)->next;
+                *sp = (*sp)->next; // unlink value from existing setting
             else if (s->precedence > set->precedence)
-                // Db contains a higher-priority setting. Abort 
+                // Db contains a higher-priority setting. Abort search
                 break;
-            if (*s->target == '*' && *set->target != '*')
+            if (zurl_wildcard(s->target) > zurl_wildcard(set->target))
                 // target-specific value trumps wildcard. Delete.
-                *sp = (*sp)->next;
-            else if (*s->target != '*' && *set->target == '*')
-                // Db already contains higher-priority setting. Abort
+                *sp = (*sp)->next; // unlink.....
+            else if (!zurl_wildcard(s->target))
+                // Db already contains higher-priority setting. Abort search
                 break;
         }
     if (!s) // s will be null when there are no higher-priority settings -- we add one
