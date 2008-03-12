@@ -1,5 +1,5 @@
 /*
-** $Id: pz2.js,v 1.69 2008-02-14 12:20:24 jakub Exp $
+** $Id: pz2.js,v 1.70 2008-03-12 11:36:57 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -933,18 +933,16 @@ Element_parseChildNodes = function (node)
         }
     }
 
-    if (node.hasAttributes()) {
-        var attrs = node.attributes;
-        for (var i = 0; i < attrs.length; i++) {
-            var attrName = '@' + attrs[i].nodeName;
-            var attrValue = attrs[i].nodeValue;
-            parsed[attrName] = attrValue;
-        }
+    var attrs = node.attributes;
+    for (var i = 0; i < attrs.length; i++) {
+        var attrName = '@' + attrs[i].nodeName;
+        var attrValue = attrs[i].nodeValue;
+        parsed[attrName] = attrValue;
     }
 
     // if no nested elements, get text content
     if (node.hasChildNodes() && !hasChildElems) {
-        if (node.hasAttributes()) 
+        if (node.attributes.length) 
             parsed['textContent'] = node.firstChild.nodeValue;
         else
             parsed = node.firstChild.nodeValue;
