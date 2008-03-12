@@ -3,6 +3,7 @@ pazpar2 (1.0.6-1) unstable; urgency=low
   * Wildcars in the target id can be used to apply settings to 
     a group of targets
   * Using yaz_deamon rather than pazpar2_process
+  * pz2.js: fixed IE compatibility issues (removed hasAttribues method calls)
 
  -- Jakub Skoczen <jakub@indexdata.dk>  Tue, 19 Feb 2008 15:09:55 +0100
 
