@@ -1,5 +1,7 @@
 --- 1.0.6 2008/03/12
 
+Fixed bug in pz2.js WRT DOMElement attributes on IE.
+
 Fixed bug 2100: Database wildcards not working
 
 --- 1.0.5 2007/11/09
