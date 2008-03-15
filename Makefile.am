@@ -8,7 +8,7 @@ SUBDIRS = src test js doc
 EXTRA_DIST = README NEWS LICENSE buildconf.sh Doxyfile.in m4/yaz.m4 
 
 dist-hook:
-	if test -x /usr/bin/cvs2cl -a -d CVS; then cvs2cl ; cp ChangeLog $(distdir); fi
+	if test -x /usr/bin/git -a -d .git; then git log >ChangeLog ; cp ChangeLog $(distdir); fi
 	for d in etc etc/settings www/test1 www/jsdemo debian; do \
 		mkdir -p $(distdir)/$$d; \
 		for f in $(srcdir)/$$d/*; do \
