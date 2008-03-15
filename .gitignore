@@ -4,6 +4,7 @@ aclocal.m4
 ChangeLog
 autom4te.cache
 *-stamp
+config
 config.cache
 config.log
 config.status
