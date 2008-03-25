@@ -7,6 +7,9 @@ cconfig.h
 cconfig.h.in
 .deps
 *.log
+*.o
+*.a
+*~
 stamp-h1
 test_config
 test_icu_I18N
