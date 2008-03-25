@@ -80,6 +80,9 @@ int main(int argc, char **argv)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "signal");
 
     yaz_log_init_prefix("pazpar2");
+#if YAZ_VERSIONL >= 0x03001B
+    yaz_log_xml_errors(0, YLOG_WARN);
+#endif
 
     while ((ret = options("dDf:h:l:p:t:u:VX", argv, argc, &arg)) != -2)
     {
