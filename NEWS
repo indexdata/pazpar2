@@ -1,3 +1,5 @@
+test, delete this line
+
 --- 1.0.6 2008/03/12
 
 Fixed bug in pz2.js WRT DOMElement attributes on IE.
