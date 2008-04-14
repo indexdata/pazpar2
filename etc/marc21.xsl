@@ -204,7 +204,7 @@
         </pz:metadata>
       </xsl:for-each>
       
-      <xsl:for-each select="marc:datafield[@tag='650' or @tag='653']">
+      <xsl:for-each select="marc:datafield[@tag='650' or @tag='651' or @tag='653']">
         <pz:metadata type="subject">
 	  <xsl:value-of select="marc:subfield[@code='a']"/>
 	</pz:metadata>
@@ -243,17 +243,29 @@
 	<xsl:value-of select="$medium"/>
       </pz:metadata>
       
-      <xsl:if test="$fulltext_a">
+      <xsl:for-each select="marc:datafield[@tag='900']/marc:subfield[@code='a']">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="."/>
+        </pz:metadata>
+      </xsl:for-each>
+
+      <!-- <xsl:if test="$fulltext_a">
 	<pz:metadata type="fulltext">
 	  <xsl:value-of select="$fulltext_a"/>
 	</pz:metadata>
-      </xsl:if>
+      </xsl:if> -->
 
-      <xsl:if test="$fulltext_b">
+      <xsl:for-each select="marc:datafield[@tag='900']/marc:subfield[@code='b']">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="."/>
+        </pz:metadata>
+      </xsl:for-each>
+
+      <!-- <xsl:if test="$fulltext_b">
 	<pz:metadata type="fulltext">
 	  <xsl:value-of select="$fulltext_b"/>
 	</pz:metadata>
-      </xsl:if>
+      </xsl:if> -->
 
       <xsl:if test="$open_url_resolver">
         <pz:metadata type="open-url">
