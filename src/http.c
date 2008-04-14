@@ -44,7 +44,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/comstack.h>
 #include <yaz/nmem.h>
 
-#include "cconfig.h"
 #include "util.h"
 #include "eventl.h"
 #include "pazpar2.h"

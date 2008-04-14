@@ -63,7 +63,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "termlists.h"
 #include "reclists.h"
 #include "relevance.h"
-#include "config.h"
 #include "database.h"
 #include "client.h"
 #include "settings.h"

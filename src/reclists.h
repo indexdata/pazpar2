@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef RECLISTS_H
 #define RECLISTS_H
 
-#include "config.h"
+#include "pazpar2_config.h"
 #include "record.h"
 
 struct reclist

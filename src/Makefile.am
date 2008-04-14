@@ -22,7 +22,7 @@ CONFIG_CLEAN_FILES=*.log
 
 AM_CFLAGS = $(YAZINC) $(ICU_CPPFLAGS)
 
-libpazpar2_a_SOURCES = config.c config.h eventl.c eventl.h \
+libpazpar2_a_SOURCES = pazpar2_config.c pazpar2_config.h eventl.c eventl.h \
 	http.c http_command.c http_command.h http.h \
         icu_I18N.h icu_I18N.c \
 	logic.c pazpar2.h \

@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "relevance.h"
 #include "reclists.h"
 #include "eventl.h"
-#include "config.h"
+#include "pazpar2_config.h"
 #include "parameters.h"
 #include "http.h"
 
