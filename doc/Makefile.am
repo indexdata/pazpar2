@@ -1,6 +1,4 @@
-## $Id: Makefile.am,v 1.7 2007-07-10 09:44:00 adam Exp $
-## docdir=$(datadir)/doc/@PACKAGE@
-
+# This file is part of Pazpar2.
 SUBDIRS = common
 
 SUFFIXES=.1 .5 .7 .8 .pdf .tkl .esp .xml 

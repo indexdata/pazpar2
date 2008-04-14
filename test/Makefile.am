@@ -1,5 +1,4 @@
-# $Id: Makefile.am,v 1.7 2007-09-15 09:09:53 adam Exp $
-
+# This file is part of Pazpar2.
 check_SCRIPTS = test_http.sh test_icu.sh
 
 EXTRA_DIST = run_pazpar2.sh marc21.xsl test_http.xml test_http.cfg \

@@ -1,5 +1,4 @@
 #!/bin/sh
-# $Id: test_icu.sh,v 1.1 2007-09-10 16:25:51 adam Exp $
 #
 
 # srcdir might be set by make

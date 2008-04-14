@@ -1,5 +1,4 @@
-# $Id: Makefile.am,v 1.15 2007-07-27 09:07:49 marc Exp $
-
+# This file is part of Pazpar2.
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 
