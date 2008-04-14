@@ -6,7 +6,7 @@
 AC_PREREQ(2.60)
 AC_INIT([pazpar2],[1.0.6],[pazpar2-help@indexdata.dk])
 
-AC_CONFIG_HEADERS(src/cconfig.h)
+AC_CONFIG_HEADERS(src/config.h)
 
 AC_CONFIG_SRCDIR([configure.ac]) 
 AC_CONFIG_AUX_DIR([config])
