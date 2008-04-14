@@ -1,7 +1,6 @@
 <settings target="localhost:9999/Default">
 
   <!-- Simple test against a local test server (could be yaz-ztest) -->
-  <!-- $Id: testserver.xml,v 1.5 2007-07-10 13:43:07 adam Exp $ -->
 
   <set name="pz:name" value="Local Test"/>
 

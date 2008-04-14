@@ -9,7 +9,6 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2_protocol.xml,v 1.16 2007-10-08 13:19:22 adam Exp $ -->
 <refentry id="pazpar2_protocol">
  <refentryinfo>
   <productname>Pazpar2</productname>

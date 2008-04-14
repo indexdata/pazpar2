@@ -1,4 +1,5 @@
 ## -*- Autoconf -*-
+## This file is part of Pazpar2.
 ## Process this file with autoconf to produce a configure script.
 
 # Autoconf and automake setup

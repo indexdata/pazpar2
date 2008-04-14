@@ -1,5 +1,4 @@
 <settings target="*">
-<!-- $Id: danish.xml,v 1.2 2007-07-10 13:43:07 adam Exp $ -->
 <!-- based on danish.pz -->
   <set target="cosmos.dnlb.dk:9909/DNL01" name="pz:name" value="cosmos.dnlb.dk:9909/DNL01"/>
   <set target="odin.dtv.dk:210/DTV01" name="pz:name" value="odin.dtv.dk:210/DTV01"/>

@@ -9,7 +9,6 @@
      <!ENTITY % idcommon SYSTEM "common/common.ent">
      %idcommon;
 ]>
-<!-- $Id: pazpar2_conf.xml,v 1.31 2007-09-10 16:25:49 adam Exp $ -->
 <refentry id="pazpar2_conf">
  <refentryinfo>
   <productname>Pazpar2</productname>
@@ -590,7 +589,6 @@
 <settings target="*">
 
   <!-- This file introduces default settings for pazpar2 -->
-  <!-- $Id: pazpar2_conf.xml,v 1.31 2007-09-10 16:25:49 adam Exp $ -->
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>

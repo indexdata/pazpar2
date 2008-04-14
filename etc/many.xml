@@ -1,5 +1,4 @@
 <settings target="*">
-<!-- $Id: many.xml,v 1.2 2007-07-10 13:43:07 adam Exp $ -->
 <!-- based on many.pz -->
   <set target="12.4.242.230:210/Unicorn" name="pz:name" value="12.4.242.230:210/Unicorn"/>
   <set target="128.119.168.1:210/INNOPAC" name="pz:name" value="128.119.168.1:210/INNOPAC"/>

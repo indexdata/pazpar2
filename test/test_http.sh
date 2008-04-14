@@ -1,5 +1,4 @@
 #!/bin/sh
-# $Id: test_http.sh,v 1.11 2007-09-10 08:18:19 adam Exp $
 #
 
 # srcdir might be set by make

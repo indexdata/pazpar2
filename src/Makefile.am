@@ -1,4 +1,4 @@
-# $Id: Makefile.am,v 1.30 2008-02-18 19:33:32 adam Exp $
+# This file is part of Pazpar2.
 
 sbin_PROGRAMS = pazpar2
 

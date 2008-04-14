@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    $Id: oai_dc.xsl,v 1.1 2007-07-18 14:19:03 adam Exp $
 
     This stylesheet expects oai/dc records
 -->

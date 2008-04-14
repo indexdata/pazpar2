@@ -1,5 +1,4 @@
 #!/bin/sh
-# $Id: run_pazpar2.sh,v 1.1 2007-09-10 08:18:19 adam Exp $
 #
 # Regression test using pazpar2 against z3950.indexdata.com/marc
 # Reads Pazpar2 URLs from test_http_urls

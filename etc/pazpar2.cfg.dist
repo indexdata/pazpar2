@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- $Id: pazpar2.cfg.dist,v 1.21 2007-10-04 12:01:15 adam Exp $ -->
 <pazpar2 xmlns="http://www.indexdata.com/pazpar2/1.0">
   
   <server>
