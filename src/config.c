@@ -456,13 +456,6 @@ static struct conf_server *parse_server(xmlNode *node)
                 server->proxy_host = nmem_strdup(nmem, (const char *) host);
             if (myurl)
                 server->myurl = nmem_strdup(nmem, (const char *) myurl);
-#ifdef GAGA
-            else
-            {
-                yaz_log(YLOG_FATAL, "Must specify @myurl for proxy");
-                return 0;
-            }
-#endif
             xmlFree(port);
             xmlFree(host);
             xmlFree(myurl);

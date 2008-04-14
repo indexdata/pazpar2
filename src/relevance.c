@@ -284,31 +284,6 @@ void relevance_donerecord(struct relevance *r, struct record_cluster *cluster)
     r->doc_frequency_vec[0]++;
 }
 
-#ifdef GAGA
-#ifdef FLOAT_REL
-static int comp(const void *p1, const void *p2)
-{
-    float res;
-    struct record **r1 = (struct record **) p1;
-    struct record **r2 = (struct record **) p2;
-    res = (*r2)->relevance - (*r1)->relevance;
-    if (res > 0)
-        return 1;
-    else if (res < 0)
-        return -1;
-    else
-        return 0;
-}
-#else
-static int comp(const void *p1, const void *p2)
-{
-    struct record_cluster **r1 = (struct record_cluster **) p1;
-    struct record_cluster **r2 = (struct record_cluster **) p2;
-    return (*r2)->relevance - (*r1)->relevance;
-}
-#endif
-#endif
-
 // Prepare for a relevance-sorted read
 void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
 {
@@ -350,9 +325,6 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
         }
         rec->relevance = (int) (relevance * 100000);
     }
-#ifdef GAGA
-    qsort(reclist->flatlist, reclist->num_records, sizeof(struct record*), comp);
-#endif
     reclist->pointer = 0;
     xfree(idfvec);
 }

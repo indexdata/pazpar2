@@ -313,22 +313,6 @@ static void update_database(void *context, struct database *db)
     if (!match_zurl(db->url, set->target))
         return;
 
-#ifdef GAGA
-    // Initialize settings array if it doesn't exist.
-    // If so, also set the 'id' automatic setting
-    if (!db->settings)
-    {
-        struct setting *id = nmem_malloc(nmem, sizeof(struct setting));
-
-        db->settings = nmem_malloc(nmem, sizeof(struct settings*) * dictionary->num);
-        memset(db->settings, 0, sizeof(struct settings*) * dictionary->num);
-        id->precedence = 0;
-        id->name = "pz:id";
-        id->target = id->value = db->url;
-        id->next = 0;
-        db->settings[PZ_ID] = id;
-    }
-#endif
     if ((offset = settings_offset_cprefix(set->name)) < 0)
         abort(); // Should never get here
 

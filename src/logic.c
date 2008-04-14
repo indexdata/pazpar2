@@ -1308,15 +1308,6 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                     if (this_max > (*wheretoput)->data.number.max)
                         (*wheretoput)->data.number.max = this_max;
                 }
-#ifdef GAGA
-                if (ser_sk)
-                {
-                    union data_types *sdata 
-                        = cluster->sortkeys[sk_field_id];
-                    yaz_log(YLOG_LOG, "SK range: %d-%d",
-                            sdata->number.min, sdata->number.max);
-                }
-#endif
             }
 
 

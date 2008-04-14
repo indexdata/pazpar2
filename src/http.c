@@ -116,17 +116,6 @@ static void http_buf_destroy_queue(struct http_buf *b)
     }
 }
 
-#ifdef GAGA
-// Calculate length of chain
-static int http_buf_len(struct http_buf *b)
-{
-    int sum = 0;
-    for (; b; b = b->next)
-        sum += b->len;
-    return sum;
-}
-#endif
-
 static struct http_buf *http_buf_bybuf(char *b, int len)
 {
     struct http_buf *res = 0;
@@ -913,25 +902,6 @@ static void http_io(IOCHAN i, int event)
     }
 }
 
-#ifdef GAGA
-// If this hostname contains our proxy host as a prefix, replace with myurl
-static char *sub_hostname(struct http_channel *c, char *buf)
-{
-    char tmp[1024];
-    if (strlen(buf) > 1023)
-        return buf;
-    if (strncmp(buf, "http://", 7))
-        return buf;
-    if (!strncmp(buf + 7, proxy_url, strlen(proxy_url)))
-    {
-        strcpy(tmp, myurl);
-        strcat(tmp, buf + strlen(proxy_url) + 7);
-        return nmem_strdup(c->nmem, tmp);
-    }
-    return buf;
-}
-#endif
-
 // Handles I/O on a client connection to a backend web server (proxy mode)
 static void proxy_io(IOCHAN pi, int event)
 {
@@ -968,33 +938,6 @@ static void proxy_io(IOCHAN pi, int event)
                 htbuf->buf[res] = '\0';
                 htbuf->offset = 0;
                 htbuf->len = res;
-#ifdef GAGA
-                if (pc->first_response) // Check if this is a redirect
-                {
-                    int len;
-                    if ((len = package_check(htbuf->buf)))
-                    {
-                        struct http_response *res = http_parse_response_buf(hc, htbuf->buf, len);
-                        if (res)
-                        {
-                            const char *location = http_lookup_header(
-                                res->header, "Location");
-                            if (location)
-                            {
-                                // We found a location header. Rewrite it.
-                                struct http_buf *buf;
-                                h->value = sub_hostname(hc, location);
-                                buf = http_serialize_response(hc, res);
-                                yaz_log(YLOG_LOG, "Proxy rewrite");
-                                http_buf_enqueue(&hc->oqueue, buf);
-                                htbuf->offset = len;
-                                break;
-                            }
-                        }
-                    }
-                    pc->first_response = 0;
-                }
-#endif
                 // Write any remaining payload
                 if (htbuf->len - htbuf->offset > 0)
                     http_buf_enqueue(&hc->oqueue, htbuf);
