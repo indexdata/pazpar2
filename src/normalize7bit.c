@@ -21,13 +21,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     \brief char and string normalization for 7bit ascii only
 */
 
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-
 #if HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
 
 #include "normalize7bit.h"
 

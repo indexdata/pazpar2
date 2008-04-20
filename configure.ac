@@ -25,6 +25,7 @@ if test -z "$YAZLIB"; then
 fi
 YAZ_DOC
 
+AC_CHECK_HEADERS([sys/time.h sys/socket.h unistd.h netinet/in.h netdb.h arpa/inet.h])
 AC_CHECK_FUNCS([getaddrinfo])
 AC_CHECK_ICU([3.6],[ICU_CPPFLAGS="$ICU_CPPFLAGS -D HAVE_ICU=1"])
 AC_CONFIG_FILES([

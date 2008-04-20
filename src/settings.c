@@ -17,11 +17,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-
 // This module implements a generic system of settings
 // (attribute-value) that can be associated with search targets. The
 // system supports both default values, per-target overrides, and
 // per-user settings.
+
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 
 #include <string.h>
 #include <stdio.h>

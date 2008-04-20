@@ -17,7 +17,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-/* $Id: config.c,v 1.42 2007-10-31 05:29:08 quinn Exp $ */
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <string.h>
 
@@ -26,10 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <libxslt/xslt.h>
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
-
-#if HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>

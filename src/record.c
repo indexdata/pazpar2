@@ -17,9 +17,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-/* $Id: record.c,v 1.10 2007-06-13 21:29:04 adam Exp $ */
-
-
 #include <string.h>
 
 #include <yaz/yaz-util.h>

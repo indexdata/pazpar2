@@ -32,7 +32,8 @@ libpazpar2_a_SOURCES = pazpar2_config.c pazpar2_config.h eventl.c eventl.h \
 	util.c util.h zeerex.c zeerex.h database.c database.h \
 	settings.h settings.c sel_thread.c sel_thread.h getaddrinfo.c \
 	charsets.c charsets.h \
-	client.c client.h connection.c connection.h host.h parameters.h
+	client.c client.h connection.c connection.h host.h parameters.h \
+	dirent.c direntz.h
 
 pazpar2_SOURCES = pazpar2.c
 pazpar2_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)

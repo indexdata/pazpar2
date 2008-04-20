@@ -28,12 +28,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * Based on revision YAZ' server/eventl.c 1.29.
  */
 
-#include <stdio.h>
-#include <assert.h>
-
 #if HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#include <stdio.h>
+#include <assert.h>
 
 #ifdef WIN32
 #include <winsock.h>

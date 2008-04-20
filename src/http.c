@@ -17,6 +17,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #ifdef WIN32
 #include <winsock.h>
@@ -28,9 +32,6 @@ typedef int socklen_t;
 #endif
 
 #include <sys/types.h>
-#if HAVE_SYS_UIO_H
-#include <sys/uio.h>
-#endif
 
 #include <yaz/snprintf.h>
 #if HAVE_UNISTD_H
@@ -48,10 +49,6 @@ typedef int socklen_t;
 #include <errno.h>
 #include <assert.h>
 #include <string.h>
-
-#if HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 #if HAVE_NETINET_IN_H
 #include <netinet/in.h>

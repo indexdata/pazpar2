@@ -17,14 +17,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include <yaz/yaz-util.h>
-
-#if HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 #include "termlists.h"
 

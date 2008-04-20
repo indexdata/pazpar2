@@ -21,6 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     \brief Z39.50 connection (low-level client)
 */
 
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -44,10 +48,6 @@ typedef int socklen_t;
 #include <signal.h>
 #include <ctype.h>
 #include <assert.h>
-
-#if HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 #include <yaz/log.h>
 #include <yaz/comstack.h>

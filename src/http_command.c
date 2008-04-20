@@ -17,15 +17,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-/*
- * $Id: http_command.c,v 1.66 2007-10-28 18:55:26 adam Exp $
- */
-
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include <stdio.h>
 #include <sys/types.h>
-#if HAVE_SYS_UIO_H
-#include <sys/uio.h>
-#endif
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -36,10 +32,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <sys/time.h>
 #endif
 #include <yaz/snprintf.h>
-#if HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <yaz/yaz-util.h>
 
 #include "util.h"
