@@ -23,14 +23,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "sel_thread.h"
 
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <stdlib.h>
-#include <pthread.h>
+
 #include <assert.h>
 #include <sys/types.h>
+#if HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
+#ifdef WIN32
+#include <winsock.h>
+#endif
+#if HAVE_NETDB_H
 #include <netdb.h>
+#endif
+#if HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#endif
 
 #include <yaz/log.h>
 #include <yaz/nmem.h>
@@ -122,11 +133,14 @@ static void work_handler(void *vp)
     if (sec)
     {
         yaz_log(log_level, "waiting %d seconds", sec);
+#if HAVE_UNISTD_H
         sleep(sec);
+#endif
     }
     perform_getaddrinfo(w);
 }
 
+#ifndef WIN32
 void iochan_handler(struct iochan *i, int event)
 {
     sel_thread_t p = iochan_getdata(i);
@@ -162,6 +176,7 @@ static void getaddrinfo_start(void)
     yaz_log(log_level, "resolver start");
     resolver_thread = p;
 }
+#endif
 
 int host_getaddrinfo(struct host *host)
 {
@@ -171,21 +186,21 @@ int host_getaddrinfo(struct host *host)
     w->hostport = host->hostport;
     w->ipport = 0;
     w->host = host;
+#ifndef WIN32
     if (use_thread)
     {
         if (resolver_thread == 0)
             getaddrinfo_start();
         assert(resolver_thread);
         sel_thread_add(resolver_thread, w);
+        return 0;
     }
-    else
-    {
-        perform_getaddrinfo(w);
-        host->ipport = w->ipport;
-        xfree(w);
-        if (!host->ipport)
-            return -1;
-    }
+#endif
+    perform_getaddrinfo(w);
+    host->ipport = w->ipport;
+    xfree(w);
+    if (!host->ipport)
+        return -1;
     return 0;
 }
 

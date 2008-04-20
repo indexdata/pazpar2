@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <string.h>
 #include <stdio.h>
 #include <sys/types.h>
-#include <dirent.h>
+#include "direntz.h"
 #include <stdlib.h>
 #include <sys/stat.h>
 
@@ -245,7 +245,7 @@ static void read_settings(const char *path,
         }
         closedir(d);
     }
-    else if ((dot = rindex(path, '.')) && !strcmp(dot + 1, "xml"))
+    else if ((dot = strrchr(path, '.')) && !strcmp(dot + 1, "xml"))
         read_settings_file(path, fun);
 }
 

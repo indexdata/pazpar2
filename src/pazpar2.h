@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PAZPAR2_H
 
 
-#include <netdb.h>
-
 #include <libxslt/xsltutils.h>
 #include <libxslt/transform.h>
 

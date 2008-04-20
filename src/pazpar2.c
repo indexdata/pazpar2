@@ -52,7 +52,7 @@ void child_handler(void *data)
 static void show_version(void)
 {
     char yaz_version_str[80];
-    printf("Pazpar2 " VERSION "\n");
+    printf("Pazpar2 " PACKAGE_VERSION "\n");
 
     yaz_version(yaz_version_str, 0);
 
@@ -74,8 +74,10 @@ int main(int argc, char **argv)
     const char *pidfile = 0;
     const char *uid = 0;
 
+#ifndef WIN32
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "signal");
+#endif
 
     yaz_log_init_prefix("pazpar2");
 #if YAZ_VERSIONL >= 0x03001B

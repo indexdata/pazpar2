@@ -18,16 +18,33 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include <stdio.h>
+#ifdef WIN32
+#include <winsock.h>
+typedef int socklen_t;
+#endif
+
+#if HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
+
 #include <sys/types.h>
+#if HAVE_SYS_UIO_H
 #include <sys/uio.h>
+#endif
+
 #include <yaz/snprintf.h>
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+
 #include <stdlib.h>
-#include <strings.h>
+#include <string.h>
 #include <ctype.h>
 #include <fcntl.h>
+#if HAVE_NETDB_H
 #include <netdb.h>
+#endif
+
 #include <errno.h>
 #include <assert.h>
 #include <string.h>
@@ -36,9 +53,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <config.h>
 #endif
 
+#if HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#endif
+
+#if HAVE_ARPA_INET_H
 #include <arpa/inet.h>
-#include <netdb.h>
+#endif
 
 #include <yaz/yaz-util.h>
 #include <yaz/comstack.h>
@@ -679,7 +700,33 @@ struct http_header * http_header_append(struct http_channel *ch,
     return hp;
 }
 
-    
+   
+static int is_inprogress(void)
+{
+#ifdef WIN32
+    if (WSAGetLastError() != WSAEWOULDBLOCK)
+        return 1;
+#else
+    if (errno != EINPROGRESS)
+        return 1;
+#endif
+    return 0;
+} 
+
+static void enable_nonblock(int sock)
+{
+    int flags;
+#ifdef WIN32
+    flags = (flags & CS_FLAGS_BLOCKING) ? 0 : 1;
+    if (ioctlsocket(sock, FIONBIO, &flags) < 0)
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "ioctlsocket");
+#else
+    if ((flags = fcntl(sock, F_GETFL, 0)) < 0) 
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl");
+    if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0)
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl2");
+#endif
+}
 
 static int http_proxy(struct http_request *rq)
 {
@@ -696,7 +743,6 @@ static int http_proxy(struct http_request *rq)
         int sock;
         struct protoent *pe;
         int one = 1;
-        int flags;
 
         if (!(pe = getprotobyname("tcp"))) {
             abort();
@@ -709,18 +755,16 @@ static int http_proxy(struct http_request *rq)
         if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char*)
                         &one, sizeof(one)) < 0)
             abort();
-        if ((flags = fcntl(sock, F_GETFL, 0)) < 0) 
-            yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl");
-        if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0)
-            yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl2");
+        enable_nonblock(sock);
         if (connect(sock, (struct sockaddr *) proxy_addr, 
                     sizeof(*proxy_addr)) < 0)
-            if (errno != EINPROGRESS)
+        {
+            if (!is_inprogress()) 
             {
                 yaz_log(YLOG_WARN|YLOG_ERRNO, "Proxy connect");
                 return -1;
             }
-
+        }
         p = xmalloc(sizeof(struct http_proxy));
         p->oqueue = 0;
         p->channel = c;
@@ -810,7 +854,7 @@ static void http_io(IOCHAN i, int event)
 
         case EVENT_INPUT:
             htbuf = http_buf_create();
-            res = read(iochan_getfd(i), htbuf->buf, HTTP_BUF_SIZE -1);
+            res = recv(iochan_getfd(i), htbuf->buf, HTTP_BUF_SIZE -1, 0);
             if (res == -1 && errno == EAGAIN)
             {
                 http_buf_destroy(htbuf);
@@ -860,7 +904,7 @@ static void http_io(IOCHAN i, int event)
             if (hc->oqueue)
             {
                 struct http_buf *wb = hc->oqueue;
-                res = write(iochan_getfd(hc->iochan), wb->buf + wb->offset, wb->len);
+                res = send(iochan_getfd(hc->iochan), wb->buf + wb->offset, wb->len, 0);
                 if (res <= 0)
                 {
                     yaz_log(YLOG_WARN|YLOG_ERRNO, "write");
@@ -914,15 +958,19 @@ static void proxy_io(IOCHAN pi, int event)
 
         case EVENT_INPUT:
             htbuf = http_buf_create();
-            res = read(iochan_getfd(pi), htbuf->buf, HTTP_BUF_SIZE -1);
-            if (res == 0 || (res < 0 && errno != EINPROGRESS))
+            res = recv(iochan_getfd(pi), htbuf->buf, HTTP_BUF_SIZE -1, 0);
+            if (res == 0 || (res < 0 && !is_inprogress()))
             {
                 if (hc->oqueue)
                 {
                     yaz_log(YLOG_WARN, "Proxy read came up short");
                     // Close channel and alert client HTTP channel that we're gone
                     http_buf_destroy(htbuf);
+#ifdef WIN32
+                    closesocket(iochan_getfd(pi));
+#else
                     close(iochan_getfd(pi));
+#endif
                     iochan_destroy(pi);
                     pc->iochan = 0;
                 }
@@ -949,7 +997,7 @@ static void proxy_io(IOCHAN pi, int event)
                 iochan_clearflag(pi, EVENT_OUTPUT);
                 return;
             }
-            res = write(iochan_getfd(pi), htbuf->buf + htbuf->offset, htbuf->len);
+            res = send(iochan_getfd(pi), htbuf->buf + htbuf->offset, htbuf->len, 0);
             if (res <= 0)
             {
                 yaz_log(YLOG_WARN|YLOG_ERRNO, "write");
@@ -957,7 +1005,7 @@ static void proxy_io(IOCHAN pi, int event)
                 return;
             }
             if (res == htbuf->len)
-            {
+            { 
                 struct http_buf *np = htbuf->next;
                 http_buf_destroy(htbuf);
                 pc->oqueue = np;
@@ -990,7 +1038,11 @@ static void http_destroy(IOCHAN i)
     {
         if (s->proxy->iochan)
         {
+#ifdef WIN32
+            closesocket(iochan_getfd(s->proxy->iochan));
+#else
             close(iochan_getfd(s->proxy->iochan));
+#endif
             iochan_destroy(s->proxy->iochan);
         }
         http_buf_destroy_queue(s->proxy->oqueue);
@@ -1002,7 +1054,11 @@ static void http_destroy(IOCHAN i)
     http_destroy_observers(s);
     s->next = http_channel_freelist;
     http_channel_freelist = s;
+#ifdef WIN32
+    closesocket(iochan_getfd(i));
+#else
     close(iochan_getfd(i));
+#endif
     iochan_destroy(i);
 }
 
@@ -1048,7 +1104,6 @@ static void http_accept(IOCHAN i, int event)
     socklen_t len;
     int s;
     IOCHAN c;
-    int flags;
     struct http_channel *ch;
 
     len = sizeof addr;
@@ -1057,10 +1112,7 @@ static void http_accept(IOCHAN i, int event)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "accept");
         return;
     }
-    if ((flags = fcntl(s, F_GETFL, 0)) < 0) 
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl");
-    if (fcntl(s, F_SETFL, flags | O_NONBLOCK) < 0)
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl2");
+    enable_nonblock(s);
 
     yaz_log(YLOG_DEBUG, "New command connection");
     c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT);
@@ -1081,7 +1133,7 @@ void http_init(const char *addr)
     struct sockaddr_in myaddr;
     int one = 1;
     const char *pp;
-    int port;
+    short port;
 
     yaz_log(YLOG_LOG, "HTTP listener %s", addr);
 
@@ -1139,7 +1191,7 @@ void http_init(const char *addr)
 void http_set_proxyaddr(char *host, char *base_url)
 {
     char *p;
-    int port;
+    short port;
     struct hostent *he;
 
     strcpy(myurl, base_url);

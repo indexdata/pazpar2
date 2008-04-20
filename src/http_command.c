@@ -23,12 +23,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <stdio.h>
 #include <sys/types.h>
+#if HAVE_SYS_UIO_H
 #include <sys/uio.h>
+#endif
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <stdlib.h>
-#include <strings.h>
+#include <string.h>
 #include <ctype.h>
+#if HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
 #include <yaz/snprintf.h>
 #if HAVE_CONFIG_H
 #include <config.h>
@@ -166,6 +172,9 @@ unsigned int make_sessionid()
         res = seq;
     else
     {
+#ifdef WIN32
+        res = seq;
+#else
         struct timeval t;
 
         if (gettimeofday(&t, 0) < 0)
@@ -177,6 +186,7 @@ unsigned int make_sessionid()
            (long long would be more appropriate)*/
         res = t.tv_sec;
         res = ((res << 8) | (seq & 0xff)) & ((1U << 31) - 1);
+#endif
     }
     return res;
 }
