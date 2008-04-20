@@ -885,6 +885,8 @@ struct icu_chain * icu_chain_xml_config(xmlNode *xml_node,
 
     xmlNode *node = 0;
     struct icu_chain * chain = 0;
+    xmlChar *xml_id = 0;
+    xmlChar *xml_locale = 0;
    
     if (!xml_node 
         ||xml_node->type != XML_ELEMENT_NODE 
@@ -892,8 +894,8 @@ struct icu_chain * icu_chain_xml_config(xmlNode *xml_node,
 
         return 0;
     
-    xmlChar *xml_id = xmlGetProp(xml_node, (xmlChar *) "id");
-    xmlChar *xml_locale = xmlGetProp(xml_node, (xmlChar *) "locale");
+    xml_id = xmlGetProp(xml_node, (xmlChar *) "id");
+    xml_locale = xmlGetProp(xml_node, (xmlChar *) "locale");
 
     if (!xml_id || !strlen((const char *) xml_id) 
         || !xml_locale || !strlen((const char *) xml_locale))
@@ -909,11 +911,12 @@ struct icu_chain * icu_chain_xml_config(xmlNode *xml_node,
         
     for (node = xml_node->children; node; node = node->next)
     {
+        xmlChar *xml_rule = 0;
+        struct icu_chain_step * step = 0;
         if (node->type != XML_ELEMENT_NODE)
             continue;
 
-        xmlChar *xml_rule = xmlGetProp(node, (xmlChar *) "rule");
-        struct icu_chain_step * step = 0;
+        xml_rule = xmlGetProp(node, (xmlChar *) "rule");
 
         if (!strcmp((const char *) node->name, 
                     (const char *) "casemap")){

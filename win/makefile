@@ -1,7 +1,7 @@
 # This file is part of Pazpar2.
 # Copyright (C) 2006-2008 Index Data
 
-DEBUG=0   # 0 for release, 1 for debug
+DEBUG=1   # 0 for release, 1 for debug
 USE_MANIFEST = 0 # Can be enabled Visual Studio 2005
 PACKAGE_NAME=pazpar2
 PACKAGE_VERSION=1.0.7
@@ -14,6 +14,10 @@ ZLIB_DIR=\zlib-1.2.3.win32
 ICONV_DIR=\iconv-1.9.2.win32
 LIBXML2_DIR=\libxml2-2.6.28.win32
 LIBXSLT_DIR=\libxslt-1.1.19.win32
+
+# ICU
+HAVE_ICU=1
+ICU_DIR=c:\icu
 
 default: all
 
@@ -45,8 +49,6 @@ YAZD=yaz3
 TMPDIR=$(ROOTDIR)\win\tmp
 TMP=$(TMPDIR)
 
-# Targets - what to make
-
 PAZPAR2_EXE=$(BINDIR)\pazpar2.exe
 
 pazpar2: $(PAZPAR2_EXE)
@@ -57,6 +59,7 @@ YAZ_DEF=/DYAZ_HAVE_XML2=2 /DYAZ_HAVE_XSLT=1 /I"$(YAZ_DIR)\include"
 yaz: $(BINDIR)\$(YAZD).dll 
 
 $(BINDIR)\$(YAZD).dll: "$(YAZ_DIR)\bin\$(YAZD).dll"
+  copy "$(YAZ_DIR)\bin\icu*.dll" $(BINDIR)
   copy "$(YAZ_DIR)\bin\$(YAZD).dll" $(BINDIR)
 
 # Copy libxslt and associates to our bin directory
@@ -79,6 +82,16 @@ LIBXSLT_LIB = \
 	   "$(LIBXML2_DIR)\lib\libxml2.lib" \
 	   "$(LIBXSLT_DIR)\lib\libxslt.lib"
 
+!if $(HAVE_ICU)
+ICU_DEF=/DHAVE_ICU=1 /D HAVE_ICU_H=1 /I"$(ICU_DIR)\include"
+ICU_LIB= $(ICU_DIR)\lib\icudt.lib \
+	 $(ICU_DIR)\lib\icuin.lib \
+	 $(ICU_DIR)\lib\icuuc.lib
+!else
+ICU_DEF=/DHAVE_ICU=0
+ICU_LIB=
+!endif
+
 COMMON_C_OPTIONS=          \
   /nologo /W3 /EHsc /FD /c \
   /D "_CRT_SECURE_NO_DEPRECATE" \
@@ -86,6 +99,7 @@ COMMON_C_OPTIONS=          \
   /D "PACKAGE_NAME=\"$(PACKAGE_NAME)\"" \
   /D "VERSION=\"$(PACKAGE_VERSION)\"" \
   $(YAZ_DEF)               \
+  $(ICU_DEF)               \
   $(LIBXSLT_DEF)           \
   /D "_WINDOWS"            \
   /D "WIN32"               \
@@ -126,7 +140,7 @@ LINK=link.exe
 
 LINK_LIBS= kernel32.lib user32.lib gdi32.lib advapi32.lib uuid.lib \
            wsock32.lib  advapi32.lib \
-           $(YAZ_LIB) $(LIBXSLT_LIB)
+           $(YAZ_LIB) $(ICU_LIB) $(LIBXSLT_LIB)
 
 COMMON_LNK_OPTIONS= /nologo /subsystem:windows /machine:i386 /incremental:no
 
@@ -177,17 +191,6 @@ PAZPAR2_OBJS = \
 {$(SRCDIR)}.c{$(OBJDIR)}.obj:
 	$(CPP) $(COPT) $< 
 
-### The RC compiler (resource files)
-RSC=rc.exe
-COMMON_RC_OPTIONS= /l 0x406 /i"$(ROOTDIR)" 
-DEBUG_RC_OPTIONS=/d "_DEBUG"
-RELEASE_RC_OPTIONS=/d "NDEBUG"
-
-!if $(DEBUG)
-RSOPT=/d_DEBUG
-!else
-RSOPT=/d_NDEBUG
-!endif
 
 !if $(USE_MANIFEST)
 MT=mt.exe /nologo

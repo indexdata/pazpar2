@@ -20,6 +20,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if HAVE_CONFIG_H
 #include <config.h>
 #endif
+#ifdef WIN32
+#include <winsock.h>
+#endif
 
 #include <signal.h>
 #include <assert.h>
@@ -64,6 +67,20 @@ static void show_version(void)
     exit(0);
 }            
 
+#ifdef WIN32
+static int tcpip_init (void)
+{
+    WORD requested;
+    WSADATA wd;
+
+    requested = MAKEWORD(1, 1);
+    if (WSAStartup(requested, &wd))
+        return 0;
+    return 1;
+}
+#endif
+
+
 int main(int argc, char **argv)
 {
     int daemon = 0;
@@ -76,12 +93,15 @@ int main(int argc, char **argv)
 #ifndef WIN32
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "signal");
+#else
+    tcpip_init();
 #endif
 
     yaz_log_init_prefix("pazpar2");
 #if YAZ_VERSIONL >= 0x03001B
     yaz_log_xml_errors(0, YLOG_WARN);
 #endif
+
 
     while ((ret = options("dDf:h:l:p:t:u:VX", argv, argc, &arg)) != -2)
     {

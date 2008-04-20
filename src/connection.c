@@ -183,7 +183,7 @@ static void connection_handler(IOCHAN i, int event)
 	int errcode;
         socklen_t errlen = sizeof(errcode);
 
-	if (getsockopt(cs_fileno(co->link), SOL_SOCKET, SO_ERROR, &errcode,
+	if (getsockopt(cs_fileno(co->link), SOL_SOCKET, SO_ERROR, (char*) &errcode,
 	    &errlen) < 0 || errcode != 0)
 	{
             client_fatal(cl);
