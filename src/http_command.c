@@ -613,7 +613,9 @@ static void cmd_record(struct http_channel *c)
     else
     {
         wrbuf_puts(c->wrbuf, "<record>\n");
-        wrbuf_printf(c->wrbuf, "<recid>%s</recid>\n", rec->recid);
+        wrbuf_puts(c->wrbuf, "<recid>");
+        wrbuf_xmlputs(c->wrbuf, rec->recid);
+        wrbuf_puts(c->wrbuf, "</recid>\n");
         write_metadata(c->wrbuf, service, rec->metadata, 1);
         for (r = rec->records; r; r = r->next)
             write_subrecord(r, c->wrbuf, service, 1);
@@ -688,7 +690,9 @@ static void show_records(struct http_channel *c, int active)
             write_subrecord(p, c->wrbuf, service, 0); // subrecs w/o details
         if (ccount > 1)
             wrbuf_printf(c->wrbuf, "<count>%d</count>\n", ccount);
-        wrbuf_printf(c->wrbuf, "<recid>%s</recid>\n", rec->recid);
+        wrbuf_puts(c->wrbuf, "<recid>");
+        wrbuf_xmlputs(c->wrbuf, rec->recid);
+        wrbuf_puts(c->wrbuf, "</recid>\n");
         wrbuf_puts(c->wrbuf, "</hit>\n");
     }
 
