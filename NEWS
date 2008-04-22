@@ -1,3 +1,9 @@
+--- 1.0.8 2008/04/22
+
+Fixed bug #1162: HTML entities are not escaped properly.
+
+Native Windows port of Pazpar2. Makefile for Visual Studio provided.
+
 --- 1.0.7 2008/04/14
 
 Marc21 stylesheet updated to reflect multiple full text fields

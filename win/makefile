@@ -1,10 +1,10 @@
 # This file is part of Pazpar2.
 # Copyright (C) 2006-2008 Index Data
 
-DEBUG=1   # 0 for release, 1 for debug
+DEBUG=0   # 0 for release, 1 for debug
 USE_MANIFEST = 0 # Can be enabled Visual Studio 2005
 PACKAGE_NAME=pazpar2
-PACKAGE_VERSION=1.0.7
+PACKAGE_VERSION=1.0.8
 
 # YAZ
 YAZ_DIR=..\..\yaz
