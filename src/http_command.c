@@ -238,7 +238,7 @@ static int process_settings(struct session *se, struct http_request *rq,
 static void cmd_exit(struct http_channel *c)
 {
     yaz_log(YLOG_WARN, "exit");
-    exit(0);
+    http_close_server();
 }
 
 static void cmd_init(struct http_channel *c)

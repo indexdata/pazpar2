@@ -110,7 +110,10 @@ int event_loop(IOCHAN *iochans)
 	    if (errno == EINTR)
     		continue;
             else
-	 	abort();
+            {
+                yaz_log(YLOG_ERRNO|YLOG_WARN, "select");
+                return 0;
+            }
 	}
     	for (p = *iochans; p; p = p->next)
     	{

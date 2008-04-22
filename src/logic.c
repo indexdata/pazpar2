@@ -1016,7 +1016,7 @@ void statistics(struct session *se, struct statistics *stat)
     stat->num_clients = count;
 }
 
-void start_http_listener(void)
+int start_http_listener(void)
 {
     char hp[128] = "";
     struct conf_server *ser = global_parameters.server;
@@ -1033,7 +1033,7 @@ void start_http_listener(void)
             sprintf(hp + strlen(hp), "%d", ser->port);
         }
     }
-    http_init(hp);
+    return http_init(hp);
 }
 
 void start_proxy(void)

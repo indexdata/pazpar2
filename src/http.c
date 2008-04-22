@@ -701,10 +701,10 @@ struct http_header * http_header_append(struct http_channel *ch,
 static int is_inprogress(void)
 {
 #ifdef WIN32
-    if (WSAGetLastError() != WSAEWOULDBLOCK)
+    if (WSAGetLastError() == WSAEWOULDBLOCK)
         return 1;
 #else
-    if (errno != EINPROGRESS)
+    if (errno == EINPROGRESS)
         return 1;
 #endif
     return 0;
@@ -1121,8 +1121,10 @@ static void http_accept(IOCHAN i, int event)
     pazpar2_add_channel(c);
 }
 
+static int listener_socket = 0;
+
 /* Create a http-channel listener, syntax [host:]port */
-void http_init(const char *addr)
+int http_init(const char *addr)
 {
     IOCHAN c;
     int l;
@@ -1147,7 +1149,7 @@ void http_init(const char *addr)
         hostname[len] = '\0';
         if (!(he = gethostbyname(hostname))){
             yaz_log(YLOG_FATAL, "Unable to resolve '%s'", hostname);
-            exit(1);
+            return 1;
         }
         
         memcpy(&myaddr.sin_addr.s_addr, he->h_addr_list[0], he->h_length);
@@ -1162,27 +1164,43 @@ void http_init(const char *addr)
     myaddr.sin_port = htons(port);
 
     if (!(p = getprotobyname("tcp"))) {
-        abort();
+        return 1;
     }
     if ((l = socket(PF_INET, SOCK_STREAM, p->p_proto)) < 0)
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "socket");
     if (setsockopt(l, SOL_SOCKET, SO_REUSEADDR, (char*)
                     &one, sizeof(one)) < 0)
-        abort();
+        return 1;
 
     if (bind(l, (struct sockaddr *) &myaddr, sizeof myaddr) < 0) 
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "bind");
-        exit(1);
+        return 1;
     }
     if (listen(l, SOMAXCONN) < 0) 
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "listen");
-        exit(1);
+        return 1;
     }
+
+    listener_socket = l;
 
     c = iochan_create(l, http_accept, EVENT_INPUT | EVENT_EXCEPT);
     pazpar2_add_channel(c);
+    return 0;
+}
+
+void http_close_server(void)
+{
+    /* break the event_loop (select) by closing down the HTTP listener sock */
+    if (listener_socket)
+    {
+#ifdef WIN32
+        closesocket(listener_socket);
+#else
+        close(listener_socket);
+#endif
+    }
 }
 
 void http_set_proxyaddr(char *host, char *base_url)

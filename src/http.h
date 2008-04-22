@@ -100,7 +100,8 @@ struct http_response
 };
 
 void http_set_proxyaddr(char *url, char *baseurl);
-void http_init(const char *addr);
+int http_init(const char *addr);
+void http_close_server(void);
 void http_addheader(struct http_response *r, 
                     const char *name, const char *value);
 struct http_header * http_header_append(struct http_channel *ch, 

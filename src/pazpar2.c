@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "database.h"
 #include "settings.h"
 #include <yaz/daemon.h>
+#include <yaz/sc.h>
 
 void child_handler(void *data)
 {
@@ -81,7 +82,7 @@ static int tcpip_init (void)
 #endif
 
 
-int main(int argc, char **argv)
+static int sc_main(yaz_sc_t s, int argc, char **argv)
 {
     int daemon = 0;
     int ret;
@@ -169,7 +170,12 @@ int main(int argc, char **argv)
     }
     global_parameters.server = config->servers;
 
-    start_http_listener();
+    ret = start_http_listener();
+    if (ret)
+        return ret; /* error starting http listener */
+
+    yaz_sc_running(s);
+
     yaz_daemon("pazpar2",
                (global_parameters.debug_mode ? YAZ_DAEMON_DEBUG : 0) +
                (daemon ? YAZ_DAEMON_FORK : 0) + YAZ_DAEMON_KEEPALIVE,
@@ -178,6 +184,22 @@ int main(int argc, char **argv)
     return 0;
 }
 
+
+static void sc_stop(yaz_sc_t s)
+{
+
+}
+
+int main(int argc, char **argv)
+{
+    int ret;
+    yaz_sc_t s = yaz_sc_create("pazpar2", "Pazpar Metasearcher");
+
+    ret = yaz_sc_program(s, argc, argv, sc_main, sc_stop);
+
+    yaz_sc_destroy(&s);
+    exit(ret);
+}
 
 /*
  * Local variables:
