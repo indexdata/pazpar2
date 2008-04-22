@@ -31,7 +31,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "database.h"
 #include "settings.h"
 #include <yaz/daemon.h>
+
+#if YAZ_VERSIONL >= 0x03001D
+/* Windows service is available in YAZ 3.0.29 or later */
+#define USE_SC 1
 #include <yaz/sc.h>
+#else
+#define USE_SC 0
+#endif
 
 void child_handler(void *data)
 {
@@ -82,7 +89,11 @@ static int tcpip_init (void)
 #endif
 
 
-static int sc_main(yaz_sc_t s, int argc, char **argv)
+static int sc_main(
+#if USE_SC
+    yaz_sc_t s, 
+#endif
+    int argc, char **argv)
 {
     int daemon = 0;
     int ret;
@@ -177,7 +188,9 @@ static int sc_main(yaz_sc_t s, int argc, char **argv)
     if (ret)
         return ret; /* error starting http listener */
 
+#if USE_SC
     yaz_sc_running(s);
+#endif
 
     yaz_daemon("pazpar2",
                (global_parameters.debug_mode ? YAZ_DAEMON_DEBUG : 0) +
@@ -188,19 +201,25 @@ static int sc_main(yaz_sc_t s, int argc, char **argv)
 }
 
 
+#if USE_SC
 static void sc_stop(yaz_sc_t s)
 {
     http_close_server();
 }
+#endif
 
 int main(int argc, char **argv)
 {
     int ret;
+#if USE_SC
     yaz_sc_t s = yaz_sc_create("pazpar2", "Pazpar2");
 
     ret = yaz_sc_program(s, argc, argv, sc_main, sc_stop);
 
     yaz_sc_destroy(&s);
+#else
+    ret = sc_main(argc, argv);
+#endif
     exit(ret);
 }
 
