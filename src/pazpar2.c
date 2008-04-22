@@ -101,10 +101,7 @@ static int sc_main(
     char *arg;
     const char *pidfile = 0;
     const char *uid = 0;
-    int i;
 
-    for (i = 0; i < argc; i++)
-        yaz_log(YLOG_LOG, "arg%d: %s", i, argv[i]);
 #ifndef WIN32
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "signal");
