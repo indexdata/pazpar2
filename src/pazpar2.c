@@ -90,7 +90,10 @@ static int sc_main(yaz_sc_t s, int argc, char **argv)
     char *arg;
     const char *pidfile = 0;
     const char *uid = 0;
+    int i;
 
+    for (i = 0; i < argc; i++)
+        yaz_log(YLOG_LOG, "arg%d: %s", i, argv[i]);
 #ifndef WIN32
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "signal");
@@ -152,7 +155,7 @@ static int sc_main(yaz_sc_t s, int argc, char **argv)
                     "    -V                      show version\n"
                     "    -X                      debug mode\n"
                 );
-            exit(1);
+            return 1;
 	}
     }
 
@@ -161,12 +164,12 @@ static int sc_main(yaz_sc_t s, int argc, char **argv)
     {
         yaz_log(YLOG_FATAL, "Logfile must be given (option -l) for daemon "
                 "mode");
-        exit(1);
+        return 1;
     }
     if (!config)
     {
         yaz_log(YLOG_FATAL, "Load config with -f");
-        exit(1);
+        return 1;
     }
     global_parameters.server = config->servers;
 
@@ -187,13 +190,13 @@ static int sc_main(yaz_sc_t s, int argc, char **argv)
 
 static void sc_stop(yaz_sc_t s)
 {
-
+    http_close_server();
 }
 
 int main(int argc, char **argv)
 {
     int ret;
-    yaz_sc_t s = yaz_sc_create("pazpar2", "Pazpar Metasearcher");
+    yaz_sc_t s = yaz_sc_create("pazpar2", "Pazpar2");
 
     ret = yaz_sc_program(s, argc, argv, sc_main, sc_stop);
 
