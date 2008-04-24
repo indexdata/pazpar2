@@ -80,6 +80,7 @@
       <metadata name="electronic-text"/>
       <metadata name="electronic-note"/>
       <metadata name="citation"/>
+      <metadata name="holding"/>
       <metadata name="fulltext"/>
 
       <metadata name="url_recipe" setting="postproc"/>
