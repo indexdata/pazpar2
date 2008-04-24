@@ -203,7 +203,7 @@
         </pz:metadata>
       </xsl:for-each>
       
-      <xsl:for-each select="marc:datafield[@tag='650' or @tag='651' or @tag='653']">
+      <xsl:for-each select="marc:datafield[@tag='600' or @tag='610' or @tag='611' or @tag='630' or @tag='648' or @tag='650' or @tag='651' or @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or @tag='658' or @tag='662' or @tag='69X']">
         <pz:metadata type="subject">
 	  <xsl:value-of select="marc:subfield[@code='a']"/>
 	</pz:metadata>
@@ -265,6 +265,29 @@
 	  <xsl:value-of select="$fulltext_b"/>
 	</pz:metadata>
       </xsl:if> -->
+
+      <xsl:for-each select="marc:datafield[@tag='926']">
+        <pz:metadata type="holding">
+	  <xsl:for-each select="marc:subfield">
+	    <xsl:if test="position() > 1">
+	      <xsl:text> </xsl:text>
+	    </xsl:if>
+	    <xsl:value-of select="."/>
+	  </xsl:for-each>
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="marc:datafield[@tag='991']">
+        <pz:metadata type="holding">
+	  <xsl:for-each select="marc:subfield">
+	    <xsl:if test="position() > 1">
+	      <xsl:text> </xsl:text>
+	    </xsl:if>
+	    <xsl:value-of select="."/>
+	  </xsl:for-each>
+        </pz:metadata>
+      </xsl:for-each>
+
 
       <xsl:if test="$open_url_resolver">
         <pz:metadata type="open-url">
