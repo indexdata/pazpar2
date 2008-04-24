@@ -28,19 +28,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * Based on revision YAZ' server/eventl.c 1.29.
  */
 
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdio.h>
 #include <assert.h>
-
-#if HAVE_CONFIG_H
-#include <cconfig.h>
-#endif
 
 #ifdef WIN32
 #include <winsock.h>
 #else
 #include <unistd.h>
 #endif
+#if HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
+
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
@@ -107,7 +110,10 @@ int event_loop(IOCHAN *iochans)
 	    if (errno == EINTR)
     		continue;
             else
-	 	abort();
+            {
+                yaz_log(YLOG_ERRNO|YLOG_WARN, "select");
+                return 0;
+            }
 	}
     	for (p = *iochans; p; p = p->next)
     	{

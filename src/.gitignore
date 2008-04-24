@@ -3,8 +3,8 @@ pazpar2
 icu_chain_test
 Makefile
 Makefile.in
-cconfig.h
-cconfig.h.in
+config.h
+config.h.in
 .deps
 *.log
 *.o

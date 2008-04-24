@@ -17,7 +17,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-/* $Id: config.c,v 1.42 2007-10-31 05:29:08 quinn Exp $ */
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <string.h>
 
@@ -27,16 +29,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <libxslt/transform.h>
 #include <libxslt/xsltutils.h>
 
-#if HAVE_CONFIG_H
-#include <cconfig.h>
-#endif
-
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>
 #include <yaz/snprintf.h>
 
 #define CONFIG_NOEXTERNS
-#include "config.h"
+#include "pazpar2_config.h"
 
 
 static NMEM nmem = 0;
@@ -456,13 +454,6 @@ static struct conf_server *parse_server(xmlNode *node)
                 server->proxy_host = nmem_strdup(nmem, (const char *) host);
             if (myurl)
                 server->myurl = nmem_strdup(nmem, (const char *) myurl);
-#ifdef GAGA
-            else
-            {
-                yaz_log(YLOG_FATAL, "Must specify @myurl for proxy");
-                return 0;
-            }
-#endif
             xmlFree(port);
             xmlFree(host);
             xmlFree(myurl);

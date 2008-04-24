@@ -21,20 +21,33 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     \brief Z39.50 connection (low-level client)
 */
 
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#if HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+#if HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
+#ifdef WIN32
+#include <winsock.h>
+typedef int socklen_t;
+#endif
+#if HAVE_NETDB_H
 #include <netdb.h>
+#endif
+
 #include <signal.h>
 #include <ctype.h>
 #include <assert.h>
-
-#if HAVE_CONFIG_H
-#include "cconfig.h"
-#endif
 
 #include <yaz/log.h>
 #include <yaz/comstack.h>
@@ -170,7 +183,7 @@ static void connection_handler(IOCHAN i, int event)
 	int errcode;
         socklen_t errlen = sizeof(errcode);
 
-	if (getsockopt(cs_fileno(co->link), SOL_SOCKET, SO_ERROR, &errcode,
+	if (getsockopt(cs_fileno(co->link), SOL_SOCKET, SO_ERROR, (char*) &errcode,
 	    &errlen) < 0 || errcode != 0)
 	{
             client_fatal(cl);

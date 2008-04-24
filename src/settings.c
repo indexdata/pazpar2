@@ -17,16 +17,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-
 // This module implements a generic system of settings
 // (attribute-value) that can be associated with search targets. The
 // system supports both default values, per-target overrides, and
 // per-user settings.
 
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+
 #include <string.h>
 #include <stdio.h>
 #include <sys/types.h>
-#include <dirent.h>
+#include "direntz.h"
 #include <stdlib.h>
 #include <sys/stat.h>
 
@@ -245,7 +249,7 @@ static void read_settings(const char *path,
         }
         closedir(d);
     }
-    else if ((dot = rindex(path, '.')) && !strcmp(dot + 1, "xml"))
+    else if ((dot = strrchr(path, '.')) && !strcmp(dot + 1, "xml"))
         read_settings_file(path, fun);
 }
 
@@ -313,22 +317,6 @@ static void update_database(void *context, struct database *db)
     if (!match_zurl(db->url, set->target))
         return;
 
-#ifdef GAGA
-    // Initialize settings array if it doesn't exist.
-    // If so, also set the 'id' automatic setting
-    if (!db->settings)
-    {
-        struct setting *id = nmem_malloc(nmem, sizeof(struct setting));
-
-        db->settings = nmem_malloc(nmem, sizeof(struct settings*) * dictionary->num);
-        memset(db->settings, 0, sizeof(struct settings*) * dictionary->num);
-        id->precedence = 0;
-        id->name = "pz:id";
-        id->target = id->value = db->url;
-        id->next = 0;
-        db->settings[PZ_ID] = id;
-    }
-#endif
     if ((offset = settings_offset_cprefix(set->name)) < 0)
         abort(); // Should never get here
 

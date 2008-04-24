@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #if HAVE_CONFIG_H
-#include "cconfig.h"
+#include <config.h>
 #endif
 
 #define USE_TIMING 0
@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/test.h>
 
 
-#include "config.h"
+#include "pazpar2_config.h"
 #include "relevance.h"
 #include "record.h"
 #include "reclists.h"

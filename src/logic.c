@@ -21,13 +21,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     \brief high-level logic; mostly user sessions and settings
 */
 
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#if HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+#if HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
+#if HAVE_NETDB_H
 #include <netdb.h>
+#endif
 #include <signal.h>
 #include <ctype.h>
 #include <assert.h>
@@ -46,16 +58,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/oid_db.h>
 #include <yaz/snprintf.h>
 
-#if HAVE_CONFIG_H
-#include "cconfig.h"
-#endif
-
 #define USE_TIMING 0
 #if USE_TIMING
 #include <yaz/timing.h>
 #endif
 
+#if HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#endif
 
 #include "pazpar2.h"
 #include "eventl.h"
@@ -63,7 +73,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "termlists.h"
 #include "reclists.h"
 #include "relevance.h"
-#include "config.h"
 #include "database.h"
 #include "client.h"
 #include "settings.h"
@@ -1007,7 +1016,7 @@ void statistics(struct session *se, struct statistics *stat)
     stat->num_clients = count;
 }
 
-void start_http_listener(void)
+int start_http_listener(void)
 {
     char hp[128] = "";
     struct conf_server *ser = global_parameters.server;
@@ -1024,7 +1033,7 @@ void start_http_listener(void)
             sprintf(hp + strlen(hp), "%d", ser->port);
         }
     }
-    http_init(hp);
+    return http_init(hp);
 }
 
 void start_proxy(void)
@@ -1308,15 +1317,6 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                     if (this_max > (*wheretoput)->data.number.max)
                         (*wheretoput)->data.number.max = this_max;
                 }
-#ifdef GAGA
-                if (ser_sk)
-                {
-                    union data_types *sdata 
-                        = cluster->sortkeys[sk_field_id];
-                    yaz_log(YLOG_LOG, "SK range: %d-%d",
-                            sdata->number.min, sdata->number.max);
-                }
-#endif
             }
 
 

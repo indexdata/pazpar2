@@ -21,13 +21,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
     \brief Z39.50 client 
 */
 
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#if HAVE_SYS_TIME_H
 #include <sys/time.h>
+#endif
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+#if HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
+#if HAVE_NETDB_H
 #include <netdb.h>
+#endif
 #include <signal.h>
 #include <ctype.h>
 #include <assert.h>
@@ -46,16 +58,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/oid_db.h>
 #include <yaz/diagbib1.h>
 
-#if HAVE_CONFIG_H
-#include "cconfig.h"
-#endif
-
 #define USE_TIMING 0
 #if USE_TIMING
 #include <yaz/timing.h>
 #endif
 
+#if HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#endif
 
 #include "pazpar2.h"
 

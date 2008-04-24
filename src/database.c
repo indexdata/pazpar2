@@ -17,6 +17,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 #include <libxslt/xslt.h>
@@ -28,15 +32,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "pazpar2.h"
 #include "host.h"
-#include "config.h"
 #include "settings.h"
 #include "http.h"
 #include "zeerex.h"
 
 #include <sys/types.h>
+#if HAVE_SYS_SOCKET_H
 #include <sys/socket.h>
+#endif
+#if HAVE_NETDB_H
 #include <netdb.h>
+#endif
+#if HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#endif
 
 static struct host *hosts = 0;  // The hosts we know about 
 static struct database *databases = 0; // The databases we know about

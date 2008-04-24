@@ -22,4 +22,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 void die(char *string, char *add);
 
+#ifdef WIN32
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
+#endif
+
 #endif

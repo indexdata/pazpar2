@@ -17,20 +17,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-/* $Id: record.c,v 1.10 2007-06-13 21:29:04 adam Exp $ */
-
-
 #include <string.h>
 
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>
 
 #if HAVE_CONFIG_H
-#include <cconfig.h>
+#include <config.h>
 #endif
 
 //#define CONFIG_NOEXTERNS
-#include "config.h"
+#include "pazpar2_config.h"
 #include "record.h"
 
 

@@ -17,26 +17,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-/*
- * $Id: http_command.c,v 1.66 2007-10-28 18:55:26 adam Exp $
- */
-
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
 #include <stdio.h>
 #include <sys/types.h>
-#include <sys/uio.h>
+#if HAVE_UNISTD_H
 #include <unistd.h>
-#include <stdlib.h>
-#include <strings.h>
-#include <ctype.h>
-#include <sys/time.h>
-#include <yaz/snprintf.h>
-#if HAVE_CONFIG_H
-#include <cconfig.h>
 #endif
-
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+#if HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+#include <yaz/snprintf.h>
 #include <yaz/yaz-util.h>
 
-#include "config.h"
 #include "util.h"
 #include "eventl.h"
 #include "pazpar2.h"
@@ -167,6 +164,9 @@ unsigned int make_sessionid()
         res = seq;
     else
     {
+#ifdef WIN32
+        res = seq;
+#else
         struct timeval t;
 
         if (gettimeofday(&t, 0) < 0)
@@ -178,6 +178,7 @@ unsigned int make_sessionid()
            (long long would be more appropriate)*/
         res = t.tv_sec;
         res = ((res << 8) | (seq & 0xff)) & ((1U << 31) - 1);
+#endif
     }
     return res;
 }
@@ -237,7 +238,7 @@ static int process_settings(struct session *se, struct http_request *rq,
 static void cmd_exit(struct http_channel *c)
 {
     yaz_log(YLOG_WARN, "exit");
-    exit(0);
+    http_close_server();
 }
 
 static void cmd_init(struct http_channel *c)
@@ -612,7 +613,9 @@ static void cmd_record(struct http_channel *c)
     else
     {
         wrbuf_puts(c->wrbuf, "<record>\n");
-        wrbuf_printf(c->wrbuf, "<recid>%s</recid>\n", rec->recid);
+        wrbuf_puts(c->wrbuf, "<recid>");
+        wrbuf_xmlputs(c->wrbuf, rec->recid);
+        wrbuf_puts(c->wrbuf, "</recid>\n");
         write_metadata(c->wrbuf, service, rec->metadata, 1);
         for (r = rec->records; r; r = r->next)
             write_subrecord(r, c->wrbuf, service, 1);
@@ -687,7 +690,9 @@ static void show_records(struct http_channel *c, int active)
             write_subrecord(p, c->wrbuf, service, 0); // subrecs w/o details
         if (ccount > 1)
             wrbuf_printf(c->wrbuf, "<count>%d</count>\n", ccount);
-        wrbuf_printf(c->wrbuf, "<recid>%s</recid>\n", rec->recid);
+        wrbuf_puts(c->wrbuf, "<recid>");
+        wrbuf_xmlputs(c->wrbuf, rec->recid);
+        wrbuf_puts(c->wrbuf, "</recid>\n");
         wrbuf_puts(c->wrbuf, "</hit>\n");
     }
 

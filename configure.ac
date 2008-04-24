@@ -4,9 +4,9 @@
 
 # Autoconf and automake setup
 AC_PREREQ(2.60)
-AC_INIT([pazpar2],[1.0.7],[pazpar2-help@indexdata.dk])
+AC_INIT([pazpar2],[1.0.8],[pazpar2-help@indexdata.dk])
 
-AC_CONFIG_HEADERS(src/cconfig.h)
+AC_CONFIG_HEADERS(src/config.h)
 
 AC_CONFIG_SRCDIR([configure.ac]) 
 AC_CONFIG_AUX_DIR([config])
@@ -25,6 +25,7 @@ if test -z "$YAZLIB"; then
 fi
 YAZ_DOC
 
+AC_CHECK_HEADERS([sys/time.h sys/socket.h unistd.h netinet/in.h netdb.h arpa/inet.h])
 AC_CHECK_FUNCS([getaddrinfo])
 AC_CHECK_ICU([3.6],[ICU_CPPFLAGS="$ICU_CPPFLAGS -D HAVE_ICU=1"])
 AC_CONFIG_FILES([

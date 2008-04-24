@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #if HAVE_CONFIG_H
-#include "cconfig.h"
+#include <config.h>
 #endif
 
 #include <yaz/xmalloc.h>
@@ -70,9 +70,10 @@ pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
 {
 #ifdef HAVE_ICU
     UErrorCode status = U_ZERO_ERROR;
+    struct icu_chain *chain = 0;
     while (xml_node && xml_node->type != XML_ELEMENT_NODE)
         xml_node = xml_node->next;
-    struct icu_chain *chain = icu_chain_xml_config(xml_node, &status);
+    chain = icu_chain_xml_config(xml_node, &status);
     if (!chain || U_FAILURE(status)){
         //xmlDocPtr icu_doc = 0;
         //xmlChar *xmlstr = 0;
@@ -139,8 +140,8 @@ pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
 #ifdef HAVE_ICU
     if (pct->icu_chn)
     {
-        pct->icu_sts = U_ZERO_ERROR;
         int ok = 0;
+        pct->icu_sts = U_ZERO_ERROR;
         ok = icu_chain_assign_cstr(pct->icu_chn, buf, &pct->icu_sts);
         //printf("\nfield ok: %d '%s'\n", ok, buf);
         prt->pct = pct;

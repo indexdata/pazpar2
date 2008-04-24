@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PAZPAR2_H
 
 
-#include <netdb.h>
-
 #include <libxslt/xsltutils.h>
 #include <libxslt/transform.h>
 
@@ -35,7 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "relevance.h"
 #include "reclists.h"
 #include "eventl.h"
-#include "config.h"
+#include "pazpar2_config.h"
 #include "parameters.h"
 #include "http.h"
 
@@ -184,7 +182,7 @@ int session_active_clients(struct session *s);
 void session_apply_setting(struct session *se, char *dbname, char *setting, char *value);
 const char *session_setting_oneval(struct session_database *db, int offset);
 
-void start_http_listener(void);
+int start_http_listener(void);
 void start_proxy(void);
 
 void pazpar2_add_channel(IOCHAN c);

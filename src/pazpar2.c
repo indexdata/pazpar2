@@ -18,9 +18,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #if HAVE_CONFIG_H
-#include "cconfig.h"
+#include <config.h>
 #endif
-
+#ifdef WIN32
+#include <winsock.h>
+#endif
 
 #include <signal.h>
 #include <assert.h>
@@ -29,6 +31,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "database.h"
 #include "settings.h"
 #include <yaz/daemon.h>
+
+#if YAZ_VERSIONL >= 0x03001D
+/* Windows service is available in YAZ 3.0.29 or later */
+#define USE_SC 1
+#include <yaz/sc.h>
+#else
+#define USE_SC 0
+#endif
 
 void child_handler(void *data)
 {
@@ -52,7 +62,7 @@ void child_handler(void *data)
 static void show_version(void)
 {
     char yaz_version_str[80];
-    printf("Pazpar2 " VERSION "\n");
+    printf("Pazpar2 " PACKAGE_VERSION "\n");
 
     yaz_version(yaz_version_str, 0);
 
@@ -65,7 +75,25 @@ static void show_version(void)
     exit(0);
 }            
 
-int main(int argc, char **argv)
+#ifdef WIN32
+static int tcpip_init (void)
+{
+    WORD requested;
+    WSADATA wd;
+
+    requested = MAKEWORD(1, 1);
+    if (WSAStartup(requested, &wd))
+        return 0;
+    return 1;
+}
+#endif
+
+
+static int sc_main(
+#if USE_SC
+    yaz_sc_t s, 
+#endif
+    int argc, char **argv)
 {
     int daemon = 0;
     int ret;
@@ -74,13 +102,18 @@ int main(int argc, char **argv)
     const char *pidfile = 0;
     const char *uid = 0;
 
+#ifndef WIN32
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "signal");
+#else
+    tcpip_init();
+#endif
 
     yaz_log_init_prefix("pazpar2");
 #if YAZ_VERSIONL >= 0x03001B
     yaz_log_xml_errors(0, YLOG_WARN);
 #endif
+
 
     while ((ret = options("dDf:h:l:p:t:u:VX", argv, argc, &arg)) != -2)
     {
@@ -130,7 +163,7 @@ int main(int argc, char **argv)
                     "    -V                      show version\n"
                     "    -X                      debug mode\n"
                 );
-            exit(1);
+            return 1;
 	}
     }
 
@@ -139,16 +172,23 @@ int main(int argc, char **argv)
     {
         yaz_log(YLOG_FATAL, "Logfile must be given (option -l) for daemon "
                 "mode");
-        exit(1);
+        return 1;
     }
     if (!config)
     {
         yaz_log(YLOG_FATAL, "Load config with -f");
-        exit(1);
+        return 1;
     }
     global_parameters.server = config->servers;
 
-    start_http_listener();
+    ret = start_http_listener();
+    if (ret)
+        return ret; /* error starting http listener */
+
+#if USE_SC
+    yaz_sc_running(s);
+#endif
+
     yaz_daemon("pazpar2",
                (global_parameters.debug_mode ? YAZ_DAEMON_DEBUG : 0) +
                (daemon ? YAZ_DAEMON_FORK : 0) + YAZ_DAEMON_KEEPALIVE,
@@ -157,6 +197,28 @@ int main(int argc, char **argv)
     return 0;
 }
 
+
+#if USE_SC
+static void sc_stop(yaz_sc_t s)
+{
+    http_close_server();
+}
+#endif
+
+int main(int argc, char **argv)
+{
+    int ret;
+#if USE_SC
+    yaz_sc_t s = yaz_sc_create("pazpar2", "Pazpar2");
+
+    ret = yaz_sc_program(s, argc, argv, sc_main, sc_stop);
+
+    yaz_sc_destroy(&s);
+#else
+    ret = sc_main(argc, argv);
+#endif
+    exit(ret);
+}
 
 /*
  * Local variables:
