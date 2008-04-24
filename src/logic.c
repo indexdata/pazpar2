@@ -1225,8 +1225,11 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
                          value, type);
                  continue;
              }
-             rec_md->next = record->metadata[md_field_id];
-             record->metadata[md_field_id] = rec_md;
+             wheretoput = &record->metadata[md_field_id];
+             while (*wheretoput)
+                 wheretoput = &(*wheretoput)->next;
+             rec_md->next = 0;
+             *wheretoput = rec_md;
 
              // merged metadata
              rec_md = record_metadata_init(se->nmem, (char *) value,
