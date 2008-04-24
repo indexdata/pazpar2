@@ -277,6 +277,17 @@
         </pz:metadata>
       </xsl:for-each>
 
+      <xsl:for-each select="marc:datafield[@tag='948']">
+        <pz:metadata type="holding">
+	  <xsl:for-each select="marc:subfield">
+	    <xsl:if test="position() > 1">
+	      <xsl:text> </xsl:text>
+	    </xsl:if>
+	    <xsl:value-of select="."/>
+	  </xsl:for-each>
+        </pz:metadata>
+      </xsl:for-each>
+
       <xsl:for-each select="marc:datafield[@tag='991']">
         <pz:metadata type="holding">
 	  <xsl:for-each select="marc:subfield">
