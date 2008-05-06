@@ -176,7 +176,7 @@ int conf_service_metadata_field_id(struct conf_service *service,
     }
    
     return -1;
-};
+}
 
 
 int conf_service_sortkey_field_id(struct conf_service *service,
@@ -193,7 +193,7 @@ int conf_service_sortkey_field_id(struct conf_service *service,
     }
    
     return -1;
-};
+}
 
 
 
