@@ -36,6 +36,8 @@
    <arg choice="opt"><option>-u <replaceable>uid</replaceable></option></arg>
    <arg choice="opt"><option>-V</option></arg>
    <arg choice="opt"><option>-X</option></arg>
+   <arg choice="opt"><option>-install</option></arg>
+   <arg choice="opt"><option>-remove</option></arg>
   </cmdsynopsis>
  </refsynopsisdiv>
  
@@ -148,6 +150,26 @@
       Makes the Pazpar2 server operate in debugging mode.
       This prevents Pazpar2 from making separate threads and processes.
       This option should not be used in production.
+     </para>
+    </listitem>
+   </varlistentry>
+
+   <varlistentry>
+    <term><option>-install</option></term>
+    <listitem>
+     <para>
+       This is an option which is only recognized on Windows. It installs
+       Pazpar2 as a Windows Service.
+     </para>
+    </listitem>
+   </varlistentry>
+
+   <varlistentry>
+    <term><option>-install</option></term>
+    <listitem>
+     <para>
+       This is an option which is only recognized on Windows. It removes
+       a Pazpar2 - Windows Service.
      </para>
     </listitem>
    </varlistentry>

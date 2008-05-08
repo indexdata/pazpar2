@@ -162,6 +162,10 @@ static int sc_main(
                     "    -u uid\n"
                     "    -V                      show version\n"
                     "    -X                      debug mode\n"
+#ifdef WIN32
+                    "    -install                install windows service\n"
+                    "    -remove                 remove windows service\n"
+#endif
                 );
             return 1;
 	}
