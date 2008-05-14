@@ -43,15 +43,15 @@ void test_record(int argc, char **argv)
   struct client *client = 0;
   char * bla = "blabla";
   union data_types data_text;
+  union data_types data_num;
+  struct record_metadata * tmp_md = 0;
+
   data_text.text.disp = bla;
   data_text.text.sort = bla;
 
-  
-  union data_types data_num;
   data_num.number.min = 2;
   data_num.number.max = 5;
 
-  struct record_metadata * tmp_md = 0;
 
   service =  conf_service_create(nmem, 4, 3);
   YAZ_CHECK(service);
