@@ -222,6 +222,55 @@
    </para>
   </section>
 
+  <section id="installation.win32">
+    <title>Installation on Windows (from Source)</title>
+    <para>
+      Pazpar2 can be built for Windows using
+      <ulink url="&url.vstudio;">Microsoft Visual Studio</ulink>.
+      The support files for building YAZ on Windows are located in the
+      <filename>win</filename> directory. The compilation is performed
+      using the <filename>win/makefile</filename> which is to be
+      processed by the NMAKE utility part of Visual Studio.
+    </para>
+    <para>
+      Ensure that the development libraries + header files are
+      available on your system before compiling Pazpar2. For installation
+      of YAZ, refer to the YAZ installation chapter.
+      It is easiest if YAZ and Pazpar2 are unpacked in the same
+      directory (side-by-side).
+    </para>
+    <para>
+      The compilation is tuned by editing the makefile of Pazpar2.
+      The process is similar to YAZ. Adjust the various directories
+      <literal>YAZ_DIR</literal>, <literal>ZLIB_DIR</literal>, ..
+    </para>
+    <para>
+      Compile Pazpar2 by invoking <application>nmake</application> in
+      the <filename>win</filename> directory.
+      The resulting binaries of the build process are located in the
+      <filename>bin</filename> of the Pazpar2 source
+      tree - including the <filename>pazpar2.exe</filename> and necessary DLLs.
+    </para>
+    <para>
+      The Windows version of Pazpar2 is a console application. It may
+      be installed as a Windows Service by adding option 
+      <literal>-install</literal> for the pazpar2 program. This will
+      register Pazpar2 as a service and use the other options provided
+      in the same invocation. For example:
+      <screen>
+	cd \MyPazpar2\etc
+	..\bin\pazpar2 -install -c pazpar2.cfg -l pazpar2.log
+      </screen>
+      The Pazpar2 service may now be controlled via the Service Control
+      Panel. It may be unregistered by passing the <literal>-remove</literal>
+      option. Example:
+      <screen>
+	cd \MyPazpar2\etc
+	..\bin\pazpar2 -remove
+      </screen>
+    </para>
+  </section>
+
   <section id="installation.test1">
    <title>Installation of test1 interface</title>
    <para>
@@ -235,11 +284,17 @@
 
    <para>
     Start the Pazpar2 daemon using the 'in-source' binary of the Pazpar2
-    daemon.
+    daemon. On Unix the process is:
     <screen>
      cd etc
      cp pazpar2.cfg.dist pazpar2.cfg
      ../src/pazpar2 -f pazpar2.cfg -t edu.xml
+    </screen>
+    And on Windows:
+    <screen>
+     cd etc
+     copy pazpar2.cfg.dist pazpar2.cfg
+     ..\bin\pazpar2 -f pazpar2.cfg -t edu.xml
     </screen>
     This will start a Pazpar2 listener on port 8004. It will proxy 
     HTTP requests to localhost - port 80, which we assume will be the regular
