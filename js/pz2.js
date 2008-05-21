@@ -174,7 +174,7 @@ pz2.prototype =
         } else if (this.useSessions) {
             var context = this;
             var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-            request.get(
+            request.postParams(
                 { "command": "init" },
                 function(data) {
                     if ( data.getElementsByTagName("status")[0]
@@ -218,7 +218,7 @@ pz2.prototype =
             );
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-        request.get(
+        request.postParams(
             { "command": "ping", "session": this.sessionID },
             function(data) {
                 if ( data.getElementsByTagName("status")[0]
@@ -274,7 +274,7 @@ pz2.prototype =
         
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-        request.get(
+        request.postParams(
             searchParams,
             function(data) {
                 if ( data.getElementsByTagName("status")[0]
@@ -305,7 +305,7 @@ pz2.prototype =
         
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-        request.get(
+        request.postParams(
             { "command": "stat", "session": this.sessionID },
             function(data) {
                 if ( data.getElementsByTagName("stat") ) {
@@ -383,7 +383,7 @@ pz2.prototype =
 
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-        request.get(
+        request.postParams(
             { 
                 "command": "show", 
                 "session": this.sessionID, 
@@ -478,7 +478,7 @@ pz2.prototype =
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
 
-        request.get(
+        request.postParams(
 	    recordParams,
             function(data) {
                 var recordNode;
@@ -525,7 +525,7 @@ pz2.prototype =
         
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-        request.get(
+        request.postParams(
             { 
                 "command": "termlist", 
                 "session": this.sessionID, 
@@ -605,7 +605,7 @@ pz2.prototype =
         
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-        request.get(
+        request.postParams(
             { "command": "bytarget", "session": this.sessionID },
             function(data) {
                 if ( data.getElementsByTagName("status")[0]
@@ -681,6 +681,7 @@ var pzHttpRequest = function ( url, errorHandler ) {
         this.url = url;
         this.errorHandler = errorHandler || null;
         this.async = true;
+        this.requestHeaders = {};
         
         if ( window.XMLHttpRequest ) {
             this.request = new XMLHttpRequest();
@@ -695,6 +696,11 @@ var pzHttpRequest = function ( url, errorHandler ) {
 
 pzHttpRequest.prototype = 
 {
+    postParams: function ( params, callback )
+    {
+        this.requestHeaders["Content-Type"]="application/x-www-form-urlencoded";
+        this._send('POST', {}, this.encodeParams(params), callback);
+    },
 
     get: function ( params, callback ) 
     {
@@ -734,6 +740,8 @@ pzHttpRequest.prototype =
         var context = this;
         this.async = true;
         this.request.open( type, this._urlAppendParams(params), this.async );
+        for (var key in this.requestHeaders)
+            this.request.setRequestHeader(key, this.requestHeaders[key]);
         this.request.onreadystatechange = function () {
             context._handleResponse();
         }
@@ -742,7 +750,11 @@ pzHttpRequest.prototype =
 
     _urlAppendParams: function (params)
     {
-        return this.url + "?" + this.encodeParams(params);
+        var encodedParams = this.encodeParams(params);
+        if (encodedParams)
+            return this.url + "?" + encodedParams;
+        else
+            return this.url;
     },
 
     _handleResponse: function ()
