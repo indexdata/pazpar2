@@ -695,6 +695,7 @@ var pzHttpRequest = function ( url, errorHandler ) {
 
 pzHttpRequest.prototype = 
 {
+
     get: function ( params, callback ) 
     {
         this._send( 'GET', params, '', callback );
@@ -714,6 +715,19 @@ pzHttpRequest.prototype =
             return this.request.responseXML;
     },
 
+    encodeParams: function (params)
+    {
+        var sep = "";
+        var encoded = "";
+        for (var key in params) {
+            if (params[key] != null) {
+                encoded += sep + key + '=' + encodeURIComponent(params[key]);
+                sep = '&';
+            }
+        }
+        return encoded;
+    },
+
     _send: function ( type, params, data, callback )
     {
         this.callback = callback;
@@ -728,17 +742,7 @@ pzHttpRequest.prototype =
 
     _urlAppendParams: function (params)
     {
-        var getUrl = this.url;
-
-	var sep = '?';
-        var el = params;
-        for (var key in el) {
-            if (el[key] != null) {
-                getUrl += sep + key + '=' + encodeURIComponent(el[key]);
-                sep = '&';
-            }
-        }
-        return getUrl;
+        return this.url + "?" + this.encodeParams(params);
     },
 
     _handleResponse: function ()
