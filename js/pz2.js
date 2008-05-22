@@ -174,7 +174,7 @@ pz2.prototype =
         } else if (this.useSessions) {
             var context = this;
             var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-            request.postParams(
+            request.safeGet(
                 { "command": "init" },
                 function(data) {
                     if ( data.getElementsByTagName("status")[0]
@@ -218,7 +218,7 @@ pz2.prototype =
             );
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-        request.postParams(
+        request.safeGet(
             { "command": "ping", "session": this.sessionID },
             function(data) {
                 if ( data.getElementsByTagName("status")[0]
@@ -274,7 +274,7 @@ pz2.prototype =
         
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-        request.postParams(
+        request.safeGet(
             searchParams,
             function(data) {
                 if ( data.getElementsByTagName("status")[0]
@@ -305,7 +305,7 @@ pz2.prototype =
         
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-        request.postParams(
+        request.safeGet(
             { "command": "stat", "session": this.sessionID },
             function(data) {
                 if ( data.getElementsByTagName("stat") ) {
@@ -383,7 +383,7 @@ pz2.prototype =
 
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-        request.postParams(
+        request.safeGet(
             { 
                 "command": "show", 
                 "session": this.sessionID, 
@@ -478,7 +478,7 @@ pz2.prototype =
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
 
-        request.postParams(
+        request.safeGet(
 	    recordParams,
             function(data) {
                 var recordNode;
@@ -525,7 +525,7 @@ pz2.prototype =
         
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-        request.postParams(
+        request.safeGet(
             { 
                 "command": "termlist", 
                 "session": this.sessionID, 
@@ -605,7 +605,7 @@ pz2.prototype =
         
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-        request.postParams(
+        request.safeGet(
             { "command": "bytarget", "session": this.sessionID },
             function(data) {
                 if ( data.getElementsByTagName("status")[0]
@@ -677,6 +677,7 @@ pz2.prototype =
 ********************************************************************************
 */
 var pzHttpRequest = function ( url, errorHandler ) {
+        this.maxUrlLength = 2048;
         this.request = null;
         this.url = url;
         this.errorHandler = errorHandler || null;
@@ -696,20 +697,29 @@ var pzHttpRequest = function ( url, errorHandler ) {
 
 pzHttpRequest.prototype = 
 {
-    postParams: function ( params, callback )
+    safeGet: function ( params, callback )
     {
-        this.requestHeaders["Content-Type"]="application/x-www-form-urlencoded";
-        this._send('POST', {}, this.encodeParams(params), callback);
+        var encodedParams =  this.encodeParams(params);
+        var url = this._urlAppendParams(encodedParams);
+        if (url.length >= this.maxUrlLength) {
+            this.requestHeaders["Content-Type"]
+                = "application/x-www-form-urlencoded";
+            this._send( 'POST', this.url, encodedParams, callback );
+        } else {
+            this._send( 'GET', url, '', callback );
+        }
     },
 
     get: function ( params, callback ) 
     {
-        this._send( 'GET', params, '', callback );
+        this._send( 'GET', this._urlAppendParams(this.encodeParams(params)), 
+            '', callback );
     },
 
     post: function ( params, data, callback )
     {
-        this._send( 'POST', params, data, callback );
+        this._send( 'POST', this._urlAppendParams(this.encodeParams(params)), 
+            data, callback );
     },
 
     load: function ()
@@ -734,12 +744,12 @@ pzHttpRequest.prototype =
         return encoded;
     },
 
-    _send: function ( type, params, data, callback )
+    _send: function ( type, url, data, callback)
     {
-        this.callback = callback;
         var context = this;
+        this.callback = callback;
         this.async = true;
-        this.request.open( type, this._urlAppendParams(params), this.async );
+        this.request.open( type, url, this.async );
         for (var key in this.requestHeaders)
             this.request.setRequestHeader(key, this.requestHeaders[key]);
         this.request.onreadystatechange = function () {
@@ -748,9 +758,8 @@ pzHttpRequest.prototype =
         this.request.send(data);
     },
 
-    _urlAppendParams: function (params)
+    _urlAppendParams: function (encodedParams)
     {
-        var encodedParams = this.encodeParams(params);
         if (encodedParams)
             return this.url + "?" + encodedParams;
         else
