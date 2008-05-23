@@ -161,11 +161,17 @@
        This is an option which is only recognized on Windows. It installs
        Pazpar2 as a Windows Service.
      </para>
+     <note>
+       <para>
+	 Pazpar2 only supports Windows Service options if Pazpar2 is
+	 linked against YAZ 3.0.29 or later.
+       </para>
+     </note>
     </listitem>
    </varlistentry>
 
    <varlistentry>
-    <term><option>-install</option></term>
+    <term><option>-remove</option></term>
     <listitem>
      <para>
        This is an option which is only recognized on Windows. It removes
