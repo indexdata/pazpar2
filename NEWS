@@ -1,3 +1,14 @@
+--- 1.0.9 2008/05/23
+
+Changed the JS library pz2.js to use POST for long URL (+ params).
+
+Added installation instructions for Windows. Note: NT services is
+NOT available until we make a new release of YAZ.
+
+Preserve order of repeated metadata fields (they were reversed before).
+
+More MARC21 information extracted for metadata.
+
 --- 1.0.8 2008/04/22
 
 Fixed bug #1162: HTML entities are not escaped properly.
