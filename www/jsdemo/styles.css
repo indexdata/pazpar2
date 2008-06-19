@@ -1,0 +1,91 @@
+html {
+    overflow-y: scroll;
+}
+
+body {
+    font-family: tahoma, arial, sans-serif;
+    font-size: small;
+}
+
+hr {
+    border: 0;
+    color: gray;
+    background-color: gray;
+    height: 1px;
+}
+
+thead {
+    font-weight: bold;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+}
+
+a.extern {
+    color: #CC6600;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a.crossout:hover {
+    text-decoration: line-through;
+    font-weight: bold;
+}
+
+
+#heading {
+    background-color: #34cc67;
+    border-color: #34cc67;
+    color: #ffffff;
+    font-size: large;
+}
+
+input#button {
+    border: 3px groove #3171f2;
+    background-color: #6b9bfd;
+    padding: 2px;
+    width: 6em;
+    color: #FFFFFF;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 10px;
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+input#query {
+    border: 2px inset #34cc67;
+    padding: 3px;
+    font-size: 12px;
+}
+
+div.termtitle {
+    margin: 4px;
+    font-weight: bold;
+}
+
+div.record {
+    padding: 5px;
+}
+
+div.details {
+    border: 3px dashed gray;
+    padding: 5px;
+    margin: 4px;
+}
+
+#recordview {
+    background-color: #FFF8DC;
+}
+
+#targetview {
+    padding: 6px;
+}
+
+#bottom {
+    background-color: #FBF5E6;
+}

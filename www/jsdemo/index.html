@@ -7,83 +7,8 @@
  
  <head>
   <title>Pazpar2 demo client</title>
-  <style type="text/css">
-    
-    html {
-        overflow-y: scroll;
-    }
-
-    body {
-        font-family: tahoma, arial, sans-serif;
-        font-size: small;
-    }
-
-    hr {
-        border: 0;
-        color: gray;
-        background-color: gray;
-        height: 1px;
-    }
-
-    thead {
-        font-weight: bold;
-    }
-
-    .jslink {
-        cursor: pointer;
-    }
-
-    .jslink:hover {
-        text-decoration: underline;
-    }
-
-    #heading {
-        background-color: #34cc67;
-        border-color: #34cc67;
-        color: #ffffff;
-        font-size: large;
-    }
-    
-    input#button {
-        border: 3px groove #3171f2;
-        background-color: #6b9bfd;
-        padding: 2px;
-        width: 6em;
-        color: #FFFFFF;
-        font-weight: bold;
-        text-transform: uppercase;
-        font-size: 10px;
-        margin-left: 8px;
-        cursor: pointer;
-    }
-
-    input#query {
-        border: 2px inset #34cc67;
-        padding: 3px;
-        font-size: 12px;
-    }
-
-    div.termtitle {
-        margin: 4px;
-        font-weight: bold;
-    }
-
-    div.record {
-        padding: 5px;
-    }
-
-    div.details {
-        border: 3px dashed gray;
-        padding: 5px;
-        margin: 4px;
-    }
-
-    #targetview {
-        padding: 6px;
-    }
-
-  </style>
-  <script type="text/javascript" src="/pazpar2/js/pz2.js"></script>
+  <link rel="stylesheet" href="styles.css"></link>
+  <script type="text/javascript" src="http://bar.indexdata.dk/pazpar2/js/pz2.js"></script>
   <script type="text/javascript" src="example_client.js"></script>
  </head>
  
@@ -118,7 +43,28 @@
       <div id="termlist"></div>
      </td>
      <td valign="top">
-      <div id="body"></div>
+            <div id="sort">
+      <form name="select">
+       Sort by
+       <select name="sort" id="sort">
+        <option value="relevance" selected="selected">relevance</option>
+        <option value="title:1">title</option>
+        <option value="date:0">newest</option>
+        <option value="date:1">oldest</option>
+       </select>
+       and show 
+       <select name="perpage" id="perpage">
+        <option value="10" selected="selected">10</option>
+        <option value="20">20</option>
+        <option value="30">30</option>
+        <option value="50">50</option>
+       </select>
+       per page.
+      </form>
+      </div>
+      <div id="pager"></div>
+      <div id="navi"></div>
+      <div id="results"></div>
      </td>
     </tr>
    </table>
