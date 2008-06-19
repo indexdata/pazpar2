@@ -6,10 +6,10 @@
 // then register the form submit event with the pz2.search function
 // autoInit is set to true on default
 var usesessions = false;
-var pazpar2path = '.';
+var pazpar2path = '/pazpar2/search.pz2';
 if (document.location.hash == '#nosessions') {
-    usesessions = true;
-    pazpar2path = '/pazpar2/search.pz2';
+    usesessions = false;
+    pazpar2path = '.';
 }
 
 my_paz = new pz2( { "onshow": my_onshow,
