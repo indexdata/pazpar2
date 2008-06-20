@@ -9,8 +9,8 @@ body {
 
 hr {
     border: 0;
-    color: gray;
-    background-color: gray;
+    color: #156a16;
+    background-color: #156a16;
     height: 1px;
 }
 
@@ -78,14 +78,18 @@ div.details {
     margin: 4px;
 }
 
+#bytarget {
+    padding: 7px;
+}
+
+#stat {
+    color: #a3c896;
+}
+
 #recordview {
-    background-color: #FFF8DC;
+    background-color: #e0f9d6;
 }
 
 #targetview {
-    padding: 6px;
-}
-
-#bottom {
-    background-color: #FBF5E6;
+    background-color: #e0f9d6;
 }

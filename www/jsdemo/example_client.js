@@ -9,7 +9,7 @@ var usesessions = false;
 var pazpar2path = '/pazpar2/search.pz2';
 if (document.location.hash == '#nosessions') {
     usesessions = false;
-    pazpar2path = '.';
+    pazpar2path = '/pazpar2-proxy/';
 }
 
 my_paz = new pz2( { "onshow": my_onshow,
@@ -80,7 +80,7 @@ function my_onshow(data) {
 
 function my_onstat(data) {
     var stat = document.getElementById("stat");
-    stat.innerHTML = '<span>Active clients: '+ data.activeclients
+    stat.innerHTML = '<span> -STATUS INFO- : <span>Active clients: '+ data.activeclients
                         + '/' + data.clients + ' | </span>'
                         + '<span>Retrieved records: ' + data.records
                         + '/' + data.hits + '</span>';

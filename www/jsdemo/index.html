@@ -13,12 +13,11 @@
  </head>
  
  <body onload="domReady();">
-
-  <a href="#" onclick="switchView('recordview')">Records Browser</a>
-  <span> | </span>
-  <a href="#" onclick="switchView('targetview')">Targets Information</a>
-
-  <br/><br/>
+  <div id="switchmenu">
+   <a href="#" onclick="switchView('recordview')">Record Browser</a>
+   <span> | </span>
+   <a href="#" onclick="switchView('targetview')">Target Info</a>
+  </div>
   
   <table id="heading" width="100%" border="0" cellpadding="6" cellspacing="0">
    <tr>
@@ -36,7 +35,6 @@
   </table>
   
   <div id="recordview">
-
    <table width="100%" border="0" cellpadding="6" cellspacing="0">
     <tr>
      <td width="250" valign="top">
@@ -68,24 +66,20 @@
      </td>
     </tr>
    </table>
-
-   <br/>
    <hr/>
-   <b>STATUS INFO:</b>
-   <br/>
-   <br/>
-   <div id="stat"></div>
-  
   </div>
   
   <div id="targetview" style="display: none">
-
-    <hr/>
-    <b>TARGET INFO:</b>
-    <hr/>
-    <table id="bytarget"></table>
-
+   <table id="bytarget">
+       <thead><tr><td>No information available yet.</td></tr></thead>
+   </table>
+   <hr/>
   </div>
+
+  <br/>
+  <br/>
+  
+  <div id="stat"></div>
 
  </body>
 </html>
