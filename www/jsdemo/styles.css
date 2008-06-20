@@ -40,7 +40,7 @@ a.crossout:hover {
 
 #heading {
     background-color: #34cc67;
-    border-color: #34cc67;
+    border-top: 1px solid  #156a16;
     color: #ffffff;
     font-size: large;
 }
@@ -87,10 +87,12 @@ div.details {
 
 #recordview {
     background-color: #e0f9d6;
+    border-bottom: 1px solid  #156a16;
 }
 
 #targetview {
     background-color: #e0f9d6;
+    border-bottom: 1px solid  #156a16;
 }
 
 #bytarget {
@@ -98,6 +100,7 @@ div.details {
 }
 
 #footer {
+    padding-top: 4px;
     color: #74c775;
     text-align: center;
 }
