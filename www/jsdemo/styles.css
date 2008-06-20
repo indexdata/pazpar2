@@ -75,12 +75,13 @@ div.record {
 
 div.details {
     border: 3px dashed gray;
+    color: gray;
     padding: 5px;
     margin: 4px;
 }
 
 #switchmenu {
-    padding-bottom: 4px;
+    padding-bottom: 3px;
     text-align: right;
 }
 

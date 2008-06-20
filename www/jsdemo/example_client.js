@@ -59,12 +59,13 @@ function my_onshow(data) {
     
     for (var i = 0; i < data.hits.length; i++) {
         var hit = data.hits[i];
-	var html = '<div class="record" id="rec_' + hit.recid + '" onclick="showDetails(this.id)">'
+	var html = '<div class="record" id="rec_' + hit.recid 
+            + '" onclick="showDetails(this.id);return false;">'
                     +'<span>' + (i + 1 + recPerPage * ( curPage - 1)) + '. </span>'
                     +'<a href="#"><b>' + hit["md-title"] +
                     ' </b></a>'; 
 	if (hit["md-title-remainder"] !== undefined) {
-	    html += '<span>' + hit["md-title-remainder"] + '</span>';
+	    html += '<span>' + hit["md-title-remainder"] + ' </span>';
 	}
 	if (hit["md-title-responsibility"] !== undefined) {
 	    html += '<span><i>' + hit["md-title-responsibility"] + '</i></span>';
@@ -95,7 +96,7 @@ function my_onterm(data) {
     for (var i = 0; i < data.xtargets.length; i++ ) {
         termlist.innerHTML += '<a href="#" target_id='
             + data.xtargets[i].id
-            + ' onclick="limitTarget(this.getAttribute(\'target_id\'), this.firstChild.nodeValue)">' 
+            + ' onclick="limitTarget(this.getAttribute(\'target_id\'), this.firstChild.nodeValue);return false;">' 
                             + data.xtargets[i].name 
                             + ' </a><span> (' 
                             + data.xtargets[i].freq 
@@ -106,7 +107,7 @@ function my_onterm(data) {
     
     termlist.innerHTML += '<div class="termtitle">.::Subjects</div>';
     for (var i = 0; i < data.subject.length; i++ ) {
-        termlist.innerHTML += '<a href="#" onclick="limitQuery(\'su\', this.firstChild.nodeValue)">' 
+        termlist.innerHTML += '<a href="#" onclick="limitQuery(\'su\', this.firstChild.nodeValue);return false;">' 
                             + data.subject[i].name 
                             + '</a><span>  (' 
                             + data.subject[i].freq 
@@ -117,7 +118,7 @@ function my_onterm(data) {
     
     termlist.innerHTML += '<div class="termtitle">.::Authors</div>';
     for (var i = 0; i < data.author.length; i++ ) {
-        termlist.innerHTML += '<a href="#" onclick="limitQuery(\'au\', this.firstChild.nodeValue)">' 
+        termlist.innerHTML += '<a href="#" onclick="limitQuery(\'au\', this.firstChild.nodeValue);return false;">' 
                             + data.author[i].name 
                             + ' </a><span> (' 
                             + data.author[i].freq 
@@ -214,7 +215,7 @@ function limitTarget (id, name)
 {
     var navi = document.getElementById('navi');
     navi.innerHTML = 
-        'Source: <a class="crossout" href="#" onclick="delimitTarget()">'
+        'Source: <a class="crossout" href="#" onclick="delimitTarget();return false;">'
         + name + '</a>';
     navi.innerHTML += '<hr/>';
     curFilter = 'pz:id=' + id;
@@ -339,7 +340,6 @@ function showDetails ( prefixRecId ) {
     }
 
     curDetRecId = recId;
-
     // request the record
     my_paz.record(recId);
 }
