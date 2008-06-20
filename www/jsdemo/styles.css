@@ -5,6 +5,7 @@ html {
 body {
     font-family: tahoma, arial, sans-serif;
     font-size: small;
+    color: #156a16;
 }
 
 hr {
@@ -19,7 +20,7 @@ thead {
 }
 
 a {
-    color: black;
+    color: #005701; 
     text-decoration: none;
 }
 
@@ -45,8 +46,8 @@ a.crossout:hover {
 }
 
 input#button {
-    border: 3px groove #3171f2;
-    background-color: #6b9bfd;
+    border: 3px outset #132194;
+    background-color: #132194;
     padding: 2px;
     width: 6em;
     color: #FFFFFF;
@@ -78,12 +79,9 @@ div.details {
     margin: 4px;
 }
 
-#bytarget {
-    padding: 7px;
-}
-
-#stat {
-    color: #a3c896;
+#switchmenu {
+    padding-bottom: 4px;
+    text-align: right;
 }
 
 #recordview {
@@ -92,4 +90,17 @@ div.details {
 
 #targetview {
     background-color: #e0f9d6;
+}
+
+#bytarget {
+    padding: 7px;
+}
+
+#footer {
+    color: #74c775;
+    text-align: center;
+}
+
+#stat {
+    font-weight: bold;
 }

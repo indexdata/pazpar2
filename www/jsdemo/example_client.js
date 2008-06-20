@@ -5,7 +5,7 @@
 // create a parameters array and pass it to the pz2's constructor
 // then register the form submit event with the pz2.search function
 // autoInit is set to true on default
-var usesessions = false;
+var usesessions = true;
 var pazpar2path = '/pazpar2/search.pz2';
 if (document.location.hash == '#nosessions') {
     usesessions = false;
@@ -80,10 +80,11 @@ function my_onshow(data) {
 
 function my_onstat(data) {
     var stat = document.getElementById("stat");
-    stat.innerHTML = '<span> -STATUS INFO- : <span>Active clients: '+ data.activeclients
-                        + '/' + data.clients + ' | </span>'
+    stat.innerHTML = '<b> .:STATUS INFO</b> -- Active clients: '
+                        + data.activeclients
+                        + '/' + data.clients + ' -- </span>'
                         + '<span>Retrieved records: ' + data.records
-                        + '/' + data.hits + '</span>';
+                        + '/' + data.hits + ' :.</span>';
 }
 
 function my_onterm(data) {
