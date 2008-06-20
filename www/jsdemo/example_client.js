@@ -139,7 +139,7 @@ function my_onrecord(data) {
 
 function my_onbytarget(data) {
     var targetDiv = document.getElementById("bytarget");
-    var table = '<thead><tr><td>Target ID</td><td>Hits</td><td>Diags</td>'
+    var table = '<table><thead><tr><td>Target ID</td><td>Hits</td><td>Diags</td>'
                          +'<td>Records</td><td>State</td></tr></thead><tbody>';
     
     for (var i = 0; i < data.length; i++ ) {
@@ -150,7 +150,7 @@ function my_onbytarget(data) {
                     "</td><td>" + data[i].state + "</td></tr>";
     }
 
-    table += '</tbody>';
+    table += '</tbody></table>';
     targetDiv.innerHTML = table;
 
 }
