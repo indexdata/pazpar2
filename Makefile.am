@@ -15,19 +15,3 @@ dist-hook:
 		done; \
 	done; exit 0
 
-cvs2cl:
-	cvs2cl
-
-
-dox:
-	doxygen
-
-showdox:
-	doxygen
-	galeon file:///`pwd`/$(top_srcdir)/dox/html/index.html &
-
-debian:
-	dpkg-buildpackage -rfakeroot
-
-
-.PHONY: cvs2cl dox showdox debian
