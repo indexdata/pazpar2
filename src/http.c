@@ -230,12 +230,13 @@ static void urldecode(char *i, char *o)
             *(o++) = ' ';
             i++;
         }
-        else if (*i == '%')
+        else if (*i == '%' && i[1] && i[2])
         {
+            int v;
             i++;
-            sscanf(i, "%2hhx", o);
+            sscanf(i, "%2x", &v);
+            *o++ = v;
             i += 2;
-            o++;
         }
         else
             *(o++) = *(i++);
