@@ -5,7 +5,7 @@
 // create a parameters array and pass it to the pz2's constructor
 // then register the form submit event with the pz2.search function
 // autoInit is set to true on default
-var usesessions = false;
+var usesessions = true;
 var pazpar2path = '/pazpar2/search.pz2';
 if (document.location.hash == '#nosessions') {
     usesessions = false;
@@ -42,48 +42,46 @@ function my_oninit() {
 
 function my_onshow(data) {
     totalRec = data.merged;
-    
     // move it out
     var pager = document.getElementById("pager");
     pager.innerHTML = "";
-
     pager.innerHTML +='<hr/><div style="float: right">Displaying: ' 
                     + data.start + ' to ' + (data.start + data.num) +
                      ' of ' + data.merged + ' (found: ' 
                      + data.total + ')</div>';
     drawPager(pager);
-
     // navi
     var results = document.getElementById("results");
     results.innerHTML = "";
     
     for (var i = 0; i < data.hits.length; i++) {
         var hit = data.hits[i];
-	var html = '<div class="record" id="rec_' + hit.recid + '" onclick="showDetails(this.id)">'
-                    +'<span>' + (i + 1 + recPerPage * ( curPage - 1)) + '. </span>'
-                    +'<a href="#"><b>' + hit["md-title"] +
-                    ' </b></a>'; 
+	var html = '<div class="record" id="recdiv_'+hit.recid+'" >'
+            +'<span>'+ (i + 1 + recPerPage * (curPage - 1)) +'. </span>'
+            +'<a href="#" id="rec_'+hit.recid
+            +'" onclick="showDetails(this.id);return false;"><b>' 
+            + hit["md-title"] +' </b></a>'; 
 	if (hit["md-title-remainder"] !== undefined) {
-	    html += '<span>' + hit["md-title-remainder"] + '</span>';
+	    html += '<span>' + hit["md-title-remainder"] + ' </span>';
 	}
 	if (hit["md-title-responsibility"] !== undefined) {
-	    html += '<span><i>' + hit["md-title-responsibility"] + '</i></span>';
+	    html += '<span><i>'+ hit["md-title-responsibility"] +'</i></span>';
 	}
 	html += '</div>';
 	results.innerHTML += html;
-        if ( hit.recid == curDetRecId ) {
+        if (hit.recid == curDetRecId) {
             drawCurDetails();
         }
     }
-    
 }
 
 function my_onstat(data) {
     var stat = document.getElementById("stat");
-    stat.innerHTML = '<span> -STATUS INFO- : <span>Active clients: '+ data.activeclients
-                        + '/' + data.clients + ' | </span>'
+    stat.innerHTML = '<b> .:STATUS INFO</b> -- Active clients: '
+                        + data.activeclients
+                        + '/' + data.clients + ' -- </span>'
                         + '<span>Retrieved records: ' + data.records
-                        + '/' + data.hits + '</span>';
+                        + '/' + data.hits + ' :.</span>';
 }
 
 function my_onterm(data) {
@@ -94,7 +92,7 @@ function my_onterm(data) {
     for (var i = 0; i < data.xtargets.length; i++ ) {
         termlist.innerHTML += '<a href="#" target_id='
             + data.xtargets[i].id
-            + ' onclick="limitTarget(this.getAttribute(\'target_id\'), this.firstChild.nodeValue)">' 
+            + ' onclick="limitTarget(this.getAttribute(\'target_id\'), this.firstChild.nodeValue);return false;">' 
                             + data.xtargets[i].name 
                             + ' </a><span> (' 
                             + data.xtargets[i].freq 
@@ -105,7 +103,7 @@ function my_onterm(data) {
     
     termlist.innerHTML += '<div class="termtitle">.::Subjects</div>';
     for (var i = 0; i < data.subject.length; i++ ) {
-        termlist.innerHTML += '<a href="#" onclick="limitQuery(\'su\', this.firstChild.nodeValue)">' 
+        termlist.innerHTML += '<a href="#" onclick="limitQuery(\'su\', this.firstChild.nodeValue);return false;">' 
                             + data.subject[i].name 
                             + '</a><span>  (' 
                             + data.subject[i].freq 
@@ -116,7 +114,7 @@ function my_onterm(data) {
     
     termlist.innerHTML += '<div class="termtitle">.::Authors</div>';
     for (var i = 0; i < data.author.length; i++ ) {
-        termlist.innerHTML += '<a href="#" onclick="limitQuery(\'au\', this.firstChild.nodeValue)">' 
+        termlist.innerHTML += '<a href="#" onclick="limitQuery(\'au\', this.firstChild.nodeValue);return false;">' 
                             + data.author[i].name 
                             + ' </a><span> (' 
                             + data.author[i].freq 
@@ -130,27 +128,25 @@ function my_onrecord(data) {
     var detRecordDiv = document.getElementById('det_'+data.recid);
     if ( detRecordDiv )
         return;
-
     curDetRecData = data;
     drawCurDetails();
 }
 
 function my_onbytarget(data) {
     var targetDiv = document.getElementById("bytarget");
-    var table = '<thead><tr><td>Target ID</td><td>Hits</td><td>Diags</td>'
-                         +'<td>Records</td><td>State</td></tr></thead><tbody>';
+    var table ='<table><thead><tr><td>Target ID</td><td>Hits</td><td>Diags</td>'
+        +'<td>Records</td><td>State</td></tr></thead><tbody>';
     
     for (var i = 0; i < data.length; i++ ) {
         table += "<tr><td>" + data[i].id +
-                    "</td><td>" + data[i].hits +
-                    "</td><td>" + data[i].diagnostic +
-                    "</td><td>" + data[i].records +
-                    "</td><td>" + data[i].state + "</td></tr>";
+            "</td><td>" + data[i].hits +
+            "</td><td>" + data[i].diagnostic +
+            "</td><td>" + data[i].records +
+            "</td><td>" + data[i].state + "</td></tr>";
     }
 
-    table += '</tbody>';
+    table += '</tbody></table>';
     targetDiv.innerHTML = table;
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -213,7 +209,7 @@ function limitTarget (id, name)
 {
     var navi = document.getElementById('navi');
     navi.innerHTML = 
-        'Source: <a class="crossout" href="#" onclick="delimitTarget()">'
+        'Source: <a class="crossout" href="#" onclick="delimitTarget();return false;">'
         + name + '</a>';
     navi.innerHTML += '<hr/>';
     curFilter = 'pz:id=' + id;
@@ -338,7 +334,6 @@ function showDetails ( prefixRecId ) {
     }
 
     curDetRecId = recId;
-
     // request the record
     my_paz.record(recId);
 }
@@ -346,7 +341,7 @@ function showDetails ( prefixRecId ) {
 function drawCurDetails ()
 {
     var data = curDetRecData;
-    var recordDiv = document.getElementById('rec_'+data.recid);
+    var recordDiv = document.getElementById('recdiv_'+data.recid);
     var details = "";
     if (data["md-title"] != undefined)
         details += '<tr><td><b>Ttle</b></td><td><b>:</b> '+data["md-title"] + '</td></tr>';
@@ -355,7 +350,7 @@ function drawCurDetails ()
     if (data["md-author"] != undefined)
         details += '<tr><td><b>Author</b></td><td><b>:</b> ' + data["md-author"] + '</td></tr>';
     if (data["md-electronic-url"] != undefined)
-        details += '<tr><td><b>URL</b></td><td><b>:</b> <a href="' + data["md-electronic-url"] + '">' + data["md-electronic-url"] + '</a>' + '</td></tr>';
+        details += '<tr><td><b>URL</b></td><td><b>:</b> <a href="' + data["md-electronic-url"] + '" target="_blank">' + data["md-electronic-url"] + '</a>' + '</td></tr>';
     if (data["location"][0]["md-subject"] != undefined)
         details += '<tr><td><b>Subject</b></td><td><b>:</b> ' + data["location"][0]["md-subject"] + '</td></tr>';
     if (data["location"][0]["@name"] != undefined)
