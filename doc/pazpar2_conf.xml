@@ -603,7 +603,10 @@
   <!-- Retrieval settings -->
 
   <set name="pz:requestsyntax" value="marc21"/>
-  <!-- <set name="pz:elements" value="F"/> NOT YET IMPLEMENTED -->
+  <set name="pz:elements" value="F"/>
+
+  <!-- Query encoding -->
+  <set name="pz:queryencoding" value="iso-8859-1"/>
 
   <!-- Result normalization settings -->
 
@@ -683,7 +686,7 @@
      <listitem>
       <para>
        The element set name to be used when retrieving records from a
-       server (not yet implemented).
+       server.
       </para>
      </listitem>
     </varlistentry>
@@ -713,6 +716,18 @@
       </para>
      </listitem>
     </varlistentry>
+
+    <varlistentry>
+     <term>pz:queryencoding</term>
+     <listitem>
+      <para>
+        The encoding of the search terms that a target accepts. Most
+        targets do not honor UTF-8 in which case this needs to be specified.
+        Each term in a query will be converted if this setting is given.
+      </para>
+     </listitem>
+    </varlistentry>
+
     <varlistentry>
      <term>pz:xslt</term>
      <listitem>
