@@ -430,23 +430,27 @@ void client_record_response(struct client *cl)
     }
     else
     {
-        ZOOM_record rec;
-        int offset = cl->records;
+        ZOOM_record rec = 0;
         const char *msg, *addinfo;
-
-        if ((rec = ZOOM_resultset_record(resultset, offset)))
+        
+        yaz_log(YLOG_LOG, "show_raw=%p show_raw->active=%d",
+                cl->show_raw, cl->show_raw ? cl->show_raw->active : 0);
+        if (cl->show_raw && cl->show_raw->active)
         {
-            yaz_log(YLOG_LOG, "Record with offset %d", offset);
-
-            yaz_log(YLOG_LOG, "show_raw=%p show_raw->active=%d",
-                    cl->show_raw, cl->show_raw ? cl->show_raw->active : 0);
-            if (cl->show_raw && cl->show_raw->active)
+            if ((rec = ZOOM_resultset_record(resultset,
+                                             cl->show_raw->position-1)))
             {
                 cl->show_raw->active = 0;
                 ingest_raw_record(cl, rec);
             }
-            else
+        }
+        else
+        {
+            int offset = cl->records;
+            if ((rec = ZOOM_resultset_record(resultset, offset)))
             {
+                yaz_log(YLOG_LOG, "Record with offset %d", offset);
+                
                 cl->records++;
                 if (ZOOM_record_error(rec, &msg, &addinfo, 0))
                     yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
@@ -479,7 +483,7 @@ void client_record_response(struct client *cl)
 
             }
         }
-        else
+        if (!rec)
             yaz_log(YLOG_WARN, "Expected record, but got NULL");
     }
 }
