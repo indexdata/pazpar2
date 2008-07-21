@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #ifndef CONNECTION_H
 #define CONNECTION_H
+#include <yaz/zoom.h>
 
 #include <yaz/proto.h>
 #include "eventl.h"
@@ -44,6 +45,9 @@ struct connection *connection_get_available(struct connection *con_list,
 int connection_prep_connection(struct connection *co, struct session *se);
 const char *connection_get_url(struct connection *co);
 void connection_release(struct connection *co);
+ZOOM_connection connection_get_link(struct connection *co);
+ZOOM_resultset connection_get_resultset(struct connection *co);
+void connection_set_resultset(struct connection *co, ZOOM_resultset rs);
 
 #endif
 

@@ -65,7 +65,8 @@ typedef int socklen_t;
  */
 struct connection {
     IOCHAN iochan;
-    COMSTACK link;
+    ZOOM_connection link;
+    ZOOM_resultset resultset;
     struct host *host;
     struct client *client;
     char *ibuf;
@@ -75,13 +76,46 @@ struct connection {
     enum {
         Conn_Resolving,
         Conn_Connecting,
-        Conn_Open,
-        Conn_Waiting,
+        Conn_Open
     } state;
     struct connection *next; // next for same host or next in free list
 };
 
 static struct connection *connection_freelist = 0;
+
+static int connection_is_idle(struct connection *co)
+{
+    ZOOM_connection link = co->link;
+    int event = ZOOM_connection_peek_event(link);
+
+    if (co->state != Conn_Open)
+        return 0;
+
+    link = co->link;
+    event = ZOOM_connection_peek_event(link);
+    if (event == ZOOM_EVENT_NONE ||
+                event == ZOOM_EVENT_END)
+        return 1;
+    else
+        return 0;
+}
+
+ZOOM_connection connection_get_link(struct connection *co)
+{
+    return co->link;
+}
+
+ZOOM_resultset connection_get_resultset(struct connection *co)
+{
+    return co->resultset;
+}
+
+void connection_set_resultset(struct connection *co, ZOOM_resultset rs)
+{
+    if (co->resultset)
+        ZOOM_resultset_destroy(co->resultset);
+    co->resultset = rs;
+}
 
 static void remove_connection_from_host(struct connection *con)
 {
@@ -104,9 +138,11 @@ void connection_destroy(struct connection *co)
 {
     if (co->link)
     {
-        cs_close(co->link);
+        ZOOM_connection_destroy(co->link);
         iochan_destroy(co->iochan);
     }
+    if (co->resultset)
+        ZOOM_resultset_destroy(co->resultset);
 
     yaz_log(YLOG_DEBUG, "Connection destroy %s", co->host->hostport);
 
@@ -144,7 +180,8 @@ struct connection *connection_create(struct client *cl)
     new->zproxy = 0;
     client_set_connection(cl, new);
     new->link = 0;
-    new->state = Conn_Resolving;
+    new->resultset = 0;
+    new->state = Conn_Connecting;
     if (host->ipport)
         connection_connect(new);
     return new;
@@ -178,107 +215,54 @@ static void connection_handler(IOCHAN i, int event)
         }
         return;
     }
-    if (co->state == Conn_Connecting && event & EVENT_OUTPUT)
+    else
     {
-	int errcode;
-        socklen_t errlen = sizeof(errcode);
+        ZOOM_connection link = co->link;
 
-	if (getsockopt(cs_fileno(co->link), SOL_SOCKET, SO_ERROR, (char*) &errcode,
-	    &errlen) < 0 || errcode != 0)
-	{
-            client_fatal(cl);
-	    return;
-	}
-	else
-	{
-            yaz_log(YLOG_DEBUG, "Connect OK");
-	    co->state = Conn_Open;
-            if (cl)
-                client_set_state(cl, Client_Connected);
-            iochan_settimeout(i, global_parameters.z3950_session_timeout);
-	}
-    }
-
-    else if (event & EVENT_INPUT)
-    {
-	int len = cs_get(co->link, &co->ibuf, &co->ibufsize);
-
-	if (len < 0)
-	{
-            yaz_log(YLOG_WARN|YLOG_ERRNO, "Error reading from %s", 
-                    client_get_url(cl));
-            connection_destroy(co);
-	    return;
-	}
-        else if (len == 0)
-	{
-            yaz_log(YLOG_WARN, "EOF reading from %s", client_get_url(cl));
-            connection_destroy(co);
-	    return;
-	}
-	else if (len > 1) // We discard input if we have no connection
-	{
-            co->state = Conn_Open;
-
-            if (client_is_our_response(cl))
-            {
-                Z_APDU *a;
-                struct session_database *sdb = client_get_database(cl);
-                const char *apdulog = session_setting_oneval(sdb, PZ_APDULOG);
-
-                odr_reset(global_parameters.odr_in);
-                odr_setbuf(global_parameters.odr_in, co->ibuf, len, 0);
-                if (!z_APDU(global_parameters.odr_in, &a, 0, 0))
+        if (ZOOM_event(1, &link))
+        {
+            do {
+                int event = ZOOM_connection_last_event(link);
+                switch (event) 
                 {
-                    client_fatal(cl);
-                    return;
-                }
-
-                if (apdulog && *apdulog && *apdulog != '0')
-                {
-                    ODR p = odr_createmem(ODR_PRINT);
-                    yaz_log(YLOG_LOG, "recv APDU %s", client_get_url(cl));
-                    
-                    odr_setprint(p, yaz_log_file());
-                    z_APDU(p, &a, 0, 0);
-                    odr_setprint(p, stderr);
-                    odr_destroy(p);
-                }
-                switch (a->which)
-                {
-                    case Z_APDU_initResponse:
-                        client_init_response(cl, a);
+                    case ZOOM_EVENT_END:
                         break;
-                    case Z_APDU_searchResponse:
-                        client_search_response(cl, a);
+                    case ZOOM_EVENT_SEND_DATA:
                         break;
-                    case Z_APDU_presentResponse:
-                        client_present_response(cl, a);
+                    case ZOOM_EVENT_RECV_DATA:
                         break;
-                    case Z_APDU_close:
-                        client_close_response(cl, a);
+                    case ZOOM_EVENT_UNKNOWN:
+                        break;
+                    case ZOOM_EVENT_SEND_APDU:
+                        client_set_state(co->client, Client_Working);
+                        break;
+                    case ZOOM_EVENT_RECV_APDU:
+                        client_set_state(co->client, Client_Idle);
+                        break;
+                    case ZOOM_EVENT_CONNECT:
+                        yaz_log(YLOG_LOG, "Connected to %s", client_get_url(cl));
+                        co->state = Conn_Open;
+                        client_set_state(co->client, Client_Connected);
+                        iochan_settimeout(i, global_parameters.z3950_session_timeout);
+                        break;
+                    case ZOOM_EVENT_RECV_SEARCH:
+                        yaz_log(YLOG_LOG, "Search response from %s", client_get_url(cl));
+                        client_search_response(cl);
+                        break;
+                    case ZOOM_EVENT_RECV_RECORD:
+                        yaz_log(YLOG_LOG, "Record from %s", client_get_url(cl));
+                        client_record_response(cl);
                         break;
                     default:
-                        yaz_log(YLOG_WARN, 
-                                "Unexpected Z39.50 response from %s",  
-                                client_get_url(cl));
-                        client_fatal(cl);
-                        return;
+                        yaz_log(YLOG_LOG, "Unhandled event (%d) from %s",
+                            event, client_get_url(cl));
                 }
-                // We aren't expecting staggered output from target
-                // if (cs_more(t->link))
-                //    iochan_setevent(i, EVENT_INPUT);
             }
-            else  // we throw away response and go to idle mode
-            {
-                yaz_log(YLOG_DEBUG, "Ignoring result of expired operation");
-                client_set_state(cl, Client_Continue);
-            }
-	}
-	/* if len==1 we do nothing but wait for more input */
+            while(ZOOM_event_nonblock(1, &link));
+        }
     }
-    client_continue(cl);
 }
+
 
 // Disassociate connection from client
 void connection_release(struct connection *co)
@@ -326,45 +310,39 @@ void connect_resolver_host(struct host *host)
     }
 }
 
-int connection_send_apdu(struct connection *co, Z_APDU *a)
-{
-    char *buf;
-    int len, r;
-
-    if (!z_APDU(global_parameters.odr_out, &a, 0, 0))
-    {
-        odr_perror(global_parameters.odr_out, "Encoding APDU");
-	abort();
-    }
-    buf = odr_getbuf(global_parameters.odr_out, &len, 0);
-    r = cs_put(co->link, buf, len);
-    if (r < 0)
-    {
-        yaz_log(YLOG_WARN, "cs_put: %s", cs_errmsg(cs_errno(co->link)));
-        return -1;
-    }
-    else if (r == 1)
-    {
-        fprintf(stderr, "cs_put incomplete (ParaZ does not handle that)\n");
-        return -1;;
-    }
-    odr_reset(global_parameters.odr_out); /* release the APDU structure  */
-    co->state = Conn_Waiting;
-    iochan_setflags(co->iochan, EVENT_INPUT);
-    return 0;
-}
-
 struct host *connection_get_host(struct connection *con)
 {
     return con->host;
 }
 
+// Callback for use by event loop
+// We do this because ZOOM connections don't always have (the same) sockets
+static int socketfun(IOCHAN c)
+{
+    struct connection *co = iochan_getdata(c);
+    if (!co->link)
+        return -1;
+    return ZOOM_connection_get_socket(co->link);
+}
+
+// Because ZOOM always knows what events it is interested in; we may not
+static int maskfun(IOCHAN c)
+{
+    struct connection *co = iochan_getdata(c);
+    if (!co->link)
+        return 0;
+
+    // This is cheating a little, and assuming that eventl mask IDs are always
+    // the same as ZOOM-C's.
+    return ZOOM_connection_get_mask(co->link);
+}
+
 int connection_connect(struct connection *con)
 {
-    COMSTACK link = 0;
+    ZOOM_connection link = 0;
     struct host *host = connection_get_host(con);
-    void *addr;
-    int res;
+    ZOOM_options zoptions = ZOOM_options_create();
+    char *auth;
 
     struct session_database *sdb = client_get_database(con->client);
     const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
@@ -372,58 +350,43 @@ int connection_connect(struct connection *con)
     assert(host->ipport);
     assert(con);
 
-    if (!(link = cs_create(tcpip_type, 0, PROTO_Z3950)))
-    {
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to create comstack");
-        return -1;
-    }
+    ZOOM_options_set(zoptions, "async", "1");
+    ZOOM_options_set(zoptions, "implementationName",
+            global_parameters.implementationName);
+    ZOOM_options_set(zoptions, "implementationVersion",
+            global_parameters.implementationVersion);
 
     if (zproxy && *zproxy)
+    {
         con->zproxy = xstrdup(zproxy);
-
-    if (!con->zproxy)
-    {
-        /* no Z39.50 proxy needed - direct connect */
-        yaz_log(YLOG_DEBUG, "Connection create %s", connection_get_url(con));
-        
-        if (!(addr = cs_straddr(link, host->ipport)))
-        {
-            yaz_log(YLOG_WARN|YLOG_ERRNO, 
-                    "Lookup of IP address %s failed", host->ipport);
-            return -1;
-        }
-        
-    } else {
-        /* Z39.50 proxy connect */
-        yaz_log(YLOG_DEBUG, "Connection create %s proxy %s", 
-                connection_get_url(con), con->zproxy);
-        
-        if (!(addr = cs_straddr(link, con->zproxy)))
-        {
-            yaz_log(YLOG_WARN|YLOG_ERRNO, 
-                    "Lookup of ZProxy IP address %s failed", 
-                    con->zproxy);
-            return -1;
-        }
+        ZOOM_options_set(zoptions, "proxy", zproxy);
     }
-    
-    res = cs_connect(link, addr);
-    if (res < 0)
+
+    if ((auth = (char*) session_setting_oneval(sdb, PZ_AUTHENTICATION)))
+        ZOOM_options_set(zoptions, "user", auth);
+
+    if (!(link = ZOOM_connection_create(zoptions)))
     {
-        yaz_log(YLOG_WARN|YLOG_ERRNO, "cs_connect %s",
-                connection_get_url(con));
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to create ZOOM Connection");
+        ZOOM_options_destroy(zoptions);
         return -1;
     }
+    ZOOM_connection_connect(link, host->ipport, 0);
+    
     con->link = link;
+    con->iochan = iochan_create(0, connection_handler, 0);
     con->state = Conn_Connecting;
-    con->iochan = iochan_create(cs_fileno(link), connection_handler, 0);
     iochan_settimeout(con->iochan, global_parameters.z3950_connect_timeout);
     iochan_setdata(con->iochan, con);
+    iochan_setsocketfun(con->iochan, socketfun);
+    iochan_setmaskfun(con->iochan, maskfun);
     pazpar2_add_channel(con->iochan);
 
     /* this fragment is bad DRY: from client_prep_connection */
     client_set_state(con->client, Client_Connecting);
-    iochan_setflag(con->iochan, EVENT_OUTPUT);
+    ZOOM_options_destroy(zoptions);
+    // This creates the connection
+    ZOOM_connection_process(link);
     return 0;
 }
 
@@ -458,7 +421,7 @@ int client_prep_connection(struct client *cl)
         // See if someone else has an idle connection
         // We should look at timestamps here to select the longest-idle connection
         for (co = host->connections; co; co = co->next)
-            if (co->state == Conn_Open &&
+            if (connection_is_idle(co) &&
                 (!co->client || client_get_session(co->client) != se) &&
                 !strcmp(co->authentication,
                     session_setting_oneval(client_get_database(cl),
@@ -478,26 +441,17 @@ int client_prep_connection(struct client *cl)
         else
             co = connection_create(cl);
     }
+
     if (co)
-    {
-        if (co->state == Conn_Connecting)
-        {
-            client_set_state(cl, Client_Connecting);
-            iochan_setflag(co->iochan, EVENT_OUTPUT);
-        }
-        else if (co->state == Conn_Open)
-        {
-            if (client_get_state(cl) == Client_Error 
-                || client_get_state(cl) == Client_Disconnected
-                || client_get_state(cl) == Client_Idle)
-                client_set_state(cl, Client_Continue);
-            iochan_setflag(co->iochan, EVENT_OUTPUT);
-        }
         return 1;
-    }
     else
         return 0;
 }
+
+// DELETEME
+
+
+int connection_send_apdu(struct connection *co, Z_APDU *a){return 10;}
 
 
 

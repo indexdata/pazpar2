@@ -32,9 +32,7 @@ enum client_state
     Client_Connecting,
     Client_Connected,
     Client_Idle,
-    Client_Initializing,
-    Client_Searching,
-    Client_Presenting,
+    Client_Working,
     Client_Error,
     Client_Failed,
     Client_Disconnected,
@@ -65,8 +63,8 @@ const char *client_get_pquery(struct client *cl);
 void client_set_requestid(struct client *cl, int id);
 
 void client_init_response(struct client *cl, Z_APDU *a);
-void client_search_response(struct client *cl, Z_APDU *a);
-void client_present_response(struct client *cl, Z_APDU *a);
+void client_search_response(struct client *cl);
+void client_record_response(struct client *cl);
 void client_close_response(struct client *cl, Z_APDU *a);
 
 int client_is_our_response(struct client *cl);
@@ -79,6 +77,7 @@ void client_destroy(struct client *c);
 void client_set_connection(struct client *cl, struct connection *con);
 void client_disconnect(struct client *cl);
 int client_prep_connection(struct client *cl);
+void client_start_search(struct client *cl);
 void client_set_session(struct client *cl, struct session *se);
 int client_is_active(struct client *cl);
 struct client *client_next_in_session(struct client *cl);

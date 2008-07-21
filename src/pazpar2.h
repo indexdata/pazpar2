@@ -144,9 +144,7 @@ struct statistics {
     int num_clients;
     int num_no_connection;
     int num_connecting;
-    int num_initializing;
-    int num_searching;
-    int num_presenting;
+    int num_working;
     int num_idle;
     int num_failed;
     int num_error;
@@ -191,10 +189,10 @@ void pazpar2_event_loop(void);
 int host_getaddrinfo(struct host *host);
 
 xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
-        Z_External *rec);
-xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec);
+        const char *rec);
+xmlDoc *record_to_xml(struct session_database *sdb, const char *rec);
 
-struct record *ingest_record(struct client *cl, Z_External *rec,
+struct record *ingest_record(struct client *cl, const char *rec,
                              int record_no);
 void session_alert_watch(struct session *s, int what);
 void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num);

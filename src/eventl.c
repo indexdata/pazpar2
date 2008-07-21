@@ -65,6 +65,8 @@ IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags)
     new_iochan->fd = fd;
     new_iochan->flags = flags;
     new_iochan->fun = cb;
+    new_iochan->socketfun = NULL;
+    new_iochan->maskfun = NULL;
     new_iochan->force_event = 0;
     new_iochan->last_event = new_iochan->max_idle = 0;
     new_iochan->next = NULL;
@@ -90,6 +92,10 @@ int event_loop(IOCHAN *iochans)
 	max = 0;
     	for (p = *iochans; p; p = p->next)
     	{
+            if (p->maskfun)
+                p->flags = (*p->maskfun)(p);
+            if (p->socketfun)
+                p->fd = (*p->socketfun)(p);
             if (p->fd < 0)
                 continue;
 	    if (p->force_event)
@@ -133,12 +139,14 @@ int event_loop(IOCHAN *iochans)
 		force_event == EVENT_INPUT))
 	    {
     		p->last_event = now;
+                yaz_log(YLOG_DEBUG, "Eventl input event");
 		(*p->fun)(p, EVENT_INPUT);
 	    }
 	    if (!p->destroyed && (FD_ISSET(p->fd, &out) ||
 	        force_event == EVENT_OUTPUT))
 	    {
 	  	p->last_event = now;
+                yaz_log(YLOG_DEBUG, "Eventl output event");
 	    	(*p->fun)(p, EVENT_OUTPUT);
 	    }
 	    if (!p->destroyed && (FD_ISSET(p->fd, &except) ||

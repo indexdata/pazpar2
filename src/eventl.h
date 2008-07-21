@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 struct iochan;
 
 typedef void (*IOC_CALLBACK)(struct iochan *i, int event);
+typedef int (*IOC_SOCKETFUN)(struct iochan *i);
+typedef int (*IOC_MASKFUN)(struct iochan *i);
 
 typedef struct iochan
 {
@@ -37,6 +39,8 @@ typedef struct iochan
 #define EVENT_WORK      0x10
     int force_event;
     IOC_CALLBACK fun;
+    IOC_SOCKETFUN socketfun;
+    IOC_MASKFUN maskfun;
     void *data;
     int destroyed;
     time_t last_event;
@@ -61,6 +65,10 @@ typedef struct iochan
 #define iochan_getnext(i) ((i)->next)
 #define iochan_settimeout(i, t) ((i)->max_idle = (t), (i)->last_event = time(0))
 #define iochan_activity(i) ((i)->last_event = time(0))
+#define iochan_setsocketfun(i, f) ((i)->socketfun = (f))
+#define iochan_getsocketfun(i) ((i)->socketfun)
+#define iochan_setmaskfun(i, f) ((i)->maskfun = (f))
+#define iochan_getmaskfun(i) ((i)->maskfun)
 
 IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags);
 int event_loop(IOCHAN *iochans);
