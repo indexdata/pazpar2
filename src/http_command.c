@@ -534,8 +534,8 @@ static void show_raw_record_ok_binary(void *data, const char *buf, size_t sz)
 
 void show_raw_reset(void *data, struct http_channel *c, void *data2)
 {
-    struct client *client = data;
-    client_show_raw_remove(client, data2);
+    //struct client *client = data;
+    //client_show_raw_remove(client, data2);
 }
 
 static void cmd_record_ready(void *data);
@@ -829,9 +829,7 @@ static void cmd_stat(struct http_channel *c)
     wrbuf_printf(c->wrbuf, "<clients>%d</clients>\n", stat.num_clients);
     wrbuf_printf(c->wrbuf, "<unconnected>%d</unconnected>\n", stat.num_no_connection);
     wrbuf_printf(c->wrbuf, "<connecting>%d</connecting>\n", stat.num_connecting);
-    wrbuf_printf(c->wrbuf, "<initializing>%d</initializing>\n", stat.num_initializing);
-    wrbuf_printf(c->wrbuf, "<searching>%d</searching>\n", stat.num_searching);
-    wrbuf_printf(c->wrbuf, "<presenting>%d</presenting>\n", stat.num_presenting);
+    wrbuf_printf(c->wrbuf, "<working>%d</working>\n", stat.num_working);
     wrbuf_printf(c->wrbuf, "<idle>%d</idle>\n", stat.num_idle);
     wrbuf_printf(c->wrbuf, "<failed>%d</failed>\n", stat.num_failed);
     wrbuf_printf(c->wrbuf, "<error>%d</error>\n", stat.num_error);

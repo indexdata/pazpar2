@@ -117,24 +117,6 @@ static const char *client_states[] = {
 
 static struct client *client_freelist = 0;
 
-static int send_apdu(struct client *c, Z_APDU *a)
-{
-    struct session_database *sdb = client_get_database(c);
-    const char *apdulog = session_setting_oneval(sdb, PZ_APDULOG);
-    if (apdulog && *apdulog && *apdulog != '0')
-    {
-        ODR p = odr_createmem(ODR_PRINT);
-        yaz_log(YLOG_LOG, "send APDU %s", client_get_url(c));
-
-        odr_setprint(p, yaz_log_file());
-        z_APDU(p, &a, 0, 0);
-        odr_setprint(p, stderr);
-        odr_destroy(p);
-    }
-    return connection_send_apdu(client_get_connection(c), a);
-}
-
-
 const char *client_get_state_str(struct client *cl)
 {
     return client_states[cl->state];
@@ -161,60 +143,11 @@ static void client_show_raw_error(struct client *cl, const char *addinfo);
 // Close connection and set state to error
 void client_fatal(struct client *cl)
 {
-    client_show_raw_error(cl, "client connection failure");
+    //client_show_raw_error(cl, "client connection failure");
     yaz_log(YLOG_WARN, "Fatal error from %s", client_get_url(cl));
     connection_destroy(cl->connection);
     client_set_state(cl, Client_Error);
 }
-
-
-static int diag_to_wrbuf(Z_DiagRec **pp, int num, WRBUF w)
-{
-    int code = 0;
-    int i;
-    for (i = 0; i<num; i++)
-    {
-        Z_DiagRec *p = pp[i];
-        if (i)
-            wrbuf_puts(w, "; ");
-        if (p->which != Z_DiagRec_defaultFormat)
-        {
-            wrbuf_puts(w, "? Not in default format");
-        }
-        else
-        {
-            Z_DefaultDiagFormat *r = p->u.defaultFormat;
-            
-            if (!r->diagnosticSetId)
-                wrbuf_puts(w, "? Missing diagset");
-            else
-            {
-                oid_class oclass;
-                char diag_name_buf[OID_STR_MAX];
-                const char *diag_name = 0;
-                diag_name = yaz_oid_to_string_buf
-                    (r->diagnosticSetId, &oclass, diag_name_buf);
-                wrbuf_puts(w, diag_name);
-            }
-            if (!code)
-                code = *r->condition;
-            wrbuf_printf(w, " %d %s", *r->condition,
-                         diagbib1_str(*r->condition));
-            switch (r->which)
-            {
-            case Z_DefaultDiagFormat_v2Addinfo:
-                wrbuf_printf(w, " -- v2 addinfo '%s'", r->u.v2Addinfo);
-                break;
-            case Z_DefaultDiagFormat_v3Addinfo:
-                wrbuf_printf(w, " -- v3 addinfo '%s'", r->u.v3Addinfo);
-                break;
-            }
-        }
-    }
-    return code;
-}
-
-
 
 struct connection *client_get_connection(struct client *cl)
 {
@@ -240,6 +173,7 @@ void client_set_requestid(struct client *cl, int id)
 {
     cl->requestid = id;
 }
+
 
 int client_show_raw_begin(struct client *cl, int position,
                           const char *syntax, const char *esn,
@@ -285,10 +219,6 @@ int client_show_raw_begin(struct client *cl, int position,
     {
         client_show_raw_error(cl, "client disconnected");
     }
-    else
-    {
-        client_continue(cl);
-    }
     return 0;
 }
 
@@ -331,223 +261,39 @@ static void client_show_raw_cancel(struct client *cl)
     }
 }
 
-static void client_present_syntax(Z_APDU *a, const char *syntax)
-{
-    // empty string for syntax OMITS preferredRecordSyntax (OPTIONAL)
-    if (syntax && *syntax)
-        a->u.presentRequest->preferredRecordSyntax =
-            yaz_string_to_oid_odr(yaz_oid_std(),
-                                  CLASS_RECSYN, syntax,
-                                  global_parameters.odr_out);
-}
-
-static void client_present_elements(Z_APDU *a, const char *elements)
-{
-    if (elements && *elements)  // element set is optional
-    {
-        Z_ElementSetNames *elementSetNames =
-            odr_malloc(global_parameters.odr_out, sizeof(*elementSetNames));
-        Z_RecordComposition *compo = 
-            odr_malloc(global_parameters.odr_out, sizeof(*compo));
-        a->u.presentRequest->recordComposition = compo;
-
-        compo->which = Z_RecordComp_simple;
-        compo->u.simple = elementSetNames;
-
-        elementSetNames->which = Z_ElementSetNames_generic;
-        elementSetNames->u.generic = 
-            odr_strdup(global_parameters.odr_out, elements);
-    }
-}
-
 void client_send_raw_present(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
-    Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_presentRequest);
-    int toget = 1;
-    int start = cl->show_raw->position;
+    struct connection *co = client_get_connection(cl);
+    ZOOM_resultset set = connection_get_resultset(co);
+
+    int offset = cl->show_raw->position;
     const char *syntax = 0;
     const char *elements = 0;
 
     assert(cl->show_raw);
+    assert(set);
 
     yaz_log(YLOG_DEBUG, "%s: trying to present %d record(s) from %d",
-            client_get_url(cl), toget, start);
-
-    a->u.presentRequest->resultSetStartPoint = &start;
-    a->u.presentRequest->numberOfRecordsRequested = &toget;
+            client_get_url(cl), 1, offset);
 
     if (cl->show_raw->syntax)
         syntax = cl->show_raw->syntax;
     else
         syntax = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
+    ZOOM_resultset_option_set(set, "preferredRecordSyntax", syntax);
 
-    client_present_syntax(a, syntax);
     if (cl->show_raw->esn)
         elements = cl->show_raw->esn;
     else
         elements = session_setting_oneval(sdb, PZ_ELEMENTS);
-    client_present_elements(a, elements);
+    ZOOM_resultset_option_set(set, "elementSetName", elements);
 
-    if (send_apdu(cl, a) >= 0)
-    {
-        cl->show_raw->active = 1;
-	cl->state = Client_Presenting;
-    }
-    else
-    {
-        client_show_raw_error(cl, "send_apdu failed");
-        cl->state = Client_Error;
-    }
-    odr_reset(global_parameters.odr_out);
+    ZOOM_resultset_records(set, 0, offset, 1);
+    cl->show_raw->active = 1;
 }
 
-void client_send_present(struct client *cl)
-{
-    struct session_database *sdb = client_get_database(cl);
-    Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_presentRequest);
-    int toget;
-    int start = cl->records + 1;
-    const char *syntax = 0;
-    const char *elements = 0;
-
-    toget = global_parameters.chunk;
-    if (toget > global_parameters.toget - cl->records)
-        toget = global_parameters.toget - cl->records;
-    if (toget > cl->hits - cl->records)
-	toget = cl->hits - cl->records;
-
-    yaz_log(YLOG_DEBUG, "Trying to present %d record(s) from %d",
-            toget, start);
-
-    a->u.presentRequest->resultSetStartPoint = &start;
-    a->u.presentRequest->numberOfRecordsRequested = &toget;
-
-    syntax = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
-    client_present_syntax(a, syntax);
-
-    elements = session_setting_oneval(sdb, PZ_ELEMENTS);
-    client_present_elements(a, elements);
-
-    if (send_apdu(cl, a) >= 0)
-	cl->state = Client_Presenting;
-    else
-        cl->state = Client_Error;
-    odr_reset(global_parameters.odr_out);
-}
-
-
-void client_send_search(struct client *cl)
-{
-    struct session *se = client_get_session(cl);
-    struct session_database *sdb = client_get_database(cl);
-    Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_searchRequest);
-    int ndb;
-    char **databaselist;
-    Z_Query *zquery;
-    int ssub = 0, lslb = 100000, mspn = 10;
-    const char *piggyback = session_setting_oneval(sdb, PZ_PIGGYBACK);
-    const char *queryenc = session_setting_oneval(sdb, PZ_QUERYENCODING);
-
-    yaz_log(YLOG_DEBUG, "Sending search to %s", sdb->database->url);
-
-    
-    // constructing RPN query
-    a->u.searchRequest->query = zquery = odr_malloc(global_parameters.odr_out,
-                                                    sizeof(Z_Query));
-    zquery->which = Z_Query_type_1;
-    zquery->u.type_1 = p_query_rpn(global_parameters.odr_out, 
-                                   client_get_pquery(cl));
-
-    // converting to target encoding
-    if (queryenc && *queryenc)
-    {
-        yaz_iconv_t iconv = yaz_iconv_open(queryenc, "UTF-8");
-        if (iconv){
-            yaz_query_charset_convert_rpnquery(zquery->u.type_1, 
-                                               global_parameters.odr_out, 
-                                               iconv);
-            yaz_iconv_close(iconv);
-        } else
-            yaz_log(YLOG_WARN, "Query encoding failed %s %s", 
-                    client_get_database(cl)->database->url, queryenc);
-    }
-
-    for (ndb = 0; sdb->database->databases[ndb]; ndb++)
-	;
-    databaselist = odr_malloc(global_parameters.odr_out, sizeof(char*) * ndb);
-    for (ndb = 0; sdb->database->databases[ndb]; ndb++)
-	databaselist[ndb] = sdb->database->databases[ndb];
-
-    if (!piggyback || *piggyback == '1')
-    {
-        const char *elements = session_setting_oneval(sdb, PZ_ELEMENTS);
-        const char *recsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
-        if (recsyn && *recsyn)
-        {
-            a->u.searchRequest->preferredRecordSyntax =
-                yaz_string_to_oid_odr(yaz_oid_std(),
-                                      CLASS_RECSYN, recsyn,
-                                      global_parameters.odr_out);
-        }
-        if (elements && *elements)
-        {
-            Z_ElementSetNames *esn =
-                odr_malloc(global_parameters.odr_out, sizeof(*esn));
-            esn->which = Z_ElementSetNames_generic;
-            esn->u.generic = odr_strdup(global_parameters.odr_out, elements);
-
-            a->u.searchRequest->smallSetElementSetNames = esn;
-            a->u.searchRequest->mediumSetElementSetNames = esn;
-        }
-        a->u.searchRequest->smallSetUpperBound = &ssub;
-        a->u.searchRequest->largeSetLowerBound = &lslb;
-        a->u.searchRequest->mediumSetPresentNumber = &mspn;
-    }
-    a->u.searchRequest->databaseNames = databaselist;
-    a->u.searchRequest->num_databaseNames = ndb;
-
-    
-    {  //scope for sending and logging queries 
-        WRBUF wbquery = wrbuf_alloc();
-        yaz_query_to_wrbuf(wbquery, a->u.searchRequest->query);
-
-
-        if (send_apdu(cl, a) >= 0)
-        {
-            client_set_state(cl, Client_Searching);
-            client_set_requestid(cl, se->requestid);
-            yaz_log(YLOG_LOG, "SearchRequest %s %s %s", 
-                    client_get_database(cl)->database->url,
-                    queryenc ? queryenc : "UTF-8",
-                    wrbuf_cstr(wbquery));
-        }
-        else {
-            client_set_state(cl, Client_Error);
-            yaz_log(YLOG_WARN, "Failed SearchRequest %s  %s %s", 
-                    client_get_database(cl)->database->url, 
-                    queryenc ? queryenc : "UTF-8",
-                    wrbuf_cstr(wbquery));
-        }
-        
-        wrbuf_destroy(wbquery);
-    }    
-
-    odr_reset(global_parameters.odr_out);
-}
-
-void client_init_response(struct client *cl, Z_APDU *a)
-{
-    Z_InitResponse *r = a->u.initResponse;
-
-    yaz_log(YLOG_DEBUG, "Init response %s", cl->database->database->url);
-
-    if (*r->result)
-	cl->state = Client_Continue;
-    else
-        cl->state = Client_Failed; // FIXME need to do something to the connection
-}
-
+#ifdef RETIRED
 
 static void ingest_raw_records(struct client *cl, Z_Records *r)
 {
@@ -609,116 +355,89 @@ static void ingest_raw_records(struct client *cl, Z_Records *r)
     xmlFree(buf_out);
 }
 
-static void ingest_records(struct client *cl, Z_Records *r)
+#endif // RETIRED show raw
+
+void client_search_response(struct client *cl)
 {
-#if USE_TIMING
-    yaz_timing_t t = yaz_timing_create();
-#endif
-    struct record *rec;
-    struct session *s = client_get_session(cl);
-    Z_NamePlusRecordList *rlist;
-    int i;
-
-    if (r->which != Z_Records_DBOSD)
-        return;
-    rlist = r->u.databaseOrSurDiagnostics;
-    for (i = 0; i < rlist->num_records; i++)
-    {
-        Z_NamePlusRecord *npr = rlist->records[i];
-
-        cl->records++;
-        if (npr->which != Z_NamePlusRecord_databaseRecord)
-        {
-            yaz_log(YLOG_WARN, 
-                    "Unexpected record type, probably diagnostic %s",
-                    cl->database->database->url);
-            continue;
-        }
-
-        rec = ingest_record(cl, npr->u.databaseRecord, cl->records);
-        if (!rec)
-            continue;
-    }
-    if (rlist->num_records)
-        session_alert_watch(s, SESSION_WATCH_SHOW);
-    if (rlist->num_records)
-        session_alert_watch(s, SESSION_WATCH_RECORD);
-
-#if USE_TIMING
-    yaz_timing_stop(t);
-    yaz_log(YLOG_LOG, "ingest_records %6.5f %3.2f %3.2f", 
-            yaz_timing_get_real(t), yaz_timing_get_user(t),
-            yaz_timing_get_sys(t));
-    yaz_timing_destroy(&t);
-#endif
-}
-
-
-void client_search_response(struct client *cl, Z_APDU *a)
-{
+    struct connection *co = cl->connection;
     struct session *se = cl->session;
-    Z_SearchResponse *r = a->u.searchResponse;
+    ZOOM_connection link = connection_get_link(co);
+    ZOOM_resultset resultset = connection_get_resultset(co);
+    const char *error, *addinfo;
 
-    yaz_log(YLOG_DEBUG, "Search response %s (status=%d)", 
-            cl->database->database->url, *r->searchStatus);
-
-    if (*r->searchStatus)
+    if (ZOOM_connection_error(link, &error, &addinfo))
     {
-	cl->hits = *r->resultCount;
-        if (cl->hits < 0)
-        {
-            yaz_log(YLOG_WARN, "Target %s returns hit count %d",
-                    cl->database->database->url, cl->hits);
-        }
-        else
-            se->total_hits += cl->hits;
-        if (r->presentStatus && !*r->presentStatus && r->records)
-        {
-            yaz_log(YLOG_DEBUG, "Records in search response %s", 
-                    cl->database->database->url);
-            ingest_records(cl, r->records);
-        }
-        cl->state = Client_Continue;
+        cl->hits = 0;
+        cl->state = Client_Error;
+        yaz_log(YLOG_WARN, "Search error %s (%s): %s",
+            error, addinfo, client_get_url(cl));
     }
     else
-    {          /*"FAILED"*/
-        Z_Records *recs = r->records;
-	cl->hits = 0;
-        cl->state = Client_Error;
-        if (recs && recs->which == Z_Records_NSD)
-        {
-            WRBUF w = wrbuf_alloc();
-
-            Z_DiagRec dr, *dr_p = &dr;
-            dr.which = Z_DiagRec_defaultFormat;
-            dr.u.defaultFormat = recs->u.nonSurrogateDiagnostic;
-            
-            wrbuf_printf(w, "Search response NSD %s: ",
-                         cl->database->database->url);
-            
-            cl->diagnostic = diag_to_wrbuf(&dr_p, 1, w);
-
-            yaz_log(YLOG_WARN, "%s", wrbuf_cstr(w));
-
-            cl->state = Client_Error;
-            wrbuf_destroy(w);
-        }
-        else if (recs && recs->which == Z_Records_multipleNSD)
-        {
-            WRBUF w = wrbuf_alloc();
-
-            wrbuf_printf(w, "Search response multipleNSD %s: ",
-                         cl->database->database->url);
-            cl->diagnostic = 
-                diag_to_wrbuf(recs->u.multipleNonSurDiagnostics->diagRecs,
-                              recs->u.multipleNonSurDiagnostics->num_diagRecs,
-                              w);
-            yaz_log(YLOG_WARN, "%s", wrbuf_cstr(w));
-            cl->state = Client_Error;
-            wrbuf_destroy(w);
-        }
+    {
+        cl->hits = ZOOM_resultset_size(resultset);
+        se->total_hits += cl->hits;
     }
 }
+
+void client_record_response(struct client *cl)
+{
+    struct connection *co = cl->connection;
+    ZOOM_connection link = connection_get_link(co);
+    ZOOM_resultset resultset = connection_get_resultset(co);
+    const char *error, *addinfo;
+
+    if (ZOOM_connection_error(link, &error, &addinfo))
+    {
+        cl->state = Client_Error;
+        yaz_log(YLOG_WARN, "Search error %s (%s): %s",
+            error, addinfo, client_get_url(cl));
+    }
+    else
+    {
+        ZOOM_record rec;
+        int offset = cl->records;
+        const char *msg, *addinfo;
+        
+        if ((rec = ZOOM_resultset_record(resultset, offset)))
+        {
+            yaz_log(YLOG_LOG, "Record with offset %d", offset);
+            cl->records++;
+            if (ZOOM_record_error(rec, &msg, &addinfo, 0))
+                yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
+                        error, addinfo, client_get_url(cl), cl->records);
+            else
+            {
+                struct session_database *sdb = client_get_database(cl);
+                const char *xmlrec;
+                char type[128] = "xml";
+                const char *nativesyntax =
+                            session_setting_oneval(sdb, PZ_NATIVESYNTAX);
+                char *cset;
+
+                if (*nativesyntax && (cset = strchr(nativesyntax, ';')))
+                    sprintf(type, "xml; charset=%s", cset + 1);
+
+                if ((xmlrec = ZOOM_record_get(rec, type, NULL)))
+                {
+                    if (ingest_record(cl, xmlrec, cl->records))
+                    {
+                        session_alert_watch(cl->session, SESSION_WATCH_SHOW);
+                        session_alert_watch(cl->session, SESSION_WATCH_RECORD);
+                    }
+                    else
+                        yaz_log(YLOG_WARN, "Failed to ingest");
+                }
+                else
+                    yaz_log(YLOG_WARN, "Failed to extract ZOOM record");
+
+            }
+        }
+        else
+            yaz_log(YLOG_WARN, "Expected record, but got NULL");
+    }
+}
+
+#ifdef RETIRED
 
 void client_present_response(struct client *cl, Z_APDU *a)
 {
@@ -794,6 +513,9 @@ void client_close_response(struct client *cl, Z_APDU *a)
     connection_destroy(co);
 }
 
+#endif // RETIRED show raw
+
+#ifdef RETIRED
 int client_is_our_response(struct client *cl)
 {
     struct session *se = client_get_session(cl);
@@ -803,92 +525,53 @@ int client_is_our_response(struct client *cl)
         return 1;
     return 0;
 }
+#endif
 
-// Set authentication token in init if one is set for the client
-// TODO: Extend this to handle other schemes than open (should be simple)
-static void init_authentication(struct client *cl, Z_InitRequest *req)
+void client_start_search(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
-    const char *auth = session_setting_oneval(sdb, PZ_AUTHENTICATION);
+    struct connection *co = client_get_connection(cl);
+    ZOOM_connection link = connection_get_link(co);
+    ZOOM_resultset rs;
+    char *databaseName = sdb->database->databases[0];
+    const char *opt_piggyback = session_setting_oneval(sdb, PZ_PIGGYBACK);
+    const char *opt_queryenc = session_setting_oneval(sdb, PZ_QUERYENCODING);
+    const char *opt_elements = session_setting_oneval(sdb, PZ_ELEMENTS);
+    const char *opt_requestsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
+    const char *opt_maxrecs = session_setting_oneval(sdb, PZ_MAXRECS);
 
-    if (*auth)
-    {
-        struct connection *co = client_get_connection(cl);
-        struct session *se = client_get_session(cl);
-        Z_IdAuthentication *idAuth = odr_malloc(global_parameters.odr_out,
-                sizeof(*idAuth));
-        idAuth->which = Z_IdAuthentication_open;
-        idAuth->u.open = odr_strdup(global_parameters.odr_out, auth);
-        req->idAuthentication = idAuth;
-        connection_set_authentication(co, nmem_strdup(se->session_nmem, auth));
-    }
-}
+    assert(link);
 
-static void init_zproxy(struct client *cl, Z_InitRequest *req)
-{
-    struct session_database *sdb = client_get_database(cl);
-    char *ztarget = sdb->database->url;
-    //char *ztarget = sdb->url;    
-    const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
-    
-    if (*zproxy)
-        yaz_oi_set_string_oid(&req->otherInfo,
-                              global_parameters.odr_out,
-                              yaz_oid_userinfo_proxy,
-                              1, ztarget);
-}
+    cl->hits = -1;
+    cl->records = 0;
+    cl->diagnostic = 0;
 
-
-static void client_init_request(struct client *cl)
-{
-    Z_APDU *a = zget_APDU(global_parameters.odr_out, Z_APDU_initRequest);
-
-    a->u.initRequest->implementationId = global_parameters.implementationId;
-    a->u.initRequest->implementationName = global_parameters.implementationName;
-    a->u.initRequest->implementationVersion =
-	global_parameters.implementationVersion;
-    ODR_MASK_SET(a->u.initRequest->options, Z_Options_search);
-    ODR_MASK_SET(a->u.initRequest->options, Z_Options_present);
-    ODR_MASK_SET(a->u.initRequest->options, Z_Options_namedResultSets);
-
-    ODR_MASK_SET(a->u.initRequest->protocolVersion, Z_ProtocolVersion_1);
-    ODR_MASK_SET(a->u.initRequest->protocolVersion, Z_ProtocolVersion_2);
-    ODR_MASK_SET(a->u.initRequest->protocolVersion, Z_ProtocolVersion_3);
-
-    init_authentication(cl, a->u.initRequest);
-    init_zproxy(cl, a->u.initRequest);
-
-    if (send_apdu(cl, a) >= 0)
-	client_set_state(cl, Client_Initializing);
+    if (*opt_piggyback)
+        ZOOM_connection_option_set(link, "piggyback", opt_piggyback);
     else
-        client_set_state(cl, Client_Error);
-    odr_reset(global_parameters.odr_out);
-}
-
-void client_continue(struct client *cl)
-{
-    if (cl->state == Client_Connected) {
-        client_init_request(cl);
-    }
-    if (cl->state == Client_Continue || cl->state == Client_Idle)
+        ZOOM_connection_option_set(link, "piggyback", "1");
+    if (*opt_queryenc)
+        ZOOM_connection_option_set(link, "rpnCharset", opt_queryenc);
+    if (*opt_elements)
+        ZOOM_connection_option_set(link, "elementSetName", opt_elements);
+    if (*opt_requestsyn)
+        ZOOM_connection_option_set(link, "preferredRecordSyntax", opt_requestsyn);
+    if (*opt_maxrecs)
+        ZOOM_connection_option_set(link, "count", opt_maxrecs);
+    else
     {
-        struct session *se = client_get_session(cl);
-        if (cl->requestid != se->requestid && cl->pquery) {
-            // we'll have to abort this because result set is to be deleted
-            client_show_raw_cancel(cl);   
-            client_send_search(cl);
-        }
-        else if (cl->show_raw)
-        {
-            client_send_raw_present(cl);
-        }
-        else if (cl->hits > 0 && cl->records < global_parameters.toget &&
-            cl->records < cl->hits) {
-            client_send_present(cl);
-        }
-        else
-            client_set_state(cl, Client_Idle);
+        char n[128];
+        sprintf(n, "%d", global_parameters.toget);
+        ZOOM_connection_option_set(link, "count", n);
     }
+    if (!databaseName || !*databaseName)
+        databaseName = "Default";
+    ZOOM_connection_option_set(link, "databaseName", databaseName);
+
+    ZOOM_connection_option_set(link, "presentChunk", "20");
+
+    rs = ZOOM_connection_search_pqf(link, cl->pquery);
+    connection_set_resultset(co, rs);
 }
 
 struct client *client_create(void)
@@ -1034,10 +717,7 @@ int client_is_active(struct client *cl)
 {
     if (cl->connection && (cl->state == Client_Continue ||
                            cl->state == Client_Connecting ||
-                           cl->state == Client_Connected ||
-                           cl->state == Client_Initializing ||
-                           cl->state == Client_Searching ||
-                           cl->state == Client_Presenting))
+                           cl->state == Client_Working))
         return 1;
     return 0;
 }

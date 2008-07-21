@@ -158,109 +158,20 @@ static void add_facet(struct session *s, const char *type, const char *value)
     termlist_insert(s->termlists[i].termlist, value);
 }
 
-xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec)
+xmlDoc *record_to_xml(struct session_database *sdb, const char *rec)
 {
     struct database *db = sdb->database;
     xmlDoc *rdoc = 0;
-    const Odr_oid *oid = rec->direct_reference;
 
-    /* convert response record to XML somehow */
-    if (rec->which == Z_External_octet && oid
-        && !oid_oidcmp(oid, yaz_oid_recsyn_xml))
+    rdoc = xmlParseMemory(rec, strlen(rec));
+
+    if (!rdoc)
     {
-        /* xml already */
-        rdoc = xmlParseMemory((char*) rec->u.octet_aligned->buf,
-                              rec->u.octet_aligned->len);
-        if (!rdoc)
-        {
-            yaz_log(YLOG_FATAL, "Non-wellformed XML received from %s",
-                    db->url);
-            return 0;
-        }
-    }
-    else if (rec->which == Z_External_OPAC)
-    {
-        if (!sdb->yaz_marc)
-        {
-            yaz_log(YLOG_WARN, "MARC decoding not configured");
-            return 0;
-        }
-        else
-        {
-            /* OPAC gets converted to XML too */
-            WRBUF wrbuf_opac = wrbuf_alloc();
-            /* MARCXML inside the OPAC XML. Charset is in effect because we
-               use the yaz_marc handle */
-            yaz_marc_xml(sdb->yaz_marc, YAZ_MARC_MARCXML);
-            yaz_opac_decode_wrbuf(sdb->yaz_marc, rec->u.opac, wrbuf_opac);
-            
-            rdoc = xmlParseMemory((char*) wrbuf_buf(wrbuf_opac),
-                                  wrbuf_len(wrbuf_opac));
-            if (!rdoc)
-            {
-                yaz_log(YLOG_WARN, "Unable to parse OPAC XML");
-                /* Was used to debug bug #1348 */
-#if 0
-                FILE *f = fopen("/tmp/opac.xml.txt", "wb");
-                if (f)
-                {
-                    fwrite(wrbuf_buf(wrbuf_opac), 1, wrbuf_len(wrbuf_opac), f);
-                    fclose(f);
-                }
-#endif
-            }
-            wrbuf_destroy(wrbuf_opac);
-        }
-    }
-    else if (oid && yaz_oid_is_iso2709(oid))
-    {
-        /* ISO2709 gets converted to MARCXML */
-        if (!sdb->yaz_marc)
-        {
-            yaz_log(YLOG_WARN, "MARC decoding not configured");
-            return 0;
-        }
-        else
-        {
-            xmlNode *res;
-            char *buf;
-            int len;
-            
-            if (rec->which != Z_External_octet)
-            {
-                yaz_log(YLOG_WARN, "Unexpected external branch, probably BER %s",
-                        db->url);
-                return 0;
-            }
-            buf = (char*) rec->u.octet_aligned->buf;
-            len = rec->u.octet_aligned->len;
-            if (yaz_marc_read_iso2709(sdb->yaz_marc, buf, len) < 0)
-            {
-                yaz_log(YLOG_WARN, "Failed to decode MARC %s", db->url);
-                return 0;
-            }
-            
-            if (yaz_marc_write_xml(sdb->yaz_marc, &res,
-                                   "http://www.loc.gov/MARC21/slim", 0, 0) < 0)
-            {
-                yaz_log(YLOG_WARN, "Failed to encode as XML %s",
-                        db->url);
-                return 0;
-            }
-            rdoc = xmlNewDoc((xmlChar *) "1.0");
-            xmlDocSetRootElement(rdoc, res);
-        }
-    }
-    else
-    {
-        char oid_name_buf[OID_STR_MAX];
-        const char *oid_name = yaz_oid_to_string_buf(oid, 0, oid_name_buf);
-        yaz_log(YLOG_FATAL, 
-                "Unable to handle record of type %s from %s", 
-                oid_name, db->url);
+        yaz_log(YLOG_FATAL, "Non-wellformed XML received from %s",
+                db->url);
         return 0;
     }
-    
+
     if (global_parameters.dump_records)
     {
         FILE *lf = yaz_log_file();
@@ -275,6 +186,7 @@ xmlDoc *record_to_xml(struct session_database *sdb, Z_External *rec)
             fprintf(lf, "\n");
         }
     }
+
     return rdoc;
 }
 
@@ -343,7 +255,7 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc)
 }
 
 xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
-                         Z_External *rec)
+                         const char *rec)
 {
     struct database_retrievalmap *m;
     xmlDoc *rdoc = record_to_xml(sdb, rec);
@@ -694,7 +606,8 @@ enum pazpar2_error_code search(struct session *se,
         else
         {
             no_working++;
-            client_prep_connection(cl);
+            if (client_prep_connection(cl))
+                client_start_search(cl);
         }
     }
 
@@ -1000,9 +913,7 @@ void statistics(struct session *se, struct statistics *stat)
         switch (client_get_state(cl))
         {
         case Client_Connecting: stat->num_connecting++; break;
-        case Client_Initializing: stat->num_initializing++; break;
-        case Client_Searching: stat->num_searching++; break;
-        case Client_Presenting: stat->num_presenting++; break;
+        case Client_Working: stat->num_working++; break;
         case Client_Idle: stat->num_idle++; break;
         case Client_Failed: stat->num_failed++; break;
         case Client_Error: stat->num_error++; break;
@@ -1103,7 +1014,7 @@ static struct record_metadata *record_metadata_init(
     return rec_md;
 }
 
-struct record *ingest_record(struct client *cl, Z_External *rec,
+struct record *ingest_record(struct client *cl, const char *rec,
                              int record_no)
 {
     xmlDoc *xdoc = normalize_record(client_get_database(cl),

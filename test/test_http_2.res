@@ -4,9 +4,7 @@
 <clients>0</clients>
 <unconnected>0</unconnected>
 <connecting>0</connecting>
-<initializing>0</initializing>
-<searching>0</searching>
-<presenting>0</presenting>
+<working>0</working>
 <idle>0</idle>
 <failed>0</failed>
 <error>0</error>
