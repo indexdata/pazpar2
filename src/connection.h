@@ -48,6 +48,7 @@ void connection_release(struct connection *co);
 ZOOM_connection connection_get_link(struct connection *co);
 ZOOM_resultset connection_get_resultset(struct connection *co);
 void connection_set_resultset(struct connection *co, ZOOM_resultset rs);
+void connection_continue(struct connection *co);
 
 #endif
 

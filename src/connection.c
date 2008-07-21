@@ -133,6 +133,14 @@ static void remove_connection_from_host(struct connection *con)
     assert(*conp == 0);
 }
 
+void connection_continue(struct connection *co)
+{
+#if 1
+    yaz_log(YLOG_LOG, "connection_continue");
+    iochan_setevent(co->iochan, EVENT_OUTPUT);
+#endif
+}
+
 // Close connection and recycle structure
 void connection_destroy(struct connection *co)
 {
@@ -221,44 +229,45 @@ static void connection_handler(IOCHAN i, int event)
 
         if (ZOOM_event(1, &link))
         {
-            do {
+            do
+            {
                 int event = ZOOM_connection_last_event(link);
                 switch (event) 
                 {
-                    case ZOOM_EVENT_END:
-                        break;
-                    case ZOOM_EVENT_SEND_DATA:
-                        break;
-                    case ZOOM_EVENT_RECV_DATA:
-                        break;
-                    case ZOOM_EVENT_UNKNOWN:
-                        break;
-                    case ZOOM_EVENT_SEND_APDU:
-                        client_set_state(co->client, Client_Working);
-                        break;
-                    case ZOOM_EVENT_RECV_APDU:
-                        client_set_state(co->client, Client_Idle);
-                        break;
-                    case ZOOM_EVENT_CONNECT:
-                        yaz_log(YLOG_LOG, "Connected to %s", client_get_url(cl));
-                        co->state = Conn_Open;
-                        client_set_state(co->client, Client_Connected);
-                        iochan_settimeout(i, global_parameters.z3950_session_timeout);
-                        break;
-                    case ZOOM_EVENT_RECV_SEARCH:
-                        yaz_log(YLOG_LOG, "Search response from %s", client_get_url(cl));
-                        client_search_response(cl);
-                        break;
-                    case ZOOM_EVENT_RECV_RECORD:
-                        yaz_log(YLOG_LOG, "Record from %s", client_get_url(cl));
-                        client_record_response(cl);
-                        break;
-                    default:
-                        yaz_log(YLOG_LOG, "Unhandled event (%d) from %s",
+                case ZOOM_EVENT_END:
+                    break;
+                case ZOOM_EVENT_SEND_DATA:
+                    break;
+                case ZOOM_EVENT_RECV_DATA:
+                    break;
+                case ZOOM_EVENT_UNKNOWN:
+                    break;
+                case ZOOM_EVENT_SEND_APDU:
+                    client_set_state(co->client, Client_Working);
+                    break;
+                case ZOOM_EVENT_RECV_APDU:
+                    client_set_state(co->client, Client_Idle);
+                    break;
+                case ZOOM_EVENT_CONNECT:
+                    yaz_log(YLOG_LOG, "Connected to %s", client_get_url(cl));
+                    co->state = Conn_Open;
+                    client_set_state(co->client, Client_Connected);
+                    iochan_settimeout(i, global_parameters.z3950_session_timeout);
+                    break;
+                case ZOOM_EVENT_RECV_SEARCH:
+                    yaz_log(YLOG_LOG, "Search response from %s", client_get_url(cl));
+                    client_search_response(cl);
+                    break;
+                case ZOOM_EVENT_RECV_RECORD:
+                    yaz_log(YLOG_LOG, "Record from %s", client_get_url(cl));
+                    client_record_response(cl);
+                    break;
+                default:
+                    yaz_log(YLOG_LOG, "Unhandled event (%d) from %s",
                             event, client_get_url(cl));
                 }
             }
-            while(ZOOM_event_nonblock(1, &link));
+            while (ZOOM_event_nonblock(1, &link));
         }
     }
 }

@@ -57,6 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/querytowrbuf.h>
 #include <yaz/oid_db.h>
 #include <yaz/diagbib1.h>
+#include <yaz/snprintf.h>
 
 #define USE_TIMING 0
 #if USE_TIMING
@@ -293,11 +294,38 @@ static void client_send_raw_present(struct client *cl)
         elements = cl->show_raw->esn;
     else
         elements = session_setting_oneval(sdb, PZ_ELEMENTS);
-    ZOOM_resultset_option_set(set, "elementSetName", elements);
+    if (elements && *elements)
+        ZOOM_resultset_option_set(set, "elementSetName", elements);
 
-    ZOOM_resultset_records(set, 0, offset, 1);
+    ZOOM_resultset_records(set, 0, offset-1, 1);
     cl->show_raw->active = 1;
-    ZOOM_connection_process(connection_get_link(co));
+
+    connection_continue(co);
+}
+
+static void ingest_raw_record(struct client *cl, ZOOM_record rec)
+{
+    const char *buf;
+    int len;
+    char type[50];
+
+    if (cl->show_raw->binary)
+        strcpy(type, "raw");
+    else
+    {
+        struct session_database *sdb = client_get_database(cl);
+        const char *cset;
+
+        const char *nativesyntax = session_setting_oneval(sdb, PZ_NATIVESYNTAX);
+        if (*nativesyntax && (cset = strchr(nativesyntax, ';')))
+            yaz_snprintf(type, sizeof(type)-1, "xml; charset=%s", cset);
+        else
+            strcpy(type, "xml");
+    }
+
+    buf = ZOOM_record_get(rec, type, &len);
+    cl->show_raw->record_handler(cl->show_raw->data,  buf, len);
+    client_show_raw_dequeue(cl);
 }
 
 #ifdef RETIRED
@@ -393,6 +421,7 @@ void client_record_response(struct client *cl)
     ZOOM_resultset resultset = connection_get_resultset(co);
     const char *error, *addinfo;
 
+    yaz_log(YLOG_LOG, "client_record_response");
     if (ZOOM_connection_error(link, &error, &addinfo))
     {
         cl->state = Client_Error;
@@ -404,38 +433,49 @@ void client_record_response(struct client *cl)
         ZOOM_record rec;
         int offset = cl->records;
         const char *msg, *addinfo;
-        
+
         if ((rec = ZOOM_resultset_record(resultset, offset)))
         {
             yaz_log(YLOG_LOG, "Record with offset %d", offset);
-            cl->records++;
-            if (ZOOM_record_error(rec, &msg, &addinfo, 0))
-                yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
-                        error, addinfo, client_get_url(cl), cl->records);
+
+            yaz_log(YLOG_LOG, "show_raw=%p show_raw->active=%d",
+                    cl->show_raw, cl->show_raw ? cl->show_raw->active : 0);
+            if (cl->show_raw && cl->show_raw->active)
+            {
+                cl->show_raw->active = 0;
+                ingest_raw_record(cl, rec);
+            }
             else
             {
-                struct session_database *sdb = client_get_database(cl);
-                const char *xmlrec;
-                char type[128] = "xml";
-                const char *nativesyntax =
-                            session_setting_oneval(sdb, PZ_NATIVESYNTAX);
-                char *cset;
-
-                if (*nativesyntax && (cset = strchr(nativesyntax, ';')))
-                    sprintf(type, "xml; charset=%s", cset + 1);
-
-                if ((xmlrec = ZOOM_record_get(rec, type, NULL)))
+                cl->records++;
+                if (ZOOM_record_error(rec, &msg, &addinfo, 0))
+                    yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
+                            error, addinfo, client_get_url(cl), cl->records);
+                else
                 {
-                    if (ingest_record(cl, xmlrec, cl->records))
+                    struct session_database *sdb = client_get_database(cl);
+                    const char *xmlrec;
+                    char type[128] = "xml";
+                    const char *nativesyntax =
+                        session_setting_oneval(sdb, PZ_NATIVESYNTAX);
+                    char *cset;
+                    
+                    if (*nativesyntax && (cset = strchr(nativesyntax, ';')))
+                        sprintf(type, "xml; charset=%s", cset + 1);
+                    
+                    if ((xmlrec = ZOOM_record_get(rec, type, NULL)))
                     {
-                        session_alert_watch(cl->session, SESSION_WATCH_SHOW);
-                        session_alert_watch(cl->session, SESSION_WATCH_RECORD);
+                        if (ingest_record(cl, xmlrec, cl->records))
+                        {
+                            session_alert_watch(cl->session, SESSION_WATCH_SHOW);
+                            session_alert_watch(cl->session, SESSION_WATCH_RECORD);
+                        }
+                        else
+                            yaz_log(YLOG_WARN, "Failed to ingest");
                     }
                     else
-                        yaz_log(YLOG_WARN, "Failed to ingest");
+                        yaz_log(YLOG_WARN, "Failed to extract ZOOM record");
                 }
-                else
-                    yaz_log(YLOG_WARN, "Failed to extract ZOOM record");
 
             }
         }
@@ -579,7 +619,7 @@ void client_start_search(struct client *cl)
 
     rs = ZOOM_connection_search_pqf(link, cl->pquery);
     connection_set_resultset(co, rs);
-    ZOOM_connection_process(link);
+    connection_continue(co);
 }
 
 struct client *client_create(void)
