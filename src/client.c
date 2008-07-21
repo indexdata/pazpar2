@@ -175,6 +175,8 @@ void client_set_requestid(struct client *cl, int id)
 }
 
 
+static void client_send_raw_present(struct client *cl);
+
 int client_show_raw_begin(struct client *cl, int position,
                           const char *syntax, const char *esn,
                           void *data,
@@ -219,6 +221,10 @@ int client_show_raw_begin(struct client *cl, int position,
     {
         client_show_raw_error(cl, "client disconnected");
     }
+    else
+    {
+        client_send_raw_present(cl);
+    }
     return 0;
 }
 
@@ -261,7 +267,7 @@ static void client_show_raw_cancel(struct client *cl)
     }
 }
 
-void client_send_raw_present(struct client *cl)
+static void client_send_raw_present(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
     struct connection *co = client_get_connection(cl);
@@ -291,6 +297,7 @@ void client_send_raw_present(struct client *cl)
 
     ZOOM_resultset_records(set, 0, offset, 1);
     cl->show_raw->active = 1;
+    ZOOM_connection_process(connection_get_link(co));
 }
 
 #ifdef RETIRED
@@ -572,6 +579,7 @@ void client_start_search(struct client *cl)
 
     rs = ZOOM_connection_search_pqf(link, cl->pquery);
     connection_set_resultset(co, rs);
+    ZOOM_connection_process(link);
 }
 
 struct client *client_create(void)
