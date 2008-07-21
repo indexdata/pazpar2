@@ -355,6 +355,7 @@ int connection_connect(struct connection *con)
 
     struct session_database *sdb = client_get_database(con->client);
     const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
+    const char *apdulog = session_setting_oneval(sdb, PZ_APDULOG);
 
     assert(host->ipport);
     assert(con);
@@ -364,12 +365,13 @@ int connection_connect(struct connection *con)
             global_parameters.implementationName);
     ZOOM_options_set(zoptions, "implementationVersion",
             global_parameters.implementationVersion);
-
     if (zproxy && *zproxy)
     {
         con->zproxy = xstrdup(zproxy);
         ZOOM_options_set(zoptions, "proxy", zproxy);
     }
+    if (apdulog && *apdulog)
+        ZOOM_options_set(zoptions, "apdulog", apdulog);
 
     if ((auth = (char*) session_setting_oneval(sdb, PZ_AUTHENTICATION)))
         ZOOM_options_set(zoptions, "user", auth);
