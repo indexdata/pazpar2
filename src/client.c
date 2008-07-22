@@ -303,24 +303,41 @@ static void client_send_raw_present(struct client *cl)
     connection_continue(co);
 }
 
+static int nativesyntax_to_type(struct session_database *sdb, char *type)
+{
+    const char *s = session_setting_oneval(sdb, PZ_NATIVESYNTAX);
+
+    if (s && *s)
+    {
+        if (!strncmp(s, "iso2709", 7))
+        {
+            const char *cp = strchr(s, ';');
+            yaz_snprintf(type, 80, "xml; charset=%s", cp ? cp+1 : "marc-8s");
+        }
+        else if (!strncmp(s, "xml", 3))
+        {
+            strcpy(type, "xml");
+        }
+        else
+            return -1;
+        yaz_log(YLOG_LOG, "Returned type %s", type);
+        return 0;
+    }
+    return -1;
+}
+
 static void ingest_raw_record(struct client *cl, ZOOM_record rec)
 {
     const char *buf;
     int len;
-    char type[50];
+    char type[80];
 
     if (cl->show_raw->binary)
         strcpy(type, "raw");
     else
     {
         struct session_database *sdb = client_get_database(cl);
-        const char *cset;
-
-        const char *nativesyntax = session_setting_oneval(sdb, PZ_NATIVESYNTAX);
-        if (*nativesyntax && (cset = strchr(nativesyntax, ';')))
-            yaz_snprintf(type, sizeof(type)-1, "xml; charset=%s", cset);
-        else
-            strcpy(type, "xml");
+        nativesyntax_to_type(sdb, type);
     }
 
     buf = ZOOM_record_get(rec, type, &len);
@@ -414,6 +431,7 @@ void client_search_response(struct client *cl)
     }
 }
 
+
 void client_record_response(struct client *cl)
 {
     struct connection *co = cl->connection;
@@ -459,14 +477,8 @@ void client_record_response(struct client *cl)
                 {
                     struct session_database *sdb = client_get_database(cl);
                     const char *xmlrec;
-                    char type[128] = "xml";
-                    const char *nativesyntax =
-                        session_setting_oneval(sdb, PZ_NATIVESYNTAX);
-                    char *cset;
-                    
-                    if (*nativesyntax && (cset = strchr(nativesyntax, ';')))
-                        sprintf(type, "xml; charset=%s", cset + 1);
-                    
+                    char type[80];
+                    nativesyntax_to_type(sdb, type);
                     if ((xmlrec = ZOOM_record_get(rec, type, NULL)))
                     {
                         if (ingest_record(cl, xmlrec, cl->records))
