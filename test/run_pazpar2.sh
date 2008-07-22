@@ -34,7 +34,7 @@ URLS=${PREFIX}_urls
 if test "$usevalgrind"; then
     valgrind --log-file=valgrind ../src/pazpar2 -X -l pazpar2.log -f ${CFG} -t ${srcdir}/test_http.xml >extra_pazpar2.log 2>&1 &
 else
-    YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -X -l pazpar2.log -f ${srcdir}/${CFG} -t ${srcdir}/test_http.xml >extra_pazpar2.log 2>&1 &
+    YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -d -X -l pazpar2.log -f ${srcdir}/${CFG} -t ${srcdir}/test_http.xml >extra_pazpar2.log 2>&1 &
 fi
 
 
