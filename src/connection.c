@@ -189,7 +189,7 @@ struct connection *connection_create(struct client *cl)
     client_set_connection(cl, new);
     new->link = 0;
     new->resultset = 0;
-    new->state = Conn_Connecting;
+    new->state = Conn_Resolving;
     if (host->ipport)
         connection_connect(new);
     return new;
@@ -309,6 +309,7 @@ void connect_resolver_host(struct host *host)
             else
             {
                 connection_connect(con);
+                client_start_search(con->client);
             }
         }
         else
@@ -453,7 +454,7 @@ int client_prep_connection(struct client *cl)
             co = connection_create(cl);
     }
 
-    if (co)
+    if (co && co->link)
         return 1;
     else
         return 0;
