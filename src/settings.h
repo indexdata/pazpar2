@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PZ_IP            12
 #define PZ_ZPROXY        13
 #define PZ_APDULOG       14
-
+#define PZ_SRU           15
 
 struct setting
 {

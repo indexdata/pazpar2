@@ -353,6 +353,8 @@ int connection_connect(struct connection *con)
     struct host *host = connection_get_host(con);
     ZOOM_options zoptions = ZOOM_options_create();
     char *auth;
+    char *sru;
+    char ipport[512] = "";
 
     struct session_database *sdb = client_get_database(con->client);
     const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
@@ -376,6 +378,8 @@ int connection_connect(struct connection *con)
 
     if ((auth = (char*) session_setting_oneval(sdb, PZ_AUTHENTICATION)))
         ZOOM_options_set(zoptions, "user", auth);
+    if ((sru = (char*) session_setting_oneval(sdb, PZ_SRU)) && *sru)
+        ZOOM_options_set(zoptions, "sru", sru);
 
     if (!(link = ZOOM_connection_create(zoptions)))
     {
@@ -383,7 +387,12 @@ int connection_connect(struct connection *con)
         ZOOM_options_destroy(zoptions);
         return -1;
     }
-    ZOOM_connection_connect(link, host->ipport, 0);
+
+    if (sru && *sru)
+        strcpy(ipport, "http://");
+    strcat(ipport, host->ipport);
+
+    ZOOM_connection_connect(link, ipport, 0);
     
     con->link = link;
     con->iochan = iochan_create(0, connection_handler, 0);
