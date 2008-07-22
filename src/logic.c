@@ -318,44 +318,6 @@ const char *session_setting_oneval(struct session_database *db, int offset)
     return db->settings[offset]->value;
 }
 
-
-
-// Initialize YAZ Map structures for MARC-based targets
-static int prepare_yazmarc(struct session_database *sdb)
-{
-    const char *s;
-
-    if (!sdb->settings)
-    {
-        yaz_log(YLOG_WARN, "No settings for %s", sdb->database->url);
-        return -1;
-    }
-    if ((s = session_setting_oneval(sdb, PZ_NATIVESYNTAX)) 
-        && !strncmp(s, "iso2709", 7))
-    {
-        char *encoding = "marc-8s", *e;
-        yaz_iconv_t cm;
-
-        // See if a native encoding is specified
-        if ((e = strchr(s, ';')))
-            encoding = e + 1;
-
-        sdb->yaz_marc = yaz_marc_create();
-        yaz_marc_subfield_str(sdb->yaz_marc, "\t");
-        
-        cm = yaz_iconv_open("utf-8", encoding);
-        if (!cm)
-        {
-            yaz_log(YLOG_FATAL, 
-                    "Unable to map from %s to UTF-8 for target %s", 
-                    encoding, sdb->database->url);
-            return -1;
-        }
-        yaz_marc_iconv(sdb->yaz_marc, cm);
-    }
-    return 0;
-}
-
 // Prepare XSLT stylesheets for record normalization
 // Structures are allocated on the session_wide nmem to avoid having
 // to recompute this for every search. This would lead
@@ -429,11 +391,6 @@ static int prepare_session_database(struct session *se,
         yaz_log(YLOG_WARN, 
                 "No settings associated with %s", sdb->database->url);
         return -1;
-    }
-    if (sdb->settings[PZ_NATIVESYNTAX] && !sdb->yaz_marc)
-    {
-        if (prepare_yazmarc(sdb) < 0)
-            return -1;
     }
     if (sdb->settings[PZ_XSLT] && !sdb->map)
     {
@@ -629,7 +586,6 @@ static void session_init_databases_fun(void *context, struct database *db)
     int i;
 
     new->database = db;
-    new->yaz_marc = 0;
     
     new->map = 0;
     new->settings 
@@ -652,8 +608,6 @@ static void session_database_destroy(struct session_database *sdb)
 
     for (m = sdb->map; m; m = m->next)
         xsltFreeStylesheet(m->stylesheet);
-    if (sdb->yaz_marc)
-        yaz_marc_destroy(sdb->yaz_marc);
 }
 
 // Initialize session_database list -- this represents this session's view
@@ -718,13 +672,6 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     // (happens when a search starts and client connections are prepared)
     switch (offset)
     {
-    case PZ_NATIVESYNTAX:
-        if (sdb->yaz_marc)
-        {
-            yaz_marc_destroy(sdb->yaz_marc);
-            sdb->yaz_marc = 0;
-        }
-        break;
     case PZ_XSLT:
         if (sdb->map)
         {

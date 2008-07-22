@@ -94,7 +94,9 @@ struct session_database
 {
     struct database *database;
     struct setting **settings;
+#ifdef RETIRED
     yaz_marc_t yaz_marc;
+#endif
     struct database_retrievalmap *map;
     struct session_database *next;
 };

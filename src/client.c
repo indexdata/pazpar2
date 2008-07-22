@@ -259,15 +259,6 @@ static void client_show_raw_error(struct client *cl, const char *addinfo)
     }
 }
 
-static void client_show_raw_cancel(struct client *cl)
-{
-    while (cl->show_raw)
-    {
-        cl->show_raw->error_handler(cl->show_raw->data, "cancel");
-        client_show_raw_dequeue(cl);
-    }
-}
-
 static void client_send_raw_present(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
@@ -344,70 +335,6 @@ static void ingest_raw_record(struct client *cl, ZOOM_record rec)
     cl->show_raw->record_handler(cl->show_raw->data,  buf, len);
     client_show_raw_dequeue(cl);
 }
-
-#ifdef RETIRED
-
-static void ingest_raw_records(struct client *cl, Z_Records *r)
-{
-    Z_NamePlusRecordList *rlist;
-    Z_NamePlusRecord *npr;
-    xmlDoc *doc;
-    xmlChar *buf_out;
-    int len_out;
-    if (r->which != Z_Records_DBOSD)
-    {
-        client_show_raw_error(cl, "non-surrogate diagnostics");
-        return;
-    }
-
-    rlist = r->u.databaseOrSurDiagnostics;
-    if (rlist->num_records != 1 || !rlist->records || !rlist->records[0])
-    {
-        client_show_raw_error(cl, "no records");
-        return;
-    }
-    npr = rlist->records[0];
-    if (npr->which != Z_NamePlusRecord_databaseRecord)
-    {
-        client_show_raw_error(cl, "surrogate diagnostic");
-        return;
-    }
-
-    if (cl->show_raw && cl->show_raw->binary)
-    {
-        Z_External *rec = npr->u.databaseRecord;
-        if (rec->which == Z_External_octet)
-        {
-            cl->show_raw->record_handler(cl->show_raw->data,
-                                         (const char *)
-                                         rec->u.octet_aligned->buf,
-                                         rec->u.octet_aligned->len);
-            client_show_raw_dequeue(cl);
-        }
-        else
-            client_show_raw_error(cl, "no records");
-    }
-
-    doc = record_to_xml(client_get_database(cl), npr->u.databaseRecord);
-    if (!doc)
-    {
-        client_show_raw_error(cl, "unable to convert record to xml");
-        return;
-    }
-
-    xmlDocDumpMemory(doc, &buf_out, &len_out);
-    xmlFreeDoc(doc);
-
-    if (cl->show_raw)
-    {
-        cl->show_raw->record_handler(cl->show_raw->data,
-                                     (const char *) buf_out, len_out);
-        client_show_raw_dequeue(cl);
-    }
-    xmlFree(buf_out);
-}
-
-#endif // RETIRED show raw
 
 void client_search_response(struct client *cl)
 {
@@ -499,96 +426,6 @@ void client_record_response(struct client *cl)
             yaz_log(YLOG_WARN, "Expected record, but got NULL");
     }
 }
-
-#ifdef RETIRED
-
-void client_present_response(struct client *cl, Z_APDU *a)
-{
-    Z_PresentResponse *r = a->u.presentResponse;
-    Z_Records *recs = r->records;
-        
-    if (recs && recs->which == Z_Records_NSD)
-    {
-        WRBUF w = wrbuf_alloc();
-        
-        Z_DiagRec dr, *dr_p = &dr;
-        dr.which = Z_DiagRec_defaultFormat;
-        dr.u.defaultFormat = recs->u.nonSurrogateDiagnostic;
-        
-        wrbuf_printf(w, "Present response NSD %s: ",
-                     cl->database->database->url);
-        
-        cl->diagnostic = diag_to_wrbuf(&dr_p, 1, w);
-        
-        yaz_log(YLOG_WARN, "%s", wrbuf_cstr(w));
-        
-        cl->state = Client_Error;
-        wrbuf_destroy(w);
-
-        client_show_raw_error(cl, "non surrogate diagnostics");
-    }
-    else if (recs && recs->which == Z_Records_multipleNSD)
-    {
-        WRBUF w = wrbuf_alloc();
-        
-        wrbuf_printf(w, "Present response multipleNSD %s: ",
-                     cl->database->database->url);
-        cl->diagnostic = 
-            diag_to_wrbuf(recs->u.multipleNonSurDiagnostics->diagRecs,
-                          recs->u.multipleNonSurDiagnostics->num_diagRecs,
-                          w);
-        yaz_log(YLOG_WARN, "%s", wrbuf_cstr(w));
-        cl->state = Client_Error;
-        wrbuf_destroy(w);
-    }
-    else if (recs && !*r->presentStatus && cl->state != Client_Error)
-    {
-        yaz_log(YLOG_DEBUG, "Good Present response %s",
-                cl->database->database->url);
-
-        // we can mix show raw and normal show ..
-        if (cl->show_raw && cl->show_raw->active)
-        {
-            cl->show_raw->active = 0; // no longer active
-            ingest_raw_records(cl, recs);
-        }
-        else
-            ingest_records(cl, recs);
-        cl->state = Client_Continue;
-    }
-    else if (*r->presentStatus) 
-    {
-        yaz_log(YLOG_WARN, "Bad Present response %s",
-                cl->database->database->url);
-        cl->state = Client_Error;
-        client_show_raw_error(cl, "bad present response");
-    }
-}
-
-void client_close_response(struct client *cl, Z_APDU *a)
-{
-    struct connection *co = cl->connection;
-    /* Z_Close *r = a->u.close; */
-
-    yaz_log(YLOG_WARN, "Close response %s", cl->database->database->url);
-
-    cl->state = Client_Failed;
-    connection_destroy(co);
-}
-
-#endif // RETIRED show raw
-
-#ifdef RETIRED
-int client_is_our_response(struct client *cl)
-{
-    struct session *se = client_get_session(cl);
-
-    if (cl && (cl->requestid == se->requestid || 
-               cl->state == Client_Initializing))
-        return 1;
-    return 0;
-}
-#endif
 
 void client_start_search(struct client *cl)
 {
