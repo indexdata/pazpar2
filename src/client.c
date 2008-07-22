@@ -311,7 +311,6 @@ static int nativesyntax_to_type(struct session_database *sdb, char *type)
         }
         else
             return -1;
-        yaz_log(YLOG_LOG, "Returned type %s", type);
         return 0;
     }
     return -1;
@@ -378,8 +377,6 @@ void client_record_response(struct client *cl)
         ZOOM_record rec = 0;
         const char *msg, *addinfo;
         
-        yaz_log(YLOG_LOG, "show_raw=%p show_raw->active=%d",
-                cl->show_raw, cl->show_raw ? cl->show_raw->active : 0);
         if (cl->show_raw && cl->show_raw->active)
         {
             if ((rec = ZOOM_resultset_record(resultset,
