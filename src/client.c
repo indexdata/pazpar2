@@ -596,7 +596,7 @@ static char *make_cqlquery(struct client *cl)
         yaz_log(YLOG_WARN, "failed to generate CQL query, code=%d", status);
         return 0;
     }
-    r = xstrdup(wrbuf_buf(wrb));
+    r = xstrdup(wrbuf_cstr(wrb));
 
     wrbuf_destroy(wrb);
     odr_reset(global_parameters.odr_out); // releases the zquery
