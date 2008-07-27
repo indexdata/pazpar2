@@ -58,6 +58,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/oid_db.h>
 #include <yaz/diagbib1.h>
 #include <yaz/snprintf.h>
+#include <yaz/rpn2cql.h>
 
 #define USE_TIMING 0
 #if USE_TIMING
@@ -80,6 +81,7 @@ struct client {
     struct connection *connection;
     struct session *session;
     char *pquery; // Current search
+    char *cqlquery; // used for SRU targets only
     int hits;
     int records;
     int setno;
@@ -436,6 +438,7 @@ void client_start_search(struct client *cl)
     const char *opt_elements = session_setting_oneval(sdb, PZ_ELEMENTS);
     const char *opt_requestsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
     const char *opt_maxrecs = session_setting_oneval(sdb, PZ_MAXRECS);
+    const char *opt_sru = session_setting_oneval(sdb, PZ_SRU);
 
     assert(link);
 
@@ -449,7 +452,9 @@ void client_start_search(struct client *cl)
         ZOOM_connection_option_set(link, "piggyback", "1");
     if (*opt_queryenc)
         ZOOM_connection_option_set(link, "rpnCharset", opt_queryenc);
-    if (*opt_elements)
+    if (*opt_sru && *opt_elements)
+        ZOOM_connection_option_set(link, "schema", opt_elements);
+    else if (*opt_elements)
         ZOOM_connection_option_set(link, "elementSetName", opt_elements);
     if (*opt_requestsyn)
         ZOOM_connection_option_set(link, "preferredRecordSyntax", opt_requestsyn);
@@ -467,7 +472,14 @@ void client_start_search(struct client *cl)
 
     ZOOM_connection_option_set(link, "presentChunk", "20");
 
-    rs = ZOOM_connection_search_pqf(link, cl->pquery);
+    if (cl->cqlquery)
+    {
+        ZOOM_query q = ZOOM_query_create();
+        ZOOM_query_cql(q, cl->cqlquery);
+        rs = ZOOM_connection_search(link, q);
+    }
+    else
+        rs = ZOOM_connection_search_pqf(link, cl->pquery);
     connection_set_resultset(co, rs);
     connection_continue(co);
 }
@@ -483,6 +495,7 @@ struct client *client_create(void)
     else
         r = xmalloc(sizeof(struct client));
     r->pquery = 0;
+    r->cqlquery = 0;
     r->database = 0;
     r->connection = 0;
     r->session = 0;
@@ -511,6 +524,7 @@ void client_destroy(struct client *c)
             cc->next = c->next;
     }
     xfree(c->pquery);
+    xfree(c->cqlquery);
 
     if (c->connection)
         connection_release(c->connection);
@@ -564,13 +578,38 @@ static CCL_bibset prepare_cclmap(struct client *cl)
     return res;
 }
 
+// returns a xmalloced CQL query corresponding to the pquery in client
+static char *make_cqlquery(struct client *cl)
+{
+    cql_transform_t cqlt = cql_transform_create();
+    Z_RPNQuery *zquery;
+    char *r;
+    WRBUF wrb = wrbuf_alloc();
+    int status;
+
+    zquery = p_query_rpn(global_parameters.odr_out, cl->pquery);
+    if ((status = cql_transform_rpn2cql_wrbuf(cqlt, wrb, zquery)))
+    {
+        yaz_log(YLOG_WARN, "failed to generate CQL query, code=%d", status);
+        return 0;
+    }
+    r = xstrdup(wrbuf_cstr(wrb));
+
+    wrbuf_destroy(wrb);
+    odr_reset(global_parameters.odr_out); // releases the zquery
+    cql_transform_close(cqlt);
+    return r;
+}
+
 // Parse the query given the settings specific to this client
 int client_parse_query(struct client *cl, const char *query)
 {
     struct session *se = client_get_session(cl);
+    struct session_database *sdb = client_get_database(cl);
     struct ccl_rpn_node *cn;
     int cerror, cpos;
     CCL_bibset ccl_map = prepare_cclmap(cl);
+    const char *sru = session_setting_oneval(sdb, PZ_SRU);
 
     if (!ccl_map)
         return -1;
@@ -588,6 +627,15 @@ int client_parse_query(struct client *cl, const char *query)
     ccl_pquery(se->wrbuf, cn);
     xfree(cl->pquery);
     cl->pquery = xstrdup(wrbuf_cstr(se->wrbuf));
+
+    xfree(cl->cqlquery);
+    if (*sru)
+    {
+        if (!(cl->cqlquery = make_cqlquery(cl)))
+            return -1;
+    }
+    else
+        cl->cqlquery = 0;
 
     if (!se->relevance)
     {
