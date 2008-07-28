@@ -67,7 +67,8 @@
    -- <ulink url="&url.xslt;">XSLT</ulink> is used to normalize and extract
    data from retrieval records for display and analysis. It can be used
    against any server which supports the 
-   <ulink url="&url.z39.50;">Z39.50</ulink> protocol. Proprietary
+   <ulink url="&url.z39.50;">Z39.50</ulink> and <ulink url="&url.sru;">SRU/SRW</ulink>
+   protocol. Proprietary
    backend modules can be used to support a large number of other protocols
    (please contact Index Data for further information about this).
   </para>
@@ -119,7 +120,7 @@
    support open standards, please contact Index Data. We have a licensing
    agreement with a third party vendor which will enable Pazpar2 to access
    thousands of online databases, in addition the vast number of catalogs
-   and online services that support the Z39.50 protocol.
+   and online services that support the Z39.50/SRU/SRW protocols.
   </para>
   <para>
    Pazpar2 is our attempt to re-think the traditional paradigms for
@@ -579,7 +580,8 @@
    <title>Connecting to non-standard resources</title>
    <para>
     Pazpar2 uses Z39.50 as its switchboard language -- i.e. as far as it
-    is concerned, all resources speak Z39.50. It is, however, equipped
+    is concerned, all resources speak Z39.50, or its webservices derivatives,
+    SRU/SRW. It is, however, equipped
     to handle a broad range of different server behavior, through
     configurable query mapping and record normalization. If you develop
     configuration, stylesheets, etc., for a new type of resources, we
@@ -597,8 +599,7 @@
    </para>
 
    <para>
-    But what about resources that don't support Z39.50 at all? The NISO
-    SRU (MXG) protocol is slowly gathering steam. Other resources might
+    But what about resources that don't support Z39.50 at all? Some resources might
     support OpenSearch, private, XML/HTTP-based protocols, or something
     else entirely. Some databases exist only as web user interfaces and
     will require screen-scraping. Still others exist only as static

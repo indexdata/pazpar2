@@ -797,6 +797,18 @@
       </para>
      </listitem>
     </varlistentry>
+
+    <varlistentry>
+      <term>pz:sru</term>
+      <listitem>
+        <para>
+	  This setting enables SRU/SRW support. It has three possible settings.
+	  'get', enables SRU access through GET requests. 'post' enables SRU/POST
+	  support, less commonly supported, but useful if very large requests are
+	  to be submitted. 'srw' enables the SRW variation of the protocol.
+	</para>
+      </listitem>
+    </varlistentry>
    </variablelist>
   </refsect2>
 
