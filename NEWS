@@ -1,3 +1,7 @@
+Added SRU support for client connections. The SRU support currently
+is triggered by a new setting, sru, which, when set, specifies the
+SRU type: get, post or soap. Refer to sru-test.xml for an example.
+
 --- 1.0.9 2008/05/23
 
 Changed the JS library pz2.js to use POST for long URL (+ params).
