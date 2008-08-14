@@ -237,7 +237,7 @@ pz2.prototype =
             }
         );
     },
-    search: function (query, num, sort, filter, showfrom)
+    search: function (query, num, sort, filter, showfrom, addParamsArr)
     {
         clearTimeout(this.statTimer);
         clearTimeout(this.showTimer);
@@ -271,6 +271,14 @@ pz2.prototype =
 	
         if (filter !== undefined)
 	    searchParams["filter"] = filter;
+
+        // copy additional parmeters, do not overwrite
+        if (addParamsArr != undefined) {
+            for (var prop in addParamsArr) {
+                if (!searchParams.hasOwnProperty(prop))
+                    searchParams[prop] = addParamsArr[prop];
+            }
+        }
         
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
