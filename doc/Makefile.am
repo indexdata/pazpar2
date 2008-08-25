@@ -43,7 +43,7 @@ index.tkl: $(XMLFILES)
 
 pazpar2.pdf: $(XMLFILES)
 	rm -f pazpar2.pdf
-	dblatex $(MAINXML) && mv book.pdf pazpar2.pdf
+	dblatex -P latex.class.options=a4paper,12pt,twoside,openright $(MAINXML) && mv book.pdf pazpar2.pdf
 
 jade-check: $(XMLFILES)
 	jade -E14 -D $(srcdir) -d common/print.dsl -t tex $(srcdir)/common/xml.dcl $(MAINXML)
