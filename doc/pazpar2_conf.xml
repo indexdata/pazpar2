@@ -809,6 +809,17 @@
 	</para>
       </listitem>
     </varlistentry>
+
+    <varlistentry>
+      <term>pz:sru_version</term>
+      <listitem>
+        <para>
+	  This allows SRU version to be specified. If unset Pazpar2
+	  will the default of YAZ (currently 1.2). Should be set
+	  to 1.1 or 1.2.
+	</para>
+      </listitem>
+    </varlistentry>
    </variablelist>
   </refsect2>
 

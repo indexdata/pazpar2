@@ -350,8 +350,9 @@ int connection_connect(struct connection *con)
     ZOOM_connection link = 0;
     struct host *host = connection_get_host(con);
     ZOOM_options zoptions = ZOOM_options_create();
-    char *auth;
-    char *sru;
+    const char *auth;
+    const char *sru;
+    const char *sru_version = 0;
     char ipport[512] = "";
 
     struct session_database *sdb = client_get_database(con->client);
@@ -374,10 +375,13 @@ int connection_connect(struct connection *con)
     if (apdulog && *apdulog)
         ZOOM_options_set(zoptions, "apdulog", apdulog);
 
-    if ((auth = (char*) session_setting_oneval(sdb, PZ_AUTHENTICATION)))
+    if ((auth = session_setting_oneval(sdb, PZ_AUTHENTICATION)))
         ZOOM_options_set(zoptions, "user", auth);
-    if ((sru = (char*) session_setting_oneval(sdb, PZ_SRU)) && *sru)
+    if ((sru = session_setting_oneval(sdb, PZ_SRU)) && *sru)
         ZOOM_options_set(zoptions, "sru", sru);
+    if ((sru_version = session_setting_oneval(sdb, PZ_SRU_VERSION)) 
+        && *sru_version)
+        ZOOM_options_set(zoptions, "sru_version", sru_version);
 
     if (!(link = ZOOM_connection_create(zoptions)))
     {

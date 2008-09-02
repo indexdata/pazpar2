@@ -64,6 +64,7 @@ static char *hard_settings[] = {
     "pz:zproxy",
     "pz:apdulog",
     "pz:sru",
+    "pz:sru_version",
     0
 };
 

@@ -3,6 +3,7 @@
   <!-- Simple test against a local SRU server (could be yaz-ztest) -->
 
   <set name="pz:sru" value="get"/> <!-- must be get, post or soap -->
+  <set name="pz:sru_version" value="1.2"/>
   <set name="pz:name" value="Local Test"/>
 
   <!-- mapping for unqualified search -->
