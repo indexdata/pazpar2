@@ -76,6 +76,7 @@
       <metadata name="description" merge="longest" rank="3"/>
       <metadata name="subject-long" rank="3"/>
       <metadata name="subject" termlist="yes" rank="0"/>
+      <metadata name="snippet" brief="yes" merge="longest"/>
       <metadata name="electronic-url"/>
       <metadata name="electronic-text"/>
       <metadata name="electronic-note"/>
