@@ -1,4 +1,4 @@
-<settings target="localhost:9999/Default">
+<settings target="localhost:9999">
 
   <!-- Simple test against a local SRU server (could be yaz-ztest) -->
 
