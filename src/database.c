@@ -134,7 +134,7 @@ static struct database *load_database(const char *id)
     if ((dbname = strchr(hostport, '/')))
         *(dbname++) = '\0';
     else
-        dbname = "Default";
+        dbname = "";
     if (!(host = find_host(hostport)))
         return 0;
     db = nmem_malloc(nmem, sizeof(*db));

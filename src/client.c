@@ -466,9 +466,8 @@ void client_start_search(struct client *cl)
         sprintf(n, "%d", global_parameters.toget);
         ZOOM_connection_option_set(link, "count", n);
     }
-    if (!databaseName || !*databaseName)
-        databaseName = "Default";
-    ZOOM_connection_option_set(link, "databaseName", databaseName);
+    if (databaseName)
+        ZOOM_connection_option_set(link, "databaseName", databaseName);
 
     ZOOM_connection_option_set(link, "presentChunk", "20");
 
