@@ -777,25 +777,17 @@ pzHttpRequest.prototype =
     _handleResponse: function ()
     {
         if ( this.request.readyState == 4 ) { 
-            // pick up pazpr2 errors first
-            if ( this.request.responseXML 
-                && this.request.responseXML.documentElement.nodeName == 'error'
-                && this.request.responseXML.getElementsByTagName("error")
-                    .length ) {
+            // pick up appplication errors first
+            var errNode = null;
+            if (this.request.responseXML &&
+                (errNode = this.request.responseXML.documentElement)
+                && errNode.nodeName == 'error') {
+                var errMsg = errNode.getAttribute("msg");
+                var errCode = errNode.getAttribute("code");
                 var errAddInfo = '';
-                if ( this.request.responseXML.getElementsByTagName("error")[0]
-                        .childNodes.length )
-                    errAddInfo = ': ' + 
-                        this.request.responseXML
-                            .getElementsByTagName("error")[0]
-                            .childNodes[0].nodeValue;
-                var errMsg = 
-                    this.request.responseXML.getElementsByTagName("error")[0]
-                        .getAttribute("msg");
-                var errCode = 
-                    this.request.responseXML.getElementsByTagName("error")[0]
-                        .getAttribute("code");
-            
+                if (errNode.childNodes.length)
+                    errAddInfo = ': ' + errNode.childNodes[0].nodeValue;
+                           
                 var err = new Error(errMsg + errAddInfo);
                 err.code = errCode;
 	    
@@ -805,13 +797,13 @@ pzHttpRequest.prototype =
                 else {
                     throw err;
                 }
-            } else if ( this.request.status == 200 ) {
-                this.callback( this.request.responseXML );
+            } else if (this.request.status == 200) {
+                this.callback(this.request.responseXML);
             } else {
-                var err = new Error("Pz2.js: HTTP request error (AJAX). Code: " 
-                            + this.request.status + " Info: " 
+                var err = new Error("HTTP response not OK: " 
+                            + this.request.status + " - " 
                             + this.request.statusText );
-                err.code = 'HTTP';
+                err.code = '00' + this.request.status;
                 
                 if (this.errorHandler) {
                     this.errorHandler(err);
