@@ -299,15 +299,15 @@
         </pz:metadata>
       </xsl:for-each>
 
-
       <xsl:if test="$open_url_resolver">
         <pz:metadata type="open-url">
             <xsl:call-template name="insert-md-openurl" />
         </pz:metadata>
       </xsl:if>
 
-    </pz:record>
-
+    </pz:record>    
   </xsl:template>
+  
+  <xsl:template match="text()"/>
 
 </xsl:stylesheet>

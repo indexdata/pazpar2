@@ -61,6 +61,19 @@
 	</pz:metadata>
       </xsl:for-each>
 
+      <xsl:for-each select="dc:identifier">
+        <pz:metadata type="electronic-url">
+	  <xsl:value-of select="."/>
+	</pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="dc:type">
+        <pz:metadata type="medium">
+	  <xsl:value-of select="."/>
+	</pz:metadata>
+      </xsl:for-each>
+
+
     </pz:record>
   </xsl:template>
 
