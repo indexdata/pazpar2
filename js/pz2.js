@@ -332,14 +332,14 @@ pz2.prototype =
                         "clients": 
                             Number( data.getElementsByTagName("clients")[0]
                                         .childNodes[0].nodeValue ),
-                        "initializing": 
-                            Number( data.getElementsByTagName("initializing")[0]
+                        "unconnected": 
+                            Number( data.getElementsByTagName("unconnected")[0]
                                         .childNodes[0].nodeValue ),
-                        "searching": 
-                            Number( data.getElementsByTagName("searching")[0]
+                        "connecting": 
+                            Number( data.getElementsByTagName("connecting")[0]
                                         .childNodes[0].nodeValue ),
-                        "presenting": 
-                            Number( data.getElementsByTagName("presenting")[0]
+                        "working": 
+                            Number( data.getElementsByTagName("working")[0]
                                         .childNodes[0].nodeValue ),
                         "idle": 
                             Number( data.getElementsByTagName("idle")[0]
