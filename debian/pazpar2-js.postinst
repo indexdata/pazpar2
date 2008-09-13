@@ -1,0 +1,24 @@
+#!/bin/sh
+set -e
+
+if [ "$1" != "configure" ]; then
+    exit 0
+fi
+
+reload_apache()
+{
+    if apache2ctl configtest 2>/dev/null; then
+	invoke-rc.d apache2 force-reload || true
+    else
+	echo "Your apache2 configuration is broken, so we're not restarting it for you."
+    fi
+}
+
+if [ -e /etc/apache2/apache2.conf ]; then
+    if [ -d /etc/apache2/conf.d ]; then
+	ln -sf /etc/pazpar2/ap2pazpar2-js.cfg /etc/apache2/conf.d/pazpar2-js
+    fi
+    
+    reload_apache
+fi
+exit 0
