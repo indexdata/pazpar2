@@ -6,6 +6,8 @@
   <set name="pz:sru_version" value="1.2"/>
   <set name="pz:name" value="Local Test"/>
 
+  <set name="pz:maxrecs" value="27"/>
+
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
 
