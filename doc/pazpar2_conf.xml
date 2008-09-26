@@ -762,7 +762,7 @@
      <listitem>
       <para>
        Controls the maximum number of records to be retrieved from a
-       server. The default is 100 (not yet implemented).
+       server. The default is 100.
       </para>
      </listitem>
     </varlistentry>
