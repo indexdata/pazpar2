@@ -71,7 +71,6 @@ struct connection {
     struct client *client;
     char *ibuf;
     int ibufsize;
-    char *authentication; // Empty string or authentication string if set
     char *zproxy;
     enum {
         Conn_Resolving,
@@ -181,7 +180,6 @@ static struct connection *connection_create(struct client *cl)
     new->next = new->host->connections;
     new->host->connections = new;
     new->client = cl;
-    new->authentication = "";
     new->zproxy = 0;
     client_set_connection(cl, new);
     new->link = 0;
@@ -426,11 +424,6 @@ const char *connection_get_url(struct connection *co)
     return client_get_url(co->client);
 }
 
-void connection_set_authentication(struct connection *co, char *auth)
-{
-    co->authentication = auth;
-}
-
 // Ensure that client has a connection associated
 int client_prep_connection(struct client *cl)
 {
@@ -454,9 +447,9 @@ int client_prep_connection(struct client *cl)
         for (co = host->connections; co; co = co->next)
             if (connection_is_idle(co) &&
                 (!co->client || client_get_session(co->client) != se) &&
-                !strcmp(co->authentication,
-                    session_setting_oneval(client_get_database(cl),
-                    PZ_AUTHENTICATION)))
+                !strcmp(ZOOM_connection_option_get(co->link, "user"),
+                        session_setting_oneval(client_get_database(cl),
+                                               PZ_AUTHENTICATION)))
             {
                 if (zproxy == 0 && co->zproxy == 0)
                     break;
