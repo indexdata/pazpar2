@@ -232,6 +232,7 @@ static void connection_handler(IOCHAN i, int event)
                 switch (event) 
                 {
                 case ZOOM_EVENT_END:
+                    client_set_state(co->client, Client_Idle);
                     break;
                 case ZOOM_EVENT_SEND_DATA:
                     break;
@@ -243,7 +244,6 @@ static void connection_handler(IOCHAN i, int event)
                     client_set_state(co->client, Client_Working);
                     break;
                 case ZOOM_EVENT_RECV_APDU:
-                    client_set_state(co->client, Client_Idle);
                     break;
                 case ZOOM_EVENT_CONNECT:
                     yaz_log(YLOG_LOG, "Connected to %s", client_get_url(cl));
