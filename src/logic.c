@@ -1086,7 +1086,6 @@ struct record *ingest_record(struct client *cl, const char *rec,
              wheretoput = &record->metadata[md_field_id];
              while (*wheretoput)
                  wheretoput = &(*wheretoput)->next;
-             rec_md->next = 0;
              *wheretoput = rec_md;
 
              // merged metadata
@@ -1096,6 +1095,12 @@ struct record *ingest_record(struct client *cl, const char *rec,
 
              // and polulate with data:
              // assign cluster or record based on merge action
+             if (ser_md->merge == Metadata_merge_no)
+             {
+                 while (*wheretoput)
+                     wheretoput = &(*wheretoput)->next;
+                 *wheretoput = rec_md;
+             }
              if (ser_md->merge == Metadata_merge_unique)
              {
                  struct record_metadata *mnode;
