@@ -36,7 +36,6 @@ struct session;
 void connection_destroy(struct connection *co);
 struct connection *connection_create(struct client *cl);
 void connect_resolver_host(struct host *host);
-int connection_send_apdu(struct connection *co, Z_APDU *a);
 struct host *connection_get_host(struct connection *con);
 void connection_set_authentication(struct connection *co, char *auth);
 int connection_connect(struct connection *con);

@@ -479,13 +479,6 @@ int client_prep_connection(struct client *cl)
         return 0;
 }
 
-// DELETEME
-
-
-int connection_send_apdu(struct connection *co, Z_APDU *a){return 10;}
-
-
-
 /*
  * Local variables:
  * c-basic-offset: 4
