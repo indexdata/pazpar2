@@ -35,7 +35,6 @@ struct session;
 
 void connection_destroy(struct connection *co);
 void connect_resolver_host(struct host *host);
-int connection_connect(struct connection *con);
 struct connection *connection_get_available(struct connection *con_list,
                                             struct session *se);
 int connection_prep_connection(struct connection *co, struct session *se);

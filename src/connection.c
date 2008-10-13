@@ -82,6 +82,8 @@ struct connection {
 
 static struct connection *connection_freelist = 0;
 
+static int connection_connect(struct connection *con);
+
 static int connection_is_idle(struct connection *co)
 {
     ZOOM_connection link = co->link;
@@ -342,7 +344,7 @@ static int maskfun(IOCHAN c)
     return ZOOM_connection_get_mask(co->link);
 }
 
-int connection_connect(struct connection *con)
+static int connection_connect(struct connection *con)
 {
     ZOOM_connection link = 0;
     struct host *host = connection_get_host(con);
