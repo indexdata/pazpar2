@@ -164,7 +164,7 @@ void connection_destroy(struct connection *co)
 
 // Creates a new connection for client, associated with the host of 
 // client's database
-struct connection *connection_create(struct client *cl)
+static struct connection *connection_create(struct client *cl)
 {
     struct connection *new;
     struct host *host = client_get_host(cl);
@@ -317,7 +317,7 @@ void connect_resolver_host(struct host *host)
     }
 }
 
-struct host *connection_get_host(struct connection *con)
+static struct host *connection_get_host(struct connection *con)
 {
     return con->host;
 }
