@@ -86,12 +86,11 @@ static struct connection *connection_freelist = 0;
 static int connection_is_idle(struct connection *co)
 {
     ZOOM_connection link = co->link;
-    int event = ZOOM_connection_peek_event(link);
+    int event;
 
-    if (co->state != Conn_Open)
+    if (co->state != Conn_Open || !link)
         return 0;
 
-    link = co->link;
     event = ZOOM_connection_peek_event(link);
     if (event == ZOOM_EVENT_NONE ||
                 event == ZOOM_EVENT_END)
