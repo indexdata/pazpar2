@@ -52,8 +52,8 @@
 	<xsl:value-of select="$medium"/>
       </xsl:attribute>
 
-      <pz:metadata type="test_usersetting_2">
-        Shit: 
+      <pz:metadata type="test-usersetting-2">
+        test-usersetting-2 data: 
         <xsl:value-of select="$test"/>
       </pz:metadata>
 
