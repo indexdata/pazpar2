@@ -384,6 +384,7 @@ static struct conf_service *parse_service(xmlNode *node)
             xmlFree(xml_type);
             xmlFree(xml_termlist);
             xmlFree(xml_rank);
+            xmlFree(xml_setting);
             md_node++;
         }
         else
