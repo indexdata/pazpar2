@@ -192,9 +192,57 @@ static struct connection *connection_create(struct client *cl)
     return new;
 }
 
-static void connection_handler(IOCHAN i, int event)
+static void non_block_events(struct connection *co, IOCHAN iochan)
 {
-    struct connection *co = iochan_getdata(i);
+    struct client *cl = co->client;
+    ZOOM_connection link = co->link;
+    while (1)
+    {
+        int ev;
+        int r = ZOOM_event_nonblock(1, &link);
+        if (!r)
+            break;
+        ev = ZOOM_connection_last_event(link);
+        switch (ev) 
+        {
+        case ZOOM_EVENT_END:
+            client_set_state(co->client, Client_Idle);
+            break;
+        case ZOOM_EVENT_SEND_DATA:
+            break;
+        case ZOOM_EVENT_RECV_DATA:
+            break;
+        case ZOOM_EVENT_UNKNOWN:
+            break;
+        case ZOOM_EVENT_SEND_APDU:
+            client_set_state(co->client, Client_Working);
+            break;
+        case ZOOM_EVENT_RECV_APDU:
+            break;
+        case ZOOM_EVENT_CONNECT:
+            yaz_log(YLOG_LOG, "Connected to %s", client_get_url(cl));
+            co->state = Conn_Open;
+            client_set_state(co->client, Client_Connected);
+            iochan_settimeout(iochan, global_parameters.z3950_session_timeout);
+            break;
+        case ZOOM_EVENT_RECV_SEARCH:
+            yaz_log(YLOG_LOG, "Search response from %s", client_get_url(cl));
+            client_search_response(cl);
+            break;
+        case ZOOM_EVENT_RECV_RECORD:
+            yaz_log(YLOG_LOG, "Record from %s", client_get_url(cl));
+            client_record_response(cl);
+            break;
+        default:
+            yaz_log(YLOG_LOG, "Unhandled event (%d) from %s",
+                    ev, client_get_url(cl));
+        }
+    }
+}
+
+static void connection_handler(IOCHAN iochan, int event)
+{
+    struct connection *co = iochan_getdata(iochan);
     struct client *cl = co->client;
     struct session *se = 0;
 
@@ -218,54 +266,14 @@ static void connection_handler(IOCHAN i, int event)
             yaz_log(YLOG_LOG,  "idle timeout %s", client_get_url(cl));
             connection_destroy(co);
         }
-        return;
     }
     else
     {
-        ZOOM_connection link = co->link;
+        non_block_events(co, iochan);
 
-        if (ZOOM_event(1, &link))
-        {
-            do
-            {
-                int event = ZOOM_connection_last_event(link);
-                switch (event) 
-                {
-                case ZOOM_EVENT_END:
-                    client_set_state(co->client, Client_Idle);
-                    break;
-                case ZOOM_EVENT_SEND_DATA:
-                    break;
-                case ZOOM_EVENT_RECV_DATA:
-                    break;
-                case ZOOM_EVENT_UNKNOWN:
-                    break;
-                case ZOOM_EVENT_SEND_APDU:
-                    client_set_state(co->client, Client_Working);
-                    break;
-                case ZOOM_EVENT_RECV_APDU:
-                    break;
-                case ZOOM_EVENT_CONNECT:
-                    yaz_log(YLOG_LOG, "Connected to %s", client_get_url(cl));
-                    co->state = Conn_Open;
-                    client_set_state(co->client, Client_Connected);
-                    iochan_settimeout(i, global_parameters.z3950_session_timeout);
-                    break;
-                case ZOOM_EVENT_RECV_SEARCH:
-                    yaz_log(YLOG_LOG, "Search response from %s", client_get_url(cl));
-                    client_search_response(cl);
-                    break;
-                case ZOOM_EVENT_RECV_RECORD:
-                    yaz_log(YLOG_LOG, "Record from %s", client_get_url(cl));
-                    client_record_response(cl);
-                    break;
-                default:
-                    yaz_log(YLOG_LOG, "Unhandled event (%d) from %s",
-                            event, client_get_url(cl));
-                }
-            }
-            while (ZOOM_event_nonblock(1, &link));
-        }
+        ZOOM_connection_fire_event_socket(co->link, event);
+        
+        non_block_events(co, iochan);
     }
 }
 
