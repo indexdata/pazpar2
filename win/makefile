@@ -4,7 +4,7 @@
 DEBUG=0   # 0 for release, 1 for debug
 USE_MANIFEST = 0 # Can be enabled Visual Studio 2005
 PACKAGE_NAME=pazpar2
-PACKAGE_VERSION=1.0.9
+PACKAGE_VERSION=1.1.0
 
 # YAZ
 YAZ_DIR=..\..\yaz
