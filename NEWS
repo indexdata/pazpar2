@@ -1,3 +1,9 @@
+--- 1.0.10 2008/10/14
+
+Fixes for IE in pz2.js.
+
+Fixed bug #2021: non-merged , brief meta data NOT included for command=show.
+
 --- 1.0.9 2008/05/23
 
 Changed the JS library pz2.js to use POST for long URL (+ params).
