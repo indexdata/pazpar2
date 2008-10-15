@@ -847,6 +847,7 @@ struct session *new_session(NMEM nmem)
     session->relevance = 0;
     session->total_hits = 0;
     session->total_records = 0;
+    session->number_of_warnings_unknown_elements = 0;
     session->num_termlists = 0;
     session->reclist = 0;
     session->requestid = -1;
@@ -1356,9 +1357,13 @@ struct record *ingest_record(struct client *cl, Z_External *rec,
             xmlFree(value);
             type = value = 0;
         }
-        else
-            yaz_log(YLOG_WARN,
-                    "Unexpected element %s in internal record", n->name);
+         else
+         {
+             if (se->number_of_warnings_unknown_elements == 0)
+                 yaz_log(YLOG_WARN,
+                         "Unexpected element in internal record: %s", n->name);
+             se->number_of_warnings_unknown_elements++;
+         }
     }
     if (type)
         xmlFree(type);
