@@ -9,7 +9,7 @@
   <para><bridgehead>Pz2.js</bridgehead></para>
   
   <para>
-  Pazapar2 comes with a small JavaScript library called pz2.js. This library is designed to simplify development of an Ajax-based pazpar2 clients and alleviate programmer from the low-level details like polling the web service, fetching and parsing returned XML output or managing timers, sessions and basic state variables.
+  Pazpar2 comes with a small JavaScript library called pz2.js. This library is designed to simplify development of an Ajax-based pazpar2 client and alleviate programmer from the low-level details like polling the web service, fetching and parsing returned XML output or managing timers, sessions and basic state variables.
   </para>
   
   <para>
@@ -28,7 +28,7 @@
   <para><bridgehead>Using pz2.js</bridgehead></para>
   
   <para>
-  Client development with the pz2.js is strongly event based and should be familiar to most JavaScript developers. A simple client (jsdemo) is distributed with pazpar2's source code and shows how to set-up and use pz2.js.
+  Client development with the pz2.js is strongly event based and the style should be familiar to most JavaScript developers. A simple client (jsdemo) is distributed with pazpar2's source code and shows how to set-up and use pz2.js.
   </para>
   
   <para>
@@ -62,7 +62,7 @@
   </screen>
   
   <para>
-  Each command callback is a user defined function that takes a hash object as a parameter. The hash object contains parsed pazpar2 responses (hash members that correspond to the elements in the response XML document). Within the handler programmer further processes the data and updates the the viewed document.
+  Each command callback is a user defined function that takes a hash object as a parameter. The hash object contains parsed pazpar2 responses (hash members that correspond to the elements in the response XML document). Within the handler programmer further processes the data and updates the viewed document.
   </para>
 
   <screen>
@@ -81,7 +81,8 @@
     }
 
     function on_record(data) {
-        // if detailsstylesheet parameter was set data array will contain raw xml // // and xsl data
+        // if detailsstylesheet parameter was set data array
+        // will contain raw xml and xsl data
         Element_appendTransformResult(someDiv, data.xmlDoc, data.xslDoc);
     }
   </screen>
@@ -117,7 +118,7 @@
     <para><bridgehead>PARAMATERS ARRAY</bridgehead></para> 
   
     <varlistentry><term>pazpar2path</term>
-    <listitem><para>server path to pazpar2 (relative to the portal), when pazar2 is installed as a package this does not have to be set </para></listitem>
+    <listitem><para>server path to pazpar2 (relative to the portal), when pazpar2 is installed as a package this does not have to be set </para></listitem>
     </varlistentry>
 
     <varlistentry><term>usesessions</term>
@@ -156,7 +157,7 @@
     <listitem><para>specifies reset method callback function</para></listitem></varlistentry>
 
     <varlistentry><term>termlist</term>
-    <listitem><para>coma separated list of facets</para></listitem></varlistentry>
+    <listitem><para>comma separated list of facets</para></listitem></varlistentry>
 
     <varlistentry><term>keepAlive</term>
     <listitem><para>ping period, should not be lower than 5000 usec</para></listitem></varlistentry>
@@ -183,19 +184,19 @@
     <listitem><para>reset state</para></listitem></varlistentry>
 
     <varlistentry><term>init (sesionId)</term>
-    <listitem><para>session-mode, intitialize new session or pick up a session already initialized</para></listitem></varlistentry>
+    <listitem><para>session-mode, initialize new session or pick up a session already initialized</para></listitem></varlistentry>
 
     <varlistentry><term>ping ()</term>
     <listitem><para>session-mode, intitialize pinging </para></listitem></varlistentry>
 
     <varlistentry><term>search (query, num, sort, filter, showfrom)</term>
-    <listitem><para>execute piggy-back search and activate polling on every command specfied by assigning command callback (in the pz2 constructor)</para></listitem></varlistentry>
+    <listitem><para>execute piggy-back search and activate polling on every command specified by assigning command callback (in the pz2 constructor)</para></listitem></varlistentry>
 
     <varlistentry><term>show (start, num, sort)</term>
     <listitem><para>start or change parameters of polling for a given window of records</para></listitem></varlistentry>
 
     <varlistentry><term>record (id, offset, syntax, handler)</term>
-    <listitem><para>retrieve detailed or raw record. handler temporary overrirdes default callback function.</para></listitem></varlistentry>
+    <listitem><para>retrieve detailed or raw record. handler temporarily overrides default callback function.</para></listitem></varlistentry>
 
     <varlistentry><term>termlist ()</term>
     <listitem><para>start polling for termlists</para></listitem></varlistentry>

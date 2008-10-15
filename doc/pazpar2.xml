@@ -127,7 +127,7 @@
      <para>
       Makes the Pazpar2 server change user ID to the
       <replaceable>uid</replaceable> given.
-      This, normally, require root privilege.
+      This, normally, requires root privilege.
      </para>
     </listitem>
    </varlistentry>

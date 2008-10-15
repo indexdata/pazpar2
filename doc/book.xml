@@ -87,7 +87,7 @@
    scenes. Pazpar2 connects to servers, carries out searches, and
    retrieves, deduplicates, and stores results internally. Your application
    code may periodically inquire about the status of an ongoing operation,
-   and ask to see records or other result set facets. Result become
+   and ask to see records or other result set facets. Result becomes
    available immediately, and it is easy to build end-user interfaces which
    feel extremely responsive, even when searching more than 100 servers
    concurrently.
@@ -118,7 +118,7 @@
    If you wish to connect to commercial or other databases which do not
    support open standards, please contact Index Data. We have a licensing
    agreement with a third party vendor which will enable Pazpar2 to access
-   thousands of online databases, in addition the vast number of catalogs
+   thousands of online databases, in addition to the vast number of catalogs
    and online services that support the Z39.50 protocol.
   </para>
   <para>
@@ -148,7 +148,7 @@
  <chapter id="installation">
   <title>Installation</title>
   <para>
-   The Pazpar2 package very small. It includes documentation as well
+   The Pazpar2 package is very small. It includes documentation as well
    as the Pazpar2 server. The package also includes a simple user
    interface test1 which consists of a single HTML page and a single
    JavaScript file to illustrate the use of Pazpar2.
@@ -465,8 +465,8 @@
     Sometimes, it may be necessary to implement functionality on your
     regular webserver that makes use of search results, for example to
     implement data import functionality, emailing results, history
-    lists, personal citation lists, interlibrary loan functionality
-    ,etc. Fortunately, it is simple to exchange information between
+    lists, personal citation lists, interlibrary loan functionality,
+    etc. Fortunately, it is simple to exchange information between
     Pazpar2, your browser scripting, and backend server-side scripting.
     You can send a session ID and possibly a record ID from your browser
     code to your server code, and from there use Pazpar2s webservice API
@@ -481,7 +481,7 @@
    <title>Your data model</title>
    <para>
     Pazpar2 does not have a preconceived model of what makes up a data
-    model. There are no assumption that records have specific fields or
+    model. There are no assumptions that records have specific fields or
     that they are organized in any particular way. The only assumption
     is that data comes packaged in a form that the software can work
     with (presently, that means XML or MARC), and that you can provide
