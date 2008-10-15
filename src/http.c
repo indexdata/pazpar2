@@ -589,7 +589,8 @@ struct http_request *http_parse_request(struct http_channel *c,
         r->content_len = start + len - buf;
         r->content_buf = buf;
 
-        if (!strcmp(content_type, "application/x-www-form-urlencoded"))
+        if (!yaz_strcmp_del("application/x-www-form-urlencoded",
+                            content_type, "; "))
         {
             http_parse_arguments(r, c->nmem, r->content_buf);
         }
@@ -888,6 +889,8 @@ static void http_io(IOCHAN i, int event)
                         hc->request->path,
                         *hc->request->search ? "?" : "",
                         hc->request->search);
+                if (hc->request->content_buf)
+                    yaz_log(YLOG_LOG, "%s", hc->request->content_buf);
                 if (http_weshouldproxy(hc->request))
                     http_proxy(hc->request);
                 else
