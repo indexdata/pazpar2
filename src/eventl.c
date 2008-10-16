@@ -111,7 +111,8 @@ int event_loop(IOCHAN *iochans)
             if (p->max_idle && p->max_idle < to.tv_sec)
                 to.tv_sec = p->max_idle;
 	}
-	if ((res = select(max + 1, &in, &out, &except, timeout)) < 0)
+        res = select(max + 1, &in, &out, &except, timeout);        
+        if (res < 0)
 	{
 	    if (errno == EINTR)
     		continue;
