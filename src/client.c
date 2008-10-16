@@ -83,7 +83,7 @@ struct client {
     char *pquery; // Current search
     char *cqlquery; // used for SRU targets only
     int hits;
-    int records;
+    int record_offset;
     int setno;
     int requestid;            // ID of current outstanding request
     int diagnostic;
@@ -108,9 +108,7 @@ static const char *client_states[] = {
     "Client_Connecting",
     "Client_Connected",
     "Client_Idle",
-    "Client_Initializing",
-    "Client_Searching",
-    "Client_Presenting",
+    "Client_Working",
     "Client_Error",
     "Client_Failed",
     "Client_Disconnected",
@@ -146,7 +144,6 @@ static void client_show_raw_error(struct client *cl, const char *addinfo);
 // Close connection and set state to error
 void client_fatal(struct client *cl)
 {
-    //client_show_raw_error(cl, "client connection failure");
     yaz_log(YLOG_WARN, "Fatal error from %s", client_get_url(cl));
     connection_destroy(cl->connection);
     client_set_state(cl, Client_Error);
@@ -348,7 +345,7 @@ void client_search_response(struct client *cl)
     if (ZOOM_connection_error(link, &error, &addinfo))
     {
         cl->hits = 0;
-        cl->state = Client_Error;
+        client_set_state(cl, Client_Error);
         yaz_log(YLOG_WARN, "Search error %s (%s): %s",
             error, addinfo, client_get_url(cl));
     }
@@ -367,10 +364,9 @@ void client_record_response(struct client *cl)
     ZOOM_resultset resultset = connection_get_resultset(co);
     const char *error, *addinfo;
 
-    yaz_log(YLOG_LOG, "client_record_response");
     if (ZOOM_connection_error(link, &error, &addinfo))
     {
-        cl->state = Client_Error;
+        client_set_state(cl, Client_Error);
         yaz_log(YLOG_WARN, "Search error %s (%s): %s",
             error, addinfo, client_get_url(cl));
     }
@@ -387,18 +383,22 @@ void client_record_response(struct client *cl)
                 cl->show_raw->active = 0;
                 ingest_raw_record(cl, rec);
             }
+            else
+            {
+                yaz_log(YLOG_WARN, "Expected record, but got NULL, offset=%d",
+                        cl->show_raw->position-1);
+            }
         }
         else
         {
-            int offset = cl->records;
+            int offset = cl->record_offset;
             if ((rec = ZOOM_resultset_record(resultset, offset)))
             {
-                yaz_log(YLOG_LOG, "Record with offset %d", offset);
-                
-                cl->records++;
+                cl->record_offset++;
                 if (ZOOM_record_error(rec, &msg, &addinfo, 0))
                     yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
-                            error, addinfo, client_get_url(cl), cl->records);
+                            error, addinfo, client_get_url(cl),
+                            cl->record_offset);
                 else
                 {
                     struct session_database *sdb = client_get_database(cl);
@@ -407,7 +407,7 @@ void client_record_response(struct client *cl)
                     nativesyntax_to_type(sdb, type);
                     if ((xmlrec = ZOOM_record_get(rec, type, NULL)))
                     {
-                        if (ingest_record(cl, xmlrec, cl->records))
+                        if (ingest_record(cl, xmlrec, cl->record_offset))
                         {
                             session_alert_watch(cl->session, SESSION_WATCH_SHOW);
                             session_alert_watch(cl->session, SESSION_WATCH_RECORD);
@@ -420,9 +420,12 @@ void client_record_response(struct client *cl)
                 }
 
             }
+            else
+            {
+                yaz_log(YLOG_WARN, "Expected record, but got NULL, offset=%d",
+                        offset);
+            }
         }
-        if (!rec)
-            yaz_log(YLOG_WARN, "Expected record, but got NULL");
     }
 }
 
@@ -443,8 +446,9 @@ void client_start_search(struct client *cl)
     assert(link);
 
     cl->hits = -1;
-    cl->records = 0;
+    cl->record_offset = 0;
     cl->diagnostic = 0;
+    client_set_state(cl, Client_Working);
 
     if (*opt_piggyback)
         ZOOM_connection_option_set(link, "piggyback", opt_piggyback);
@@ -499,7 +503,7 @@ struct client *client_create(void)
     r->connection = 0;
     r->session = 0;
     r->hits = 0;
-    r->records = 0;
+    r->record_offset = 0;
     r->setno = 0;
     r->requestid = -1;
     r->diagnostic = 0;
@@ -617,7 +621,7 @@ int client_parse_query(struct client *cl, const char *query)
     ccl_qual_rm(&ccl_map);
     if (!cn)
     {
-        cl->state = Client_Error;
+        client_set_state(cl, Client_Error);
         yaz_log(YLOG_WARN, "Failed to parse query for %s",
                          client_get_database(cl)->database->url);
         return -1;
@@ -682,7 +686,7 @@ int client_get_hits(struct client *cl)
 
 int client_get_num_records(struct client *cl)
 {
-    return cl->records;
+    return cl->record_offset;
 }
 
 int client_get_diagnostic(struct client *cl)
