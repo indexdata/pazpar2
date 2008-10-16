@@ -21,6 +21,7 @@
 
   <!-- Result normalization settings -->
 
+  <set name="pz:apdulog" value="0"/>
   <set name="pz:nativesyntax" value="iso2709"/>
   <set name="pz:xslt" value="marc21.xsl"/>
 
