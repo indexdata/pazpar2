@@ -480,6 +480,7 @@ void client_start_search(struct client *cl)
         ZOOM_query q = ZOOM_query_create();
         ZOOM_query_cql(q, cl->cqlquery);
         rs = ZOOM_connection_search(link, q);
+        ZOOM_query_destroy(q);
     }
     else
         rs = ZOOM_connection_search_pqf(link, cl->pquery);
