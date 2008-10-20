@@ -30,7 +30,6 @@ struct connection;
 enum client_state
 {
     Client_Connecting,
-    Client_Connected,
     Client_Idle,
     Client_Working,
     Client_Error,

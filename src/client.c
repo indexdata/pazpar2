@@ -106,7 +106,6 @@ struct show_raw {
 
 static const char *client_states[] = {
     "Client_Connecting",
-    "Client_Connected",
     "Client_Idle",
     "Client_Working",
     "Client_Error",
@@ -351,6 +350,7 @@ void client_search_response(struct client *cl)
     }
     else
     {
+        cl->record_offset = 0;
         cl->hits = ZOOM_resultset_size(resultset);
         se->total_hits += cl->hits;
     }

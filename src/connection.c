@@ -72,8 +72,6 @@ struct connection {
     char *ibuf;
     int ibufsize;
     char *zproxy;
-    int set_id_request;
-    int set_id_response;
     enum {
         Conn_Resolving,
         Conn_Connecting,
@@ -94,6 +92,8 @@ static int connection_is_idle(struct connection *co)
     if (co->state != Conn_Open || !link)
         return 0;
 
+    if (!ZOOM_connection_is_idle(link))
+        return 0;
     event = ZOOM_connection_peek_event(link);
     if (event == ZOOM_EVENT_NONE ||
                 event == ZOOM_EVENT_END)
@@ -116,7 +116,6 @@ void connection_set_resultset(struct connection *co, ZOOM_resultset rs)
 {
     if (co->resultset)
         ZOOM_resultset_destroy(co->resultset);
-    co->set_id_request++;
     co->resultset = rs;
 }
 
@@ -184,8 +183,6 @@ static struct connection *connection_create(struct client *cl)
     new->link = 0;
     new->resultset = 0;
     new->state = Conn_Resolving;
-    new->set_id_request = 0;
-    new->set_id_response = 0;
     if (host->ipport)
         connection_connect(new);
     return new;
@@ -203,11 +200,21 @@ static void non_block_events(struct connection *co)
         if (!r)
             break;
         ev = ZOOM_connection_last_event(link);
+#if 0
+        yaz_log(YLOG_LOG, "ZOOM_EVENT_%s", ZOOM_get_event_str(ev));
+#endif
         switch (ev) 
         {
         case ZOOM_EVENT_END:
-            if (co->set_id_request == co->set_id_response)
-                client_set_state(co->client, Client_Idle);
+            {
+                const char *error, *addinfo;
+                if (ZOOM_connection_error(link, &error, &addinfo))
+                {
+                    yaz_log(YLOG_LOG, "Error %s from %s",
+                            error, client_get_url(cl));
+                }
+                client_set_state(cl, Client_Idle);
+            }
             break;
         case ZOOM_EVENT_SEND_DATA:
             break;
@@ -223,17 +230,13 @@ static void non_block_events(struct connection *co)
         case ZOOM_EVENT_CONNECT:
             yaz_log(YLOG_LOG, "Connected to %s", client_get_url(cl));
             co->state = Conn_Open;
-            client_set_state(co->client, Client_Connected);
             iochan_settimeout(iochan, global_parameters.z3950_session_timeout);
             break;
         case ZOOM_EVENT_RECV_SEARCH:
-            co->set_id_response++;
-            if (co->set_id_request == co->set_id_response)
-                client_search_response(cl);
+            client_search_response(cl);
             break;
         case ZOOM_EVENT_RECV_RECORD:
-            if (co->set_id_request == co->set_id_response)
-                client_record_response(cl);
+            client_record_response(cl);
             break;
         default:
             yaz_log(YLOG_LOG, "Unhandled event (%d) from %s",
@@ -478,14 +481,14 @@ int client_prep_connection(struct client *cl)
             connection_release(co);
             client_set_connection(cl, co);
             co->client = cl;
-#if 0
             /* tells ZOOM to reconnect if necessary. Disabled becuase
                the ZOOM_connection_connect flushes the task queue */
             ZOOM_connection_connect(co->link, 0, 0);
-#endif
         }
         else
+        {
             co = connection_create(cl);
+        }
     }
 
     if (co && co->link)
