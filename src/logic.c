@@ -530,7 +530,6 @@ enum pazpar2_error_code search(struct session *se,
     se->reclist = 0;
     se->num_termlists = 0;
     criteria = parse_filter(se->nmem, filter);
-    se->requestid++;
     live_channels = select_targets(se, criteria);
     if (live_channels)
     {
@@ -701,7 +700,6 @@ struct session *new_session(NMEM nmem)
     session->number_of_warnings_unknown_elements = 0;
     session->num_termlists = 0;
     session->reclist = 0;
-    session->requestid = -1;
     session->clients = 0;
     session->expected_maxrecs = 0;
     session->session_nmem = nmem;
