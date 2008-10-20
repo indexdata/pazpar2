@@ -59,8 +59,6 @@ void client_set_database(struct client *cl, struct session_database *db);
 struct session *client_get_session(struct client *cl);
 const char *client_get_pquery(struct client *cl);
 
-void client_set_requestid(struct client *cl, int id);
-
 void client_init_response(struct client *cl, Z_APDU *a);
 void client_search_response(struct client *cl);
 void client_record_response(struct client *cl);

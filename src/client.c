@@ -75,7 +75,6 @@ struct client {
     int hits;
     int record_offset;
     int setno;
-    int requestid;            // ID of current outstanding request
     int diagnostic;
     enum client_state state;
     struct show_raw *show_raw;
@@ -157,12 +156,6 @@ const char *client_get_pquery(struct client *cl)
 {
     return cl->pquery;
 }
-
-void client_set_requestid(struct client *cl, int id)
-{
-    cl->requestid = id;
-}
-
 
 static void client_send_raw_present(struct client *cl);
 
@@ -496,7 +489,6 @@ struct client *client_create(void)
     r->hits = 0;
     r->record_offset = 0;
     r->setno = 0;
-    r->requestid = -1;
     r->diagnostic = 0;
     r->state = Client_Disconnected;
     r->show_raw = 0;
