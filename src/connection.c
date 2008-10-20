@@ -34,16 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif
-#ifdef WIN32
-#include <winsock.h>
-typedef int socklen_t;
-#endif
-#if HAVE_NETDB_H
-#include <netdb.h>
-#endif
 
 #include <signal.h>
 #include <ctype.h>
@@ -95,8 +85,7 @@ static int connection_is_idle(struct connection *co)
     if (!ZOOM_connection_is_idle(link))
         return 0;
     event = ZOOM_connection_peek_event(link);
-    if (event == ZOOM_EVENT_NONE ||
-                event == ZOOM_EVENT_END)
+    if (event == ZOOM_EVENT_NONE || event == ZOOM_EVENT_END)
         return 1;
     else
         return 0;
