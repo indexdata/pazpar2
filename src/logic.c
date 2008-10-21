@@ -34,12 +34,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
-#if HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif
-#if HAVE_NETDB_H
-#include <netdb.h>
-#endif
 #include <signal.h>
 #include <ctype.h>
 #include <assert.h>
@@ -63,9 +57,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/timing.h>
 #endif
 
-#if HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
 
 #include "pazpar2.h"
 #include "eventl.h"
@@ -539,7 +530,6 @@ enum pazpar2_error_code search(struct session *se,
     se->reclist = 0;
     se->num_termlists = 0;
     criteria = parse_filter(se->nmem, filter);
-    se->requestid++;
     live_channels = select_targets(se, criteria);
     if (live_channels)
     {
@@ -710,7 +700,6 @@ struct session *new_session(NMEM nmem)
     session->number_of_warnings_unknown_elements = 0;
     session->num_termlists = 0;
     session->reclist = 0;
-    session->requestid = -1;
     session->clients = 0;
     session->expected_maxrecs = 0;
     session->session_nmem = nmem;
