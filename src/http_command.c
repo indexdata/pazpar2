@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #if HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif

@@ -182,7 +182,7 @@ static const char *pp2_relevance_token_a_to_z(pp2_relevance_token_t prt)
     int c;
 
     /* skip white space */
-    while (*cp && (c = raw_char(tolower(*cp))) < 0)
+    while (*cp && (c = raw_char(tolower(*(const unsigned char *)cp))) < 0)
         cp++;
     if (*cp == '\0')
     {

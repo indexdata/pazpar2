@@ -35,8 +35,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /** \brief removes leading whitespace.. Removes suffix cahrs in rm_chars */
 char * normalize7bit_generic(char * str, const char * rm_chars)
 {
-    unsigned char *p, *pe;
-    for (p = str; *p && isspace(*p); p++)
+    char *p, *pe;
+    for (p = str; *p && isspace(*(unsigned char *)p); p++)
         ;
     for (pe = p + strlen(p) - 1;
          pe > p && strchr(rm_chars, *pe); pe--)
@@ -48,18 +48,18 @@ char * normalize7bit_generic(char * str, const char * rm_chars)
 
 char * normalize7bit_mergekey(char *buf, int skiparticle)
 {
-    unsigned char *p = buf, *pout = buf;
+    char *p = buf, *pout = buf;
 
     if (skiparticle)
     {
         char firstword[64];
         char articles[] = "the den der die des an a "; // must end in space
 
-        while (*p && !isalnum(*p))
+        while (*p && !isalnum(*(unsigned char *)p))
             p++;
         pout = firstword;
         while (*p && *p != ' ' && pout - firstword < 62)
-            *(pout++) = tolower(*(p++));
+            *(pout++) = tolower(*(unsigned char *)(p++));
         *(pout++) = ' ';
         *(pout++) = '\0';
         if (!strstr(articles, firstword))
@@ -69,13 +69,13 @@ char * normalize7bit_mergekey(char *buf, int skiparticle)
 
     while (*p)
     {
-        while (*p && !isalnum(*p))
+        while (*p && !isalnum(*(unsigned char *)p))
             p++;
-        while (isalnum(*p))
-            *(pout++) = tolower(*(p++));
+        while (isalnum(*(unsigned char *)p))
+            *(pout++) = tolower(*(unsigned char *)(p++));
         if (*p)
             *(pout++) = ' ';
-        while (*p && !isalnum(*p))
+        while (*p && !isalnum(*(unsigned char *)p))
             p++;
     }
     if (buf != pout)
