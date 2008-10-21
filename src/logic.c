@@ -95,6 +95,24 @@ struct parameters global_parameters =
     15   // Connect timeout
 };
 
+static void log_xml_doc(xmlDoc *doc)
+{
+    FILE *lf = yaz_log_file();
+    xmlChar *result = 0;
+    int len = 0;
+#if LIBXML_VERSION >= 20600
+    xmlDocDumpFormatMemory(doc, &result, &len, 1);
+#else
+    xmlDocDumpMemory(doc, &result, &len);
+#endif
+    if (lf && len)
+    {
+        fwrite(result, 1, len, lf);
+        fprintf(lf, "\n");
+    }
+    xmlFree(result);
+}
+
 // Recursively traverse query structure to extract terms.
 void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
 {
@@ -165,17 +183,8 @@ xmlDoc *record_to_xml(struct session_database *sdb, const char *rec)
 
     if (global_parameters.dump_records)
     {
-        FILE *lf = yaz_log_file();
-        if (lf)
-        {
-            yaz_log(YLOG_LOG, "Un-normalized record from %s", db->url);
-#if LIBXML_VERSION >= 20600
-            xmlDocFormatDump(lf, rdoc, 1);
-#else
-            xmlDocDump(lf, rdoc);
-#endif
-            fprintf(lf, "\n");
-        }
+        yaz_log(YLOG_LOG, "Un-normalized record from %s", db->url);
+        log_xml_doc(rdoc);
     }
 
     return rdoc;
@@ -282,19 +291,9 @@ xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
 
         if (global_parameters.dump_records)
         {
-            FILE *lf = yaz_log_file();
-            
-            if (lf)
-            {
-                yaz_log(YLOG_LOG, "Normalized record from %s", 
-                        sdb->database->url);
-#if LIBXML_VERSION >= 20600
-                xmlDocFormatDump(lf, rdoc, 1);
-#else
-                xmlDocDump(lf, rdoc);
-#endif
-                fprintf(lf, "\n");
-            }
+            yaz_log(YLOG_LOG, "Normalized record from %s", 
+                    sdb->database->url);
+            log_xml_doc(rdoc);
         }
     }
     return rdoc;
