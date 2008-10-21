@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /** \brief removes leading whitespace.. Removes suffix cahrs in rm_chars */
 char * normalize7bit_generic(char * str, const char * rm_chars)
 {
-    char *p, *pe;
+    unsigned char *p, *pe;
     for (p = str; *p && isspace(*p); p++)
         ;
     for (pe = p + strlen(p) - 1;
@@ -48,7 +48,7 @@ char * normalize7bit_generic(char * str, const char * rm_chars)
 
 char * normalize7bit_mergekey(char *buf, int skiparticle)
 {
-    char *p = buf, *pout = buf;
+    unsigned char *p = buf, *pout = buf;
 
     if (skiparticle)
     {
@@ -99,10 +99,10 @@ int extract7bit_dates(const char *buf, int *first, int *last, int longdate)
         const char *e;
         int len;
 
-        while (*buf && !isdigit(*buf))
+        while (*buf && !isdigit(*(unsigned char *)buf))
             buf++;
         len = 0;
-        for (e = buf; *e && isdigit(*e); e++)
+        for (e = buf; *e && isdigit(*(unsigned char *)e); e++)
             len++;
         if ((len == 4 && !longdate) || (longdate && len >= 4 && len <= 8))
         {
