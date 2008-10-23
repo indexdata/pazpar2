@@ -1020,137 +1020,137 @@ struct record *ingest_record(struct client *cl, const char *rec,
         return 0;
     }
     relevance_newrec(se->relevance, cluster);
+    
+    
+    // now parsing XML record and adding data to cluster or record metadata
+    for (n = root->children; n; n = n->next)
+    {
+        if (type)
+            xmlFree(type);
+        if (value)
+            xmlFree(value);
+        type = value = 0;
+        
+        if (n->type != XML_ELEMENT_NODE)
+            continue;
+        if (!strcmp((const char *) n->name, "metadata"))
+        {
+            struct conf_metadata *ser_md = 0;
+            struct conf_sortkey *ser_sk = 0;
+            struct record_metadata **wheretoput = 0;
+            struct record_metadata *rec_md = 0;
+            int md_field_id = -1;
+            int sk_field_id = -1;
+            
+            type = xmlGetProp(n, (xmlChar *) "type");
+            value = xmlNodeListGetString(xdoc, n->children, 1);
+            
+            if (!type || !value || !*value)
+                continue;
+            
+            md_field_id 
+                = conf_service_metadata_field_id(service, (const char *) type);
+            if (md_field_id < 0)
+            {
+                if (se->number_of_warnings_unknown_metadata == 0)
+                {
+                    yaz_log(YLOG_WARN, 
+                            "Ignoring unknown metadata element: %s", type);
+                }
+                se->number_of_warnings_unknown_metadata++;
+                continue;
+            }
+            
+            ser_md = &service->metadata[md_field_id];
+            
+            if (ser_md->sortkey_offset >= 0){
+                sk_field_id = ser_md->sortkey_offset;
+                ser_sk = &service->sortkeys[sk_field_id];
+            }
 
-     
-     // now parsing XML record and adding data to cluster or record metadata
-     for (n = root->children; n; n = n->next)
-     {
-         if (type)
-             xmlFree(type);
-         if (value)
-             xmlFree(value);
-         type = value = 0;
+            // non-merged metadata
+            rec_md = record_metadata_init(se->nmem, (char *) value,
+                                          ser_md->type);
+            if (!rec_md)
+            {
+                yaz_log(YLOG_WARN, "bad metadata data '%s' for element '%s'",
+                        value, type);
+                continue;
+            }
+            wheretoput = &record->metadata[md_field_id];
+            while (*wheretoput)
+                wheretoput = &(*wheretoput)->next;
+            *wheretoput = rec_md;
 
-         if (n->type != XML_ELEMENT_NODE)
-             continue;
-         if (!strcmp((const char *) n->name, "metadata"))
-         {
-             struct conf_metadata *ser_md = 0;
-             struct conf_sortkey *ser_sk = 0;
-             struct record_metadata **wheretoput = 0;
-             struct record_metadata *rec_md = 0;
-             int md_field_id = -1;
-             int sk_field_id = -1;
+            // merged metadata
+            rec_md = record_metadata_init(se->nmem, (char *) value,
+                                          ser_md->type);
+            wheretoput = &cluster->metadata[md_field_id];
 
-             type = xmlGetProp(n, (xmlChar *) "type");
-             value = xmlNodeListGetString(xdoc, n->children, 1);
+            // and polulate with data:
+            // assign cluster or record based on merge action
+            if (ser_md->merge == Metadata_merge_no)
+            {
+                while (*wheretoput)
+                    wheretoput = &(*wheretoput)->next;
+                *wheretoput = rec_md;
+            }
+            if (ser_md->merge == Metadata_merge_unique)
+            {
+                struct record_metadata *mnode;
+                for (mnode = *wheretoput; mnode; mnode = mnode->next)
+                    if (!strcmp((const char *) mnode->data.text.disp, 
+                                rec_md->data.text.disp))
+                        break;
+                if (!mnode)
+                {
+                    rec_md->next = *wheretoput;
+                    *wheretoput = rec_md;
+                }
+            }
+            else if (ser_md->merge == Metadata_merge_longest)
+            {
+                if (!*wheretoput 
+                    || strlen(rec_md->data.text.disp) 
+                    > strlen((*wheretoput)->data.text.disp))
+                {
+                    *wheretoput = rec_md;
+                    if (ser_sk)
+                    {
+                        const char *sort_str = 0;
+                        int skip_article = 
+                            ser_sk->type == Metadata_sortkey_skiparticle;
 
-             if (!type || !value || !*value)
-                 continue;
-
-             md_field_id 
-                 = conf_service_metadata_field_id(service, (const char *) type);
-             if (md_field_id < 0)
-             {
-                 if (se->number_of_warnings_unknown_metadata == 0)
-                 {
-                     yaz_log(YLOG_WARN, 
-                             "Ignoring unknown metadata element: %s", type);
-                 }
-                 se->number_of_warnings_unknown_metadata++;
-                 continue;
-             }
-
-             ser_md = &service->metadata[md_field_id];
-
-             if (ser_md->sortkey_offset >= 0){
-                 sk_field_id = ser_md->sortkey_offset;
-                 ser_sk = &service->sortkeys[sk_field_id];
-             }
-
-             // non-merged metadata
-             rec_md = record_metadata_init(se->nmem, (char *) value,
-                                           ser_md->type);
-             if (!rec_md)
-             {
-                 yaz_log(YLOG_WARN, "bad metadata data '%s' for element '%s'",
-                         value, type);
-                 continue;
-             }
-             wheretoput = &record->metadata[md_field_id];
-             while (*wheretoput)
-                 wheretoput = &(*wheretoput)->next;
-             *wheretoput = rec_md;
-
-             // merged metadata
-             rec_md = record_metadata_init(se->nmem, (char *) value,
-                                           ser_md->type);
-             wheretoput = &cluster->metadata[md_field_id];
-
-             // and polulate with data:
-             // assign cluster or record based on merge action
-             if (ser_md->merge == Metadata_merge_no)
-             {
-                 while (*wheretoput)
-                     wheretoput = &(*wheretoput)->next;
-                 *wheretoput = rec_md;
-             }
-             if (ser_md->merge == Metadata_merge_unique)
-             {
-                 struct record_metadata *mnode;
-                 for (mnode = *wheretoput; mnode; mnode = mnode->next)
-                     if (!strcmp((const char *) mnode->data.text.disp, 
-                                 rec_md->data.text.disp))
-                         break;
-                 if (!mnode)
-                 {
-                     rec_md->next = *wheretoput;
-                     *wheretoput = rec_md;
-                 }
-             }
-             else if (ser_md->merge == Metadata_merge_longest)
-             {
-                 if (!*wheretoput 
-                     || strlen(rec_md->data.text.disp) 
-                     > strlen((*wheretoput)->data.text.disp))
-                 {
-                     *wheretoput = rec_md;
-                     if (ser_sk)
-                     {
-                         const char *sort_str = 0;
-                         int skip_article = 
-                             ser_sk->type == Metadata_sortkey_skiparticle;
-
-                         if (!cluster->sortkeys[sk_field_id])
-                             cluster->sortkeys[sk_field_id] = 
-                                 nmem_malloc(se->nmem, 
-                                             sizeof(union data_types));
+                        if (!cluster->sortkeys[sk_field_id])
+                            cluster->sortkeys[sk_field_id] = 
+                                nmem_malloc(se->nmem, 
+                                            sizeof(union data_types));
                          
-                         prt = pp2_relevance_tokenize(
-                             global_parameters.server->sort_pct,
-                             rec_md->data.text.disp);
+                        prt = pp2_relevance_tokenize(
+                            global_parameters.server->sort_pct,
+                            rec_md->data.text.disp);
 
-                         pp2_relevance_token_next(prt);
+                        pp2_relevance_token_next(prt);
                          
-                         sort_str = pp2_get_sort(prt, skip_article);
+                        sort_str = pp2_get_sort(prt, skip_article);
                          
-                         cluster->sortkeys[sk_field_id]->text.disp = 
-                             rec_md->data.text.disp;
-                         if (!sort_str)
-                         {
-                             sort_str = rec_md->data.text.disp;
-                             yaz_log(YLOG_WARN, 
-                                     "Could not make sortkey. Bug #1858");
-                         }
-                         cluster->sortkeys[sk_field_id]->text.sort = 
-                             nmem_strdup(se->nmem, sort_str);
+                        cluster->sortkeys[sk_field_id]->text.disp = 
+                            rec_md->data.text.disp;
+                        if (!sort_str)
+                        {
+                            sort_str = rec_md->data.text.disp;
+                            yaz_log(YLOG_WARN, 
+                                    "Could not make sortkey. Bug #1858");
+                        }
+                        cluster->sortkeys[sk_field_id]->text.sort = 
+                            nmem_strdup(se->nmem, sort_str);
 #if 0
-                         yaz_log(YLOG_LOG, "text disp=%s",
-                                 cluster->sortkeys[sk_field_id]->text.disp);
-                         yaz_log(YLOG_LOG, "text sort=%s",
-                                 cluster->sortkeys[sk_field_id]->text.sort);
+                        yaz_log(YLOG_LOG, "text disp=%s",
+                                cluster->sortkeys[sk_field_id]->text.disp);
+                        yaz_log(YLOG_LOG, "text sort=%s",
+                                cluster->sortkeys[sk_field_id]->text.sort);
 #endif
-                         pp2_relevance_token_destroy(prt);
+                        pp2_relevance_token_destroy(prt);
                     }
                 }
             }
@@ -1208,13 +1208,13 @@ struct record *ingest_record(struct client *cl, const char *rec,
             xmlFree(value);
             type = value = 0;
         }
-         else
-         {
-             if (se->number_of_warnings_unknown_elements == 0)
-                 yaz_log(YLOG_WARN,
-                         "Unexpected element in internal record: %s", n->name);
-             se->number_of_warnings_unknown_elements++;
-         }
+        else
+        {
+            if (se->number_of_warnings_unknown_elements == 0)
+                yaz_log(YLOG_WARN,
+                        "Unexpected element in internal record: %s", n->name);
+            se->number_of_warnings_unknown_elements++;
+        }
     }
     if (type)
         xmlFree(type);
