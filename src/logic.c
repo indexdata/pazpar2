@@ -697,6 +697,7 @@ struct session *new_session(NMEM nmem)
     session->total_hits = 0;
     session->total_records = 0;
     session->number_of_warnings_unknown_elements = 0;
+    session->number_of_warnings_unknown_metadata = 0;
     session->num_termlists = 0;
     session->reclist = 0;
     session->clients = 0;
@@ -1019,7 +1020,7 @@ struct record *ingest_record(struct client *cl, const char *rec,
         return 0;
     }
     relevance_newrec(se->relevance, cluster);
-     
+
      
      // now parsing XML record and adding data to cluster or record metadata
      for (n = root->children; n; n = n->next)
@@ -1051,8 +1052,12 @@ struct record *ingest_record(struct client *cl, const char *rec,
                  = conf_service_metadata_field_id(service, (const char *) type);
              if (md_field_id < 0)
              {
-                 yaz_log(YLOG_WARN, 
-                         "Ignoring unknown metadata element: %s", type);
+                 if (se->number_of_warnings_unknown_metadata == 0)
+                 {
+                     yaz_log(YLOG_WARN, 
+                             "Ignoring unknown metadata element: %s", type);
+                 }
+                 se->number_of_warnings_unknown_metadata++;
                  continue;
              }
 
