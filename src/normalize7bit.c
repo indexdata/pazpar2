@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 char * normalize7bit_generic(char * str, const char * rm_chars)
 {
     char *p, *pe;
-    for (p = str; *p && isspace(*p); p++)
+    for (p = str; *p && isspace(*(unsigned char *)p); p++)
         ;
     for (pe = p + strlen(p) - 1;
          pe > p && strchr(rm_chars, *pe); pe--)
@@ -55,11 +55,11 @@ char * normalize7bit_mergekey(char *buf, int skiparticle)
         char firstword[64];
         char articles[] = "the den der die des an a "; // must end in space
 
-        while (*p && !isalnum(*p))
+        while (*p && !isalnum(*(unsigned char *)p))
             p++;
         pout = firstword;
         while (*p && *p != ' ' && pout - firstword < 62)
-            *(pout++) = tolower(*(p++));
+            *(pout++) = tolower(*(unsigned char *)(p++));
         *(pout++) = ' ';
         *(pout++) = '\0';
         if (!strstr(articles, firstword))
@@ -69,13 +69,13 @@ char * normalize7bit_mergekey(char *buf, int skiparticle)
 
     while (*p)
     {
-        while (*p && !isalnum(*p))
+        while (*p && !isalnum(*(unsigned char *)p))
             p++;
-        while (isalnum(*p))
-            *(pout++) = tolower(*(p++));
+        while (isalnum(*(unsigned char *)p))
+            *(pout++) = tolower(*(unsigned char *)(p++));
         if (*p)
             *(pout++) = ' ';
-        while (*p && !isalnum(*p))
+        while (*p && !isalnum(*(unsigned char *)p))
             p++;
     }
     if (buf != pout)
@@ -99,10 +99,10 @@ int extract7bit_dates(const char *buf, int *first, int *last, int longdate)
         const char *e;
         int len;
 
-        while (*buf && !isdigit(*buf))
+        while (*buf && !isdigit(*(unsigned char *)buf))
             buf++;
         len = 0;
-        for (e = buf; *e && isdigit(*e); e++)
+        for (e = buf; *e && isdigit(*(unsigned char *)e); e++)
             len++;
         if ((len == 4 && !longdate) || (longdate && len >= 4 && len <= 8))
         {

@@ -351,7 +351,7 @@ static int package_check(const char *buf, int sz)
             while (*cp == ' ')
                 cp++;
             content_len = 0;
-            while (*cp && isdigit(*cp))
+            while (*cp && isdigit(*(const unsigned char *)cp))
                 content_len = content_len*10 + (*cp++ - '0');
             if (content_len < 0) /* prevent negative offsets */
                 content_len = 0;
@@ -404,7 +404,7 @@ struct http_response *http_parse_response_buf(struct http_channel *c, const char
                 return 0;
             *(value++) = '\0';
             h->name = nmem_strdup(c->nmem, p);
-            while (isspace(*value))
+            while (isspace(*(const unsigned char *) value))
                 value++;
             if (value >= p2)  // Empty header;
             {

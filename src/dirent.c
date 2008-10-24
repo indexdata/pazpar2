@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <config.h>
 #endif
 
-#include <ctype.h>
 #include <assert.h>
 #ifdef WIN32
 #include <io.h>

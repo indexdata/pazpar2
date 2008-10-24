@@ -34,9 +34,7 @@ enum client_state
     Client_Working,
     Client_Error,
     Client_Failed,
-    Client_Disconnected,
-    Client_Stopped,
-    Client_Continue
+    Client_Disconnected
 };
 
 int client_show_raw_begin(struct client *cl, int position,

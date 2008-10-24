@@ -35,7 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <unistd.h>
 #endif
 #include <signal.h>
-#include <ctype.h>
 #include <assert.h>
 
 #include <yaz/marcdisp.h>
@@ -74,7 +73,6 @@ struct client {
     char *cqlquery; // used for SRU targets only
     int hits;
     int record_offset;
-    int setno;
     int diagnostic;
     enum client_state state;
     struct show_raw *show_raw;
@@ -99,9 +97,7 @@ static const char *client_states[] = {
     "Client_Working",
     "Client_Error",
     "Client_Failed",
-    "Client_Disconnected",
-    "Client_Stopped",
-    "Client_Continue"
+    "Client_Disconnected"
 };
 
 static struct client *client_freelist = 0;
@@ -488,7 +484,6 @@ struct client *client_create(void)
     r->session = 0;
     r->hits = 0;
     r->record_offset = 0;
-    r->setno = 0;
     r->diagnostic = 0;
     r->state = Client_Disconnected;
     r->show_raw = 0;
@@ -647,8 +642,7 @@ void client_set_session(struct client *cl, struct session *se)
 
 int client_is_active(struct client *cl)
 {
-    if (cl->connection && (cl->state == Client_Continue ||
-                           cl->state == Client_Connecting ||
+    if (cl->connection && (cl->state == Client_Connecting ||
                            cl->state == Client_Working))
         return 1;
     return 0;

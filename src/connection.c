@@ -36,7 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #include <signal.h>
-#include <ctype.h>
 #include <assert.h>
 
 #include <yaz/log.h>
@@ -399,16 +398,7 @@ static int connection_connect(struct connection *con)
     if (sru && *sru)
         strcpy(ipport, "http://");
     strcat(ipport, host->ipport);
-    /* deal with SRU path here because databaseName option is not read in
-       ZOOM in SRU mode */
-    if (sru && *sru)
-    {
-        if (*sdb->database->databases[0])
-        {
-            strcat(ipport, "/");
-            strcat(ipport, sdb->database->databases[0]);
-        }
-    }
+
     ZOOM_connection_connect(link, ipport, 0);
     
     con->link = link;

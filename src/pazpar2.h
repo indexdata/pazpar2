@@ -140,6 +140,7 @@ struct session {
     int total_records;
     int total_merged;
     int number_of_warnings_unknown_elements;
+    int number_of_warnings_unknown_metadata;
 };
 
 struct statistics {
