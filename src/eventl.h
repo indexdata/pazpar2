@@ -36,7 +36,6 @@ typedef struct iochan
 #define EVENT_OUTPUT    0x02
 #define EVENT_EXCEPT    0x04
 #define EVENT_TIMEOUT   0x08
-#define EVENT_WORK      0x10
     int force_event;
     IOC_CALLBACK fun;
     IOC_SOCKETFUN socketfun;
