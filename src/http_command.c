@@ -485,8 +485,7 @@ static void write_subrecord(struct record *r, WRBUF w,
     wrbuf_xmlputs(w,  *name ? name : "Unknown");
     wrbuf_puts(w, "\">");
 
-    if (show_details)
-        write_metadata(w, service, r->metadata, 1);
+    write_metadata(w, service, r->metadata, show_details);
     wrbuf_puts(w, "</location>\n");
 }
 
