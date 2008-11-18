@@ -4,7 +4,7 @@
   <server>
     <listen port="9004"/>
     <proxy host="localhost:80"/>
-    <settings src="../etc/settings"/>
+    <!-- <settings src="/etc/pazpar2/settings/edu.xml"/> -->
 
     <relevance>
       <icu_chain id="relevance" locale="el">
@@ -35,12 +35,12 @@
     
     <service>
       <!-- we try to keep same order as in marc21.xsl -->
-      <metadata name="id"/>
+      <metadata name="id" brief="yes"/>
       <metadata name="lccn" merge="unique"/>
       <metadata name="isbn"/>
       <metadata name="issn"/>
       <metadata name="tech-rep-nr"/>
-      <metadata name="author" brief="yes" termlist="yes" merge="longest" rank="2"/>
+      <metadata name="author" brief="yes" termlist="yes" merge="unique" rank="2"/>
       <metadata name="author-title"/>
       <metadata name="author-date"/>
       <metadata name="corporate-name"/>
@@ -58,7 +58,8 @@
       <metadata name="title-dates" brief="yes" merge="longest"/>
       <metadata name="title-medium" brief="yes" merge="longest"/>
       <metadata name="title-number-section" brief="yes" merge="longest"/>
-      <metadata name="medium" brief="yes" merge="longest"/>
+      <metadata name="medium" brief="yes" merge="no"/>
+      <metadata name="iii-id" brief="yes" merge="no"/>
       <metadata name="edition"/>
       <metadata name="publication-place"/>
       <metadata name="publication-name"/>
@@ -73,19 +74,19 @@
 
       <metadata name="series-title"/>	
 
-      <metadata name="description" merge="longest" rank="3"/>
+      <metadata name="description" brief="yes" merge="unique" rank="3"/>
       <metadata name="subject-long" rank="3"/>
       <metadata name="subject" termlist="yes" rank="0"/>
-      <metadata name="snippet" brief="yes" merge="longest"/>
-      <metadata name="electronic-url"/>
+      <metadata name="snippet" brief="yes" merge="unique"/>
+      <metadata name="electronic-url" brief="yes" merge="no"/>
       <metadata name="electronic-text"/>
       <metadata name="electronic-note"/>
       <metadata name="citation"/>
       <metadata name="holding"/>
       <metadata name="fulltext"/>
 
-      <metadata name="url_recipe" setting="postproc"/>
-      <metadata name="open_url_resolver" setting="parameter"/>
+      <metadata name="url_recipe" setting="postproc" brief="yes" merge="no"/>
+      <metadata name="open_url_resolver" setting="parameter" merge="no"/>
       <metadata name="open-url" merge="longest"/>
     </service>
   </server>
