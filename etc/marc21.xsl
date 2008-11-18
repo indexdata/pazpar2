@@ -264,6 +264,12 @@
 	</pz:metadata>
       </xsl:if> -->
 
+      <xsl:for-each select="marc:datafield[@tag='907']">
+        <pz:metadata type="iii-id">
+	  <xsl:value-of select="marc:subfield[@code='a']"/>
+	</pz:metadata>
+      </xsl:for-each>
+
       <xsl:for-each select="marc:datafield[@tag='926']">
         <pz:metadata type="holding">
 	  <xsl:for-each select="marc:subfield">
