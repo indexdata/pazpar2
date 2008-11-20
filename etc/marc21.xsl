@@ -30,9 +30,6 @@
 	<xsl:when test="$fulltext_b">
 	  <xsl:text>electronic resource</xsl:text>
 	</xsl:when>
-	<xsl:when test="$electronic_location_url">
-	  <xsl:text>electronic resource</xsl:text>
-	</xsl:when>
 	<xsl:when test="$journal_title">
 	  <xsl:text>article</xsl:text>
 	</xsl:when>
