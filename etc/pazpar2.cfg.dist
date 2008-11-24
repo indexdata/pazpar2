@@ -4,7 +4,7 @@
   <server>
     <listen port="9004"/>
     <proxy host="localhost:80"/>
-    <!-- <settings src="/etc/pazpar2/settings/edu.xml"/> -->
+    <settings src="../etc/settings"/>
 
     <relevance>
       <icu_chain id="relevance" locale="el">
