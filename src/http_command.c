@@ -422,6 +422,13 @@ static void cmd_bytarget(struct http_channel *c)
         wrbuf_xmlputs(c->wrbuf, ht[i].id);
         wrbuf_puts(c->wrbuf, "</id>\n");
 
+        if (ht[i].name && ht[i].name[0]) 
+        {
+            wrbuf_puts(c->wrbuf, "<name>");
+            wrbuf_xmlputs(c->wrbuf, ht[i].name);
+            wrbuf_puts(c->wrbuf, "</name>\n");
+        }
+
         wrbuf_printf(c->wrbuf, "<hits>%d</hits>\n", ht[i].hits);
         wrbuf_printf(c->wrbuf, "<diagnostic>%d</diagnostic>\n", ht[i].diagnostic);
         wrbuf_printf(c->wrbuf, "<records>%d</records>\n", ht[i].records);
