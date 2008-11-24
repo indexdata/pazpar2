@@ -1,3 +1,11 @@
+--- 1.0.13 2008/11/24
+
+Command bytarget returns name of target (if defined).
+
+--- 1.0.12 2008/11/04
+
+Fixed bug #2021.. location now holds all brief elements.
+
 --- 1.0.11 2008/10/15
 
 Fixed check for application/x-www-form-urlencoded parameters.
