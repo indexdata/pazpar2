@@ -1,3 +1,9 @@
+pazpar2 (1.0.13-2indexdata) jaunty; urgency=low
+
+  * New package with no .orig file in it.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Tue, 25 Nov 2008 10:46:48 +0100
+
 pazpar2 (1.0.13-1indexdata) unstable; urgency=low
 
   * Upstream.
