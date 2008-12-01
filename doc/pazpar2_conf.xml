@@ -797,6 +797,19 @@
       </para>
      </listitem>
     </varlistentry>
+
+    <varlistentry>
+      <term>pz:pqf_prefix</term>
+      <listitem>
+        <para>
+	  Allows you to specify an arbitrary PQF query language substring. The provided
+	  string is prefixed the user's query after it has been normalized to PQF
+	  internally in pazpar2. This allows you to attach complex 'filters' to
+	  queries for a gien target, sometimes necessary to select sub-catalogs
+	  in union catalog systems, etc.
+	</para>
+      </listitem>
+    </varlistentry>
    </variablelist>
   </refsect2>
 

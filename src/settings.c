@@ -63,6 +63,7 @@ static char *hard_settings[] = {
     "pz:ip",
     "pz:zproxy",
     "pz:apdulog",
+    "pz:pqf_prefix",
     0
 };
 
