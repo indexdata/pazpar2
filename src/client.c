@@ -591,6 +591,7 @@ int client_parse_query(struct client *cl, const char *query)
     int cerror, cpos;
     CCL_bibset ccl_map = prepare_cclmap(cl);
     const char *sru = session_setting_oneval(sdb, PZ_SRU);
+    const char *pqf_prefix = session_setting_oneval(sdb, PZ_PQF_PREFIX);
 
     if (!ccl_map)
         return -1;
@@ -605,6 +606,11 @@ int client_parse_query(struct client *cl, const char *query)
         return -1;
     }
     wrbuf_rewind(se->wrbuf);
+    if (*pqf_prefix)
+    {
+        wrbuf_puts(se->wrbuf, pqf_prefix);
+        wrbuf_puts(se->wrbuf, " ");
+    }
     ccl_pquery(se->wrbuf, cn);
     xfree(cl->pquery);
     cl->pquery = xstrdup(wrbuf_cstr(se->wrbuf));

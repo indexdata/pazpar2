@@ -65,6 +65,7 @@ static char *hard_settings[] = {
     "pz:apdulog",
     "pz:sru",
     "pz:sru_version",
+    "pz:pqf_prefix",
     0
 };
 
