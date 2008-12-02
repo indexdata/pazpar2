@@ -344,7 +344,7 @@ function drawCurDetails ()
     var recordDiv = document.getElementById('recdiv_'+data.recid);
     var details = "";
     if (data["md-title"] != undefined)
-        details += '<tr><td><b>Ttle</b></td><td><b>:</b> '+data["md-title"] + '</td></tr>';
+        details += '<tr><td><b>Title</b></td><td><b>:</b> '+data["md-title"] + '</td></tr>';
     if (data["md-date"] != undefined)
         details += '<tr><td><b>Date</b></td><td><b>:</b> ' + data["md-date"] + '</td></tr>';
     if (data["md-author"] != undefined)
