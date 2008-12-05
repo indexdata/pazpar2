@@ -343,8 +343,16 @@ function drawCurDetails ()
     var data = curDetRecData;
     var recordDiv = document.getElementById('recdiv_'+data.recid);
     var details = "";
-    if (data["md-title"] != undefined)
-        details += '<tr><td><b>Title</b></td><td><b>:</b> '+data["md-title"] + '</td></tr>';
+    if (data["md-title"] != undefined) {
+        details += '<tr><td><b>Title</b></td><td><b>:</b> '+data["md-title"];
+	if (data["md-title-remainder"] !== undefined) {
+	    details += ' : <span>' + data["md-title-remainder"] + ' </span>';
+	}
+	if (data["md-title-responsibility"] !== undefined) {
+	    details += ' <span><i>'+ data["md-title-responsibility"] +'</i></span>';
+	}
+ 	details += '</td></tr>';
+    }
     if (data["md-date"] != undefined)
         details += '<tr><td><b>Date</b></td><td><b>:</b> ' + data["md-date"] + '</td></tr>';
     if (data["md-author"] != undefined)
