@@ -3,10 +3,8 @@
   <set target="acorn.library.vanderbilt.edu:2200/ACORN" name="pz:name" value="Vanderbilt U"/>
   <set target="advance.biblio.polymtl.ca:210/ADVANCE" name="pz:name" value="Ecole Polytechnique Montreal"/>
   <set target="albert.rit.edu:210/INNOPAC" name="pz:name" value="Rochester U of Tech"/>
-  <set target="aleph.mcgill.ca:210/MUSE" name="pz:name" value="McGill U"/>
   <set target="atrium.bib.umontreal.ca:210/ADVANCE" name="pz:name" value="U of Montreal"/>
   <set target="biblio.hec.ca:210/hec" name="pz:name" value="HEC Montreal"/>
-  <set target="bobcat.nyu.edu:210/ADVANCE" name="pz:name" value="New York University"/>
   <set target="books.luther.edu:210/innopac" name="pz:name" value="Luther College"/>
   <set target="cat.cisti.nrc.ca:210/INNOPAC" name="pz:name" value="NRC Canada"/>
   <set target="cat.lib.grin.edu:210/innopac" name="pz:name" value="Grinell College"/>
@@ -35,7 +33,6 @@
   <set target="rs6000.nshpl.library.ns.ca:210/AVR" name="pz:name" value="National Library Canada"/>
   <set target="sabio.library.arizona.edu:210/innopac" name="pz:name" value="U of Arizona"/>
   <set target="scotty.mhsl.uab.edu:7090/VOYAGER" name="pz:name" value="U of Alabama"/>
-  <set target="sirsi.library.utoronto.ca:2200/UNICORN" name="pz:name" value="U of Toronto"/>
   <set target="sundog.usask.ca:210/INNOPAC" name="pz:name" value="U of Saskatchewan"/>
   <set target="titus.folger.edu:7090/VOYAGER" name="pz:name" value="Folger Shakespeare"/>
   <set target="troy.lib.sfu.ca:210/INNOPAC" name="pz:name" value="Simon Fraser U"/>
