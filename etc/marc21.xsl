@@ -217,7 +217,7 @@
 	  <xsl:value-of select="marc:subfield[@code='u']"/>
 	</pz:metadata>
 	<pz:metadata type="electronic-text">
-	  <xsl:value-of select="marc:subfield[@code='y']"/>
+	  <xsl:value-of select="marc:subfield[@code='y' or @code='3']"/>
 	</pz:metadata>
 	<pz:metadata type="electronic-note">
 	  <xsl:value-of select="marc:subfield[@code='z']"/>
