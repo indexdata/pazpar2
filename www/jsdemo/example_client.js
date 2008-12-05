@@ -31,6 +31,9 @@ var curDetRecData = null;
 var curSort = 'relevance';
 var curFilter = null;
 var submitted = false;
+var SourceMax = 16;
+var SubjectMax = 10;
+var AuthorMax = 10;
 
 //
 // pz2.js event handlers:
@@ -89,7 +92,7 @@ function my_onterm(data) {
     termlist.innerHTML = "<hr/><b>TERMLISTS:</b><hr/>";
     
     termlist.innerHTML += '<div class="termtitle">.::Sources</div>';
-    for (var i = 0; i < data.xtargets.length; i++ ) {
+    for (var i = 0; i < data.xtargets.length && i < SourceMax; i++ ) {
         termlist.innerHTML += '<a href="#" target_id='
             + data.xtargets[i].id
             + ' onclick="limitTarget(this.getAttribute(\'target_id\'), this.firstChild.nodeValue);return false;">' 
@@ -102,7 +105,7 @@ function my_onterm(data) {
     termlist.innerHTML += "<hr/>";
     
     termlist.innerHTML += '<div class="termtitle">.::Subjects</div>';
-    for (var i = 0; i < data.subject.length; i++ ) {
+    for (var i = 0; i < data.subject.length && i < SubjectMax; i++ ) {
         termlist.innerHTML += '<a href="#" onclick="limitQuery(\'su\', this.firstChild.nodeValue);return false;">' 
                             + data.subject[i].name 
                             + '</a><span>  (' 
@@ -113,7 +116,7 @@ function my_onterm(data) {
     termlist.innerHTML += "<hr/>";
     
     termlist.innerHTML += '<div class="termtitle">.::Authors</div>';
-    for (var i = 0; i < data.author.length; i++ ) {
+    for (var i = 0; i < data.author.length && i < AuthorMax; i++ ) {
         termlist.innerHTML += '<a href="#" onclick="limitQuery(\'au\', this.firstChild.nodeValue);return false;">' 
                             + data.author[i].name 
                             + ' </a><span> (' 
