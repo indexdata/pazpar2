@@ -271,7 +271,7 @@ static void client_send_raw_present(struct client *cl)
     connection_continue(co);
 }
 
-static int nativesyntax_to_type(struct session_database *sdb, char *type)
+static int nativesyntax_to_type(struct session_database *sdb, char *type, ZOOM_record rec)
 {
     const char *s = session_setting_oneval(sdb, PZ_NATIVESYNTAX);
 
@@ -290,7 +290,25 @@ static int nativesyntax_to_type(struct session_database *sdb, char *type)
             return -1;
         return 0;
     }
-    return -1;
+    else  /* attempt to deduce structure */
+    {
+        const char *syntax = ZOOM_record_get(rec, "syntax", NULL);
+        if (syntax)
+        {
+            if (!strcmp(syntax, "XML"))
+            {
+                strcpy(type, "xml");
+                return 0;
+            }
+            else if (!strcmp(syntax, "USmarc") || !strcmp(syntax, "MARC21"))
+            {
+                strcpy(type, "xml; charset=marc8-s");
+                return 0;
+            }
+            else return -1;
+        }
+        else return -1;
+    }
 }
 
 static void ingest_raw_record(struct client *cl, ZOOM_record rec)
@@ -304,7 +322,7 @@ static void ingest_raw_record(struct client *cl, ZOOM_record rec)
     else
     {
         struct session_database *sdb = client_get_database(cl);
-        nativesyntax_to_type(sdb, type);
+        nativesyntax_to_type(sdb, type, rec);
     }
 
     buf = ZOOM_record_get(rec, type, &len);
@@ -383,7 +401,8 @@ void client_record_response(struct client *cl)
                     struct session_database *sdb = client_get_database(cl);
                     const char *xmlrec;
                     char type[80];
-                    nativesyntax_to_type(sdb, type);
+                    if (nativesyntax_to_type(sdb, type, rec))
+                        yaz_log(YLOG_WARN, "Failed to determine record type");
                     if ((xmlrec = ZOOM_record_get(rec, type, NULL)))
                     {
                         if (ingest_record(cl, xmlrec, cl->record_offset))
