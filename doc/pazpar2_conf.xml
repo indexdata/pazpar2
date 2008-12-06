@@ -714,6 +714,10 @@
        For iso2709, can also specify a native character set, e.g. "iso2709;latin-1".
        If no character set is provided, MARC-8 is assumed.
       </para>
+      <para>
+        If pz:nativesyntax is not specified, pazpar2 will attempt to determine
+	the value based on the response from the server.
+      </para>
      </listitem>
     </varlistentry>
 
