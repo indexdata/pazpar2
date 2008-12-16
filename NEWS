@@ -1,3 +1,5 @@
+Automatically computes pz:nativesyntax if not provided (works for XML and MARC)
+
 --- 1.0.13 2008/11/24
 
 Command bytarget returns name of target (if defined).
