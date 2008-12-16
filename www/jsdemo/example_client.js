@@ -49,7 +49,7 @@ function my_onshow(data) {
     var pager = document.getElementById("pager");
     pager.innerHTML = "";
     pager.innerHTML +='<hr/><div style="float: right">Displaying: ' 
-                    + data.start + ' to ' + (data.start + data.num) +
+                    + (data.start + 1) + ' to ' + (data.start + data.num) +
                      ' of ' + data.merged + ' (found: ' 
                      + data.total + ')</div>';
     drawPager(pager);
@@ -80,6 +80,9 @@ function my_onshow(data) {
 
 function my_onstat(data) {
     var stat = document.getElementById("stat");
+    if (stat == null)
+	return;
+    
     stat.innerHTML = '<b> .:STATUS INFO</b> -- Active clients: '
                         + data.activeclients
                         + '/' + data.clients + ' -- </span>'
