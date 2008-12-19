@@ -80,6 +80,12 @@
 	</pz:metadata>
       </xsl:for-each>
 
+      <xsl:for-each select="marc:datafield[@tag='035']">
+        <pz:metadata type="system-control-nr">
+	  <xsl:value-of select="marc:subfield[@code='a']"/>
+	</pz:metadata>
+      </xsl:for-each>
+
       <xsl:for-each select="marc:datafield[@tag='100']">
 	<pz:metadata type="author">
 	  <xsl:value-of select="marc:subfield[@code='a']"/>
@@ -261,7 +267,7 @@
 	</pz:metadata>
       </xsl:if> -->
 
-      <xsl:for-each select="marc:datafield[@tag='907']">
+      <xsl:for-each select="marc:datafield[@tag='907' or @tag='901']">
         <pz:metadata type="iii-id">
 	  <xsl:value-of select="marc:subfield[@code='a']"/>
 	</pz:metadata>
