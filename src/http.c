@@ -99,7 +99,7 @@ static const char *http_lookup_header(struct http_header *header,
     return 0;
 }
 
-static struct http_buf *http_buf_create()
+static struct http_buf *http_buf_create(void)
 {
     struct http_buf *r;
 
