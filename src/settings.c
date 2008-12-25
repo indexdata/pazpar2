@@ -375,7 +375,7 @@ static void initialize_hard_settings(struct setting_dictionary *dict)
 
 // Read any settings names introduced in service definition (config) and add to dictionary
 // This is done now to avoid errors if user settings are declared in session overrides
-static void initialize_soft_settings()
+static void initialize_soft_settings(void)
 {
     struct conf_service *service = config->servers->service;
     int i;
