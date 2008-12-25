@@ -62,7 +62,7 @@ static void session_timeout(IOCHAN i, int event)
     http_session_destroy(s);
 }
 
-struct http_session *http_session_create()
+struct http_session *http_session_create(void)
 {
     NMEM nmem = nmem_create();
     struct http_session *r = nmem_malloc(nmem, sizeof(*r));
@@ -153,7 +153,7 @@ static void error(struct http_response *rs,
     http_send_response(c);
 }
 
-unsigned int make_sessionid()
+unsigned int make_sessionid(void)
 {
     static int seq = 0;
     unsigned int res;
