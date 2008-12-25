@@ -471,15 +471,21 @@ static struct conf_server *parse_server(xmlNode *node)
         }
         else if (!strcmp((const char *) n->name, "relevance"))
         {
-            server->relevance_pct = pp2_charset_create_xml(n->children);
+            server->relevance_pct = pp2_charset_create_xml(n);
+            if (!server->relevance_pct)
+                return 0;
         }
         else if (!strcmp((const char *) n->name, "sort"))
         {
-            server->sort_pct = pp2_charset_create_xml(n->children);
+            server->sort_pct = pp2_charset_create_xml(n);
+            if (!server->sort_pct)
+                return 0;
         }
         else if (!strcmp((const char *) n->name, "mergekey"))
         {
-            server->mergekey_pct = pp2_charset_create_xml(n->children);
+            server->mergekey_pct = pp2_charset_create_xml(n);
+            if (!server->mergekey_pct)
+                return 0;
         }
         else if (!strcmp((const char *) n->name, "service"))
         {

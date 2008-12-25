@@ -71,6 +71,8 @@ pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
 #ifdef HAVE_ICU
     UErrorCode status = U_ZERO_ERROR;
     struct icu_chain *chain = 0;
+    if (xml_node)
+        xml_node = xml_node->children;
     while (xml_node && xml_node->type != XML_ELEMENT_NODE)
         xml_node = xml_node->next;
     chain = icu_chain_xml_config(xml_node, &status);
