@@ -19,7 +19,7 @@ AC_PROG_RANLIB
 
 AC_LANG(C)
 
-YAZ_INIT([static threads],[3.0.37])
+YAZ_INIT([static icu threads],[3.0.39])
 if test -z "$YAZLIB"; then
 	AC_MSG_ERROR([YAZ development libraries missing])
 fi
@@ -27,7 +27,6 @@ YAZ_DOC
 
 AC_CHECK_HEADERS([sys/time.h sys/socket.h unistd.h netinet/in.h netdb.h arpa/inet.h])
 AC_CHECK_FUNCS([getaddrinfo])
-AC_CHECK_ICU([3.6],[ICU_CPPFLAGS="$ICU_CPPFLAGS -D HAVE_ICU=1"])
 AC_CONFIG_FILES([
 	Doxyfile
 	Makefile

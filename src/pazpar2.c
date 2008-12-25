@@ -61,7 +61,7 @@ static void show_version(void)
     yaz_version(yaz_version_str, 0);
 
     printf("Configuration:");
-#if HAVE_ICU
+#if YAZ_HAVE_ICU
     printf(" icu:?");
 #endif
     printf(" yaz:%s", yaz_version_str);

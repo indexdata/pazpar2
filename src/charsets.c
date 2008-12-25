@@ -34,27 +34,28 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "charsets.h"
 #include "normalize7bit.h"
 
-#ifdef HAVE_ICU
-#include "icu_I18N.h"
-#endif // HAVE_ICU
+#if YAZ_HAVE_ICU
+#include <yaz/icu.h>
+#endif
+
 
 /* charset handle */
 struct pp2_charset_s {
     const char *(*token_next_handler)(pp2_relevance_token_t prt);
     const char *(*get_sort_handler)(pp2_relevance_token_t prt, int skip);
-#ifdef HAVE_ICU
+#if YAZ_HAVE_ICU
     struct icu_chain * icu_chn;
     UErrorCode icu_sts;
-#endif // HAVE_ICU
+#endif
 };
 
 static const char *pp2_relevance_token_a_to_z(pp2_relevance_token_t prt);
 static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt, int skip_article);
 
-#ifdef HAVE_ICU
+#if YAZ_HAVE_ICU
 static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt);
 static const char *pp2_get_sort_icu(pp2_relevance_token_t prt, int skip_article);
-#endif // HAVE_ICU
+#endif
 
 /* tokenzier handle */
 struct pp2_relevance_token_s {
@@ -68,14 +69,14 @@ struct pp2_relevance_token_s {
 
 pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
 {
-#ifdef HAVE_ICU
+#if YAZ_HAVE_ICU
     UErrorCode status = U_ZERO_ERROR;
     struct icu_chain *chain = 0;
     if (xml_node)
         xml_node = xml_node->children;
     while (xml_node && xml_node->type != XML_ELEMENT_NODE)
         xml_node = xml_node->next;
-    chain = icu_chain_xml_config(xml_node, &status);
+    chain = icu_chain_xml_config(xml_node, 1, &status);
     if (!chain || U_FAILURE(status)){
         //xmlDocPtr icu_doc = 0;
         //xmlChar *xmlstr = 0;
@@ -88,17 +89,14 @@ pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
         return 0;
     }
     return pp2_charset_create(chain);
-#else // HAVE_ICU
+#else // YAZ_HAVE_ICU
     yaz_log(YLOG_FATAL, "Error: ICU support requested with element:\n"
             "<%s>\n ... \n</%s>",
             xml_node->name, xml_node->name);
     yaz_log(YLOG_FATAL, 
-            "But no ICU support compiled into pazpar2 server.");
-    yaz_log(YLOG_FATAL, 
-            "Please install libicu36-dev and icu-doc or similar, "
-            "re-configure and re-compile");            
+            "But no ICU support is compiled into the YAZ library.");
     return 0;
-#endif // HAVE_ICU
+#endif // YAZ_HAVE_ICU
 }
 
 
@@ -108,7 +106,7 @@ pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn)
 
     pct->token_next_handler = pp2_relevance_token_a_to_z;
     pct->get_sort_handler  = pp2_get_sort_ascii;
-#ifdef HAVE_ICU
+#if YAZ_HAVE_ICU
     pct->icu_chn = 0;
     if (icu_chn)
     {
@@ -117,7 +115,7 @@ pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn)
         pct->token_next_handler = pp2_relevance_token_icu;
         pct->get_sort_handler = pp2_get_sort_icu;
     }
-#endif // HAVE_ICU
+#endif // YAZ_HAVE_ICU
     return pct;
 }
 
@@ -139,7 +137,7 @@ pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
     prt->last_cp = 0;
     prt->pct = pct;
 
-#ifdef HAVE_ICU
+#if YAZ_HAVE_ICU
     if (pct->icu_chn)
     {
         int ok = 0;
@@ -148,7 +146,7 @@ pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
         //printf("\nfield ok: %d '%s'\n", ok, buf);
         prt->pct = pct;
     }
-#endif // HAVE_ICU
+#endif // YAZ_HAVE_ICU
     return prt;
 }
 
@@ -224,7 +222,7 @@ static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt,
 }
 
 
-#ifdef HAVE_ICU
+#if YAZ_HAVE_ICU
 static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)
 {
     if (icu_chain_next_token(prt->pct->icu_chn, &prt->pct->icu_sts))
@@ -233,7 +231,7 @@ static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)
         {
             return 0;
         }
-        return icu_chain_get_norm(prt->pct->icu_chn);
+        return icu_chain_token_norm(prt->pct->icu_chn);
     }
     return 0;
 }
@@ -241,11 +239,10 @@ static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)
 static const char *pp2_get_sort_icu(pp2_relevance_token_t prt,
                                     int skip_article)
 {
-    return icu_chain_get_sort(prt->pct->icu_chn);
+    return icu_chain_token_sortkey(prt->pct->icu_chn);
 }
 
-#endif // HAVE_ICU
-
+#endif // YAZ_HAVE_ICU
 
 
 /*

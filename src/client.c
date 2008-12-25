@@ -475,8 +475,8 @@ void client_start_search(struct client *cl)
 
     if (cl->cqlquery)
     {
-        yaz_log(YLOG_LOG, "Search %s CQL: %s", sdb->database->url, cl->cqlquery);
         ZOOM_query q = ZOOM_query_create();
+        yaz_log(YLOG_LOG, "Search %s CQL: %s", sdb->database->url, cl->cqlquery);
         ZOOM_query_cql(q, cl->cqlquery);
         rs = ZOOM_connection_search(link, q);
         ZOOM_query_destroy(q);

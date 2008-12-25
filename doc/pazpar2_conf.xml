@@ -125,7 +125,7 @@
 	 </para>
 	</listitem>
        </varlistentry>
-       <varlistentry><term>normalize</term>
+       <varlistentry><term>transform</term>
 	<listitem>
 	 <para>
 	  Normalization and transformation of tokens follows
@@ -149,17 +149,6 @@
 	  "s" (sentence), "l" (line-break), "w" (word), and
 	  "c" (character), the later probably not being
 	  very useful in a pruning Pazpar2 installation. 
-	 </para>
-	</listitem>
-       </varlistentry>
-       <varlistentry><term>index</term>
-	<listitem>
-	 <para>
-	  Finally the 'index' element instruction - without
-	  any 'rule' attribute - is used to store the tokens
-	  after chain processing in the relevance ranking
-	  unit of Pazpar2. It will always be the last
-	  instruction in the chain.
 	 </para>
 	</listitem>
        </varlistentry>

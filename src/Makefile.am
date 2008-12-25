@@ -2,10 +2,7 @@
 
 sbin_PROGRAMS = pazpar2
 
-noinst_PROGRAMS = icu_chain_test
-
 check_PROGRAMS = test_config \
-      test_icu_I18N \
       test_record \
       test_reclists \
       test_relevance \
@@ -20,11 +17,10 @@ MAINTAINERCLEANFILES = Makefile.in cconfig.h
 
 CONFIG_CLEAN_FILES=*.log
 
-AM_CFLAGS = $(YAZINC) $(ICU_CPPFLAGS)
-
+AM_CFLAGS = $(YAZINC)
+        
 libpazpar2_a_SOURCES = pazpar2_config.c pazpar2_config.h eventl.c eventl.h \
 	http.c http_command.c http_command.h http.h \
-        icu_I18N.h icu_I18N.c \
 	logic.c pazpar2.h \
 	record.h record.c reclists.c reclists.h \
 	relevance.c relevance.h termlists.c termlists.h \
@@ -36,29 +32,23 @@ libpazpar2_a_SOURCES = pazpar2_config.c pazpar2_config.h eventl.c eventl.h \
 	dirent.c direntz.h
 
 pazpar2_SOURCES = pazpar2.c
-pazpar2_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
-
-icu_chain_test_SOURCES = icu_chain_test.c icu_I18N.c
-icu_chain_test_LDADD = $(YAZLIB) $(ICU_LIBS)
+pazpar2_LDADD = libpazpar2.a $(YAZLIB)
 
 test_config_SOURCES = test_config.c
-test_config_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
+test_config_LDADD = libpazpar2.a $(YAZLIB)
 
 test_record_SOURCES = test_record.c
-test_record_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
+test_record_LDADD = libpazpar2.a $(YAZLIB)
 
 test_reclists_SOURCES = test_reclists.c
-test_reclists_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
+test_reclists_LDADD = libpazpar2.a $(YAZLIB)
 
 test_relevance_SOURCES = test_relevance.c
-test_relevance_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
+test_relevance_LDADD = libpazpar2.a $(YAZLIB)
 
 test_sel_thread_SOURCES = test_sel_thread.c
-test_sel_thread_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
-
-test_icu_I18N_SOURCES = test_icu_I18N.c
-test_icu_I18N_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
+test_sel_thread_LDADD = libpazpar2.a $(YAZLIB)
 
 test_normalize_SOURCES = test_normalize.c
-test_normalize_LDADD = libpazpar2.a $(YAZLIB) $(ICU_LIBS)
+test_normalize_LDADD = libpazpar2.a $(YAZLIB)
 
