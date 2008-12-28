@@ -105,14 +105,14 @@
      <term>relevance</term>
      <listitem>
       <para>
-       Specifies ICU tokenization and normalization rules
+       Specifies ICU tokenization and transformation rules
        for tokens that are used in Pazpar2's relevance ranking.  The 'id'
        attribute is currently not used, and the 'locale'
        attribute must be set to one of the locale strings
        defined in ICU. The child elements listed below can be
        in any order, except the 'index' element which logically
        belongs to the end of the list. The stated tokenization,
-       normalization and charmapping instructions are performed
+       transformation and charmapping instructions are performed
        in order from top to bottom. 
       </para>
       <variablelist> <!-- Level 2 -->
@@ -160,7 +160,7 @@
      <term>sort</term>
      <listitem>
       <para>
-       Specifies ICU tokenization and normalization rules
+       Specifies ICU tokenization and transformation rules
        for tokens that are used in Pazpar2's sorting. The contents
        is similar to that of <literal>relevance</literal>.
       </para>
@@ -171,7 +171,7 @@
      <term>mergekey</term>
      <listitem>
       <para>
-       Specifies ICU tokenization and normalization rules
+       Specifies ICU tokenization and transformation rules
        for tokens that are used in Pazpar2's mergekey. The contents
        is similar to that of <literal>relevance</literal>.
       </para>
@@ -832,14 +832,14 @@
  </refsect1>
  <refsect1><title>SEE ALSO</title>
   <para>
-   Pazpar2:
    <citerefentry>
     <refentrytitle>pazpar2</refentrytitle>
     <manvolnum>8</manvolnum>
    </citerefentry>
-  </para>
-  <para>
-   Pazpar2 protocol:
+   <citerefentry>
+    <refentrytitle>yaz-icu</refentrytitle>
+    <manvolnum>1</manvolnum>
+   </citerefentry>
    <citerefentry>
     <refentrytitle>pazpar2_protocol</refentrytitle>
     <manvolnum>7</manvolnum>
