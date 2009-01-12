@@ -2,7 +2,7 @@
 #
 # pazpar2.sh - pazpar2 start/stop script
 
-PAZPAR2_HOME=$HOME/pazpar2
+: ${PAZPAR2_HOME=$HOME/pazpar2}
 pazpar2_program=$PAZPAR2_HOME/src/pazpar2
 pazpar2_config=$PAZPAR2_HOME/etc/pazpar2.cfg
 pazpar2_pid=$PAZPAR2_HOME/pazpar2.pid
