@@ -1,5 +1,5 @@
 /* This file is part of Pazpar2.
-   Copyright (C) 2006-2008 Index Data
+   Copyright (C) 2006-2009 Index Data
 
 Pazpar2 is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /*
  * Based on  ParaZ - a simple tool for harvesting performance data for
  * parallel operations using Z39.50.
- * Copyright (c) 2000-2004 Index Data ApS
+ * Copyright (C) 2006-2009 Index Data ApS
  * See LICENSE file for details.
  */
 
