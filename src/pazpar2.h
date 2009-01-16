@@ -205,7 +205,9 @@ void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num);
 /*
  * Local variables:
  * c-basic-offset: 4
+ * c-file-style: "Stroustrup"
  * indent-tabs-mode: nil
  * End:
  * vim: shiftwidth=4 tabstop=8 expandtab
  */
+

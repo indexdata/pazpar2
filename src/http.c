@@ -1294,7 +1294,9 @@ void http_observer_set_data2(http_channel_observer_t obs, void *data2)
 /*
  * Local variables:
  * c-basic-offset: 4
+ * c-file-style: "Stroustrup"
  * indent-tabs-mode: nil
  * End:
  * vim: shiftwidth=4 tabstop=8 expandtab
  */
+

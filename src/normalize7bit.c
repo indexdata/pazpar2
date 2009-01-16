@@ -124,7 +124,9 @@ int extract7bit_dates(const char *buf, int *first, int *last, int longdate)
 /*
  * Local variables:
  * c-basic-offset: 4
+ * c-file-style: "Stroustrup"
  * indent-tabs-mode: nil
  * End:
  * vim: shiftwidth=4 tabstop=8 expandtab
  */
+

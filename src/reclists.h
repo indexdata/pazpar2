@@ -77,7 +77,9 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms);
 /*
  * Local variables:
  * c-basic-offset: 4
+ * c-file-style: "Stroustrup"
  * indent-tabs-mode: nil
  * End:
  * vim: shiftwidth=4 tabstop=8 expandtab
  */
+

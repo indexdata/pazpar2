@@ -248,7 +248,9 @@ static const char *pp2_get_sort_icu(pp2_relevance_token_t prt,
 /*
  * Local variables:
  * c-basic-offset: 4
+ * c-file-style: "Stroustrup"
  * indent-tabs-mode: nil
  * End:
  * vim: shiftwidth=4 tabstop=8 expandtab
  */
+

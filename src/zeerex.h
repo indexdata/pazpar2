@@ -223,12 +223,14 @@ struct zr_explain *zr_read_xml(NMEM m, xmlNode *n);
 struct zr_explain *zr_read_file(NMEM m, const char *fn);
 const char *zr_langstr(Zr_langstr *s, const char *lang);
 
+#endif
+
 /*
  * Local variables:
  * c-basic-offset: 4
+ * c-file-style: "Stroustrup"
  * indent-tabs-mode: nil
  * End:
  * vim: shiftwidth=4 tabstop=8 expandtab
  */
 
-#endif
