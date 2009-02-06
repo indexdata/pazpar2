@@ -23,9 +23,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-#include <libxslt/xslt.h>
-#include <libxslt/transform.h>
-#include <libxslt/xsltutils.h>
 #include <assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
