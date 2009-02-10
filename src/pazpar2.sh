@@ -3,10 +3,10 @@
 # pazpar2.sh - pazpar2 start/stop script
 
 : ${PAZPAR2_HOME=$HOME/pazpar2}
-pazpar2_program=$PAZPAR2_HOME/src/pazpar2
-pazpar2_config=$PAZPAR2_HOME/etc/pazpar2.cfg
-pazpar2_pid=$PAZPAR2_HOME/pazpar2.pid
-pazpar2_log=$PAZPAR2_HOME/pazpar2.log
+: ${pazpar2_program=$PAZPAR2_HOME/src/pazpar2}
+: ${pazpar2_config=$PAZPAR2_HOME/etc/pazpar2.cfg}
+: ${pazpar2_pid=$PAZPAR2_HOME/pazpar2.pid}
+: ${pazpar2_log=$PAZPAR2_HOME/pazpar2.log}
 
 command=$1; shift
 
