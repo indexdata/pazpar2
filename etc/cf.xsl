@@ -19,31 +19,44 @@
 
   <xsl:template match="/record">
     <pz:record>
-
       <xsl:attribute name="mergekey">
-	<xsl:text>title </xsl:text>
+	      <xsl:text>title </xsl:text>
         <xsl:value-of select="title" />
-	<xsl:text> author </xsl:text>
+	      <xsl:text> author </xsl:text>
         <xsl:value-of select="author"/>
       </xsl:attribute>
-
-      <pz:metadata type="id">
-        <xsl:value-of select="url"/>
-      </pz:metadata>
-
-      <pz:metadata type="author">
-        <xsl:value-of select="author"/>
-      </pz:metadata>
-
-        <pz:metadata type="title">
-          <xsl:value-of select="title" />
-        </pz:metadata>
-
-        <pz:metadata type="date">
-          <xsl:value-of select="date" />
-        </pz:metadata>
-
+      <xsl:apply-templates/>
     </pz:record>
+  </xsl:template>
+
+  <xsl:template match="url">
+    <pz:metadata type="electronic-url">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="author">
+    <pz:metadata type="author">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="title">
+    <pz:metadata type="title">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="date">
+    <pz:metadata type="publication-date">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="description">
+    <pz:metadata type="description">
+      <xsl:value-of select="."/>
+    </pz:metadata>
   </xsl:template>
 
   <xsl:template match="text()"/>
