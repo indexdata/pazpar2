@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-
     This stylesheet expects Connector Frameworks records
-    $Id: usco.xsl,v 1.3 2009-01-13 15:18:42 wosch Exp $
-
 -->
 <xsl:stylesheet
     version="1.0"
