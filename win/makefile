@@ -169,7 +169,6 @@ PAZPAR2_OBJS = \
    "$(OBJDIR)\http.obj" \
    "$(OBJDIR)\eventl.obj" \
    "$(OBJDIR)\http_command.obj" \
-   "$(OBJDIR)\icu_I18N.obj" \
    "$(OBJDIR)\logic.obj" \
    "$(OBJDIR)\record.obj" \
    "$(OBJDIR)\reclists.obj" \
