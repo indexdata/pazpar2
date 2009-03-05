@@ -44,14 +44,6 @@ BINDIR=$(ROOTDIR)\bin       # We produce exes and dlls there
 WINDIR=$(ROOTDIR)\win       # all these Win make things
 SRCDIR=$(ROOTDIR)\src       # for the case we move them under src
 
-!if $(DEBUG)
-OBJDIR=$(WINDIR)\dobj       # debug objects
-YAZD=yaz3d
-!else
-OBJDIR=$(WINDIR)\obj        # non-debug objects
-YAZD=yaz3
-!endif
-
 TMPDIR=$(ROOTDIR)\win\tmp
 TMP=$(TMPDIR)
 
@@ -59,14 +51,24 @@ PAZPAR2_EXE=$(BINDIR)\pazpar2.exe
 
 pazpar2: $(PAZPAR2_EXE)
 
-# YAZ includes & libs
-YAZ_LIB="$(YAZ_DIR)\lib\$(YAZD).lib"
-YAZ_DEF=/DYAZ_HAVE_XML2=2 /DYAZ_HAVE_XSLT=1 /I"$(YAZ_DIR)\include"
-yaz: $(BINDIR)\$(YAZD).dll 
+YAZBINDIR=$(YAZ_DIR)\bin
+!if $(DEBUG)
+YAZ_LIB="$(YAZ_DIR)\lib\yaz3d.lib"
+!if $(HAVE_ICU)
+YAZ_LIB=$(YAZ_LIB) "$(YAZ_DIR)\lib\yaz_icu3d.lib"
+!endif
+YAZ_DLL_SOURCE="$(YAZBINDIR)\yaz3d.dll"
+YAZ_DLL_TARGET="$(BINDIR)\yaz3d.dll"
+!else
+YAZ_LIB="$(YAZ_DIR)\lib\yaz3.lib"
+!if $(HAVE_ICU)
+YAZ_LIB=$(YAZ_LIB) "$(YAZ_DIR)\lib\yaz_icu3.lib"
+!endif
+YAZ_DLL_SOURCE="$(YAZBINDIR)\yaz3.dll"
+YAZ_DLL_TARGET="$(BINDIR)\yaz3.dll"
+!endif
 
-$(BINDIR)\$(YAZD).dll: "$(YAZ_DIR)\bin\$(YAZD).dll"
-  copy "$(YAZ_DIR)\bin\icu*.dll" $(BINDIR)
-  copy "$(YAZ_DIR)\bin\$(YAZD).dll" $(BINDIR)
+YAZ_DEF=/DYAZ_HAVE_XML2=2 /DYAZ_HAVE_XSLT=1 /I"$(YAZ_DIR)\include"
 
 # Copy libxslt and associates to our bin directory
 libxslt: $(BINDIR)\libxslt.dll
@@ -89,12 +91,12 @@ LIBXSLT_LIB = \
 	   "$(LIBXSLT_DIR)\lib\libxslt.lib"
 
 !if $(HAVE_ICU)
-ICU_DEF=/DHAVE_ICU=1 /D HAVE_ICU_H=1 /I"$(ICU_DIR)\include"
+ICU_DEF=/DYAZ_HAVE_ICU=1 /I"$(ICU_DIR)\include"
 ICU_LIB= $(ICU_DIR)\lib\icudt.lib \
 	 $(ICU_DIR)\lib\icuin.lib \
 	 $(ICU_DIR)\lib\icuuc.lib
 !else
-ICU_DEF=/DHAVE_ICU=0
+ICU_DEF=/DYAZ_HAVE_ICU=0
 ICU_LIB=
 !endif
 
@@ -219,4 +221,10 @@ dirs: $(OBJDIR) $(WINDIR) $(BINDIR) $(TMPDIR)
 
 $(OBJDIR) $(WINDIR) $(BINDIR) $(TMPDIR):
 	if not exist "$@/$(NUL)" mkdir "$@"
+
+yaz: $(YAZ_DLL_TARGET)
+
+$(YAZ_DLL_TARGET) : $(YAZ_DLL_SOURCE)
+#	copy "$(YAZBINDIR)\*.dll.manifest" $(BINDIR)
+	copy "$(YAZBINDIR)\*.dll" $(BINDIR)
 
