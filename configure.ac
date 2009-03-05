@@ -64,9 +64,6 @@ echo \
   YAZ Include:                ${YAZINC}
   YAZ La Lib:                 ${YAZLALIB}
   YAZ Lib:                    ${YAZLIB}
-  ICU Version:                ${ICU_VERSION}
-  ICU Include:                ${ICU_CPPFLAGS}
-  ICU Lib:                    ${ICU_LIBS}
   Bugreport:                  ${PACKAGE_BUGREPORT}
 
 ------------------------------------------------------------------------"
