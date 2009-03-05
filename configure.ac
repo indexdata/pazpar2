@@ -37,7 +37,7 @@ AC_CONFIG_FILES([
 	doc/local.ent
 	doc/common/Makefile
 	doc/common/print.dsl
-
+	win/version.nsi
 ])
 
 AC_OUTPUT
