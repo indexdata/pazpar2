@@ -81,10 +81,11 @@ Section "" ; (default section)
 	File LICENSE.txt
 	File ..\README
 	File ..\NEWS
-	SetOutPath $INSTDIR/etc
+	SetOutPath $INSTDIR\etc
 	File /r ..\etc\*.xml
 	File /r ..\etc\*.xsl
-	File /r ..\etc\*.dist
+	File /oname=pazpar2.cfg ..\etc\pazpar2.cfg.dist 
+	SetOutPath $INSTDIR\log
 
 SectionEnd ; end of default section
 
@@ -94,16 +95,16 @@ Section "Pazpar2 Runtime" Pazpar2_Runtime
 	ExecWait '"$INSTDIR\bin\pazpar2.exe" -remove'
 Noservice:
 	SetOutPath $INSTDIR\bin
-	File "${VS_RUNTIME_DLL}"
-	File "${VS_RUNTIME_MANIFEST}"
+	; File "${VS_RUNTIME_DLL}"
+	; File "${VS_RUNTIME_MANIFEST}"
 	File ..\bin\*.dll
 	File ..\bin\*.exe
 	SetOutPath $SMPROGRAMS\Pazpar2
 	SetOutPath $SMPROGRAMS\Pazpar2\Server
  	CreateShortCut "$SMPROGRAMS\Pazpar2\Server\Server on console.lnk" \
                  "$INSTDIR\bin\pazpar2.exe" '-f"$INSTDIR\etc\pazpar2.cfg"'
-  	CreateShortCut "$SMPROGRAMS\Pazpar2\Server\Install Z39.50 service.lnk" \
-                  "$INSTDIR\bin\pazpar2.exe" '-installa -f"$INSTDIR\etc\pazpar2.cfg"'
+  	CreateShortCut "$SMPROGRAMS\Pazpar2\Server\Install Pazpar2 service.lnk" \
+                 "$INSTDIR\bin\pazpar2.exe" '-install -l"$INSTDIR\log\pazpar2.log" -f"$INSTDIR\etc\pazpar2.cfg"'
  	CreateShortCut "$SMPROGRAMS\Pazpar2\Server\Remove Pazpar2 service.lnk" \
                  "$INSTDIR\bin\pazpar2.exe" '-remove'
 SectionEnd
