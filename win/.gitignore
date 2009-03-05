@@ -1,0 +1,6 @@
+version.nsi
+dobj
+obj
+tmp
+*.log
+*~
