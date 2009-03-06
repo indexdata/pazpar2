@@ -44,6 +44,12 @@ BINDIR=$(ROOTDIR)\bin       # We produce exes and dlls there
 WINDIR=$(ROOTDIR)\win       # all these Win make things
 SRCDIR=$(ROOTDIR)\src       # for the case we move them under src
 
+!if $(DEBUG)
+OBJDIR=$(WINDIR)\dobj
+!else
+OBJDIR=$(WINDIR)\obj
+!endif
+
 TMPDIR=$(ROOTDIR)\win\tmp
 TMP=$(TMPDIR)
 
