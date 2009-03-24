@@ -43,6 +43,10 @@
           <xsl:value-of select="date" />
         </pz:metadata>
 
+        <pz:metadata type="electronic-url">
+          <xsl:value-of select="url" />
+        </pz:metadata>
+
     </pz:record>
   </xsl:template>
 
