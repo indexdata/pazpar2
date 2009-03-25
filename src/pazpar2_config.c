@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>
 #include <yaz/snprintf.h>
+#include <yaz/tpath.h>
 
 #define CONFIG_NOEXTERNS
 #include "pazpar2_config.h"
@@ -402,7 +403,16 @@ static char *parse_settings(xmlNode *node)
     char *r;
 
     if (src)
-        r = nmem_strdup(nmem, (const char *) src);
+    {
+        if (yaz_is_abspath((const char *) src))
+            r = nmem_strdup(nmem, (const char *) src);
+        else
+        {
+            r = nmem_malloc(nmem,
+                            strlen(confdir) + strlen((const char *) src) + 2);
+            sprintf(r, "%s/%s", confdir, src);
+        }
+    }
     else
     {
         yaz_log(YLOG_FATAL, "Must specify src in targetprofile");
@@ -512,7 +522,7 @@ static struct conf_server *parse_server(xmlNode *node)
 xsltStylesheet *conf_load_stylesheet(const char *fname)
 {
     char path[256];
-    if (*fname == '/')
+    if (yaz_is_abspath(fname))
         yaz_snprintf(path, sizeof(path), fname);
     else
         yaz_snprintf(path, sizeof(path), "%s/%s", confdir, fname);
@@ -611,7 +621,13 @@ int read_config(const char *fname)
         yaz_log(YLOG_FATAL, "Failed to read %s", fname);
         exit(1);
     }
-    if ((p = strrchr(fname, '/')))
+    if ((p = strrchr(fname, 
+#ifdef WIN32
+                     '\\'
+#else
+                     '/'
+#endif
+             )))
     {
         int len = p - fname;
         if (len >= sizeof(confdir))
