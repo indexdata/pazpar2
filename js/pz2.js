@@ -349,6 +349,9 @@ pz2.prototype =
                                         .childNodes[0].nodeValue ),
                         "error": 
                             Number( data.getElementsByTagName("error")[0]
+                                        .childNodes[0].nodeValue ),
+                        "progress": 
+                            Number( data.getElementsByTagName("progress")[0]
                                         .childNodes[0].nodeValue )
                     };
                     

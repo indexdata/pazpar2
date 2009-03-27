@@ -1,8 +1,8 @@
 # This file is part of Pazpar2.
-# Copyright (C) 2006-2008 Index Data
+# Copyright (C) 2006-2009 Index Data
 
 DEBUG=0   # 0 for release, 1 for debug
-USE_MANIFEST = 0 # Can be enabled Visual Studio 2005
+USE_MANIFEST = 0 # Can be enabled Visual Studio 2005/2008
 PACKAGE_NAME=pazpar2
 PACKAGE_VERSION=1.1.0
 
@@ -23,10 +23,16 @@ default: all
 
 all: dirs yaz libxslt pazpar2
 
-NSIS="c:\program files\nsis\makensis-bz2.exe"
+NSIS="c:\program files\nsis\makensis.exe"
+
+dist:
+	nmake DEBUG=1 clean
+	nmake DEBUG=0 clean
+	nmake DEBUG=0
+	$(NSIS) pazpar2.nsi
 
 nsis: all
-	$(NSIS) yazpp.nsi
+	$(NSIS) pazpar2.nsi
 
 nsishelp:
 	$(NSIS)
@@ -39,11 +45,9 @@ WINDIR=$(ROOTDIR)\win       # all these Win make things
 SRCDIR=$(ROOTDIR)\src       # for the case we move them under src
 
 !if $(DEBUG)
-OBJDIR=$(WINDIR)\dobj       # debug objects
-YAZD=yaz3d
+OBJDIR=$(WINDIR)\dobj
 !else
-OBJDIR=$(WINDIR)\obj        # non-debug objects
-YAZD=yaz3
+OBJDIR=$(WINDIR)\obj
 !endif
 
 TMPDIR=$(ROOTDIR)\win\tmp
@@ -53,14 +57,24 @@ PAZPAR2_EXE=$(BINDIR)\pazpar2.exe
 
 pazpar2: $(PAZPAR2_EXE)
 
-# YAZ includes & libs
-YAZ_LIB="$(YAZ_DIR)\lib\$(YAZD).lib"
-YAZ_DEF=/DYAZ_HAVE_XML2=2 /DYAZ_HAVE_XSLT=1 /I"$(YAZ_DIR)\include"
-yaz: $(BINDIR)\$(YAZD).dll 
+YAZBINDIR=$(YAZ_DIR)\bin
+!if $(DEBUG)
+YAZ_LIB="$(YAZ_DIR)\lib\yaz3d.lib"
+!if $(HAVE_ICU)
+YAZ_LIB=$(YAZ_LIB) "$(YAZ_DIR)\lib\yaz_icu3d.lib"
+!endif
+YAZ_DLL_SOURCE="$(YAZBINDIR)\yaz3d.dll"
+YAZ_DLL_TARGET="$(BINDIR)\yaz3d.dll"
+!else
+YAZ_LIB="$(YAZ_DIR)\lib\yaz3.lib"
+!if $(HAVE_ICU)
+YAZ_LIB=$(YAZ_LIB) "$(YAZ_DIR)\lib\yaz_icu3.lib"
+!endif
+YAZ_DLL_SOURCE="$(YAZBINDIR)\yaz3.dll"
+YAZ_DLL_TARGET="$(BINDIR)\yaz3.dll"
+!endif
 
-$(BINDIR)\$(YAZD).dll: "$(YAZ_DIR)\bin\$(YAZD).dll"
-  copy "$(YAZ_DIR)\bin\icu*.dll" $(BINDIR)
-  copy "$(YAZ_DIR)\bin\$(YAZD).dll" $(BINDIR)
+YAZ_DEF=/DYAZ_HAVE_XML2=2 /DYAZ_HAVE_XSLT=1 /I"$(YAZ_DIR)\include"
 
 # Copy libxslt and associates to our bin directory
 libxslt: $(BINDIR)\libxslt.dll
@@ -83,12 +97,12 @@ LIBXSLT_LIB = \
 	   "$(LIBXSLT_DIR)\lib\libxslt.lib"
 
 !if $(HAVE_ICU)
-ICU_DEF=/DHAVE_ICU=1 /D HAVE_ICU_H=1 /I"$(ICU_DIR)\include"
+ICU_DEF=/DYAZ_HAVE_ICU=1 /I"$(ICU_DIR)\include"
 ICU_LIB= $(ICU_DIR)\lib\icudt.lib \
 	 $(ICU_DIR)\lib\icuin.lib \
 	 $(ICU_DIR)\lib\icuuc.lib
 !else
-ICU_DEF=/DHAVE_ICU=0
+ICU_DEF=/DYAZ_HAVE_ICU=0
 ICU_LIB=
 !endif
 
@@ -169,7 +183,6 @@ PAZPAR2_OBJS = \
    "$(OBJDIR)\http.obj" \
    "$(OBJDIR)\eventl.obj" \
    "$(OBJDIR)\http_command.obj" \
-   "$(OBJDIR)\icu_I18N.obj" \
    "$(OBJDIR)\logic.obj" \
    "$(OBJDIR)\record.obj" \
    "$(OBJDIR)\reclists.obj" \
@@ -214,4 +227,10 @@ dirs: $(OBJDIR) $(WINDIR) $(BINDIR) $(TMPDIR)
 
 $(OBJDIR) $(WINDIR) $(BINDIR) $(TMPDIR):
 	if not exist "$@/$(NUL)" mkdir "$@"
+
+yaz: $(YAZ_DLL_TARGET)
+
+$(YAZ_DLL_TARGET) : $(YAZ_DLL_SOURCE)
+#	copy "$(YAZBINDIR)\*.dll.manifest" $(BINDIR)
+	copy "$(YAZBINDIR)\*.dll" $(BINDIR)
 

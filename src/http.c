@@ -794,7 +794,8 @@ static int http_proxy(struct http_request *rq)
         hp = http_header_append(c, hp, 
                                 "X-Pazpar2-Server-Port", server_port);
         sprintf(server_via,  "1.1 %s:%s (%s/%s)",  
-                ser->host, server_port, PACKAGE_NAME, PACKAGE_VERSION);
+                ser->host ? ser->host : "@",
+                server_port, PACKAGE_NAME, PACKAGE_VERSION);
         hp = http_header_append(c, hp, "Via" , server_via);
         hp = http_header_append(c, hp, "X-Forwarded-For", c->addr);
     }

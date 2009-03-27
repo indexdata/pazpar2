@@ -820,11 +820,17 @@ static void cmd_stat(struct http_channel *c)
     struct statistics stat;
     int clients;
 
+    float progress = 0;
+
     if (!s)
         return;
 
     clients = session_active_clients(s->psession);
     statistics(s->psession, &stat);
+
+    if (stat.num_clients > 0) {
+    	progress = (stat.num_clients  - clients) / (float)stat.num_clients;
+    }
 
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, "<stat>");
@@ -838,6 +844,7 @@ static void cmd_stat(struct http_channel *c)
     wrbuf_printf(c->wrbuf, "<idle>%d</idle>\n", stat.num_idle);
     wrbuf_printf(c->wrbuf, "<failed>%d</failed>\n", stat.num_failed);
     wrbuf_printf(c->wrbuf, "<error>%d</error>\n", stat.num_error);
+    wrbuf_printf(c->wrbuf, "<progress>%.2f</progress>\n", progress);
     wrbuf_puts(c->wrbuf, "</stat>");
     rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
