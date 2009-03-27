@@ -27,7 +27,7 @@
         <xsl:value-of select="author"/>
       </xsl:attribute>
 
-      <pz:metadata type="id">
+      <pz:metadata type="electronic-url">
         <xsl:value-of select="url"/>
       </pz:metadata>
 
@@ -40,6 +40,10 @@
         </pz:metadata>
 
         <pz:metadata type="date">
+          <xsl:value-of select="date" />
+        </pz:metadata>
+
+        <pz:metadata type="description">
           <xsl:value-of select="date" />
         </pz:metadata>
 
