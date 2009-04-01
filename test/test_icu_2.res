@@ -8,4 +8,5 @@
 <idle>0</idle>
 <failed>0</failed>
 <error>0</error>
+<progress>0.00</progress>
 </stat>
