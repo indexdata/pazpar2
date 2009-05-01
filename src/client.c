@@ -157,13 +157,12 @@ static void client_send_raw_present(struct client *cl);
 static int nativesyntax_to_type(struct session_database *sdb, char *type,
                                 ZOOM_record rec);
 
-int client_show_raw_immediate(struct client *cl, int position,
-                              const char *syntax, const char *esn,
-                              void *data,
-                              void (*error_handler)(void *data, const char *addinfo),
-                              void (*record_handler)(void *data, const char *buf,
-                                                     size_t sz),
-                              int binary)
+static void client_show_immediate(struct client *cl, int position,
+                                  void *data,
+                                  void (*error_handler)(void *data, const char *addinfo),
+                                  void (*record_handler)(void *data, const char *buf,
+                                                         size_t sz),
+                                  int binary)
 {
     struct connection *co = cl->connection;
     struct session_database *sdb = client_get_database(cl);
@@ -173,20 +172,19 @@ int client_show_raw_immediate(struct client *cl, int position,
     const char *buf;
     int len;
 
-    if (!co)
-        return -1;
+    assert(co);
 
     resultset = connection_get_resultset(co);
     if (!resultset)
     {
         error_handler(data, "no resultset");
-        return 0;
+        return;
     }
     rec = ZOOM_resultset_record(resultset, position-1);
     if (!rec)
     {
         error_handler(data, "no record");
-        return 0;
+        return;
     }
     if (binary)
         strcpy(type, "raw");
@@ -196,10 +194,9 @@ int client_show_raw_immediate(struct client *cl, int position,
     if (!buf)
     {
         error_handler(data, "no record");
-        return 0;
+        return;
     }
     record_handler(data, buf, len);
-    return 0;
 }
 
 
@@ -209,47 +206,51 @@ int client_show_raw_begin(struct client *cl, int position,
                           void (*error_handler)(void *data, const char *addinfo),
                           void (*record_handler)(void *data, const char *buf,
                                                  size_t sz),
-                          void **data2,
                           int binary)
 {
-    struct show_raw *rr, **rrp;
     if (!cl->connection)
-    {   /* the client has no connection */
         return -1;
-    }
-    rr = xmalloc(sizeof(*rr));
-    *data2 = rr;
-    rr->position = position;
-    rr->active = 0;
-    rr->data = data;
-    rr->error_handler = error_handler;
-    rr->record_handler = record_handler;
-    rr->binary = binary;
-    if (syntax)
-        rr->syntax = xstrdup(syntax);
-    else
-        rr->syntax = 0;
-    if (esn)
-        rr->esn = xstrdup(esn);
-    else
-        rr->esn = 0;
-    rr->next = 0;
     
-    for (rrp = &cl->show_raw; *rrp; rrp = &(*rrp)->next)
-        ;
-    *rrp = rr;
-    
-    if (cl->state == Client_Failed)
+    if (syntax == 0 && esn == 0)
+        client_show_immediate(cl, position, data,
+                              error_handler, record_handler,
+                              binary);
+    else
     {
+        struct show_raw *rr, **rrp;
+        rr = xmalloc(sizeof(*rr));
+        rr->position = position;
+        rr->active = 0;
+        rr->data = data;
+        rr->error_handler = error_handler;
+        rr->record_handler = record_handler;
+        rr->binary = binary;
+        if (syntax)
+            rr->syntax = xstrdup(syntax);
+        else
+            rr->syntax = 0;
+        if (esn)
+            rr->esn = xstrdup(esn);
+        else
+            rr->esn = 0;
+        rr->next = 0;
+        
+        for (rrp = &cl->show_raw; *rrp; rrp = &(*rrp)->next)
+            ;
+        *rrp = rr;
+        
+        if (cl->state == Client_Failed)
+        {
         client_show_raw_error(cl, "client failed");
-    }
-    else if (cl->state == Client_Disconnected)
-    {
-        client_show_raw_error(cl, "client disconnected");
-    }
-    else
-    {
-        client_send_raw_present(cl);
+        }
+        else if (cl->state == Client_Disconnected)
+        {
+            client_show_raw_error(cl, "client disconnected");
+        }
+        else
+        {
+            client_send_raw_present(cl);
+        }
     }
     return 0;
 }

@@ -593,45 +593,22 @@ static void cmd_record(struct http_channel *c)
             error(rs, PAZPAR2_RECORD_FAIL, "no record at offset given");
             return;
         }
-        else if (syntax == 0 && esn == 0)
-        {
-            http_channel_observer_t obs =
-                http_add_observer(c, r->client, show_raw_reset);
-            int ret = client_show_raw_immediate(
-                r->client, r->position, syntax, esn, 
-                obs,
-                show_raw_record_error,
-                (binary ? 
-                 show_raw_record_ok_binary : 
-                 show_raw_record_ok),
-                (binary ? 1 : 0));
-            if (ret == -1)
-            {
-                http_remove_observer(obs);
-                error(rs, PAZPAR2_NO_SESSION, 0);
-                return;
-            }
-        }
         else
         {
-            void *data2;
             http_channel_observer_t obs =
                 http_add_observer(c, r->client, show_raw_reset);
-            int ret = 
-                client_show_raw_begin(
-                    r->client, r->position, syntax, esn, 
-                    obs /* data */,
-                    show_raw_record_error,
-                    (binary ? 
-                     show_raw_record_ok_binary : 
-                     show_raw_record_ok),
-                    &data2,
-                    (binary ? 1 : 0));
+            int ret = client_show_raw_begin(r->client, r->position,
+                                        syntax, esn, 
+                                        obs /* data */,
+                                        show_raw_record_error,
+                                        (binary ? 
+                                         show_raw_record_ok_binary : 
+                                         show_raw_record_ok),
+                                        (binary ? 1 : 0));
             if (ret == -1)
             {
                 http_remove_observer(obs);
                 error(rs, PAZPAR2_NO_SESSION, 0);
-                return;
             }
         }
     }

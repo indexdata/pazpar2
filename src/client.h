@@ -43,16 +43,7 @@ int client_show_raw_begin(struct client *cl, int position,
                           void (*error_handler)(void *data, const char *addinfo),
                           void (*record_handler)(void *data, const char *buf,
                                                  size_t sz),
-                          void **data2,
                           int binary);
-
-int client_show_raw_immediate(struct client *cl, int position,
-                              const char *syntax, const char *esn,
-                              void *data,
-                              void (*error_handler)(void *data, const char *addinfo),
-                              void (*record_handler)(void *data, const char *buf,
-                                                     size_t sz),
-                              int binary);
 
 void client_show_raw_remove(struct client *cl, void *rr);
 
