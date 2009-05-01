@@ -154,6 +154,54 @@ const char *client_get_pquery(struct client *cl)
 }
 
 static void client_send_raw_present(struct client *cl);
+static int nativesyntax_to_type(struct session_database *sdb, char *type,
+                                ZOOM_record rec);
+
+int client_show_raw_immediate(struct client *cl, int position,
+                              const char *syntax, const char *esn,
+                              void *data,
+                              void (*error_handler)(void *data, const char *addinfo),
+                              void (*record_handler)(void *data, const char *buf,
+                                                     size_t sz),
+                              int binary)
+{
+    struct connection *co = cl->connection;
+    struct session_database *sdb = client_get_database(cl);
+    ZOOM_resultset resultset = 0;
+    ZOOM_record rec = 0;
+    char type[80];
+    const char *buf;
+    int len;
+
+    if (!co)
+        return -1;
+
+    resultset = connection_get_resultset(co);
+    if (!resultset)
+    {
+        error_handler(data, "no resultset");
+        return 0;
+    }
+    rec = ZOOM_resultset_record(resultset, position-1);
+    if (!rec)
+    {
+        error_handler(data, "no record");
+        return 0;
+    }
+    if (binary)
+        strcpy(type, "raw");
+    else
+        nativesyntax_to_type(sdb, type, rec);
+    buf = ZOOM_record_get(rec, type, &len);
+    if (!buf)
+    {
+        error_handler(data, "no record");
+        return 0;
+    }
+    record_handler(data, buf, len);
+    return 0;
+}
+
 
 int client_show_raw_begin(struct client *cl, int position,
                           const char *syntax, const char *esn,
@@ -271,7 +319,8 @@ static void client_send_raw_present(struct client *cl)
     connection_continue(co);
 }
 
-static int nativesyntax_to_type(struct session_database *sdb, char *type, ZOOM_record rec)
+static int nativesyntax_to_type(struct session_database *sdb, char *type,
+                                ZOOM_record rec)
 {
     const char *s = session_setting_oneval(sdb, PZ_NATIVESYNTAX);
 
