@@ -302,6 +302,17 @@
 	   </listitem>
 	  </varlistentry>
 
+	  <varlistentry><term>mergekey</term>
+	   <listitem>
+	    <para>
+	     If set to <literal>yes</literal>, the value of this
+	     metadata element is appended to the resulting mergekey.
+	     By default metadata is not part of a mergekey.
+	    </para>
+	   </listitem>
+	  </varlistentry>
+
+
 	  <varlistentry><term>setting</term>
 	   <listitem>
 	    <para>

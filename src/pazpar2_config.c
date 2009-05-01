@@ -44,6 +44,7 @@ static char confdir[256] = ".";
 struct conf_config *config = 0;
 
 
+static 
 struct conf_metadata * conf_metadata_assign(NMEM nmem, 
                                             struct conf_metadata * metadata,
                                             const char *name,
@@ -53,7 +54,8 @@ struct conf_metadata * conf_metadata_assign(NMEM nmem,
                                             int brief,
                                             int termlist,
                                             int rank,
-                                            int sortkey_offset)
+                                            int sortkey_offset,
+                                            enum conf_metadata_mergekey mt)
 {
     if (!nmem || !metadata || !name)
         return 0;
@@ -73,10 +75,12 @@ struct conf_metadata * conf_metadata_assign(NMEM nmem,
     metadata->termlist = termlist;
     metadata->rank = rank;    
     metadata->sortkey_offset = sortkey_offset;
+    metadata->mergekey = mt;
     return metadata;
 }
 
 
+static
 struct conf_sortkey * conf_sortkey_assign(NMEM nmem, 
                                           struct conf_sortkey * sortkey,
                                           const char *name,
@@ -127,7 +131,8 @@ struct conf_metadata* conf_service_add_metadata(NMEM nmem,
                                                 int brief,
                                                 int termlist,
                                                 int rank,
-                                                int sortkey_offset)
+                                                int sortkey_offset,
+                                                enum conf_metadata_mergekey mt)
 {
     struct conf_metadata * md = 0;
 
@@ -138,7 +143,8 @@ struct conf_metadata* conf_service_add_metadata(NMEM nmem,
     //md = &((service->metadata)[field_id]);
     md = service->metadata + field_id;
     md = conf_metadata_assign(nmem, md, name, type, merge, setting,
-                             brief, termlist, rank, sortkey_offset);
+                              brief, termlist, rank, sortkey_offset,
+                              mt);
     return md;
 }
 
@@ -239,11 +245,13 @@ static struct conf_service *parse_service(xmlNode *node)
             xmlChar *xml_termlist = xmlGetProp(n, (xmlChar *) "termlist");
             xmlChar *xml_rank = xmlGetProp(n, (xmlChar *) "rank");
             xmlChar *xml_setting = xmlGetProp(n, (xmlChar *) "setting");
+            xmlChar *xml_mergekey = xmlGetProp(n, (xmlChar *) "mergekey");
 
             enum conf_metadata_type type = Metadata_type_generic;
             enum conf_metadata_merge merge = Metadata_merge_no;
             enum conf_setting_type setting = Metadata_setting_no;
             enum conf_sortkey_type sk_type = Metadata_sortkey_relevance;
+            enum conf_metadata_mergekey mergekey_type = Metadata_mergekey_no;
             int brief = 0;
             int termlist = 0;
             int rank = 0;
@@ -372,11 +380,18 @@ static struct conf_service *parse_service(xmlNode *node)
             else
                 sortkey_offset = -1;
 
+            if (xml_mergekey && strcmp((const char *) xml_mergekey, "no"))
+            {
+                mergekey_type = Metadata_mergekey_yes;
+            }
+
+
             // metadata known, assign values
             conf_service_add_metadata(nmem, service, md_node,
                                       (const char *) xml_name,
                                       type, merge, setting,
-                                      brief, termlist, rank, sortkey_offset);
+                                      brief, termlist, rank, sortkey_offset,
+                                      mergekey_type);
 
             xmlFree(xml_name);
             xmlFree(xml_brief);

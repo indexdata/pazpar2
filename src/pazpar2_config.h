@@ -56,6 +56,11 @@ enum conf_setting_type {
     Metadata_setting_parameter      // Expose value to normalization stylesheets
 };
 
+enum conf_metadata_mergekey {
+    Metadata_mergekey_no,
+    Metadata_mergekey_yes
+};
+
 // Describes known metadata elements and how they are to be manipulated
 // An array of these structure provides a 'map' against which
 // discovered metadata elements are matched. It also governs storage,
@@ -73,20 +78,8 @@ struct conf_metadata
     enum conf_metadata_type type;
     enum conf_metadata_merge merge;
     enum conf_setting_type setting; // Value is to be taken from session/db settings?
+    enum conf_metadata_type mergekey;
 };
-
-
-
-struct conf_metadata * conf_metadata_assign(NMEM nmem, 
-                                            struct conf_metadata * metadata,
-                                            const char *name,
-                                            enum conf_metadata_type type,
-                                            enum conf_metadata_merge merge,
-                                            enum conf_setting_type setting,
-                                            int brief,
-                                            int termlist,
-                                            int rank,
-                                            int sortkey_offset);
 
 
 
@@ -96,13 +89,6 @@ struct conf_sortkey
     char *name;
     enum conf_sortkey_type type;
 };
-
-struct conf_sortkey * conf_sortkey_assign(NMEM nmem, 
-                                            struct conf_sortkey * sortkey,
-                                            const char *name,
-                                            enum conf_sortkey_type type);
-
-
 
 // It is conceivable that there will eventually be several 'services'
 // offered from one server, with separate configuration -- possibly
@@ -120,7 +106,6 @@ struct conf_service
 struct conf_service * conf_service_create(NMEM nmem, 
                                           int num_metadata, int num_sortkeys);
 
-
 struct conf_metadata* conf_service_add_metadata(NMEM nmem, 
                                                 struct conf_service *service,
                                                 int field_id,
@@ -131,7 +116,8 @@ struct conf_metadata* conf_service_add_metadata(NMEM nmem,
                                                 int brief,
                                                 int termlist,
                                                 int rank,
-                                                int sortkey_offset);
+                                                int sortkey_offset,
+                                                enum conf_metadata_mergekey mt);
 
 struct conf_sortkey * conf_service_add_sortkey(NMEM nmem,
                                                struct conf_service *service,

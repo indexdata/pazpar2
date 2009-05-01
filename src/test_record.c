@@ -56,30 +56,42 @@ void test_record(int argc, char **argv)
   service =  conf_service_create(nmem, 4, 3);
   YAZ_CHECK(service);
 
-  YAZ_CHECK(conf_service_add_metadata(nmem, service, 0, "title",
-                            Metadata_type_generic, Metadata_merge_unique,
-                            Metadata_setting_no, 1, 1, 1, 0));
+  YAZ_CHECK(conf_service_add_metadata(
+                nmem, service, 0, "title",
+                Metadata_type_generic, Metadata_merge_unique,
+                Metadata_setting_no, 1, 1, 1, 0,
+                Metadata_mergekey_no
+                ));
 
-  YAZ_CHECK(conf_service_add_metadata(nmem, service, 1, "author",
-                            Metadata_type_generic, Metadata_merge_longest,
-                            Metadata_setting_no,1, 1, 1, 0));
+  YAZ_CHECK(conf_service_add_metadata(
+                nmem, service, 1, "author",
+                Metadata_type_generic, Metadata_merge_longest,
+                Metadata_setting_no,1, 1, 1, 0,
+                Metadata_mergekey_no));
 
-  YAZ_CHECK(conf_service_add_metadata(nmem, service, 2, "isbn",
-                            Metadata_type_number, Metadata_merge_no,
-                            Metadata_setting_no, 1, 1, 1, 0));
+  YAZ_CHECK(conf_service_add_metadata(
+                nmem, service, 2, "isbn",
+                Metadata_type_number, Metadata_merge_no,
+                Metadata_setting_no, 1, 1, 1, 0,
+                Metadata_mergekey_no));
 
-  YAZ_CHECK(conf_service_add_metadata(nmem, service, 3, "year",
-                            Metadata_type_year, Metadata_merge_range,
-                            Metadata_setting_no, 1, 1, 1, 0));
+  YAZ_CHECK(conf_service_add_metadata(
+                nmem, service, 3, "year",
+                Metadata_type_year, Metadata_merge_range,
+                Metadata_setting_no, 1, 1, 1, 0,
+                Metadata_mergekey_no));
 
-  YAZ_CHECK(conf_service_add_sortkey(nmem, service, 0, "relevance",
-                                     Metadata_sortkey_relevance));
-
-  YAZ_CHECK(conf_service_add_sortkey(nmem, service, 1, "title",
-                                     Metadata_sortkey_string));
+  YAZ_CHECK(conf_service_add_sortkey(
+                nmem, service, 0, "relevance",
+                Metadata_sortkey_relevance));
   
-  YAZ_CHECK(conf_service_add_sortkey(nmem, service, 2, "year",
-                                     Metadata_sortkey_numeric));
+  YAZ_CHECK(conf_service_add_sortkey(
+                nmem, service, 1, "title",
+                Metadata_sortkey_string));
+  
+  YAZ_CHECK(conf_service_add_sortkey(
+                nmem, service, 2, "year",
+                Metadata_sortkey_numeric));
   
 
 

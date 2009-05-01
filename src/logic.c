@@ -951,6 +951,106 @@ static struct record_metadata *record_metadata_init(
     return rec_md;
 }
 
+const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
+                         struct conf_service *service, NMEM nmem)
+{
+    char *mergekey_norm = 0;
+    xmlNode *root = xmlDocGetRootElement(doc);
+    WRBUF norm_wr = wrbuf_alloc();
+    xmlNode *n;
+
+    /* create mergekey based on mergekey attribute from XSL (if any) */
+    xmlChar *mergekey = xmlGetProp(root, (xmlChar *) "mergekey");
+    if (mergekey)
+    {
+        const char *norm_str;
+        pp2_relevance_token_t prt =
+            pp2_relevance_tokenize(
+                global_parameters.server->mergekey_pct,
+                (const char *) mergekey);
+        
+        while ((norm_str = pp2_relevance_token_next(prt)))
+        {
+            if (*norm_str)
+            {
+                if (wrbuf_len(norm_wr))
+                    wrbuf_puts(norm_wr, " ");
+                wrbuf_puts(norm_wr, norm_str);
+            }
+        }
+        pp2_relevance_token_destroy(prt);
+        xmlFree(mergekey);
+    }
+    /* append (if any) mergekey=yes metadata values */
+    for (n = root->children; n; n = n->next)
+    {
+        if (n->type != XML_ELEMENT_NODE)
+            continue;
+        if (!strcmp((const char *) n->name, "metadata"))
+        {
+            struct conf_metadata *ser_md = 0;
+            int md_field_id = -1;
+            
+            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
+            
+            if (!type)
+                continue;
+                
+            md_field_id 
+                = conf_service_metadata_field_id(service, 
+                                                 (const char *) type);
+            if (md_field_id >= 0)
+            {
+                ser_md = &service->metadata[md_field_id];
+                if (ser_md->mergekey == Metadata_mergekey_yes)
+                {
+                    xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
+                    if (value)
+                    {
+                        const char *norm_str;
+                        pp2_relevance_token_t prt =
+                            pp2_relevance_tokenize(
+                                global_parameters.server->mergekey_pct,
+                                (const char *) value);
+                        
+                        while ((norm_str = pp2_relevance_token_next(prt)))
+                        {
+                            if (*norm_str)
+                            {
+                                if (wrbuf_len(norm_wr))
+                                    wrbuf_puts(norm_wr, " ");
+                                wrbuf_puts(norm_wr, norm_str);
+                            }
+                        }
+                        xmlFree(value);
+                        pp2_relevance_token_destroy(prt);
+                    }
+                }
+            }
+            xmlFree(type);
+        }
+    }
+
+    /* generate unique key if none is not generated already or is empty */
+    if (wrbuf_len(norm_wr) == 0)
+    {
+        wrbuf_printf(norm_wr, "%s-%d",
+                     client_get_database(cl)->database->url, record_no);
+    }
+    if (wrbuf_len(norm_wr) > 0)
+        mergekey_norm = nmem_strdup(nmem, wrbuf_cstr(norm_wr));
+    wrbuf_destroy(norm_wr);
+    return mergekey_norm;
+}
+
+
+
+/** \brief ingest XML record
+    \param cl client holds the result set for record
+    \param rec record buffer (0 terminated)
+    \param record_no record position (1, 2, ..)
+    \returns resulting record or NULL on failure
+*/
 struct record *ingest_record(struct client *cl, const char *rec,
                              int record_no)
 {
@@ -960,52 +1060,27 @@ struct record *ingest_record(struct client *cl, const char *rec,
     struct record *record;
     struct record_cluster *cluster;
     struct session *se = client_get_session(cl);
-    xmlChar *mergekey, *mergekey_norm;
+    const char *mergekey_norm;
     xmlChar *type = 0;
     xmlChar *value = 0;
     struct conf_service *service = global_parameters.server->service;
-    const char *norm_str = 0;
-    pp2_relevance_token_t prt = 0;
-    WRBUF norm_wr = 0;
 
     if (!xdoc)
         return 0;
 
     root = xmlDocGetRootElement(xdoc);
-    if (!(mergekey = xmlGetProp(root, (xmlChar *) "mergekey")))
+
+    mergekey_norm = get_mergekey(xdoc, cl, record_no, service, se->nmem);
+    if (!mergekey_norm)
     {
-        yaz_log(YLOG_WARN, "No mergekey found in record");
+        yaz_log(YLOG_WARN, "Got no mergekey");
         xmlFreeDoc(xdoc);
         return 0;
     }
-    
     record = record_create(se->nmem, 
                            service->num_metadata, service->num_sortkeys, cl,
                            record_no);
 
-    prt = pp2_relevance_tokenize(
-        global_parameters.server->mergekey_pct, (const char *) mergekey);
-
-
-    norm_wr = wrbuf_alloc();
-    
-    while ((norm_str = pp2_relevance_token_next(prt)))
-    {
-        if (*norm_str)
-        {
-            if (wrbuf_len(norm_wr))
-                wrbuf_puts(norm_wr, " ");
-            wrbuf_puts(norm_wr, norm_str);
-        }
-    }
-        
-    mergekey_norm = (xmlChar *)nmem_strdup(se->nmem, wrbuf_cstr(norm_wr));
-    wrbuf_destroy(norm_wr);
-
-    pp2_relevance_token_destroy(prt);
-
-    xmlFree(mergekey);
-    
     cluster = reclist_insert(se->reclist, 
                              global_parameters.server->service, 
                              record, (char *) mergekey_norm, 
@@ -1021,10 +1096,10 @@ struct record *ingest_record(struct client *cl, const char *rec,
     }
     relevance_newrec(se->relevance, cluster);
     
-    
     // now parsing XML record and adding data to cluster or record metadata
     for (n = root->children; n; n = n->next)
     {
+        pp2_relevance_token_t prt;
         if (type)
             xmlFree(type);
         if (value)
