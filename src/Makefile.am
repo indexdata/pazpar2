@@ -4,8 +4,6 @@ sbin_PROGRAMS = pazpar2
 
 check_PROGRAMS = test_config \
       test_record \
-      test_reclists \
-      test_relevance \
       test_sel_thread \
       test_normalize
 
@@ -39,12 +37,6 @@ test_config_LDADD = libpazpar2.a $(YAZLIB)
 
 test_record_SOURCES = test_record.c
 test_record_LDADD = libpazpar2.a $(YAZLIB)
-
-test_reclists_SOURCES = test_reclists.c
-test_reclists_LDADD = libpazpar2.a $(YAZLIB)
-
-test_relevance_SOURCES = test_relevance.c
-test_relevance_LDADD = libpazpar2.a $(YAZLIB)
 
 test_sel_thread_SOURCES = test_sel_thread.c
 test_sel_thread_LDADD = libpazpar2.a $(YAZLIB)
