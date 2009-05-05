@@ -855,7 +855,11 @@ static void cmd_info(struct http_channel *c)
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, "<info>\n");
     wrbuf_puts(c->wrbuf, " <version>\n");
-    wrbuf_puts(c->wrbuf, "<pazpar2>");
+    wrbuf_puts(c->wrbuf, "<pazpar2");
+#ifdef PAZPAR2_VERSION_SHA1
+    wrbuf_printf(c->wrbuf, " sha1=\"%s\"", PAZPAR2_VERSION_SHA1);
+#endif
+    wrbuf_puts(c->wrbuf, ">");
     wrbuf_xmlputs(c->wrbuf, VERSION);
     wrbuf_puts(c->wrbuf, "</pazpar2>");
 
