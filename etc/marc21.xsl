@@ -10,7 +10,7 @@
 <!-- Extract metadata from MARC21/USMARC 
       http://www.loc.gov/marc/bibliographic/ecbdhome.html
 -->  
-  <xsl:template name="template-hook"/>
+  <xsl:template name="record-hook"/>
 
   <xsl:template match="/marc:record">
     <xsl:variable name="title_medium" select="marc:datafield[@tag='245']/marc:subfield[@code='h']"/>
