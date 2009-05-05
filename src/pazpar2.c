@@ -56,7 +56,12 @@ void child_handler(void *data)
 static void show_version(void)
 {
     char yaz_version_str[80];
-    printf("Pazpar2 " PACKAGE_VERSION "\n");
+    printf("Pazpar2 " PACKAGE_VERSION 
+#ifdef PAZPAR2_VERSION_SHA1
+           " "
+           PAZPAR2_VERSION_SHA1
+#endif
+"\n");
 
     yaz_version(yaz_version_str, 0);
 
