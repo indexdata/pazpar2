@@ -4,15 +4,14 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:pz="http://www.indexdata.com/pazpar2/1.0"
     xmlns:marc="http://www.loc.gov/MARC21/slim">
-
   
   <xsl:output indent="yes" method="xml" version="1.0" encoding="UTF-8"/>
 
 <!-- Extract metadata from MARC21/USMARC 
       http://www.loc.gov/marc/bibliographic/ecbdhome.html
 -->  
-  <xsl:include href="pz2-ourl-marc21.xsl" />
-  
+  <xsl:template name="template-hook"/>
+
   <xsl:template match="/marc:record">
     <xsl:variable name="title_medium" select="marc:datafield[@tag='245']/marc:subfield[@code='h']"/>
     <xsl:variable name="journal_title" select="marc:datafield[@tag='773']/marc:subfield[@code='t']"/>
@@ -306,11 +305,13 @@
         </pz:metadata>
       </xsl:for-each>
 
-      <xsl:if test="$open_url_resolver">
-        <pz:metadata type="open-url">
-            <xsl:call-template name="insert-md-openurl" />
-        </pz:metadata>
-      </xsl:if>
+      <!-- passthrough id data -->
+      <xsl:for-each select="pz:metadata">
+          <xsl:copy-of select="."/>
+      </xsl:for-each>
+
+      <!-- other stylesheets importing this might want to define this -->
+      <xsl:call-template name="record-hook"/>
 
     </pz:record>    
   </xsl:template>
