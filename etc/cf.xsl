@@ -55,6 +55,12 @@
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
+  
+  <xsl:template match="subject">
+    <pz:metadata type="subject">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
 
   <xsl:template match="text()"/>
 
