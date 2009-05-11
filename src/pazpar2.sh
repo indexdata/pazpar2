@@ -16,7 +16,9 @@ case "$command" in
         	;;
 
 	stop) 
-		test -f $pazpar2_pid && kill `cat $pazpar2_pid`
+		test -f $pazpar2_pid && \
+			kill -0 `cat $pazpar2_pid` 2>/dev/null && \
+			kill -TERM `cat $pazpar2_pid`
         	;;
 
 	# graceful restart - not yet implemented by pazpar2
