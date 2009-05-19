@@ -1,11 +1,7 @@
 <settings target="z3950.loc.gov:7090/voyager">
   <set name="pz:name" value="Library of Congress (SRU)"/>
-
   <set name="pz:sru" value="get"/>
   <set name="pz:sru_version" value="1.1"/>
   <set name="pz:elements" value="dc"/>
-
   <set name="pz:xslt" value="dc.xsl"/>
-
-  <set name="pz:apdulog" value="1"/>
 </settings>
