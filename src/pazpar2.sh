@@ -28,6 +28,7 @@ case "$command" in
 
 	restart)
 		$0 stop
+		sleep 1 	# let the OS give the port address free
 		$0 start "$@"
 		;;
 
