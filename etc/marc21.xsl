@@ -12,7 +12,11 @@
 -->  
   <xsl:template name="record-hook"/>
 
-  <xsl:template match="/marc:record">
+  <xsl:template match="/">
+    <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template match="marc:record">
     <xsl:variable name="title_medium" select="marc:datafield[@tag='245']/marc:subfield[@code='h']"/>
     <xsl:variable name="journal_title" select="marc:datafield[@tag='773']/marc:subfield[@code='t']"/>
     <xsl:variable name="electronic_location_url" select="marc:datafield[@tag='856']/marc:subfield[@code='u']"/>
@@ -236,6 +240,19 @@
 	    <xsl:text> </xsl:text>
 	  </xsl:for-each>
 	</pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="marc:datafield[@tag='852']">
+        <xsl:if test="marc:subfield[@code='y']">
+	  <pz:metadata type="publicnote">
+	    <xsl:value-of select="marc:subfield[@code='y']"/>
+	  </pz:metadata>
+	</xsl:if>
+	<xsl:if test="marc:subfield[@code='h']">
+	  <pz:metadata type="callnumber">
+	    <xsl:value-of select="marc:subfield[@code='h']"/>
+	  </pz:metadata>
+	</xsl:if>
       </xsl:for-each>
 
       <pz:metadata type="medium">
