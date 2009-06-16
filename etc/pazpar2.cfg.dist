@@ -81,6 +81,9 @@
       <metadata name="citation"/>
       <metadata name="holding"/>
       <metadata name="fulltext"/>
+      <metadata name="locallocation" brief="yes"/>
+      <metadata name="callnumber" brief="yes"/>
+      <metadata name="publicnote" brief="yes"/>
 
       <!-- journals -->
       <metadata name="volume-number"/>
