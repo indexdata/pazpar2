@@ -98,6 +98,7 @@ static int sc_main(
     char *arg;
     const char *pidfile = 0;
     const char *uid = 0;
+    int session_timeout = 60; // session timeout
 
 #ifndef WIN32
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
@@ -109,7 +110,7 @@ static int sc_main(
     yaz_log_init_prefix("pazpar2");
     yaz_log_xml_errors(0, YLOG_WARN);
 
-    while ((ret = options("dDf:h:l:p:t:u:VX", argv, argc, &arg)) != -2)
+    while ((ret = options("dDf:h:l:p:t:T:u:VX", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -136,6 +137,14 @@ static int sc_main(
         case 't':
             strcpy(global_parameters.settings_path_override, arg);
             break;
+        case 'T':
+	    session_timeout = atoi(arg);
+	    if (session_timeout >= 10 && session_timeout <= 86400) {
+            	global_parameters.session_timeout = session_timeout;
+	    } else {
+		fprintf(stderr, "Session timeout out of range 10..86400: %d\n", session_timeout);
+            }
+            break;
         case 'u':
             uid = arg;
             break;
@@ -153,6 +162,7 @@ static int sc_main(
                     "    -l file                 log to file\n"
                     "    -p pidfile              PID file\n"
                     "    -t settings\n"
+                    "    -T session_timeout\n"
                     "    -u uid\n"
                     "    -V                      show version\n"
                     "    -X                      debug mode\n"
