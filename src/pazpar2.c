@@ -98,7 +98,7 @@ static int sc_main(
     char *arg;
     const char *pidfile = 0;
     const char *uid = 0;
-    int session_timeout = 60; // session timeout
+    int session_timeout = 60;
 
 #ifndef WIN32
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
@@ -139,11 +139,13 @@ static int sc_main(
             break;
         case 'T':
 	    session_timeout = atoi(arg);
-	    if (session_timeout >= 10 && session_timeout <= 86400) {
-            	global_parameters.session_timeout = session_timeout;
-	    } else {
-		fprintf(stderr, "Session timeout out of range 10..86400: %d\n", session_timeout);
+	    if (session_timeout < 9 || session_timeout > 86400)
+            {
+                yaz_log(YLOG_FATAL, "Session timeout out of range 10..86400: %d",
+                        session_timeout);
+                return 1;
             }
+            global_parameters.session_timeout = session_timeout;
             break;
         case 'u':
             uid = arg;
