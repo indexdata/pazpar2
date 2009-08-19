@@ -5,7 +5,7 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = src test js doc
 
 EXTRA_DIST = README NEWS LICENSE buildconf.sh Doxyfile.in m4/yaz.m4 \
-	win/makefile win/version.nsi win/version.nsi.in win/pazpar2.nsi win/license.txt
+	win/makefile win/version.nsi win/version.nsi.in win/license.txt
 
 dist-hook:
 	if test -x /usr/bin/git -a -d .git; then git log >ChangeLog ; cp ChangeLog $(distdir); fi
