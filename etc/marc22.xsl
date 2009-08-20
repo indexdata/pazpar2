@@ -92,7 +92,7 @@
     </pz:metadata>
   </xsl:template>
   
-  <xsl:template match="marc:datafield[@tag='100']">
+  <xsl:template match="marc:datafield[@tag='100' or @tag='700']">
     <pz:metadata type="author">
       <xsl:value-of select="marc:subfield[@code='a']"/>
     </pz:metadata>
@@ -100,6 +100,30 @@
       <xsl:value-of select="marc:subfield[@code='c']"/>
     </pz:metadata>
     <pz:metadata type="author-date">
+      <xsl:value-of select="marc:subfield[@code='d']"/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='110']">
+    <pz:metadata type="corporate-name">
+      <xsl:value-of select="marc:subfield[@code='a']"/>
+    </pz:metadata>
+    <pz:metadata type="corporate-location">
+      <xsl:value-of select="marc:subfield[@code='c']"/>
+    </pz:metadata>
+    <pz:metadata type="corporate-date">
+      <xsl:value-of select="marc:subfield[@code='d']"/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='111']">
+    <pz:metadata type="meeting-name">
+      <xsl:value-of select="marc:subfield[@code='a']"/>
+    </pz:metadata>
+    <pz:metadata type="meeting-location">
+      <xsl:value-of select="marc:subfield[@code='c']"/>
+    </pz:metadata>
+    <pz:metadata type="meeting-date">
       <xsl:value-of select="marc:subfield[@code='d']"/>
     </pz:metadata>
   </xsl:template>
