@@ -22,6 +22,8 @@
   <set name="pz:elements" value="dc"/>
   <set name="pz:xslt" value="dc.xsl"/>
 
+  <set name="pz:maxrecs" value="1000"/>
+
   <!-- Result normalization settings -->
 
 
