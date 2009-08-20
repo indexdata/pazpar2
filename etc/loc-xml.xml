@@ -1,0 +1,29 @@
+<settings target="z3950.loc.gov:7090/voyager">
+
+  <set name="pz:name" value="Library of Congress"/>
+
+  <!-- This file introduces default settings for pazpar2 -->
+
+  <!-- mapping for unqualified search -->
+  <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
+
+  <!-- field-specific mappings -->
+  
+  <set name="pz:cclmap:au" value="u=1004 s=al"/>
+  <set name="pz:cclmap:ti" value="u=title s=al"/>
+  <set name="pz:cclmap:su" value="u=21 s=al"/>
+  <set name="pz:cclmap:isbn" value="u=7"/>
+  <set name="pz:cclmap:issn" value="u=8"/>
+  <set name="pz:cclmap:date" value="u=30 r=r"/>
+
+  <!-- Retrieval settings -->
+
+  <set name="pz:requestsyntax" value="xml"/>
+  <set name="pz:elements" value="dc"/>
+  <set name="pz:xslt" value="dc.xsl"/>
+
+  <!-- Result normalization settings -->
+
+
+</settings>
+
