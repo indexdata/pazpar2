@@ -128,6 +128,72 @@
     </pz:metadata>
   </xsl:template>
 
+  <xsl:template match="marc:datafield[@tag='245']">
+    <pz:metadata type="title">
+      <xsl:value-of select="marc:subfield[@code='a']"/>
+    </pz:metadata>
+    <pz:metadata type="title-remainder">
+      <xsl:value-of select="marc:subfield[@code='b']"/>
+    </pz:metadata>
+    <pz:metadata type="title-responsibility">
+      <xsl:value-of select="marc:subfield[@code='c']"/>
+    </pz:metadata>
+    <pz:metadata type="title-dates">
+      <xsl:value-of select="marc:subfield[@code='f']"/>
+    </pz:metadata>
+    <pz:metadata type="title-medium">
+      <xsl:value-of select="marc:subfield[@code='h']"/>
+    </pz:metadata>
+    <pz:metadata type="title-number-section">
+      <xsl:value-of select="marc:subfield[@code='n']"/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='250']">
+    <pz:metadata type="edition">
+	<xsl:value-of select="marc:subfield[@code='a']"/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='260']">
+    <pz:metadata type="publication-place">
+      <xsl:value-of select="marc:subfield[@code='a']"/>
+    </pz:metadata>
+    <pz:metadata type="publication-name">
+      <xsl:value-of select="marc:subfield[@code='b']"/>
+    </pz:metadata>
+    <pz:metadata type="publication-date">
+      <xsl:value-of select="marc:subfield[@code='c']"/>
+    </pz:metadata>
+    <pz:metadata type="date">
+      <xsl:value-of select="marc:subfield[@code='c']"/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='300']">
+    <pz:metadata type="physical-extent">
+      <xsl:value-of select="marc:subfield[@code='a']"/>
+    </pz:metadata>
+    <pz:metadata type="physical-format">
+      <xsl:value-of select="marc:subfield[@code='b']"/>
+    </pz:metadata>
+    <pz:metadata type="physical-dimensions">
+      <xsl:value-of select="marc:subfield[@code='c']"/>
+    </pz:metadata>
+    <pz:metadata type="physical-accomp">
+      <xsl:value-of select="marc:subfield[@code='e']"/>
+    </pz:metadata>
+    <pz:metadata type="physical-unittype">
+      <xsl:value-of select="marc:subfield[@code='f']"/>
+    </pz:metadata>
+    <pz:metadata type="physical-unitsize">
+      <xsl:value-of select="marc:subfield[@code='g']"/>
+    </pz:metadata>
+    <pz:metadata type="physical-specified">
+      <xsl:value-of select="marc:subfield[@code='3']"/>
+    </pz:metadata>
+  </xsl:template>
+
   <xsl:template match="text()"/>
 
 </xsl:stylesheet>
