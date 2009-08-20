@@ -52,6 +52,10 @@
 	<xsl:value-of select="$medium"/>
       </xsl:attribute>
 
+      <pz:metadata type="medium">
+	<xsl:value-of select="$medium"/>
+      </pz:metadata>
+
       <xsl:apply-templates/>
 
       <!-- other stylesheets importing this might want to define this -->
@@ -194,6 +198,117 @@
     </pz:metadata>
   </xsl:template>
 
+  <xsl:template match="marc:datafield[@tag='440']">
+    <pz:metadata type="series-title">
+      <xsl:value-of select="marc:subfield[@code='a']"/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag = '500' or @tag = '505' or
+	    @tag = '518' or @tag = '520' or @tag = '522']">
+    <pz:metadata type="description">
+	<xsl:value-of select="*/text()"/>
+    </pz:metadata>
+  </xsl:template>
+  
+  <xsl:template match="marc:datafield[@tag='600' or @tag='610' or @tag='611' or @tag='630' or @tag='648' or @tag='650' or @tag='651' or @tag='653' or @tag='654' or @tag='655' or @tag='656' or @tag='657' or @tag='658' or @tag='662' or @tag='69X']">
+    <pz:metadata type="subject">
+      <xsl:value-of select="marc:subfield[@code='a']"/>
+    </pz:metadata>
+    <pz:metadata type="subject-long">
+      <xsl:for-each select="marc:subfield">
+	<xsl:if test="position() > 1">
+	  <xsl:text>, </xsl:text>
+	</xsl:if>
+	<xsl:value-of select="."/>
+      </xsl:for-each>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='856']">
+    <pz:metadata type="electronic-url">
+      <xsl:value-of select="marc:subfield[@code='u']"/>
+    </pz:metadata>
+    <pz:metadata type="electronic-text">
+      <xsl:value-of select="marc:subfield[@code='y' or @code='3']"/>
+    </pz:metadata>
+    <pz:metadata type="electronic-note">
+      <xsl:value-of select="marc:subfield[@code='z']"/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='773']">
+    <pz:metadata type="citation">
+      <xsl:for-each select="*">
+	<xsl:value-of select="normalize-space(.)"/>
+	<xsl:text> </xsl:text>
+      </xsl:for-each>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='852']">
+    <xsl:if test="marc:subfield[@code='y']">
+      <pz:metadata type="publicnote">
+	<xsl:value-of select="marc:subfield[@code='y']"/>
+      </pz:metadata>
+    </xsl:if>
+    <xsl:if test="marc:subfield[@code='h']">
+      <pz:metadata type="callnumber">
+	<xsl:value-of select="marc:subfield[@code='h']"/>
+      </pz:metadata>
+    </xsl:if>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='900']/marc:subfield[@code='a']">
+    <pz:metadata type="fulltext">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='907' or @tag='901']">
+    <pz:metadata type="iii-id">
+      <xsl:value-of select="marc:subfield[@code='a']"/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='926']">
+    <pz:metadata type="holding">
+      <xsl:for-each select="marc:subfield">
+	<xsl:if test="position() > 1">
+	  <xsl:text> </xsl:text>
+	</xsl:if>
+	<xsl:value-of select="."/>
+      </xsl:for-each>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='948']">
+    <pz:metadata type="holding">
+      <xsl:for-each select="marc:subfield">
+	<xsl:if test="position() > 1">
+	  <xsl:text> </xsl:text>
+	</xsl:if>
+	<xsl:value-of select="."/>
+      </xsl:for-each>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="marc:datafield[@tag='991']">
+    <pz:metadata type="holding">
+      <xsl:for-each select="marc:subfield">
+	<xsl:if test="position() > 1">
+	  <xsl:text> </xsl:text>
+	</xsl:if>
+	<xsl:value-of select="."/>
+      </xsl:for-each>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="pz:metadata">
+      <xsl:copy-of select="."/>
+  </xsl:template>
+
+      <!-- other stylesheets importing this might want to define this -->
   <xsl:template match="text()"/>
 
 </xsl:stylesheet>
