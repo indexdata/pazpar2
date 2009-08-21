@@ -280,7 +280,8 @@ search.pz2?session=2044502273&command=stat
 	field first. A sort field may be followed by a colon followed by
 	the number '0' or '1', indicating whether results should be sorted in
 	increasing or decreasing order according to that field. 0==Decreasing is
-	the default.
+	the default. Sort field names can be any field name designated as a sort field
+        in the pazpar2.cfg file, or the special name 'relevance'.
        </para>
       </listitem>
      </varlistentry>
