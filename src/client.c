@@ -77,6 +77,7 @@ struct client {
     enum client_state state;
     struct show_raw *show_raw;
     struct client *next;     // next client in session or next in free list
+    ZOOM_resultset resultset;
 };
 
 struct show_raw {
@@ -157,24 +158,18 @@ static void client_send_raw_present(struct client *cl);
 static int nativesyntax_to_type(struct session_database *sdb, char *type,
                                 ZOOM_record rec);
 
-static void client_show_immediate(struct client *cl, int position,
-                                  void *data,
-                                  void (*error_handler)(void *data, const char *addinfo),
-                                  void (*record_handler)(void *data, const char *buf,
-                                                         size_t sz),
-                                  int binary)
+static void client_show_immediate(
+    ZOOM_resultset resultset, struct session_database *sdb, int position,
+    void *data,
+    void (*error_handler)(void *data, const char *addinfo),
+    void (*record_handler)(void *data, const char *buf, size_t sz),
+    int binary)
 {
-    struct connection *co = cl->connection;
-    struct session_database *sdb = client_get_database(cl);
-    ZOOM_resultset resultset = 0;
     ZOOM_record rec = 0;
     char type[80];
     const char *buf;
     int len;
 
-    assert(co);
-
-    resultset = connection_get_resultset(co);
     if (!resultset)
     {
         error_handler(data, "no resultset");
@@ -208,16 +203,19 @@ int client_show_raw_begin(struct client *cl, int position,
                                                  size_t sz),
                           int binary)
 {
-    if (!cl->connection)
-        return -1;
-    
     if (syntax == 0 && esn == 0)
-        client_show_immediate(cl, position, data,
+        client_show_immediate(cl->resultset, client_get_database(cl),
+                              position, data,
                               error_handler, record_handler,
                               binary);
     else
     {
         struct show_raw *rr, **rrp;
+
+        if (!cl->connection)
+            return -1;
+    
+
         rr = xmalloc(sizeof(*rr));
         rr->position = position;
         rr->active = 0;
@@ -241,7 +239,7 @@ int client_show_raw_begin(struct client *cl, int position,
         
         if (cl->state == Client_Failed)
         {
-        client_show_raw_error(cl, "client failed");
+            client_show_raw_error(cl, "client failed");
         }
         else if (cl->state == Client_Disconnected)
         {
@@ -289,7 +287,7 @@ static void client_send_raw_present(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
     struct connection *co = client_get_connection(cl);
-    ZOOM_resultset set = connection_get_resultset(co);
+    ZOOM_resultset set = cl->resultset;
 
     int offset = cl->show_raw->position;
     const char *syntax = 0;
@@ -385,7 +383,7 @@ void client_search_response(struct client *cl)
     struct connection *co = cl->connection;
     struct session *se = cl->session;
     ZOOM_connection link = connection_get_link(co);
-    ZOOM_resultset resultset = connection_get_resultset(co);
+    ZOOM_resultset resultset = cl->resultset;
     const char *error, *addinfo;
 
     if (ZOOM_connection_error(link, &error, &addinfo))
@@ -408,7 +406,7 @@ void client_record_response(struct client *cl)
 {
     struct connection *co = cl->connection;
     ZOOM_connection link = connection_get_link(co);
-    ZOOM_resultset resultset = connection_get_resultset(co);
+    ZOOM_resultset resultset = cl->resultset;
     const char *error, *addinfo;
 
     if (ZOOM_connection_error(link, &error, &addinfo))
@@ -522,7 +520,7 @@ void client_start_search(struct client *cl)
         ZOOM_connection_option_set(link, "databaseName", databaseName);
 
     ZOOM_connection_option_set(link, "presentChunk", "20");
-
+        
     if (cl->cqlquery)
     {
         ZOOM_query q = ZOOM_query_create();
@@ -536,7 +534,8 @@ void client_start_search(struct client *cl)
         yaz_log(YLOG_LOG, "Search %s PQF: %s", sdb->database->url, cl->pquery);
         rs = ZOOM_connection_search_pqf(link, cl->pquery);
     }
-    connection_set_resultset(co, rs);
+    ZOOM_resultset_destroy(cl->resultset);
+    cl->resultset = rs;
     connection_continue(co);
 }
 
@@ -560,6 +559,7 @@ struct client *client_create(void)
     r->diagnostic = 0;
     r->state = Client_Disconnected;
     r->show_raw = 0;
+    r->resultset = 0;
     r->next = 0;
     return r;
 }
@@ -582,6 +582,9 @@ void client_destroy(struct client *c)
 
     if (c->connection)
         connection_release(c->connection);
+
+    ZOOM_resultset_destroy(c->resultset);
+    c->resultset = 0;
     c->next = client_freelist;
     client_freelist = c;
 }
