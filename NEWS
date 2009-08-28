@@ -1,3 +1,10 @@
+--- 1.1.1 2009/08/28
+
+One result set is created per session (last search) rather than for
+each connection which happen to be shared (bug #3009).
+
+marc21 stylesheets changed for efficiency.
+
 --- 1.1.0 2009/08/19
 
 Session timeout may be specified on the command-line as option -T.
