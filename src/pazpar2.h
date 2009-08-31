@@ -172,7 +172,9 @@ enum pazpar2_error_code search(struct session *s, char *query,
                                char *filter, const char **addinfo);
 struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, int start,
         int *num, int *total, int *sumhits, NMEM nmem_show);
-struct record_cluster *show_single(struct session *s, const char *id);
+struct record_cluster *show_single(struct session *s, const char *id,
+                                   struct record_cluster **prev_r,
+                                   struct record_cluster **next_r);
 struct termlist_score **termlist(struct session *s, const char *name, int *num);
 int session_set_watch(struct session *s, int what, session_watchfun fun, void *data, struct http_channel *c);
 int session_active_clients(struct session *s);

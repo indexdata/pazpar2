@@ -765,14 +765,24 @@ void report_nmem_stats(void)
 }
 #endif
 
-struct record_cluster *show_single(struct session *s, const char *id)
+struct record_cluster *show_single(struct session *s, const char *id,
+                                   struct record_cluster **prev_r,
+                                   struct record_cluster **next_r)
 {
     struct record_cluster *r;
 
     reclist_rewind(s->reclist);
+    *prev_r = 0;
+    *next_r = 0;
     while ((r = reclist_read_record(s->reclist)))
+    {
         if (!strcmp(r->recid, id))
+        {
+            *next_r = reclist_read_record(s->reclist);
             return r;
+        }
+        *prev_r = r;
+    }
     return 0;
 }
 

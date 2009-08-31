@@ -1,5 +1,7 @@
 <record>
 <recid>title how to program a computer author jack collins medium book</recid>
+<nextrecid>title computer processing of dynamic images from an anger scintillation camera author medium book</nextrecid>
+<activeclients>0</activeclients>
 
 <md-title>How to program a computer</md-title>
 <md-author>Jack Collins</md-author>
