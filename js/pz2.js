@@ -98,6 +98,8 @@ var pz2 = function ( paramArray )
     this.showFastCount = 4;
     this.bytargetTime = paramArray.bytargettime || 1000;
     this.bytargetTimer = null;
+    this.recordTime = paramArray.recordtime || 500;
+    this.recordTimer = null;
 
     // counters for each command and applied delay
     this.dumpFactor = 500;
@@ -105,6 +107,7 @@ var pz2 = function ( paramArray )
     this.termCounter = 0;
     this.statCounter = 0;
     this.bytargetCounter = 0;
+    this.recordCounter = 0;
 
     // active clients, updated by stat and show
     // might be an issue since bytarget will poll accordingly
@@ -332,14 +335,14 @@ pz2.prototype =
                         "clients": 
                             Number( data.getElementsByTagName("clients")[0]
                                         .childNodes[0].nodeValue ),
-                        "unconnected": 
-                            Number( data.getElementsByTagName("unconnected")[0]
+                        "initializing": 
+                            Number( data.getElementsByTagName("initializing")[0]
                                         .childNodes[0].nodeValue ),
-                        "connecting": 
-                            Number( data.getElementsByTagName("connecting")[0]
+                        "searching": 
+                            Number( data.getElementsByTagName("searching")[0]
                                         .childNodes[0].nodeValue ),
-                        "working": 
-                            Number( data.getElementsByTagName("working")[0]
+                        "presenting": 
+                            Number( data.getElementsByTagName("presenting")[0]
                                         .childNodes[0].nodeValue ),
                         "idle": 
                             Number( data.getElementsByTagName("idle")[0]
@@ -349,9 +352,6 @@ pz2.prototype =
                                         .childNodes[0].nodeValue ),
                         "error": 
                             Number( data.getElementsByTagName("error")[0]
-                                        .childNodes[0].nodeValue ),
-                        "progress": 
-                            Number( data.getElementsByTagName("progress")[0]
                                         .childNodes[0].nodeValue )
                     };
                     
@@ -493,7 +493,7 @@ pz2.prototype =
 	    recordParams,
             function(data) {
                 var recordNode;
-                var record;
+                var record;                                
                 //raw record
                 if (context.currRecOffset !== null) {
                     record = new Array();
@@ -514,7 +514,21 @@ pz2.prototype =
                     //parse record
                     } else {
                         record = Element_parseChildNodes(recordNode);
-                    }                    
+                    }    
+		    var activeClients = 
+		       Number( data.getElementsByTagName("activeclients")[0]
+		 		.childNodes[0].nodeValue );
+		    context.activeClients = activeClients; 
+                    context.recordCounter++;
+                    var delay = context.recordTime + context.recordCounter * context.dumpFactor;
+                    if ( activeClients > 0 )
+                        context.recordTimer = 
+                           setTimeout ( 
+                               function() {
+                                  context.record(id, offset, syntax, handler);
+                                  },
+                                  delay
+                               );                                    
                     callback(record, args);
                 }
                 else
