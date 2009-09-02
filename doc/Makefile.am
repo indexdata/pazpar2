@@ -1,7 +1,7 @@
 # This file is part of Pazpar2.
 SUBDIRS = common
 
-SUFFIXES=.1 .5 .7 .8 .pdf .tkl .esp .xml 
+SUFFIXES=.1 .5 .7 .8 .pdf .esp .xml 
 
 XMLFILES = book.xml manref.xml gpl-2.0.xml
 
@@ -38,9 +38,6 @@ $(HTMLFILES): $(XMLFILES) $(PNGFILES)
 .xml.8:
 	$(MAN_COMPILE) $<
 
-index.tkl: $(XMLFILES)
-	$(TKL_COMPILE) $(MAINXML)
-
 pazpar2.pdf: $(XMLFILES)
 	rm -f pazpar2.pdf
 	$(PDF_COMPILE) $(MAINXML) && mv book.pdf pazpar2.pdf
@@ -65,7 +62,7 @@ dist-hook:
 	done
 
 doc-clean:
-	rm -f *.html *.[0-9] *.pdf *.tkl
+	rm -f *.html *.[0-9] *.pdf
 
 install-data-hook:
 	if test -f index.html; then d=.; else d="$(srcdir)"; fi; \

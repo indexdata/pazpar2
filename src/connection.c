@@ -55,7 +55,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 struct connection {
     IOCHAN iochan;
     ZOOM_connection link;
-    ZOOM_resultset resultset;
     struct host *host;
     struct client *client;
     char *ibuf;
@@ -95,18 +94,6 @@ ZOOM_connection connection_get_link(struct connection *co)
     return co->link;
 }
 
-ZOOM_resultset connection_get_resultset(struct connection *co)
-{
-    return co->resultset;
-}
-
-void connection_set_resultset(struct connection *co, ZOOM_resultset rs)
-{
-    if (co->resultset)
-        ZOOM_resultset_destroy(co->resultset);
-    co->resultset = rs;
-}
-
 static void remove_connection_from_host(struct connection *con)
 {
     struct connection **conp = &con->host->connections;
@@ -131,9 +118,6 @@ void connection_destroy(struct connection *co)
         ZOOM_connection_destroy(co->link);
         iochan_destroy(co->iochan);
     }
-    if (co->resultset)
-        ZOOM_resultset_destroy(co->resultset);
-
     yaz_log(YLOG_DEBUG, "Connection destroy %s", co->host->hostport);
 
     remove_connection_from_host(co);
@@ -169,7 +153,6 @@ static struct connection *connection_create(struct client *cl)
     new->zproxy = 0;
     client_set_connection(cl, new);
     new->link = 0;
-    new->resultset = 0;
     new->state = Conn_Resolving;
     if (host->ipport)
         connection_connect(new);

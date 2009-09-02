@@ -550,7 +550,7 @@ static void cmd_record(struct http_channel *c)
     struct http_response *rs = c->response;
     struct http_request *rq = c->request;
     struct http_session *s = locate_session(rq, rs);
-    struct record_cluster *rec;
+    struct record_cluster *rec, *prev_r, *next_r;
     struct record *r;
     struct conf_service *service = global_parameters.server->service;
     const char *idstr = http_argbyname(rq, "id");
@@ -565,7 +565,7 @@ static void cmd_record(struct http_channel *c)
         return;
     }
     wrbuf_rewind(c->wrbuf);
-    if (!(rec = show_single(s->psession, idstr)))
+    if (!(rec = show_single(s->psession, idstr, &prev_r, &next_r)))
     {
         if (session_set_watch(s->psession, SESSION_WATCH_RECORD,
                               cmd_record_ready, c, c) != 0)
@@ -618,6 +618,20 @@ static void cmd_record(struct http_channel *c)
         wrbuf_puts(c->wrbuf, "<recid>");
         wrbuf_xmlputs(c->wrbuf, rec->recid);
         wrbuf_puts(c->wrbuf, "</recid>\n");
+        if (prev_r)
+        {
+            wrbuf_puts(c->wrbuf, "<prevrecid>");
+            wrbuf_xmlputs(c->wrbuf, prev_r->recid);
+            wrbuf_puts(c->wrbuf, "</prevrecid>\n");
+        }
+        if (next_r)
+        {
+            wrbuf_puts(c->wrbuf, "<nextrecid>");
+            wrbuf_xmlputs(c->wrbuf, next_r->recid);
+            wrbuf_puts(c->wrbuf, "</nextrecid>\n");
+        }
+        wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", 
+                     session_active_clients(s->psession));
         write_metadata(c->wrbuf, service, rec->metadata, 1);
         for (r = rec->records; r; r = r->next)
             write_subrecord(r, c->wrbuf, service, 1);
