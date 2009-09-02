@@ -532,7 +532,7 @@ enum pazpar2_error_code search(struct session *se,
     live_channels = select_targets(se, criteria);
     if (live_channels)
     {
-        int maxrecs = live_channels * global_parameters.toget;
+        int maxrecs = live_channels * global_parameters.toget; // This is buggy!!!
         se->reclist = reclist_create(se->nmem, maxrecs);
         se->expected_maxrecs = maxrecs;
     }
