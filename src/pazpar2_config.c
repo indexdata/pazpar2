@@ -118,6 +118,8 @@ struct conf_service * conf_service_create(NMEM nmem,
             = nmem_malloc(nmem, 
                           sizeof(struct conf_sortkey) * service->num_sortkeys);
 
+    service->nmem = 0;
+    service->dictionary = 0;
     return service; 
 }
 

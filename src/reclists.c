@@ -93,11 +93,11 @@ reclist_sortparms_insert(NMEM nmem,
 #endif
 
 
-struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms)
+struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
+    struct conf_service *service)
 {
     struct reclist_sortparms *res = 0;
     struct reclist_sortparms **rp = &res;
-    struct conf_service *service = config->servers->service;
 
     if (strlen(parms) > 256)
         return 0;

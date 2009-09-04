@@ -62,12 +62,12 @@ static void session_timeout(IOCHAN i, int event)
     http_session_destroy(s);
 }
 
-struct http_session *http_session_create(void)
+struct http_session *http_session_create(struct conf_service *service)
 {
     NMEM nmem = nmem_create();
     struct http_session *r = nmem_malloc(nmem, sizeof(*r));
 
-    r->psession = new_session(nmem);
+    r->psession = new_session(nmem, service);
     r->session_id = 0;
     r->timestamp = 0;
     r->nmem = nmem;
@@ -240,12 +240,18 @@ static void cmd_exit(struct http_channel *c)
     http_close_server();
 }
 
+static struct conf_service *locate_service(const char *service_name)
+{
+    return global_parameters.server->service;
+}
+
 static void cmd_init(struct http_channel *c)
 {
     unsigned int sesid;
     char buf[1024];
     const char *clear = http_argbyname(c->request, "clear");
-    struct http_session *s = http_session_create();
+    const char *service_name = http_argbyname(c->request, "service");
+    struct http_session *s = http_session_create(locate_service(service_name));
     struct http_response *rs = c->response;
 
     yaz_log(YLOG_DEBUG, "HTTP Session init");
@@ -552,7 +558,7 @@ static void cmd_record(struct http_channel *c)
     struct http_session *s = locate_session(rq, rs);
     struct record_cluster *rec, *prev_r, *next_r;
     struct record *r;
-    struct conf_service *service = global_parameters.server->service;
+    struct conf_service *service = s->psession->service;
     const char *idstr = http_argbyname(rq, "id");
     const char *offsetstr = http_argbyname(rq, "offset");
     const char *binarystr = http_argbyname(rq, "binary");
@@ -677,7 +683,7 @@ static void show_records(struct http_channel *c, int active)
         numn = atoi(num);
     if (!sort)
         sort = "relevance";
-    if (!(sp = reclist_parse_sortparms(c->nmem, sort)))
+    if (!(sp = reclist_parse_sortparms(c->nmem, sort, s->psession->service)))
     {
         error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
         return;
@@ -698,7 +704,7 @@ static void show_records(struct http_channel *c, int active)
         int ccount;
         struct record *p;
         struct record_cluster *rec = rl[i];
-        struct conf_service *service = global_parameters.server->service;
+        struct conf_service *service = s->psession->service;
 
         wrbuf_puts(c->wrbuf, "<hit>\n");
         write_metadata(c->wrbuf, service, rec->metadata, 0);

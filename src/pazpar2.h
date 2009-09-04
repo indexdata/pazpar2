@@ -121,6 +121,7 @@ struct session_watchentry {
 
 // End-user session
 struct session {
+    struct conf_service *service; /* service in use for this session */
     struct session_database *databases;  // All databases, settings overriden
     struct client *clients;              // Clients connected for current search
     NMEM session_nmem;  // Nmem for session-permanent storage
@@ -163,7 +164,7 @@ struct hitsbytarget {
 
 struct hitsbytarget *hitsbytarget(struct session *s, int *count, NMEM nmem);
 int select_targets(struct session *se, struct database_criterion *crit);
-struct session *new_session(NMEM nmem);
+struct session *new_session(NMEM nmem, struct conf_service *service);
 void destroy_session(struct session *s);
 void session_init_databases(struct session *s);
 int load_targets(struct session *s, const char *fn);

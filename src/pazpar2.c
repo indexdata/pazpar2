@@ -36,13 +36,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 void child_handler(void *data)
 {
+    struct conf_service *service = global_parameters.server->service;
     start_proxy();
-    init_settings();
+
+    init_settings(service);
 
     if (*global_parameters.settings_path_override)
-        settings_read(global_parameters.settings_path_override);
+        settings_read(service, global_parameters.settings_path_override);
     else if (global_parameters.server->settings)
-        settings_read(global_parameters.server->settings);
+        settings_read(service, global_parameters.server->settings);
     else
         yaz_log(YLOG_WARN, "No settings-directory specified");
     global_parameters.odr_in = odr_createmem(ODR_DECODE);
@@ -50,7 +52,6 @@ void child_handler(void *data)
 
 
     pazpar2_event_loop();
-
 }
 
 static void show_version(void)

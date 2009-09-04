@@ -100,7 +100,8 @@ struct conf_service
     struct conf_metadata *metadata;
     int num_sortkeys;
     struct conf_sortkey *sortkeys;
-
+    struct setting_dictionary *dictionary;
+    NMEM nmem;
 };
 
 struct conf_service * conf_service_create(NMEM nmem, 

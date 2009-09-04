@@ -44,8 +44,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "database.h"
 #include "settings.h"
 
-static NMEM nmem = 0;
-
 // Used for initializing setting_dictionary with pazpar2-specific settings
 static char *hard_settings[] = {
     "pz:piggyback",
@@ -76,34 +74,32 @@ struct setting_dictionary
     int num;
 };
 
-static struct setting_dictionary *dictionary = 0;
-
 // This establishes the precedence of wildcard expressions
 #define SETTING_WILDCARD_NO     0 // No wildcard
 #define SETTING_WILDCARD_DB     1 // Database wildcard 'host:port/*'
 #define SETTING_WILDCARD_YES    2 // Complete wildcard '*'
 
 // Returns size of settings directory
-int settings_num(void)
+int settings_num(struct conf_service *service)
 {
-    return dictionary->num;
+    return service->dictionary->num;
 }
 
-int settings_offset(const char *name)
+int settings_offset(struct conf_service *service, const char *name)
 {
     int i;
 
     if (!name)
         name = "";
-    for (i = 0; i < dictionary->num; i++)
-        if (!strcmp(name, dictionary->dict[i]))
+    for (i = 0; i < service->dictionary->num; i++)
+        if (!strcmp(name, service->dictionary->dict[i]))
             return i;
     return -1;
 }
 
 // Ignores everything after second colon, if present
 // A bit of a hack to support the pz:cclmap: scheme (and more to come?)
-int settings_offset_cprefix(const char *name)
+int settings_offset_cprefix(struct conf_service *service, const char *name)
 {
     const char *p;
     int maxlen = 100;
@@ -111,15 +107,15 @@ int settings_offset_cprefix(const char *name)
 
     if (!strncmp("pz:", name, 3) && (p = strchr(name + 3, ':')))
         maxlen = (p - name) + 1;
-    for (i = 0; i < dictionary->num; i++)
-        if (!strncmp(name, dictionary->dict[i], maxlen))
+    for (i = 0; i < service->dictionary->num; i++)
+        if (!strncmp(name, service->dictionary->dict[i], maxlen))
             return i;
     return -1;
 }
 
-char *settings_name(int offset)
+char *settings_name(struct conf_service *service, int offset)
 {
-    return dictionary->dict[offset];
+    return service->dictionary->dict[offset];
 }
 
 static int isdir(const char *path)
@@ -136,7 +132,9 @@ static int isdir(const char *path)
 
 // Read settings from an XML file, calling handler function for each setting
 static void read_settings_file(const char *path,
-        void (*fun)(struct setting *set))
+                               struct conf_service *service,
+                               void (*fun)(struct conf_service *service,
+                                           struct setting *set))
 {
     xmlDoc *doc = xmlParseFile(path);
     xmlNode *n;
@@ -203,7 +201,7 @@ static void read_settings_file(const char *path,
                     strcpy(valueb, (const char *) valuea);
                 set.value = valueb;
                 set.next = 0;
-                (*fun)(&set);
+                (*fun)(service, &set);
             }
             xmlFree(name);
             xmlFree(precedence);
@@ -229,7 +227,9 @@ static void read_settings_file(const char *path,
 // Recursively read files or directories, invoking a 
 // callback for each one
 static void read_settings(const char *path,
-		void (*fun)(struct setting *set))
+                          struct conf_service *service,
+                          void (*fun)(struct conf_service *service,
+                                      struct setting *set))
 {
     DIR *d;
     struct dirent *de;
@@ -248,12 +248,12 @@ static void read_settings(const char *path,
             if (*de->d_name == '.' || !strcmp(de->d_name, "CVS"))
                 continue;
             sprintf(tmp, "%s/%s", path, de->d_name);
-            read_settings(tmp, fun);
+            read_settings(tmp, service, fun);
         }
         closedir(d);
     }
     else if ((dot = strrchr(path, '.')) && !strcmp(dot + 1, "xml"))
-        read_settings_file(path, fun);
+        read_settings_file(path, service, fun);
 }
 
 // Determines if a ZURL is a wildcard, and what kind
@@ -272,14 +272,17 @@ static int zurl_wildcard(const char *zurl)
 // Callback. Adds a new entry to the dictionary if necessary
 // This is used in pass 1 to determine layout of dictionary
 // and to load any databases mentioned
-static void prepare_dictionary(struct setting *set)
+static void prepare_dictionary(struct conf_service *service,
+                               struct setting *set)
 {
+    struct setting_dictionary *dictionary = service->dictionary;
+
     int i;
     char *p;
 
     // If target address is not wildcard, add the database
     if (*set->target && !zurl_wildcard(set->target))
-        find_database(set->target, 0);
+        find_database(set->target, 0, service);
 
     // Determine if we already have a dictionary entry
     if (!strncmp(set->name, "pz:", 3) && (p = strchr(set->name + 3, ':')))
@@ -297,22 +300,32 @@ static void prepare_dictionary(struct setting *set)
     // Create a new dictionary entry
     // Grow dictionary if necessary
     if (!dictionary->size)
-        dictionary->dict = nmem_malloc(nmem, (dictionary->size = 50) * sizeof(char*));
+        dictionary->dict =
+            nmem_malloc(service->nmem, (dictionary->size = 50) * sizeof(char*));
     else if (dictionary->num + 1 > dictionary->size)
     {
-        char **tmp = nmem_malloc(nmem, dictionary->size * 2 * sizeof(char*));
+        char **tmp =
+            nmem_malloc(service->nmem, dictionary->size * 2 * sizeof(char*));
         memcpy(tmp, dictionary->dict, dictionary->size * sizeof(char*));
         dictionary->dict = tmp;
         dictionary->size *= 2;
     }
-    dictionary->dict[dictionary->num++] = nmem_strdup(nmem, set->name);
+    dictionary->dict[dictionary->num++] = nmem_strdup(service->nmem, set->name);
 }
+
+struct update_database_context {
+    struct setting *set;
+    struct conf_service *service;
+};
 
 // This is called from grep_databases -- adds/overrides setting for a target
 // This is also where the rules for precedence of settings are implemented
 static void update_database(void *context, struct database *db)
 {
-    struct setting *set = (struct setting *) context;
+    struct setting *set = ((struct update_database_context *)
+                           context)->set;
+    struct conf_service *service = ((struct update_database_context *) 
+                                    context)->service;
     struct setting *s, **sp;
     int offset;
 
@@ -320,7 +333,7 @@ static void update_database(void *context, struct database *db)
     if (!match_zurl(db->url, set->target))
         return;
 
-    if ((offset = settings_offset_cprefix(set->name)) < 0)
+    if ((offset = settings_offset_cprefix(service, set->name)) < 0)
         abort(); // Should never get here
 
     // First we determine if this setting is overriding  any existing settings
@@ -344,13 +357,13 @@ static void update_database(void *context, struct database *db)
         }
     if (!s) // s will be null when there are no higher-priority settings -- we add one
     {
-        struct setting *new = nmem_malloc(nmem, sizeof(*new));
+        struct setting *new = nmem_malloc(service->nmem, sizeof(*new));
 
         memset(new, 0, sizeof(*new));
         new->precedence = set->precedence;
-        new->target = nmem_strdup(nmem, set->target);
-        new->name = nmem_strdup(nmem, set->name);
-        new->value = nmem_strdup(nmem, set->value);
+        new->target = nmem_strdup(service->nmem, set->target);
+        new->name = nmem_strdup(service->nmem, set->name);
+        new->value = nmem_strdup(service->nmem, set->value);
         new->next = db->settings[offset];
         db->settings[offset] = new;
     }
@@ -358,16 +371,21 @@ static void update_database(void *context, struct database *db)
 
 // Callback -- updates database records with dictionary entries as appropriate
 // This is used in pass 2 to assign name/value pairs to databases
-static void update_databases(struct setting *set)
+static void update_databases(struct conf_service *service, 
+                             struct setting *set)
 {
-    predef_grep_databases(set, 0, update_database);
+    struct update_database_context context;
+    context.set = set;
+    context.service = service;
+    predef_grep_databases(&context, service, 0, update_database);
 }
 
 // This simply copies the 'hard' (application-specific) settings
 // to the settings dictionary.
-static void initialize_hard_settings(struct setting_dictionary *dict)
+static void initialize_hard_settings(struct conf_service *service)
 {
-    dict->dict = nmem_malloc(nmem, sizeof(hard_settings) - sizeof(char*));
+    struct setting_dictionary *dict = service->dictionary;
+    dict->dict = nmem_malloc(service->nmem, sizeof(hard_settings) - sizeof(char*));
     dict->size = (sizeof(hard_settings) - sizeof(char*)) / sizeof(char*);
     memcpy(dict->dict, hard_settings, dict->size * sizeof(char*));
     dict->num = dict->size;
@@ -375,9 +393,8 @@ static void initialize_hard_settings(struct setting_dictionary *dict)
 
 // Read any settings names introduced in service definition (config) and add to dictionary
 // This is done now to avoid errors if user settings are declared in session overrides
-static void initialize_soft_settings(void)
+static void initialize_soft_settings(struct conf_service *service)
 {
-    struct conf_service *service = config->servers->service;
     int i;
 
     for (i = 0; i < service->num_metadata; i++)
@@ -393,31 +410,30 @@ static void initialize_soft_settings(void)
         set.name = md->name;
         set.value = "";
         set.next = 0;
-        prepare_dictionary(&set);
+        prepare_dictionary(service, &set);
     }
 }
 
 // If we ever decide we need to be able to specify multiple settings directories,
 // the two calls to read_settings must be split -- so the dictionary is prepared
 // for the contents of every directory before the databases are updated.
-void settings_read(const char *path)
+void settings_read(struct conf_service *service, const char *path)
 {
-    read_settings(path, prepare_dictionary);
-    read_settings(path, update_databases);
+    read_settings(path, service, prepare_dictionary);
+    read_settings(path, service, update_databases);
 }
 
-void init_settings(void)
+void init_settings(struct conf_service *service)
 {
     struct setting_dictionary *new;
-    if (!nmem)
-        nmem = nmem_create();
-    else
-        nmem_reset(nmem);
-    new = nmem_malloc(nmem, sizeof(*new));
+
+    service->nmem = nmem_create();
+
+    new = nmem_malloc(service->nmem, sizeof(*new));
     memset(new, 0, sizeof(*new));
-    initialize_hard_settings(new);
-    dictionary = new;
-    initialize_soft_settings();
+    service->dictionary = new;
+    initialize_hard_settings(service);
+    initialize_soft_settings(service);
 }
 
 /*

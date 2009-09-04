@@ -196,7 +196,7 @@ xmlDoc *record_to_xml(struct session_database *sdb, const char *rec)
 static void insert_settings_parameters(struct session_database *sdb,
                                        struct session *se, char **parms)
 {
-    struct conf_service *service = global_parameters.server->service;
+    struct conf_service *service = se->service;
     int i;
     int nparms = 0;
     int offset = 0;
@@ -207,7 +207,7 @@ static void insert_settings_parameters(struct session_database *sdb,
         int setting;
 
         if (md->setting == Metadata_setting_parameter &&
-            (setting = settings_offset(md->name)) > 0)
+            (setting = settings_offset(service, md->name)) > 0)
         {
             const char *val = session_setting_oneval(sdb, setting);
             if (val && nparms < MAX_XSLT_ARGS)
@@ -229,9 +229,9 @@ static void insert_settings_parameters(struct session_database *sdb,
 }
 
 // Add static values from session database settings if applicable
-static void insert_settings_values(struct session_database *sdb, xmlDoc *doc)
+static void insert_settings_values(struct session_database *sdb, xmlDoc *doc,
+    struct conf_service *service)
 {
-    struct conf_service *service = global_parameters.server->service;
     int i;
 
     for (i = 0; i < service->num_metadata; i++)
@@ -240,7 +240,7 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc)
         int offset;
 
         if (md->setting == Metadata_setting_postproc &&
-            (offset = settings_offset(md->name)) > 0)
+            (offset = settings_offset(service, md->name)) > 0)
         {
             const char *val = session_setting_oneval(sdb, offset);
             if (val)
@@ -287,7 +287,7 @@ xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
             rdoc = new;
         }
 
-        insert_settings_values(sdb, rdoc);
+        insert_settings_values(sdb, rdoc, se->service);
 
         if (global_parameters.dump_records)
         {
@@ -570,8 +570,9 @@ enum pazpar2_error_code search(struct session *se,
 static void session_init_databases_fun(void *context, struct database *db)
 {
     struct session *se = (struct session *) context;
+    struct conf_service *service = se->service;
     struct session_database *new = nmem_malloc(se->session_nmem, sizeof(*new));
-    int num = settings_num();
+    int num = settings_num(service);
     int i;
 
     new->database = db;
@@ -604,7 +605,7 @@ static void session_database_destroy(struct session_database *sdb)
 void session_init_databases(struct session *se)
 {
     se->databases = 0;
-    predef_grep_databases(se, 0, session_init_databases_fun);
+    predef_grep_databases(se, se->service, 0, session_init_databases_fun);
 }
 
 // Probably session_init_databases_fun should be refactored instead of
@@ -612,7 +613,7 @@ void session_init_databases(struct session *se)
 static struct session_database *load_session_database(struct session *se, 
                                                       char *id)
 {
-    struct database *db = find_database(id, 0);
+    struct database *db = find_database(id, 0, se->service);
 
     session_init_databases_fun((void*) se, db);
     // New sdb is head of se->databases list
@@ -636,8 +637,9 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
                            char *value)
 {
     struct session_database *sdb = find_session_database(se, dbname);
+    struct conf_service *service = se->service;
     struct setting *new = nmem_malloc(se->session_nmem, sizeof(*new));
-    int offset = settings_offset_cprefix(setting);
+    int offset = settings_offset_cprefix(service, setting);
 
     if (offset < 0)
     {
@@ -686,13 +688,14 @@ void destroy_session(struct session *s)
     wrbuf_destroy(s->wrbuf);
 }
 
-struct session *new_session(NMEM nmem) 
+struct session *new_session(NMEM nmem, struct conf_service *service) 
 {
     int i;
     struct session *session = nmem_malloc(nmem, sizeof(*session));
 
     yaz_log(YLOG_DEBUG, "New Pazpar2 session");
-    
+
+    session->service = service;
     session->relevance = 0;
     session->total_hits = 0;
     session->total_records = 0;
@@ -1073,7 +1076,7 @@ struct record *ingest_record(struct client *cl, const char *rec,
     const char *mergekey_norm;
     xmlChar *type = 0;
     xmlChar *value = 0;
-    struct conf_service *service = global_parameters.server->service;
+    struct conf_service *service = se->service;
 
     if (!xdoc)
         return 0;
@@ -1092,7 +1095,7 @@ struct record *ingest_record(struct client *cl, const char *rec,
                            record_no);
 
     cluster = reclist_insert(se->reclist, 
-                             global_parameters.server->service, 
+                             service, 
                              record, (char *) mergekey_norm, 
                              &se->total_merged);
     if (global_parameters.dump_records)

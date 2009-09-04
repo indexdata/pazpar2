@@ -48,11 +48,11 @@ struct setting
     struct setting *next;
 };
 
-int settings_num(void);
-void settings_read(const char *path);
-int settings_offset(const char *name);
-int settings_offset_cprefix(const char *name);
-void init_settings(void);
+int settings_num(struct conf_service *service);
+void settings_read(struct conf_service *service, const char *path);
+int settings_offset(struct conf_service *service, const char *name);
+int settings_offset_cprefix(struct conf_service *service, const char *name);
+void init_settings(struct conf_service *service);
 
 #endif
 

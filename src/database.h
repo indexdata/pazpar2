@@ -21,11 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define DATABASE_H
 
 void prepare_databases(void);
-struct database *find_database(const char *id, int new);
-int database_match_criteria(struct session_database *db, struct database_criterion *cl);
+struct database *find_database(const char *id, int new, struct conf_service *service);
 int session_grep_databases(struct session *se, struct database_criterion *cl,
         void (*fun)(void *context, struct session_database *db));
-int predef_grep_databases(void *context, struct database_criterion *cl,
+int predef_grep_databases(void *context, struct conf_service *service,
+			  struct database_criterion *cl,
 			  void (*fun)(void *context, struct database *db));
 int match_zurl(const char *zurl, const char *pattern);
 

@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "settings.h"
 #include "http.h"
 #include "zeerex.h"
+#include "database.h"
 
 #include <sys/types.h>
 #if HAVE_SYS_SOCKET_H
@@ -103,7 +104,8 @@ static struct host *find_host(const char *hostport)
     return create_host(hostport);
 }
 
-static struct database *load_database(const char *id)
+static struct database *load_database(const char *id,
+    struct conf_service *service)
 {
     xmlDoc *doc = 0;
     struct zr_explain *explain = 0;
@@ -146,8 +148,9 @@ static struct database *load_database(const char *id)
 
     db->settings = 0;
 
-    db->settings = nmem_malloc(nmem, sizeof(struct settings*) * settings_num());
-    memset(db->settings, 0, sizeof(struct settings*) * settings_num());
+    db->settings = nmem_malloc(nmem, sizeof(struct settings*) * 
+                               settings_num(service));
+    memset(db->settings, 0, sizeof(struct settings*) * settings_num(service));
     idset = nmem_malloc(nmem, sizeof(*idset));
     idset->precedence = 0;
     idset->name = "pz:id";
@@ -163,7 +166,8 @@ static struct database *load_database(const char *id)
 
 // Return a database structure by ID. Load and add to list if necessary
 // new==1 just means we know it's not in the list
-struct database *find_database(const char *id, int new)
+struct database *find_database(const char *id, int new,
+                               struct conf_service *service)
 {
     struct database *p;
     if (!new)
@@ -172,7 +176,7 @@ struct database *find_database(const char *id, int new)
             if (!strcmp(p->url, id))
                 return p;
     }
-    return load_database(id);
+    return load_database(id, service);
 }
 
 // This whole session_grep database thing should be moved elsewhere
@@ -207,9 +211,11 @@ int match_zurl(const char *zurl, const char *pattern)
 }
 
 // This will be generalized at some point
-static int match_criterion(struct setting **settings, struct database_criterion *c)
+static int match_criterion(struct setting **settings,
+                           struct conf_service *service, 
+                           struct database_criterion *c)
 {
-    int offset = settings_offset(c->name);
+    int offset = settings_offset(service, c->name);
     struct database_criterion_value *v;
 
     if (offset < 0)
@@ -238,10 +244,12 @@ static int match_criterion(struct setting **settings, struct database_criterion 
         return 0;
 }
 
-int database_match_criteria(struct setting **settings, struct database_criterion *cl)
+int database_match_criteria(struct setting **settings,
+                            struct conf_service *service,
+                            struct database_criterion *cl)
 {
     for (; cl; cl = cl->next)
-        if (!match_criterion(settings, cl))
+        if (!match_criterion(settings, service, cl))
             break;
     if (cl) // one of the criteria failed to match -- skip this db
         return 0;
@@ -263,7 +271,7 @@ int session_grep_databases(struct session *se, struct database_criterion *cl,
             continue;
         if (!p->settings[PZ_NAME])
             continue;
-        if (database_match_criteria(p->settings, cl))
+        if (database_match_criteria(p->settings, se->service, cl))
         {
             (*fun)(se, p);
             i++;
@@ -272,14 +280,15 @@ int session_grep_databases(struct session *se, struct database_criterion *cl,
     return i;
 }
 
-int predef_grep_databases(void *context, struct database_criterion *cl,
+int predef_grep_databases(void *context, struct conf_service *service,
+                          struct database_criterion *cl,
                           void (*fun)(void *context, struct database *db))
 {
     struct database *p;
     int i = 0;
 
     for (p = databases; p; p = p->next)
-        if (database_match_criteria(p->settings, cl))
+        if (database_match_criteria(p->settings, service, cl))
         {
             (*fun)(context, p);
             i++;
