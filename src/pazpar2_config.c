@@ -38,7 +38,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "pazpar2_config.h"
 
 
-static NMEM nmem = 0;
 static char confdir[256] = ".";
 
 struct conf_config *config = 0;
@@ -96,10 +95,10 @@ struct conf_sortkey * conf_sortkey_assign(NMEM nmem,
 }
 
 
-struct conf_service * conf_service_create(NMEM nmem,
-                                          int num_metadata, int num_sortkeys)
+struct conf_service * conf_service_create(int num_metadata, int num_sortkeys)
 {
     struct conf_service * service = 0;
+    NMEM nmem = nmem_create();
 
     //assert(nmem);
     
@@ -118,13 +117,12 @@ struct conf_service * conf_service_create(NMEM nmem,
             = nmem_malloc(nmem, 
                           sizeof(struct conf_sortkey) * service->num_sortkeys);
 
-    service->nmem = 0;
+    service->nmem = nmem;
     service->dictionary = 0;
     return service; 
 }
 
-struct conf_metadata* conf_service_add_metadata(NMEM nmem, 
-                                                struct conf_service *service,
+struct conf_metadata* conf_service_add_metadata(struct conf_service *service,
                                                 int field_id,
                                                 const char *name,
                                                 enum conf_metadata_type type,
@@ -144,15 +142,14 @@ struct conf_metadata* conf_service_add_metadata(NMEM nmem,
 
     //md = &((service->metadata)[field_id]);
     md = service->metadata + field_id;
-    md = conf_metadata_assign(nmem, md, name, type, merge, setting,
+    md = conf_metadata_assign(service->nmem, md, name, type, merge, setting,
                               brief, termlist, rank, sortkey_offset,
                               mt);
     return md;
 }
 
 
-struct conf_sortkey * conf_service_add_sortkey(NMEM nmem,
-                                               struct conf_service *service,
+struct conf_sortkey * conf_service_add_sortkey(struct conf_service *service,
                                                int field_id,
                                                const char *name,
                                                enum conf_sortkey_type type)
@@ -165,7 +162,7 @@ struct conf_sortkey * conf_service_add_sortkey(NMEM nmem,
 
     //sk = &((service->sortkeys)[field_id]);
     sk = service->sortkeys + field_id;
-    sk = conf_sortkey_assign(nmem, sk, name, type);
+    sk = conf_sortkey_assign(service->nmem, sk, name, type);
 
     return sk;
 }
@@ -231,7 +228,7 @@ static struct conf_service *parse_service(xmlNode *node)
             xmlFree(sortkey);
         }
 
-    service = conf_service_create(nmem, num_metadata, num_sortkeys);    
+    service = conf_service_create(num_metadata, num_sortkeys);    
 
     for (n = node->children; n; n = n->next)
     {
@@ -374,7 +371,8 @@ static struct conf_service *parse_service(xmlNode *node)
                 }
                 sortkey_offset = sk_node;
 
-                conf_service_add_sortkey(nmem, service, sk_node,
+                conf_service_add_sortkey(
+service, sk_node,
                                          (const char *) xml_name, sk_type);
                 
                 sk_node++;
@@ -389,7 +387,7 @@ static struct conf_service *parse_service(xmlNode *node)
 
 
             // metadata known, assign values
-            conf_service_add_metadata(nmem, service, md_node,
+            conf_service_add_metadata(service, md_node,
                                       (const char *) xml_name,
                                       type, merge, setting,
                                       brief, termlist, rank, sortkey_offset,
@@ -414,7 +412,7 @@ static struct conf_service *parse_service(xmlNode *node)
     return service;
 }
 
-static char *parse_settings(xmlNode *node)
+static char *parse_settings(NMEM nmem, xmlNode *node)
 {
     xmlChar *src = xmlGetProp(node, (xmlChar *) "src");
     char *r;
@@ -439,7 +437,7 @@ static char *parse_settings(xmlNode *node)
     return r;
 }
 
-static struct conf_server *parse_server(xmlNode *node)
+static struct conf_server *parse_server(NMEM nmem, xmlNode *node)
 {
     xmlNode *n;
     struct conf_server *server = nmem_malloc(nmem, sizeof(struct conf_server));
@@ -493,7 +491,7 @@ static struct conf_server *parse_server(xmlNode *node)
                 yaz_log(YLOG_FATAL, "Can't repeat 'settings'");
                 return 0;
             }
-            if (!(server->settings = parse_settings(n)))
+            if (!(server->settings = parse_settings(nmem, n)))
                 return 0;
         }
         else if (!strcmp((const char *) n->name, "relevance"))
@@ -546,7 +544,8 @@ xsltStylesheet *conf_load_stylesheet(const char *fname)
     return xsltParseStylesheetFile((xmlChar *) path);
 }
 
-static struct conf_targetprofiles *parse_targetprofiles(xmlNode *node)
+static struct conf_targetprofiles *parse_targetprofiles(NMEM nmem,
+                                                        xmlNode *node)
 {
     struct conf_targetprofiles *r = nmem_malloc(nmem, sizeof(*r));
     xmlChar *type = xmlGetProp(node, (xmlChar *) "type");
@@ -584,9 +583,11 @@ static struct conf_targetprofiles *parse_targetprofiles(xmlNode *node)
 
 static struct conf_config *parse_config(xmlNode *root)
 {
+    NMEM nmem = nmem_create();
     xmlNode *n;
     struct conf_config *r = nmem_malloc(nmem, sizeof(struct conf_config));
 
+    r->nmem = nmem;
     r->servers = 0;
     r->targetprofiles = 0;
 
@@ -596,7 +597,7 @@ static struct conf_config *parse_config(xmlNode *root)
             continue;
         if (!strcmp((const char *) n->name, "server"))
         {
-            struct conf_server *tmp = parse_server(n);
+            struct conf_server *tmp = parse_server(nmem, n);
             if (!tmp)
                 return 0;
             tmp->next = r->servers;
@@ -610,7 +611,7 @@ static struct conf_config *parse_config(xmlNode *root)
                 yaz_log(YLOG_FATAL, "Can't repeat targetprofiles");
                 return 0;
             }
-            if (!(r->targetprofiles = parse_targetprofiles(n)))
+            if (!(r->targetprofiles = parse_targetprofiles(nmem, n)))
                 return 0;
         }
         else
@@ -627,12 +628,8 @@ int read_config(const char *fname)
     xmlDoc *doc = xmlParseFile(fname);
     const char *p;
 
-    if (!nmem)  // Initialize
-    {
-        nmem = nmem_create();
-        xmlSubstituteEntitiesDefault(1);
-        xmlLoadExtDtdDefaultValue = 1;
-    }
+    xmlSubstituteEntitiesDefault(1);
+    xmlLoadExtDtdDefaultValue = 1;
     if (!doc)
     {
         yaz_log(YLOG_FATAL, "Failed to read %s", fname);

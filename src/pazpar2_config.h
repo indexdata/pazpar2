@@ -104,11 +104,9 @@ struct conf_service
     NMEM nmem;
 };
 
-struct conf_service * conf_service_create(NMEM nmem, 
-                                          int num_metadata, int num_sortkeys);
+struct conf_service * conf_service_create(int num_metadata, int num_sortkeys);
 
-struct conf_metadata* conf_service_add_metadata(NMEM nmem, 
-                                                struct conf_service *service,
+struct conf_metadata* conf_service_add_metadata(struct conf_service *service,
                                                 int field_id,
                                                 const char *name,
                                                 enum conf_metadata_type type,
@@ -120,8 +118,7 @@ struct conf_metadata* conf_service_add_metadata(NMEM nmem,
                                                 int sortkey_offset,
                                                 enum conf_metadata_mergekey mt);
 
-struct conf_sortkey * conf_service_add_sortkey(NMEM nmem,
-                                               struct conf_service *service,
+struct conf_sortkey * conf_service_add_sortkey(struct conf_service *service,
                                                int field_id,
                                                const char *name,
                                                enum conf_sortkey_type type);
@@ -159,6 +156,7 @@ struct conf_targetprofiles
 
 struct conf_config
 {
+    NMEM nmem;
     struct conf_server *servers;
     struct conf_targetprofiles *targetprofiles;
 };

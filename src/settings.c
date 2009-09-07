@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
 #include <string.h>
+#include <assert.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include "direntz.h"
@@ -427,7 +428,7 @@ void init_settings(struct conf_service *service)
 {
     struct setting_dictionary *new;
 
-    service->nmem = nmem_create();
+    assert(service->nmem);
 
     new = nmem_malloc(service->nmem, sizeof(*new));
     memset(new, 0, sizeof(*new));

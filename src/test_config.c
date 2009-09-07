@@ -34,43 +34,34 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 void test_conf_service(int argc, char **argv)
 {
-  NMEM 	nmem = nmem_create();
-
   struct conf_service *service = 0;
-  service = conf_service_create(nmem, 4, 3);
+  service = conf_service_create(4, 3);
 
   YAZ_CHECK(service);
 
   // expected metadata failures
-  YAZ_CHECK(!conf_service_add_metadata(0, service, 0, "dead_nmem",
-                                       Metadata_type_generic,
-                                       Metadata_merge_unique,
-                                       Metadata_setting_no,
-                                       1, 1, 1, 0,
-                                       Metadata_mergekey_no));
-
-  YAZ_CHECK(!conf_service_add_metadata(nmem, 0, 0, "service_needed",
+  YAZ_CHECK(!conf_service_add_metadata(0, 0, "service_needed",
                                        Metadata_type_generic, 
                                        Metadata_merge_unique,
                                        Metadata_setting_no,
                                        1, 1, 1, 0,
                                        Metadata_mergekey_no));
 
-  YAZ_CHECK(!conf_service_add_metadata(nmem, service, -1, "out_of_bounds",
+  YAZ_CHECK(!conf_service_add_metadata(service, -1, "out_of_bounds",
                                        Metadata_type_generic,
                                        Metadata_merge_unique,
                                        Metadata_setting_no,
                                        1, 1, 1, 0,
                                        Metadata_mergekey_no));
 
-  YAZ_CHECK(!conf_service_add_metadata(nmem, service, 4, "out_of_bounds",
+  YAZ_CHECK(!conf_service_add_metadata(service, 4, "out_of_bounds",
                                        Metadata_type_generic,
                                        Metadata_merge_unique,
                                        Metadata_setting_no,
                                        1, 1, 1, 0,
                                        Metadata_mergekey_no));
 
-  YAZ_CHECK(!conf_service_add_metadata(nmem, service, 0, 0,  //missing name
+  YAZ_CHECK(!conf_service_add_metadata(service, 0, 0,  //missing name
                                        Metadata_type_generic,
                                        Metadata_merge_unique,
                                        Metadata_setting_no,
@@ -78,28 +69,28 @@ void test_conf_service(int argc, char **argv)
                                        Metadata_mergekey_no));
 
   // expected metadata sucesses
-  YAZ_CHECK(conf_service_add_metadata(nmem, service, 0, "title",
+  YAZ_CHECK(conf_service_add_metadata(service, 0, "title",
                                       Metadata_type_generic,
                                       Metadata_merge_unique,
                                        Metadata_setting_no,
                                       1, 1, 1, 0,
                                       Metadata_mergekey_no));
 
-  YAZ_CHECK(conf_service_add_metadata(nmem, service, 1, "author",
+  YAZ_CHECK(conf_service_add_metadata(service, 1, "author",
                                       Metadata_type_generic,
                                       Metadata_merge_longest,
                                       Metadata_setting_no,
                                       1, 1, 1, 0,
                                       Metadata_mergekey_no));
 
-  YAZ_CHECK(conf_service_add_metadata(nmem, service, 2, "isbn",
+  YAZ_CHECK(conf_service_add_metadata(service, 2, "isbn",
                                       Metadata_type_number,
                                       Metadata_merge_no,
                                       Metadata_setting_no,
                                       1, 1, 1, 0,
                                       Metadata_mergekey_no));
 
-  YAZ_CHECK(conf_service_add_metadata(nmem, service, 3, "year",
+  YAZ_CHECK(conf_service_add_metadata(service, 3, "year",
                                       Metadata_type_year,
                                       Metadata_merge_range,
                                       Metadata_setting_no,
@@ -108,45 +99,28 @@ void test_conf_service(int argc, char **argv)
 
 
   // expected sortkey failures
-  YAZ_CHECK(!conf_service_add_sortkey(0, service, 0, "dead_nmem",
-                                     Metadata_sortkey_relevance));
-
-  YAZ_CHECK(!conf_service_add_sortkey(nmem, 0, 0, "service_neeeded",
-                                     Metadata_sortkey_numeric));
-
-  YAZ_CHECK(!conf_service_add_sortkey(nmem, service, -1, "out_of_bounds",
+  YAZ_CHECK(!conf_service_add_sortkey(service, -1, "out_of_bounds",
                                      Metadata_sortkey_skiparticle));
 
-  YAZ_CHECK(!conf_service_add_sortkey(nmem, service, -1, "out_of_bounds",
+  YAZ_CHECK(!conf_service_add_sortkey(service, -1, "out_of_bounds",
                                      Metadata_sortkey_string));
 
-  YAZ_CHECK(!conf_service_add_sortkey(nmem, service, 3, "out_of_bounds",
+  YAZ_CHECK(!conf_service_add_sortkey(service, 3, "out_of_bounds",
                                      Metadata_sortkey_relevance));
 
-  YAZ_CHECK(!conf_service_add_sortkey(nmem, service, 0, 0, //missing name
+  YAZ_CHECK(!conf_service_add_sortkey(service, 0, 0, //missing name
                                      Metadata_sortkey_relevance));
 
 
   // expected sortkey sucess
-  YAZ_CHECK(conf_service_add_sortkey(nmem, service, 0, "relevance",
+  YAZ_CHECK(conf_service_add_sortkey(service, 0, "relevance",
                                      Metadata_sortkey_relevance));
 
-  YAZ_CHECK(conf_service_add_sortkey(nmem, service, 1, "title",
+  YAZ_CHECK(conf_service_add_sortkey(service, 1, "title",
                                      Metadata_sortkey_string));
   
-  YAZ_CHECK(conf_service_add_sortkey(nmem, service, 2, "year",
+  YAZ_CHECK(conf_service_add_sortkey(service, 2, "year",
                                      Metadata_sortkey_numeric));
-  
-
-
-
-
-
-  nmem_destroy(nmem);
-
-  //YAZ_CHECK(0 == 0);
-  //YAZ_CHECK_EQ(0, 1);
-
 }
 
 
