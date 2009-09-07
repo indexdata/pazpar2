@@ -67,6 +67,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /** \brief Represents client state for a connection to one search target */
 struct client {
     struct session_database *database;
+    struct conf_server *server;
     struct connection *connection;
     struct session *session;
     char *pquery; // Current search
@@ -706,7 +707,7 @@ int client_parse_query(struct client *cl, const char *query)
         char *p[512];
         extract_terms(se->nmem, cn, p);
         se->relevance = relevance_create(
-            global_parameters.server->relevance_pct,
+            se->service->relevance_pct,
             se->nmem, (const char **) p,
             se->expected_maxrecs);
     }

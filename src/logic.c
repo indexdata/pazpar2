@@ -76,9 +76,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // Note: Some things in this structure will eventually move to configuration
 struct parameters global_parameters = 
 {
-    "",
-    "",
-    0,
     0,   // dump_records
     0,   // debug_mode
     30,  // operations timeout 
@@ -876,49 +873,51 @@ void statistics(struct session *se, struct statistics *stat)
     stat->num_clients = count;
 }
 
-int start_http_listener(void)
+int start_http_listener(struct conf_config *conf,
+                        const char *listener_override,
+                        const char *proxy_override)
 {
-    char hp[128] = "";
-    struct conf_server *ser = global_parameters.server;
-
-    if (*global_parameters.listener_override)
-        strcpy(hp, global_parameters.listener_override);
-    else
+    struct conf_server *ser;
+    for (ser = conf->servers; ser; ser = ser->next)
     {
-        strcpy(hp, ser->host ? ser->host : "");
-        if (ser->port)
+        char hp[128];
+        *hp = '\0';
+        if (listener_override)
         {
-            if (*hp)
-                strcat(hp, ":");
-            sprintf(hp + strlen(hp), "%d", ser->port);
+            strcpy(hp, listener_override);
+            listener_override = 0; /* only first server is overriden */
         }
-    }
-    return http_init(hp);
-}
-
-void start_proxy(void)
-{
-    char hp[128] = "";
-    struct conf_server *ser = global_parameters.server;
-
-    if (*global_parameters.proxy_override)
-        strcpy(hp, global_parameters.proxy_override);
-    else if (ser->proxy_host || ser->proxy_port)
-    {
-        strcpy(hp, ser->proxy_host ? ser->proxy_host : "");
-        if (ser->proxy_port)
+        else
         {
-            if (*hp)
-                strcat(hp, ":");
-            sprintf(hp + strlen(hp), "%d", ser->proxy_port);
+            strcpy(hp, ser->host ? ser->host : "");
+            if (ser->port)
+            {
+                if (*hp)
+                    strcat(hp, ":");
+                sprintf(hp + strlen(hp), "%d", ser->port);
+            }
         }
+        if (http_init(hp, ser))
+            return -1;
+
+        *hp = '\0';
+        if (proxy_override)
+            strcpy(hp, proxy_override);
+        else if (ser->proxy_host || ser->proxy_port)
+        {
+            strcpy(hp, ser->proxy_host ? ser->proxy_host : "");
+            if (ser->proxy_port)
+            {
+                if (*hp)
+                    strcat(hp, ":");
+                sprintf(hp + strlen(hp), "%d", ser->proxy_port);
+            }
+        }
+        if (*hp)
+            http_set_proxyaddr(hp, ser->myurl ? ser->myurl : "");
     }
-    else
-        return;
-
-    http_set_proxyaddr(hp, ser->myurl ? ser->myurl : "");
+    return 0;
 }
-
 
 // Master list of connections we're handling events to
 static IOCHAN channel_list = 0; 
@@ -963,8 +962,8 @@ static struct record_metadata *record_metadata_init(
     return rec_md;
 }
 
-const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
-                         struct conf_service *service, NMEM nmem)
+static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
+                                struct conf_service *service, NMEM nmem)
 {
     char *mergekey_norm = 0;
     xmlNode *root = xmlDocGetRootElement(doc);
@@ -978,7 +977,7 @@ const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
         const char *norm_str;
         pp2_relevance_token_t prt =
             pp2_relevance_tokenize(
-                global_parameters.server->mergekey_pct,
+                service->mergekey_pct,
                 (const char *) mergekey);
         
         while ((norm_str = pp2_relevance_token_next(prt)))
@@ -1022,7 +1021,7 @@ const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
                         const char *norm_str;
                         pp2_relevance_token_t prt =
                             pp2_relevance_tokenize(
-                                global_parameters.server->mergekey_pct,
+                                service->mergekey_pct,
                                 (const char *) value);
                         
                         while ((norm_str = pp2_relevance_token_next(prt)))
@@ -1208,7 +1207,7 @@ struct record *ingest_record(struct client *cl, const char *rec,
                                             sizeof(union data_types));
                          
                         prt = pp2_relevance_tokenize(
-                            global_parameters.server->sort_pct,
+                            service->sort_pct,
                             rec_md->data.text.disp);
 
                         pp2_relevance_token_next(prt);

@@ -246,7 +246,8 @@ static void cmd_init(struct http_channel *c)
     char buf[1024];
     const char *clear = http_argbyname(c->request, "clear");
     const char *service_name = http_argbyname(c->request, "service");
-    struct conf_service *service = locate_service(service_name);
+    struct conf_service *service = locate_service(c->server,
+                                                  service_name);
     struct http_session *s = http_session_create(service);
     struct http_response *rs = c->response;
 

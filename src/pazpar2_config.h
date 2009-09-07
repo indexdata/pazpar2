@@ -105,6 +105,13 @@ struct conf_service
     char *id;
     char *settings;
     NMEM nmem;
+
+    /* duplicated from conf_server */
+    pp2_charset_t relevance_pct;
+    pp2_charset_t sort_pct;
+    pp2_charset_t mergekey_pct;
+
+
     struct database *databases;
 };
 
@@ -133,10 +140,6 @@ int conf_service_metadata_field_id(struct conf_service *service, const char * na
 
 int conf_service_sortkey_field_id(struct conf_service *service, const char * name);
 
-
-void config_read_settings(const char *path_override);
-
-struct conf_service *locate_service(const char *service_id);
 
 struct conf_server
 {
@@ -170,14 +173,15 @@ struct conf_config
     struct conf_targetprofiles *targetprofiles;
 };
 
-#ifndef CONFIG_NOEXTERNS
-
-extern struct conf_config *config;
-
-#endif
-
-int read_config(const char *fname);
+struct conf_config *read_config(const char *fname);
 xsltStylesheet *conf_load_stylesheet(const char *fname);
+
+void config_read_settings(struct conf_config *config,
+                          const char *path_override);
+
+struct conf_service *locate_service(struct conf_server *server,
+                                    const char *service_id);
+
 
 #endif
 

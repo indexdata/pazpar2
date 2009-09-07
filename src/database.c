@@ -47,6 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static struct host *hosts = 0;  // The hosts we know about 
 
+#if 0
 static xmlDoc *get_explain_xml(const char *id)
 {
     struct stat st;
@@ -71,6 +72,7 @@ static xmlDoc *get_explain_xml(const char *id)
     else
         return 0;
 }
+#endif
 
 // Create a new host structure for hostport
 static struct host *create_host(const char *hostport)
@@ -115,6 +117,7 @@ static struct database *load_database(const char *id,
 
     yaz_log(YLOG_LOG, "New database: %s", id);
 
+#if 0
     if (config && config->targetprofiles 
         && (doc = get_explain_xml(id)))
     {
@@ -122,6 +125,7 @@ static struct database *load_database(const char *id,
         if (!explain)
             return 0;
     }
+#endif
 
     if (strlen(id) > 255)
         return 0;

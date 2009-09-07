@@ -71,7 +71,8 @@ typedef int socklen_t;
 #define MAX_HTTP_HEADER 4096
 
 static void proxy_io(IOCHAN i, int event);
-static struct http_channel *http_create(const char *addr);
+static struct http_channel *http_create(const char *addr,
+                                        struct conf_server *server);
 static void http_destroy(IOCHAN i);
 
 // If this is set, we proxy normal HTTP requests
@@ -735,7 +736,7 @@ static int http_proxy(struct http_request *rq)
     struct http_buf *requestbuf;
     char server_via[128] = "";
     char server_port[16] = "";
-    struct conf_server *ser = global_parameters.server;
+    struct conf_server *ser = c->server;
 
     if (!p) // This is a new connection. Create a proxy channel
     {
@@ -1064,7 +1065,8 @@ static void http_destroy(IOCHAN i)
     iochan_destroy(i);
 }
 
-static struct http_channel *http_create(const char *addr)
+static struct http_channel *http_create(const char *addr,
+                                        struct conf_server *server)
 {
     struct http_channel *r = http_channel_freelist;
 
@@ -1080,6 +1082,7 @@ static struct http_channel *http_create(const char *addr)
         r->nmem = nmem_create();
         r->wrbuf = wrbuf_alloc();
     }
+    r->server = server;
     r->proxy = 0;
     r->iochan = 0;
     r->iqueue = r->oqueue = 0;
@@ -1107,6 +1110,7 @@ static void http_accept(IOCHAN i, int event)
     int s;
     IOCHAN c;
     struct http_channel *ch;
+    struct conf_server *server = iochan_getdata(i);
 
     len = sizeof addr;
     if ((s = accept(fd, (struct sockaddr *) &addr, &len)) < 0)
@@ -1119,7 +1123,7 @@ static void http_accept(IOCHAN i, int event)
     yaz_log(YLOG_DEBUG, "New command connection");
     c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT);
     
-    ch = http_create(inet_ntoa(addr.sin_addr));
+    ch = http_create(inet_ntoa(addr.sin_addr), server);
     ch->iochan = c;
     iochan_setdata(c, ch);
 
@@ -1129,7 +1133,7 @@ static void http_accept(IOCHAN i, int event)
 static int listener_socket = 0;
 
 /* Create a http-channel listener, syntax [host:]port */
-int http_init(const char *addr)
+int http_init(const char *addr, struct conf_server *server)
 {
     IOCHAN c;
     int l;
@@ -1191,6 +1195,7 @@ int http_init(const char *addr)
     listener_socket = l;
 
     c = iochan_create(l, http_accept, EVENT_INPUT | EVENT_EXCEPT);
+    iochan_setdata(c, server);
     pazpar2_add_channel(c);
     return 0;
 }

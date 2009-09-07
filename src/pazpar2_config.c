@@ -34,13 +34,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/snprintf.h>
 #include <yaz/tpath.h>
 
-#define CONFIG_NOEXTERNS
 #include "pazpar2_config.h"
 #include "settings.h"
 
 static char confdir[256] = ".";
 
-struct conf_config *config = 0;
+struct conf_config *config1 = 0;
 
 
 static char *parse_settings(NMEM nmem, xmlNode *node);
@@ -554,7 +553,15 @@ static struct conf_server *parse_server(NMEM nmem, xmlNode *node)
             {
                 struct conf_service *s = parse_service(n, service_id);
                 if (s)
+                {
+                    s->relevance_pct = server->relevance_pct ?
+                        server->relevance_pct : pp2_charset_create(0);
+                    s->sort_pct = server->sort_pct ?
+                        server->sort_pct : pp2_charset_create(0);
+                    s->mergekey_pct = server->mergekey_pct ?
+                        server->mergekey_pct : pp2_charset_create(0);
                     *sp = s;
+                }
             }
         }
         else
@@ -563,12 +570,6 @@ static struct conf_server *parse_server(NMEM nmem, xmlNode *node)
             return 0;
         }
     }
-    if (!server->relevance_pct)
-        server->relevance_pct = pp2_charset_create(0);
-    if (!server->sort_pct)
-        server->sort_pct = pp2_charset_create(0);
-    if (!server->mergekey_pct)
-        server->mergekey_pct = pp2_charset_create(0);
     return server;
 }
 
@@ -619,9 +620,10 @@ static struct conf_targetprofiles *parse_targetprofiles(NMEM nmem,
     return r;
 }
 
-struct conf_service *locate_service(const char *service_id)
+struct conf_service *locate_service(struct conf_server *server,
+                                    const char *service_id)
 {
-    struct conf_service *s = config->servers->service;
+    struct conf_service *s = server->service;
     for (; s; s = s->next)
         if (s->id && service_id && 0 == strcmp(s->id, service_id))
             return s;
@@ -673,10 +675,11 @@ static struct conf_config *parse_config(xmlNode *root)
     return r;
 }
 
-int read_config(const char *fname)
+struct conf_config *read_config(const char *fname)
 {
     xmlDoc *doc = xmlParseFile(fname);
     const char *p;
+    struct conf_config *config;
 
     xmlSubstituteEntitiesDefault(1);
     xmlLoadExtDtdDefaultValue = 1;
@@ -702,13 +705,11 @@ int read_config(const char *fname)
     config = parse_config(xmlDocGetRootElement(doc));
     xmlFreeDoc(doc);
 
-    if (config)
-        return 1;
-    else
-        return 0;
+    return config;
 }
 
-void config_read_settings(const char *path_override)
+void config_read_settings(struct conf_config *config,
+                          const char *path_override)
 {
     struct conf_service *s = config->servers->service;
     for (;s ; s = s->next)

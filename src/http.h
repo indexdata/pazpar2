@@ -52,6 +52,7 @@ struct http_channel
     struct http_channel *next; // for freelist
     char addr[20]; // forwarded address
     http_channel_observer_t observers;
+    struct conf_server *server;
 };
 
 struct http_proxy //  attached to iochan for proxy connection
@@ -100,7 +101,7 @@ struct http_response
 };
 
 void http_set_proxyaddr(char *url, char *baseurl);
-int http_init(const char *addr);
+int http_init(const char *addr, struct conf_server *ser);
 void http_close_server(void);
 void http_addheader(struct http_response *r, 
                     const char *name, const char *value);

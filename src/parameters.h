@@ -24,9 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 /** \brief global parameters */
 struct parameters {
-    char proxy_override[128];
-    char listener_override[128];
-    struct conf_server *server;
     int dump_records;
     int debug_mode;
     int timeout;		/* operations timeout, in seconds */

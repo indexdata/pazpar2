@@ -38,9 +38,8 @@ static char *path_override = 0;
 
 void child_handler(void *data)
 {
-    start_proxy();
-
-    config_read_settings(path_override);
+    struct conf_config *config = (struct conf_config *) data;
+    config_read_settings(config, path_override);
 
     global_parameters.odr_in = odr_createmem(ODR_DECODE);
     global_parameters.odr_out = odr_createmem(ODR_ENCODE);
@@ -94,6 +93,9 @@ static int sc_main(
     const char *pidfile = 0;
     const char *uid = 0;
     int session_timeout = 60;
+    const char *listener_override = 0;
+    const char *proxy_override = 0;
+    struct conf_config *config;
 
 #ifndef WIN32
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
@@ -116,11 +118,12 @@ static int sc_main(
             daemon = 1;
             break;
         case 'f':
-            if (!read_config(arg))
+            config = read_config(arg);
+            if (!config)
                 exit(1);
             break;
         case 'h':
-            strcpy(global_parameters.listener_override, arg);
+            listener_override = arg;
             break;
         case 'l':
             yaz_log_init_file(arg);
@@ -184,9 +187,7 @@ static int sc_main(
         yaz_log(YLOG_FATAL, "Load config with -f");
         return 1;
     }
-    global_parameters.server = config->servers;
-
-    ret = start_http_listener();
+    ret = start_http_listener(config, listener_override, proxy_override);
     if (ret)
         return ret; /* error starting http listener */
 
@@ -195,7 +196,7 @@ static int sc_main(
     yaz_daemon("pazpar2",
                (global_parameters.debug_mode ? YAZ_DAEMON_DEBUG : 0) +
                (daemon ? YAZ_DAEMON_FORK : 0) + YAZ_DAEMON_KEEPALIVE,
-               child_handler, 0 /* child_data */,
+               child_handler, config /* child_data */,
                pidfile, uid);
     return 0;
 }
