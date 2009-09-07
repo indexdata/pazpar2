@@ -34,93 +34,93 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 void test_conf_service(int argc, char **argv)
 {
-  struct conf_service *service = 0;
-  service = conf_service_create(4, 3);
+    struct conf_service *service = 0;
+    service = conf_service_create(4, 3);
 
-  YAZ_CHECK(service);
+    YAZ_CHECK(service);
 
-  // expected metadata failures
-  YAZ_CHECK(!conf_service_add_metadata(0, 0, "service_needed",
-                                       Metadata_type_generic, 
-                                       Metadata_merge_unique,
-                                       Metadata_setting_no,
-                                       1, 1, 1, 0,
-                                       Metadata_mergekey_no));
+    // expected metadata failures
+    YAZ_CHECK(!conf_service_add_metadata(0, 0, "service_needed",
+                                         Metadata_type_generic, 
+                                         Metadata_merge_unique,
+                                         Metadata_setting_no,
+                                         1, 1, 1, 0,
+                                         Metadata_mergekey_no));
 
-  YAZ_CHECK(!conf_service_add_metadata(service, -1, "out_of_bounds",
-                                       Metadata_type_generic,
-                                       Metadata_merge_unique,
-                                       Metadata_setting_no,
-                                       1, 1, 1, 0,
-                                       Metadata_mergekey_no));
+    YAZ_CHECK(!conf_service_add_metadata(service, -1, "out_of_bounds",
+                                         Metadata_type_generic,
+                                         Metadata_merge_unique,
+                                         Metadata_setting_no,
+                                         1, 1, 1, 0,
+                                         Metadata_mergekey_no));
 
-  YAZ_CHECK(!conf_service_add_metadata(service, 4, "out_of_bounds",
-                                       Metadata_type_generic,
-                                       Metadata_merge_unique,
-                                       Metadata_setting_no,
-                                       1, 1, 1, 0,
-                                       Metadata_mergekey_no));
+    YAZ_CHECK(!conf_service_add_metadata(service, 4, "out_of_bounds",
+                                         Metadata_type_generic,
+                                         Metadata_merge_unique,
+                                         Metadata_setting_no,
+                                         1, 1, 1, 0,
+                                         Metadata_mergekey_no));
 
-  YAZ_CHECK(!conf_service_add_metadata(service, 0, 0,  //missing name
-                                       Metadata_type_generic,
-                                       Metadata_merge_unique,
-                                       Metadata_setting_no,
-                                       1, 1, 1, 0,
-                                       Metadata_mergekey_no));
+    YAZ_CHECK(!conf_service_add_metadata(service, 0, 0,  //missing name
+                                         Metadata_type_generic,
+                                         Metadata_merge_unique,
+                                         Metadata_setting_no,
+                                         1, 1, 1, 0,
+                                         Metadata_mergekey_no));
 
-  // expected metadata sucesses
-  YAZ_CHECK(conf_service_add_metadata(service, 0, "title",
-                                      Metadata_type_generic,
-                                      Metadata_merge_unique,
-                                       Metadata_setting_no,
-                                      1, 1, 1, 0,
-                                      Metadata_mergekey_no));
+    // expected metadata sucesses
+    YAZ_CHECK(conf_service_add_metadata(service, 0, "title",
+                                        Metadata_type_generic,
+                                        Metadata_merge_unique,
+                                        Metadata_setting_no,
+                                        1, 1, 1, 0,
+                                        Metadata_mergekey_no));
 
-  YAZ_CHECK(conf_service_add_metadata(service, 1, "author",
-                                      Metadata_type_generic,
-                                      Metadata_merge_longest,
-                                      Metadata_setting_no,
-                                      1, 1, 1, 0,
-                                      Metadata_mergekey_no));
+    YAZ_CHECK(conf_service_add_metadata(service, 1, "author",
+                                        Metadata_type_generic,
+                                        Metadata_merge_longest,
+                                        Metadata_setting_no,
+                                        1, 1, 1, 0,
+                                        Metadata_mergekey_no));
 
-  YAZ_CHECK(conf_service_add_metadata(service, 2, "isbn",
-                                      Metadata_type_number,
-                                      Metadata_merge_no,
-                                      Metadata_setting_no,
-                                      1, 1, 1, 0,
-                                      Metadata_mergekey_no));
+    YAZ_CHECK(conf_service_add_metadata(service, 2, "isbn",
+                                        Metadata_type_number,
+                                        Metadata_merge_no,
+                                        Metadata_setting_no,
+                                        1, 1, 1, 0,
+                                        Metadata_mergekey_no));
 
-  YAZ_CHECK(conf_service_add_metadata(service, 3, "year",
-                                      Metadata_type_year,
-                                      Metadata_merge_range,
-                                      Metadata_setting_no,
-                                      1, 1, 1, 0,
-                                      Metadata_mergekey_no));
-
-
-  // expected sortkey failures
-  YAZ_CHECK(!conf_service_add_sortkey(service, -1, "out_of_bounds",
-                                     Metadata_sortkey_skiparticle));
-
-  YAZ_CHECK(!conf_service_add_sortkey(service, -1, "out_of_bounds",
-                                     Metadata_sortkey_string));
-
-  YAZ_CHECK(!conf_service_add_sortkey(service, 3, "out_of_bounds",
-                                     Metadata_sortkey_relevance));
-
-  YAZ_CHECK(!conf_service_add_sortkey(service, 0, 0, //missing name
-                                     Metadata_sortkey_relevance));
+    YAZ_CHECK(conf_service_add_metadata(service, 3, "year",
+                                        Metadata_type_year,
+                                        Metadata_merge_range,
+                                        Metadata_setting_no,
+                                        1, 1, 1, 0,
+                                        Metadata_mergekey_no));
 
 
-  // expected sortkey sucess
-  YAZ_CHECK(conf_service_add_sortkey(service, 0, "relevance",
-                                     Metadata_sortkey_relevance));
+    // expected sortkey failures
+    YAZ_CHECK(!conf_service_add_sortkey(service, -1, "out_of_bounds",
+                                        Metadata_sortkey_skiparticle));
 
-  YAZ_CHECK(conf_service_add_sortkey(service, 1, "title",
-                                     Metadata_sortkey_string));
+    YAZ_CHECK(!conf_service_add_sortkey(service, -1, "out_of_bounds",
+                                        Metadata_sortkey_string));
+
+    YAZ_CHECK(!conf_service_add_sortkey(service, 3, "out_of_bounds",
+                                        Metadata_sortkey_relevance));
+
+    YAZ_CHECK(!conf_service_add_sortkey(service, 0, 0, //missing name
+                                        Metadata_sortkey_relevance));
+
+
+    // expected sortkey sucess
+    YAZ_CHECK(conf_service_add_sortkey(service, 0, "relevance",
+                                       Metadata_sortkey_relevance));
+
+    YAZ_CHECK(conf_service_add_sortkey(service, 1, "title",
+                                       Metadata_sortkey_string));
   
-  YAZ_CHECK(conf_service_add_sortkey(service, 2, "year",
-                                     Metadata_sortkey_numeric));
+    YAZ_CHECK(conf_service_add_sortkey(service, 2, "year",
+                                       Metadata_sortkey_numeric));
 }
 
 
