@@ -103,7 +103,9 @@ struct conf_service
     struct setting_dictionary *dictionary;
     struct conf_service *next;
     char *id;
+    char *settings;
     NMEM nmem;
+    struct database *databases;
 };
 
 struct conf_service * conf_service_create(int num_metadata, int num_sortkeys,
@@ -132,6 +134,8 @@ int conf_service_metadata_field_id(struct conf_service *service, const char * na
 int conf_service_sortkey_field_id(struct conf_service *service, const char * name);
 
 
+void config_read_settings(const char *path_override);
+
 struct conf_service *locate_service(const char *service_id);
 
 struct conf_server
@@ -141,7 +145,7 @@ struct conf_server
     char *proxy_host;
     int proxy_port;
     char *myurl;
-    char *settings;
+    char *server_settings;
 
     pp2_charset_t relevance_pct;
     pp2_charset_t sort_pct;

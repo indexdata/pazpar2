@@ -34,22 +34,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <yaz/sc.h>
 
+static char *path_override = 0;
+
 void child_handler(void *data)
 {
-    struct conf_service *service = global_parameters.server->service;
     start_proxy();
 
-    init_settings(service);
+    config_read_settings(path_override);
 
-    if (*global_parameters.settings_path_override)
-        settings_read(service, global_parameters.settings_path_override);
-    else if (global_parameters.server->settings)
-        settings_read(service, global_parameters.server->settings);
-    else
-        yaz_log(YLOG_WARN, "No settings-directory specified");
     global_parameters.odr_in = odr_createmem(ODR_DECODE);
     global_parameters.odr_out = odr_createmem(ODR_ENCODE);
-
 
     pazpar2_event_loop();
 }
@@ -136,7 +130,7 @@ static int sc_main(
             pidfile = arg;
             break;
         case 't':
-            strcpy(global_parameters.settings_path_override, arg);
+            path_override = arg;
             break;
         case 'T':
 	    session_timeout = atoi(arg);

@@ -46,8 +46,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 static struct host *hosts = 0;  // The hosts we know about 
-static struct database *databases = 0; // The databases we know about
-static NMEM nmem = 0;
 
 static xmlDoc *get_explain_xml(const char *id)
 {
@@ -116,13 +114,11 @@ static struct database *load_database(const char *id,
     struct setting *idset;
 
     yaz_log(YLOG_LOG, "New database: %s", id);
-    if (!nmem)
-        nmem = nmem_create();
 
     if (config && config->targetprofiles 
         && (doc = get_explain_xml(id)))
     {
-        explain = zr_read_xml(nmem, xmlDocGetRootElement(doc));
+        explain = zr_read_xml(service->nmem, xmlDocGetRootElement(doc));
         if (!explain)
             return 0;
     }
@@ -136,30 +132,30 @@ static struct database *load_database(const char *id,
         dbname = "";
     if (!(host = find_host(hostport)))
         return 0;
-    db = nmem_malloc(nmem, sizeof(*db));
+    db = nmem_malloc(service->nmem, sizeof(*db));
     memset(db, 0, sizeof(*db));
     db->host = host;
-    db->url = nmem_strdup(nmem, id);
+    db->url = nmem_strdup(service->nmem, id);
     db->databases = xmalloc(2 * sizeof(char *));
-    db->databases[0] = nmem_strdup(nmem, dbname);
+    db->databases[0] = nmem_strdup(service->nmem, dbname);
     db->databases[1] = 0;
     db->errors = 0;
     db->explain = explain;
 
     db->settings = 0;
 
-    db->settings = nmem_malloc(nmem, sizeof(struct settings*) * 
+    db->settings = nmem_malloc(service->nmem, sizeof(struct settings*) * 
                                settings_num(service));
     memset(db->settings, 0, sizeof(struct settings*) * settings_num(service));
-    idset = nmem_malloc(nmem, sizeof(*idset));
+    idset = nmem_malloc(service->nmem, sizeof(*idset));
     idset->precedence = 0;
     idset->name = "pz:id";
     idset->target = idset->value = db->url;
     idset->next = 0;
     db->settings[PZ_ID] = idset;
 
-    db->next = databases;
-    databases = db;
+    db->next = service->databases;
+    service->databases = db;
 
     return db;
 }
@@ -172,7 +168,7 @@ struct database *find_database(const char *id, int new,
     struct database *p;
     if (!new)
     {
-        for (p = databases; p; p = p->next)
+        for (p = service->databases; p; p = p->next)
             if (!strcmp(p->url, id))
                 return p;
     }
@@ -287,7 +283,7 @@ int predef_grep_databases(void *context, struct conf_service *service,
     struct database *p;
     int i = 0;
 
-    for (p = databases; p; p = p->next)
+    for (p = service->databases; p; p = p->next)
         if (database_match_criteria(p->settings, service, cl))
         {
             (*fun)(context, p);

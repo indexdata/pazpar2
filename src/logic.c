@@ -78,7 +78,6 @@ struct parameters global_parameters =
 {
     "",
     "",
-    "", 
     0,
     0,   // dump_records
     0,   // debug_mode

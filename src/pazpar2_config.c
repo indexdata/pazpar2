@@ -36,12 +36,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define CONFIG_NOEXTERNS
 #include "pazpar2_config.h"
-
+#include "settings.h"
 
 static char confdir[256] = ".";
 
 struct conf_config *config = 0;
 
+
+static char *parse_settings(NMEM nmem, xmlNode *node);
 
 static 
 struct conf_metadata * conf_metadata_assign(NMEM nmem, 
@@ -106,6 +108,8 @@ struct conf_service * conf_service_create(int num_metadata, int num_sortkeys,
     service = nmem_malloc(nmem, sizeof(struct conf_service));
     service->nmem = nmem;
     service->next = 0;
+    service->settings = 0;
+    service->databases = 0;
 
     service->id = service_id ? nmem_strdup(nmem, service_id) : 0;
     service->num_metadata = num_metadata;
@@ -236,7 +240,18 @@ static struct conf_service *parse_service(xmlNode *node, const char *service_id)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp((const char *) n->name, (const char *) "metadata"))
+        if (!strcmp((const char *) n->name, "settings"))
+        {
+            if (service->settings)
+            {
+                yaz_log(YLOG_FATAL, "Can't repeat 'settings'");
+                return 0;
+            }
+            service->settings = parse_settings(service->nmem, n);
+            if (!service->settings)
+                return 0;
+        }
+        else if (!strcmp((const char *) n->name, (const char *) "metadata"))
         {
             xmlChar *xml_name = xmlGetProp(n, (xmlChar *) "name");
             xmlChar *xml_brief = xmlGetProp(n, (xmlChar *) "brief");
@@ -451,7 +466,7 @@ static struct conf_server *parse_server(NMEM nmem, xmlNode *node)
     server->myurl = 0;
     server->service = 0;
     server->next = 0;
-    server->settings = 0;
+    server->server_settings = 0;
     server->relevance_pct = 0;
     server->sort_pct = 0;
     server->mergekey_pct = 0;
@@ -488,12 +503,12 @@ static struct conf_server *parse_server(NMEM nmem, xmlNode *node)
         }
         else if (!strcmp((const char *) n->name, "settings"))
         {
-            if (server->settings)
+            if (server->server_settings)
             {
                 yaz_log(YLOG_FATAL, "Can't repeat 'settings'");
                 return 0;
             }
-            if (!(server->settings = parse_settings(nmem, n)))
+            if (!(server->server_settings = parse_settings(nmem, n)))
                 return 0;
         }
         else if (!strcmp((const char *) n->name, "relevance"))
@@ -693,6 +708,22 @@ int read_config(const char *fname)
         return 0;
 }
 
+void config_read_settings(const char *path_override)
+{
+    struct conf_service *s = config->servers->service;
+    for (;s ; s = s->next)
+    {
+        init_settings(s);
+        if (path_override)
+            settings_read(s, path_override);
+        else if (s->settings)
+            settings_read(s, s->settings);
+        else if (config->servers->server_settings)
+            settings_read(s, config->servers->server_settings);
+        else
+            yaz_log(YLOG_WARN, "No settings for service");
+    }
+}
 
 /*
  * Local variables:

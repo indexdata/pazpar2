@@ -125,7 +125,7 @@ static int isdir(const char *path)
 
     if (stat(path, &st) < 0)
     {
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "%s", path);
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "stat %s", path);
         exit(1);
     }
     return st.st_mode & S_IFDIR;
@@ -314,6 +314,7 @@ static void prepare_dictionary(struct conf_service *service,
     dictionary->dict[dictionary->num++] = nmem_strdup(service->nmem, set->name);
 }
 
+
 struct update_database_context {
     struct setting *set;
     struct conf_service *service;
@@ -335,7 +336,7 @@ static void update_database(void *context, struct database *db)
         return;
 
     if ((offset = settings_offset_cprefix(service, set->name)) < 0)
-        abort(); // Should never get here
+        return ;
 
     // First we determine if this setting is overriding  any existing settings
     // with the same name.
@@ -415,12 +416,33 @@ static void initialize_soft_settings(struct conf_service *service)
     }
 }
 
+static void prepare_target_dictionary(struct conf_service *service,
+                                      struct setting *set)
+{
+    struct setting_dictionary *dictionary = service->dictionary;
+
+    int i;
+    char *p;
+
+    // If target address is not wildcard, add the database
+    if (*set->target && !zurl_wildcard(set->target))
+        find_database(set->target, 0, service);
+
+    // Determine if we already have a dictionary entry
+    if (!strncmp(set->name, "pz:", 3) && (p = strchr(set->name + 3, ':')))
+        *(p + 1) = '\0';
+    for (i = 0; i < dictionary->num; i++)
+        if (!strcmp(dictionary->dict[i], set->name))
+            return;
+    yaz_log(YLOG_WARN, "setting %s not configured as metadata", set->name);
+}
+
 // If we ever decide we need to be able to specify multiple settings directories,
 // the two calls to read_settings must be split -- so the dictionary is prepared
 // for the contents of every directory before the databases are updated.
 void settings_read(struct conf_service *service, const char *path)
 {
-    read_settings(path, service, prepare_dictionary);
+    read_settings(path, service, prepare_target_dictionary);
     read_settings(path, service, update_databases);
 }
 
