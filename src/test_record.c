@@ -51,7 +51,7 @@ void test_record(int argc, char **argv)
     data_num.number.max = 5;
 
 
-    service =  conf_service_create(4, 3);
+    service =  conf_service_create(4, 3, 0);
     YAZ_CHECK(service);
     
     YAZ_CHECK(conf_service_add_metadata(

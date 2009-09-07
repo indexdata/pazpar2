@@ -95,7 +95,8 @@ struct conf_sortkey * conf_sortkey_assign(NMEM nmem,
 }
 
 
-struct conf_service * conf_service_create(int num_metadata, int num_sortkeys)
+struct conf_service * conf_service_create(int num_metadata, int num_sortkeys,
+    const char *service_id)
 {
     struct conf_service * service = 0;
     NMEM nmem = nmem_create();
@@ -103,7 +104,10 @@ struct conf_service * conf_service_create(int num_metadata, int num_sortkeys)
     //assert(nmem);
     
     service = nmem_malloc(nmem, sizeof(struct conf_service));
+    service->nmem = nmem;
+    service->next = 0;
 
+    service->id = service_id ? nmem_strdup(nmem, service_id) : 0;
     service->num_metadata = num_metadata;
     service->metadata = 0;
     if (service->num_metadata)
@@ -116,8 +120,6 @@ struct conf_service * conf_service_create(int num_metadata, int num_sortkeys)
         service->sortkeys 
             = nmem_malloc(nmem, 
                           sizeof(struct conf_sortkey) * service->num_sortkeys);
-
-    service->nmem = nmem;
     service->dictionary = 0;
     return service; 
 }
@@ -206,7 +208,7 @@ int conf_service_sortkey_field_id(struct conf_service *service,
 /* Code to parse configuration file */
 /* ==================================================== */
 
-static struct conf_service *parse_service(xmlNode *node)
+static struct conf_service *parse_service(xmlNode *node, const char *service_id)
 {
     xmlNode *n;
     int md_node = 0;
@@ -228,7 +230,7 @@ static struct conf_service *parse_service(xmlNode *node)
             xmlFree(sortkey);
         }
 
-    service = conf_service_create(num_metadata, num_sortkeys);    
+    service = conf_service_create(num_metadata, num_sortkeys, service_id);
 
     for (n = node->children; n; n = n->next)
     {
@@ -514,10 +516,31 @@ static struct conf_server *parse_server(NMEM nmem, xmlNode *node)
         }
         else if (!strcmp((const char *) n->name, "service"))
         {
-            struct conf_service *s = parse_service(n);
-            if (!s)
+            const char *service_id = (const char *)
+                xmlGetProp(n, (xmlChar *) "id");
+
+            struct conf_service **sp = &server->service;
+            for (; *sp; sp = &(*sp)->next)
+                if ((*sp)->id && service_id &&
+                    0 == strcmp((*sp)->id, service_id))
+                {
+                    yaz_log(YLOG_FATAL, "Duplicate service: %s", service_id);
+                    break;
+                }
+                else if (!(*sp)->id && !service_id)
+                {
+                    yaz_log(YLOG_FATAL, "Duplicate unnamed service");
+                    break;
+                }
+
+            if (*sp)  /* service already exist */
                 return 0;
-            server->service = s;
+            else
+            {
+                struct conf_service *s = parse_service(n, service_id);
+                if (s)
+                    *sp = s;
+            }
         }
         else
         {
@@ -580,6 +603,18 @@ static struct conf_targetprofiles *parse_targetprofiles(NMEM nmem,
     xmlFree(src);
     return r;
 }
+
+struct conf_service *locate_service(const char *service_id)
+{
+    struct conf_service *s = config->servers->service;
+    for (; s; s = s->next)
+        if (s->id && service_id && 0 == strcmp(s->id, service_id))
+            return s;
+        else if (!s->id && !service_id)
+            return s;
+    return 0;
+}
+
 
 static struct conf_config *parse_config(xmlNode *root)
 {

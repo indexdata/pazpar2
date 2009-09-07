@@ -240,19 +240,21 @@ static void cmd_exit(struct http_channel *c)
     http_close_server();
 }
 
-static struct conf_service *locate_service(const char *service_name)
-{
-    return global_parameters.server->service;
-}
-
 static void cmd_init(struct http_channel *c)
 {
     unsigned int sesid;
     char buf[1024];
     const char *clear = http_argbyname(c->request, "clear");
     const char *service_name = http_argbyname(c->request, "service");
-    struct http_session *s = http_session_create(locate_service(service_name));
+    struct conf_service *service = locate_service(service_name);
+    struct http_session *s = http_session_create(service);
     struct http_response *rs = c->response;
+
+    if (!service)
+    {
+        error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "service");
+        return;
+    }
 
     yaz_log(YLOG_DEBUG, "HTTP Session init");
     if (!clear || *clear == '0')

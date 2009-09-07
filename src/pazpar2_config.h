@@ -101,10 +101,13 @@ struct conf_service
     int num_sortkeys;
     struct conf_sortkey *sortkeys;
     struct setting_dictionary *dictionary;
+    struct conf_service *next;
+    char *id;
     NMEM nmem;
 };
 
-struct conf_service * conf_service_create(int num_metadata, int num_sortkeys);
+struct conf_service * conf_service_create(int num_metadata, int num_sortkeys,
+    const char *service_id);
 
 struct conf_metadata* conf_service_add_metadata(struct conf_service *service,
                                                 int field_id,
@@ -128,6 +131,8 @@ int conf_service_metadata_field_id(struct conf_service *service, const char * na
 
 int conf_service_sortkey_field_id(struct conf_service *service, const char * name);
 
+
+struct conf_service *locate_service(const char *service_id);
 
 struct conf_server
 {

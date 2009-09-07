@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 void test_conf_service(int argc, char **argv)
 {
     struct conf_service *service = 0;
-    service = conf_service_create(4, 3);
+    service = conf_service_create(4, 3, 0);
 
     YAZ_CHECK(service);
 
