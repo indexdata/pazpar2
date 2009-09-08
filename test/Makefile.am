@@ -1,7 +1,8 @@
 # This file is part of Pazpar2.
 check_SCRIPTS = test_http.sh test_icu.sh
 
-EXTRA_DIST = run_pazpar2.sh marc21.xsl test_http.xml test_http.cfg \
+EXTRA_DIST = run_pazpar2.sh marc21.xsl z3950_indexdata_com_marc.xml \
+	z3950_indexdata_com_gils.xml test_http.cfg \
 	test_http_urls test_icu.cfg test_icu_urls $(check_SCRIPTS)
 
 TESTS = $(check_SCRIPTS)
