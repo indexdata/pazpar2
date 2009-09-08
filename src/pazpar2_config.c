@@ -412,8 +412,7 @@ static struct conf_service *parse_service(struct conf_config *config,
                 }
                 sortkey_offset = sk_node;
 
-                conf_service_add_sortkey(
-service, sk_node,
+                conf_service_add_sortkey(service, sk_node,
                                          (const char *) xml_name, sk_type);
                 
                 sk_node++;
@@ -461,7 +460,7 @@ static char *parse_settings(struct conf_config *config,
 
     if (src)
     {
-        if (yaz_is_abspath((const char *) src))
+        if (yaz_is_abspath((const char *) src) || !wrbuf_len(config->confdir))
             r = nmem_strdup(nmem, (const char *) src);
         else
         {
@@ -607,9 +606,9 @@ xsltStylesheet *conf_load_stylesheet(struct conf_config *config,
                                      const char *fname)
 {
     char path[256];
-    if (yaz_is_abspath(fname))
+    if (yaz_is_abspath(fname) || !config || !wrbuf_len(config->confdir))
         yaz_snprintf(path, sizeof(path), fname);
-    else if (config)
+    else
         yaz_snprintf(path, sizeof(path), "%s/%s",
                      wrbuf_cstr(config->confdir), fname);
     return xsltParseStylesheetFile((xmlChar *) path);
@@ -696,9 +695,43 @@ static int parse_config(struct conf_config *config, xmlNode *root)
     return 0;
 }
 
+static void config_include_src(struct conf_config *config, xmlNode *n,
+                               const char *src)
+{
+    xmlDoc *doc = xmlParseFile(src);
+    yaz_log(YLOG_LOG, "processing incldue src=%s", src);
+    if (doc)
+    {
+        xmlNodePtr t = xmlDocGetRootElement(doc);
+        xmlReplaceNode(n, xmlCopyNode(t, 1));
+        xmlFreeDoc(doc);
+    }
+}
+
+static void process_config_includes(struct conf_config *config, xmlNode *n)
+{
+    for (; n; n = n->next)
+    {
+        if (n->type == XML_ELEMENT_NODE)
+        {
+            if (!strcmp((const char *) n->name, "include"))
+            {
+                xmlChar *src = xmlGetProp(n, (xmlChar *) "src");
+                if (src)
+                {
+                    config_include_src(config, n, (const char *) src);
+                    xmlFree(src);
+                }
+            }
+        }
+        process_config_includes(config, n->children);
+    }
+}
+
 struct conf_config *read_config(const char *fname)
 {
     xmlDoc *doc = xmlParseFile(fname);
+    xmlNode *n;
     const char *p;
     int r;
     NMEM nmem = nmem_create();
@@ -728,7 +761,11 @@ struct conf_config *read_config(const char *fname)
         wrbuf_write(config->confdir, fname, len);
     }
     wrbuf_puts(config->confdir, "");
-    r = parse_config(config, xmlDocGetRootElement(doc));
+    
+    n = xmlDocGetRootElement(doc);
+    process_config_includes(config, n);
+    xmlDocFormatDump(stdout, doc, 0);
+    r = parse_config(config, n);
     xmlFreeDoc(doc);
 
     if (r)
