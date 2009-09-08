@@ -27,8 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "pazpar2.h"
 #include "reclists.h"
-
-extern struct parameters global_parameters;
+#include "parameters.h"
 
 static struct reclist_sortparms *qsort_sortparms = 0; /* thread pr */
 
