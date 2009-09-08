@@ -26,9 +26,4 @@
   
   <set name="pz:apdulog" value="1"/>
 
-  <!-- Examples of application-specific setting -->
-  <!-- Available in output record and/or normalization stylesheet -->
-  <set name="test-usersetting" value="XXXXXXXXXX"/>
-  <set name="test" value="YYYYYYYYY"/>
-
 </settings>
