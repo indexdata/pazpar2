@@ -385,7 +385,7 @@ static struct zr_map *map(NMEM m, xmlNode *node)
 
 static Zr_setting *findsetting(NMEM m, xmlNode *node, char *name)
 {
-    static Zr_setting *r = 0;
+    static Zr_setting *r = 0; /* thread pr */
     xmlNode *n;
     for (n = node->children; n; n = n->next)
     {

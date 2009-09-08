@@ -870,7 +870,8 @@ void statistics(struct session *se, struct statistics *stat)
 
 
 // Master list of connections we're handling events to
-static IOCHAN channel_list = 0; 
+static IOCHAN channel_list = 0;  /* thread pr */
+
 void pazpar2_add_channel(IOCHAN chan)
 {
     chan->next = channel_list;

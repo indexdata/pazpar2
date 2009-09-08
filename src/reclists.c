@@ -30,8 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 extern struct parameters global_parameters;
 
-// Not threadsafe
-static struct reclist_sortparms *sortparms = 0;
+static struct reclist_sortparms *qsort_sortparms = 0; /* thread pr */
 
 struct reclist_bucket
 {
@@ -168,7 +167,7 @@ static int reclist_cmp(const void *p1, const void *p2)
     struct reclist_sortparms *s;
     int res = 0;
 
-    for (s = sortparms; s && res == 0; s = s->next)
+    for (s = qsort_sortparms; s && res == 0; s = s->next)
     {
         union data_types *ut1 = r1->sortkeys[s->offset];
         union data_types *ut2 = r2->sortkeys[s->offset];
@@ -214,7 +213,7 @@ static int reclist_cmp(const void *p1, const void *p2)
 
 void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
 {
-    sortparms = parms;
+    qsort_sortparms = parms;
     qsort(l->flatlist, l->num_records, 
           sizeof(struct record_cluster*), reclist_cmp);
     reclist_rewind(l);

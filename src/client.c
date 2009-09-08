@@ -102,7 +102,7 @@ static const char *client_states[] = {
     "Client_Disconnected"
 };
 
-static struct client *client_freelist = 0;
+static struct client *client_freelist = 0; /* thread pr */
 
 const char *client_get_state_str(struct client *cl)
 {

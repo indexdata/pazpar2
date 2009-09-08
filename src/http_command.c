@@ -53,7 +53,8 @@ struct http_session {
     struct http_session *next;
 };
 
-static struct http_session *session_list = 0;
+static struct http_session *session_list = 0; /* thread pr */
+
 void http_session_destroy(struct http_session *s);
 
 static void session_timeout(IOCHAN i, int event)
@@ -155,7 +156,7 @@ static void error(struct http_response *rs,
 
 unsigned int make_sessionid(void)
 {
-    static int seq = 0;
+    static int seq = 0; /* thread pr */
     unsigned int res;
 
     seq++;

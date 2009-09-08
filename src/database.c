@@ -45,7 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <netinet/in.h>
 #endif
 
-static struct host *hosts = 0;  // The hosts we know about 
+static struct host *hosts = 0;  /* thread pr */
 
 static xmlDoc *get_explain_xml(struct conf_targetprofiles *targetprofiles,
                                const char *id)

@@ -75,8 +75,8 @@ static struct http_channel *http_create(const char *addr,
                                         struct conf_server *server);
 static void http_destroy(IOCHAN i);
 
-static struct http_buf *http_buf_freelist = 0;
-static struct http_channel *http_channel_freelist = 0;
+static struct http_buf *http_buf_freelist = 0;        /* thread pr */
+static struct http_channel *http_channel_freelist = 0; /* thread pr */
 
 struct http_channel_observer_s {
     void *data;
