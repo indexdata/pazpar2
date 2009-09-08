@@ -644,17 +644,20 @@ static char *make_cqlquery(struct client *cl)
     char *r;
     WRBUF wrb = wrbuf_alloc();
     int status;
+    ODR odr_out = odr_createmem(ODR_ENCODE);
 
-    zquery = p_query_rpn(global_parameters.odr_out, cl->pquery);
+    zquery = p_query_rpn(odr_out, cl->pquery);
     if ((status = cql_transform_rpn2cql_wrbuf(cqlt, wrb, zquery)))
     {
         yaz_log(YLOG_WARN, "failed to generate CQL query, code=%d", status);
-        return 0;
+        r = 0;
     }
-    r = xstrdup(wrbuf_cstr(wrb));
-
+    else
+    {
+        r = xstrdup(wrbuf_cstr(wrb));
+    }     
     wrbuf_destroy(wrb);
-    odr_reset(global_parameters.odr_out); // releases the zquery
+    odr_destroy(odr_out);
     cql_transform_close(cqlt);
     return r;
 }

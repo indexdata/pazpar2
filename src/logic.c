@@ -79,14 +79,9 @@ struct parameters global_parameters =
     0,   // dump_records
     0,   // debug_mode
     30,  // operations timeout 
-    "81",
-    "Index Data PazPar2",
-    VERSION,
     60,   // session timeout 
     100,
     MAX_CHUNK,
-    0,
-    0,
     180, // Z39.50 session timeout
     15   // Connect timeout
 };

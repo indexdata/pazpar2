@@ -27,14 +27,9 @@ struct parameters {
     int dump_records;
     int debug_mode;
     int timeout;		/* operations timeout, in seconds */
-    char implementationId[128];
-    char implementationName[128];
-    char implementationVersion[128];
     int session_timeout;
     int toget;
     int chunk;
-    ODR odr_out;
-    ODR odr_in;
     int z3950_session_timeout;
     int z3950_connect_timeout;
 };

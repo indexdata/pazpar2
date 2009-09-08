@@ -41,9 +41,6 @@ void child_handler(void *data)
     struct conf_config *config = (struct conf_config *) data;
     config_read_settings(config, path_override);
 
-    global_parameters.odr_in = odr_createmem(ODR_DECODE);
-    global_parameters.odr_out = odr_createmem(ODR_ENCODE);
-
     pazpar2_event_loop();
 }
 
