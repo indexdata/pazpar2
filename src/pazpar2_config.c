@@ -36,10 +36,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "pazpar2_config.h"
 #include "settings.h"
+#include "eventl.h"
+#include "http.h"
 
-static WRBUF confdir = 0;
+struct conf_config
+{
+    NMEM nmem; /* for conf_config and servers memory */
+    struct conf_server *servers;
+    WRBUF confdir;
+};
 
-static char *parse_settings(NMEM nmem, xmlNode *node);
+
+static char *parse_settings(struct conf_config *config,
+                            NMEM nmem, xmlNode *node);
 
 static struct conf_targetprofiles *parse_targetprofiles(NMEM nmem,
                                                         xmlNode *node);
@@ -96,8 +105,9 @@ struct conf_sortkey * conf_sortkey_assign(NMEM nmem,
 }
 
 
-struct conf_service * conf_service_create(int num_metadata, int num_sortkeys,
-    const char *service_id)
+struct conf_service * conf_service_create(struct conf_config *config,
+                                          int num_metadata, int num_sortkeys,
+                                          const char *service_id)
 {
     struct conf_service * service = 0;
     NMEM nmem = nmem_create();
@@ -110,7 +120,7 @@ struct conf_service * conf_service_create(int num_metadata, int num_sortkeys,
     service->settings = 0;
     service->databases = 0;
     service->targetprofiles = 0;
-
+    service->config = config;
 
     service->id = service_id ? nmem_strdup(nmem, service_id) : 0;
     service->num_metadata = num_metadata;
@@ -213,7 +223,8 @@ int conf_service_sortkey_field_id(struct conf_service *service,
 /* Code to parse configuration file */
 /* ==================================================== */
 
-static struct conf_service *parse_service(xmlNode *node, const char *service_id)
+static struct conf_service *parse_service(struct conf_config *config,
+                                          xmlNode *node, const char *service_id)
 {
     xmlNode *n;
     int md_node = 0;
@@ -235,7 +246,8 @@ static struct conf_service *parse_service(xmlNode *node, const char *service_id)
             xmlFree(sortkey);
         }
 
-    service = conf_service_create(num_metadata, num_sortkeys, service_id);
+    service = conf_service_create(config,
+                                  num_metadata, num_sortkeys, service_id);
 
     for (n = node->children; n; n = n->next)
     {
@@ -248,7 +260,7 @@ static struct conf_service *parse_service(xmlNode *node, const char *service_id)
                 yaz_log(YLOG_FATAL, "Can't repeat 'settings'");
                 return 0;
             }
-            service->settings = parse_settings(service->nmem, n);
+            service->settings = parse_settings(config, service->nmem, n);
             if (!service->settings)
                 return 0;
         }
@@ -441,7 +453,8 @@ service, sk_node,
     return service;
 }
 
-static char *parse_settings(NMEM nmem, xmlNode *node)
+static char *parse_settings(struct conf_config *config,
+                            NMEM nmem, xmlNode *node)
 {
     xmlChar *src = xmlGetProp(node, (xmlChar *) "src");
     char *r;
@@ -453,8 +466,9 @@ static char *parse_settings(NMEM nmem, xmlNode *node)
         else
         {
             r = nmem_malloc(nmem,
-                            wrbuf_len(confdir) + strlen((const char *) src) + 2);
-            sprintf(r, "%s/%s", wrbuf_cstr(confdir), src);
+                            wrbuf_len(config->confdir) + 
+                            strlen((const char *) src) + 2);
+            sprintf(r, "%s/%s", wrbuf_cstr(config->confdir), src);
         }
     }
     else
@@ -466,7 +480,8 @@ static char *parse_settings(NMEM nmem, xmlNode *node)
     return r;
 }
 
-static struct conf_server *parse_server(NMEM nmem, xmlNode *node)
+static struct conf_server *parse_server(struct conf_config *config,
+                                        NMEM nmem, xmlNode *node)
 {
     xmlNode *n;
     struct conf_server *server = nmem_malloc(nmem, sizeof(struct conf_server));
@@ -521,7 +536,7 @@ static struct conf_server *parse_server(NMEM nmem, xmlNode *node)
                 yaz_log(YLOG_FATAL, "Can't repeat 'settings'");
                 return 0;
             }
-            if (!(server->server_settings = parse_settings(nmem, n)))
+            if (!(server->server_settings = parse_settings(config, nmem, n)))
                 return 0;
         }
         else if (!strcmp((const char *) n->name, "relevance"))
@@ -565,7 +580,7 @@ static struct conf_server *parse_server(NMEM nmem, xmlNode *node)
                 return 0;
             else
             {
-                struct conf_service *s = parse_service(n, service_id);
+                struct conf_service *s = parse_service(config, n, service_id);
                 if (s)
                 {
                     s->relevance_pct = server->relevance_pct ?
@@ -588,13 +603,15 @@ static struct conf_server *parse_server(NMEM nmem, xmlNode *node)
     return server;
 }
 
-xsltStylesheet *conf_load_stylesheet(const char *fname)
+xsltStylesheet *conf_load_stylesheet(struct conf_config *config,
+                                     const char *fname)
 {
     char path[256];
     if (yaz_is_abspath(fname))
         yaz_snprintf(path, sizeof(path), fname);
-    else
-        yaz_snprintf(path, sizeof(path), "%s/%s", wrbuf_cstr(confdir), fname);
+    else if (config)
+        yaz_snprintf(path, sizeof(path), "%s/%s",
+                     wrbuf_cstr(config->confdir), fname);
     return xsltParseStylesheetFile((xmlChar *) path);
 }
 
@@ -648,14 +665,9 @@ struct conf_service *locate_service(struct conf_server *server,
 }
 
 
-static struct conf_config *parse_config(xmlNode *root)
+static int parse_config(struct conf_config *config, xmlNode *root)
 {
-    NMEM nmem = nmem_create();
     xmlNode *n;
-    struct conf_config *r = nmem_malloc(nmem, sizeof(struct conf_config));
-
-    r->nmem = nmem;
-    r->servers = 0;
 
     for (n = root->children; n; n = n->next)
     {
@@ -663,32 +675,34 @@ static struct conf_config *parse_config(xmlNode *root)
             continue;
         if (!strcmp((const char *) n->name, "server"))
         {
-            struct conf_server *tmp = parse_server(nmem, n);
+            struct conf_server *tmp = parse_server(config, config->nmem, n);
             if (!tmp)
-                return 0;
-            tmp->next = r->servers;
-            r->servers = tmp;
+                return -1;
+            tmp->next = config->servers;
+            config->servers = tmp;
         }
         else if (!strcmp((const char *) n->name, "targetprofiles"))
         {
             yaz_log(YLOG_FATAL, "targetprofiles unsupported here. Must be part of service");
-            return 0;
+            return -1;
 
         }
         else
         {
             yaz_log(YLOG_FATAL, "Bad element: %s", n->name);
-            return 0;
+            return -1;
         }
     }
-    return r;
+    return 0;
 }
 
 struct conf_config *read_config(const char *fname)
 {
     xmlDoc *doc = xmlParseFile(fname);
     const char *p;
-    struct conf_config *config;
+    int r;
+    NMEM nmem = nmem_create();
+    struct conf_config *config = nmem_malloc(nmem, sizeof(struct conf_config));
 
     xmlSubstituteEntitiesDefault(1);
     xmlLoadExtDtdDefaultValue = 1;
@@ -697,7 +711,11 @@ struct conf_config *read_config(const char *fname)
         yaz_log(YLOG_FATAL, "Failed to read %s", fname);
         exit(1);
     }
-    confdir = wrbuf_alloc();
+
+    config->nmem = nmem;
+    config->servers = 0;
+
+    config->confdir = wrbuf_alloc();
     if ((p = strrchr(fname, 
 #ifdef WIN32
                      '\\'
@@ -707,12 +725,14 @@ struct conf_config *read_config(const char *fname)
              )))
     {
         int len = p - fname;
-        wrbuf_write(confdir, fname, len);
+        wrbuf_write(config->confdir, fname, len);
     }
-    wrbuf_puts(confdir, "");
-    config = parse_config(xmlDocGetRootElement(doc));
+    wrbuf_puts(config->confdir, "");
+    r = parse_config(config, xmlDocGetRootElement(doc));
     xmlFreeDoc(doc);
 
+    if (r)
+        return 0;
     return config;
 }
 
@@ -732,6 +752,64 @@ void config_read_settings(struct conf_config *config,
         else
             yaz_log(YLOG_WARN, "No settings for service");
     }
+}
+
+void config_stop_listeners(struct conf_config *conf)
+{
+    struct conf_server *ser;
+    for (ser = conf->servers; ser; ser = ser->next)
+        http_close_server(ser);
+}
+
+int config_start_listeners(struct conf_config *conf,
+                           const char *listener_override,
+                           const char *proxy_override)
+{
+    struct conf_server *ser;
+    for (ser = conf->servers; ser; ser = ser->next)
+    {
+        WRBUF w = wrbuf_alloc();
+        int r;
+        if (listener_override)
+        {
+            wrbuf_puts(w, listener_override);
+            listener_override = 0; /* only first server is overriden */
+        }
+        else
+        {
+            if (ser->host)
+                wrbuf_puts(w, ser->host);
+            if (ser->port)
+            {
+                if (wrbuf_len(w))
+                    wrbuf_puts(w, ":");
+                wrbuf_printf(w, "%d", ser->port);
+            }
+        }
+        r = http_init(wrbuf_cstr(w), ser);
+        wrbuf_destroy(w);
+        if (r)
+            return -1;
+
+        w = wrbuf_alloc();
+        if (proxy_override)
+            wrbuf_puts(w, proxy_override);
+        else if (ser->proxy_host || ser->proxy_port)
+        {
+            if (ser->proxy_host)
+                wrbuf_puts(w, ser->proxy_host);
+            if (ser->proxy_port)
+            {
+                if (wrbuf_len(w))
+                    wrbuf_puts(w, ":");
+                wrbuf_printf(w, "%d", ser->proxy_port);
+            }
+        }
+        if (wrbuf_len(w))
+            http_set_proxyaddr(wrbuf_cstr(w), ser);
+        wrbuf_destroy(w);
+    }
+    return 0;
 }
 
 /*

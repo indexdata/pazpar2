@@ -346,7 +346,8 @@ static int prepare_map(struct session *se, struct session_database *sdb)
         {
             (*m) = nmem_malloc(se->session_nmem, sizeof(**m));
             (*m)->next = 0;
-            if (!((*m)->stylesheet = conf_load_stylesheet(stylesheets[i])))
+            if (!((*m)->stylesheet = conf_load_stylesheet(se->service->config,
+                                                          stylesheets[i])))
             {
                 yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load stylesheet: %s",
                         stylesheets[i]);
@@ -867,56 +868,6 @@ void statistics(struct session *se, struct statistics *stat)
     stat->num_clients = count;
 }
 
-int start_http_listener(struct conf_config *conf,
-                        const char *listener_override,
-                        const char *proxy_override)
-{
-    struct conf_server *ser;
-    for (ser = conf->servers; ser; ser = ser->next)
-    {
-        WRBUF w = wrbuf_alloc();
-        int r;
-        if (listener_override)
-        {
-            wrbuf_puts(w, listener_override);
-            listener_override = 0; /* only first server is overriden */
-        }
-        else
-        {
-            if (ser->host)
-                wrbuf_puts(w, ser->host);
-            if (ser->port)
-            {
-                if (wrbuf_len(w))
-                    wrbuf_puts(w, ":");
-                wrbuf_printf(w, "%d", ser->port);
-            }
-        }
-        r = http_init(wrbuf_cstr(w), ser);
-        wrbuf_destroy(w);
-        if (r)
-            return -1;
-
-        w = wrbuf_alloc();
-        if (proxy_override)
-            wrbuf_puts(w, proxy_override);
-        else if (ser->proxy_host || ser->proxy_port)
-        {
-            if (ser->proxy_host)
-                wrbuf_puts(w, ser->proxy_host);
-            if (ser->proxy_port)
-            {
-                if (wrbuf_len(w))
-                    wrbuf_puts(w, ":");
-                wrbuf_printf(w, "%d", ser->proxy_port);
-            }
-        }
-        if (wrbuf_len(w))
-            http_set_proxyaddr(wrbuf_cstr(w), ser);
-        wrbuf_destroy(w);
-    }
-    return 0;
-}
 
 // Master list of connections we're handling events to
 static IOCHAN channel_list = 0; 

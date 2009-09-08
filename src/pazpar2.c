@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/sc.h>
 
 static char *path_override = 0;
+static struct conf_config *sc_stop_config = 0;
 
 void child_handler(void *data)
 {
@@ -118,6 +119,7 @@ static int sc_main(
             config = read_config(arg);
             if (!config)
                 exit(1);
+            sc_stop_config = config;
             break;
         case 'h':
             listener_override = arg;
@@ -184,7 +186,7 @@ static int sc_main(
         yaz_log(YLOG_FATAL, "Load config with -f");
         return 1;
     }
-    ret = start_http_listener(config, listener_override, proxy_override);
+    ret = config_start_listeners(config, listener_override, proxy_override);
     if (ret)
         return ret; /* error starting http listener */
 
@@ -201,7 +203,7 @@ static int sc_main(
 
 static void sc_stop(yaz_sc_t s)
 {
-    http_close_server();
+    config_stop_listeners(sc_stop_config);
 }
 
 int main(int argc, char **argv)

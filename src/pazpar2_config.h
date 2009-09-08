@@ -113,10 +113,12 @@ struct conf_service
 
     struct database *databases;
     struct conf_targetprofiles *targetprofiles;
+    struct conf_config *config;
 };
 
-struct conf_service * conf_service_create(int num_metadata, int num_sortkeys,
-    const char *service_id);
+struct conf_service * conf_service_create(struct conf_config *config,
+                                          int num_metadata, int num_sortkeys,
+                                          const char *service_id);
 
 struct conf_metadata* conf_service_add_metadata(struct conf_service *service,
                                                 int field_id,
@@ -140,7 +142,6 @@ int conf_service_metadata_field_id(struct conf_service *service, const char * na
 
 int conf_service_sortkey_field_id(struct conf_service *service, const char * name);
 
-
 struct conf_server
 {
     char *host;
@@ -149,6 +150,7 @@ struct conf_server
     int proxy_port;
     char *myurl;
     struct sockaddr_in *proxy_addr;
+    int listener_socket;
 
     char *server_settings;
 
@@ -167,14 +169,9 @@ struct conf_targetprofiles
     char *src;
 };
 
-struct conf_config
-{
-    NMEM nmem; /* for conf_config and servers memory */
-    struct conf_server *servers;
-};
-
 struct conf_config *read_config(const char *fname);
-xsltStylesheet *conf_load_stylesheet(const char *fname);
+xsltStylesheet *conf_load_stylesheet(struct conf_config *config,
+                                     const char *fname);
 
 void config_read_settings(struct conf_config *config,
                           const char *path_override);
@@ -182,6 +179,12 @@ void config_read_settings(struct conf_config *config,
 struct conf_service *locate_service(struct conf_server *server,
                                     const char *service_id);
 
+
+int config_start_listeners(struct conf_config *conf,
+                           const char *listener_override,
+                           const char *proxy_override);
+
+void config_stop_listeners(struct conf_config *conf);
 
 #endif
 

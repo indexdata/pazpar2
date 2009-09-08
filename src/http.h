@@ -102,7 +102,7 @@ struct http_response
 
 void http_set_proxyaddr(const char *url, struct conf_server *ser);
 int http_init(const char *addr, struct conf_server *ser);
-void http_close_server(void);
+void http_close_server(struct conf_server *ser);
 void http_addheader(struct http_response *r, 
                     const char *name, const char *value);
 struct http_header * http_header_append(struct http_channel *ch, 

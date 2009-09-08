@@ -1129,8 +1129,6 @@ static void http_accept(IOCHAN i, int event)
     pazpar2_add_channel(c);
 }
 
-static int listener_socket = 0;
-
 /* Create a http-channel listener, syntax [host:]port */
 int http_init(const char *addr, struct conf_server *server)
 {
@@ -1193,7 +1191,7 @@ int http_init(const char *addr, struct conf_server *server)
         return 1;
     }
 
-    listener_socket = l;
+    server->listener_socket = l;
 
     c = iochan_create(l, http_accept, EVENT_INPUT | EVENT_EXCEPT);
     iochan_setdata(c, server);
@@ -1201,15 +1199,15 @@ int http_init(const char *addr, struct conf_server *server)
     return 0;
 }
 
-void http_close_server(void)
+void http_close_server(struct conf_server *server)
 {
     /* break the event_loop (select) by closing down the HTTP listener sock */
-    if (listener_socket)
+    if (server->listener_socket)
     {
 #ifdef WIN32
-        closesocket(listener_socket);
+        closesocket(server->listener_socket);
 #else
-        close(listener_socket);
+        close(server->listener_socket);
 #endif
     }
 }
