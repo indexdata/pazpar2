@@ -502,7 +502,7 @@ static struct database_criterion *parse_filter(NMEM m, const char *buf)
 }
 
 enum pazpar2_error_code search(struct session *se,
-                               char *query, char *filter,
+                               const char *query, const char *filter,
                                const char **addinfo)
 {
     int live_channels = 0;

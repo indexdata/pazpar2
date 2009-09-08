@@ -18,7 +18,7 @@ CONFIG_CLEAN_FILES=*.log
 AM_CFLAGS = $(YAZINC)
         
 libpazpar2_a_SOURCES = pazpar2_config.c pazpar2_config.h eventl.c eventl.h \
-	http.c http_command.c http_command.h http.h \
+	http.c http_command.c http.h \
 	logic.c pazpar2.h \
 	record.h record.c reclists.c reclists.h \
 	relevance.c relevance.h termlists.c termlists.h \

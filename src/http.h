@@ -109,8 +109,8 @@ struct http_header * http_header_append(struct http_channel *ch,
                                         struct http_header * hp, 
                                         const char *name, 
                                         const char *value);
-char *http_argbyname(struct http_request *r, char *name);
-char *http_headerbyname(struct http_header *r, char *name);
+const char *http_argbyname(struct http_request *r, const char *name);
+const char *http_headerbyname(struct http_header *r, const char *name);
 struct http_response *http_create_response(struct http_channel *c);
 void http_send_response(struct http_channel *c);
 void urlencode(const char *i, char *o);
@@ -124,6 +124,9 @@ void http_observer_set_data2(http_channel_observer_t obs, void *data2);
 
 void http_remove_observer(http_channel_observer_t obs);
 struct http_channel *http_channel_observer_chan(http_channel_observer_t obs);
+
+void http_command(struct http_channel *c);
+
 #endif
 
 /*

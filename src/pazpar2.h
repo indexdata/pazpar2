@@ -169,8 +169,8 @@ void destroy_session(struct session *s);
 void session_init_databases(struct session *s);
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
-enum pazpar2_error_code search(struct session *s, char *query, 
-                               char *filter, const char **addinfo);
+enum pazpar2_error_code search(struct session *s, const char *query, 
+                               const char *filter, const char **addinfo);
 struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, int start,
         int *num, int *total, int *sumhits, NMEM nmem_show);
 struct record_cluster *show_single(struct session *s, const char *id,

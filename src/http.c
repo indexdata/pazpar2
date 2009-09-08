@@ -66,7 +66,6 @@ typedef int socklen_t;
 #include "eventl.h"
 #include "pazpar2.h"
 #include "http.h"
-#include "http_command.h"
 
 #define MAX_HTTP_HEADER 4096
 
@@ -268,7 +267,7 @@ void http_addheader(struct http_response *r, const char *name, const char *value
     r->headers = h;
 }
 
-char *http_argbyname(struct http_request *r, char *name)
+const char *http_argbyname(struct http_request *r, const char *name)
 {
     struct http_argument *p;
     if (!name)
@@ -279,7 +278,7 @@ char *http_argbyname(struct http_request *r, char *name)
     return 0;
 }
 
-char *http_headerbyname(struct http_header *h, char *name)
+const char *http_headerbyname(struct http_header *h, const char *name)
 {
     for (; h; h = h->next)
         if (!strcmp(h->name, name))

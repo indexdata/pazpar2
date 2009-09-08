@@ -37,7 +37,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "eventl.h"
 #include "pazpar2.h"
 #include "http.h"
-#include "http_command.h"
 #include "settings.h"
 #include "client.h"
 
@@ -186,7 +185,7 @@ unsigned int make_sessionid(void)
 static struct http_session *locate_session(struct http_request *rq, struct http_response *rs)
 {
     struct http_session *p;
-    char *session = http_argbyname(rq, "session");
+    const char *session = http_argbyname(rq, "session");
     unsigned int id;
 
     if (!session)
@@ -343,8 +342,8 @@ static void cmd_termlist(struct http_channel *c)
     struct termlist_score **p;
     int len;
     int i;
-    char *name = http_argbyname(rq, "name");
-    char *nums = http_argbyname(rq, "num");
+    const char *name = http_argbyname(rq, "name");
+    const char *nums = http_argbyname(rq, "num");
     int num = 15;
     int status;
 
@@ -367,7 +366,7 @@ static void cmd_termlist(struct http_channel *c)
     while (*name)
     {
         char tname[256];
-        char *tp;
+        const char *tp;
 
         if (!(tp = strchr(name, ',')))
             tp = name + strlen(name);
@@ -665,9 +664,9 @@ static void show_records(struct http_channel *c, int active)
     struct http_session *s = locate_session(rq, rs);
     struct record_cluster **rl;
     struct reclist_sortparms *sp;
-    char *start = http_argbyname(rq, "start");
-    char *num = http_argbyname(rq, "num");
-    char *sort = http_argbyname(rq, "sort");
+    const char *start = http_argbyname(rq, "start");
+    const char *num = http_argbyname(rq, "num");
+    const char *sort = http_argbyname(rq, "sort");
     int startn = 0;
     int numn = 20;
     int total;
@@ -739,7 +738,7 @@ static void cmd_show(struct http_channel *c)
     struct http_request *rq = c->request;
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
-    char *block = http_argbyname(rq, "block");
+    const char *block = http_argbyname(rq, "block");
     int status;
 
     if (!s)
@@ -805,8 +804,8 @@ static void cmd_search(struct http_channel *c)
     struct http_request *rq = c->request;
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
-    char *query = http_argbyname(rq, "query");
-    char *filter = http_argbyname(rq, "filter");
+    const char *query = http_argbyname(rq, "query");
+    const char *filter = http_argbyname(rq, "filter");
     enum pazpar2_error_code code;
     const char *addinfo = 0;
 
@@ -922,7 +921,7 @@ struct {
 
 void http_command(struct http_channel *c)
 {
-    char *command = http_argbyname(c->request, "command");
+    const char *command = http_argbyname(c->request, "command");
     struct http_response *rs = http_create_response(c);
     int i;
 
