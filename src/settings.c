@@ -434,7 +434,7 @@ static void prepare_target_dictionary(struct conf_service *service,
     for (i = 0; i < dictionary->num; i++)
         if (!strcmp(dictionary->dict[i], set->name))
             return;
-    yaz_log(YLOG_WARN, "setting %s not configured as metadata", set->name);
+    yaz_log(YLOG_WARN, "Setting '%s' not configured as metadata", set->name);
 }
 
 // If we ever decide we need to be able to specify multiple settings directories,

@@ -47,24 +47,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static struct host *hosts = 0;  // The hosts we know about 
 
-#if 0
-static xmlDoc *get_explain_xml(const char *id)
+static xmlDoc *get_explain_xml(struct conf_targetprofiles *targetprofiles,
+                               const char *id)
 {
     struct stat st;
     char *dir;
     char path[256];
     char ide[256];
-    if (!config || !config->targetprofiles)
-    {
-        yaz_log(YLOG_WARN, "Config must be loaded and specify targetprofiles");
-        return 0;
-    }
-    if (config->targetprofiles->type != Targetprofiles_local)
+    if (targetprofiles->type != Targetprofiles_local)
     {
         yaz_log(YLOG_FATAL, "Only supports local type");
         return 0;
     }
-    dir = config->targetprofiles->src;
+    dir = targetprofiles->src;
     urlencode(id, ide);
     sprintf(path, "%s/%s", dir, ide);
     if (!stat(path, &st))
@@ -72,7 +67,6 @@ static xmlDoc *get_explain_xml(const char *id)
     else
         return 0;
 }
-#endif
 
 // Create a new host structure for hostport
 static struct host *create_host(const char *hostport)
@@ -117,15 +111,13 @@ static struct database *load_database(const char *id,
 
     yaz_log(YLOG_LOG, "New database: %s", id);
 
-#if 0
-    if (config && config->targetprofiles 
-        && (doc = get_explain_xml(id)))
+    if (service->targetprofiles 
+        && (doc = get_explain_xml(service->targetprofiles, id)))
     {
         explain = zr_read_xml(service->nmem, xmlDocGetRootElement(doc));
         if (!explain)
             return 0;
     }
-#endif
 
     if (strlen(id) > 255)
         return 0;

@@ -111,8 +111,8 @@ struct conf_service
     pp2_charset_t sort_pct;
     pp2_charset_t mergekey_pct;
 
-
     struct database *databases;
+    struct conf_targetprofiles *targetprofiles;
 };
 
 struct conf_service * conf_service_create(int num_metadata, int num_sortkeys,
@@ -168,9 +168,8 @@ struct conf_targetprofiles
 
 struct conf_config
 {
-    NMEM nmem;
+    NMEM nmem; /* for conf_config and servers memory */
     struct conf_server *servers;
-    struct conf_targetprofiles *targetprofiles;
 };
 
 struct conf_config *read_config(const char *fname);

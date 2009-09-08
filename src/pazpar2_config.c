@@ -41,6 +41,9 @@ static char confdir[256] = ".";
 
 static char *parse_settings(NMEM nmem, xmlNode *node);
 
+static struct conf_targetprofiles *parse_targetprofiles(NMEM nmem,
+                                                        xmlNode *node);
+
 static 
 struct conf_metadata * conf_metadata_assign(NMEM nmem, 
                                             struct conf_metadata * metadata,
@@ -106,6 +109,8 @@ struct conf_service * conf_service_create(int num_metadata, int num_sortkeys,
     service->next = 0;
     service->settings = 0;
     service->databases = 0;
+    service->targetprofiles = 0;
+
 
     service->id = service_id ? nmem_strdup(nmem, service_id) : 0;
     service->num_metadata = num_metadata;
@@ -245,6 +250,17 @@ static struct conf_service *parse_service(xmlNode *node, const char *service_id)
             }
             service->settings = parse_settings(service->nmem, n);
             if (!service->settings)
+                return 0;
+        }
+        else if (!strcmp((const char *) n->name, (const char *) "targetprofiles"))
+        {
+            if (service->targetprofiles)
+            {
+                yaz_log(YLOG_FATAL, "Can't repeat targetprofiles");
+                return 0;
+            }
+            if (!(service->targetprofiles = 
+                  parse_targetprofiles(service->nmem, n)))
                 return 0;
         }
         else if (!strcmp((const char *) n->name, (const char *) "metadata"))
@@ -638,7 +654,6 @@ static struct conf_config *parse_config(xmlNode *root)
 
     r->nmem = nmem;
     r->servers = 0;
-    r->targetprofiles = 0;
 
     for (n = root->children; n; n = n->next)
     {
@@ -654,14 +669,9 @@ static struct conf_config *parse_config(xmlNode *root)
         }
         else if (!strcmp((const char *) n->name, "targetprofiles"))
         {
-            // It would be fun to be able to fix this sometime
-            if (r->targetprofiles)
-            {
-                yaz_log(YLOG_FATAL, "Can't repeat targetprofiles");
-                return 0;
-            }
-            if (!(r->targetprofiles = parse_targetprofiles(nmem, n)))
-                return 0;
+            yaz_log(YLOG_FATAL, "targetprofiles unsupported here. Must be part of service");
+            return 0;
+
         }
         else
         {
