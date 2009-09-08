@@ -81,7 +81,6 @@ struct parameters global_parameters =
     30,  // operations timeout 
     60,   // session timeout 
     100,
-    MAX_CHUNK,
     180, // Z39.50 session timeout
     15   // Connect timeout
 };

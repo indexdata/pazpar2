@@ -29,7 +29,6 @@ struct parameters {
     int timeout;		/* operations timeout, in seconds */
     int session_timeout;
     int toget;
-    int chunk;
     int z3950_session_timeout;
     int z3950_connect_timeout;
 };
