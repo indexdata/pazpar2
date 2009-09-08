@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "pazpar2_config.h"
 #include "settings.h"
 
-static char confdir[256] = ".";
+static WRBUF confdir = 0;
 
 static char *parse_settings(NMEM nmem, xmlNode *node);
 
@@ -453,8 +453,8 @@ static char *parse_settings(NMEM nmem, xmlNode *node)
         else
         {
             r = nmem_malloc(nmem,
-                            strlen(confdir) + strlen((const char *) src) + 2);
-            sprintf(r, "%s/%s", confdir, src);
+                            wrbuf_len(confdir) + strlen((const char *) src) + 2);
+            sprintf(r, "%s/%s", wrbuf_cstr(confdir), src);
         }
     }
     else
@@ -476,6 +476,7 @@ static struct conf_server *parse_server(NMEM nmem, xmlNode *node)
     server->proxy_host = 0;
     server->proxy_port = 0;
     server->myurl = 0;
+    server->proxy_addr = 0;
     server->service = 0;
     server->next = 0;
     server->server_settings = 0;
@@ -543,7 +544,7 @@ static struct conf_server *parse_server(NMEM nmem, xmlNode *node)
         }
         else if (!strcmp((const char *) n->name, "service"))
         {
-            const char *service_id = (const char *)
+            char *service_id = (char *)
                 xmlGetProp(n, (xmlChar *) "id");
 
             struct conf_service **sp = &server->service;
@@ -576,6 +577,7 @@ static struct conf_server *parse_server(NMEM nmem, xmlNode *node)
                     *sp = s;
                 }
             }
+            xmlFree(service_id);
         }
         else
         {
@@ -592,7 +594,7 @@ xsltStylesheet *conf_load_stylesheet(const char *fname)
     if (yaz_is_abspath(fname))
         yaz_snprintf(path, sizeof(path), fname);
     else
-        yaz_snprintf(path, sizeof(path), "%s/%s", confdir, fname);
+        yaz_snprintf(path, sizeof(path), "%s/%s", wrbuf_cstr(confdir), fname);
     return xsltParseStylesheetFile((xmlChar *) path);
 }
 
@@ -695,6 +697,7 @@ struct conf_config *read_config(const char *fname)
         yaz_log(YLOG_FATAL, "Failed to read %s", fname);
         exit(1);
     }
+    confdir = wrbuf_alloc();
     if ((p = strrchr(fname, 
 #ifdef WIN32
                      '\\'
@@ -704,11 +707,9 @@ struct conf_config *read_config(const char *fname)
              )))
     {
         int len = p - fname;
-        if (len >= sizeof(confdir))
-            len = sizeof(confdir)-1;
-        strncpy(confdir, fname, len);
-        confdir[len] = '\0';
+        wrbuf_write(confdir, fname, len);
     }
+    wrbuf_puts(confdir, "");
     config = parse_config(xmlDocGetRootElement(doc));
     xmlFreeDoc(doc);
 

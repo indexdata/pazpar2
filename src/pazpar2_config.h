@@ -148,12 +148,13 @@ struct conf_server
     char *proxy_host;
     int proxy_port;
     char *myurl;
+    struct sockaddr_in *proxy_addr;
+
     char *server_settings;
 
     pp2_charset_t relevance_pct;
     pp2_charset_t sort_pct;
     pp2_charset_t mergekey_pct;
-
     struct conf_service *service;
     struct conf_server *next;
 };

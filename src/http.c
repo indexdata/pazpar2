@@ -75,10 +75,6 @@ static struct http_channel *http_create(const char *addr,
                                         struct conf_server *server);
 static void http_destroy(IOCHAN i);
 
-// If this is set, we proxy normal HTTP requests
-static struct sockaddr_in *proxy_addr = 0; 
-static char proxy_url[256] = "";
-static char myurl[256] = "";
 static struct http_buf *http_buf_freelist = 0;
 static struct http_channel *http_channel_freelist = 0;
 
@@ -666,7 +662,8 @@ static struct http_buf *http_serialize_request(struct http_request *r)
 
 static int http_weshouldproxy(struct http_request *rq)
 {
-    if (proxy_addr && !strstr(rq->path, "search.pz2"))
+    struct http_channel *c = rq->channel;
+    if (c->server->proxy_addr && !strstr(rq->path, "search.pz2"))
         return 1;
     return 0;
 }
@@ -734,7 +731,6 @@ static int http_proxy(struct http_request *rq)
     struct http_proxy *p = c->proxy;
     struct http_header *hp;
     struct http_buf *requestbuf;
-    char server_via[128] = "";
     char server_port[16] = "";
     struct conf_server *ser = c->server;
 
@@ -756,8 +752,8 @@ static int http_proxy(struct http_request *rq)
                         &one, sizeof(one)) < 0)
             abort();
         enable_nonblock(sock);
-        if (connect(sock, (struct sockaddr *) proxy_addr, 
-                    sizeof(*proxy_addr)) < 0)
+        if (connect(sock, (struct sockaddr *) c->server->proxy_addr, 
+                    sizeof(*c->server->proxy_addr)) < 0)
         {
             if (!is_inprogress()) 
             {
@@ -786,6 +782,8 @@ static int http_proxy(struct http_request *rq)
     
     // Add new header about paraz2 version, host, remote client address, etc.
     {
+        char server_via[128];
+
         hp = rq->headers;
         hp = http_header_append(c, hp, 
                                 "X-Pazpar2-Version", PACKAGE_VERSION);
@@ -794,9 +792,10 @@ static int http_proxy(struct http_request *rq)
         sprintf(server_port, "%d",  ser->port);
         hp = http_header_append(c, hp, 
                                 "X-Pazpar2-Server-Port", server_port);
-        sprintf(server_via,  "1.1 %s:%s (%s/%s)",  
-                ser->host ? ser->host : "@",
-                server_port, PACKAGE_NAME, PACKAGE_VERSION);
+        yaz_snprintf(server_via, sizeof(server_via), 
+                     "1.1 %s:%s (%s/%s)",  
+                     ser->host ? ser->host : "@",
+                     server_port, PACKAGE_NAME, PACKAGE_VERSION);
         hp = http_header_append(c, hp, "Via" , server_via);
         hp = http_header_append(c, hp, "X-Forwarded-For", c->addr);
     }
@@ -1150,17 +1149,19 @@ int http_init(const char *addr, struct conf_server *server)
     pp = strchr(addr, ':');
     if (pp)
     {
-        int len = pp - addr;
-        char hostname[128];
+        WRBUF w = wrbuf_alloc();
         struct hostent *he;
 
-        strncpy(hostname, addr, len);
-        hostname[len] = '\0';
-        if (!(he = gethostbyname(hostname))){
-            yaz_log(YLOG_FATAL, "Unable to resolve '%s'", hostname);
+        wrbuf_write(w, addr, pp - addr);
+        wrbuf_puts(w, "");
+
+        he = gethostbyname(wrbuf_cstr(w));
+        wrbuf_destroy(w);
+        if (!he)
+        {
+            yaz_log(YLOG_FATAL, "Unable to resolve '%s'", addr);
             return 1;
         }
-        
         memcpy(&myaddr.sin_addr.s_addr, he->h_addr_list[0], he->h_length);
         port = atoi(pp + 1);
     }
@@ -1213,32 +1214,38 @@ void http_close_server(void)
     }
 }
 
-void http_set_proxyaddr(char *host, char *base_url)
+void http_set_proxyaddr(const char *host, struct conf_server *server)
 {
-    char *p;
+    const char *p;
     short port;
     struct hostent *he;
+    WRBUF w = wrbuf_alloc();
 
-    strcpy(myurl, base_url);
-    strcpy(proxy_url, host);
+    yaz_log(YLOG_LOG, "HTTP backend  %s", host);
+
     p = strchr(host, ':');
-    yaz_log(YLOG_DEBUG, "Proxying for %s", host);
-    yaz_log(YLOG_LOG, "HTTP backend  %s", proxy_url);
-    if (p) {
+    if (p)
+    {
         port = atoi(p + 1);
-        *p = '\0';
+        wrbuf_write(w, host, p - host);
+        wrbuf_puts(w, "");
     }
     else
-        port = 80;
-    if (!(he = gethostbyname(host))) 
     {
-        fprintf(stderr, "Failed to lookup '%s'\n", host);
+        port = 80;
+        wrbuf_puts(w, host);
+    }
+    if (!(he = gethostbyname(wrbuf_cstr(w))))
+    {
+        fprintf(stderr, "Failed to lookup '%s'\n", wrbuf_cstr(w));
         exit(1);
     }
-    proxy_addr = xmalloc(sizeof(struct sockaddr_in));
-    proxy_addr->sin_family = he->h_addrtype;
-    memcpy(&proxy_addr->sin_addr.s_addr, he->h_addr_list[0], he->h_length);
-    proxy_addr->sin_port = htons(port);
+    wrbuf_destroy(w);
+
+    server->proxy_addr = xmalloc(sizeof(struct sockaddr_in));
+    server->proxy_addr->sin_family = he->h_addrtype;
+    memcpy(&server->proxy_addr->sin_addr.s_addr, he->h_addr_list[0], he->h_length);
+    server->proxy_addr->sin_port = htons(port);
 }
 
 static void http_fire_observers(struct http_channel *c)

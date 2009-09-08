@@ -874,41 +874,46 @@ int start_http_listener(struct conf_config *conf,
     struct conf_server *ser;
     for (ser = conf->servers; ser; ser = ser->next)
     {
-        char hp[128];
-        *hp = '\0';
+        WRBUF w = wrbuf_alloc();
+        int r;
         if (listener_override)
         {
-            strcpy(hp, listener_override);
+            wrbuf_puts(w, listener_override);
             listener_override = 0; /* only first server is overriden */
         }
         else
         {
-            strcpy(hp, ser->host ? ser->host : "");
+            if (ser->host)
+                wrbuf_puts(w, ser->host);
             if (ser->port)
             {
-                if (*hp)
-                    strcat(hp, ":");
-                sprintf(hp + strlen(hp), "%d", ser->port);
+                if (wrbuf_len(w))
+                    wrbuf_puts(w, ":");
+                wrbuf_printf(w, "%d", ser->port);
             }
         }
-        if (http_init(hp, ser))
+        r = http_init(wrbuf_cstr(w), ser);
+        wrbuf_destroy(w);
+        if (r)
             return -1;
 
-        *hp = '\0';
+        w = wrbuf_alloc();
         if (proxy_override)
-            strcpy(hp, proxy_override);
+            wrbuf_puts(w, proxy_override);
         else if (ser->proxy_host || ser->proxy_port)
         {
-            strcpy(hp, ser->proxy_host ? ser->proxy_host : "");
+            if (ser->proxy_host)
+                wrbuf_puts(w, ser->proxy_host);
             if (ser->proxy_port)
             {
-                if (*hp)
-                    strcat(hp, ":");
-                sprintf(hp + strlen(hp), "%d", ser->proxy_port);
+                if (wrbuf_len(w))
+                    wrbuf_puts(w, ":");
+                wrbuf_printf(w, "%d", ser->proxy_port);
             }
         }
-        if (*hp)
-            http_set_proxyaddr(hp, ser->myurl ? ser->myurl : "");
+        if (wrbuf_len(w))
+            http_set_proxyaddr(wrbuf_cstr(w), ser);
+        wrbuf_destroy(w);
     }
     return 0;
 }
