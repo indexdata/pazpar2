@@ -39,9 +39,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static char confdir[256] = ".";
 
-struct conf_config *config1 = 0;
-
-
 static char *parse_settings(NMEM nmem, xmlNode *node);
 
 static 
