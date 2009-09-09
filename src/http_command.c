@@ -561,13 +561,14 @@ static void cmd_record(struct http_channel *c)
     struct http_session *s = locate_session(rq, rs);
     struct record_cluster *rec, *prev_r, *next_r;
     struct record *r;
-    struct conf_service *service = s->psession->service;
+    struct conf_service *service;
     const char *idstr = http_argbyname(rq, "id");
     const char *offsetstr = http_argbyname(rq, "offset");
     const char *binarystr = http_argbyname(rq, "binary");
     
     if (!s)
         return;
+    service = s->psession->service;
     if (!idstr)
     {
         error(rs, PAZPAR2_MISSING_PARAMETER, "id");
@@ -576,7 +577,11 @@ static void cmd_record(struct http_channel *c)
     wrbuf_rewind(c->wrbuf);
     if (!(rec = show_single(s->psession, idstr, &prev_r, &next_r)))
     {
-        if (session_set_watch(s->psession, SESSION_WATCH_RECORD,
+        if (session_active_clients(s->psession) == 0)
+        {
+            error(rs, PAZPAR2_RECORD_MISSING, idstr);
+        }
+        else if (session_set_watch(s->psession, SESSION_WATCH_RECORD,
                               cmd_record_ready, c, c) != 0)
         {
             error(rs, PAZPAR2_RECORD_MISSING, idstr);
