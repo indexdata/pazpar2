@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 struct pp2_charset_s {
     const char *(*token_next_handler)(pp2_relevance_token_t prt);
     const char *(*get_sort_handler)(pp2_relevance_token_t prt, int skip);
+    int ref_count;
 #if YAZ_HAVE_ICU
     struct icu_chain * icu_chn;
     UErrorCode icu_sts;
@@ -99,6 +100,10 @@ pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
 #endif // YAZ_HAVE_ICU
 }
 
+void pp2_charset_incref(pp2_charset_t pct)
+{
+    (pct->ref_count)++;
+}
 
 pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn)
 {
@@ -106,6 +111,7 @@ pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn)
 
     pct->token_next_handler = pp2_relevance_token_a_to_z;
     pct->get_sort_handler  = pp2_get_sort_ascii;
+    pct->ref_count = 1;
 #if YAZ_HAVE_ICU
     pct->icu_chn = 0;
     if (icu_chn)
@@ -121,7 +127,13 @@ pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn)
 
 void pp2_charset_destroy(pp2_charset_t pct)
 {
-    xfree(pct);
+    if (pct)
+    {
+        assert(pct->ref_count >= 1);
+        --(pct->ref_count);
+        if (pct->ref_count == 0)
+            xfree(pct);
+    }
 }
 
 pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
