@@ -34,6 +34,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/snprintf.h>
 #include <yaz/tpath.h>
 
+#if HAVE_GLOB_H
+#define USE_POSIX_GLOB 1
+#else
+#define USE_POSIX_GLOB 0
+#endif
+
+
+#if USE_POSIX_GLOB
+#include <glob.h>
+#endif
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 #include "pazpar2_config.h"
 #include "settings.h"
 #include "eventl.h"
@@ -218,13 +231,30 @@ int conf_service_sortkey_field_id(struct conf_service *service,
     return -1;
 }
 
+static void conf_dir_path(struct conf_config *config, WRBUF w, const char *src)
+{
+    if (config->confdir && wrbuf_len(config->confdir) > 0 &&
+        !yaz_is_abspath(src))
+    {
+        wrbuf_printf(w, "%s/%s", wrbuf_cstr(config->confdir), src);
+    }
+    else
+        wrbuf_puts(w, src);
+}
 
+static void service_destroy(struct conf_service *service)
+{
+    if (service)
+    {
+        pp2_charset_destroy(service->relevance_pct);
+        pp2_charset_destroy(service->sort_pct);
+        pp2_charset_destroy(service->mergekey_pct);
+        nmem_destroy(service->nmem);
+    }
+}
 
-/* Code to parse configuration file */
-/* ==================================================== */
-
-static struct conf_service *parse_service(struct conf_config *config,
-                                          xmlNode *node, const char *service_id)
+static struct conf_service *service_create(struct conf_config *config,
+                                           xmlNode *node, const char *service_id)
 {
     xmlNode *n;
     int md_node = 0;
@@ -460,15 +490,10 @@ static char *parse_settings(struct conf_config *config,
 
     if (src)
     {
-        if (yaz_is_abspath((const char *) src) || !wrbuf_len(config->confdir))
-            r = nmem_strdup(nmem, (const char *) src);
-        else
-        {
-            r = nmem_malloc(nmem,
-                            wrbuf_len(config->confdir) + 
-                            strlen((const char *) src) + 2);
-            sprintf(r, "%s/%s", wrbuf_cstr(config->confdir), src);
-        }
+        WRBUF w = wrbuf_alloc();
+        conf_dir_path(config, w, (const char *) src);
+        r = nmem_strdup(nmem, wrbuf_cstr(w));
+        wrbuf_destroy(w);
     }
     else
     {
@@ -579,15 +604,33 @@ static struct conf_server *parse_server(struct conf_config *config,
                 return 0;
             else
             {
-                struct conf_service *s = parse_service(config, n, service_id);
+                struct conf_service *s = service_create(config, n, service_id);
                 if (s)
                 {
-                    s->relevance_pct = server->relevance_pct ?
-                        server->relevance_pct : pp2_charset_create(0);
-                    s->sort_pct = server->sort_pct ?
-                        server->sort_pct : pp2_charset_create(0);
-                    s->mergekey_pct = server->mergekey_pct ?
-                        server->mergekey_pct : pp2_charset_create(0);
+                    if (server->relevance_pct)
+                    {
+                        s->relevance_pct = server->relevance_pct;
+                        pp2_charset_incref(s->relevance_pct);
+                    }
+                    else
+                        s->relevance_pct = pp2_charset_create(0);
+
+                    if (server->sort_pct)
+                    {
+                        
+                        s->sort_pct = server->sort_pct;
+                        pp2_charset_incref(s->sort_pct);
+                    }
+                    else
+                        s->sort_pct = pp2_charset_create(0);
+
+                    if (server->mergekey_pct)
+                    {
+                        s->mergekey_pct = server->mergekey_pct;
+                        pp2_charset_incref(s->mergekey_pct);
+                    }
+                    else
+                        s->mergekey_pct = pp2_charset_create(0);
                     *sp = s;
                 }
             }
@@ -605,13 +648,13 @@ static struct conf_server *parse_server(struct conf_config *config,
 xsltStylesheet *conf_load_stylesheet(struct conf_config *config,
                                      const char *fname)
 {
-    char path[256];
-    if (yaz_is_abspath(fname) || !config || !wrbuf_len(config->confdir))
-        yaz_snprintf(path, sizeof(path), fname);
-    else
-        yaz_snprintf(path, sizeof(path), "%s/%s",
-                     wrbuf_cstr(config->confdir), fname);
-    return xsltParseStylesheetFile((xmlChar *) path);
+    WRBUF w = wrbuf_alloc();
+    xsltStylesheet *s;
+
+    conf_dir_path(config, w, fname);
+    s = xsltParseStylesheetFile((xmlChar *) wrbuf_cstr(w));
+    wrbuf_destroy(w);
+    return s;
 }
 
 static struct conf_targetprofiles *parse_targetprofiles(NMEM nmem,
@@ -695,20 +738,87 @@ static int parse_config(struct conf_config *config, xmlNode *root)
     return 0;
 }
 
-static void config_include_src(struct conf_config *config, xmlNode *n,
-                               const char *src)
+static int process_config_includes(struct conf_config *config, xmlNode *n);
+
+static int config_include_one(struct conf_config *config, xmlNode **sib,
+    const char *path)
 {
-    xmlDoc *doc = xmlParseFile(src);
-    yaz_log(YLOG_LOG, "processing incldue src=%s", src);
-    if (doc)
+    struct stat st;
+    if (stat(path, &st) < 0)
     {
-        xmlNodePtr t = xmlDocGetRootElement(doc);
-        xmlReplaceNode(n, xmlCopyNode(t, 1));
-        xmlFreeDoc(doc);
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "stat %s", path);
+        return -1;
     }
+    else
+    {
+        if (S_ISREG(st.st_mode))
+        {
+            xmlDoc *doc = xmlParseFile(path);
+            yaz_log(YLOG_LOG, "processing include path=%s", path);
+            if (doc)
+            {
+                xmlNodePtr t = xmlDocGetRootElement(doc);
+                int ret = process_config_includes(config, t);
+                *sib = xmlAddNextSibling(*sib, xmlCopyNode(t, 1));
+                xmlFreeDoc(doc);
+                if (ret)
+                    return -1;
+            }
+            else
+            {
+                yaz_log(YLOG_FATAL, "Could not parse %s", path);
+                return -1;
+            }
+        }
+    }
+    return 0;
 }
 
-static void process_config_includes(struct conf_config *config, xmlNode *n)
+static int config_include_src(struct conf_config *config, xmlNode **np,
+                              const char *src)
+{
+    int ret = 0; /* return code. OK so far */
+    WRBUF w = wrbuf_alloc();
+    xmlNodePtr sib; /* our sibling that we append */
+    xmlNodePtr c; /* tmp node */
+
+    wrbuf_printf(w, " begin include src=\"%s\" ", src);
+
+    /* replace include element with a 'begin' comment */
+    sib = xmlNewComment((const xmlChar *) wrbuf_cstr(w));
+    xmlReplaceNode(*np, sib);
+
+    xmlFreeNode(*np);
+
+    wrbuf_rewind(w);
+    conf_dir_path(config, w, src);
+#if USE_POSIX_GLOB
+    {
+        size_t i;
+        glob_t glob_res;
+        glob(wrbuf_cstr(w), 0 /* flags */, 0 /* errfunc */, &glob_res);
+        
+        for (i = 0; ret == 0 && i < glob_res.gl_pathc; i++)
+        {
+            const char *path = glob_res.gl_pathv[i];
+            ret = config_include_one(config, &sib, path);
+        }
+        globfree(&glob_res);
+    }
+#else
+    ret = config_include_one(config, &sib, wrbuf_cstr(w));
+#endif
+    wrbuf_rewind(w);
+    wrbuf_printf(w, " end include src=\"%s\" ", src);
+    c = xmlNewComment((const xmlChar *) wrbuf_cstr(w));
+    sib = xmlAddNextSibling(sib, c);
+    
+    *np = sib;
+    wrbuf_destroy(w);
+    return ret;
+}
+
+static int process_config_includes(struct conf_config *config, xmlNode *n)
 {
     for (; n; n = n->next)
     {
@@ -719,16 +829,25 @@ static void process_config_includes(struct conf_config *config, xmlNode *n)
                 xmlChar *src = xmlGetProp(n, (xmlChar *) "src");
                 if (src)
                 {
-                    config_include_src(config, n, (const char *) src);
+                    int ret = config_include_src(config, &n,
+                                                 (const char *) src);
                     xmlFree(src);
+                    if (ret)
+                        return ret;
+                        
                 }
             }
+            else
+            {
+                if (process_config_includes(config, n->children))
+                    return -1;
+            }
         }
-        process_config_includes(config, n->children);
     }
+    return 0;
 }
 
-struct conf_config *read_config(const char *fname)
+struct conf_config *config_create(const char *fname)
 {
     xmlDoc *doc = xmlParseFile(fname);
     xmlNode *n;
@@ -742,7 +861,7 @@ struct conf_config *read_config(const char *fname)
     if (!doc)
     {
         yaz_log(YLOG_FATAL, "Failed to read %s", fname);
-        exit(1);
+        return 0;
     }
 
     config->nmem = nmem;
@@ -763,14 +882,50 @@ struct conf_config *read_config(const char *fname)
     wrbuf_puts(config->confdir, "");
     
     n = xmlDocGetRootElement(doc);
-    process_config_includes(config, n);
-    xmlDocFormatDump(stdout, doc, 0);
-    r = parse_config(config, n);
+    r = process_config_includes(config, n);
+    if (r == 0) /* OK */
+    {
+        xmlDocFormatDump(stdout, doc, 0);
+        r = parse_config(config, n);
+    }
     xmlFreeDoc(doc);
 
     if (r)
+    {
+        config_destroy(config);
         return 0;
+    }
     return config;
+}
+
+void server_destroy(struct conf_server *server)
+{
+    struct conf_service *s = server->service;
+    while (s)
+    {
+        struct conf_service *s_next = s->next;
+        service_destroy(s);
+        s = s_next;
+    }
+    pp2_charset_destroy(server->relevance_pct);
+    pp2_charset_destroy(server->sort_pct);
+    pp2_charset_destroy(server->mergekey_pct);
+}
+
+void config_destroy(struct conf_config *config)
+{
+    if (config)
+    {
+        struct conf_server *server = config->servers;
+        while (server)
+        {
+            struct conf_server *s_next = server->next;
+            server_destroy(server);
+            server = s_next;
+        }
+        wrbuf_destroy(config->confdir);
+        nmem_destroy(config->nmem);
+    }
 }
 
 void config_read_settings(struct conf_config *config,
