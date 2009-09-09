@@ -93,7 +93,7 @@ static int sc_main(
     int session_timeout = 60;
     const char *listener_override = 0;
     const char *proxy_override = 0;
-    struct conf_config *config;
+    struct conf_config *config = 0;
 
 #ifndef WIN32
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
@@ -116,9 +116,9 @@ static int sc_main(
             daemon = 1;
             break;
         case 'f':
-            config = read_config(arg);
+            config = config_create(arg);
             if (!config)
-                exit(1);
+                return 1;
             sc_stop_config = config;
             break;
         case 'h':
