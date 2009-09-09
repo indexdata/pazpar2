@@ -46,7 +46,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 #include <sys/types.h>
 #include <sys/stat.h>
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include "pazpar2_config.h"
 #include "settings.h"
 #include "eventl.h"
@@ -751,7 +753,7 @@ static int config_include_one(struct conf_config *config, xmlNode **sib,
     }
     else
     {
-        if (S_ISREG(st.st_mode))
+        if ((st.st_mode & S_IFMT) == S_IFREG)
         {
             xmlDoc *doc = xmlParseFile(path);
             yaz_log(YLOG_LOG, "processing include path=%s", path);
