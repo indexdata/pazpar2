@@ -25,7 +25,7 @@ if test -z "$YAZLIB"; then
 fi
 YAZ_DOC
 
-AC_CHECK_HEADERS([sys/time.h sys/socket.h unistd.h netinet/in.h netdb.h arpa/inet.h])
+AC_CHECK_HEADERS([sys/time.h sys/socket.h unistd.h netinet/in.h netdb.h arpa/inet.h glob.h])
 AC_CHECK_FUNCS([getaddrinfo])
 
 if test -d ${srcdir}/.git; then
