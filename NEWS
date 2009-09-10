@@ -1,3 +1,11 @@
+Option -t tests the Pazpar2 configuration and returns exit code
+(0=success, non-zero=failure). In previous version of Pazpar2, -t
+specified local settings.
+
+In version 1.2.0 the configuration file - after include processing -
+was dumped to stdout. Now, the configuration is only dumped to the
+yaz log file if option -d is given.
+
 --- 1.2.0 2009/09/10
 
 Configuration may now have multiple server areas. This means that a

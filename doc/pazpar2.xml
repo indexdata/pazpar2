@@ -32,6 +32,7 @@
    <arg choice="opt"><option>-h <replaceable>ip:port</replaceable></option></arg>
    <arg choice="opt"><option>-l <replaceable>logfile</replaceable></option></arg>
    <arg choice="opt"><option>-p <replaceable>pidfile</replaceable></option></arg>
+   <arg choice="opt"><option>-t</option></arg>
    <arg choice="opt"><option>-T <replaceable>session_timeout</replaceable></option></arg>
    <arg choice="opt"><option>-u <replaceable>uid</replaceable></option></arg>
    <arg choice="opt"><option>-V</option></arg>
@@ -108,6 +109,23 @@
       Specifies PID file. If Pazpar2 is started and configured properly
       the file given holds the process ID of the Pazpar2 process.
      </para>
+    </listitem>
+   </varlistentry>
+
+   <varlistentry>
+    <term><option>-t</option></term>
+    <listitem>
+     <para>
+      Checks parameters and configuration. No service or daemon is
+      started. Useful for checking a new configuration before a
+      Pazpar2 is restarted.
+     </para>
+     <note>
+      <para>
+       In Pazpar2 1.2 and earlier releasese, option -t specified a
+       local target settings file.
+      </para>
+     </note>
     </listitem>
    </varlistentry>
 

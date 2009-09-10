@@ -92,7 +92,9 @@ static int sc_main(
     int session_timeout = 60;
     const char *listener_override = 0;
     const char *proxy_override = 0;
+    const char *config_fname = 0;
     struct conf_config *config = 0;
+    int test_mode = 0;
 
 #ifndef WIN32
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
@@ -104,7 +106,7 @@ static int sc_main(
     yaz_log_init_prefix("pazpar2");
     yaz_log_xml_errors(0, YLOG_WARN);
 
-    while ((ret = options("dDf:h:l:p:T:u:VX", argv, argc, &arg)) != -2)
+    while ((ret = options("dDf:h:l:p:tT:u:VX", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -115,10 +117,7 @@ static int sc_main(
             daemon = 1;
             break;
         case 'f':
-            config = config_create(arg);
-            if (!config)
-                return 1;
-            sc_stop_config = config;
+            config_fname = arg;
             break;
         case 'h':
             listener_override = arg;
@@ -129,6 +128,9 @@ static int sc_main(
             break;
         case 'p':
             pidfile = arg;
+            break;
+        case 't':
+            test_mode = 1;
             break;
         case 'T':
 	    session_timeout = atoi(arg);
@@ -150,48 +152,60 @@ static int sc_main(
             break;
         default:
             fprintf(stderr, "Usage: pazpar2\n"
-                    "    -d                      (show internal records)\n"
+                    "    -d                      Show internal records\n"
                     "    -D                      Daemon mode (background)\n"
-                    "    -f configfile\n"
-                    "    -h [host:]port          (REST protocol listener)\n"
-                    "    -l file                 log to file\n"
+                    "    -f configfile           Configuration\n"
+                    "    -h [host:]port          Listener port\n"
+                    "    -l file                 Log to file\n"
                     "    -p pidfile              PID file\n"
-                    "    -T session_timeout\n"
-                    "    -u uid\n"
-                    "    -V                      show version\n"
-                    "    -X                      debug mode\n"
+                    "    -t                      Test configuration\n"
+                    "    -T session_timeout      Session timeout\n"
+                    "    -u uid                  Change user to uid\n"
+                    "    -V                      Show version\n"
+                    "    -X                      Debug mode\n"
 #ifdef WIN32
-                    "    -install                install windows service\n"
-                    "    -remove                 remove windows service\n"
+                    "    -install                Install windows service\n"
+                    "    -remove                 Remove windows service\n"
 #endif
                 );
             return 1;
 	}
     }
-
-    yaz_log(YLOG_LOG, "Pazpar2 %s started", VERSION);
-    if (daemon && !log_file_in_use)
+    if (!config_fname)
     {
-        yaz_log(YLOG_FATAL, "Logfile must be given (option -l) for daemon "
-                "mode");
+        yaz_log(YLOG_FATAL, "Configuration must be given with option -f");
         return 1;
     }
+    config = config_create(config_fname, global_parameters.dump_records);
     if (!config)
-    {
-        yaz_log(YLOG_FATAL, "Load config with -f");
         return 1;
+    sc_stop_config = config;
+    if (test_mode)
+    {
+        yaz_log(YLOG_LOG, "Configuration OK");
+        config_destroy(config);
     }
-    ret = config_start_listeners(config, listener_override, proxy_override);
-    if (ret)
-        return ret; /* error starting http listener */
-
-    yaz_sc_running(s);
-
-    yaz_daemon("pazpar2",
-               (global_parameters.debug_mode ? YAZ_DAEMON_DEBUG : 0) +
-               (daemon ? YAZ_DAEMON_FORK : 0) + YAZ_DAEMON_KEEPALIVE,
-               child_handler, config /* child_data */,
-               pidfile, uid);
+    else
+    {
+        yaz_log(YLOG_LOG, "Pazpar2 %s started", VERSION);
+        if (daemon && !log_file_in_use)
+        {
+            yaz_log(YLOG_FATAL, "Logfile must be given (option -l) for daemon "
+                    "mode");
+            return 1;
+        }
+        ret = config_start_listeners(config, listener_override, proxy_override);
+        if (ret)
+            return ret; /* error starting http listener */
+        
+        yaz_sc_running(s);
+        
+        yaz_daemon("pazpar2",
+                   (global_parameters.debug_mode ? YAZ_DAEMON_DEBUG : 0) +
+                   (daemon ? YAZ_DAEMON_FORK : 0) + YAZ_DAEMON_KEEPALIVE,
+                   child_handler, config /* child_data */,
+                   pidfile, uid);
+    }
     return 0;
 }
 

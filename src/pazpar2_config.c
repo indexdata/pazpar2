@@ -849,7 +849,7 @@ static int process_config_includes(struct conf_config *config, xmlNode *n)
     return 0;
 }
 
-struct conf_config *config_create(const char *fname)
+struct conf_config *config_create(const char *fname, int verbose)
 {
     xmlDoc *doc = xmlParseFile(fname);
     xmlNode *n;
@@ -887,7 +887,12 @@ struct conf_config *config_create(const char *fname)
     r = process_config_includes(config, n);
     if (r == 0) /* OK */
     {
-        xmlDocFormatDump(stdout, doc, 0);
+        if (verbose)
+        {
+            yaz_log(YLOG_LOG, "Configuration %s after include processing",
+                    fname);
+            xmlDocFormatDump(yaz_log_file(), doc, 0);
+        }
         r = parse_config(config, n);
     }
     xmlFreeDoc(doc);

@@ -169,7 +169,7 @@ struct conf_targetprofiles
     char *src;
 };
 
-struct conf_config *config_create(const char *fname);
+struct conf_config *config_create(const char *fname, int verbose);
 void config_destroy(struct conf_config *config);
 xsltStylesheet *conf_load_stylesheet(struct conf_config *config,
                                      const char *fname);
