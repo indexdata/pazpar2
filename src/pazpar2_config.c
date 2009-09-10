@@ -886,6 +886,7 @@ struct conf_config *config_create(const char *fname, int verbose)
     if (!doc)
     {
         yaz_log(YLOG_FATAL, "Failed to read %s", fname);
+        nmem_destroy(nmem);
         return 0;
     }
 
