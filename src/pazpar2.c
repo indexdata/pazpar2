@@ -39,7 +39,8 @@ static struct conf_config *sc_stop_config = 0;
 void child_handler(void *data)
 {
     struct conf_config *config = (struct conf_config *) data;
-    config_read_settings(config);
+
+    config_start_databases(config);
 
     pazpar2_event_loop();
 }

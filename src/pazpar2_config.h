@@ -152,8 +152,6 @@ struct conf_server
     struct sockaddr_in *proxy_addr;
     int listener_socket;
 
-    char *server_settings;
-
     pp2_charset_t relevance_pct;
     pp2_charset_t sort_pct;
     pp2_charset_t mergekey_pct;
@@ -174,7 +172,7 @@ void config_destroy(struct conf_config *config);
 xsltStylesheet *conf_load_stylesheet(struct conf_config *config,
                                      const char *fname);
 
-void config_read_settings(struct conf_config *config);
+void config_start_databases(struct conf_config *config);
 
 struct conf_service *locate_service(struct conf_server *server,
                                     const char *service_id);

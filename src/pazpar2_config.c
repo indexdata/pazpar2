@@ -247,7 +247,9 @@ static void service_destroy(struct conf_service *service)
 }
 
 static struct conf_service *service_create(struct conf_config *config,
-                                           xmlNode *node, const char *service_id)
+                                           xmlNode *node,
+                                           const char *service_id,
+                                           const char *server_settings)
 {
     xmlNode *n;
     int md_node = 0;
@@ -256,6 +258,7 @@ static struct conf_service *service_create(struct conf_config *config,
     struct conf_service *service = 0;
     int num_metadata = 0;
     int num_sortkeys = 0;
+    int got_settings = 0;
     
     // count num_metadata and num_sortkeys
     for (n = node->children; n; n = n->next)
@@ -277,16 +280,7 @@ static struct conf_service *service_create(struct conf_config *config,
         if (n->type != XML_ELEMENT_NODE)
             continue;
         if (!strcmp((const char *) n->name, "settings"))
-        {
-            if (service->settings)
-            {
-                yaz_log(YLOG_FATAL, "Can't repeat 'settings'");
-                return 0;
-            }
-            service->settings = parse_settings(config, service->nmem, n);
-            if (!service->settings)
-                return 0;
-        }
+            got_settings++;
         else if (!strcmp((const char *) n->name, (const char *) "targetprofiles"))
         {
             if (service->targetprofiles)
@@ -472,6 +466,44 @@ static struct conf_service *service_create(struct conf_config *config,
             return 0;
         }
     }
+    init_settings(service);
+    if (got_settings)
+    {
+        int pass;
+        /* metadata has been read.. Consider now settings */
+        for (pass = 1; pass <= 2; pass++)
+        {
+            for (n = node->children; n; n = n->next)
+            {
+                if (n->type != XML_ELEMENT_NODE)
+                    continue;
+                if (!strcmp((const char *) n->name, "settings"))
+                {
+                    xmlChar *src = xmlGetProp(n, (xmlChar *) "src");
+                    if (src)
+                    {
+                        WRBUF w = wrbuf_alloc();
+                        conf_dir_path(config, w, (const char *) src);
+                        settings_read_file(service, wrbuf_cstr(w), pass);
+                        wrbuf_destroy(w);
+                        xmlFree(src);
+                    }
+                    else
+                    {
+                        settings_read_node(service, n, pass);
+                    }
+                }
+            }
+        }
+    }
+    else
+    {
+        if (server_settings)
+        {
+            settings_read_file(service, server_settings, 1);
+            settings_read_file(service, server_settings, 2);
+        }
+    }
     return service;
 }
 
@@ -501,6 +533,7 @@ static struct conf_server *parse_server(struct conf_config *config,
                                         NMEM nmem, xmlNode *node)
 {
     xmlNode *n;
+    const char *server_settings = 0;
     struct conf_server *server = nmem_malloc(nmem, sizeof(struct conf_server));
 
     server->host = 0;
@@ -511,7 +544,6 @@ static struct conf_server *parse_server(struct conf_config *config,
     server->proxy_addr = 0;
     server->service = 0;
     server->next = 0;
-    server->server_settings = 0;
     server->relevance_pct = 0;
     server->sort_pct = 0;
     server->mergekey_pct = 0;
@@ -548,12 +580,12 @@ static struct conf_server *parse_server(struct conf_config *config,
         }
         else if (!strcmp((const char *) n->name, "settings"))
         {
-            if (server->server_settings)
+            if (server_settings)
             {
                 yaz_log(YLOG_FATAL, "Can't repeat 'settings'");
                 return 0;
             }
-            if (!(server->server_settings = parse_settings(config, nmem, n)))
+            if (!(server_settings = parse_settings(config, nmem, n)))
                 return 0;
         }
         else if (!strcmp((const char *) n->name, "relevance"))
@@ -597,7 +629,9 @@ static struct conf_server *parse_server(struct conf_config *config,
                 return 0;
             else
             {
-                struct conf_service *s = service_create(config, n, service_id);
+                struct conf_service *s = service_create(config, n,
+                                                        service_id,
+                                                        server_settings);
                 if (s)
                 {
                     if (server->relevance_pct)
@@ -610,7 +644,6 @@ static struct conf_server *parse_server(struct conf_config *config,
 
                     if (server->sort_pct)
                     {
-                        
                         s->sort_pct = server->sort_pct;
                         pp2_charset_incref(s->sort_pct);
                     }
@@ -747,7 +780,6 @@ static int config_include_one(struct conf_config *config, xmlNode **sib,
         if ((st.st_mode & S_IFMT) == S_IFREG)
         {
             xmlDoc *doc = xmlParseFile(path);
-            yaz_log(YLOG_LOG, "processing include path=%s", path);
             if (doc)
             {
                 xmlNodePtr t = xmlDocGetRootElement(doc);
@@ -926,26 +958,22 @@ void config_destroy(struct conf_config *config)
     }
 }
 
-void config_read_settings(struct conf_config *config)
-{
-    struct conf_service *s = config->servers->service;
-    for (;s ; s = s->next)
-    {
-        init_settings(s);
-        if (s->settings)
-            settings_read(s, s->settings);
-        else if (config->servers->server_settings)
-            settings_read(s, config->servers->server_settings);
-        else
-            yaz_log(YLOG_WARN, "No settings for service");
-    }
-}
-
 void config_stop_listeners(struct conf_config *conf)
 {
     struct conf_server *ser;
     for (ser = conf->servers; ser; ser = ser->next)
         http_close_server(ser);
+}
+
+void config_start_databases(struct conf_config *conf)
+{
+    struct conf_server *ser;
+    for (ser = conf->servers; ser; ser = ser->next)
+    {
+        struct conf_service *s = ser->service;
+        for (;s ; s = s->next)
+            resolve_databases(s);
+    }
 }
 
 int config_start_listeners(struct conf_config *conf,

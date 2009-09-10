@@ -98,13 +98,36 @@ static struct host *find_host(const char *hostport)
     return create_host(hostport);
 }
 
+int resolve_database(struct database *db)
+{
+    if (db->host == 0)
+    {
+        struct host *host;
+        char *p;
+        char hostport[256];
+        strcpy(hostport, db->url);
+        if ((p = strchr(hostport, '/')))
+            *p = '\0';
+        if (!(host = find_host(hostport)))
+            return -1;
+        db->host = host;
+    }
+    return 0;
+}
+
+void resolve_databases(struct conf_service *service)
+{
+    struct database *db = service->databases;
+    for (; db; db = db->next)
+        resolve_database(db);
+}
+
 static struct database *load_database(const char *id,
     struct conf_service *service)
 {
     xmlDoc *doc = 0;
     struct zr_explain *explain = 0;
     struct database *db;
-    struct host *host;
     char hostport[256];
     char *dbname;
     struct setting *idset;
@@ -126,11 +149,9 @@ static struct database *load_database(const char *id,
         *(dbname++) = '\0';
     else
         dbname = "";
-    if (!(host = find_host(hostport)))
-        return 0;
     db = nmem_malloc(service->nmem, sizeof(*db));
     memset(db, 0, sizeof(*db));
-    db->host = host;
+    db->host = 0;
     db->url = nmem_strdup(service->nmem, id);
     db->databases = xmalloc(2 * sizeof(char *));
     db->databases[0] = nmem_strdup(service->nmem, dbname);

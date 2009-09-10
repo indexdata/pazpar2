@@ -48,11 +48,15 @@ struct setting
     struct setting *next;
 };
 
+void settings_read_file(struct conf_service *service, const char *path,
+                        int pass);
+void settings_read_node(struct conf_service *service, xmlNode *n,
+                        int pass);
 int settings_num(struct conf_service *service);
-void settings_read(struct conf_service *service, const char *path);
 int settings_offset(struct conf_service *service, const char *name);
 int settings_offset_cprefix(struct conf_service *service, const char *name);
 void init_settings(struct conf_service *service);
+void resolve_databases(struct conf_service *service);
 
 #endif
 

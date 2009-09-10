@@ -291,10 +291,6 @@ static void prepare_dictionary(struct conf_service *service,
     int i;
     char *p;
 
-    // If target address is not wildcard, add the database
-    if (*set->target && !zurl_wildcard(set->target))
-        find_database(set->target, 0, service);
-
     // Determine if we already have a dictionary entry
     if (!strncmp(set->name, "pz:", 3) && (p = strchr(set->name + 3, ':')))
         *(p + 1) = '\0';
@@ -447,26 +443,35 @@ static void prepare_target_dictionary(struct conf_service *service,
     yaz_log(YLOG_WARN, "Setting '%s' not configured as metadata", set->name);
 }
 
-// If we ever decide we need to be able to specify multiple settings directories,
-// the two calls to read_settings must be split -- so the dictionary is prepared
-// for the contents of every directory before the databases are updated.
-void settings_read(struct conf_service *service, const char *path)
-{
-    read_settings(path, service, prepare_target_dictionary);
-    read_settings(path, service, update_databases);
-}
-
 void init_settings(struct conf_service *service)
 {
     struct setting_dictionary *new;
-
+    
     assert(service->nmem);
-
+    
     new = nmem_malloc(service->nmem, sizeof(*new));
     memset(new, 0, sizeof(*new));
     service->dictionary = new;
     initialize_hard_settings(service);
     initialize_soft_settings(service);
+}
+
+void settings_read_file(struct conf_service *service, const char *path,
+                        int pass)
+{
+    if (pass == 1)
+        read_settings(path, service, prepare_target_dictionary);
+    else
+        read_settings(path, service, update_databases);
+}
+
+void settings_read_node(struct conf_service *service, xmlNode *n,
+                        int pass)
+{
+    if (pass == 1)
+        read_settings_node(n, service, prepare_target_dictionary);
+    else
+        read_settings_node(n, service, update_databases);
 }
 
 /*

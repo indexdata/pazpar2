@@ -606,6 +606,8 @@ static struct session_database *load_session_database(struct session *se,
 {
     struct database *db = find_database(id, 0, se->service);
 
+    resolve_database(db);
+
     session_init_databases_fun((void*) se, db);
     // New sdb is head of se->databases list
     return se->databases;
