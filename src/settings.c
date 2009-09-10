@@ -132,21 +132,13 @@ static int isdir(const char *path)
 }
 
 // Read settings from an XML file, calling handler function for each setting
-static void read_settings_file(const char *path,
+static void read_settings_node(xmlNode *n,
                                struct conf_service *service,
                                void (*fun)(struct conf_service *service,
                                            struct setting *set))
 {
-    xmlDoc *doc = xmlParseFile(path);
-    xmlNode *n;
     xmlChar *namea, *targeta, *valuea, *usera, *precedencea;
 
-    if (!doc)
-    {
-        yaz_log(YLOG_FATAL, "Failed to parse %s", path);
-        exit(1);
-    }
-    n = xmlDocGetRootElement(doc);
     namea = xmlGetProp(n, (xmlChar *) "name");
     targeta = xmlGetProp(n, (xmlChar *) "target");
     valuea = xmlGetProp(n, (xmlChar *) "value");
@@ -221,10 +213,28 @@ static void read_settings_file(const char *path,
     xmlFree(valuea);
     xmlFree(usera);
     xmlFree(targeta);
+}
+ 
+static void read_settings_file(const char *path,
+                               struct conf_service *service,
+                               void (*fun)(struct conf_service *service,
+                                           struct setting *set))
+{
+    xmlDoc *doc = xmlParseFile(path);
+    xmlNode *n;
+
+    if (!doc)
+    {
+        yaz_log(YLOG_FATAL, "Failed to parse %s", path);
+        exit(1);
+    }
+    n = xmlDocGetRootElement(doc);
+    read_settings_node(n, service, fun);
 
     xmlFreeDoc(doc);
 }
- 
+
+
 // Recursively read files or directories, invoking a 
 // callback for each one
 static void read_settings(const char *path,
