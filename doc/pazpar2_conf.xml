@@ -195,7 +195,8 @@
        Multiple services must be given a unique ID by specifying
        attribute <literal>id</literal>.
        A single service may be unnamed (service ID omitted). The
-       service ID is referred to in the <literal>init</literal> webservice
+       service ID is referred to in the
+       <link linkend="command-init"><literal>init</literal></link> webservice
        command's <literal>service</literal> parameter.
       </para>
 
@@ -354,7 +355,7 @@
     </varlistentry>
    </variablelist>           <!-- Data elements in server directive -->
   </refsect2>
-  
+
  </refsect1>
  
  <refsect1><title>EXAMPLE</title>
@@ -393,7 +394,22 @@
 ]]></screen>
   </para>
  </refsect1> 
- 
+
+ <refsect1 id="config-include"><title>INCLUDE FACILITY</title>
+  <para>
+   The XML configuration may be partitioned into multiple files by using
+   the <literal>include</literal> element which takes a single attribute,
+   <literal>src</literal>. The of the <literal>src</literal> attribute is
+   regular Shell like glob-pattern. For example,
+   <screen><![CDATA[
+    <include src="/etc/pazpar2/conf.d/*.xml"/>
+    ]]></screen>
+  </para>
+  <para>
+   The include facility requires Pazpar2 version 1.2.
+  </para>
+ </refsect1>
+
  <refsect1 id="target_settings"><title>TARGET SETTINGS</title>
   <para>
    Pazpar2 features a cunning scheme by which you can associate various
@@ -429,7 +445,9 @@
    environment, where different end-users may need to be represented to
    some search targets in different ways. This, again, can be managed
    using an external database or other lookup mechanism. Setting overrides
-   can be performed either using the 'init' or the 'settings' webservice
+   can be performed either using the
+   <link linkend="command-init">init</link> or the 
+   <link linkend="command-settings">settings</link> webservice
    command.
   </para>
   
@@ -442,8 +460,10 @@
   
   <para>
    Finally, as an extreme case of this, the webservice client can
-   introduce entirely new targets, on the fly, as part of the init or
-   settings command. This is useful if you desire to manage information
+   introduce entirely new targets, on the fly, as part of the
+   <link linkend="command-init">init</link> or
+   <link linkend="command-settings">settings</link> command.
+   This is useful if you desire to manage information
    about your search targets in a separate application such as a database.
    You do not need any static settings file whatsoever to run Pazpar2 -- as
    long as the webservice client is prepared to supply the necessary
