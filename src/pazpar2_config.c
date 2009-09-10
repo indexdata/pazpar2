@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #include <string.h>
+#include <assert.h>
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
@@ -68,21 +69,19 @@ static char *parse_settings(struct conf_config *config,
 static struct conf_targetprofiles *parse_targetprofiles(NMEM nmem,
                                                         xmlNode *node);
 
-static 
-struct conf_metadata * conf_metadata_assign(NMEM nmem, 
-                                            struct conf_metadata * metadata,
-                                            const char *name,
-                                            enum conf_metadata_type type,
-                                            enum conf_metadata_merge merge,
-                                            enum conf_setting_type setting,
-                                            int brief,
-                                            int termlist,
-                                            int rank,
-                                            int sortkey_offset,
-                                            enum conf_metadata_mergekey mt)
+static void conf_metadata_assign(NMEM nmem, 
+                                 struct conf_metadata * metadata,
+                                 const char *name,
+                                 enum conf_metadata_type type,
+                                 enum conf_metadata_merge merge,
+                                 enum conf_setting_type setting,
+                                 int brief,
+                                 int termlist,
+                                 int rank,
+                                 int sortkey_offset,
+                                 enum conf_metadata_mergekey mt)
 {
-    if (!nmem || !metadata || !name)
-        return 0;
+    assert(nmem && metadata && name);
     
     metadata->name = nmem_strdup(nmem, name);
 
@@ -100,35 +99,28 @@ struct conf_metadata * conf_metadata_assign(NMEM nmem,
     metadata->rank = rank;    
     metadata->sortkey_offset = sortkey_offset;
     metadata->mergekey = mt;
-    return metadata;
 }
 
 
-static
-struct conf_sortkey * conf_sortkey_assign(NMEM nmem, 
-                                          struct conf_sortkey * sortkey,
-                                          const char *name,
-                                          enum conf_sortkey_type type)
+static void conf_sortkey_assign(NMEM nmem, 
+                                struct conf_sortkey * sortkey,
+                                const char *name,
+                                enum conf_sortkey_type type)
 {
-    if (!nmem || !sortkey || !name)
-        return 0;
+    assert(nmem && sortkey && name);
     
     sortkey->name = nmem_strdup(nmem, name);
     sortkey->type = type;
-
-    return sortkey;
 }
 
 
-struct conf_service * conf_service_create(struct conf_config *config,
-                                          int num_metadata, int num_sortkeys,
+struct conf_service *conf_service_create(struct conf_config *config,
+                                         int num_metadata, int num_sortkeys,
                                           const char *service_id)
 {
     struct conf_service * service = 0;
     NMEM nmem = nmem_create();
 
-    //assert(nmem);
-    
     service = nmem_malloc(nmem, sizeof(struct conf_service));
     service->nmem = nmem;
     service->next = 0;
@@ -172,11 +164,10 @@ struct conf_metadata* conf_service_add_metadata(struct conf_service *service,
         || field_id < 0  || !(field_id < service->num_metadata))
         return 0;
 
-    //md = &((service->metadata)[field_id]);
     md = service->metadata + field_id;
-    md = conf_metadata_assign(service->nmem, md, name, type, merge, setting,
-                              brief, termlist, rank, sortkey_offset,
-                              mt);
+    conf_metadata_assign(service->nmem, md, name, type, merge, setting,
+                         brief, termlist, rank, sortkey_offset,
+                         mt);
     return md;
 }
 
@@ -194,7 +185,7 @@ struct conf_sortkey * conf_service_add_sortkey(struct conf_service *service,
 
     //sk = &((service->sortkeys)[field_id]);
     sk = service->sortkeys + field_id;
-    sk = conf_sortkey_assign(service->nmem, sk, name, type);
+    conf_sortkey_assign(service->nmem, sk, name, type);
 
     return sk;
 }
