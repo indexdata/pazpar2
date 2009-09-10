@@ -153,7 +153,7 @@ static struct database *load_database(const char *id,
     memset(db, 0, sizeof(*db));
     db->host = 0;
     db->url = nmem_strdup(service->nmem, id);
-    db->databases = xmalloc(2 * sizeof(char *));
+    db->databases = nmem_malloc(service->nmem, 2 * sizeof(char *));
     db->databases[0] = nmem_strdup(service->nmem, dbname);
     db->databases[1] = 0;
     db->errors = 0;
