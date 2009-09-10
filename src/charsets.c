@@ -132,7 +132,12 @@ void pp2_charset_destroy(pp2_charset_t pct)
         assert(pct->ref_count >= 1);
         --(pct->ref_count);
         if (pct->ref_count == 0)
+        {
+#if YAZ_HAVE_ICU
+            icu_chain_destroy(pct->icu_chn);
+#endif
             xfree(pct);
+        }
     }
 }
 
