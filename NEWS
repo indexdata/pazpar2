@@ -1,3 +1,24 @@
+--- 1.2.0 2009/09/10
+
+Configuration may now have multiple server areas. This means that a
+Pazpar2 instance may listen on multiple ports. Virtual hosting is not
+yet supported - on a server basis. Configuration may also have multiple
+services .. That is repeating service elements inside a server. Each
+has an attribute 'id' which serves as service ID. This ID in turn may
+be used in a Pazpar2 session, by specifying parameter service=ID for
+command init. There can be at most one unnamed service inside a server
+which can be referred to by not specifying an service ID for command
+init (backwards compatible). In order to partition multiple servers and
+services a new include directive has been added. This takes an attribute
+'src' which specifies one or more sub-files. For example to include
+service files, one might use:
+  <server >.. <include src=/"etc/pazpar2/conf.d/*.xml"/> .. </server>.
+It is the intention that that completely makes the settings directive
+redundant.
+
+Fix problem where the record command would wait forever if there were
+no targets to wait for (activeclients == 0).
+
 --- 1.1.1 2009/08/28
 
 One result set is created per session (last search) rather than for
