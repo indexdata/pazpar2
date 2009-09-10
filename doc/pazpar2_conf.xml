@@ -59,8 +59,9 @@
   
   <refsect2 id="config-server"><title>server</title>
    <para>
-    This section governs overall behavior of the client. The data
-    elements are described below.
+    This section governs overall behavior of the server. The data
+    elements are described below. From Pazpar2 version 1.2 this is
+    a repeatable element.
    </para>
    <variablelist> <!-- level 1 -->
     <varlistentry>
@@ -189,7 +190,15 @@
        extraction of data from the internal representation, primarily
        through the 'metadata' sub-element.
       </para>
-      
+      <para>
+       Pazpar2 version 1.2 and later allows multiple service elements.
+       Multiple services must be given a unique ID by specifying
+       attribute <literal>id</literal>.
+       A single service may be unnamed (service ID omitted). The
+       service ID is referred to in the <literal>init</literal> webservice
+       command's <literal>service</literal> parameter.
+      </para>
+
       <variablelist> <!-- Level 2 -->
        <varlistentry><term>metadata</term>
 	<listitem>

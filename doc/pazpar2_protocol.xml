@@ -73,6 +73,17 @@
 	</para>
       </listitem>
      </varlistentry>
+
+     <varlistentry>
+      <term>service</term>
+      <listitem>
+       <para>
+	Makes the session use the service with the given ID. If
+	this is setting is omitted, the session will use the
+	unnamed service in the Pazpar2 configuration.
+	</para>
+      </listitem>
+     </varlistentry>
     </variablelist>
    </para>
   </refsect2>
