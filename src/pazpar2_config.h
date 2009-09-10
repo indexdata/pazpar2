@@ -181,8 +181,7 @@ struct conf_service *locate_service(struct conf_server *server,
 
 
 int config_start_listeners(struct conf_config *conf,
-                           const char *listener_override,
-                           const char *proxy_override);
+                           const char *listener_override);
 
 void config_stop_listeners(struct conf_config *conf);
 

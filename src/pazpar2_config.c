@@ -958,8 +958,7 @@ void config_stop_listeners(struct conf_config *conf)
 }
 
 int config_start_listeners(struct conf_config *conf,
-                           const char *listener_override,
-                           const char *proxy_override)
+                           const char *listener_override)
 {
     struct conf_server *ser;
     for (ser = conf->servers; ser; ser = ser->next)
@@ -988,9 +987,7 @@ int config_start_listeners(struct conf_config *conf,
             return -1;
 
         w = wrbuf_alloc();
-        if (proxy_override)
-            wrbuf_puts(w, proxy_override);
-        else if (ser->proxy_host || ser->proxy_port)
+        if (ser->proxy_host || ser->proxy_port)
         {
             if (ser->proxy_host)
                 wrbuf_puts(w, ser->proxy_host);

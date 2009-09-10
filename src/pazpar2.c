@@ -91,7 +91,6 @@ static int sc_main(
     const char *uid = 0;
     int session_timeout = 60;
     const char *listener_override = 0;
-    const char *proxy_override = 0;
     const char *config_fname = 0;
     struct conf_config *config = 0;
     int test_mode = 0;
@@ -194,7 +193,7 @@ static int sc_main(
                     "mode");
             return 1;
         }
-        ret = config_start_listeners(config, listener_override, proxy_override);
+        ret = config_start_listeners(config, listener_override);
         if (ret)
             return ret; /* error starting http listener */
         
