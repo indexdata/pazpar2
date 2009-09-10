@@ -930,16 +930,13 @@ void config_destroy(struct conf_config *config)
     }
 }
 
-void config_read_settings(struct conf_config *config,
-                          const char *path_override)
+void config_read_settings(struct conf_config *config)
 {
     struct conf_service *s = config->servers->service;
     for (;s ; s = s->next)
     {
         init_settings(s);
-        if (path_override)
-            settings_read(s, path_override);
-        else if (s->settings)
+        if (s->settings)
             settings_read(s, s->settings);
         else if (config->servers->server_settings)
             settings_read(s, config->servers->server_settings);

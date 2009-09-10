@@ -32,7 +32,6 @@
    <arg choice="opt"><option>-h <replaceable>ip:port</replaceable></option></arg>
    <arg choice="opt"><option>-l <replaceable>logfile</replaceable></option></arg>
    <arg choice="opt"><option>-p <replaceable>pidfile</replaceable></option></arg>
-   <arg choice="opt"><option>-t <replaceable>path</replaceable></option></arg>
    <arg choice="opt"><option>-T <replaceable>session_timeout</replaceable></option></arg>
    <arg choice="opt"><option>-u <replaceable>uid</replaceable></option></arg>
    <arg choice="opt"><option>-V</option></arg>
@@ -112,16 +111,6 @@
     </listitem>
    </varlistentry>
 
-   <varlistentry>
-    <term><option>-t <replaceable>path</replaceable></option></term>
-    <listitem>
-     <para>
-      Specifies a file or directory with alternative settings. This
-      overrides the <literal>settings</literal> element in the main
-      configuration.
-     </para>
-    </listitem>
-   </varlistentry>
    <varlistentry>
     <term><option>-T <replaceable>session_timeout</replaceable></option></term>
     <listitem>

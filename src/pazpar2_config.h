@@ -174,8 +174,7 @@ void config_destroy(struct conf_config *config);
 xsltStylesheet *conf_load_stylesheet(struct conf_config *config,
                                      const char *fname);
 
-void config_read_settings(struct conf_config *config,
-                          const char *path_override);
+void config_read_settings(struct conf_config *config);
 
 struct conf_service *locate_service(struct conf_server *server,
                                     const char *service_id);

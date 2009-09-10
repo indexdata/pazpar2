@@ -34,13 +34,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <yaz/sc.h>
 
-static char *path_override = 0;
 static struct conf_config *sc_stop_config = 0;
 
 void child_handler(void *data)
 {
     struct conf_config *config = (struct conf_config *) data;
-    config_read_settings(config, path_override);
+    config_read_settings(config);
 
     pazpar2_event_loop();
 }
@@ -105,7 +104,7 @@ static int sc_main(
     yaz_log_init_prefix("pazpar2");
     yaz_log_xml_errors(0, YLOG_WARN);
 
-    while ((ret = options("dDf:h:l:p:t:T:u:VX", argv, argc, &arg)) != -2)
+    while ((ret = options("dDf:h:l:p:T:u:VX", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -130,9 +129,6 @@ static int sc_main(
             break;
         case 'p':
             pidfile = arg;
-            break;
-        case 't':
-            path_override = arg;
             break;
         case 'T':
 	    session_timeout = atoi(arg);
@@ -160,7 +156,6 @@ static int sc_main(
                     "    -h [host:]port          (REST protocol listener)\n"
                     "    -l file                 log to file\n"
                     "    -p pidfile              PID file\n"
-                    "    -t settings\n"
                     "    -T session_timeout\n"
                     "    -u uid\n"
                     "    -V                      show version\n"
