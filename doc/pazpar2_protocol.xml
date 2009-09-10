@@ -78,9 +78,9 @@
       <term>service</term>
       <listitem>
        <para>
-	Makes the session use the service with the given ID. If
-	this is setting is omitted, the session will use the
-	unnamed service in the Pazpar2 configuration.
+        If this is defined it specifies a service ID. Makes the session use
+        the service with this ID. If this is setting is omitted, the
+        session will use the unnamed service in the Pazpar2 configuration.
 	</para>
       </listitem>
      </varlistentry>
