@@ -10,7 +10,5 @@ config.h.in
 *.a
 *~
 stamp-h1
-test_config
-test_record
 test_sel_thread
 test_normalize
