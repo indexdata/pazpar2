@@ -489,6 +489,7 @@ void client_start_search(struct client *cl)
     const char *opt_requestsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
     const char *opt_maxrecs = session_setting_oneval(sdb, PZ_MAXRECS);
     const char *opt_sru = session_setting_oneval(sdb, PZ_SRU);
+    const char *opt_sort = session_setting_oneval(sdb, PZ_SORT);
 
     assert(link);
 
@@ -527,6 +528,8 @@ void client_start_search(struct client *cl)
         ZOOM_query q = ZOOM_query_create();
         yaz_log(YLOG_LOG, "Search %s CQL: %s", sdb->database->url, cl->cqlquery);
         ZOOM_query_cql(q, cl->cqlquery);
+	if (*opt_sort)
+	    ZOOM_query_sortby(q, opt_sort);
         rs = ZOOM_connection_search(link, q);
         ZOOM_query_destroy(q);
     }

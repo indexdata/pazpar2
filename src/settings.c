@@ -65,6 +65,7 @@ static char *hard_settings[] = {
     "pz:sru",
     "pz:sru_version",
     "pz:pqf_prefix",
+    "pz:sort",
     0
 };
 
