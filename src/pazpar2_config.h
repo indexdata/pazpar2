@@ -151,6 +151,7 @@ struct conf_server
     char *myurl;
     struct sockaddr_in *proxy_addr;
     int listener_socket;
+    char *server_settings;
 
     pp2_charset_t relevance_pct;
     pp2_charset_t sort_pct;

@@ -114,9 +114,9 @@ static void conf_sortkey_assign(NMEM nmem,
 }
 
 
-struct conf_service *conf_service_create(struct conf_config *config,
+static struct conf_service *service_init(struct conf_config *config,
                                          int num_metadata, int num_sortkeys,
-                                          const char *service_id)
+                                         const char *service_id)
 {
     struct conf_service * service = 0;
     NMEM nmem = nmem_create();
@@ -128,6 +128,10 @@ struct conf_service *conf_service_create(struct conf_config *config,
     service->databases = 0;
     service->targetprofiles = 0;
     service->config = config;
+
+    service->relevance_pct = 0;
+    service->sort_pct = 0;
+    service->mergekey_pct = 0;
 
     service->id = service_id ? nmem_strdup(nmem, service_id) : 0;
     service->num_metadata = num_metadata;
@@ -248,8 +252,7 @@ static void service_destroy(struct conf_service *service)
 
 static struct conf_service *service_create(struct conf_config *config,
                                            xmlNode *node,
-                                           const char *service_id,
-                                           const char *server_settings)
+                                           const char *service_id)
 {
     xmlNode *n;
     int md_node = 0;
@@ -272,8 +275,7 @@ static struct conf_service *service_create(struct conf_config *config,
             xmlFree(sortkey);
         }
 
-    service = conf_service_create(config,
-                                  num_metadata, num_sortkeys, service_id);
+    service = service_init(config, num_metadata, num_sortkeys, service_id);
 
     for (n = node->children; n; n = n->next)
     {
@@ -291,6 +293,48 @@ static struct conf_service *service_create(struct conf_config *config,
             if (!(service->targetprofiles = 
                   parse_targetprofiles(service->nmem, n)))
                 return 0;
+        }
+        else if (!strcmp((const char *) n->name, "relevance"))
+        {
+            if (service->relevance_pct)
+            {
+                yaz_log(YLOG_LOG, "relevance may not repeat in service");
+                return 0;
+            }
+            else
+            {
+                service->relevance_pct = pp2_charset_create_xml(n);
+                if (!service->relevance_pct)
+                    return 0;
+            }
+        }
+        else if (!strcmp((const char *) n->name, "sort"))
+        {
+            if (service->sort_pct)
+            {
+                yaz_log(YLOG_LOG, "sort may not repeat in service");
+                return 0;
+            }
+            else
+            {
+                service->sort_pct = pp2_charset_create_xml(n);
+                if (!service->sort_pct)
+                    return 0;
+            }
+        }
+        else if (!strcmp((const char *) n->name, "mergekey"))
+        {
+            if (service->mergekey_pct)
+            {
+                yaz_log(YLOG_LOG, "mergekey may not repeat in service");
+                return 0;
+            }
+            else
+            {
+                service->mergekey_pct = pp2_charset_create_xml(n);
+                if (!service->mergekey_pct)
+                    return 0;
+            }
         }
         else if (!strcmp((const char *) n->name, (const char *) "metadata"))
         {
@@ -466,11 +510,11 @@ static struct conf_service *service_create(struct conf_config *config,
             return 0;
         }
     }
-    init_settings(service);
     if (got_settings)
     {
         int pass;
         /* metadata has been read.. Consider now settings */
+        init_settings(service);
         for (pass = 1; pass <= 2; pass++)
         {
             for (n = node->children; n; n = n->next)
@@ -498,11 +542,6 @@ static struct conf_service *service_create(struct conf_config *config,
     }
     else
     {
-        if (server_settings)
-        {
-            settings_read_file(service, server_settings, 1);
-            settings_read_file(service, server_settings, 2);
-        }
     }
     return service;
 }
@@ -529,11 +568,69 @@ static char *parse_settings(struct conf_config *config,
     return r;
 }
 
+static void inherit_server_settings(struct conf_server *server)
+{
+    struct conf_service *s;
+    for (s = server->service; s; s = s->next)
+    {
+        if (!s->dictionary) /* service has no config settings ? */
+        {
+            if (server->server_settings)
+            {
+                /* inherit settings from server */
+                init_settings(s);
+                settings_read_file(s, server->server_settings, 1);
+                settings_read_file(s, server->server_settings, 2);
+            }
+            else
+            {
+                yaz_log(YLOG_WARN, "service '%s' has no settings",
+                        s->id ? s->id : "unnamed");
+                init_settings(s);
+            }
+        }
+
+        /* use relevance/sort/mergekey from server if not defined
+           for this service.. */
+        if (!s->relevance_pct)
+        {
+            if (server->relevance_pct)
+            {
+                s->relevance_pct = server->relevance_pct;
+                pp2_charset_incref(s->relevance_pct);
+            }
+            else
+                s->relevance_pct = pp2_charset_create(0);
+        }
+        
+        if (!s->sort_pct)
+        {
+            if (server->sort_pct)
+            {
+                s->sort_pct = server->sort_pct;
+                pp2_charset_incref(s->sort_pct);
+            }
+            else
+                s->sort_pct = pp2_charset_create(0);
+        }
+        
+        if (!s->mergekey_pct)
+        {
+            if (server->mergekey_pct)
+            {
+                s->mergekey_pct = server->mergekey_pct;
+                pp2_charset_incref(s->mergekey_pct);
+            }
+            else
+                s->mergekey_pct = pp2_charset_create(0);
+        }
+    }
+}
+
 static struct conf_server *parse_server(struct conf_config *config,
                                         NMEM nmem, xmlNode *node)
 {
     xmlNode *n;
-    const char *server_settings = 0;
     struct conf_server *server = nmem_malloc(nmem, sizeof(struct conf_server));
 
     server->host = 0;
@@ -547,6 +644,7 @@ static struct conf_server *parse_server(struct conf_config *config,
     server->relevance_pct = 0;
     server->sort_pct = 0;
     server->mergekey_pct = 0;
+    server->server_settings = 0;
 
     for (n = node->children; n; n = n->next)
     {
@@ -580,12 +678,12 @@ static struct conf_server *parse_server(struct conf_config *config,
         }
         else if (!strcmp((const char *) n->name, "settings"))
         {
-            if (server_settings)
+            if (server->server_settings)
             {
                 yaz_log(YLOG_FATAL, "Can't repeat 'settings'");
                 return 0;
             }
-            if (!(server_settings = parse_settings(config, nmem, n)))
+            if (!(server->server_settings = parse_settings(config, nmem, n)))
                 return 0;
         }
         else if (!strcmp((const char *) n->name, "relevance"))
@@ -621,46 +719,25 @@ static struct conf_server *parse_server(struct conf_config *config,
                 }
                 else if (!(*sp)->id && !service_id)
                 {
-                    yaz_log(YLOG_FATAL, "Duplicate unnamed service");
+                    yaz_log(YLOG_FATAL, "Duplicate unnamed service '%s'",
+                        service_id);
                     break;
                 }
 
             if (*sp)  /* service already exist */
+            {
+                xmlFree(service_id);
                 return 0;
+            }
             else
             {
                 struct conf_service *s = service_create(config, n,
-                                                        service_id,
-                                                        server_settings);
-                if (s)
-                {
-                    if (server->relevance_pct)
-                    {
-                        s->relevance_pct = server->relevance_pct;
-                        pp2_charset_incref(s->relevance_pct);
-                    }
-                    else
-                        s->relevance_pct = pp2_charset_create(0);
-
-                    if (server->sort_pct)
-                    {
-                        s->sort_pct = server->sort_pct;
-                        pp2_charset_incref(s->sort_pct);
-                    }
-                    else
-                        s->sort_pct = pp2_charset_create(0);
-
-                    if (server->mergekey_pct)
-                    {
-                        s->mergekey_pct = server->mergekey_pct;
-                        pp2_charset_incref(s->mergekey_pct);
-                    }
-                    else
-                        s->mergekey_pct = pp2_charset_create(0);
-                    *sp = s;
-                }
+                                                        service_id);
+                xmlFree(service_id);
+                if (!s)
+                    return 0;
+                *sp = s;
             }
-            xmlFree(service_id);
         }
         else
         {
@@ -668,6 +745,7 @@ static struct conf_server *parse_server(struct conf_config *config,
             return 0;
         }
     }
+    inherit_server_settings(server);
     return server;
 }
 
