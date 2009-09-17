@@ -40,9 +40,6 @@
   <set target="yulib001.mc.yu.edu:1111/DEFAULT" name="pz:name" value="Yeshiva U"/>
   <set target="z3950.fcla.edu:210/CF" name="pz:name" value="Florida CLA"/>
   <set target="z3950.library.wisc.edu:210/madison" name="pz:name" value="U of Wisconsin"/>
-  <set target="us1v1.indexdata.com/ruprime" name="pz:name" value="Reference Universe"/>
-  <set target="us1v1.indexdata.com/pdx" name="pz:name" value="Public Documents Masterfile"/>
-  <set target="us1.indexdata.com:9001/Default" name="pz:name" value="Open Content Alliance"/>
   <set target="opencontent.indexdata.com:210/oca-all" name="pz:name" value="OCA American Libraries"/>
   <set target="opencontent.indexdata.com:210/gutenberg" name="pz:name" value="Project Gutenberg"/>
   <set target="z3950.loc.gov:7090/voyager" name="pz:name" value="Library of Congress"/>
