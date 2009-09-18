@@ -68,6 +68,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "client.h"
 #include "settings.h"
 #include "normalize7bit.h"
+#include "marcmap.h"
 
 #define TERMLIST_HIGH_SCORE 25
 
@@ -271,8 +272,17 @@ xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
 
                 insert_settings_parameters(sdb, se, parms);
 
-                new = xsltApplyStylesheet(m->stylesheet, rdoc, (const char **) parms);
-                root= xmlDocGetRootElement(new);
+                if (m->stylesheet)
+                {
+                    new = xsltApplyStylesheet(m->stylesheet, rdoc, (const char **) parms);
+                }
+                else if (m->marcmap)
+                {
+                    new = marcmap_apply(m->marcmap, rdoc);
+                }
+
+                root = xmlDocGetRootElement(new);
+
                 if (!new || !root || !(root->children))
                 {
                     yaz_log(YLOG_WARN, "XSLT transformation failed from %s",
@@ -356,12 +366,30 @@ static int prepare_map(struct session *se, struct session_database *sdb)
         {
             (*m) = nmem_malloc(se->session_nmem, sizeof(**m));
             (*m)->next = 0;
-            if (!((*m)->stylesheet = conf_load_stylesheet(stylesheets[i])))
-            {
-                yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load stylesheet: %s",
-                        stylesheets[i]);
-                return -1;
+ 
+            // XSLT
+            if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl")) 
+            {    
+                (*m)->marcmap = NULL;
+                if (!((*m)->stylesheet = conf_load_stylesheet(stylesheets[i])))
+                {
+                    yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load stylesheet: %s",
+                            stylesheets[i]);
+                    return -1;
+                }
             }
+            // marcmap
+            else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-5], ".mmap"))
+            {
+                (*m)->stylesheet = NULL;
+		if (!((*m)->marcmap = marcmap_load(stylesheets[i], se->session_nmem)))
+                {
+                    yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load marcmap: %s",
+                            stylesheets[i]);
+                    return -1;
+                }
+            }
+
             m = &(*m)->next;
         }
     }

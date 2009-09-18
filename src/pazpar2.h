@@ -81,6 +81,7 @@ struct database_criterion {
 // Simple sequence of stylesheets run in series.
 struct database_retrievalmap {
     xsltStylesheet *stylesheet;
+    struct marcmap *marcmap;
     struct database_retrievalmap *next;
 };
 
