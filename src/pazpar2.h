@@ -122,6 +122,7 @@ struct session_watchentry {
 
 // End-user session
 struct session {
+    struct conf_service *service; /* service in use for this session */
     struct session_database *databases;  // All databases, settings overriden
     struct client *clients;              // Clients connected for current search
     NMEM session_nmem;  // Nmem for session-permanent storage
@@ -164,13 +165,13 @@ struct hitsbytarget {
 
 struct hitsbytarget *hitsbytarget(struct session *s, int *count, NMEM nmem);
 int select_targets(struct session *se, struct database_criterion *crit);
-struct session *new_session(NMEM nmem);
+struct session *new_session(NMEM nmem, struct conf_service *service);
 void destroy_session(struct session *s);
 void session_init_databases(struct session *s);
 int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
-enum pazpar2_error_code search(struct session *s, char *query, 
-                               char *filter, const char **addinfo);
+enum pazpar2_error_code search(struct session *s, const char *query, 
+                               const char *filter, const char **addinfo);
 struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, int start,
         int *num, int *total, int *sumhits, NMEM nmem_show);
 struct record_cluster *show_single(struct session *s, const char *id,
@@ -181,9 +182,6 @@ int session_set_watch(struct session *s, int what, session_watchfun fun, void *d
 int session_active_clients(struct session *s);
 void session_apply_setting(struct session *se, char *dbname, char *setting, char *value);
 const char *session_setting_oneval(struct session_database *db, int offset);
-
-int start_http_listener(void);
-void start_proxy(void);
 
 void pazpar2_add_channel(IOCHAN c);
 void pazpar2_event_loop(void);

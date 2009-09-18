@@ -4,7 +4,7 @@
 
 # Autoconf and automake setup
 AC_PREREQ(2.60)
-AC_INIT([pazpar2],[1.1.1],[pazpar2-help@indexdata.dk])
+AC_INIT([pazpar2],[1.2.0],[pazpar2-help@indexdata.dk])
 
 AC_CONFIG_HEADERS(src/config.h)
 
@@ -19,13 +19,13 @@ AC_PROG_RANLIB
 
 AC_LANG(C)
 
-YAZ_INIT([static icu threads],[3.0.39])
+YAZ_INIT([static icu threads],[3.0.46])
 if test -z "$YAZLIB"; then
 	AC_MSG_ERROR([YAZ development libraries missing])
 fi
 YAZ_DOC
 
-AC_CHECK_HEADERS([sys/time.h sys/socket.h unistd.h netinet/in.h netdb.h arpa/inet.h])
+AC_CHECK_HEADERS([sys/time.h sys/socket.h unistd.h netinet/in.h netdb.h arpa/inet.h glob.h])
 AC_CHECK_FUNCS([getaddrinfo])
 
 if test -d ${srcdir}/.git; then

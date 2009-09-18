@@ -77,21 +77,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // Note: Some things in this structure will eventually move to configuration
 struct parameters global_parameters = 
 {
-    "",
-    "",
-    "", 
-    0,
     0,   // dump_records
     0,   // debug_mode
-    30,  // operations timeout 
-    "81",
-    "Index Data PazPar2",
-    VERSION,
     60,   // session timeout 
     100,
-    MAX_CHUNK,
-    0,
-    0,
     180, // Z39.50 session timeout
     15   // Connect timeout
 };
@@ -197,7 +186,7 @@ xmlDoc *record_to_xml(struct session_database *sdb, const char *rec)
 static void insert_settings_parameters(struct session_database *sdb,
                                        struct session *se, char **parms)
 {
-    struct conf_service *service = global_parameters.server->service;
+    struct conf_service *service = se->service;
     int i;
     int nparms = 0;
     int offset = 0;
@@ -208,7 +197,7 @@ static void insert_settings_parameters(struct session_database *sdb,
         int setting;
 
         if (md->setting == Metadata_setting_parameter &&
-            (setting = settings_offset(md->name)) > 0)
+            (setting = settings_offset(service, md->name)) > 0)
         {
             const char *val = session_setting_oneval(sdb, setting);
             if (val && nparms < MAX_XSLT_ARGS)
@@ -230,9 +219,9 @@ static void insert_settings_parameters(struct session_database *sdb,
 }
 
 // Add static values from session database settings if applicable
-static void insert_settings_values(struct session_database *sdb, xmlDoc *doc)
+static void insert_settings_values(struct session_database *sdb, xmlDoc *doc,
+    struct conf_service *service)
 {
-    struct conf_service *service = global_parameters.server->service;
     int i;
 
     for (i = 0; i < service->num_metadata; i++)
@@ -241,7 +230,7 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc)
         int offset;
 
         if (md->setting == Metadata_setting_postproc &&
-            (offset = settings_offset(md->name)) > 0)
+            (offset = settings_offset(service, md->name)) > 0)
         {
             const char *val = session_setting_oneval(sdb, offset);
             if (val)
@@ -297,7 +286,7 @@ xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
             rdoc = new;
         }
 
-        insert_settings_values(sdb, rdoc);
+        insert_settings_values(sdb, rdoc, se->service);
 
         if (global_parameters.dump_records)
         {
@@ -371,7 +360,7 @@ static int prepare_map(struct session *se, struct session_database *sdb)
             if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl")) 
             {    
                 (*m)->marcmap = NULL;
-                if (!((*m)->stylesheet = conf_load_stylesheet(stylesheets[i])))
+                if (!((*m)->stylesheet = conf_load_stylesheet(se->service->config, stylesheets[i])))
                 {
                     yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load stylesheet: %s",
                             stylesheets[i]);
@@ -539,7 +528,7 @@ static struct database_criterion *parse_filter(NMEM m, const char *buf)
 }
 
 enum pazpar2_error_code search(struct session *se,
-                               char *query, char *filter,
+                               const char *query, const char *filter,
                                const char **addinfo)
 {
     int live_channels = 0;
@@ -560,7 +549,7 @@ enum pazpar2_error_code search(struct session *se,
     live_channels = select_targets(se, criteria);
     if (live_channels)
     {
-        int maxrecs = live_channels * global_parameters.toget;
+        int maxrecs = live_channels * global_parameters.toget; // This is buggy!!!
         se->reclist = reclist_create(se->nmem, maxrecs);
         se->expected_maxrecs = maxrecs;
     }
@@ -598,8 +587,9 @@ enum pazpar2_error_code search(struct session *se,
 static void session_init_databases_fun(void *context, struct database *db)
 {
     struct session *se = (struct session *) context;
+    struct conf_service *service = se->service;
     struct session_database *new = nmem_malloc(se->session_nmem, sizeof(*new));
-    int num = settings_num();
+    int num = settings_num(service);
     int i;
 
     new->database = db;
@@ -632,7 +622,7 @@ static void session_database_destroy(struct session_database *sdb)
 void session_init_databases(struct session *se)
 {
     se->databases = 0;
-    predef_grep_databases(se, 0, session_init_databases_fun);
+    predef_grep_databases(se, se->service, 0, session_init_databases_fun);
 }
 
 // Probably session_init_databases_fun should be refactored instead of
@@ -640,7 +630,9 @@ void session_init_databases(struct session *se)
 static struct session_database *load_session_database(struct session *se, 
                                                       char *id)
 {
-    struct database *db = find_database(id, 0);
+    struct database *db = find_database(id, 0, se->service);
+
+    resolve_database(db);
 
     session_init_databases_fun((void*) se, db);
     // New sdb is head of se->databases list
@@ -664,8 +656,9 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
                            char *value)
 {
     struct session_database *sdb = find_session_database(se, dbname);
+    struct conf_service *service = se->service;
     struct setting *new = nmem_malloc(se->session_nmem, sizeof(*new));
-    int offset = settings_offset_cprefix(setting);
+    int offset = settings_offset_cprefix(service, setting);
 
     if (offset < 0)
     {
@@ -714,13 +707,14 @@ void destroy_session(struct session *s)
     wrbuf_destroy(s->wrbuf);
 }
 
-struct session *new_session(NMEM nmem) 
+struct session *new_session(NMEM nmem, struct conf_service *service) 
 {
     int i;
     struct session *session = nmem_malloc(nmem, sizeof(*session));
 
     yaz_log(YLOG_DEBUG, "New Pazpar2 session");
-    
+
+    session->service = service;
     session->relevance = 0;
     session->total_hits = 0;
     session->total_records = 0;
@@ -902,52 +896,10 @@ void statistics(struct session *se, struct statistics *stat)
     stat->num_clients = count;
 }
 
-int start_http_listener(void)
-{
-    char hp[128] = "";
-    struct conf_server *ser = global_parameters.server;
-
-    if (*global_parameters.listener_override)
-        strcpy(hp, global_parameters.listener_override);
-    else
-    {
-        strcpy(hp, ser->host ? ser->host : "");
-        if (ser->port)
-        {
-            if (*hp)
-                strcat(hp, ":");
-            sprintf(hp + strlen(hp), "%d", ser->port);
-        }
-    }
-    return http_init(hp);
-}
-
-void start_proxy(void)
-{
-    char hp[128] = "";
-    struct conf_server *ser = global_parameters.server;
-
-    if (*global_parameters.proxy_override)
-        strcpy(hp, global_parameters.proxy_override);
-    else if (ser->proxy_host || ser->proxy_port)
-    {
-        strcpy(hp, ser->proxy_host ? ser->proxy_host : "");
-        if (ser->proxy_port)
-        {
-            if (*hp)
-                strcat(hp, ":");
-            sprintf(hp + strlen(hp), "%d", ser->proxy_port);
-        }
-    }
-    else
-        return;
-
-    http_set_proxyaddr(hp, ser->myurl ? ser->myurl : "");
-}
-
 
 // Master list of connections we're handling events to
-static IOCHAN channel_list = 0; 
+static IOCHAN channel_list = 0;  /* thread pr */
+
 void pazpar2_add_channel(IOCHAN chan)
 {
     chan->next = channel_list;
@@ -989,8 +941,8 @@ static struct record_metadata *record_metadata_init(
     return rec_md;
 }
 
-const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
-                         struct conf_service *service, NMEM nmem)
+static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
+                                struct conf_service *service, NMEM nmem)
 {
     char *mergekey_norm = 0;
     xmlNode *root = xmlDocGetRootElement(doc);
@@ -1004,7 +956,7 @@ const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
         const char *norm_str;
         pp2_relevance_token_t prt =
             pp2_relevance_tokenize(
-                global_parameters.server->mergekey_pct,
+                service->mergekey_pct,
                 (const char *) mergekey);
         
         while ((norm_str = pp2_relevance_token_next(prt)))
@@ -1048,7 +1000,7 @@ const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
                         const char *norm_str;
                         pp2_relevance_token_t prt =
                             pp2_relevance_tokenize(
-                                global_parameters.server->mergekey_pct,
+                                service->mergekey_pct,
                                 (const char *) value);
                         
                         while ((norm_str = pp2_relevance_token_next(prt)))
@@ -1101,7 +1053,7 @@ struct record *ingest_record(struct client *cl, const char *rec,
     const char *mergekey_norm;
     xmlChar *type = 0;
     xmlChar *value = 0;
-    struct conf_service *service = global_parameters.server->service;
+    struct conf_service *service = se->service;
 
     if (!xdoc)
         return 0;
@@ -1120,7 +1072,7 @@ struct record *ingest_record(struct client *cl, const char *rec,
                            record_no);
 
     cluster = reclist_insert(se->reclist, 
-                             global_parameters.server->service, 
+                             service, 
                              record, (char *) mergekey_norm, 
                              &se->total_merged);
     if (global_parameters.dump_records)
@@ -1234,7 +1186,7 @@ struct record *ingest_record(struct client *cl, const char *rec,
                                             sizeof(union data_types));
                          
                         prt = pp2_relevance_tokenize(
-                            global_parameters.server->sort_pct,
+                            service->sort_pct,
                             rec_md->data.text.disp);
 
                         pp2_relevance_token_next(prt);

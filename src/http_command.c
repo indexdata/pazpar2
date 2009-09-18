@@ -37,7 +37,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "eventl.h"
 #include "pazpar2.h"
 #include "http.h"
-#include "http_command.h"
 #include "settings.h"
 #include "client.h"
 
@@ -53,7 +52,8 @@ struct http_session {
     struct http_session *next;
 };
 
-static struct http_session *session_list = 0;
+static struct http_session *session_list = 0; /* thread pr */
+
 void http_session_destroy(struct http_session *s);
 
 static void session_timeout(IOCHAN i, int event)
@@ -62,12 +62,12 @@ static void session_timeout(IOCHAN i, int event)
     http_session_destroy(s);
 }
 
-struct http_session *http_session_create(void)
+struct http_session *http_session_create(struct conf_service *service)
 {
     NMEM nmem = nmem_create();
     struct http_session *r = nmem_malloc(nmem, sizeof(*r));
 
-    r->psession = new_session(nmem);
+    r->psession = new_session(nmem, service);
     r->session_id = 0;
     r->timestamp = 0;
     r->nmem = nmem;
@@ -155,7 +155,7 @@ static void error(struct http_response *rs,
 
 unsigned int make_sessionid(void)
 {
-    static int seq = 0;
+    static int seq = 0; /* thread pr */
     unsigned int res;
 
     seq++;
@@ -185,7 +185,7 @@ unsigned int make_sessionid(void)
 static struct http_session *locate_session(struct http_request *rq, struct http_response *rs)
 {
     struct http_session *p;
-    char *session = http_argbyname(rq, "session");
+    const char *session = http_argbyname(rq, "session");
     unsigned int id;
 
     if (!session)
@@ -237,7 +237,7 @@ static int process_settings(struct session *se, struct http_request *rq,
 static void cmd_exit(struct http_channel *c)
 {
     yaz_log(YLOG_WARN, "exit");
-    http_close_server();
+    http_close_server(c->server);
 }
 
 static void cmd_init(struct http_channel *c)
@@ -245,8 +245,17 @@ static void cmd_init(struct http_channel *c)
     unsigned int sesid;
     char buf[1024];
     const char *clear = http_argbyname(c->request, "clear");
-    struct http_session *s = http_session_create();
+    const char *service_name = http_argbyname(c->request, "service");
+    struct conf_service *service = locate_service(c->server,
+                                                  service_name);
+    struct http_session *s = http_session_create(service);
     struct http_response *rs = c->response;
+
+    if (!service)
+    {
+        error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "service");
+        return;
+    }
 
     yaz_log(YLOG_DEBUG, "HTTP Session init");
     if (!clear || *clear == '0')
@@ -333,8 +342,8 @@ static void cmd_termlist(struct http_channel *c)
     struct termlist_score **p;
     int len;
     int i;
-    char *name = http_argbyname(rq, "name");
-    char *nums = http_argbyname(rq, "num");
+    const char *name = http_argbyname(rq, "name");
+    const char *nums = http_argbyname(rq, "num");
     int num = 15;
     int status;
 
@@ -357,7 +366,7 @@ static void cmd_termlist(struct http_channel *c)
     while (*name)
     {
         char tname[256];
-        char *tp;
+        const char *tp;
 
         if (!(tp = strchr(name, ',')))
             tp = name + strlen(name);
@@ -552,13 +561,14 @@ static void cmd_record(struct http_channel *c)
     struct http_session *s = locate_session(rq, rs);
     struct record_cluster *rec, *prev_r, *next_r;
     struct record *r;
-    struct conf_service *service = global_parameters.server->service;
+    struct conf_service *service;
     const char *idstr = http_argbyname(rq, "id");
     const char *offsetstr = http_argbyname(rq, "offset");
     const char *binarystr = http_argbyname(rq, "binary");
     
     if (!s)
         return;
+    service = s->psession->service;
     if (!idstr)
     {
         error(rs, PAZPAR2_MISSING_PARAMETER, "id");
@@ -567,7 +577,11 @@ static void cmd_record(struct http_channel *c)
     wrbuf_rewind(c->wrbuf);
     if (!(rec = show_single(s->psession, idstr, &prev_r, &next_r)))
     {
-        if (session_set_watch(s->psession, SESSION_WATCH_RECORD,
+        if (session_active_clients(s->psession) == 0)
+        {
+            error(rs, PAZPAR2_RECORD_MISSING, idstr);
+        }
+        else if (session_set_watch(s->psession, SESSION_WATCH_RECORD,
                               cmd_record_ready, c, c) != 0)
         {
             error(rs, PAZPAR2_RECORD_MISSING, idstr);
@@ -655,9 +669,9 @@ static void show_records(struct http_channel *c, int active)
     struct http_session *s = locate_session(rq, rs);
     struct record_cluster **rl;
     struct reclist_sortparms *sp;
-    char *start = http_argbyname(rq, "start");
-    char *num = http_argbyname(rq, "num");
-    char *sort = http_argbyname(rq, "sort");
+    const char *start = http_argbyname(rq, "start");
+    const char *num = http_argbyname(rq, "num");
+    const char *sort = http_argbyname(rq, "sort");
     int startn = 0;
     int numn = 20;
     int total;
@@ -677,7 +691,7 @@ static void show_records(struct http_channel *c, int active)
         numn = atoi(num);
     if (!sort)
         sort = "relevance";
-    if (!(sp = reclist_parse_sortparms(c->nmem, sort)))
+    if (!(sp = reclist_parse_sortparms(c->nmem, sort, s->psession->service)))
     {
         error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
         return;
@@ -698,7 +712,7 @@ static void show_records(struct http_channel *c, int active)
         int ccount;
         struct record *p;
         struct record_cluster *rec = rl[i];
-        struct conf_service *service = global_parameters.server->service;
+        struct conf_service *service = s->psession->service;
 
         wrbuf_puts(c->wrbuf, "<hit>\n");
         write_metadata(c->wrbuf, service, rec->metadata, 0);
@@ -729,7 +743,7 @@ static void cmd_show(struct http_channel *c)
     struct http_request *rq = c->request;
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
-    char *block = http_argbyname(rq, "block");
+    const char *block = http_argbyname(rq, "block");
     int status;
 
     if (!s)
@@ -795,8 +809,8 @@ static void cmd_search(struct http_channel *c)
     struct http_request *rq = c->request;
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(rq, rs);
-    char *query = http_argbyname(rq, "query");
-    char *filter = http_argbyname(rq, "filter");
+    const char *query = http_argbyname(rq, "query");
+    const char *filter = http_argbyname(rq, "filter");
     enum pazpar2_error_code code;
     const char *addinfo = 0;
 
@@ -912,7 +926,7 @@ struct {
 
 void http_command(struct http_channel *c)
 {
-    char *command = http_argbyname(c->request, "command");
+    const char *command = http_argbyname(c->request, "command");
     struct http_response *rs = http_create_response(c);
     int i;
 

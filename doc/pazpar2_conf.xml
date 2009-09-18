@@ -59,8 +59,9 @@
   
   <refsect2 id="config-server"><title>server</title>
    <para>
-    This section governs overall behavior of the client. The data
-    elements are described below.
+    This section governs overall behavior of the server. The data
+    elements are described below. From Pazpar2 version 1.2 this is
+    a repeatable element.
    </para>
    <variablelist> <!-- level 1 -->
     <varlistentry>
@@ -100,80 +101,30 @@
       </para>
      </listitem>
     </varlistentry>
-    
-    <varlistentry>
-     <term>relevance</term>
-     <listitem>
-      <para>
-       Specifies ICU tokenization and transformation rules
-       for tokens that are used in Pazpar2's relevance ranking.  The 'id'
-       attribute is currently not used, and the 'locale'
-       attribute must be set to one of the locale strings
-       defined in ICU. The child elements listed below can be
-       in any order, except the 'index' element which logically
-       belongs to the end of the list. The stated tokenization,
-       transformation and charmapping instructions are performed
-       in order from top to bottom. 
-      </para>
-      <variablelist> <!-- Level 2 -->
-       <varlistentry><term>casemap</term>
-	<listitem>
-	 <para>
-	  The attribute 'rule' defines the direction of the
-	  per-character casemapping, allowed values are "l"
-	  (lower), "u" (upper), "t" (title).  
-	 </para>
-	</listitem>
-       </varlistentry>
-       <varlistentry><term>transform</term>
-	<listitem>
-	 <para>
-	  Normalization and transformation of tokens follows
-	  the rules defined in the 'rule' attribute. For
-	  possible values we refer to the extensive ICU
-	  documentation found at the 
-	  <ulink url="&url.icu.transform;">ICU
-	   transformation</ulink> home page. Set filtering
-	  principles are explained at the 
-	  <ulink url="&url.icu.unicode.set;">ICU set and
-	   filtering</ulink> page.
-	 </para>
-	</listitem>
-       </varlistentry>
-       <varlistentry><term>tokenize</term>
-	<listitem>
-	 <para>
-	  Tokenization is the only rule in the ICU chain
-	  which splits one token into multiple tokens. The
-	  'rule' attribute may have the following values:
-	  "s" (sentence), "l" (line-break), "w" (word), and
-	  "c" (character), the later probably not being
-	  very useful in a pruning Pazpar2 installation. 
-	 </para>
-	</listitem>
-       </varlistentry>
-      </variablelist>
-     </listitem>
-    </varlistentry>
 
     <varlistentry>
-     <term>sort</term>
+     <term>relevance / sort / mergekey</term>
      <listitem>
       <para>
-       Specifies ICU tokenization and transformation rules
-       for tokens that are used in Pazpar2's sorting. The contents
-       is similar to that of <literal>relevance</literal>.
+       Specifies character set normalization for relevancy / sorting 
+       and the mergekey - for the server. These definitions serves as
+       default for services that don't have these given. For the meaning
+       of these settings refer to the "relevance" element inside service.
       </para>
      </listitem>
     </varlistentry>
     
     <varlistentry>
-     <term>mergekey</term>
+     <term>settings</term>
      <listitem>
       <para>
-       Specifies ICU tokenization and transformation rules
-       for tokens that are used in Pazpar2's mergekey. The contents
-       is similar to that of <literal>relevance</literal>.
+       Specifies target settings for the server.. These settings serves
+       as default for all services which don't have these given.
+       The settings element requires one attribute 'src' which specifies
+       a settings file or a directory . If a directory is given all
+       files with suffix <filename>.xml</filename> is read from this
+       directory. Refer to 
+       <xref linkend="target_settings"/> for more information.
       </para>
      </listitem>
     </varlistentry>
@@ -189,7 +140,16 @@
        extraction of data from the internal representation, primarily
        through the 'metadata' sub-element.
       </para>
-      
+      <para>
+       Pazpar2 version 1.2 and later allows multiple service elements.
+       Multiple services must be given a unique ID by specifying
+       attribute <literal>id</literal>.
+       A single service may be unnamed (service ID omitted). The
+       service ID is referred to in the
+       <link linkend="command-init"><literal>init</literal></link> webservice
+       command's <literal>service</literal> parameter.
+      </para>
+
       <variablelist> <!-- Level 2 -->
        <varlistentry><term>metadata</term>
 	<listitem>
@@ -312,7 +272,6 @@
 	   </listitem>
 	  </varlistentry>
 
-
 	  <varlistentry><term>setting</term>
 	   <listitem>
 	    <para>
@@ -327,64 +286,171 @@
 	      the value to decide how to deal with other data values.
 	    </para>
 	    <para>
-	    </para>
 	      The purpose of using settings in this way can either be to
 	      control the behavior of normalization stylesheet in a database-
 	      dependent way, or to easily make database-dependent values
 	      available to display-logic in your user interface, without having
 	      to implement complicated interactions between the user interface
 	      and your configuration system.
+	    </para>
 	   </listitem>
 	  </varlistentry>
+	  
 	 </variablelist> <!-- attributes to metadata -->
 	 
 	</listitem>
        </varlistentry>
+       
+       <varlistentry>
+	<term>relevance</term>
+	<listitem>
+	 <para>
+	  Specifies ICU tokenization and transformation rules
+	  for tokens that are used in Pazpar2's relevance ranking.
+	  The 'id' attribute is currently not used, and the 'locale'
+	  attribute must be set to one of the locale strings
+	  defined in ICU. The child elements listed below can be
+	  in any order, except the 'index' element which logically
+	  belongs to the end of the list. The stated tokenization,
+	  transformation and charmapping instructions are performed
+	  in order from top to bottom. 
+	 </para>
+	 <variablelist> <!-- Level 2 -->
+	  <varlistentry><term>casemap</term>
+	   <listitem>
+	    <para>
+	     The attribute 'rule' defines the direction of the
+	     per-character casemapping, allowed values are "l"
+	     (lower), "u" (upper), "t" (title).  
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	  <varlistentry><term>transform</term>
+	   <listitem>
+	    <para>
+	     Normalization and transformation of tokens follows
+	     the rules defined in the 'rule' attribute. For
+	     possible values we refer to the extensive ICU
+	     documentation found at the 
+	     <ulink url="&url.icu.transform;">ICU
+	      transformation</ulink> home page. Set filtering
+	     principles are explained at the 
+	     <ulink url="&url.icu.unicode.set;">ICU set and
+	      filtering</ulink> page.
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	  <varlistentry><term>tokenize</term>
+	   <listitem>
+	    <para>
+	     Tokenization is the only rule in the ICU chain
+	     which splits one token into multiple tokens. The
+	     'rule' attribute may have the following values:
+	     "s" (sentence), "l" (line-break), "w" (word), and
+	     "c" (character), the later probably not being
+	     very useful in a pruning Pazpar2 installation. 
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	 </variablelist>
+	 <para>
+	  From Pazpar2 version 1.1 the ICU wrapper from YAZ is used.
+	  Refer to the <ulink url="&url.yaz.yaz-icu;">yaz-icu</ulink>
+	  utility for more information.
+	 </para>
+	</listitem>
+       </varlistentry>
+       
+       <varlistentry>
+	<term>sort</term>
+	<listitem>
+	 <para>
+	  Specifies ICU tokenization and transformation rules
+	  for tokens that are used in Pazpar2's sorting. The contents
+	  is similar to that of <literal>relevance</literal>.
+	 </para>
+	</listitem>
+       </varlistentry>
+       
+       <varlistentry>
+	<term>mergekey</term>
+	<listitem>
+	 <para>
+	  Specifies ICU tokenization and transformation rules
+	  for tokens that are used in Pazpar2's mergekey. The contents
+	  is similar to that of <literal>relevance</literal>.
+	 </para>
+	</listitem>
+       </varlistentry>
+
+       <varlistentry>
+	<term>settings</term>
+	<listitem>
+	 <para>
+	  Specifies target settings for this service. Refer to
+	  <xref linkend="target_settings"/>.
+	 </para>
+	</listitem>
+       </varlistentry>
+
       </variablelist>     <!-- Data elements in service directive -->
      </listitem>
     </varlistentry>
+    
    </variablelist>           <!-- Data elements in server directive -->
   </refsect2>
-  
+
  </refsect1>
  
  <refsect1><title>EXAMPLE</title>
   <para>Below is a working example configuration:
-  <screen><![CDATA[
-<?xml version="1.0" encoding="UTF-8"?>
-<pazpar2 xmlns="http://www.indexdata.com/pazpar2/1.0">
-
-<server>
-  <listen port="9004"/>
-  <proxy host="us1.indexdata.com" myurl="us1.indexdata.com"/>
-
-  <!-- optional ICU ranking configuration example -->
-  <!--
-  <icu_chain id="el:word" locale="el">
-    <normalize rule="[:Control:] Any-Remove"/>
-    <tokenize rule="l"/>
-    <normalize rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
-    <casemap rule="l"/>
-    <index/>
-  </icu_chain>
-  -->
-
-  <service>
-    <metadata name="title" brief="yes" sortkey="skiparticle" merge="longest" rank="6"/>
-    <metadata name="isbn" merge="unique"/>
-    <metadata name="date" brief="yes" sortkey="numeric" type="year" merge="range"
-	    termlist="yes"/>
-    <metadata name="author" brief="yes" termlist="yes" merge="longest" rank="2"/>
-    <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
-    <metadata name="url" merge="unique"/>
-  </service>
-</server>
-
-</pazpar2>
-]]></screen>
+   <screen><![CDATA[
+    <?xml version="1.0" encoding="UTF-8"?>
+    <pazpar2 xmlns="http://www.indexdata.com/pazpar2/1.0">
+    
+      <server>
+        <listen port="9004"/>
+        <service>
+          <metadata name="title" brief="yes" sortkey="skiparticle"
+             merge="longest" rank="6"/>
+          <metadata name="isbn" merge="unique"/>
+          <metadata name="date" brief="yes" sortkey="numeric"
+             type="year" merge="range" termlist="yes"/>
+          <metadata name="author" brief="yes" termlist="yes"
+             merge="longest" rank="2"/>
+          <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
+          <metadata name="url" merge="unique"/>
+          <relevance>
+            <icu_chain id="relevance" locale="el">
+              <transform rule="[:Control:] Any-Remove"/>
+              <tokenize rule="l"/>
+              <transform rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
+              <casemap rule="l"/>
+             </icu_chain>
+           </relevance>
+           <settings src="mysettings"/>
+        <service>
+     </server>
+   </pazpar2>
+    ]]></screen>
   </para>
  </refsect1> 
- 
+
+ <refsect1 id="config-include"><title>INCLUDE FACILITY</title>
+  <para>
+   The XML configuration may be partitioned into multiple files by using
+   the <literal>include</literal> element which takes a single attribute,
+   <literal>src</literal>. The of the <literal>src</literal> attribute is
+   regular Shell like glob-pattern. For example,
+   <screen><![CDATA[
+    <include src="/etc/pazpar2/conf.d/*.xml"/>
+    ]]></screen>
+  </para>
+  <para>
+   The include facility requires Pazpar2 version 1.2.
+  </para>
+ </refsect1>
+
  <refsect1 id="target_settings"><title>TARGET SETTINGS</title>
   <para>
    Pazpar2 features a cunning scheme by which you can associate various
@@ -420,7 +486,9 @@
    environment, where different end-users may need to be represented to
    some search targets in different ways. This, again, can be managed
    using an external database or other lookup mechanism. Setting overrides
-   can be performed either using the 'init' or the 'settings' webservice
+   can be performed either using the
+   <link linkend="command-init">init</link> or the 
+   <link linkend="command-settings">settings</link> webservice
    command.
   </para>
   
@@ -433,8 +501,10 @@
   
   <para>
    Finally, as an extreme case of this, the webservice client can
-   introduce entirely new targets, on the fly, as part of the init or
-   settings command. This is useful if you desire to manage information
+   introduce entirely new targets, on the fly, as part of the
+   <link linkend="command-init">init</link> or
+   <link linkend="command-settings">settings</link> command.
+   This is useful if you desire to manage information
    about your search targets in a separate application such as a database.
    You do not need any static settings file whatsoever to run Pazpar2 -- as
    long as the webservice client is prepared to supply the necessary
@@ -834,6 +904,16 @@
 	  internally in pazpar2. This allows you to attach complex 'filters' to
 	  queries for a gien target, sometimes necessary to select sub-catalogs
 	  in union catalog systems, etc.
+	</para>
+      </listitem>
+    </varlistentry>
+
+    <varlistentry>
+      <term>pz:sort</term>
+      <listitem>
+        <para>
+	  Specifies sort criteria to be applied to the result set. Only works for targets
+	  which support the sort service.
 	</para>
       </listitem>
     </varlistentry>

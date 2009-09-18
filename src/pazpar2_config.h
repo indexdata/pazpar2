@@ -100,14 +100,27 @@ struct conf_service
     struct conf_metadata *metadata;
     int num_sortkeys;
     struct conf_sortkey *sortkeys;
+    struct setting_dictionary *dictionary;
+    struct conf_service *next;
+    char *id;
+    char *settings;
+    NMEM nmem;
 
+    /* duplicated from conf_server */
+    pp2_charset_t relevance_pct;
+    pp2_charset_t sort_pct;
+    pp2_charset_t mergekey_pct;
+
+    struct database *databases;
+    struct conf_targetprofiles *targetprofiles;
+    struct conf_config *config;
 };
 
-struct conf_service * conf_service_create(NMEM nmem, 
-                                          int num_metadata, int num_sortkeys);
+struct conf_service * conf_service_create(struct conf_config *config,
+                                          int num_metadata, int num_sortkeys,
+                                          const char *service_id);
 
-struct conf_metadata* conf_service_add_metadata(NMEM nmem, 
-                                                struct conf_service *service,
+struct conf_metadata* conf_service_add_metadata(struct conf_service *service,
                                                 int field_id,
                                                 const char *name,
                                                 enum conf_metadata_type type,
@@ -119,8 +132,7 @@ struct conf_metadata* conf_service_add_metadata(NMEM nmem,
                                                 int sortkey_offset,
                                                 enum conf_metadata_mergekey mt);
 
-struct conf_sortkey * conf_service_add_sortkey(NMEM nmem,
-                                               struct conf_service *service,
+struct conf_sortkey * conf_service_add_sortkey(struct conf_service *service,
                                                int field_id,
                                                const char *name,
                                                enum conf_sortkey_type type);
@@ -130,7 +142,6 @@ int conf_service_metadata_field_id(struct conf_service *service, const char * na
 
 int conf_service_sortkey_field_id(struct conf_service *service, const char * name);
 
-
 struct conf_server
 {
     char *host;
@@ -138,12 +149,13 @@ struct conf_server
     char *proxy_host;
     int proxy_port;
     char *myurl;
-    char *settings;
+    struct sockaddr_in *proxy_addr;
+    int listener_socket;
+    char *server_settings;
 
     pp2_charset_t relevance_pct;
     pp2_charset_t sort_pct;
     pp2_charset_t mergekey_pct;
-
     struct conf_service *service;
     struct conf_server *next;
 };
@@ -156,20 +168,21 @@ struct conf_targetprofiles
     char *src;
 };
 
-struct conf_config
-{
-    struct conf_server *servers;
-    struct conf_targetprofiles *targetprofiles;
-};
+struct conf_config *config_create(const char *fname, int verbose);
+void config_destroy(struct conf_config *config);
+xsltStylesheet *conf_load_stylesheet(struct conf_config *config,
+                                     const char *fname);
 
-#ifndef CONFIG_NOEXTERNS
+void config_start_databases(struct conf_config *config);
 
-extern struct conf_config *config;
+struct conf_service *locate_service(struct conf_server *server,
+                                    const char *service_id);
 
-#endif
 
-int read_config(const char *fname);
-xsltStylesheet *conf_load_stylesheet(const char *fname);
+int config_start_listeners(struct conf_config *conf,
+                           const char *listener_override);
+
+void config_stop_listeners(struct conf_config *conf);
 
 #endif
 

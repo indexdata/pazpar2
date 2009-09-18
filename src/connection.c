@@ -351,10 +351,8 @@ static int connection_connect(struct connection *con)
     assert(con);
 
     ZOOM_options_set(zoptions, "async", "1");
-    ZOOM_options_set(zoptions, "implementationName",
-            global_parameters.implementationName);
-    ZOOM_options_set(zoptions, "implementationVersion",
-            global_parameters.implementationVersion);
+    ZOOM_options_set(zoptions, "implementationName", PACKAGE_NAME);
+    ZOOM_options_set(zoptions, "implementationVersion", VERSION);
     if (zproxy && *zproxy)
     {
         con->zproxy = xstrdup(zproxy);

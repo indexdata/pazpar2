@@ -66,20 +66,16 @@ typedef int socklen_t;
 #include "eventl.h"
 #include "pazpar2.h"
 #include "http.h"
-#include "http_command.h"
 
 #define MAX_HTTP_HEADER 4096
 
 static void proxy_io(IOCHAN i, int event);
-static struct http_channel *http_create(const char *addr);
+static struct http_channel *http_create(const char *addr,
+                                        struct conf_server *server);
 static void http_destroy(IOCHAN i);
 
-// If this is set, we proxy normal HTTP requests
-static struct sockaddr_in *proxy_addr = 0; 
-static char proxy_url[256] = "";
-static char myurl[256] = "";
-static struct http_buf *http_buf_freelist = 0;
-static struct http_channel *http_channel_freelist = 0;
+static struct http_buf *http_buf_freelist = 0;        /* thread pr */
+static struct http_channel *http_channel_freelist = 0; /* thread pr */
 
 struct http_channel_observer_s {
     void *data;
@@ -271,7 +267,7 @@ void http_addheader(struct http_response *r, const char *name, const char *value
     r->headers = h;
 }
 
-char *http_argbyname(struct http_request *r, char *name)
+const char *http_argbyname(struct http_request *r, const char *name)
 {
     struct http_argument *p;
     if (!name)
@@ -282,7 +278,7 @@ char *http_argbyname(struct http_request *r, char *name)
     return 0;
 }
 
-char *http_headerbyname(struct http_header *h, char *name)
+const char *http_headerbyname(struct http_header *h, const char *name)
 {
     for (; h; h = h->next)
         if (!strcmp(h->name, name))
@@ -665,7 +661,8 @@ static struct http_buf *http_serialize_request(struct http_request *r)
 
 static int http_weshouldproxy(struct http_request *rq)
 {
-    if (proxy_addr && !strstr(rq->path, "search.pz2"))
+    struct http_channel *c = rq->channel;
+    if (c->server->proxy_addr && !strstr(rq->path, "search.pz2"))
         return 1;
     return 0;
 }
@@ -733,9 +730,8 @@ static int http_proxy(struct http_request *rq)
     struct http_proxy *p = c->proxy;
     struct http_header *hp;
     struct http_buf *requestbuf;
-    char server_via[128] = "";
     char server_port[16] = "";
-    struct conf_server *ser = global_parameters.server;
+    struct conf_server *ser = c->server;
 
     if (!p) // This is a new connection. Create a proxy channel
     {
@@ -755,8 +751,8 @@ static int http_proxy(struct http_request *rq)
                         &one, sizeof(one)) < 0)
             abort();
         enable_nonblock(sock);
-        if (connect(sock, (struct sockaddr *) proxy_addr, 
-                    sizeof(*proxy_addr)) < 0)
+        if (connect(sock, (struct sockaddr *) c->server->proxy_addr, 
+                    sizeof(*c->server->proxy_addr)) < 0)
         {
             if (!is_inprogress()) 
             {
@@ -785,6 +781,8 @@ static int http_proxy(struct http_request *rq)
     
     // Add new header about paraz2 version, host, remote client address, etc.
     {
+        char server_via[128];
+
         hp = rq->headers;
         hp = http_header_append(c, hp, 
                                 "X-Pazpar2-Version", PACKAGE_VERSION);
@@ -793,9 +791,10 @@ static int http_proxy(struct http_request *rq)
         sprintf(server_port, "%d",  ser->port);
         hp = http_header_append(c, hp, 
                                 "X-Pazpar2-Server-Port", server_port);
-        sprintf(server_via,  "1.1 %s:%s (%s/%s)",  
-                ser->host ? ser->host : "@",
-                server_port, PACKAGE_NAME, PACKAGE_VERSION);
+        yaz_snprintf(server_via, sizeof(server_via), 
+                     "1.1 %s:%s (%s/%s)",  
+                     ser->host ? ser->host : "@",
+                     server_port, PACKAGE_NAME, PACKAGE_VERSION);
         hp = http_header_append(c, hp, "Via" , server_via);
         hp = http_header_append(c, hp, "X-Forwarded-For", c->addr);
     }
@@ -1064,7 +1063,8 @@ static void http_destroy(IOCHAN i)
     iochan_destroy(i);
 }
 
-static struct http_channel *http_create(const char *addr)
+static struct http_channel *http_create(const char *addr,
+                                        struct conf_server *server)
 {
     struct http_channel *r = http_channel_freelist;
 
@@ -1080,6 +1080,7 @@ static struct http_channel *http_create(const char *addr)
         r->nmem = nmem_create();
         r->wrbuf = wrbuf_alloc();
     }
+    r->server = server;
     r->proxy = 0;
     r->iochan = 0;
     r->iqueue = r->oqueue = 0;
@@ -1107,6 +1108,7 @@ static void http_accept(IOCHAN i, int event)
     int s;
     IOCHAN c;
     struct http_channel *ch;
+    struct conf_server *server = iochan_getdata(i);
 
     len = sizeof addr;
     if ((s = accept(fd, (struct sockaddr *) &addr, &len)) < 0)
@@ -1119,17 +1121,15 @@ static void http_accept(IOCHAN i, int event)
     yaz_log(YLOG_DEBUG, "New command connection");
     c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT);
     
-    ch = http_create(inet_ntoa(addr.sin_addr));
+    ch = http_create(inet_ntoa(addr.sin_addr), server);
     ch->iochan = c;
     iochan_setdata(c, ch);
 
     pazpar2_add_channel(c);
 }
 
-static int listener_socket = 0;
-
 /* Create a http-channel listener, syntax [host:]port */
-int http_init(const char *addr)
+int http_init(const char *addr, struct conf_server *server)
 {
     IOCHAN c;
     int l;
@@ -1146,17 +1146,19 @@ int http_init(const char *addr)
     pp = strchr(addr, ':');
     if (pp)
     {
-        int len = pp - addr;
-        char hostname[128];
+        WRBUF w = wrbuf_alloc();
         struct hostent *he;
 
-        strncpy(hostname, addr, len);
-        hostname[len] = '\0';
-        if (!(he = gethostbyname(hostname))){
-            yaz_log(YLOG_FATAL, "Unable to resolve '%s'", hostname);
+        wrbuf_write(w, addr, pp - addr);
+        wrbuf_puts(w, "");
+
+        he = gethostbyname(wrbuf_cstr(w));
+        wrbuf_destroy(w);
+        if (!he)
+        {
+            yaz_log(YLOG_FATAL, "Unable to resolve '%s'", addr);
             return 1;
         }
-        
         memcpy(&myaddr.sin_addr.s_addr, he->h_addr_list[0], he->h_length);
         port = atoi(pp + 1);
     }
@@ -1188,52 +1190,59 @@ int http_init(const char *addr)
         return 1;
     }
 
-    listener_socket = l;
+    server->listener_socket = l;
 
     c = iochan_create(l, http_accept, EVENT_INPUT | EVENT_EXCEPT);
+    iochan_setdata(c, server);
     pazpar2_add_channel(c);
     return 0;
 }
 
-void http_close_server(void)
+void http_close_server(struct conf_server *server)
 {
     /* break the event_loop (select) by closing down the HTTP listener sock */
-    if (listener_socket)
+    if (server->listener_socket)
     {
 #ifdef WIN32
-        closesocket(listener_socket);
+        closesocket(server->listener_socket);
 #else
-        close(listener_socket);
+        close(server->listener_socket);
 #endif
     }
 }
 
-void http_set_proxyaddr(char *host, char *base_url)
+void http_set_proxyaddr(const char *host, struct conf_server *server)
 {
-    char *p;
+    const char *p;
     short port;
     struct hostent *he;
+    WRBUF w = wrbuf_alloc();
 
-    strcpy(myurl, base_url);
-    strcpy(proxy_url, host);
+    yaz_log(YLOG_LOG, "HTTP backend  %s", host);
+
     p = strchr(host, ':');
-    yaz_log(YLOG_DEBUG, "Proxying for %s", host);
-    yaz_log(YLOG_LOG, "HTTP backend  %s", proxy_url);
-    if (p) {
+    if (p)
+    {
         port = atoi(p + 1);
-        *p = '\0';
+        wrbuf_write(w, host, p - host);
+        wrbuf_puts(w, "");
     }
     else
-        port = 80;
-    if (!(he = gethostbyname(host))) 
     {
-        fprintf(stderr, "Failed to lookup '%s'\n", host);
+        port = 80;
+        wrbuf_puts(w, host);
+    }
+    if (!(he = gethostbyname(wrbuf_cstr(w))))
+    {
+        fprintf(stderr, "Failed to lookup '%s'\n", wrbuf_cstr(w));
         exit(1);
     }
-    proxy_addr = xmalloc(sizeof(struct sockaddr_in));
-    proxy_addr->sin_family = he->h_addrtype;
-    memcpy(&proxy_addr->sin_addr.s_addr, he->h_addr_list[0], he->h_length);
-    proxy_addr->sin_port = htons(port);
+    wrbuf_destroy(w);
+
+    server->proxy_addr = xmalloc(sizeof(struct sockaddr_in));
+    server->proxy_addr->sin_family = he->h_addrtype;
+    memcpy(&server->proxy_addr->sin_addr.s_addr, he->h_addr_list[0], he->h_length);
+    server->proxy_addr->sin_port = htons(port);
 }
 
 static void http_fire_observers(struct http_channel *c)

@@ -2,8 +2,7 @@
 
 sbin_PROGRAMS = pazpar2
 
-check_PROGRAMS = test_config \
-      test_record \
+check_PROGRAMS = \
       test_sel_thread \
       test_normalize
 
@@ -18,7 +17,7 @@ CONFIG_CLEAN_FILES=*.log
 AM_CFLAGS = $(YAZINC)
         
 libpazpar2_a_SOURCES = pazpar2_config.c pazpar2_config.h eventl.c eventl.h \
-	http.c http_command.c http_command.h http.h \
+	http.c http_command.c http.h \
 	logic.c pazpar2.h \
 	record.h record.c reclists.c reclists.h \
 	relevance.c relevance.h termlists.c termlists.h \
@@ -31,12 +30,6 @@ libpazpar2_a_SOURCES = pazpar2_config.c pazpar2_config.h eventl.c eventl.h \
 
 pazpar2_SOURCES = pazpar2.c
 pazpar2_LDADD = libpazpar2.a $(YAZLIB)
-
-test_config_SOURCES = test_config.c
-test_config_LDADD = libpazpar2.a $(YAZLIB)
-
-test_record_SOURCES = test_record.c
-test_record_LDADD = libpazpar2.a $(YAZLIB)
 
 test_sel_thread_SOURCES = test_sel_thread.c
 test_sel_thread_LDADD = libpazpar2.a $(YAZLIB)

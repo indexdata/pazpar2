@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PZ_SRU           15
 #define PZ_SRU_VERSION   16
 #define PZ_PQF_PREFIX    17
+#define PZ_SORT		 18
 
 struct setting
 {
@@ -48,11 +49,15 @@ struct setting
     struct setting *next;
 };
 
-int settings_num(void);
-void settings_read(const char *path);
-int settings_offset(const char *name);
-int settings_offset_cprefix(const char *name);
-void init_settings(void);
+void settings_read_file(struct conf_service *service, const char *path,
+                        int pass);
+void settings_read_node(struct conf_service *service, xmlNode *n,
+                        int pass);
+int settings_num(struct conf_service *service);
+int settings_offset(struct conf_service *service, const char *name);
+int settings_offset_cprefix(struct conf_service *service, const char *name);
+void init_settings(struct conf_service *service);
+void resolve_databases(struct conf_service *service);
 
 #endif
 

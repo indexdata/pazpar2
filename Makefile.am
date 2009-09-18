@@ -16,3 +16,6 @@ dist-hook:
 		done; \
 	done; exit 0
 
+.PHONY:debian
+debian:
+	dpkg-buildpackage -rfakeroot

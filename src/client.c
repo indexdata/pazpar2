@@ -101,7 +101,7 @@ static const char *client_states[] = {
     "Client_Disconnected"
 };
 
-static struct client *client_freelist = 0;
+static struct client *client_freelist = 0; /* thread pr */
 
 const char *client_get_state_str(struct client *cl)
 {
@@ -488,6 +488,7 @@ void client_start_search(struct client *cl)
     const char *opt_requestsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
     const char *opt_maxrecs = session_setting_oneval(sdb, PZ_MAXRECS);
     const char *opt_sru = session_setting_oneval(sdb, PZ_SRU);
+    const char *opt_sort = session_setting_oneval(sdb, PZ_SORT);
 
     assert(link);
 
@@ -526,6 +527,8 @@ void client_start_search(struct client *cl)
         ZOOM_query q = ZOOM_query_create();
         yaz_log(YLOG_LOG, "Search %s CQL: %s", sdb->database->url, cl->cqlquery);
         ZOOM_query_cql(q, cl->cqlquery);
+	if (*opt_sort)
+	    ZOOM_query_sortby(q, opt_sort);
         rs = ZOOM_connection_search(link, q);
         ZOOM_query_destroy(q);
     }
@@ -643,17 +646,20 @@ static char *make_cqlquery(struct client *cl)
     char *r;
     WRBUF wrb = wrbuf_alloc();
     int status;
+    ODR odr_out = odr_createmem(ODR_ENCODE);
 
-    zquery = p_query_rpn(global_parameters.odr_out, cl->pquery);
+    zquery = p_query_rpn(odr_out, cl->pquery);
     if ((status = cql_transform_rpn2cql_wrbuf(cqlt, wrb, zquery)))
     {
         yaz_log(YLOG_WARN, "failed to generate CQL query, code=%d", status);
-        return 0;
+        r = 0;
     }
-    r = xstrdup(wrbuf_cstr(wrb));
-
+    else
+    {
+        r = xstrdup(wrbuf_cstr(wrb));
+    }     
     wrbuf_destroy(wrb);
-    odr_reset(global_parameters.odr_out); // releases the zquery
+    odr_destroy(odr_out);
     cql_transform_close(cqlt);
     return r;
 }
@@ -706,7 +712,7 @@ int client_parse_query(struct client *cl, const char *query)
         char *p[512];
         extract_terms(se->nmem, cn, p);
         se->relevance = relevance_create(
-            global_parameters.server->relevance_pct,
+            se->service->relevance_pct,
             se->nmem, (const char **) p,
             se->expected_maxrecs);
     }

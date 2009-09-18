@@ -52,6 +52,7 @@ struct http_channel
     struct http_channel *next; // for freelist
     char addr[20]; // forwarded address
     http_channel_observer_t observers;
+    struct conf_server *server;
 };
 
 struct http_proxy //  attached to iochan for proxy connection
@@ -99,17 +100,17 @@ struct http_response
     char *content_type;
 };
 
-void http_set_proxyaddr(char *url, char *baseurl);
-int http_init(const char *addr);
-void http_close_server(void);
+void http_set_proxyaddr(const char *url, struct conf_server *ser);
+int http_init(const char *addr, struct conf_server *ser);
+void http_close_server(struct conf_server *ser);
 void http_addheader(struct http_response *r, 
                     const char *name, const char *value);
 struct http_header * http_header_append(struct http_channel *ch, 
                                         struct http_header * hp, 
                                         const char *name, 
                                         const char *value);
-char *http_argbyname(struct http_request *r, char *name);
-char *http_headerbyname(struct http_header *r, char *name);
+const char *http_argbyname(struct http_request *r, const char *name);
+const char *http_headerbyname(struct http_header *r, const char *name);
 struct http_response *http_create_response(struct http_channel *c);
 void http_send_response(struct http_channel *c);
 void urlencode(const char *i, char *o);
@@ -123,6 +124,9 @@ void http_observer_set_data2(http_channel_observer_t obs, void *data2);
 
 void http_remove_observer(http_channel_observer_t obs);
 struct http_channel *http_channel_observer_chan(http_channel_observer_t obs);
+
+void http_command(struct http_channel *c);
+
 #endif
 
 /*

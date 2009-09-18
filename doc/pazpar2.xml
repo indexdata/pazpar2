@@ -32,7 +32,7 @@
    <arg choice="opt"><option>-h <replaceable>ip:port</replaceable></option></arg>
    <arg choice="opt"><option>-l <replaceable>logfile</replaceable></option></arg>
    <arg choice="opt"><option>-p <replaceable>pidfile</replaceable></option></arg>
-   <arg choice="opt"><option>-t <replaceable>path</replaceable></option></arg>
+   <arg choice="opt"><option>-t</option></arg>
    <arg choice="opt"><option>-T <replaceable>session_timeout</replaceable></option></arg>
    <arg choice="opt"><option>-u <replaceable>uid</replaceable></option></arg>
    <arg choice="opt"><option>-V</option></arg>
@@ -113,15 +113,22 @@
    </varlistentry>
 
    <varlistentry>
-    <term><option>-t <replaceable>path</replaceable></option></term>
+    <term><option>-t</option></term>
     <listitem>
      <para>
-      Specifies a file or directory with alternative settings. This
-      overrides the <literal>settings</literal> element in the main
-      configuration.
+      Checks parameters and configuration. No service or daemon is
+      started. Useful for checking a new configuration before a
+      Pazpar2 is restarted.
      </para>
+     <note>
+      <para>
+       In Pazpar2 1.2 and earlier releasese, option -t specified a
+       local target settings file.
+      </para>
+     </note>
     </listitem>
    </varlistentry>
+
    <varlistentry>
     <term><option>-T <replaceable>session_timeout</replaceable></option></term>
     <listitem>
