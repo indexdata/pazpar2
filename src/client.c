@@ -67,7 +67,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /** \brief Represents client state for a connection to one search target */
 struct client {
     struct session_database *database;
-    struct conf_server *server;
     struct connection *connection;
     struct session *session;
     char *pquery; // Current search
