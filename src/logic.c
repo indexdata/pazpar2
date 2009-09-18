@@ -78,7 +78,6 @@ struct parameters global_parameters =
 {
     0,   // dump_records
     0,   // debug_mode
-    30,  // operations timeout 
     60,   // session timeout 
     100,
     180, // Z39.50 session timeout
