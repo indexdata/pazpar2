@@ -28,11 +28,11 @@ http://localhost:9763/search.pz2?session=1&command=record&id=title+how+to+progra
 http://localhost:9763/search.pz2?session=1&command=record&id=title+how+to+program+a+computer+author+jack+collins+medium+book&offset=0&binary=1
 http://localhost:9763/search.pz2?session=1&command=record&id=title+how+to+program+a+computer+author+jack+collins+medium+book&offset=0&binary=1&syntax=xml
 http://localhost:9763/search.pz2?command=init&service=gils
-http://localhost:9763/search.pz2?session=2&command=search&query=utah
-2
-http://localhost:9763/search.pz2?session=2&command=show&start=0&number=1&block=1
-http://localhost:9763/search.pz2?command=init&clear=1
-http://localhost:9763/search.pz2?session=3&command=settings&pz:name[z3950.indexdata.com%2Fgils]=gils&pz:requestsyntax[z3950.indexdata.com%2Fgils]=usmarc&pz:nativesyntax[z3950.indexdata.com%2Fgils]=iso2709&pz:xslt[z3950.indexdata.com%2Fgils]=marc21.mmap
-http://localhost:9763/search.pz2?session=3&command=search&query=computer
+http://localhost:9763/search.pz2?session=3&command=search&query=utah
 2
 http://localhost:9763/search.pz2?session=3&command=show&start=0&number=1&block=1
+http://localhost:9763/search.pz2?command=init&clear=1
+http://localhost:9763/search.pz2?session=4&command=settings&pz:name[z3950.indexdata.com%2Fgils]=gils&pz:requestsyntax[z3950.indexdata.com%2Fgils]=usmarc&pz:nativesyntax[z3950.indexdata.com%2Fgils]=iso2709&pz:xslt[z3950.indexdata.com%2Fgils]=marc21.mmap
+http://localhost:9763/search.pz2?session=4&command=search&query=computer
+2
+http://localhost:9763/search.pz2?session=4&command=show&start=0&number=1&block=1
