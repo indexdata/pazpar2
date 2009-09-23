@@ -393,6 +393,21 @@
 	</listitem>
        </varlistentry>
 
+       <varlistentry>
+	<term>timeout</term>
+	<listitem>
+	 <para>
+	  Specifies timeout parameters for this service.
+	  The <literal>timeout</literal>
+	  element supports the following attributes: 
+	  <literal>session</literal>, <literal>z3950_connect</literal>,
+	  <literal>z3950_session</literal> which specifies
+	  'session timeout', 'Z39.50 connect timeout', 'Z39.50 session timeout'
+	  respectively.
+	 </para>
+	</listitem>
+       </varlistentry>
+
       </variablelist>     <!-- Data elements in service directive -->
      </listitem>
     </varlistentry>
@@ -429,6 +444,7 @@
              </icu_chain>
            </relevance>
            <settings src="mysettings"/>
+           <timeout session="60"/>
         <service>
      </server>
    </pazpar2>

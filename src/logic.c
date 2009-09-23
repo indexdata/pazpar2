@@ -79,10 +79,7 @@ struct parameters global_parameters =
 {
     0,   // dump_records
     0,   // debug_mode
-    60,   // session timeout 
     100,
-    180, // Z39.50 session timeout
-    15   // Connect timeout
 };
 
 static void log_xml_doc(xmlDoc *doc)
@@ -569,7 +566,8 @@ enum pazpar2_error_code search(struct session *se,
         else
         {
             no_working++;
-            if (client_prep_connection(cl))
+            if (client_prep_connection(cl, se->service->z3950_connect_timeout,
+                    se->service->z3950_session_timeout))
                 client_start_search(cl);
         }
     }

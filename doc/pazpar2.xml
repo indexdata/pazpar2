@@ -33,7 +33,6 @@
    <arg choice="opt"><option>-l <replaceable>logfile</replaceable></option></arg>
    <arg choice="opt"><option>-p <replaceable>pidfile</replaceable></option></arg>
    <arg choice="opt"><option>-t</option></arg>
-   <arg choice="opt"><option>-T <replaceable>session_timeout</replaceable></option></arg>
    <arg choice="opt"><option>-u <replaceable>uid</replaceable></option></arg>
    <arg choice="opt"><option>-V</option></arg>
    <arg choice="opt"><option>-X</option></arg>
@@ -126,16 +125,6 @@
        local target settings file.
       </para>
      </note>
-    </listitem>
-   </varlistentry>
-
-   <varlistentry>
-    <term><option>-T <replaceable>session_timeout</replaceable></option></term>
-    <listitem>
-     <para>
-      Specifies a Pazpar2 HTTP session timeout. This
-      overrides the default value of 60 seconds which is to low for some broken browser.
-     </para>
     </listitem>
    </varlistentry>
 

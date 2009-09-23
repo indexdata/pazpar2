@@ -90,7 +90,6 @@ static int sc_main(
     char *arg;
     const char *pidfile = 0;
     const char *uid = 0;
-    int session_timeout = 60;
     const char *listener_override = 0;
     const char *config_fname = 0;
     struct conf_config *config = 0;
@@ -106,7 +105,7 @@ static int sc_main(
     yaz_log_init_prefix("pazpar2");
     yaz_log_xml_errors(0, YLOG_WARN);
 
-    while ((ret = options("dDf:h:l:p:tT:u:VX", argv, argc, &arg)) != -2)
+    while ((ret = options("dDf:h:l:p:tu:VX", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -132,16 +131,6 @@ static int sc_main(
         case 't':
             test_mode = 1;
             break;
-        case 'T':
-	    session_timeout = atoi(arg);
-	    if (session_timeout < 9 || session_timeout > 86400)
-            {
-                yaz_log(YLOG_FATAL, "Session timeout out of range 10..86400: %d",
-                        session_timeout);
-                return 1;
-            }
-            global_parameters.session_timeout = session_timeout;
-            break;
         case 'u':
             uid = arg;
             break;
@@ -159,7 +148,6 @@ static int sc_main(
                     "    -l file                 Log to file\n"
                     "    -p pidfile              PID file\n"
                     "    -t                      Test configuration\n"
-                    "    -T session_timeout      Session timeout\n"
                     "    -u uid                  Change user to uid\n"
                     "    -V                      Show version\n"
                     "    -X                      Debug mode\n"

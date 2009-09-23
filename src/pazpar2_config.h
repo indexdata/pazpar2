@@ -105,7 +105,10 @@ struct conf_service
     char *id;
     char *settings;
     NMEM nmem;
-
+    int session_timeout;
+    int z3950_session_timeout;
+    int z3950_connect_timeout;
+    
     /* duplicated from conf_server */
     pp2_charset_t relevance_pct;
     pp2_charset_t sort_pct;

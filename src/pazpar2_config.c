@@ -128,6 +128,9 @@ static struct conf_service *service_init(struct conf_config *config,
     service->databases = 0;
     service->targetprofiles = 0;
     service->config = config;
+    service->session_timeout = 60; /* default session timeout */
+    service->z3950_session_timeout = 180;
+    service->z3950_connect_timeout = 15;
 
     service->relevance_pct = 0;
     service->sort_pct = 0;
@@ -454,7 +457,43 @@ static struct conf_service *service_create(struct conf_config *config,
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
-        if (!strcmp((const char *) n->name, "settings"))
+        if (!strcmp((const char *) n->name, "timeout"))
+        {
+            xmlChar *src = xmlGetProp(n, (xmlChar *) "session");
+            if (src)
+            {
+                service->session_timeout = atoi((const char *) src);
+                xmlFree(src);
+                if (service->session_timeout < 9)
+                {
+                    yaz_log(YLOG_FATAL, "session timeout out of range");
+                    return 0;
+                }
+            }
+            src = xmlGetProp(n, (xmlChar *) "z3950_connect");
+            if (src)
+            {
+                service->z3950_connect_timeout = atoi((const char *) src);
+                xmlFree(src);
+                if (service->z3950_session_timeout < 9)
+                {
+                    yaz_log(YLOG_FATAL, "Z39.50 connect timeout out of range");
+                    return 0;
+                }
+            }
+            src = xmlGetProp(n, (xmlChar *) "z3950_session");
+            if (src)
+            {
+                service->z3950_session_timeout = atoi((const char *) src);
+                xmlFree(src);
+                if (service->z3950_session_timeout < 9)
+                {
+                    yaz_log(YLOG_FATAL, "Z39.50 session timeout out of range");
+                    return 0;
+                }
+            }
+        }
+        else if (!strcmp((const char *) n->name, "settings"))
             got_settings++;
         else if (!strcmp((const char *) n->name, (const char *) "targetprofiles"))
         {
