@@ -120,24 +120,6 @@ struct conf_service * conf_service_create(struct conf_config *config,
                                           int num_metadata, int num_sortkeys,
                                           const char *service_id);
 
-struct conf_metadata* conf_service_add_metadata(struct conf_service *service,
-                                                int field_id,
-                                                const char *name,
-                                                enum conf_metadata_type type,
-                                                enum conf_metadata_merge merge,
-                                                enum conf_setting_type setting,
-                                                int brief,
-                                                int termlist,
-                                                int rank,
-                                                int sortkey_offset,
-                                                enum conf_metadata_mergekey mt);
-
-struct conf_sortkey * conf_service_add_sortkey(struct conf_service *service,
-                                               int field_id,
-                                               const char *name,
-                                               enum conf_sortkey_type type);
-
-
 int conf_service_metadata_field_id(struct conf_service *service, const char * name);
 
 int conf_service_sortkey_field_id(struct conf_service *service, const char * name);
