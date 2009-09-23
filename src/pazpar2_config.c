@@ -627,8 +627,8 @@ static void inherit_server_settings(struct conf_server *server)
     }
 }
 
-static struct conf_server *parse_server(struct conf_config *config,
-                                        NMEM nmem, xmlNode *node)
+static struct conf_server *server_create(struct conf_config *config,
+                                         NMEM nmem, xmlNode *node)
 {
     xmlNode *n;
     struct conf_server *server = nmem_malloc(nmem, sizeof(struct conf_server));
@@ -821,7 +821,7 @@ static int parse_config(struct conf_config *config, xmlNode *root)
             continue;
         if (!strcmp((const char *) n->name, "server"))
         {
-            struct conf_server *tmp = parse_server(config, config->nmem, n);
+            struct conf_server *tmp = server_create(config, config->nmem, n);
             if (!tmp)
                 return -1;
             tmp->next = config->servers;
