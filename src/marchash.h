@@ -44,11 +44,16 @@ struct marcsubfield
 };
 
 struct marchash *marchash_create (NMEM nmem);
-int marchash_ingest_marcxml (struct marchash *marchash, xmlNodePtr rec_node);
-struct marcfield *marchash_add_field (struct marchash *marchash, char *key, char *value);
-struct marcsubfield *marchash_add_subfield (struct marchash *marchash, struct marcfield *field, char key, char *value);
-struct marcfield *marchash_get_field (struct marchash *marchash, char *key, struct marcfield *last);
+void marchash_ingest_marcxml (struct marchash *marchash, xmlNodePtr rec_node);
+struct marcfield *marchash_add_field (struct marchash *marchash,
+                                      const char *key, const char *value);
+struct marcsubfield *marchash_add_subfield (struct marchash *marchash, struct marcfield *field, const char key, const char *value);
+struct marcfield *marchash_get_field (struct marchash *marchash, const char *key, struct marcfield *last);
 struct marcsubfield *marchash_get_subfield (char key, struct marcfield *field, struct marcsubfield *last);
+
+char *marchash_catenate_subfields(struct marcfield *field,
+                                  const char *delim, NMEM nmem);
+
 #endif
 /*
  * Local variables:

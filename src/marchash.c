@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #include <libxml/tree.h>
 #include <libxml/parser.h>
@@ -48,9 +49,9 @@ static unsigned int hash(const unsigned char *key)
     return hash;
 }
 
-inline char *strtrimcat (char *dest, char *src)
+inline void strtrimcat(char *dest, const char *src)
 {
-    char *in;
+    const char *in;
     char *out;
     char *last_nonspace;
     in = src;
@@ -74,13 +75,13 @@ inline char *strtrimcat (char *dest, char *src)
     *(++last_nonspace) = '\0';
 }
 
-inline char *strtrimcpy (char *dest, char *src)
+inline void strtrimcpy(char *dest, const char *src)
 {
     *dest = '\0';
     strtrimcat(dest, src);
 }
 
-struct marchash *marchash_create (NMEM nmem)
+struct marchash *marchash_create(NMEM nmem)
 {
     struct marchash *new;
     new = nmem_malloc(nmem, sizeof (struct marchash));
@@ -89,34 +90,44 @@ struct marchash *marchash_create (NMEM nmem)
     return new;
 }
 
-int marchash_ingest_marcxml (struct marchash *marchash, xmlNodePtr rec_node)
+void marchash_ingest_marcxml(struct marchash *marchash, xmlNodePtr rec_node)
 {
      xmlNodePtr field_node;
      xmlNodePtr sub_node;
-     field_node = rec_node->children;
      struct marcfield *field;
+     field_node = rec_node->children;
 
      while (field_node)
      {
          if (field_node->type == XML_ELEMENT_NODE)
          {
              field = NULL;
-             if (!strcmp(field_node->name, "controlfield"))
+             if (!strcmp((const char *) field_node->name, "controlfield"))
              {
-                 field = marchash_add_field(marchash, xmlGetProp(field_node, "tag"), xmlNodeGetContent(field_node));
+                 field = marchash_add_field(
+                     marchash, 
+                     (const char *) xmlGetProp(field_node, BAD_CAST "tag"),
+                     (const char *) xmlNodeGetContent(field_node));
              }
-             else if (!strcmp(field_node->name, "datafield"))
+             else if (!strcmp((const char *) field_node->name, "datafield"))
              {
-                 field = marchash_add_field(marchash, xmlGetProp(field_node, "tag"), xmlNodeGetContent(field_node));
+                 field = marchash_add_field(
+                     marchash,
+                     (const char *) xmlGetProp(field_node, BAD_CAST "tag"),
+                     (const char *) xmlNodeGetContent(field_node));
              }
              if (field)
              {
                  sub_node = field_node->children;
                  while (sub_node) 
                  {
-                     if ((sub_node->type == XML_ELEMENT_NODE) && (!strcmp(sub_node->name, "subfield")))
+                     if ((sub_node->type == XML_ELEMENT_NODE) &&
+                         !strcmp((const char *) sub_node->name, "subfield"))
                      {
-                         marchash_add_subfield(marchash, field, xmlGetProp(sub_node, "code")[0], xmlNodeGetContent(sub_node));
+                         marchash_add_subfield(
+                             marchash, field,
+                             xmlGetProp(sub_node, BAD_CAST "code")[0],
+                             (const char *) xmlNodeGetContent(sub_node));
                      }
                      sub_node = sub_node->next;
                  } 
@@ -126,13 +137,14 @@ int marchash_ingest_marcxml (struct marchash *marchash, xmlNodePtr rec_node)
      }
 }
 
-struct marcfield *marchash_add_field (struct marchash *marchash, char *key, char *val)
+struct marcfield *marchash_add_field(struct marchash *marchash,
+                                     const char *key, const char *val)
 {
     int slot;
     struct marcfield *new;
     struct marcfield *last;
     
-    slot = hash(key) & MARCHASH_MASK;
+    slot = hash((const unsigned char *) key) & MARCHASH_MASK;
     new = marchash->table[slot];
     last = NULL;
     
@@ -163,7 +175,9 @@ struct marcfield *marchash_add_field (struct marchash *marchash, char *key, char
     return new;
 }
 
-struct marcsubfield *marchash_add_subfield (struct marchash *marchash, struct marcfield *field, char key, char *val)
+struct marcsubfield *marchash_add_subfield(struct marchash *marchash,
+                                           struct marcfield *field,
+                                           const char key, const char *val)
 {
     struct marcsubfield *new;
     struct marcsubfield *last;
@@ -190,13 +204,14 @@ struct marcsubfield *marchash_add_subfield (struct marchash *marchash, struct ma
     return new;
 }
 
-struct marcfield *marchash_get_field (struct marchash *marchash, char *key, struct marcfield *last)
+struct marcfield *marchash_get_field (struct marchash *marchash,
+                                      const char *key, struct marcfield *last)
 {
     struct marcfield *cur;
     if (last)
         cur = last->next;
     else 
-        cur = marchash->table[hash(key) & MARCHASH_MASK];
+        cur = marchash->table[hash((const unsigned char *)key) & MARCHASH_MASK];
     while (cur)
     {
         if (!strcmp(cur->key, key))
@@ -206,7 +221,9 @@ struct marcfield *marchash_get_field (struct marchash *marchash, char *key, stru
     return NULL;
 }
 
-struct marcsubfield *marchash_get_subfield (char key, struct marcfield *field, struct marcsubfield *last)
+struct marcsubfield *marchash_get_subfield(char key,
+                                           struct marcfield *field,
+                                           struct marcsubfield *last)
 {
     struct marcsubfield *cur;
     if (last)
@@ -222,7 +239,8 @@ struct marcsubfield *marchash_get_subfield (char key, struct marcfield *field, s
     return NULL;
 }
 
-char *marchash_catenate_subfields (struct marcfield *field, char *delim, NMEM nmem)
+char *marchash_catenate_subfields(struct marcfield *field,
+                                  const char *delim, NMEM nmem)
 {
     char *output;
     struct marcsubfield *cur;

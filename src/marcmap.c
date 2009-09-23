@@ -144,36 +144,38 @@ xmlDoc *marcmap_apply(struct marcmap *marcmap, xmlDoc *xml_in)
     mmcur = marcmap;
     while (mmcur != NULL)
     {
-        if (field = marchash_get_field(marchash, mmcur->field, NULL))
-            do
+        field = 0;
+        while ((field = marchash_get_field(marchash, mmcur->field, field)) != 0)
+        {
+            // field value
+            if ((mmcur->subfield == '$') && (s = field->val))
             {
-                // field value
-                if ((mmcur->subfield == '$') && (s = field->val))
-                {
-                    meta_node = xmlNewChild(xml_out_root, ns_pz, BAD_CAST "metadata", s);
-                    xmlSetProp(meta_node, BAD_CAST "type", mmcur->pz); 
-                }
-                // catenate all subfields
-                else if ((mmcur->subfield == '*') && (s = marchash_catenate_subfields(field, " ", nmem)))
-                {
-                    meta_node = xmlNewChild(xml_out_root, ns_pz, BAD_CAST "metadata", s);
-                    xmlSetProp(meta_node, BAD_CAST "type", mmcur->pz);
-                }
-                // subfield value
-                else if (mmcur->subfield) 
-                {
-                    if (subfield = marchash_get_subfield(mmcur->subfield, field, NULL)) 
-                        do
-                            if (s = subfield->val)
-                            {
-                                meta_node = xmlNewChild(xml_out_root, ns_pz, BAD_CAST "metadata", s);
-                                xmlSetProp(meta_node, BAD_CAST "type", mmcur->pz);
-                            }
-                        while (subfield = marchash_get_subfield(mmcur->subfield, field, subfield));
-                }
-                
+                meta_node = xmlNewChild(xml_out_root, ns_pz, BAD_CAST "metadata", BAD_CAST s);
+                xmlSetProp(meta_node, BAD_CAST "type", BAD_CAST mmcur->pz); 
             }
-            while (field = marchash_get_field(marchash, mmcur->field, field));
+            // catenate all subfields
+            else if ((mmcur->subfield == '*') && (s = marchash_catenate_subfields(field, " ", nmem)))
+            {
+                meta_node = xmlNewChild(xml_out_root, ns_pz, BAD_CAST "metadata", BAD_CAST s);
+                xmlSetProp(meta_node, BAD_CAST "type", BAD_CAST mmcur->pz);
+            }
+            // subfield value
+            else if (mmcur->subfield) 
+            {
+                subfield = 0;
+                while ((subfield = 
+                        marchash_get_subfield(mmcur->subfield,
+                                              field, subfield)) != 0)
+                {
+                    if ((s = subfield->val) != 0)
+                    {
+                        meta_node = xmlNewChild(xml_out_root, ns_pz, BAD_CAST "metadata", BAD_CAST s);
+                        xmlSetProp(meta_node, BAD_CAST "type", BAD_CAST mmcur->pz);
+                    }
+                }
+            }
+            
+        }
         mmcur = mmcur->next;
     }
 
