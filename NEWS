@@ -1,3 +1,8 @@
+A service may be posted for command=init. This service will be used
+during the session. The service may have its own target settings,
+ICU config, timeout, etc. In order to be recognized, the POST request
+must use Content-Type=text/xml.
+
 Timeout values may be given per-service. That's element 'timeout' 
 which takes three attribute values (a subset may be given): 'session',
 'z3950_connect', 'z3950_session'. Option -T is no longer supported

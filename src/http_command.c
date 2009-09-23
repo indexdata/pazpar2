@@ -207,7 +207,7 @@ static struct http_session *locate_session(struct http_request *rq, struct http_
 // Decode settings parameters and apply to session
 // Syntax: setting[target]=value
 static int process_settings(struct session *se, struct http_request *rq,
-        struct http_response *rs)
+                            struct http_response *rs)
 {
     struct http_argument *a;
 
@@ -242,26 +242,47 @@ static void cmd_exit(struct http_channel *c)
 
 static void cmd_init(struct http_channel *c)
 {
-    unsigned int sesid;
     char buf[1024];
-    const char *clear = http_argbyname(c->request, "clear");
-    const char *service_name = http_argbyname(c->request, "service");
-    struct conf_service *service = locate_service(c->server,
-                                                  service_name);
-    struct http_session *s = http_session_create(service);
+    struct http_request *r = c->request;
+    const char *clear = http_argbyname(r, "clear");
+    const char *content_type = http_lookup_header(r->headers, "Content-Type");
+    unsigned int sesid;
+    struct http_session *s;
     struct http_response *rs = c->response;
-
-    if (!service)
+    struct conf_service *service;
+    
+    if (content_type && !yaz_strcmp_del("text/xml", content_type, "; "))
     {
-        error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "service");
-        return;
+        xmlDoc *doc = xmlParseMemory(r->content_buf, r->content_len);
+        xmlNode *root_n;
+        if (!doc)
+        {
+            error(rs, PAZPAR2_MALFORMED_SETTING, 0);
+            return;
+        }
+        root_n = xmlDocGetRootElement(doc);
+        service = service_create(c->server, root_n);
+        xmlFreeDoc(doc);
     }
-
+    else
+    {
+        const char *service_name = http_argbyname(c->request, "service");
+        service = locate_service(c->server, service_name);
+        if (!service)
+        {
+            error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "service");
+            return;
+        }
+        service_incref(service);
+    }
+    s = http_session_create(service);
+    
     yaz_log(YLOG_DEBUG, "HTTP Session init");
     if (!clear || *clear == '0')
         session_init_databases(s->psession);
     else
         yaz_log(YLOG_LOG, "No databases preloaded");
+    
     sesid = make_sessionid();
     s->session_id = sesid;
     if (process_settings(s->psession, c->request, c->response) < 0)

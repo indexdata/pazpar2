@@ -702,6 +702,7 @@ void destroy_session(struct session *s)
     for (sdb = s->databases; sdb; sdb = sdb->next)
         session_database_destroy(sdb);
     nmem_destroy(s->nmem);
+    service_destroy(s->service);
     wrbuf_destroy(s->wrbuf);
 }
 

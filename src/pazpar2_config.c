@@ -122,6 +122,7 @@ static struct conf_service *service_init(struct conf_server *server,
     NMEM nmem = nmem_create();
 
     service = nmem_malloc(nmem, sizeof(struct conf_service));
+    service->ref_count = 1;
     service->nmem = nmem;
     service->next = 0;
     service->settings = 0;
@@ -244,15 +245,25 @@ static void conf_dir_path(struct conf_config *config, WRBUF w, const char *src)
         wrbuf_puts(w, src);
 }
 
-static void service_destroy(struct conf_service *service)
+void service_destroy(struct conf_service *service)
 {
     if (service)
     {
-        pp2_charset_destroy(service->relevance_pct);
-        pp2_charset_destroy(service->sort_pct);
-        pp2_charset_destroy(service->mergekey_pct);
-        nmem_destroy(service->nmem);
+        assert(service->ref_count > 0);
+        service->ref_count--;
+        if (service->ref_count == 0)
+        {
+            pp2_charset_destroy(service->relevance_pct);
+            pp2_charset_destroy(service->sort_pct);
+            pp2_charset_destroy(service->mergekey_pct);
+            nmem_destroy(service->nmem);
+        }
     }
+}
+
+void service_incref(struct conf_service *service)
+{
+    service->ref_count++;
 }
 
 static int parse_metadata(struct conf_service *service, xmlNode *n,
@@ -426,9 +437,9 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     return 0;
 }
 
-static struct conf_service *service_create(struct conf_server *server,
-                                           xmlNode *node,
-                                           const char *service_id)
+static struct conf_service *service_create_static(struct conf_server *server,
+                                                  xmlNode *node,
+                                                  const char *service_id)
 {
     xmlNode *n;
     int md_node = 0;
@@ -614,63 +625,73 @@ static char *parse_settings(struct conf_config *config,
     return r;
 }
 
-static void inherit_server_settings(struct conf_server *server)
+static void inherit_server_settings(struct conf_service *s)
 {
-    struct conf_service *s;
-    for (s = server->service; s; s = s->next)
+    struct conf_server *server = s->server;
+    if (!s->dictionary) /* service has no config settings ? */
     {
-        if (!s->dictionary) /* service has no config settings ? */
+        if (server->server_settings)
         {
-            if (server->server_settings)
-            {
-                /* inherit settings from server */
-                init_settings(s);
-                settings_read_file(s, server->server_settings, 1);
-                settings_read_file(s, server->server_settings, 2);
-            }
-            else
-            {
-                yaz_log(YLOG_WARN, "service '%s' has no settings",
-                        s->id ? s->id : "unnamed");
-                init_settings(s);
-            }
+            /* inherit settings from server */
+            init_settings(s);
+            settings_read_file(s, server->server_settings, 1);
+            settings_read_file(s, server->server_settings, 2);
         }
-
-        /* use relevance/sort/mergekey from server if not defined
-           for this service.. */
-        if (!s->relevance_pct)
+        else
         {
-            if (server->relevance_pct)
-            {
-                s->relevance_pct = server->relevance_pct;
-                pp2_charset_incref(s->relevance_pct);
-            }
-            else
-                s->relevance_pct = pp2_charset_create(0);
-        }
-        
-        if (!s->sort_pct)
-        {
-            if (server->sort_pct)
-            {
-                s->sort_pct = server->sort_pct;
-                pp2_charset_incref(s->sort_pct);
-            }
-            else
-                s->sort_pct = pp2_charset_create(0);
-        }
-        
-        if (!s->mergekey_pct)
-        {
-            if (server->mergekey_pct)
-            {
-                s->mergekey_pct = server->mergekey_pct;
-                pp2_charset_incref(s->mergekey_pct);
-            }
-            else
-                s->mergekey_pct = pp2_charset_create(0);
+            yaz_log(YLOG_WARN, "service '%s' has no settings",
+                    s->id ? s->id : "unnamed");
+            init_settings(s);
         }
     }
+    
+    /* use relevance/sort/mergekey from server if not defined
+       for this service.. */
+    if (!s->relevance_pct)
+    {
+        if (server->relevance_pct)
+        {
+            s->relevance_pct = server->relevance_pct;
+            pp2_charset_incref(s->relevance_pct);
+        }
+        else
+            s->relevance_pct = pp2_charset_create(0);
+    }
+    
+    if (!s->sort_pct)
+    {
+        if (server->sort_pct)
+        {
+            s->sort_pct = server->sort_pct;
+            pp2_charset_incref(s->sort_pct);
+        }
+        else
+            s->sort_pct = pp2_charset_create(0);
+    }
+    
+    if (!s->mergekey_pct)
+    {
+        if (server->mergekey_pct)
+        {
+            s->mergekey_pct = server->mergekey_pct;
+            pp2_charset_incref(s->mergekey_pct);
+        }
+        else
+            s->mergekey_pct = pp2_charset_create(0);
+    }
+}
+
+struct conf_service *service_create(struct conf_server *server,
+                                    xmlNode *node)
+{
+    struct conf_service *service = service_create_static(server,
+                                                         node, 0);
+    if (service)
+    {
+        inherit_server_settings(service);
+        resolve_databases(service);
+    }
+    return service;
 }
 
 static struct conf_server *server_create(struct conf_config *config,
@@ -778,8 +799,8 @@ static struct conf_server *server_create(struct conf_config *config,
             }
             else
             {
-                struct conf_service *s = service_create(server, n,
-                                                        service_id);
+                struct conf_service *s = service_create_static(server, n,
+                                                               service_id);
                 xmlFree(service_id);
                 if (!s)
                     return 0;
@@ -792,7 +813,12 @@ static struct conf_server *server_create(struct conf_config *config,
             return 0;
         }
     }
-    inherit_server_settings(server);
+    if (server->service)
+    {
+        struct conf_service *s;
+        for (s = server->service; s; s = s->next)
+            inherit_server_settings(s);
+    }
     return server;
 }
 

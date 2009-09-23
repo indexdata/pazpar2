@@ -31,8 +31,9 @@ fi
 CFG=${PREFIX}.cfg
 URLS=${PREFIX}_urls
 
+usevalgrind=false
 if test "$usevalgrind"; then
-    valgrind --log-file=valgrind ../src/pazpar2 -X -l pazpar2.log -f ${CFG} >extra_pazpar2.log 2>&1 &
+    valgrind --leak-check=full --log-file=valgrind ../src/pazpar2 -X -l pazpar2.log -f ${CFG} >extra_pazpar2.log 2>&1 &
 else
     YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -d -X -l pazpar2.log -f ${srcdir}/${CFG} >extra_pazpar2.log 2>&1 &
 fi
@@ -69,7 +70,11 @@ for f in `cat ${srcdir}/${URLS}`; do
 	if test -f $OUT1; then
 	    rm -f $OUT2
 	    if test -n "${wget}"; then
-		${wget} -q -O $OUT2 $f
+		if test -n "${postfile}"; then
+		    ${wget} -q -O $OUT2 --header="Content-Type: text/xml" --post-file=$postfile $f
+		else
+		    ${wget} -q -O $OUT2 $f
+		fi
 	    elif test -n "${lynx}"; then
 		${lynx} -dump $f >$OUT2
 	    else
@@ -88,13 +93,22 @@ for f in `cat ${srcdir}/${URLS}`; do
 	    code=1
 	fi
 	testno=`expr $testno + 1`
-    else
+	postfile=
+    elif echo $f | grep '^[0-9]' >/dev/null; then
 	sleep $f
+    else
+	if test -f $f; then
+	    postfile=$f
+	else
+	    echo "File $f does not exist"
+	    code=1
+	fi
     fi
     if ps -p $PP2PID >/dev/null 2>&1; then
 	:
     else
-	echo "pazpar2 died"
+	echo "Test $testno: pazpar2 died"
+	exit 1
     fi
 done
 IFS="$oIFS"

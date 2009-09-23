@@ -110,7 +110,8 @@ struct conf_service
     int session_timeout;
     int z3950_session_timeout;
     int z3950_connect_timeout;
-    
+
+    int ref_count;
     /* duplicated from conf_server */
     pp2_charset_t relevance_pct;
     pp2_charset_t sort_pct;
@@ -162,6 +163,10 @@ void config_start_databases(struct conf_config *config);
 struct conf_service *locate_service(struct conf_server *server,
                                     const char *service_id);
 
+struct conf_service *service_create(struct conf_server *server,
+                                    xmlNode *node);
+void service_incref(struct conf_service *service);
+void service_destroy(struct conf_service *service);
 
 int config_start_listeners(struct conf_config *conf,
                            const char *listener_override);
