@@ -540,9 +540,6 @@ static struct conf_service *service_create(struct conf_config *config,
             }
         }
     }
-    else
-    {
-    }
     return service;
 }
 
