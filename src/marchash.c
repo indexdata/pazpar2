@@ -30,24 +30,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <libxml/parser.h>
 #include <yaz/nmem.h>
 
+#include "jenkins_hash.h"
 #include <marchash.h>
-
-// Jenkins one-at-a-time hash (from pp2 reclists.c, wikipedia)
-static unsigned int hash(const unsigned char *key)
-{
-    unsigned int hash = 0;
-
-    while (*key)
-    {
-        hash += *(key++);
-        hash += (hash << 10);
-        hash ^= (hash >> 6);
-    }
-    hash += (hash << 3);
-    hash ^= (hash >> 11);
-    hash += (hash << 15);
-    return hash;
-}
 
 inline void strtrimcat(char *dest, const char *src)
 {
@@ -144,7 +128,7 @@ struct marcfield *marchash_add_field(struct marchash *marchash,
     struct marcfield *new;
     struct marcfield *last;
     
-    slot = hash((const unsigned char *) key) & MARCHASH_MASK;
+    slot = jenkins_hash((const unsigned char *) key) & MARCHASH_MASK;
     new = marchash->table[slot];
     last = NULL;
     
@@ -211,7 +195,7 @@ struct marcfield *marchash_get_field (struct marchash *marchash,
     if (last)
         cur = last->next;
     else 
-        cur = marchash->table[hash((const unsigned char *)key) & MARCHASH_MASK];
+        cur = marchash->table[jenkins_hash((const unsigned char *)key) & MARCHASH_MASK];
     while (cur)
     {
         if (!strcmp(cur->key, key))

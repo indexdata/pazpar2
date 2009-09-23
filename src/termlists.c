@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/yaz-util.h>
 
 #include "termlists.h"
+#include "jenkins_hash.h"
 
 // Discussion:
 // As terms are found in incoming records, they are added to (or updated in) a
@@ -51,24 +52,6 @@ struct termlist
 
     NMEM nmem;
 };
-
-
-// Jenkins one-at-a-time hash (from wikipedia)
-static unsigned int hash(const unsigned char *key)
-{
-    unsigned int hash = 0;
-
-    while (*key)
-    {
-        hash += *(key++);
-        hash += (hash << 10);
-        hash ^= (hash >> 6);
-    }
-    hash += (hash << 3);
-    hash ^= (hash >> 11);
-    hash += (hash << 15);
-    return hash;
-}
 
 struct termlist *termlist_create(NMEM nmem, int numterms, int highscore_size)
 {
@@ -148,7 +131,7 @@ void termlist_insert(struct termlist *tl, const char *term)
     for (cp = buf + strlen(buf); cp != buf && strchr(",. -", cp[-1]); cp--)
         cp[-1] = '\0';
     
-    bucket = hash((unsigned char *)buf) & tl->hashmask;
+    bucket = jenkins_hash((unsigned char *)buf) & tl->hashmask;
     for (p = &tl->hashtable[bucket]; *p; p = &(*p)->next)
     {
         if (!strcmp(buf, (*p)->term.term))

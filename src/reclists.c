@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "pazpar2.h"
 #include "reclists.h"
+#include "jenkins_hash.h"
 
 static struct reclist_sortparms *qsort_sortparms = 0; /* thread pr */
 
@@ -231,23 +232,6 @@ void reclist_rewind(struct reclist *l)
         l->pointer = 0;
 }
 
-// Jenkins one-at-a-time hash (from wikipedia)
-static unsigned int hash(const unsigned char *key)
-{
-    unsigned int hash = 0;
-
-    while (*key)
-    {
-        hash += *(key++);
-        hash += (hash << 10);
-        hash ^= (hash >> 6);
-    }
-    hash += (hash << 3);
-    hash ^= (hash >> 11);
-    hash += (hash << 15);
-    return hash;
-}
-
 struct reclist *reclist_create(NMEM nmem, int numrecs)
 {
     int hashsize = 1;
@@ -287,7 +271,7 @@ struct record_cluster *reclist_insert( struct reclist *l,
     assert(merge_key);
     assert(total);
 
-    bucket = hash((unsigned char*) merge_key) & l->hashmask;
+    bucket = jenkins_hash((unsigned char*) merge_key) & l->hashmask;
 
     for (p = &l->hashtable[bucket]; *p; p = &(*p)->next)
     {
