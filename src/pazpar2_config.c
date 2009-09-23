@@ -114,7 +114,7 @@ static void conf_sortkey_assign(NMEM nmem,
 }
 
 
-static struct conf_service *service_init(struct conf_config *config,
+static struct conf_service *service_init(struct conf_server *server,
                                          int num_metadata, int num_sortkeys,
                                          const char *service_id)
 {
@@ -127,7 +127,7 @@ static struct conf_service *service_init(struct conf_config *config,
     service->settings = 0;
     service->databases = 0;
     service->targetprofiles = 0;
-    service->config = config;
+    service->server = server;
     service->session_timeout = 60; /* default session timeout */
     service->z3950_session_timeout = 180;
     service->z3950_connect_timeout = 15;
@@ -426,7 +426,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     return 0;
 }
 
-static struct conf_service *service_create(struct conf_config *config,
+static struct conf_service *service_create(struct conf_server *server,
                                            xmlNode *node,
                                            const char *service_id)
 {
@@ -451,7 +451,7 @@ static struct conf_service *service_create(struct conf_config *config,
             xmlFree(sortkey);
         }
 
-    service = service_init(config, num_metadata, num_sortkeys, service_id);
+    service = service_init(server, num_metadata, num_sortkeys, service_id);
 
     for (n = node->children; n; n = n->next)
     {
@@ -576,7 +576,7 @@ static struct conf_service *service_create(struct conf_config *config,
                     if (src)
                     {
                         WRBUF w = wrbuf_alloc();
-                        conf_dir_path(config, w, (const char *) src);
+                        conf_dir_path(server->config, w, (const char *) src);
                         settings_read_file(service, wrbuf_cstr(w), pass);
                         wrbuf_destroy(w);
                         xmlFree(src);
@@ -686,6 +686,7 @@ static struct conf_server *server_create(struct conf_config *config,
     server->myurl = 0;
     server->proxy_addr = 0;
     server->service = 0;
+    server->config = config;
     server->next = 0;
     server->relevance_pct = 0;
     server->sort_pct = 0;
@@ -777,7 +778,7 @@ static struct conf_server *server_create(struct conf_config *config,
             }
             else
             {
-                struct conf_service *s = service_create(config, n,
+                struct conf_service *s = service_create(server, n,
                                                         service_id);
                 xmlFree(service_id);
                 if (!s)
@@ -795,9 +796,10 @@ static struct conf_server *server_create(struct conf_config *config,
     return server;
 }
 
-xsltStylesheet *conf_load_stylesheet(struct conf_config *config,
+xsltStylesheet *conf_load_stylesheet(struct conf_service *service,
                                      const char *fname)
 {
+    struct conf_config *config = service->server->config;
     WRBUF w = wrbuf_alloc();
     xsltStylesheet *s;
 

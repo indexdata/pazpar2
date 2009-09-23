@@ -357,7 +357,7 @@ static int prepare_map(struct session *se, struct session_database *sdb)
             if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl")) 
             {    
                 (*m)->marcmap = NULL;
-                if (!((*m)->stylesheet = conf_load_stylesheet(se->service->config, stylesheets[i])))
+                if (!((*m)->stylesheet = conf_load_stylesheet(se->service, stylesheets[i])))
                 {
                     yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load stylesheet: %s",
                             stylesheets[i]);

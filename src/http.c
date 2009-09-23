@@ -90,8 +90,8 @@ struct http_channel_observer_s {
 };
 
 
-static const char *http_lookup_header(struct http_header *header,
-                                      const char *name)
+const char *http_lookup_header(struct http_header *header,
+                               const char *name)
 {
     for (; header; header = header->next)
         if (!strcasecmp(name, header->name))

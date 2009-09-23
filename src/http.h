@@ -106,6 +106,8 @@ int http_init(const char *addr, struct conf_server *ser);
 void http_close_server(struct conf_server *ser);
 void http_addheader(struct http_response *r, 
                     const char *name, const char *value);
+const char *http_lookup_header(struct http_header *header,
+                               const char *name);
 struct http_header * http_header_append(struct http_channel *ch, 
                                         struct http_header * hp, 
                                         const char *name, 

@@ -90,6 +90,8 @@ struct conf_sortkey
     enum conf_sortkey_type type;
 };
 
+struct conf_server;
+
 // It is conceivable that there will eventually be several 'services'
 // offered from one server, with separate configuration -- possibly
 // more than one services associated with the same port. For now,
@@ -116,12 +118,8 @@ struct conf_service
 
     struct database *databases;
     struct conf_targetprofiles *targetprofiles;
-    struct conf_config *config;
+    struct conf_server *server;
 };
-
-struct conf_service * conf_service_create(struct conf_config *config,
-                                          int num_metadata, int num_sortkeys,
-                                          const char *service_id);
 
 int conf_service_metadata_field_id(struct conf_service *service, const char * name);
 
@@ -143,6 +141,7 @@ struct conf_server
     pp2_charset_t mergekey_pct;
     struct conf_service *service;
     struct conf_server *next;
+    struct conf_config *config;
 };
 
 struct conf_targetprofiles
@@ -155,7 +154,7 @@ struct conf_targetprofiles
 
 struct conf_config *config_create(const char *fname, int verbose);
 void config_destroy(struct conf_config *config);
-xsltStylesheet *conf_load_stylesheet(struct conf_config *config,
+xsltStylesheet *conf_load_stylesheet(struct conf_service *service,
                                      const char *fname);
 
 void config_start_databases(struct conf_config *config);
