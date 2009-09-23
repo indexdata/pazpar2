@@ -59,10 +59,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #include "pazpar2.h"
-
+#include "parameters.h"
 #include "client.h"
 #include "connection.h"
 #include "settings.h"
+#include "relevance.h"
 
 /** \brief Represents client state for a connection to one search target */
 struct client {

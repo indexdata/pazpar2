@@ -189,7 +189,6 @@ PAZPAR2_OBJS = \
    "$(OBJDIR)\relevance.obj" \
    "$(OBJDIR)\termlists.obj" \
    "$(OBJDIR)\normalize7bit.obj" \
-   "$(OBJDIR)\util.obj" \
    "$(OBJDIR)\zeerex.obj" \
    "$(OBJDIR)\database.obj" \
    "$(OBJDIR)\settings.obj" \

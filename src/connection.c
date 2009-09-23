@@ -42,12 +42,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/comstack.h>
 #include <yaz/tcpip.h>
 #include "connection.h"
-#include "eventl.h"
 #include "pazpar2.h"
 #include "host.h"
 #include "client.h"
 #include "settings.h"
-#include "parameters.h"
 
 
 /** \brief Represents a physical, reusable  connection to a remote Z39.50 host

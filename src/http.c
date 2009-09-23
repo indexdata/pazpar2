@@ -63,11 +63,15 @@ typedef int socklen_t;
 #include <yaz/nmem.h>
 
 #include "util.h"
-#include "eventl.h"
 #include "pazpar2.h"
 #include "http.h"
 
 #define MAX_HTTP_HEADER 4096
+
+#ifdef WIN32
+#define strncasecmp _strnicmp
+#define strcasecmp _stricmp
+#endif
 
 static void proxy_io(IOCHAN i, int event);
 static struct http_channel *http_create(const char *addr,

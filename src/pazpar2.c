@@ -27,11 +27,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <signal.h>
 #include <assert.h>
 
+#include "parameters.h"
 #include "pazpar2.h"
-#include "database.h"
-#include "settings.h"
 #include <yaz/daemon.h>
-
+#include <yaz/log.h>
+#include <yaz/options.h>
 #include <yaz/sc.h>
 
 static struct conf_config *sc_stop_config = 0;
