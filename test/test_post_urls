@@ -1,5 +1,9 @@
 marc_service.xml
 http://localhost:9763/search.pz2?command=init
 http://localhost:9763/search.pz1?session=1&command=search&query=computer
+gils_service.xml
+http://localhost:9763/search.pz2?command=init
+http://localhost:9763/search.pz1?session=2&command=search&query=computer
 2
+http://localhost:9763/search.pz1?session=2&command=show
 http://localhost:9763/search.pz1?session=1&command=show
