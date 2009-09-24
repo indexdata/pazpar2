@@ -398,8 +398,6 @@ static int connection_connect(struct connection *con)
     /* this fragment is bad DRY: from client_prep_connection */
     client_set_state(con->client, Client_Connecting);
     ZOOM_options_destroy(zoptions);
-    // This creates the connection
-    ZOOM_connection_process(link);
     return 0;
 }
 
