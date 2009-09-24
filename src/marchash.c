@@ -92,17 +92,23 @@ void marchash_ingest_marcxml(struct marchash *marchash, xmlNodePtr rec_node)
              field = NULL;
              if (!strcmp((const char *) field_node->name, "controlfield"))
              {
-                 field = marchash_add_field(
-                     marchash, 
-                     (const char *) xmlGetProp(field_node, BAD_CAST "tag"),
-                     (const char *) xmlNodeGetContent(field_node));
+                 xmlChar *content = xmlNodeGetContent(field_node);
+                 xmlChar *tag = xmlGetProp(field_node, BAD_CAST "tag");
+                 if (tag && content)
+                     field = marchash_add_field(
+                         marchash, (const char *) tag, (const char *) content);
+                 xmlFree(content);
+                 xmlFree(tag);
              }
              else if (!strcmp((const char *) field_node->name, "datafield"))
              {
-                 field = marchash_add_field(
-                     marchash,
-                     (const char *) xmlGetProp(field_node, BAD_CAST "tag"),
-                     (const char *) xmlNodeGetContent(field_node));
+                 xmlChar *content = xmlNodeGetContent(field_node);
+                 xmlChar *tag = xmlGetProp(field_node, BAD_CAST "tag");
+                 if (tag && content)
+                     field = marchash_add_field(
+                         marchash, (const char *) tag, (const char *) content);
+                 xmlFree(content);
+                 xmlFree(tag);
              }
              if (field)
              {
@@ -112,10 +118,14 @@ void marchash_ingest_marcxml(struct marchash *marchash, xmlNodePtr rec_node)
                      if ((sub_node->type == XML_ELEMENT_NODE) &&
                          !strcmp((const char *) sub_node->name, "subfield"))
                      {
-                         marchash_add_subfield(
-                             marchash, field,
-                             xmlGetProp(sub_node, BAD_CAST "code")[0],
-                             (const char *) xmlNodeGetContent(sub_node));
+                         xmlChar *content = xmlNodeGetContent(sub_node);
+                         xmlChar *code = xmlGetProp(sub_node, BAD_CAST "code");
+                         if (code && content)
+                             marchash_add_subfield(
+                                 marchash, field,
+                                 code[0], (const char *) content);
+                         xmlFree(content);
+                         xmlFree(code);
                      }
                      sub_node = sub_node->next;
                  } 
