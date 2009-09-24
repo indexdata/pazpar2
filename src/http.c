@@ -62,7 +62,6 @@ typedef int socklen_t;
 #include <yaz/comstack.h>
 #include <yaz/nmem.h>
 
-#include "util.h"
 #include "pazpar2.h"
 #include "http.h"
 
