@@ -1,8 +1,5 @@
 <settings target="z3950.indexdata.com/marc">
-
-  <!-- Used by test test_http.sh -->
-
-  <set name="pz:name" value="Local Test"/>
+  <set name="pz:name" value="Index Data MARC test server"/>
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
@@ -17,7 +14,6 @@
   <!-- Retrieval settings -->
 
   <set name="pz:requestsyntax" value="marc21"/>
-  <!-- <set name="pz:elements" value="F"/> NOT YET IMPLEMENTED -->
 
   <!-- Result normalization settings -->
 
