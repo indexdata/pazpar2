@@ -254,6 +254,13 @@ int client_show_raw_begin(struct client *cl, int position,
     return 0;
 }
 
+static void client_show_raw_delete(struct show_raw *r)
+{
+    xfree(r->syntax);
+    xfree(r->esn);
+    xfree(r);
+}
+
 void client_show_raw_remove(struct client *cl, void *data)
 {
     struct show_raw *rr = data;
@@ -263,7 +270,7 @@ void client_show_raw_remove(struct client *cl, void *data)
     if (*rrp)
     {
         *rrp = rr->next;
-        xfree(rr);
+        client_show_raw_delete(rr);
     }
 }
 
@@ -272,7 +279,7 @@ void client_show_raw_dequeue(struct client *cl)
     struct show_raw *rr = cl->show_raw;
 
     cl->show_raw = rr->next;
-    xfree(rr);
+    client_show_raw_delete(rr);
 }
 
 static void client_show_raw_error(struct client *cl, const char *addinfo)
