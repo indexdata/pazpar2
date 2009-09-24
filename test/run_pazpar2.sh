@@ -30,10 +30,11 @@ if test "x${PREFIX}" = "x"; then
 fi
 CFG=${PREFIX}.cfg
 URLS=${PREFIX}_urls
+VALGRINDLOG=${PREFIX}_valgrind.log
 
 usevalgrind=false
-if test "$usevalgrind"; then
-    valgrind --leak-check=full --log-file=valgrind ../src/pazpar2 -X -l pazpar2.log -f ${CFG} >extra_pazpar2.log 2>&1 &
+if $usevalgrind; then
+    valgrind --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -X -l pazpar2.log -f ${CFG} >extra_pazpar2.log 2>&1 &
 else
     YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -d -X -l pazpar2.log -f ${srcdir}/${CFG} >extra_pazpar2.log 2>&1 &
 fi
@@ -67,19 +68,20 @@ for f in `cat ${srcdir}/${URLS}`; do
 	OUT1=${srcdir}/${PREFIX}_${testno}.res
 	OUT2=${PREFIX}_${testno}.log
 	DIFF=${PREFIX}_${testno}.dif
-	if test -f $OUT1; then
-	    rm -f $OUT2
-	    if test -n "${wget}"; then
-		if test -n "${postfile}"; then
-		    ${wget} -q -O $OUT2 --header="Content-Type: text/xml" --post-file=$postfile $f
-		else
-		    ${wget} -q -O $OUT2 $f
-		fi
-	    elif test -n "${lynx}"; then
-		${lynx} -dump $f >$OUT2
+	rm -f $OUT2 $DIFF
+	if test -n "${wget}"; then
+	    if test -n "${postfile}"; then
+		${wget} -q -O $OUT2 --header="Content-Type: text/xml" --post-file=$postfile $f
 	    else
-		break
+		${wget} -q -O $OUT2 $f
 	    fi
+	elif test -n "${lynx}"; then
+	    ${lynx} -dump $f >$OUT2
+	else
+	    break
+	fi
+
+	if test -f $OUT1; then
 	    if diff $OUT1 $OUT2 >$DIFF; then
 		:
 	    else
@@ -89,7 +91,7 @@ for f in `cat ${srcdir}/${URLS}`; do
 	    fi
 	else
 	    echo "Test $testno: Making for the first time"
-	    ${wget} -q -O $OUT1 $f
+	    mv $OUT2 $OUT1
 	    code=1
 	fi
 	testno=`expr $testno + 1`
