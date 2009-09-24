@@ -133,10 +133,10 @@ static int isdir(const char *path)
 }
 
 // Read settings from an XML file, calling handler function for each setting
-static void read_settings_node(xmlNode *n,
-                               struct conf_service *service,
-                               void (*fun)(struct conf_service *service,
-                                           struct setting *set))
+void settings_read_node_x(xmlNode *n,
+                          void *client_data,
+                          void (*fun)(void *client_data,
+                                      struct setting *set))
 {
     xmlChar *namea, *targeta, *valuea, *usera, *precedencea;
 
@@ -195,7 +195,7 @@ static void read_settings_node(xmlNode *n,
                     strcpy(valueb, (const char *) valuea);
                 set.value = valueb;
                 set.next = 0;
-                (*fun)(service, &set);
+                (*fun)(client_data, &set);
             }
             xmlFree(name);
             xmlFree(precedence);
@@ -217,8 +217,8 @@ static void read_settings_node(xmlNode *n,
 }
  
 static void read_settings_file(const char *path,
-                               struct conf_service *service,
-                               void (*fun)(struct conf_service *service,
+                               void *client_data,
+                               void (*fun)(void *client_data,
                                            struct setting *set))
 {
     xmlDoc *doc = xmlParseFile(path);
@@ -230,7 +230,7 @@ static void read_settings_file(const char *path,
         exit(1);
     }
     n = xmlDocGetRootElement(doc);
-    read_settings_node(n, service, fun);
+    settings_read_node_x(n, client_data, fun);
 
     xmlFreeDoc(doc);
 }
@@ -239,8 +239,8 @@ static void read_settings_file(const char *path,
 // Recursively read files or directories, invoking a 
 // callback for each one
 static void read_settings(const char *path,
-                          struct conf_service *service,
-                          void (*fun)(struct conf_service *service,
+                          void *client_data,
+                          void (*fun)(void *client_data,
                                       struct setting *set))
 {
     DIR *d;
@@ -260,12 +260,12 @@ static void read_settings(const char *path,
             if (*de->d_name == '.' || !strcmp(de->d_name, "CVS"))
                 continue;
             sprintf(tmp, "%s/%s", path, de->d_name);
-            read_settings(tmp, service, fun);
+            read_settings(tmp, client_data, fun);
         }
         closedir(d);
     }
     else if ((dot = strrchr(path, '.')) && !strcmp(dot + 1, "xml"))
-        read_settings_file(path, service, fun);
+        read_settings_file(path, client_data, fun);
 }
 
 // Determines if a ZURL is a wildcard, and what kind
@@ -380,9 +380,9 @@ static void update_database(void *context, struct database *db)
 
 // Callback -- updates database records with dictionary entries as appropriate
 // This is used in pass 2 to assign name/value pairs to databases
-static void update_databases(struct conf_service *service, 
-                             struct setting *set)
+static void update_databases(void *client_data, struct setting *set)
 {
+    struct conf_service *service = (struct conf_service *) client_data;
     struct update_database_context context;
     context.set = set;
     context.service = service;
@@ -423,9 +423,9 @@ static void initialize_soft_settings(struct conf_service *service)
     }
 }
 
-static void prepare_target_dictionary(struct conf_service *service,
-                                      struct setting *set)
+static void prepare_target_dictionary(void *client_data, struct setting *set)
 {
+    struct conf_service *service = (struct conf_service *) client_data;
     struct setting_dictionary *dictionary = service->dictionary;
 
     int i;
@@ -470,9 +470,9 @@ void settings_read_node(struct conf_service *service, xmlNode *n,
                         int pass)
 {
     if (pass == 1)
-        read_settings_node(n, service, prepare_target_dictionary);
+        settings_read_node_x(n, service, prepare_target_dictionary);
     else
-        read_settings_node(n, service, update_databases);
+        settings_read_node_x(n, service, update_databases);
 }
 
 /*
