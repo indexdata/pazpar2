@@ -37,7 +37,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "jenkins_hash.h"
 #include <marchash.h>
 
-inline void strtrimcat(char *dest, const char *src)
+static inline void strtrimcat(char *dest, const char *src)
 {
     const char *in;
     char *out;
@@ -63,7 +63,7 @@ inline void strtrimcat(char *dest, const char *src)
     *(++last_nonspace) = '\0';
 }
 
-inline void strtrimcpy(char *dest, const char *src)
+static inline void strtrimcpy(char *dest, const char *src)
 {
     *dest = '\0';
     strtrimcat(dest, src);
