@@ -23,6 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #if HAVE_CONFIG_H
 #include <config.h>
+#else
+/* disable inline if AC_C_INLINE is not in use (Windows) */
+#define inline
 #endif
 
 #include <stdlib.h>
