@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/nmem.h>
 
 #include "jenkins_hash.h"
-#include <marchash.h>
+#include "marchash.h"
 
 static inline void strtrimcat(char *dest, const char *src)
 {
