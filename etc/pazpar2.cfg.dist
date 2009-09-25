@@ -4,7 +4,7 @@
   <server>
     <listen port="9004"/>
     <proxy host="localhost:80"/>
-    <settings src="settings"/>
+    <settings src="settings/edu.xml"/>
 
     <relevance>
       <icu_chain id="relevance" locale="el">
