@@ -4,7 +4,7 @@
   <server>
     <listen port="9004"/>
     <proxy host="localhost:80"/>
-    <settings src="../etc/settings"/>
+    <settings src="settings"/>
 
     <relevance>
       <icu_chain id="relevance" locale="el">
@@ -31,6 +31,8 @@
     </mergekey>
     
     <service>
+      <timeout session="60" z3950_connect="15" z3950_session="180"/>
+
       <!-- we try to keep same order as in marc21.xsl -->
       <metadata name="id" brief="yes"/>
       <metadata name="lccn" merge="unique"/>
