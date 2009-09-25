@@ -1,2 +1,10 @@
+*.debhelper.log
 *.debhelper
 files
+pazpar2
+pazpar2-apache2
+pazpar2-doc
+pazpar2-js
+pazpar2-jsdemo
+pazpar2-test1
+pazpar2.substvars

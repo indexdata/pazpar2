@@ -2,4 +2,3 @@
 *.dif
 Makefile
 Makefile.in
-valgrind.[0-9]*
