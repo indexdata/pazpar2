@@ -23,6 +23,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #if HAVE_CONFIG_H
 #include <config.h>
+#else
+/* disable inline if AC_C_INLINE is not in use (Windows) */
+#define inline
 #endif
 
 #include <stdlib.h>
@@ -35,9 +38,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/nmem.h>
 
 #include "jenkins_hash.h"
-#include <marchash.h>
+#include "marchash.h"
 
-inline void strtrimcat(char *dest, const char *src)
+static inline void strtrimcat(char *dest, const char *src)
 {
     const char *in;
     char *out;
@@ -63,7 +66,7 @@ inline void strtrimcat(char *dest, const char *src)
     *(++last_nonspace) = '\0';
 }
 
-inline void strtrimcpy(char *dest, const char *src)
+static inline void strtrimcpy(char *dest, const char *src)
 {
     *dest = '\0';
     strtrimcat(dest, src);

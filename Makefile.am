@@ -14,7 +14,7 @@ dist-hook:
 		for f in $(srcdir)/$$d/*; do \
 			test -f $$f && cp $$f $(distdir)/$$d; \
 		done; \
-	done; exit 0
+	done; rm -f $(distdir)/etc/pazpar2.cfg; exit 0
 
 .PHONY:debian
 debian:

@@ -289,21 +289,19 @@
     <screen>
      cd etc
      cp pazpar2.cfg.dist pazpar2.cfg
-     cp edu.xml settings
      ../src/pazpar2 -f pazpar2.cfg
     </screen>
     And on Windows:
     <screen>
      cd etc
      copy pazpar2.cfg.dist pazpar2.cfg
-     copy edu.xml settings
      ..\bin\pazpar2 -f pazpar2.cfg
     </screen>
     This will start a Pazpar2 listener on port 9004. It will proxy 
     HTTP requests to localhost - port 80, which we assume will be the regular
     HTTP server on the system. Inspect and modify pazpar2.cfg as needed
     if this is to be changed. The pazpar2.cfg includes settings from the
-    directory <filename>settings</filename>.
+    file <filename>settings/edu.xml</filename>
     to use for searches.
    </para>
    <para>

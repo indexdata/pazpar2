@@ -12,3 +12,5 @@ config.guess
 config.sub
 configure
 Doxyfile
+dox
+deb-src

@@ -1,3 +1,10 @@
+Setting XML files are now stored in etc/settings instead of etc. This
+reflects the layout with the Debian package layout.
+
+Settings may be posted for command=settings. The POSTed settings must
+have root element 'settings' like regular setting files. In order to be
+recognized, the POST request must use Content-Type=text/xml.
+
 A service may be posted for command=init. This service will be used
 during the session. The service may have its own target settings,
 ICU config, timeout, etc. In order to be recognized, the POST request

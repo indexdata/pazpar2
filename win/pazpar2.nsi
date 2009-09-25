@@ -84,6 +84,7 @@ Section "" ; (default section)
 	SetOutPath $INSTDIR\etc
 	File /r ..\etc\*.xml
 	File /r ..\etc\*.xsl
+	File /r ..\etc\*.mmap
 	File /oname=pazpar2.cfg ..\etc\pazpar2.cfg.dist 
 	SetOutPath $INSTDIR\log
 

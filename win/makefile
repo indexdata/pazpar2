@@ -197,8 +197,8 @@ PAZPAR2_OBJS = \
    "$(OBJDIR)\client.obj" \
    "$(OBJDIR)\dirent.obj" \
    "$(OBJDIR)\jenkins_hash.obj" \
-   "$(OBJDIR)\marcmap..obj" \
-   "$(OBJDIR)\marchash..obj" \
+   "$(OBJDIR)\marcmap.obj" \
+   "$(OBJDIR)\marchash.obj" \
    "$(OBJDIR)\connection.obj" 
 
 
