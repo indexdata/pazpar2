@@ -825,6 +825,20 @@
        Provides the path of an XSLT stylesheet which will be used to
        map incoming records to the internal representation.
       </para>
+      <para>
+       When mapping MARC XML records, XSLT can be bypassed for increased 
+       performance with the alternate "MARC map" format.  Provide the
+       path of a file with extension ".mmap" containing on each line:
+       <programlisting>
+        &lt;field&gt; &lt;subfield&gt; &lt;metadata element&gt;</programlisting>
+       For example:
+       <programlisting>
+        245 a title
+        500 $ description
+        773 * citation</programlisting>
+       To map the field value specify a subfield of '$'.  To store a 
+       concatenation of all subfields, specify a subfield of '*'.
+      </para>
      </listitem>
     </varlistentry>
     <varlistentry>
