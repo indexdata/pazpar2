@@ -419,6 +419,9 @@ int client_prep_connection(struct client *cl,
     if (zproxy && zproxy[0] == '\0')
         zproxy = 0;
 
+    if (!host)
+        return 0;
+
     co = client_get_connection(cl);
 
     yaz_log(YLOG_DEBUG, "Client prep %s", client_get_url(cl));
