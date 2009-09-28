@@ -1032,6 +1032,20 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     return mergekey_norm;
 }
 
+static const char *str_tok_n(const char *s, const char *delim,
+                             const char **res, size_t *len)
+{
+    *res = s;
+    while (*s && !strchr(delim, *s))
+        s++;
+    *len = s - *res;
+    if (*len == 0)
+        return 0;
+    if (*s && strchr(delim, *s))
+        s++;
+    return s;
+}
+
 /** \brief see if metadata for pz:recordfilter exists 
     \param root xml root element of normalized record
     \param sdb session database for client
@@ -1059,19 +1073,26 @@ static int check_record_filter(xmlNode *root, struct session_database *sdb)
         if (!strcmp((const char *) n->name, "metadata"))
         {
             xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
-            
-            if (!type)
-                continue;
-            if (!strcmp((const char *) type, s))
+            if (type)
             {
-                xmlChar *value = xmlNodeGetContent(n);
-                if (value && *value)
+                const char *s1 = s;
+                size_t len;
+                const char *value;
+                while ((s1 = str_tok_n(s1, ",", &value, &len)) != 0)
                 {
-                    xmlFree(value);
-                    match = 1;
+                    if (len == strlen((const char *)type) &&
+                        !memcmp((const char *) type, s, len))
+                    {
+                        xmlChar *value = xmlNodeGetContent(n);
+                        if (value && *value)
+                        {
+                            xmlFree(value);
+                            match = 1;
+                        }
+                    }
                 }
+                xmlFree(type);
             }
-            xmlFree(type);
         }
     }
     return match;
@@ -1088,11 +1109,11 @@ struct record *ingest_record(struct client *cl, const char *rec,
                              int record_no)
 {
     struct session_database *sdb = client_get_database(cl);
-    xmlDoc *xdoc = normalize_record(sdb, client_get_session(cl), rec);
+    struct session *se = client_get_session(cl);
+    xmlDoc *xdoc = normalize_record(sdb, se, rec);
     xmlNode *root, *n;
     struct record *record;
     struct record_cluster *cluster;
-    struct session *se = client_get_session(cl);
     const char *mergekey_norm;
     xmlChar *type = 0;
     xmlChar *value = 0;
@@ -1128,7 +1149,7 @@ struct record *ingest_record(struct client *cl, const char *rec,
                              &se->total_merged);
     if (global_parameters.dump_records)
         yaz_log(YLOG_LOG, "Cluster id %s from %s (#%d)", cluster->recid,
-                client_get_database(cl)->database->url, record_no);
+                sdb->database->url, record_no);
     if (!cluster)
     {
         /* no room for record */
