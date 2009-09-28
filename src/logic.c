@@ -948,7 +948,7 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     WRBUF norm_wr = wrbuf_alloc();
     xmlNode *n;
 
-    /* create mergekey based on mergekey attribute from XSL (if any) */
+    /* consider mergekey from XSL first */
     xmlChar *mergekey = xmlGetProp(root, (xmlChar *) "mergekey");
     if (mergekey)
     {
@@ -970,53 +970,56 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
         pp2_relevance_token_destroy(prt);
         xmlFree(mergekey);
     }
-    /* append (if any) mergekey=yes metadata values */
-    for (n = root->children; n; n = n->next)
+    else
     {
-        if (n->type != XML_ELEMENT_NODE)
-            continue;
-        if (!strcmp((const char *) n->name, "metadata"))
+        /* no mergekey defined in XSL. Look for mergekey metadata instead */
+        for (n = root->children; n; n = n->next)
         {
-            struct conf_metadata *ser_md = 0;
-            int md_field_id = -1;
-            
-            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
-            
-            if (!type)
+            if (n->type != XML_ELEMENT_NODE)
                 continue;
-                
-            md_field_id 
-                = conf_service_metadata_field_id(service, 
-                                                 (const char *) type);
-            if (md_field_id >= 0)
+            if (!strcmp((const char *) n->name, "metadata"))
             {
-                ser_md = &service->metadata[md_field_id];
-                if (ser_md->mergekey == Metadata_mergekey_yes)
+                struct conf_metadata *ser_md = 0;
+                int md_field_id = -1;
+                
+                xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
+                
+                if (!type)
+                    continue;
+                
+                md_field_id 
+                    = conf_service_metadata_field_id(service, 
+                                                     (const char *) type);
+                if (md_field_id >= 0)
                 {
-                    xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
-                    if (value)
+                    ser_md = &service->metadata[md_field_id];
+                    if (ser_md->mergekey == Metadata_mergekey_yes)
                     {
-                        const char *norm_str;
-                        pp2_relevance_token_t prt =
-                            pp2_relevance_tokenize(
-                                service->mergekey_pct,
-                                (const char *) value);
-                        
-                        while ((norm_str = pp2_relevance_token_next(prt)))
+                        xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
+                        if (value)
                         {
-                            if (*norm_str)
+                            const char *norm_str;
+                            pp2_relevance_token_t prt =
+                                pp2_relevance_tokenize(
+                                    service->mergekey_pct,
+                                    (const char *) value);
+                            
+                            while ((norm_str = pp2_relevance_token_next(prt)))
                             {
-                                if (wrbuf_len(norm_wr))
-                                    wrbuf_puts(norm_wr, " ");
-                                wrbuf_puts(norm_wr, norm_str);
+                                if (*norm_str)
+                                {
+                                    if (wrbuf_len(norm_wr))
+                                        wrbuf_puts(norm_wr, " ");
+                                    wrbuf_puts(norm_wr, norm_str);
+                                }
                             }
+                            xmlFree(value);
+                            pp2_relevance_token_destroy(prt);
                         }
-                        xmlFree(value);
-                        pp2_relevance_token_destroy(prt);
                     }
                 }
+                xmlFree(type);
             }
-            xmlFree(type);
         }
     }
 
