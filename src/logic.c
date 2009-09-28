@@ -1032,6 +1032,50 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     return mergekey_norm;
 }
 
+/** \brief see if metadata for pz:recordfilter exists 
+    \param root xml root element of normalized record
+    \param sdb session database for client
+    \retval 0 if there is no metadata for pz:recordfilter
+    \retval 1 if there is metadata for pz:recordfilter
+
+    If there is no pz:recordfilter defined, this function returns 1
+    as well.
+*/
+    
+static int check_record_filter(xmlNode *root, struct session_database *sdb)
+{
+    int match = 0;
+    xmlNode *n;
+    const char *s;
+    s = session_setting_oneval(sdb, PZ_RECORDFILTER);
+
+    if (!s || !*s)
+        return 1;
+
+    for (n = root->children; n; n = n->next)
+    {
+        if (n->type != XML_ELEMENT_NODE)
+            continue;
+        if (!strcmp((const char *) n->name, "metadata"))
+        {
+            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
+            
+            if (!type)
+                continue;
+            if (!strcmp((const char *) type, s))
+            {
+                xmlChar *value = xmlNodeGetContent(n);
+                if (value && *value)
+                {
+                    xmlFree(value);
+                    match = 1;
+                }
+            }
+            xmlFree(type);
+        }
+    }
+    return match;
+}
 
 
 /** \brief ingest XML record
@@ -1043,8 +1087,8 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
 struct record *ingest_record(struct client *cl, const char *rec,
                              int record_no)
 {
-    xmlDoc *xdoc = normalize_record(client_get_database(cl),
-                                    client_get_session(cl), rec);
+    struct session_database *sdb = client_get_database(cl);
+    xmlDoc *xdoc = normalize_record(sdb, client_get_session(cl), rec);
     xmlNode *root, *n;
     struct record *record;
     struct record_cluster *cluster;
@@ -1058,6 +1102,14 @@ struct record *ingest_record(struct client *cl, const char *rec,
         return 0;
 
     root = xmlDocGetRootElement(xdoc);
+
+    if (!check_record_filter(root, sdb))
+    {
+        yaz_log(YLOG_WARN, "Filtered out record no %d from %s", record_no,
+            sdb->database->url);
+        xmlFreeDoc(xdoc);
+        return 0;
+    }
 
     mergekey_norm = get_mergekey(xdoc, cl, record_no, service, se->nmem);
     if (!mergekey_norm)
