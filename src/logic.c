@@ -1035,20 +1035,6 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     return mergekey_norm;
 }
 
-static const char *str_tok_n(const char *s, const char *delim,
-                             const char **res, size_t *len)
-{
-    *res = s;
-    while (*s && !strchr(delim, *s))
-        s++;
-    *len = s - *res;
-    if (*len == 0)
-        return 0;
-    if (*s && strchr(delim, *s))
-        s++;
-    return s;
-}
-
 /** \brief see if metadata for pz:recordfilter exists 
     \param root xml root element of normalized record
     \param sdb session database for client
@@ -1078,21 +1064,22 @@ static int check_record_filter(xmlNode *root, struct session_database *sdb)
             xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
             if (type)
             {
-                const char *s1 = s;
                 size_t len;
-                const char *value;
-                while ((s1 = str_tok_n(s1, ",", &value, &len)) != 0)
+                const char *eq = strchr(s, '=');
+                if (eq)
+                    len = eq - s;
+                else
+                    len = strlen(s);
+                if (len == strlen((const char *)type) &&
+                    !memcmp((const char *) type, s, len))
                 {
-                    if (len == strlen((const char *)type) &&
-                        !memcmp((const char *) type, s, len))
+                    xmlChar *value = xmlNodeGetContent(n);
+                    if (value && *value)
                     {
-                        xmlChar *value = xmlNodeGetContent(n);
-                        if (value && *value)
-                        {
-                            xmlFree(value);
+                        if (!eq || strstr((const char *) value, eq+1))
                             match = 1;
-                        }
                     }
+                    xmlFree(value);
                 }
                 xmlFree(type);
             }
