@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <record>
 <recid>title how to program a computer author jack collins medium book</recid>
 <nextrecid>title computer processing of dynamic images from an anger scintillation camera author medium book</nextrecid>

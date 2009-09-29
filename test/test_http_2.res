@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <stat><activeclients>0</activeclients>
 <hits>0</hits>
 <records>0</records>

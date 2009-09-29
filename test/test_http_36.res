@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <show>
 <status>OK</status>
 <activeclients>0</activeclients>
