@@ -566,7 +566,7 @@ enum pazpar2_error_code search(struct session *se,
         else
         {
             no_working++;
-            if (client_prep_connection(cl, se->service->z3950_connect_timeout,
+            if (client_prep_connection(cl, se->service->z3950_operation_timeout,
                     se->service->z3950_session_timeout))
                 client_start_search(cl);
         }

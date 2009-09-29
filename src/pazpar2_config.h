@@ -109,7 +109,7 @@ struct conf_service
     NMEM nmem;
     int session_timeout;
     int z3950_session_timeout;
-    int z3950_connect_timeout;
+    int z3950_operation_timeout;
 
     int ref_count;
     /* duplicated from conf_server */

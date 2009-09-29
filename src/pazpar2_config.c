@@ -131,7 +131,7 @@ static struct conf_service *service_init(struct conf_server *server,
     service->server = server;
     service->session_timeout = 60; /* default session timeout */
     service->z3950_session_timeout = 180;
-    service->z3950_connect_timeout = 15;
+    service->z3950_operation_timeout = 30;
 
     service->relevance_pct = 0;
     service->sort_pct = 0;
@@ -481,14 +481,14 @@ static struct conf_service *service_create_static(struct conf_server *server,
                     return 0;
                 }
             }
-            src = xmlGetProp(n, (xmlChar *) "z3950_connect");
+            src = xmlGetProp(n, (xmlChar *) "z3950_operation");
             if (src)
             {
-                service->z3950_connect_timeout = atoi((const char *) src);
+                service->z3950_operation_timeout = atoi((const char *) src);
                 xmlFree(src);
                 if (service->z3950_session_timeout < 9)
                 {
-                    yaz_log(YLOG_FATAL, "Z39.50 connect timeout out of range");
+                    yaz_log(YLOG_FATAL, "Z39.50 operation timeout out of range");
                     return 0;
                 }
             }
