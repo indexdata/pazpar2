@@ -31,7 +31,7 @@
     </mergekey>
     
     <service>
-      <timeout session="60" z3950_connect="15" z3950_session="180"/>
+      <timeout session="60" z3950_operation="30" z3950_session="180"/>
 
       <!-- we try to keep same order as in marc21.xsl -->
       <metadata name="id" brief="yes"/>
