@@ -350,17 +350,21 @@ static int prepare_map(struct session *se, struct session_database *sdb)
         nmem_strsplit(se->session_nmem, ",", s, &stylesheets, &num);
         for (i = 0; i < num; i++)
         {
+            WRBUF fname = conf_get_fname(se->service, stylesheets[i]);
+            
             (*m) = nmem_malloc(se->session_nmem, sizeof(**m));
             (*m)->next = 0;
- 
+            
             // XSLT
             if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl")) 
             {    
                 (*m)->marcmap = NULL;
-                if (!((*m)->stylesheet = conf_load_stylesheet(se->service, stylesheets[i])))
+                if (!((*m)->stylesheet =
+                      xsltParseStylesheetFile((xmlChar *) wrbuf_cstr(fname))))
                 {
                     yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load stylesheet: %s",
                             stylesheets[i]);
+                    wrbuf_destroy(fname);
                     return -1;
                 }
             }
@@ -368,14 +372,15 @@ static int prepare_map(struct session *se, struct session_database *sdb)
             else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-5], ".mmap"))
             {
                 (*m)->stylesheet = NULL;
-		if (!((*m)->marcmap = marcmap_load(stylesheets[i], se->session_nmem)))
+                if (!((*m)->marcmap = marcmap_load(wrbuf_cstr(fname), se->session_nmem)))
                 {
                     yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load marcmap: %s",
                             stylesheets[i]);
+                    wrbuf_destroy(fname);
                     return -1;
                 }
             }
-
+            wrbuf_destroy(fname);
             m = &(*m)->next;
         }
     }

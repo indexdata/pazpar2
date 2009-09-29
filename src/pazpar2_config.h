@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <libxslt/xslt.h>
 #include <libxslt/transform.h>
-#include <libxslt/xsltutils.h>
 
 #include <yaz/nmem.h>
 #include "charsets.h"
@@ -155,9 +154,6 @@ struct conf_targetprofiles
 
 struct conf_config *config_create(const char *fname, int verbose);
 void config_destroy(struct conf_config *config);
-xsltStylesheet *conf_load_stylesheet(struct conf_service *service,
-                                     const char *fname);
-
 void config_start_databases(struct conf_config *config);
 
 struct conf_service *locate_service(struct conf_server *server,
@@ -172,6 +168,8 @@ int config_start_listeners(struct conf_config *conf,
                            const char *listener_override);
 
 void config_stop_listeners(struct conf_config *conf);
+
+WRBUF conf_get_fname(struct conf_service *service, const char *fname);
 
 #endif
 
