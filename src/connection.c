@@ -63,7 +63,7 @@ struct connection {
         Conn_Connecting,
         Conn_Open
     } state;
-    int connect_timeout;
+    int operation_timeout;
     int session_timeout;
     struct connection *next; // next for same host or next in free list
 };
@@ -134,7 +134,7 @@ void connection_destroy(struct connection *co)
 // Creates a new connection for client, associated with the host of 
 // client's database
 static struct connection *connection_create(struct client *cl,
-                                            int connect_timeout,
+                                            int operation_timeout,
                                             int session_timeout)
 {
     struct connection *new;
@@ -156,7 +156,7 @@ static struct connection *connection_create(struct client *cl,
     client_set_connection(cl, new);
     new->link = 0;
     new->state = Conn_Resolving;
-    new->connect_timeout = connect_timeout;
+    new->operation_timeout = operation_timeout;
     new->session_timeout = session_timeout;
     if (host->ipport)
         connection_connect(new);
@@ -188,6 +188,7 @@ static void non_block_events(struct connection *co)
                     yaz_log(YLOG_LOG, "Error %s from %s",
                             error, client_get_url(cl));
                 }
+                iochan_settimeout(iochan, co->session_timeout);
                 client_set_state(cl, Client_Idle);
             }
             break;
@@ -199,13 +200,13 @@ static void non_block_events(struct connection *co)
             break;
         case ZOOM_EVENT_SEND_APDU:
             client_set_state(co->client, Client_Working);
+            iochan_settimeout(iochan, co->operation_timeout);
             break;
         case ZOOM_EVENT_RECV_APDU:
             break;
         case ZOOM_EVENT_CONNECT:
             yaz_log(YLOG_LOG, "Connected to %s", client_get_url(cl));
             co->state = Conn_Open;
-            iochan_settimeout(iochan, co->session_timeout);
             break;
         case ZOOM_EVENT_RECV_SEARCH:
             client_search_response(cl);
@@ -389,7 +390,7 @@ static int connection_connect(struct connection *con)
     con->link = link;
     con->iochan = iochan_create(0, connection_handler, 0);
     con->state = Conn_Connecting;
-    iochan_settimeout(con->iochan, con->connect_timeout);
+    iochan_settimeout(con->iochan, con->operation_timeout);
     iochan_setdata(con->iochan, con);
     iochan_setsocketfun(con->iochan, socketfun);
     iochan_setmaskfun(con->iochan, maskfun);
@@ -408,7 +409,7 @@ const char *connection_get_url(struct connection *co)
 
 // Ensure that client has a connection associated
 int client_prep_connection(struct client *cl,
-                           int connect_timeout, int session_timeout)
+                           int operation_timeout, int session_timeout)
 {
     struct connection *co;
     struct session *se = client_get_session(cl);
@@ -418,6 +419,9 @@ int client_prep_connection(struct client *cl,
 
     if (zproxy && zproxy[0] == '\0')
         zproxy = 0;
+
+    if (!host)
+        return 0;
 
     co = client_get_connection(cl);
 
@@ -444,15 +448,15 @@ int client_prep_connection(struct client *cl,
             connection_release(co);
             client_set_connection(cl, co);
             co->client = cl;
+            co->operation_timeout = operation_timeout;
+            co->session_timeout = session_timeout;
             /* tells ZOOM to reconnect if necessary. Disabled becuase
                the ZOOM_connection_connect flushes the task queue */
-            co->connect_timeout = connect_timeout;
-            co->session_timeout = session_timeout;
             ZOOM_connection_connect(co->link, 0, 0);
         }
         else
         {
-            co = connection_create(cl, connect_timeout, session_timeout);
+            co = connection_create(cl, operation_timeout, session_timeout);
         }
     }
 

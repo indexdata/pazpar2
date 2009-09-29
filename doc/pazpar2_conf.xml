@@ -400,10 +400,19 @@
 	  Specifies timeout parameters for this service.
 	  The <literal>timeout</literal>
 	  element supports the following attributes: 
-	  <literal>session</literal>, <literal>z3950_connect</literal>,
+	  <literal>session</literal>, <literal>z3950_operation</literal>,
 	  <literal>z3950_session</literal> which specifies
-	  'session timeout', 'Z39.50 connect timeout', 'Z39.50 session timeout'
-	  respectively.
+	  'session timeout', 'Z39.50 operation timeout',
+	  'Z39.50 session timeout' respectively. The Z39.50 operation
+	  timeout is the time Pazpar2 will wait for an active Z39.50/SRU
+	  operation before it gives up (times out). The Z39.50 session
+	  time out is the time Pazpar2 will keep the session alive for
+	  an idle session (no operation).
+	 </para>
+	 <para>
+	  The following is recommended but not required:
+	  z3950_operation (30) &lt; session (60) &lt; z3950_session (180) .
+	  The default values are given in parantheses.
 	 </para>
 	</listitem>
        </varlistentry>

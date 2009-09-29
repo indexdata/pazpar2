@@ -350,17 +350,21 @@ static int prepare_map(struct session *se, struct session_database *sdb)
         nmem_strsplit(se->session_nmem, ",", s, &stylesheets, &num);
         for (i = 0; i < num; i++)
         {
+            WRBUF fname = conf_get_fname(se->service, stylesheets[i]);
+            
             (*m) = nmem_malloc(se->session_nmem, sizeof(**m));
             (*m)->next = 0;
- 
+            
             // XSLT
             if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl")) 
             {    
                 (*m)->marcmap = NULL;
-                if (!((*m)->stylesheet = conf_load_stylesheet(se->service, stylesheets[i])))
+                if (!((*m)->stylesheet =
+                      xsltParseStylesheetFile((xmlChar *) wrbuf_cstr(fname))))
                 {
                     yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load stylesheet: %s",
                             stylesheets[i]);
+                    wrbuf_destroy(fname);
                     return -1;
                 }
             }
@@ -368,14 +372,15 @@ static int prepare_map(struct session *se, struct session_database *sdb)
             else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-5], ".mmap"))
             {
                 (*m)->stylesheet = NULL;
-		if (!((*m)->marcmap = marcmap_load(stylesheets[i], se->session_nmem)))
+                if (!((*m)->marcmap = marcmap_load(wrbuf_cstr(fname), se->session_nmem)))
                 {
                     yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load marcmap: %s",
                             stylesheets[i]);
+                    wrbuf_destroy(fname);
                     return -1;
                 }
             }
-
+            wrbuf_destroy(fname);
             m = &(*m)->next;
         }
     }
@@ -566,7 +571,7 @@ enum pazpar2_error_code search(struct session *se,
         else
         {
             no_working++;
-            if (client_prep_connection(cl, se->service->z3950_connect_timeout,
+            if (client_prep_connection(cl, se->service->z3950_operation_timeout,
                     se->service->z3950_session_timeout))
                 client_start_search(cl);
         }
@@ -948,7 +953,7 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     WRBUF norm_wr = wrbuf_alloc();
     xmlNode *n;
 
-    /* create mergekey based on mergekey attribute from XSL (if any) */
+    /* consider mergekey from XSL first */
     xmlChar *mergekey = xmlGetProp(root, (xmlChar *) "mergekey");
     if (mergekey)
     {
@@ -970,53 +975,56 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
         pp2_relevance_token_destroy(prt);
         xmlFree(mergekey);
     }
-    /* append (if any) mergekey=yes metadata values */
-    for (n = root->children; n; n = n->next)
+    else
     {
-        if (n->type != XML_ELEMENT_NODE)
-            continue;
-        if (!strcmp((const char *) n->name, "metadata"))
+        /* no mergekey defined in XSL. Look for mergekey metadata instead */
+        for (n = root->children; n; n = n->next)
         {
-            struct conf_metadata *ser_md = 0;
-            int md_field_id = -1;
-            
-            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
-            
-            if (!type)
+            if (n->type != XML_ELEMENT_NODE)
                 continue;
-                
-            md_field_id 
-                = conf_service_metadata_field_id(service, 
-                                                 (const char *) type);
-            if (md_field_id >= 0)
+            if (!strcmp((const char *) n->name, "metadata"))
             {
-                ser_md = &service->metadata[md_field_id];
-                if (ser_md->mergekey == Metadata_mergekey_yes)
+                struct conf_metadata *ser_md = 0;
+                int md_field_id = -1;
+                
+                xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
+                
+                if (!type)
+                    continue;
+                
+                md_field_id 
+                    = conf_service_metadata_field_id(service, 
+                                                     (const char *) type);
+                if (md_field_id >= 0)
                 {
-                    xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
-                    if (value)
+                    ser_md = &service->metadata[md_field_id];
+                    if (ser_md->mergekey == Metadata_mergekey_yes)
                     {
-                        const char *norm_str;
-                        pp2_relevance_token_t prt =
-                            pp2_relevance_tokenize(
-                                service->mergekey_pct,
-                                (const char *) value);
-                        
-                        while ((norm_str = pp2_relevance_token_next(prt)))
+                        xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
+                        if (value)
                         {
-                            if (*norm_str)
+                            const char *norm_str;
+                            pp2_relevance_token_t prt =
+                                pp2_relevance_tokenize(
+                                    service->mergekey_pct,
+                                    (const char *) value);
+                            
+                            while ((norm_str = pp2_relevance_token_next(prt)))
                             {
-                                if (wrbuf_len(norm_wr))
-                                    wrbuf_puts(norm_wr, " ");
-                                wrbuf_puts(norm_wr, norm_str);
+                                if (*norm_str)
+                                {
+                                    if (wrbuf_len(norm_wr))
+                                        wrbuf_puts(norm_wr, " ");
+                                    wrbuf_puts(norm_wr, norm_str);
+                                }
                             }
+                            xmlFree(value);
+                            pp2_relevance_token_destroy(prt);
                         }
-                        xmlFree(value);
-                        pp2_relevance_token_destroy(prt);
                     }
                 }
+                xmlFree(type);
             }
-            xmlFree(type);
         }
     }
 
@@ -1032,6 +1040,58 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     return mergekey_norm;
 }
 
+/** \brief see if metadata for pz:recordfilter exists 
+    \param root xml root element of normalized record
+    \param sdb session database for client
+    \retval 0 if there is no metadata for pz:recordfilter
+    \retval 1 if there is metadata for pz:recordfilter
+
+    If there is no pz:recordfilter defined, this function returns 1
+    as well.
+*/
+    
+static int check_record_filter(xmlNode *root, struct session_database *sdb)
+{
+    int match = 0;
+    xmlNode *n;
+    const char *s;
+    s = session_setting_oneval(sdb, PZ_RECORDFILTER);
+
+    if (!s || !*s)
+        return 1;
+
+    for (n = root->children; n; n = n->next)
+    {
+        if (n->type != XML_ELEMENT_NODE)
+            continue;
+        if (!strcmp((const char *) n->name, "metadata"))
+        {
+            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
+            if (type)
+            {
+                size_t len;
+                const char *eq = strchr(s, '=');
+                if (eq)
+                    len = eq - s;
+                else
+                    len = strlen(s);
+                if (len == strlen((const char *)type) &&
+                    !memcmp((const char *) type, s, len))
+                {
+                    xmlChar *value = xmlNodeGetContent(n);
+                    if (value && *value)
+                    {
+                        if (!eq || strstr((const char *) value, eq+1))
+                            match = 1;
+                    }
+                    xmlFree(value);
+                }
+                xmlFree(type);
+            }
+        }
+    }
+    return match;
+}
 
 
 /** \brief ingest XML record
@@ -1043,12 +1103,12 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
 struct record *ingest_record(struct client *cl, const char *rec,
                              int record_no)
 {
-    xmlDoc *xdoc = normalize_record(client_get_database(cl),
-                                    client_get_session(cl), rec);
+    struct session_database *sdb = client_get_database(cl);
+    struct session *se = client_get_session(cl);
+    xmlDoc *xdoc = normalize_record(sdb, se, rec);
     xmlNode *root, *n;
     struct record *record;
     struct record_cluster *cluster;
-    struct session *se = client_get_session(cl);
     const char *mergekey_norm;
     xmlChar *type = 0;
     xmlChar *value = 0;
@@ -1058,6 +1118,14 @@ struct record *ingest_record(struct client *cl, const char *rec,
         return 0;
 
     root = xmlDocGetRootElement(xdoc);
+
+    if (!check_record_filter(root, sdb))
+    {
+        yaz_log(YLOG_WARN, "Filtered out record no %d from %s", record_no,
+            sdb->database->url);
+        xmlFreeDoc(xdoc);
+        return 0;
+    }
 
     mergekey_norm = get_mergekey(xdoc, cl, record_no, service, se->nmem);
     if (!mergekey_norm)
@@ -1076,7 +1144,7 @@ struct record *ingest_record(struct client *cl, const char *rec,
                              &se->total_merged);
     if (global_parameters.dump_records)
         yaz_log(YLOG_LOG, "Cluster id %s from %s (#%d)", cluster->recid,
-                client_get_database(cl)->database->url, record_no);
+                sdb->database->url, record_no);
     if (!cluster)
     {
         /* no room for record */

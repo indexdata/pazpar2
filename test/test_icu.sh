@@ -5,7 +5,7 @@
 srcdir=${srcdir:-"."}
 
 if test -x ../src/pazpar2; then
-    if ../src/pazpar2 -V |grep icu: >/dev/null; then
+    if ../src/pazpar2 -V |grep icu:enabled >/dev/null; then
 	exec ${srcdir}/run_pazpar2.sh test_icu
     fi
 fi

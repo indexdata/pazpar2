@@ -12,7 +12,7 @@ must use Content-Type=text/xml.
 
 Timeout values may be given per-service. That's element 'timeout' 
 which takes three attribute values (a subset may be given): 'session',
-'z3950_connect', 'z3950_session'. Option -T is no longer supported
+'z3950_operation', 'z3950_session'. Option -T is no longer supported
 - used to specify session timeout.
 
 Option -t tests the Pazpar2 configuration and returns exit code

@@ -28,7 +28,7 @@ struct marcmap
     struct marcmap *next;
 };
 
-struct marcmap *marcmap_load(char *filename, NMEM nmem);
+struct marcmap *marcmap_load(const char *filename, NMEM nmem);
 xmlDoc *marcmap_apply(struct marcmap *marcmap, xmlDoc *xml_in);
 
 #endif

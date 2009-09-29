@@ -324,37 +324,9 @@ pz2.prototype =
                         Number( data.getElementsByTagName("activeclients")[0]
                                     .childNodes[0].nodeValue );
                     context.activeClients = activeClients;
-                    var stat = {
-                        "activeclients": activeClients,
-                        "hits": 
-                            Number( data.getElementsByTagName("hits")[0]
-                                        .childNodes[0].nodeValue ),
-                        "records": 
-                            Number( data.getElementsByTagName("records")[0]
-                                        .childNodes[0].nodeValue ),
-                        "clients": 
-                            Number( data.getElementsByTagName("clients")[0]
-                                        .childNodes[0].nodeValue ),
-                        "initializing": 
-                            Number( data.getElementsByTagName("initializing")[0]
-                                        .childNodes[0].nodeValue ),
-                        "searching": 
-                            Number( data.getElementsByTagName("searching")[0]
-                                        .childNodes[0].nodeValue ),
-                        "presenting": 
-                            Number( data.getElementsByTagName("presenting")[0]
-                                        .childNodes[0].nodeValue ),
-                        "idle": 
-                            Number( data.getElementsByTagName("idle")[0]
-                                        .childNodes[0].nodeValue ),
-                        "failed": 
-                            Number( data.getElementsByTagName("failed")[0]
-                                        .childNodes[0].nodeValue ),
-                        "error": 
-                            Number( data.getElementsByTagName("error")[0]
-                                        .childNodes[0].nodeValue )
-                    };
-                    
+
+		    var stat = Element_parseChildNodes(data.documentElement);
+
                     context.statCounter++;
 		    var delay = context.statTime 
                         + context.statCounter * context.dumpFactor;

@@ -1,4 +1,4 @@
-http://localhost:9763/search.pz2?command=init
+http://localhost:9763/search.pz2?command=init&pz:elements[z3950.indexdata.com%2Fmarc]=F&pz:elements[z3950.indexdata.com%2Fgils]=F
 http://localhost:9763/search.pz2?session=1&command=stat
 http://localhost:9763/search.pz2?session=1&command=ping
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
@@ -36,3 +36,8 @@ http://localhost:9763/search.pz2?session=4&command=settings&pz:name[z3950.indexd
 http://localhost:9763/search.pz2?session=4&command=search&query=computer
 2
 http://localhost:9763/search.pz2?session=4&command=show&start=0&number=1&block=1
+http://localhost:9763/search.pz2?command=init&clear=1
+http://localhost:9763/search.pz2?session=5&command=settings&pz:name[z3950.indexdata.com%2Fmarc]=marc&pz:requestsyntax[z3950.indexdata.com%2Fmarc]=usmarc&pz:nativesyntax[z3950.indexdata.com%2Fmarc]=iso2709&pz:xslt[z3950.indexdata.com%2Fmarc]=marc21.xsl&pz:recordfilter[z3950.indexdata.com%2Fmarc]=date
+http://localhost:9763/search.pz2?session=5&command=search&query=computer
+2
+http://localhost:9763/search.pz2?session=5&command=show&start=0&number=1&block=1

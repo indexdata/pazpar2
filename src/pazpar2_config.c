@@ -26,9 +26,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
-#include <libxslt/xslt.h>
-#include <libxslt/transform.h>
-#include <libxslt/xsltutils.h>
 
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>
@@ -131,7 +128,7 @@ static struct conf_service *service_init(struct conf_server *server,
     service->server = server;
     service->session_timeout = 60; /* default session timeout */
     service->z3950_session_timeout = 180;
-    service->z3950_connect_timeout = 15;
+    service->z3950_operation_timeout = 30;
 
     service->relevance_pct = 0;
     service->sort_pct = 0;
@@ -481,14 +478,14 @@ static struct conf_service *service_create_static(struct conf_server *server,
                     return 0;
                 }
             }
-            src = xmlGetProp(n, (xmlChar *) "z3950_connect");
+            src = xmlGetProp(n, (xmlChar *) "z3950_operation");
             if (src)
             {
-                service->z3950_connect_timeout = atoi((const char *) src);
+                service->z3950_operation_timeout = atoi((const char *) src);
                 xmlFree(src);
                 if (service->z3950_session_timeout < 9)
                 {
-                    yaz_log(YLOG_FATAL, "Z39.50 connect timeout out of range");
+                    yaz_log(YLOG_FATAL, "Z39.50 operation timeout out of range");
                     return 0;
                 }
             }
@@ -822,17 +819,13 @@ static struct conf_server *server_create(struct conf_config *config,
     return server;
 }
 
-xsltStylesheet *conf_load_stylesheet(struct conf_service *service,
-                                     const char *fname)
+WRBUF conf_get_fname(struct conf_service *service, const char *fname)
 {
     struct conf_config *config = service->server->config;
     WRBUF w = wrbuf_alloc();
-    xsltStylesheet *s;
 
     conf_dir_path(config, w, fname);
-    s = xsltParseStylesheetFile((xmlChar *) wrbuf_cstr(w));
-    wrbuf_destroy(w);
-    return s;
+    return w;
 }
 
 static struct conf_targetprofiles *parse_targetprofiles(NMEM nmem,

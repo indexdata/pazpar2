@@ -59,7 +59,9 @@ static void show_version(void)
 
     printf("Configuration:");
 #if YAZ_HAVE_ICU
-    printf(" icu:?");
+    printf(" icu:enabled");
+#else
+    printf(" icu:disabled");
 #endif
     printf(" yaz:%s", yaz_version_str);
     printf("\n");
@@ -175,7 +177,13 @@ static int sc_main(
     }
     else
     {
-        yaz_log(YLOG_LOG, "Pazpar2 %s started", VERSION);
+        yaz_log(YLOG_LOG, "Pazpar2 " VERSION  " "
+#ifdef PAZPAR2_VERSION_SHA1
+                PAZPAR2_VERSION_SHA1
+#else
+                "-"
+#endif
+                " started");
         if (daemon && !log_file_in_use)
         {
             yaz_log(YLOG_FATAL, "Logfile must be given (option -l) for daemon "
