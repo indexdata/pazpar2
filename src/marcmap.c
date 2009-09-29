@@ -37,7 +37,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "marcmap.h"
 #include "marchash.h"
 
-struct marcmap *marcmap_load(char *filename, NMEM nmem) {
+struct marcmap *marcmap_load(const char *filename, NMEM nmem)
+{
     struct marcmap *mm;
     struct marcmap *mmhead;
     FILE *fp;
