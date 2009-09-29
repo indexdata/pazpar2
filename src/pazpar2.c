@@ -177,7 +177,13 @@ static int sc_main(
     }
     else
     {
-        yaz_log(YLOG_LOG, "Pazpar2 %s started", VERSION);
+        yaz_log(YLOG_LOG, "Pazpar2 " VERSION  " "
+#ifdef PAZPAR2_VERSION_SHA1
+                PAZPAR2_VERSION_SHA1
+#else
+                "-"
+#endif
+                " started");
         if (daemon && !log_file_in_use)
         {
             yaz_log(YLOG_FATAL, "Logfile must be given (option -l) for daemon "
