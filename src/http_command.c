@@ -43,6 +43,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // Update this when the protocol changes
 #define PAZPAR2_PROTOCOL_VERSION "1"
 
+#define HTTP_COMMAND_RESPONSE_PREFIX "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+
 struct http_session {
     IOCHAN timeout_iochan;     // NOTE: This is NOT associated with a socket
     struct session *psession;
@@ -140,7 +142,7 @@ static void error(struct http_response *rs,
     rs->msg = nmem_strdup(c->nmem, msg);
     strcpy(rs->code, http_status);
 
-    wrbuf_printf(text, "<error code=\"%d\" msg=\"%s\">", (int) code,
+    wrbuf_printf(text, HTTP_COMMAND_RESPONSE_PREFIX "<error code=\"%d\" msg=\"%s\">", (int) code,
                msg);
     if (addinfo)
         wrbuf_xmlputs(text, addinfo);
@@ -294,7 +296,7 @@ static void cmd_init(struct http_channel *c)
     s->session_id = sesid;
     if (process_settings(s->psession, c->request, c->response) < 0)
         return;
-    sprintf(buf, "<init><status>OK</status><session>%u</session>"
+    sprintf(buf, HTTP_COMMAND_RESPONSE_PREFIX "<init><status>OK</status><session>%u</session>"
             "<protocol>" PAZPAR2_PROTOCOL_VERSION "</protocol></init>", sesid);
     rs->payload = nmem_strdup(c->nmem, buf);
     http_send_response(c);
@@ -338,7 +340,7 @@ static void cmd_settings(struct http_channel *c)
     }
     if (process_settings(s->psession, rq, rs) < 0)
         return;
-    rs->payload = "<settings><status>OK</status></settings>";
+    rs->payload = HTTP_COMMAND_RESPONSE_PREFIX "<settings><status>OK</status></settings>";
     http_send_response(c);
 }
 
@@ -476,7 +478,7 @@ static void cmd_bytarget(struct http_channel *c)
         return;
     ht = hitsbytarget(s->psession, &count, c->nmem);
     wrbuf_rewind(c->wrbuf);
-    wrbuf_puts(c->wrbuf, "<bytarget><status>OK</status>");
+    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<bytarget><status>OK</status>");
 
     for (i = 0; i < count; i++)
     {
@@ -683,7 +685,7 @@ static void cmd_record(struct http_channel *c)
     }
     else
     {
-        wrbuf_puts(c->wrbuf, "<record>\n");
+        wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<record>\n");
         wrbuf_puts(c->wrbuf, "<recid>");
         wrbuf_xmlputs(c->wrbuf, rec->recid);
         wrbuf_puts(c->wrbuf, "</recid>\n");
@@ -755,7 +757,7 @@ static void show_records(struct http_channel *c, int active)
     rl = show(s->psession, sp, startn, &numn, &total, &total_hits, c->nmem);
 
     wrbuf_rewind(c->wrbuf);
-    wrbuf_puts(c->wrbuf, "<show>\n<status>OK</status>\n");
+    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<show>\n<status>OK</status>\n");
     wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", active);
     wrbuf_printf(c->wrbuf, "<merged>%d</merged>\n", total);
     wrbuf_printf(c->wrbuf, "<total>%d</total>\n", total_hits);
@@ -830,7 +832,7 @@ static void cmd_ping(struct http_channel *c)
     struct http_session *s = locate_session(rq, rs);
     if (!s)
         return;
-    rs->payload = "<ping><status>OK</status></ping>";
+    rs->payload = HTTP_COMMAND_RESPONSE_PREFIX "<ping><status>OK</status></ping>";
     http_send_response(c);
 }
 
@@ -887,7 +889,7 @@ static void cmd_search(struct http_channel *c)
         error(rs, code, addinfo);
         return;
     }
-    rs->payload = "<search><status>OK</status></search>";
+    rs->payload = HTTP_COMMAND_RESPONSE_PREFIX "<search><status>OK</status></search>";
     http_send_response(c);
 }
 
@@ -913,7 +915,7 @@ static void cmd_stat(struct http_channel *c)
     }
 
     wrbuf_rewind(c->wrbuf);
-    wrbuf_puts(c->wrbuf, "<stat>");
+    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<stat>");
     wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", clients);
     wrbuf_printf(c->wrbuf, "<hits>%d</hits>\n", stat.num_hits);
     wrbuf_printf(c->wrbuf, "<records>%d</records>\n", stat.num_records);
@@ -936,7 +938,7 @@ static void cmd_info(struct http_channel *c)
     struct http_response *rs = c->response;
 
     wrbuf_rewind(c->wrbuf);
-    wrbuf_puts(c->wrbuf, "<info>\n");
+    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<info>\n");
     wrbuf_puts(c->wrbuf, " <version>\n");
     wrbuf_puts(c->wrbuf, "<pazpar2");
 #ifdef PAZPAR2_VERSION_SHA1
