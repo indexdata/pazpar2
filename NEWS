@@ -1,3 +1,5 @@
+For WS responses Pazpar2 creates XML header. Exception: raw record.
+
 Setting XML files are now stored in etc/settings instead of etc. This
 reflects the layout with the Debian package layout.
 
