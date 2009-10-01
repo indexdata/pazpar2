@@ -51,6 +51,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "connection.h"
 #include "host.h"
 
+/* Only use a threaded resolver on Unix that offers getaddrinfo.
+   gethostbyname is NOT reentrant.
+ */
+#if HAVE_GETADDRINFO
+#ifndef WIN32
+#define USE_THREADED_RESOLVER 1
+#endif
+#endif
+
 struct work {
     char *hostport;  /* hostport to be resolved in separate thread */
     char *ipport;    /* result or NULL if it could not be resolved */
@@ -140,7 +149,7 @@ static void work_handler(void *vp)
     perform_getaddrinfo(w);
 }
 
-#ifndef WIN32
+#if USE_THREADED_RESOLVER
 void iochan_handler(struct iochan *i, int event)
 {
     sel_thread_t p = iochan_getdata(i);
@@ -186,7 +195,7 @@ int host_getaddrinfo(struct host *host)
     w->hostport = host->hostport;
     w->ipport = 0;
     w->host = host;
-#ifndef WIN32
+#if USE_THREADED_RESOLVER
     if (use_thread)
     {
         if (resolver_thread == 0)
