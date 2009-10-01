@@ -28,6 +28,17 @@ fi
 YAZ_DOC
 
 AC_CHECK_HEADERS([sys/time.h sys/socket.h unistd.h netinet/in.h netdb.h arpa/inet.h glob.h])
+checkBoth=0
+AC_CHECK_FUNC([connect])
+if test "$ac_cv_func_connect" = "no"; then
+    AC_CHECK_LIB([socket],[main], LIBS="$LIBS -lsocket", checkBoth=1)
+fi
+if test "$checkBoth" = "1"; then
+    oldLibs=$LIBS
+    LIBS="$LIBS -lsocket -lnsl"
+    AC_CHECK_FUNC([accept], , [LIBS=$oldLibs])
+fi
+AC_CHECK_FUNC([gethostbyname], ,[AC_CHECK_LIB(nsl, main, [LIBS="$LIBS -lnsl"])])
 AC_CHECK_FUNCS([getaddrinfo])
 
 if test -d ${srcdir}/.git; then
