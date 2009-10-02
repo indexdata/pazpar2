@@ -117,11 +117,11 @@ for f in `cat ${srcdir}/${URLS}`; do
 done
 IFS="$oIFS"
 
-sleep 1
 # Kill programs
 
 if test -n "$PP2PID"; then
     kill $PP2PID
+    sleep 1
 fi
 
 exit $code
