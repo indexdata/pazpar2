@@ -10,13 +10,15 @@
 # srcdir might be set by make
 srcdir=${srcdir:-"."}
 
-wget=""
-lynx=""
-if test -x /usr/bin/wget; then
-    wget=/usr/bin/wget
-fi
-if test -x /usr/bin/lynx; then
-    lynx=/usr/bin/lynx
+if test -x /usr/bin/curl; then
+    GET='/usr/bin/curl -s -o $OUT2 "$f"'
+    POST='/usr/bin/curl -s -H "Content-Type: text/xml" --data-binary "@$postfile" -o $OUT2  "$f"'
+elif test -x /usr/bin/wget; then
+    GET='/usr/bin/wget -q -O $OUT2 $f'
+    POST='/usr/bin/wget -q -O $OUT2 --header="Content-Type: text/xml" --post-file=$postfile $f'
+elif test -x /usr/bin/lynx; then
+    GET='/usr/bin/lynx -dump "$f" >$OUT2'
+    POST=''
 fi
 
 # Fire up pazpar2
@@ -69,25 +71,25 @@ for f in `cat ${srcdir}/${URLS}`; do
 	OUT2=${PREFIX}_${testno}.log
 	DIFF=${PREFIX}_${testno}.dif
 	rm -f $OUT2 $DIFF
-	if test -n "${wget}"; then
-	    if test -n "${postfile}"; then
-		${wget} -q -O $OUT2 --header="Content-Type: text/xml" --post-file=$postfile $f
-	    else
-		${wget} -q -O $OUT2 $f
-	    fi
-	elif test -n "${lynx}"; then
-	    ${lynx} -dump $f >$OUT2
+	if test -n "${postfile}"; then
+	    eval $POST
 	else
-	    break
+	    eval $GET
 	fi
-
 	if test -f $OUT1; then
-	    if diff $OUT1 $OUT2 >$DIFF; then
-		:
+	    if test -f $OUT2; then
+		if diff $OUT1 $OUT2 >$DIFF; then
+		    :
+		else
+		    # wget returns 0-size file on HTTP error, curl dont.
+		    if test -s $OUT1; then
+			echo "Test $testno: Failed. See $OUT1, $OUT2 and $DIFF"
+			echo "URL: $f"
+			code=1
+		    fi
+		fi
 	    else
-		echo "Test $testno: Failed. See $OUT1, $OUT2 and $DIFF"
-		echo "URL: $f"
-		code=1
+		echo "Test $test: can not be performed"
 	    fi
 	else
 	    echo "Test $testno: Making for the first time"
