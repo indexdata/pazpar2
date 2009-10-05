@@ -1,3 +1,5 @@
+--- 1.2.1 2009/10/05
+
 For WS responses Pazpar2 creates XML header. Exception: raw record.
 
 Setting XML files are now stored in etc/settings instead of etc. This
