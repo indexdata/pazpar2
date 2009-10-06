@@ -505,10 +505,14 @@ static struct database_criterion *parse_filter(NMEM m, const char *buf)
         int subnum;
         int subi;
         struct database_criterion *new = nmem_malloc(m, sizeof(*new));
-        char *eq = strchr(values[i], '=');
+        char *eq;
+        if (eq = strchr(values[i], '='))
+            new->type = PAZPAR2_STRING_MATCH;
+        if (eq = strchr(values[i], '~'))
+            new->type = PAZPAR2_SUBSTRING_MATCH;
         if (!eq)
         {
-            yaz_log(YLOG_WARN, "Missing equal-sign in filter");
+            yaz_log(YLOG_WARN, "Missing equal-signi/tilde in filter");
             return 0;
         }
         *(eq++) = '\0';
