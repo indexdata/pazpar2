@@ -155,6 +155,7 @@ static int sc_main(
                     "    -t                      Test configuration\n"
                     "    -u uid                  Change user to uid\n"
                     "    -V                      Show version\n"
+                    "    -v level                Set log level\n"
                     "    -X                      Debug mode\n"
 #ifdef WIN32
                     "    -install                Install windows service\n"
