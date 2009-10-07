@@ -199,6 +199,8 @@ PAZPAR2_OBJS = \
    "$(OBJDIR)\jenkins_hash.obj" \
    "$(OBJDIR)\marcmap.obj" \
    "$(OBJDIR)\marchash.obj" \
+   "$(OBJDIR)\normalize_record.obj" \
+   "$(OBJDIR)\normalize_cache.obj" \
    "$(OBJDIR)\connection.obj" 
 
 

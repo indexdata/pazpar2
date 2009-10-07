@@ -35,6 +35,7 @@
    <arg choice="opt"><option>-t</option></arg>
    <arg choice="opt"><option>-u <replaceable>uid</replaceable></option></arg>
    <arg choice="opt"><option>-V</option></arg>
+   <arg choice="opt"><option>-v <replaceable>level</replaceable></option></arg>
    <arg choice="opt"><option>-X</option></arg>
    <arg choice="opt"><option>-install</option></arg>
    <arg choice="opt"><option>-remove</option></arg>
@@ -144,8 +145,17 @@
     <listitem>
      <para>
       Shows Pazpar2 version and versions of some of the components that it
-      is using (ICU and YAZ). Pazpar2 will not exit immediately after
+      is using (ICU and YAZ). Pazpar2 will exit immediately after
       displaying the version information (no daemon started).
+     </para>
+    </listitem>
+   </varlistentry>
+
+   <varlistentry>
+    <term><option>-v <replaceable>level</replaceable></option></term>
+    <listitem>
+     <para>
+      Sets log level (YAZ log level system).
      </para>
     </listitem>
    </varlistentry>

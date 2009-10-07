@@ -80,21 +80,13 @@ struct database_criterion {
     struct database_criterion *next;
 };
 
-// Normalization filter. Turns incoming record into internal representation
-// Simple sequence of stylesheets run in series.
-struct database_retrievalmap {
-    xsltStylesheet *stylesheet;
-    struct marcmap *marcmap;
-    struct database_retrievalmap *next;
-};
-
 // Represents a database as viewed from one session, possibly with settings overriden
 // for that session
 struct session_database
 {
     struct database *database;
     struct setting **settings;
-    struct database_retrievalmap *map;
+    normalize_record_t map;
     struct session_database *next;
 };
 
@@ -139,6 +131,7 @@ struct session {
     int total_merged;
     int number_of_warnings_unknown_elements;
     int number_of_warnings_unknown_metadata;
+    normalize_cache_t normalize_cache;
 };
 
 struct statistics {
@@ -187,10 +180,6 @@ void pazpar2_add_channel(IOCHAN c);
 void pazpar2_event_loop(void);
 
 int host_getaddrinfo(struct host *host);
-
-xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
-        const char *rec);
-xmlDoc *record_to_xml(struct session_database *sdb, const char *rec);
 
 struct record *ingest_record(struct client *cl, const char *rec,
                              int record_no);

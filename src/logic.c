@@ -68,7 +68,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "client.h"
 #include "settings.h"
 #include "normalize7bit.h"
-#include "marcmap.h"
 
 #define TERMLIST_HIGH_SCORE 25
 
@@ -154,7 +153,7 @@ static void add_facet(struct session *s, const char *type, const char *value)
     termlist_insert(s->termlists[i].termlist, value);
 }
 
-xmlDoc *record_to_xml(struct session_database *sdb, const char *rec)
+static xmlDoc *record_to_xml(struct session_database *sdb, const char *rec)
 {
     struct database *db = sdb->database;
     xmlDoc *rdoc = 0;
@@ -241,55 +240,32 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc,
     }
 }
 
-xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
-                         const char *rec)
+static xmlDoc *normalize_record(struct session_database *sdb,
+                                struct session *se,
+                                const char *rec)
 {
-    struct database_retrievalmap *m;
     xmlDoc *rdoc = record_to_xml(sdb, rec);
+
     if (rdoc)
     {
-        for (m = sdb->map; m; m = m->next)
+        char *parms[MAX_XSLT_ARGS*2+1];
+        
+        insert_settings_parameters(sdb, se, parms);
+        
+        if (normalize_record_transform(sdb->map, &rdoc, (const char **)parms))
         {
-            xmlDoc *new = 0;
-            
-            {
-                xmlNodePtr root = 0;
-                char *parms[MAX_XSLT_ARGS*2+1];
-
-                insert_settings_parameters(sdb, se, parms);
-
-                if (m->stylesheet)
-                {
-                    new = xsltApplyStylesheet(m->stylesheet, rdoc, (const char **) parms);
-                }
-                else if (m->marcmap)
-                {
-                    new = marcmap_apply(m->marcmap, rdoc);
-                }
-
-                root = xmlDocGetRootElement(new);
-
-                if (!new || !root || !(root->children))
-                {
-                    yaz_log(YLOG_WARN, "XSLT transformation failed from %s",
-                            sdb->database->url);
-                    xmlFreeDoc(new);
-                    xmlFreeDoc(rdoc);
-                    return 0;
-                }
-            }
-            
-            xmlFreeDoc(rdoc);
-            rdoc = new;
+            yaz_log(YLOG_WARN, "Normalize failed from %s", sdb->database->url);
         }
-
-        insert_settings_values(sdb, rdoc, se->service);
-
-        if (global_parameters.dump_records)
+        else
         {
-            yaz_log(YLOG_LOG, "Normalized record from %s", 
-                    sdb->database->url);
-            log_xml_doc(rdoc);
+            insert_settings_values(sdb, rdoc, se->service);
+            
+            if (global_parameters.dump_records)
+            {
+                yaz_log(YLOG_LOG, "Normalized record from %s", 
+                        sdb->database->url);
+                log_xml_doc(rdoc);
+            }
         }
     }
     return rdoc;
@@ -320,9 +296,6 @@ static int prepare_map(struct session *se, struct session_database *sdb)
     }
     if ((s = session_setting_oneval(sdb, PZ_XSLT)))
     {
-        char **stylesheets;
-        struct database_retrievalmap **m = &sdb->map;
-        int num, i;
         char auto_stylesheet[256];
 
         if (!strcmp(s, "auto"))
@@ -347,46 +320,11 @@ static int prepare_map(struct session *se, struct session_database *sdb)
                 yaz_log(YLOG_WARN, "No pz:requestsyntax for auto stylesheet");
             }
         }
-        nmem_strsplit(se->session_nmem, ",", s, &stylesheets, &num);
-        for (i = 0; i < num; i++)
-        {
-            WRBUF fname = conf_get_fname(se->service, stylesheets[i]);
-            
-            (*m) = nmem_malloc(se->session_nmem, sizeof(**m));
-            (*m)->next = 0;
-            
-            // XSLT
-            if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl")) 
-            {    
-                (*m)->marcmap = NULL;
-                if (!((*m)->stylesheet =
-                      xsltParseStylesheetFile((xmlChar *) wrbuf_cstr(fname))))
-                {
-                    yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load stylesheet: %s",
-                            stylesheets[i]);
-                    wrbuf_destroy(fname);
-                    return -1;
-                }
-            }
-            // marcmap
-            else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-5], ".mmap"))
-            {
-                (*m)->stylesheet = NULL;
-                if (!((*m)->marcmap = marcmap_load(wrbuf_cstr(fname), se->session_nmem)))
-                {
-                    yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load marcmap: %s",
-                            stylesheets[i]);
-                    wrbuf_destroy(fname);
-                    return -1;
-                }
-            }
-            wrbuf_destroy(fname);
-            m = &(*m)->next;
-        }
+        sdb->map = normalize_cache_get(se->normalize_cache,
+                                       se->service, s);
+        if (!sdb->map)
+            return -1;
     }
-    if (!sdb->map)
-        yaz_log(YLOG_WARN, "No Normalization stylesheet for target %s",
-                sdb->database->url);
     return 0;
 }
 
@@ -506,9 +444,9 @@ static struct database_criterion *parse_filter(NMEM m, const char *buf)
         int subi;
         struct database_criterion *new = nmem_malloc(m, sizeof(*new));
         char *eq;
-        if (eq = strchr(values[i], '='))
+        if ((eq = strchr(values[i], '=')))
             new->type = PAZPAR2_STRING_MATCH;
-        if (eq = strchr(values[i], '~'))
+        if ((eq = strchr(values[i], '~')))
             new->type = PAZPAR2_SUBSTRING_MATCH;
         if (!eq)
         {
@@ -565,10 +503,7 @@ enum pazpar2_error_code search(struct session *se,
     for (cl = se->clients; cl; cl = client_next_in_session(cl))
     {
         if (prepare_session_database(se, client_get_database(cl)) < 0)
-        {
-            *addinfo = client_get_database(cl)->database->url;
-            return PAZPAR2_CONFIG_TARGET;
-        }
+            continue;
         // Parse query for target
         if (client_parse_query(cl, query) < 0)
             no_failed++;
@@ -576,16 +511,19 @@ enum pazpar2_error_code search(struct session *se,
         {
             no_working++;
             if (client_prep_connection(cl, se->service->z3950_operation_timeout,
-                    se->service->z3950_session_timeout))
+                                       se->service->z3950_session_timeout))
                 client_start_search(cl);
         }
     }
-
-    // If no queries could be mapped, we signal an error
     if (no_working == 0)
     {
-        *addinfo = "query";
-        return PAZPAR2_MALFORMED_PARAMETER_VALUE;
+        if (no_failed > 0)
+        {
+            *addinfo = "query";
+            return PAZPAR2_MALFORMED_PARAMETER_VALUE;
+        }
+        else
+            return PAZPAR2_NO_TARGETS;
     }
     return PAZPAR2_NO_ERROR;
 }
@@ -618,10 +556,7 @@ static void session_init_databases_fun(void *context, struct database *db)
 // Doesn't free memory associated with sdb -- nmem takes care of that
 static void session_database_destroy(struct session_database *sdb)
 {
-    struct database_retrievalmap *m;
-
-    for (m = sdb->map; m; m = m->next)
-        xsltFreeStylesheet(m->stylesheet);
+    sdb->map = 0;
 }
 
 // Initialize session_database list -- this represents this session's view
@@ -692,10 +627,6 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     case PZ_XSLT:
         if (sdb->map)
         {
-            struct database_retrievalmap *m;
-            // We don't worry about the map structure -- it's in nmem
-            for (m = sdb->map; m; m = m->next)
-                xsltFreeStylesheet(m->stylesheet);
             sdb->map = 0;
         }
         break;
@@ -710,6 +641,7 @@ void destroy_session(struct session *s)
         client_destroy(s->clients);
     for (sdb = s->databases; sdb; sdb = sdb->next)
         session_database_destroy(sdb);
+    normalize_cache_destroy(s->normalize_cache);
     nmem_destroy(s->nmem);
     service_destroy(s->service);
     wrbuf_destroy(s->wrbuf);
@@ -741,6 +673,8 @@ struct session *new_session(NMEM nmem, struct conf_service *service)
         session->watchlist[i].data = 0;
         session->watchlist[i].fun = 0;
     }
+    session->normalize_cache = normalize_cache_create();
+
     return session;
 }
 
@@ -949,13 +883,58 @@ static struct record_metadata *record_metadata_init(
     return rec_md;
 }
 
+static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
+                                 struct conf_service *service, WRBUF norm_wr)
+{
+    xmlNode *n;
+    int no_found = 0;
+    for (n = root->children; n; n = n->next)
+    {
+        if (n->type != XML_ELEMENT_NODE)
+            continue;
+        if (!strcmp((const char *) n->name, "metadata"))
+        {
+            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
+            if (!strcmp(name, (const char *) type))
+            {
+                xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
+                if (value)
+                {
+                    const char *norm_str;
+                    pp2_relevance_token_t prt =
+                        pp2_relevance_tokenize(
+                            service->mergekey_pct,
+                            (const char *) value);
+                    
+                    wrbuf_puts(norm_wr, name);
+                    wrbuf_puts(norm_wr, "=");
+                    while ((norm_str =
+                            pp2_relevance_token_next(prt)))
+                    {
+                        if (*norm_str)
+                        {
+                            if (wrbuf_len(norm_wr))
+                                wrbuf_puts(norm_wr, " ");
+                            wrbuf_puts(norm_wr, norm_str);
+                        }
+                    }
+                    xmlFree(value);
+                    pp2_relevance_token_destroy(prt);
+                    no_found++;
+                }
+            }
+            xmlFree(type);
+        }
+    }
+    return no_found;
+}
+
 static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
                                 struct conf_service *service, NMEM nmem)
 {
     char *mergekey_norm = 0;
     xmlNode *root = xmlDocGetRootElement(doc);
     WRBUF norm_wr = wrbuf_alloc();
-    xmlNode *n;
 
     /* consider mergekey from XSL first */
     xmlChar *mergekey = xmlGetProp(root, (xmlChar *) "mergekey");
@@ -982,52 +961,21 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     else
     {
         /* no mergekey defined in XSL. Look for mergekey metadata instead */
-        for (n = root->children; n; n = n->next)
+        int field_id;
+        for (field_id = 0; field_id < service->num_metadata; field_id++)
         {
-            if (n->type != XML_ELEMENT_NODE)
-                continue;
-            if (!strcmp((const char *) n->name, "metadata"))
+            struct conf_metadata *ser_md = &service->metadata[field_id];
+            if (ser_md->mergekey != Metadata_mergekey_no)
             {
-                struct conf_metadata *ser_md = 0;
-                int md_field_id = -1;
-                
-                xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
-                
-                if (!type)
-                    continue;
-                
-                md_field_id 
-                    = conf_service_metadata_field_id(service, 
-                                                     (const char *) type);
-                if (md_field_id >= 0)
+                int r = get_mergekey_from_doc(doc, root, ser_md->name,
+                                              service, norm_wr);
+                if (r == 0 && ser_md->mergekey == Metadata_mergekey_required)
                 {
-                    ser_md = &service->metadata[md_field_id];
-                    if (ser_md->mergekey == Metadata_mergekey_yes)
-                    {
-                        xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
-                        if (value)
-                        {
-                            const char *norm_str;
-                            pp2_relevance_token_t prt =
-                                pp2_relevance_tokenize(
-                                    service->mergekey_pct,
-                                    (const char *) value);
-                            
-                            while ((norm_str = pp2_relevance_token_next(prt)))
-                            {
-                                if (*norm_str)
-                                {
-                                    if (wrbuf_len(norm_wr))
-                                        wrbuf_puts(norm_wr, " ");
-                                    wrbuf_puts(norm_wr, norm_str);
-                                }
-                            }
-                            xmlFree(value);
-                            pp2_relevance_token_destroy(prt);
-                        }
-                    }
+                    /* no mergekey on this one and it is required.. 
+                       Generate unique key instead */
+                    wrbuf_rewind(norm_wr);
+                    break;
                 }
-                xmlFree(type);
             }
         }
     }

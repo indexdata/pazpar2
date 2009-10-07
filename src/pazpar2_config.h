@@ -20,8 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef PAZPAR2_CONFIG_H
 #define PAZPAR2_CONFIG_H
 
-#include <libxslt/xslt.h>
-#include <libxslt/transform.h>
+#include "normalize_cache.h"
 
 #include <yaz/nmem.h>
 #include "charsets.h"
@@ -57,7 +56,8 @@ enum conf_setting_type {
 
 enum conf_metadata_mergekey {
     Metadata_mergekey_no,
-    Metadata_mergekey_yes
+    Metadata_mergekey_optional,
+    Metadata_mergekey_required
 };
 
 // Describes known metadata elements and how they are to be manipulated
