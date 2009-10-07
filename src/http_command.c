@@ -777,6 +777,8 @@ static void show_records(struct http_channel *c, int active)
             write_subrecord(p, c->wrbuf, service, 0); // subrecs w/o details
         if (ccount > 1)
             wrbuf_printf(c->wrbuf, "<count>%d</count>\n", ccount);
+	if (strstr(sort, "relevance"))
+	    wrbuf_printf(c->wrbuf, "<relevance>%d</relevance>\n", rec->relevance);
         wrbuf_puts(c->wrbuf, "<recid>");
         wrbuf_xmlputs(c->wrbuf, rec->recid);
         wrbuf_puts(c->wrbuf, "</recid>\n");
