@@ -265,9 +265,22 @@
 	  <varlistentry><term>mergekey</term>
 	   <listitem>
 	    <para>
-	     If set to <literal>yes</literal>, the value of this
-	     metadata element is appended to the resulting mergekey.
-	     By default metadata is not part of a mergekey.
+	     If set to '<literal>required</literal>', the value of this
+	     metadata element is appended to the resulting mergekey if
+	     the metadata is present in a record instance.
+	     If the metadata element is not present, the a unique mergekey
+	     will be generated instead.
+	    </para>
+	    <para>
+	     If set to '<literal>optional</literal>', the value of this
+	     metadata element is appended to the resulting mergekey if the
+	     the metadata is present in a record instance. If the metadata
+	     is not present, it will be empty.
+	    </para>
+	    <para>
+	     If set to '<literal>no</literal>' or the mergekey attribute is
+	     omitted, the metadata will not be used in the creation of a
+	     mergekey.
 	    </para>
 	   </listitem>
 	  </varlistentry>

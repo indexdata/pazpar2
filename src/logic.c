@@ -949,13 +949,58 @@ static struct record_metadata *record_metadata_init(
     return rec_md;
 }
 
+static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
+                                 struct conf_service *service, WRBUF norm_wr)
+{
+    xmlNode *n;
+    int no_found = 0;
+    for (n = root->children; n; n = n->next)
+    {
+        if (n->type != XML_ELEMENT_NODE)
+            continue;
+        if (!strcmp((const char *) n->name, "metadata"))
+        {
+            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
+            if (!strcmp(name, (const char *) type))
+            {
+                xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
+                if (value)
+                {
+                    const char *norm_str;
+                    pp2_relevance_token_t prt =
+                        pp2_relevance_tokenize(
+                            service->mergekey_pct,
+                            (const char *) value);
+                    
+                    wrbuf_puts(norm_wr, name);
+                    wrbuf_puts(norm_wr, "=");
+                    while ((norm_str =
+                            pp2_relevance_token_next(prt)))
+                    {
+                        if (*norm_str)
+                        {
+                            if (wrbuf_len(norm_wr))
+                                wrbuf_puts(norm_wr, " ");
+                            wrbuf_puts(norm_wr, norm_str);
+                        }
+                    }
+                    xmlFree(value);
+                    pp2_relevance_token_destroy(prt);
+                    no_found++;
+                }
+            }
+            xmlFree(type);
+        }
+    }
+    return no_found;
+}
+
 static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
                                 struct conf_service *service, NMEM nmem)
 {
     char *mergekey_norm = 0;
     xmlNode *root = xmlDocGetRootElement(doc);
     WRBUF norm_wr = wrbuf_alloc();
-    xmlNode *n;
 
     /* consider mergekey from XSL first */
     xmlChar *mergekey = xmlGetProp(root, (xmlChar *) "mergekey");
@@ -982,52 +1027,21 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     else
     {
         /* no mergekey defined in XSL. Look for mergekey metadata instead */
-        for (n = root->children; n; n = n->next)
+        int field_id;
+        for (field_id = 0; field_id < service->num_metadata; field_id++)
         {
-            if (n->type != XML_ELEMENT_NODE)
-                continue;
-            if (!strcmp((const char *) n->name, "metadata"))
+            struct conf_metadata *ser_md = &service->metadata[field_id];
+            if (ser_md->mergekey != Metadata_mergekey_no)
             {
-                struct conf_metadata *ser_md = 0;
-                int md_field_id = -1;
-                
-                xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
-                
-                if (!type)
-                    continue;
-                
-                md_field_id 
-                    = conf_service_metadata_field_id(service, 
-                                                     (const char *) type);
-                if (md_field_id >= 0)
+                int r = get_mergekey_from_doc(doc, root, ser_md->name,
+                                              service, norm_wr);
+                if (r == 0 && ser_md->mergekey == Metadata_mergekey_required)
                 {
-                    ser_md = &service->metadata[md_field_id];
-                    if (ser_md->mergekey == Metadata_mergekey_yes)
-                    {
-                        xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
-                        if (value)
-                        {
-                            const char *norm_str;
-                            pp2_relevance_token_t prt =
-                                pp2_relevance_tokenize(
-                                    service->mergekey_pct,
-                                    (const char *) value);
-                            
-                            while ((norm_str = pp2_relevance_token_next(prt)))
-                            {
-                                if (*norm_str)
-                                {
-                                    if (wrbuf_len(norm_wr))
-                                        wrbuf_puts(norm_wr, " ");
-                                    wrbuf_puts(norm_wr, norm_str);
-                                }
-                            }
-                            xmlFree(value);
-                            pp2_relevance_token_destroy(prt);
-                        }
-                    }
+                    /* no mergekey on this one and it is required.. 
+                       Generate unique key instead */
+                    wrbuf_rewind(norm_wr);
+                    break;
                 }
-                xmlFree(type);
             }
         }
     }

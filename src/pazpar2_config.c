@@ -409,9 +409,19 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     else
         sortkey_offset = -1;
     
-    if (xml_mergekey && strcmp((const char *) xml_mergekey, "no"))
+    if (xml_mergekey)
     {
-        mergekey_type = Metadata_mergekey_yes;
+        if (!strcmp((const char *) xml_mergekey, "required"))
+            mergekey_type = Metadata_mergekey_required;
+        else if (!strcmp((const char *) xml_mergekey, "optional"))
+            mergekey_type = Metadata_mergekey_optional;
+        else if (!strcmp((const char *) xml_mergekey, "no"))
+            mergekey_type = Metadata_mergekey_no;
+        else
+        {
+            yaz_log(YLOG_FATAL, "Unknown value for mergekey: %s", xml_mergekey);
+            return -1;
+        }
     }
     
     
@@ -430,6 +440,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     xmlFree(xml_termlist);
     xmlFree(xml_rank);
     xmlFree(xml_setting);
+    xmlFree(xml_mergekey);
     (*md_node)++;
     return 0;
 }
