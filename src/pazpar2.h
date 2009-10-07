@@ -52,6 +52,11 @@ enum pazpar2_error_code {
     PAZPAR2_LAST_ERROR
 };
 
+enum pazpar2_database_criterion_type {
+    PAZPAR2_STRING_MATCH,
+    PAZPAR2_SUBSTRING_MATCH
+};
+
 // Represents a (virtual) database on a host
 struct database {
     struct host *host;
@@ -70,6 +75,7 @@ struct database_criterion_value {
 
 struct database_criterion {
     char *name;
+    enum pazpar2_database_criterion_type type;
     struct database_criterion_value *values;
     struct database_criterion *next;
 };
