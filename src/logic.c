@@ -506,9 +506,9 @@ static struct database_criterion *parse_filter(NMEM m, const char *buf)
         int subi;
         struct database_criterion *new = nmem_malloc(m, sizeof(*new));
         char *eq;
-        if (eq = strchr(values[i], '='))
+        if ((eq = strchr(values[i], '=')))
             new->type = PAZPAR2_STRING_MATCH;
-        if (eq = strchr(values[i], '~'))
+        if ((eq = strchr(values[i], '~')))
             new->type = PAZPAR2_SUBSTRING_MATCH;
         if (!eq)
         {
