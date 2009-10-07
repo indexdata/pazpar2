@@ -320,6 +320,8 @@ static int prepare_map(struct session *se, struct session_database *sdb)
             }
         }
         sdb->map = normalize_record_create(se->service, s);
+        if (!sdb->map)
+            return -1;
     }
     return 0;
 }
@@ -499,10 +501,7 @@ enum pazpar2_error_code search(struct session *se,
     for (cl = se->clients; cl; cl = client_next_in_session(cl))
     {
         if (prepare_session_database(se, client_get_database(cl)) < 0)
-        {
-            *addinfo = client_get_database(cl)->database->url;
-            return PAZPAR2_CONFIG_TARGET;
-        }
+            continue;
         // Parse query for target
         if (client_parse_query(cl, query) < 0)
             no_failed++;
@@ -510,16 +509,19 @@ enum pazpar2_error_code search(struct session *se,
         {
             no_working++;
             if (client_prep_connection(cl, se->service->z3950_operation_timeout,
-                    se->service->z3950_session_timeout))
+                                       se->service->z3950_session_timeout))
                 client_start_search(cl);
         }
     }
-
-    // If no queries could be mapped, we signal an error
     if (no_working == 0)
     {
-        *addinfo = "query";
-        return PAZPAR2_MALFORMED_PARAMETER_VALUE;
+        if (no_failed > 0)
+        {
+            *addinfo = "query";
+            return PAZPAR2_MALFORMED_PARAMETER_VALUE;
+        }
+        else
+            return PAZPAR2_NO_TARGETS;
     }
     return PAZPAR2_NO_ERROR;
 }
