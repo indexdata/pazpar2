@@ -68,7 +68,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "client.h"
 #include "settings.h"
 #include "normalize7bit.h"
-#include "marcmap.h"
 
 #define TERMLIST_HIGH_SCORE 25
 
@@ -244,52 +243,28 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc,
 xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
                          const char *rec)
 {
-    struct database_retrievalmap *m;
     xmlDoc *rdoc = record_to_xml(sdb, rec);
+
     if (rdoc)
     {
-        for (m = sdb->map; m; m = m->next)
+        char *parms[MAX_XSLT_ARGS*2+1];
+        
+        insert_settings_parameters(sdb, se, parms);
+        
+        if (normalize_record_transform(sdb->map, &rdoc, (const char **)parms))
         {
-            xmlDoc *new = 0;
-            
-            {
-                xmlNodePtr root = 0;
-                char *parms[MAX_XSLT_ARGS*2+1];
-
-                insert_settings_parameters(sdb, se, parms);
-
-                if (m->stylesheet)
-                {
-                    new = xsltApplyStylesheet(m->stylesheet, rdoc, (const char **) parms);
-                }
-                else if (m->marcmap)
-                {
-                    new = marcmap_apply(m->marcmap, rdoc);
-                }
-
-                root = xmlDocGetRootElement(new);
-
-                if (!new || !root || !(root->children))
-                {
-                    yaz_log(YLOG_WARN, "XSLT transformation failed from %s",
-                            sdb->database->url);
-                    xmlFreeDoc(new);
-                    xmlFreeDoc(rdoc);
-                    return 0;
-                }
-            }
-            
-            xmlFreeDoc(rdoc);
-            rdoc = new;
+            yaz_log(YLOG_WARN, "Normalize failed from %s", sdb->database->url);
         }
-
-        insert_settings_values(sdb, rdoc, se->service);
-
-        if (global_parameters.dump_records)
+        else
         {
-            yaz_log(YLOG_LOG, "Normalized record from %s", 
-                    sdb->database->url);
-            log_xml_doc(rdoc);
+            insert_settings_values(sdb, rdoc, se->service);
+            
+            if (global_parameters.dump_records)
+            {
+                yaz_log(YLOG_LOG, "Normalized record from %s", 
+                        sdb->database->url);
+                log_xml_doc(rdoc);
+            }
         }
     }
     return rdoc;
@@ -320,9 +295,6 @@ static int prepare_map(struct session *se, struct session_database *sdb)
     }
     if ((s = session_setting_oneval(sdb, PZ_XSLT)))
     {
-        char **stylesheets;
-        struct database_retrievalmap **m = &sdb->map;
-        int num, i;
         char auto_stylesheet[256];
 
         if (!strcmp(s, "auto"))
@@ -347,46 +319,8 @@ static int prepare_map(struct session *se, struct session_database *sdb)
                 yaz_log(YLOG_WARN, "No pz:requestsyntax for auto stylesheet");
             }
         }
-        nmem_strsplit(se->session_nmem, ",", s, &stylesheets, &num);
-        for (i = 0; i < num; i++)
-        {
-            WRBUF fname = conf_get_fname(se->service, stylesheets[i]);
-            
-            (*m) = nmem_malloc(se->session_nmem, sizeof(**m));
-            (*m)->next = 0;
-            
-            // XSLT
-            if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl")) 
-            {    
-                (*m)->marcmap = NULL;
-                if (!((*m)->stylesheet =
-                      xsltParseStylesheetFile((xmlChar *) wrbuf_cstr(fname))))
-                {
-                    yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load stylesheet: %s",
-                            stylesheets[i]);
-                    wrbuf_destroy(fname);
-                    return -1;
-                }
-            }
-            // marcmap
-            else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-5], ".mmap"))
-            {
-                (*m)->stylesheet = NULL;
-                if (!((*m)->marcmap = marcmap_load(wrbuf_cstr(fname), se->session_nmem)))
-                {
-                    yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load marcmap: %s",
-                            stylesheets[i]);
-                    wrbuf_destroy(fname);
-                    return -1;
-                }
-            }
-            wrbuf_destroy(fname);
-            m = &(*m)->next;
-        }
+        sdb->map = normalize_record_create(se->service, s);
     }
-    if (!sdb->map)
-        yaz_log(YLOG_WARN, "No Normalization stylesheet for target %s",
-                sdb->database->url);
     return 0;
 }
 
@@ -618,10 +552,8 @@ static void session_init_databases_fun(void *context, struct database *db)
 // Doesn't free memory associated with sdb -- nmem takes care of that
 static void session_database_destroy(struct session_database *sdb)
 {
-    struct database_retrievalmap *m;
-
-    for (m = sdb->map; m; m = m->next)
-        xsltFreeStylesheet(m->stylesheet);
+    normalize_record_destroy(sdb->map);
+    sdb->map = 0;
 }
 
 // Initialize session_database list -- this represents this session's view
@@ -692,10 +624,7 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     case PZ_XSLT:
         if (sdb->map)
         {
-            struct database_retrievalmap *m;
-            // We don't worry about the map structure -- it's in nmem
-            for (m = sdb->map; m; m = m->next)
-                xsltFreeStylesheet(m->stylesheet);
+            normalize_record_destroy(sdb->map);
             sdb->map = 0;
         }
         break;

@@ -20,8 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef PAZPAR2_CONFIG_H
 #define PAZPAR2_CONFIG_H
 
-#include <libxslt/xslt.h>
-#include <libxslt/transform.h>
+#include "normalize_record.h"
 
 #include <yaz/nmem.h>
 #include "charsets.h"

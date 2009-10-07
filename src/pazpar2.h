@@ -80,21 +80,13 @@ struct database_criterion {
     struct database_criterion *next;
 };
 
-// Normalization filter. Turns incoming record into internal representation
-// Simple sequence of stylesheets run in series.
-struct database_retrievalmap {
-    xsltStylesheet *stylesheet;
-    struct marcmap *marcmap;
-    struct database_retrievalmap *next;
-};
-
 // Represents a database as viewed from one session, possibly with settings overriden
 // for that session
 struct session_database
 {
     struct database *database;
     struct setting **settings;
-    struct database_retrievalmap *map;
+    normalize_record_t map;
     struct session_database *next;
 };
 
