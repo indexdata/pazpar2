@@ -320,7 +320,8 @@ static int prepare_map(struct session *se, struct session_database *sdb)
                 yaz_log(YLOG_WARN, "No pz:requestsyntax for auto stylesheet");
             }
         }
-        sdb->map = normalize_record_create(se->service, s);
+        sdb->map = normalize_cache_get(se->normalize_cache,
+                                       se->service, s);
         if (!sdb->map)
             return -1;
     }
@@ -555,7 +556,6 @@ static void session_init_databases_fun(void *context, struct database *db)
 // Doesn't free memory associated with sdb -- nmem takes care of that
 static void session_database_destroy(struct session_database *sdb)
 {
-    normalize_record_destroy(sdb->map);
     sdb->map = 0;
 }
 
@@ -627,7 +627,6 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     case PZ_XSLT:
         if (sdb->map)
         {
-            normalize_record_destroy(sdb->map);
             sdb->map = 0;
         }
         break;
@@ -642,6 +641,7 @@ void destroy_session(struct session *s)
         client_destroy(s->clients);
     for (sdb = s->databases; sdb; sdb = sdb->next)
         session_database_destroy(sdb);
+    normalize_cache_destroy(s->normalize_cache);
     nmem_destroy(s->nmem);
     service_destroy(s->service);
     wrbuf_destroy(s->wrbuf);
@@ -673,6 +673,8 @@ struct session *new_session(NMEM nmem, struct conf_service *service)
         session->watchlist[i].data = 0;
         session->watchlist[i].fun = 0;
     }
+    session->normalize_cache = normalize_cache_create();
+
     return session;
 }
 

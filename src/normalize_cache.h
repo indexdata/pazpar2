@@ -17,19 +17,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-#ifndef NORMALIZE_RECORD_H
-#define NORMALIZE_RECORD_H
-typedef struct normalize_record_s *normalize_record_t;
+#ifndef NORMALIZE_CACHE_H
+#define NORMALIZE_CACHE_H
 
-struct conf_service;
+#include "normalize_record.h"
+typedef struct normalize_cache_s *normalize_cache_t;
 
-normalize_record_t normalize_record_create(struct conf_service *service,
-                                           const char *spec);
+normalize_cache_t normalize_cache_create(void);
 
-void normalize_record_destroy(normalize_record_t nt);
-
-int normalize_record_transform(normalize_record_t nt, xmlDoc **doc,
-                               const char **parms);
+normalize_record_t normalize_cache_get(normalize_cache_t nc,
+                                       struct conf_service *service,
+                                       const char *spec);
+void normalize_cache_destroy(normalize_cache_t nc);
 
 #endif
 

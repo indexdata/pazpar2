@@ -42,31 +42,20 @@ struct normalize_step {
 
 struct normalize_record_s {
     struct normalize_step *steps;
-    char *spec;
     NMEM nmem;
 };
-
-const char *normalize_record_get_spec(normalize_record_t nt)
-{
-    if (nt)
-        return nt->spec;
-    return 0;
-}
 
 normalize_record_t normalize_record_create(struct conf_service *service,
                                            const char *spec)
 {
-    normalize_record_t nt = xmalloc(sizeof(*nt));
-    struct normalize_step **m;
+    NMEM nmem = nmem_create();
+    normalize_record_t nt = nmem_malloc(nmem, sizeof(*nt));
+    struct normalize_step **m = &nt->steps;
     int i, num;
     int no_errors = 0;
     char **stylesheets;
 
-    nt->nmem = nmem_create();
-
-    nt->spec = nmem_strdup(nt->nmem, spec);
-
-    m = &nt->steps;
+    nt->nmem = nmem;
 
     nmem_strsplit(nt->nmem, ",", spec, &stylesheets, &num);
     for (i = 0; i < num; i++)
@@ -128,8 +117,6 @@ void normalize_record_destroy(normalize_record_t nt)
                 xsltFreeStylesheet(m->stylesheet);
         }
         nmem_destroy(nt->nmem);
-
-        xfree(nt);
     }
 }
 

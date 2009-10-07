@@ -131,6 +131,7 @@ struct session {
     int total_merged;
     int number_of_warnings_unknown_elements;
     int number_of_warnings_unknown_metadata;
+    normalize_cache_t normalize_cache;
 };
 
 struct statistics {
