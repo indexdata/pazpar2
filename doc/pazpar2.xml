@@ -145,7 +145,7 @@
     <listitem>
      <para>
       Shows Pazpar2 version and versions of some of the components that it
-      is using (ICU and YAZ). Pazpar2 will not exit immediately after
+      is using (ICU and YAZ). Pazpar2 will exit immediately after
       displaying the version information (no daemon started).
      </para>
     </listitem>
