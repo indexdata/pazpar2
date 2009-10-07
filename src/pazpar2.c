@@ -107,7 +107,7 @@ static int sc_main(
     yaz_log_init_prefix("pazpar2");
     yaz_log_xml_errors(0, YLOG_WARN);
 
-    while ((ret = options("dDf:h:l:p:tu:VX", argv, argc, &arg)) != -2)
+    while ((ret = options("dDf:h:l:p:tu:v:VX", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -135,6 +135,9 @@ static int sc_main(
             break;
         case 'u':
             uid = arg;
+            break;
+        case 'v':
+            yaz_log_init_level(yaz_log_mask_str(arg));
             break;
         case 'V':
             show_version();

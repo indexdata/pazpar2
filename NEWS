@@ -1,3 +1,5 @@
+Pazpar2 allows YAZ log level to be set (option -v).
+
 --- 1.2.1 2009/10/05
 
 For WS responses Pazpar2 creates XML header. Exception: raw record.
