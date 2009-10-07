@@ -153,7 +153,7 @@ static void add_facet(struct session *s, const char *type, const char *value)
     termlist_insert(s->termlists[i].termlist, value);
 }
 
-xmlDoc *record_to_xml(struct session_database *sdb, const char *rec)
+static xmlDoc *record_to_xml(struct session_database *sdb, const char *rec)
 {
     struct database *db = sdb->database;
     xmlDoc *rdoc = 0;
@@ -240,8 +240,9 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc,
     }
 }
 
-xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
-                         const char *rec)
+static xmlDoc *normalize_record(struct session_database *sdb,
+                                struct session *se,
+                                const char *rec)
 {
     xmlDoc *rdoc = record_to_xml(sdb, rec);
 

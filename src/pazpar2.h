@@ -180,10 +180,6 @@ void pazpar2_event_loop(void);
 
 int host_getaddrinfo(struct host *host);
 
-xmlDoc *normalize_record(struct session_database *sdb, struct session *se,
-        const char *rec);
-xmlDoc *record_to_xml(struct session_database *sdb, const char *rec);
-
 struct record *ingest_record(struct client *cl, const char *rec,
                              int record_no);
 void session_alert_watch(struct session *s, int what);
