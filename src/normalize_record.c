@@ -124,30 +124,32 @@ int normalize_record_transform(normalize_record_t nt, xmlDoc **doc,
     const char **parms)
 {
     struct normalize_step *m;
-    for (m = nt->steps; m; m = m->next)
-    {
-        xmlNodePtr root = 0;
-        xmlDoc *new;
-        if (m->stylesheet)
-        {
-            new = xsltApplyStylesheet(m->stylesheet, *doc, parms);
-        }
-        else if (m->marcmap)
-        {
-            new = marcmap_apply(m->marcmap, *doc);
-        }
-        
-        root = xmlDocGetRootElement(new);
-        
-        if (!new || !root || !root->children)
-        {
-            if (new)
-                xmlFreeDoc(new);
-            xmlFreeDoc(*doc);
-            return -1;
-        }
-        xmlFreeDoc(*doc);
-        *doc = new;
+    if (nt) {
+	for (m = nt->steps; m; m = m->next)
+	{
+	    xmlNodePtr root = 0;
+	    xmlDoc *new;
+	    if (m->stylesheet)
+	    {
+		new = xsltApplyStylesheet(m->stylesheet, *doc, parms);
+	    }
+	    else if (m->marcmap)
+	    {
+		new = marcmap_apply(m->marcmap, *doc);
+	    }
+	    
+	    root = xmlDocGetRootElement(new);
+	    
+	    if (!new || !root || !root->children)
+	    {
+		if (new)
+		    xmlFreeDoc(new);
+		xmlFreeDoc(*doc);
+		return -1;
+	    }
+	    xmlFreeDoc(*doc);
+	    *doc = new;
+	}
     }
     return 0;
 }
