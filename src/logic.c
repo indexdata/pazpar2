@@ -446,7 +446,7 @@ static struct database_criterion *parse_filter(NMEM m, const char *buf)
         char *eq;
         if ((eq = strchr(values[i], '=')))
             new->type = PAZPAR2_STRING_MATCH;
-        if ((eq = strchr(values[i], '~')))
+        else if ((eq = strchr(values[i], '~')))
             new->type = PAZPAR2_SUBSTRING_MATCH;
         if (!eq)
         {
