@@ -38,6 +38,7 @@ http://localhost:9763/search.pz2?session=4&command=search&query=computer
 http://localhost:9763/search.pz2?session=4&command=show&start=0&number=1&block=1
 http://localhost:9763/search.pz2?command=init&clear=1
 http://localhost:9763/search.pz2?session=5&command=settings&pz:name%5Bz3950.indexdata.com%2Fmarc%5D=marc&pz:requestsyntax%5Bz3950.indexdata.com%2Fmarc%5D=usmarc&pz:nativesyntax%5Bz3950.indexdata.com%2Fmarc%5D=iso2709&pz:xslt%5Bz3950.indexdata.com%2Fmarc%5D=marc21.xsl&pz:recordfilter%5Bz3950.indexdata.com%2Fmarc%5D=date
-http://localhost:9763/search.pz2?session=5&command=search&query=computer
+http://localhost:9763/search.pz2?session=5&command=search&query=computer&filter=pz%3Aid%3Dz3950.indexdata.com%2Fmarc
 2
 http://localhost:9763/search.pz2?session=5&command=show&start=0&number=1&block=1
+http://localhost:9763/search.pz2?session=5&command=search&query=computer&filter=pz%3Aid%3Dunknown
