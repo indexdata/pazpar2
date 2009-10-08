@@ -23,19 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "pazpar2_config.h"
 #include "record.h"
 
-struct reclist
-{
-    struct reclist_bucket **hashtable;
-    int hashtable_size;
-    int hashmask;
-
-    struct record_cluster **flatlist;
-    int flatlist_size;
-    int num_records;
-    int pointer;
-
-    NMEM nmem;
-};
+struct reclist;
 
 // This is a recipe for sorting. First node in list has highest priority
 struct reclist_sortparms
@@ -72,6 +60,9 @@ struct record_cluster *reclist_read_record(struct reclist *l);
 void reclist_rewind(struct reclist *l);
 struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
     struct conf_service *service);
+
+int reclist_get_num_records(struct reclist *l);
+struct record_cluster *reclist_get_cluster(struct reclist *l, int i);
 
 #endif
 

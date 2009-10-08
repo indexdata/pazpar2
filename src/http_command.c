@@ -812,7 +812,7 @@ static void cmd_show(struct http_channel *c)
 
     if (block)
     {
-        if (status && (!s->psession->reclist || !s->psession->reclist->num_records))
+        if (status && reclist_get_num_records(s->psession->reclist) == 0)
         {
             // if there is already a watch/block. we do not block this one
             if (session_set_watch(s->psession, SESSION_WATCH_SHOW,

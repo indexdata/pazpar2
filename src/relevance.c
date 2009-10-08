@@ -308,10 +308,10 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
         }
     }
     // Calculate relevance for each document
-    for (i = 0; i < reclist->num_records; i++)
+    for (i = 0; i < reclist_get_num_records(reclist); i++)
     {
         int t;
-        struct record_cluster *rec = reclist->flatlist[i];
+        struct record_cluster *rec = reclist_get_cluster(reclist, i);
         float relevance;
         relevance = 0;
         for (t = 1; t < rel->vec_len; t++)
@@ -324,7 +324,7 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
         }
         rec->relevance = (int) (relevance * 100000);
     }
-    reclist->pointer = 0;
+    reclist_rewind(reclist);
     xfree(idfvec);
 }
 

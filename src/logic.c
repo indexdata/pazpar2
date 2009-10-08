@@ -779,7 +779,7 @@ struct record_cluster **show(struct session *s, struct reclist_sortparms *sp,
             }
         reclist_sort(s->reclist, sp);
         
-        *total = s->reclist->num_records;
+        *total = reclist_get_num_records(s->reclist);
         *sumhits = s->total_hits;
         
         for (i = 0; i < start; i++)

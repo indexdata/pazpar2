@@ -29,6 +29,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "reclists.h"
 #include "jenkins_hash.h"
 
+struct reclist
+{
+    struct reclist_bucket **hashtable;
+    int hashtable_size;
+    int hashmask;
+
+    struct record_cluster **flatlist;
+    int flatlist_size;
+    int num_records;
+    int pointer;
+
+    NMEM nmem;
+};
+
 static struct reclist_sortparms *qsort_sortparms = 0; /* thread pr */
 
 struct reclist_bucket
@@ -253,6 +267,18 @@ struct reclist *reclist_create(NMEM nmem, int numrecs)
     res->flatlist_size = numrecs;
 
     return res;
+}
+
+int reclist_get_num_records(struct reclist *l)
+{
+    if (l)
+        return l->num_records;
+    return 0;
+}
+
+struct record_cluster *reclist_get_cluster(struct reclist *l, int i)
+{
+    return l->flatlist[i];
 }
 
 // Insert a record. Return record cluster (newly formed or pre-existing)
