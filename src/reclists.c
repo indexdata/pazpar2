@@ -35,10 +35,9 @@ struct reclist
     int hashtable_size;
     int hashmask;
 
-    struct record_cluster **flatlist;
-    int flatlist_size;
     int num_records;
-    int pointer;
+    struct reclist_bucket *sorted_list;
+    struct reclist_bucket *sorted_ptr;
 
     NMEM nmem;
 };
@@ -49,6 +48,7 @@ struct reclist_bucket
 {
     struct record_cluster *record;
     struct reclist_bucket *next;
+    struct reclist_bucket *snext;
 };
 
 struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
@@ -121,8 +121,8 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
 
 static int reclist_cmp(const void *p1, const void *p2)
 {
-    struct record_cluster *r1 = (*(struct record_cluster**) p1);
-    struct record_cluster *r2 = (*(struct record_cluster**) p2);
+    struct record_cluster *r1 = (*(struct reclist_bucket**) p1)->record;
+    struct record_cluster *r2 = (*(struct reclist_bucket**) p2)->record;
     struct reclist_sortparms *s;
     int res = 0;
 
@@ -172,16 +172,40 @@ static int reclist_cmp(const void *p1, const void *p2)
 
 void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
 {
+    struct reclist_bucket **flatlist = xmalloc(sizeof(*flatlist) * l->num_records);
+    struct reclist_bucket *ptr = l->sorted_list;
+    struct reclist_bucket **prev = &l->sorted_list;
+    int i = 0;
+    while (ptr)
+    {
+        flatlist[i] = ptr;
+        ptr = ptr->snext;
+        i++;
+    }
+    yaz_log(YLOG_WARN, "i=%d num_records=%d", i, l->num_records);
+    assert(i == l->num_records);
+
     qsort_sortparms = parms;
-    qsort(l->flatlist, l->num_records, 
-          sizeof(struct record_cluster*), reclist_cmp);
+    qsort(flatlist, l->num_records, sizeof(*flatlist), reclist_cmp);
+    for (i = 0; i < l->num_records; i++)
+    {
+        *prev = flatlist[i];
+        prev = &flatlist[i]->snext;
+    }
+    *prev = 0;
+    xfree(flatlist);
+
     reclist_rewind(l);
 }
 
 struct record_cluster *reclist_read_record(struct reclist *l)
 {
-    if (l && l->pointer < l->num_records)
-        return l->flatlist[l->pointer++];
+    if (l && l->sorted_ptr)
+    {
+        struct record_cluster *t = l->sorted_ptr->record;
+        l->sorted_ptr = l->sorted_ptr->snext;
+        return t;
+    }
     else
         return 0;
 }
@@ -189,7 +213,7 @@ struct record_cluster *reclist_read_record(struct reclist *l)
 void reclist_rewind(struct reclist *l)
 {
     if (l)
-        l->pointer = 0;
+        l->sorted_ptr = l->sorted_list;
 }
 
 struct reclist *reclist_create(NMEM nmem, int numrecs)
@@ -208,10 +232,10 @@ struct reclist *reclist_create(NMEM nmem, int numrecs)
     res->nmem = nmem;
     res->hashmask = hashsize - 1; // Creates a bitmask
 
-    res->num_records = 0;
-    res->flatlist = nmem_malloc(nmem, numrecs * sizeof(struct record_cluster*));
-    res->flatlist_size = numrecs;
+    res->sorted_ptr = 0;
+    res->sorted_list = 0;
 
+    res->num_records = 0;
     return res;
 }
 
@@ -220,11 +244,6 @@ int reclist_get_num_records(struct reclist *l)
     if (l)
         return l->num_records;
     return 0;
-}
-
-struct record_cluster *reclist_get_cluster(struct reclist *l, int i)
-{
-    return l->flatlist[i];
 }
 
 // Insert a record. Return record cluster (newly formed or pre-existing)
@@ -257,34 +276,39 @@ struct record_cluster *reclist_insert( struct reclist *l,
             break;
         }
     }
-    if (!cluster && l->num_records < l->flatlist_size)
+    if (!cluster)
     {
         struct reclist_bucket *new =
-            nmem_malloc(l->nmem, sizeof(struct reclist_bucket));
-        struct record_cluster *newc =
-            nmem_malloc(l->nmem, sizeof(struct record_cluster));
+            nmem_malloc(l->nmem, sizeof(*new));
+
+        cluster = nmem_malloc(l->nmem, sizeof(*cluster));
         
         record->next = 0;
-        new->record = newc;
+        new->record = cluster;
         new->next = 0;
-        newc->records = record;
-        newc->merge_key = merge_key;
-        newc->relevance = 0;
-        newc->term_frequency_vec = 0;
-        newc->recid = merge_key;
+        cluster->records = record;
+        cluster->merge_key = merge_key;
+        cluster->relevance = 0;
+        cluster->term_frequency_vec = 0;
+        cluster->recid = merge_key;
         (*total)++;
-        newc->metadata = nmem_malloc(l->nmem,
-                sizeof(struct record_metadata*) * service->num_metadata);
-        memset(newc->metadata, 0, 
+        cluster->metadata =
+            nmem_malloc(l->nmem,
+                        sizeof(struct record_metadata*) * service->num_metadata);
+        memset(cluster->metadata, 0, 
                sizeof(struct record_metadata*) * service->num_metadata);
-        newc->sortkeys = nmem_malloc(l->nmem,
-                sizeof(struct record_metadata*) * service->num_sortkeys);
-        memset(newc->sortkeys, 0,
+        cluster->sortkeys = 
+            nmem_malloc(l->nmem, sizeof(struct record_metadata*) * service->num_sortkeys);
+        memset(cluster->sortkeys, 0,
                sizeof(union data_types*) * service->num_sortkeys);
 
         *p = new;
-        l->flatlist[l->num_records++] = newc;
-        cluster = newc;
+
+        new->snext = l->sorted_list;
+        l->sorted_list = new;
+        l->sorted_ptr = l->sorted_list;
+
+        l->num_records++;
     }
     return cluster;
 }
