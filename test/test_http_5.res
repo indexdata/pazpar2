@@ -22,6 +22,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <count>2</count>
+<relevance>9030</relevance>
 <recid>title how to program a computer author jack collins medium book</recid>
 </hit>
 <hit>
@@ -35,6 +36,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>4515</relevance>
 <recid>title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>
@@ -48,6 +50,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>4515</relevance>
 <recid>title a plan for community college computer development author medium book</recid>
 </hit>
 <hit>
@@ -65,6 +68,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>3951</relevance>
 <recid>title washington metropolitan area rail computer feasibility study author englund carl r medium book</recid>
 </hit>
 <hit>
@@ -79,6 +83,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>3160</relevance>
 <recid>title the computer bible author medium book</recid>
 </hit>
 <hit>
@@ -92,6 +97,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>3160</relevance>
 <recid>title computer science technology author medium book</recid>
 </hit>
 <hit>
@@ -110,6 +116,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>2634</relevance>
 <recid>title the puget sound region author mairs john w medium book</recid>
 </hit>
 <hit>
@@ -125,6 +132,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>2257</relevance>
 <recid>title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 <hit>
@@ -140,6 +148,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>0</relevance>
 <recid>title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 </show>

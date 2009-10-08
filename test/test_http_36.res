@@ -17,6 +17,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>5722</relevance>
 <recid>title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>
@@ -30,6 +31,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>5722</relevance>
 <recid>title a plan for community college computer development author medium book</recid>
 </hit>
 <hit>
@@ -47,6 +49,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>5007</relevance>
 <recid>title washington metropolitan area rail computer feasibility study author englund carl r medium book</recid>
 </hit>
 <hit>
@@ -61,6 +64,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>4005</relevance>
 <recid>title the computer bible author medium book</recid>
 </hit>
 <hit>
@@ -74,6 +78,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>4005</relevance>
 <recid>title computer science technology author medium book</recid>
 </hit>
 <hit>
@@ -92,6 +97,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>3338</relevance>
 <recid>title the puget sound region author mairs john w medium book</recid>
 </hit>
 <hit>
@@ -107,6 +113,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>2861</relevance>
 <recid>title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 <hit>
@@ -122,6 +129,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>0</relevance>
 <recid>title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 </show>

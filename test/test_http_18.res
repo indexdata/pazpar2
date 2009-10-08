@@ -15,6 +15,7 @@
 <md-description>1692-PRESENT</md-description>
 <md-test-usersetting-2>test-usersetting-2 data: 
 </md-test-usersetting-2></location>
+<relevance>8239</relevance>
 <recid>title bibliography of maine geology author medium book</recid>
 </hit>
 <hit>
@@ -26,6 +27,7 @@
 <md-description>1907-PRESENT</md-description>
 <md-test-usersetting-2>test-usersetting-2 data: 
 </md-test-usersetting-2></location>
+<relevance>0</relevance>
 <recid>title oil gas drilling author medium book</recid>
 </hit>
 <hit>
@@ -37,6 +39,7 @@
 <md-description>1972-1978</md-description>
 <md-test-usersetting-2>test-usersetting-2 data: 
 </md-test-usersetting-2></location>
+<relevance>0</relevance>
 <recid>title groundwater resource maps county series author medium book</recid>
 </hit>
 </show>
