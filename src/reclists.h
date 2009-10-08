@@ -34,22 +34,6 @@ struct reclist_sortparms
     struct reclist_sortparms *next;
 };
 
-struct reclist_sortparms * 
-reclist_sortparms_insert_field_id(NMEM nmem,
-                                  struct reclist_sortparms **sortparms,
-                                  int field_id ,
-                                  enum conf_sortkey_type type,
-                                  int increasing);
-
-
-struct reclist_sortparms * 
-reclist_sortparms_insert(NMEM nmem, 
-                         struct reclist_sortparms **sortparms,
-                         struct conf_service * service,
-                         const char * name,
-                         int increasing);
-
-
 struct reclist *reclist_create(NMEM, int numrecs);
 struct record_cluster *reclist_insert( struct reclist *tl,
                                        struct conf_service *service,

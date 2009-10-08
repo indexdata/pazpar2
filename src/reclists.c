@@ -51,62 +51,8 @@ struct reclist_bucket
     struct reclist_bucket *next;
 };
 
-#if 0
-struct reclist_sortparms * 
-reclist_sortparms_insert_field_id(NMEM nmem,
-                         struct reclist_sortparms **sortparms,
-                         int field_id,
-                         enum conf_sortkey_type type,
-                         int increasing)
-{
-    struct reclist_sortparms * tmp_rlsp = 0;
-    // assert(nmem);
-
-    if(!sortparms || field_id < 0)
-        return 0;
-
-    // construct new reclist_sortparms
-    tmp_rlsp  = nmem_malloc(nmem, sizeof(struct reclist_sortparms));
-    tmp_rlsp->offset = field_id;
-    tmp_rlsp->type = type;
-    tmp_rlsp->increasing = increasing;
-
-
-    // insert in *sortparms place, moving *sortparms one down the list
-    tmp_rlsp->next = *sortparms;
-    *sortparms = tmp_rlsp;
-
-    return *sortparms;
-};
-#endif
-
-#if 0
-struct reclist_sortparms * 
-reclist_sortparms_insert(NMEM nmem, 
-                         struct reclist_sortparms **sortparms,
-                         struct conf_service * service,
-                         const char * name,
-                         int increasing)
-{
-    int field_id = 0;
-
-    if (!sortparms || !service || !name)  
-        return 0;
-    
-    field_id = conf_service_sortkey_field_id(service, name);
-
-    if (-1 == field_id)
-        return 0;
-
-    return reclist_sortparms_insert_field_id(nmem, sortparms, field_id,
-                                             service->sortkeys[field_id].type,
-                                             increasing);
-};
-#endif
-
-
 struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
-    struct conf_service *service)
+                                                  struct conf_service *service)
 {
     struct reclist_sortparms *res = 0;
     struct reclist_sortparms **rp = &res;
