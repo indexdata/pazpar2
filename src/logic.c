@@ -448,7 +448,7 @@ static struct database_criterion *parse_filter(NMEM m, const char *buf)
             new->type = PAZPAR2_STRING_MATCH;
         else if ((eq = strchr(values[i], '~')))
             new->type = PAZPAR2_SUBSTRING_MATCH;
-        else if (!eq)
+        else
         {
             yaz_log(YLOG_WARN, "Missing equal-sign/tilde in filter");
             return 0;
