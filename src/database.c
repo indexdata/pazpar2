@@ -239,8 +239,9 @@ static int match_criterion(struct setting **settings,
     }
     if (!settings[offset])
         return 0;
-    if (c->type == PAZPAR2_STRING_MATCH)
-        for (v = c->values; v; v = v->next)
+    for (v = c->values; v; v = v->next)
+    {
+        if (c->type == PAZPAR2_STRING_MATCH)
         {
             if (offset == PZ_ID)
             {
@@ -252,21 +253,13 @@ static int match_criterion(struct setting **settings,
                 if (!strcmp(settings[offset]->value, v->value))
                     break;
             }
-        }
-    else if (c->type == PAZPAR2_SUBSTRING_MATCH)
-        for (v = c->values; v; v = v->next)
+        }            
+        else if (c->type == PAZPAR2_SUBSTRING_MATCH)
         {
-            if (offset == PZ_ID)
-            {
-                if (match_zurl(settings[offset]->value, v->value))
-                    break;
-            }
-            else
-            {
-                if (strstr(settings[offset]->value, v->value))
-                    break;
-            }
+            if (strstr(settings[offset]->value, v->value))
+                break;
         }
+    }
     if (v)
         return 1;
     else
