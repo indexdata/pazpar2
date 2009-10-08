@@ -38,7 +38,7 @@ struct reclist
     int num_records;
     struct reclist_bucket *sorted_list;
     struct reclist_bucket *sorted_ptr;
-
+    struct reclist_bucket **last;
     NMEM nmem;
 };
 
@@ -47,7 +47,7 @@ static struct reclist_sortparms *qsort_sortparms = 0; /* thread pr */
 struct reclist_bucket
 {
     struct record_cluster *record;
-    struct reclist_bucket *next;
+    struct reclist_bucket *hnext;
     struct reclist_bucket *snext;
 };
 
@@ -182,7 +182,6 @@ void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
         ptr = ptr->snext;
         i++;
     }
-    yaz_log(YLOG_WARN, "i=%d num_records=%d", i, l->num_records);
     assert(i == l->num_records);
 
     qsort_sortparms = parms;
@@ -193,6 +192,8 @@ void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
         prev = &flatlist[i]->snext;
     }
     *prev = 0;
+    l->last = prev;
+
     xfree(flatlist);
 
     reclist_rewind(l);
@@ -234,6 +235,7 @@ struct reclist *reclist_create(NMEM nmem, int numrecs)
 
     res->sorted_ptr = 0;
     res->sorted_list = 0;
+    res->last = &res->sorted_list;
 
     res->num_records = 0;
     return res;
@@ -264,7 +266,7 @@ struct record_cluster *reclist_insert( struct reclist *l,
 
     bucket = jenkins_hash((unsigned char*) merge_key) & l->hashmask;
 
-    for (p = &l->hashtable[bucket]; *p; p = &(*p)->next)
+    for (p = &l->hashtable[bucket]; *p; p = &(*p)->hnext)
     {
         // We found a matching record. Merge them
         if (!strcmp(merge_key, (*p)->record->merge_key))
@@ -285,7 +287,7 @@ struct record_cluster *reclist_insert( struct reclist *l,
         
         record->next = 0;
         new->record = cluster;
-        new->next = 0;
+        new->hnext = 0;
         cluster->records = record;
         cluster->merge_key = merge_key;
         cluster->relevance = 0;
@@ -301,12 +303,15 @@ struct record_cluster *reclist_insert( struct reclist *l,
             nmem_malloc(l->nmem, sizeof(struct record_metadata*) * service->num_sortkeys);
         memset(cluster->sortkeys, 0,
                sizeof(union data_types*) * service->num_sortkeys);
+ 
+        /* attach to hash list */
+        *p = new; 
 
-        *p = new;
-
-        new->snext = l->sorted_list;
-        l->sorted_list = new;
+        /* append to sorted_list */
+        *l->last = new;
+        l->last = &new->snext;
         l->sorted_ptr = l->sorted_list;
+        new->snext = 0;
 
         l->num_records++;
     }
