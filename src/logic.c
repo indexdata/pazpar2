@@ -1089,15 +1089,15 @@ struct record *ingest_record(struct client *cl, const char *rec,
                              service, 
                              record, (char *) mergekey_norm, 
                              &se->total_merged);
-    if (global_parameters.dump_records)
-        yaz_log(YLOG_LOG, "Cluster id %s from %s (#%d)", cluster->recid,
-                sdb->database->url, record_no);
     if (!cluster)
     {
         /* no room for record */
         xmlFreeDoc(xdoc);
         return 0;
     }
+    if (global_parameters.dump_records)
+        yaz_log(YLOG_LOG, "Cluster id %s from %s (#%d)", cluster->recid,
+                sdb->database->url, record_no);
     relevance_newrec(se->relevance, cluster);
     
     // now parsing XML record and adding data to cluster or record metadata
