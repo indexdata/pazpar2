@@ -34,7 +34,7 @@ struct reclist_sortparms
     struct reclist_sortparms *next;
 };
 
-struct reclist *reclist_create(NMEM, int numrecs);
+struct reclist *reclist_create(NMEM);
 struct record_cluster *reclist_insert( struct reclist *tl,
                                        struct conf_service *service,
                                        struct record  *record,

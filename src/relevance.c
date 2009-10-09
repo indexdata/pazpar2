@@ -241,7 +241,7 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
 
 
 struct relevance *relevance_create(pp2_charset_t pct,
-                                   NMEM nmem, const char **terms, int numrecs)
+                                   NMEM nmem, const char **terms)
 {
     struct relevance *res = nmem_malloc(nmem, sizeof(struct relevance));
     const char **p;
@@ -289,6 +289,7 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
     int i;
     float *idfvec = xmalloc(rel->vec_len * sizeof(float));
 
+    reclist_rewind(reclist);
     // Calculate document frequency vector for each term.
     for (i = 1; i < rel->vec_len; i++)
     {
@@ -308,12 +309,14 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
         }
     }
     // Calculate relevance for each document
-    for (i = 0; i < reclist_get_num_records(reclist); i++)
+
+    while (1)
     {
         int t;
-        struct record_cluster *rec = reclist_get_cluster(reclist, i);
-        float relevance;
-        relevance = 0;
+        float relevance = 0;
+        struct record_cluster *rec = reclist_read_record(reclist);
+        if (!rec)
+            break;
         for (t = 1; t < rel->vec_len; t++)
         {
             float termfreq;
