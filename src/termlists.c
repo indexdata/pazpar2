@@ -42,8 +42,7 @@ struct termlist_bucket
 struct termlist
 {
     struct termlist_bucket **hashtable;
-    int hashtable_size;
-    int hashmask;
+    unsigned hash_size;
 
     struct termlist_score **highscore;
     int highscore_size;
@@ -53,24 +52,14 @@ struct termlist
     NMEM nmem;
 };
 
-struct termlist *termlist_create(NMEM nmem, int numterms, int highscore_size)
+struct termlist *termlist_create(NMEM nmem, int highscore_size)
 {
-    int hashsize = 1;
-    int halfnumterms;
-    struct termlist *res;
-
-    // Calculate a hash size smallest power of 2 larger than 50% of expected numterms
-    halfnumterms = numterms >> 1;
-    if (halfnumterms < 0)
-        halfnumterms = 1;
-    while (hashsize < halfnumterms)
-        hashsize <<= 1;
-    res = nmem_malloc(nmem, sizeof(struct termlist));
-    res->hashtable = nmem_malloc(nmem, hashsize * sizeof(struct termlist_bucket*));
-    memset(res->hashtable, 0, hashsize * sizeof(struct termlist_bucket*));
-    res->hashtable_size = hashsize;
+    struct termlist *res = nmem_malloc(nmem, sizeof(struct termlist));
+    res->hash_size = 399;
+    res->hashtable =
+        nmem_malloc(nmem, res->hash_size * sizeof(struct termlist_bucket*));
+    memset(res->hashtable, 0, res->hash_size * sizeof(struct termlist_bucket*));
     res->nmem = nmem;
-    res->hashmask = hashsize - 1; // Creates a bitmask
 
     res->highscore = nmem_malloc(nmem, highscore_size * sizeof(struct termlist_score *));
     res->highscore_size = highscore_size;
@@ -131,7 +120,7 @@ void termlist_insert(struct termlist *tl, const char *term)
     for (cp = buf + strlen(buf); cp != buf && strchr(",. -", cp[-1]); cp--)
         cp[-1] = '\0';
     
-    bucket = jenkins_hash((unsigned char *)buf) & tl->hashmask;
+    bucket = jenkins_hash((unsigned char *)buf) % tl->hash_size;
     for (p = &tl->hashtable[bucket]; *p; p = &(*p)->next)
     {
         if (!strcmp(buf, (*p)->term.term))

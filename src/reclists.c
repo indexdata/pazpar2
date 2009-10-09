@@ -32,8 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 struct reclist
 {
     struct reclist_bucket **hashtable;
-    int hashtable_size;
-    int hashmask;
+    unsigned hash_size;
 
     int num_records;
     struct reclist_bucket *sorted_list;
@@ -217,21 +216,14 @@ void reclist_rewind(struct reclist *l)
         l->sorted_ptr = l->sorted_list;
 }
 
-struct reclist *reclist_create(NMEM nmem, int numrecs)
+struct reclist *reclist_create(NMEM nmem)
 {
-    int hashsize = 1;
-    struct reclist *res;
-
-    assert(numrecs);
-    while (hashsize < numrecs)
-        hashsize <<= 1;
-    res = nmem_malloc(nmem, sizeof(struct reclist));
+    struct reclist *res = nmem_malloc(nmem, sizeof(struct reclist));
+    res->hash_size = 399;
     res->hashtable 
-        = nmem_malloc(nmem, hashsize * sizeof(struct reclist_bucket*));
-    memset(res->hashtable, 0, hashsize * sizeof(struct reclist_bucket*));
-    res->hashtable_size = hashsize;
+        = nmem_malloc(nmem, res->hash_size * sizeof(struct reclist_bucket*));
+    memset(res->hashtable, 0, res->hash_size * sizeof(struct reclist_bucket*));
     res->nmem = nmem;
-    res->hashmask = hashsize - 1; // Creates a bitmask
 
     res->sorted_ptr = 0;
     res->sorted_list = 0;
@@ -264,7 +256,7 @@ struct record_cluster *reclist_insert( struct reclist *l,
     assert(merge_key);
     assert(total);
 
-    bucket = jenkins_hash((unsigned char*) merge_key) & l->hashmask;
+    bucket = jenkins_hash((unsigned char*) merge_key) % l->hash_size;
 
     for (p = &l->hashtable[bucket]; *p; p = &(*p)->hnext)
     {

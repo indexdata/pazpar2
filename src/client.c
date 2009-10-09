@@ -520,11 +520,8 @@ void client_start_search(struct client *cl)
     if (*opt_maxrecs)
         ZOOM_connection_option_set(link, "count", opt_maxrecs);
     else
-    {
-        char n[128];
-        sprintf(n, "%d", global_parameters.toget);
-        ZOOM_connection_option_set(link, "count", n);
-    }
+        ZOOM_connection_option_set(link, "count", "100");
+
     if (databaseName)
         ZOOM_connection_option_set(link, "databaseName", databaseName);
 
@@ -721,8 +718,7 @@ int client_parse_query(struct client *cl, const char *query)
         extract_terms(se->nmem, cn, p);
         se->relevance = relevance_create(
             se->service->relevance_pct,
-            se->nmem, (const char **) p,
-            se->expected_maxrecs);
+            se->nmem, (const char **) p);
     }
 
     ccl_rpn_delete(cn);

@@ -28,7 +28,7 @@ struct record_cluster;
 struct reclist;
 
 struct relevance *relevance_create(pp2_charset_t pct,
-                                   NMEM nmem, const char **terms, int numrecs);
+                                   NMEM nmem, const char **terms);
 void relevance_newrec(struct relevance *r, struct record_cluster *cluster);
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
         const char *words, int multiplier);

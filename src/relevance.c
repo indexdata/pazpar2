@@ -241,7 +241,7 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
 
 
 struct relevance *relevance_create(pp2_charset_t pct,
-                                   NMEM nmem, const char **terms, int numrecs)
+                                   NMEM nmem, const char **terms)
 {
     struct relevance *res = nmem_malloc(nmem, sizeof(struct relevance));
     const char **p;

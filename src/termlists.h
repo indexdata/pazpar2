@@ -30,7 +30,7 @@ struct termlist_score
 
 struct termlist;
 
-struct termlist *termlist_create(NMEM nmem, int numterms, int highscore_size);
+struct termlist *termlist_create(NMEM nmem, int highscore_size);
 void termlist_insert(struct termlist *tl, const char *term);
 struct termlist_score **termlist_highscore(struct termlist *tl, int *len);
 

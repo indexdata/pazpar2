@@ -77,8 +77,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 struct parameters global_parameters = 
 {
     0,   // dump_records
-    0,   // debug_mode
-    100,
+    0    // debug_mode
 };
 
 static void log_xml_doc(xmlDoc *doc)
@@ -146,8 +145,7 @@ static void add_facet(struct session *s, const char *type, const char *value)
 
         s->termlists[i].name = nmem_strdup(s->nmem, type);
         s->termlists[i].termlist 
-            = termlist_create(s->nmem, s->expected_maxrecs,
-                              TERMLIST_HIGH_SCORE);
+            = termlist_create(s->nmem, TERMLIST_HIGH_SCORE);
         s->num_termlists = i + 1;
     }
     termlist_insert(s->termlists[i].termlist, value);
@@ -493,9 +491,7 @@ enum pazpar2_error_code search(struct session *se,
     live_channels = select_targets(se, criteria);
     if (live_channels)
     {
-        int maxrecs = live_channels * global_parameters.toget; // This is buggy!!!
-        se->reclist = reclist_create(se->nmem, maxrecs);
-        se->expected_maxrecs = maxrecs;
+        se->reclist = reclist_create(se->nmem);
     }
     else
         return PAZPAR2_NO_TARGETS;
@@ -663,7 +659,6 @@ struct session *new_session(NMEM nmem, struct conf_service *service)
     session->num_termlists = 0;
     session->reclist = 0;
     session->clients = 0;
-    session->expected_maxrecs = 0;
     session->session_nmem = nmem;
     session->nmem = nmem_create();
     session->wrbuf = wrbuf_alloc();
