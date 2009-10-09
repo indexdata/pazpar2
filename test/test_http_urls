@@ -42,3 +42,7 @@ http://localhost:9763/search.pz2?session=5&command=search&query=computer&filter=
 2
 http://localhost:9763/search.pz2?session=5&command=show&start=0&number=1&block=1
 http://localhost:9763/search.pz2?session=5&command=search&query=computer&filter=pz%3Aid%3Dunknown
+http://localhost:9763/search.pz2?session=3&command=settings&pz:maxrecs%5Bz3950.indexdata.com%2Fgils%5D=8
+http://localhost:9763/search.pz2?session=3&command=search&query=the
+2
+http://localhost:9763/search.pz2?session=3&command=show&start=0&number=1&block=1
