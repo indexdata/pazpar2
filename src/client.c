@@ -657,9 +657,10 @@ static char *make_cqlquery(struct client *cl)
     ODR odr_out = odr_createmem(ODR_ENCODE);
 
     zquery = p_query_rpn(odr_out, cl->pquery);
+    yaz_log(YLOG_LOG, "PQF: %s", cl->pquery);
     if ((status = cql_transform_rpn2cql_wrbuf(cqlt, wrb, zquery)))
     {
-        yaz_log(YLOG_WARN, "failed to generate CQL query, code=%d", status);
+        yaz_log(YLOG_WARN, "Failed to generate CQL query, code=%d", status);
         r = 0;
     }
     else
@@ -691,8 +692,9 @@ int client_parse_query(struct client *cl, const char *query)
     if (!cn)
     {
         client_set_state(cl, Client_Error);
-        yaz_log(YLOG_WARN, "Failed to parse query for %s",
-                         client_get_database(cl)->database->url);
+        yaz_log(YLOG_WARN, "Failed to parse CCL query %s for %s",
+                query,
+                client_get_database(cl)->database->url);
         return -1;
     }
     wrbuf_rewind(se->wrbuf);
