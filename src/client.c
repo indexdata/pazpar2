@@ -517,15 +517,18 @@ void client_start_search(struct client *cl)
         ZOOM_connection_option_set(link, "elementSetName", opt_elements);
     if (*opt_requestsyn)
         ZOOM_connection_option_set(link, "preferredRecordSyntax", opt_requestsyn);
-    if (*opt_maxrecs)
-        ZOOM_connection_option_set(link, "count", opt_maxrecs);
-    else
-        ZOOM_connection_option_set(link, "count", "100");
+    if (!*opt_maxrecs)
+        opt_maxrecs = "100";
+
+    ZOOM_connection_option_set(link, "count", opt_maxrecs);
 
     if (databaseName)
         ZOOM_connection_option_set(link, "databaseName", databaseName);
 
-    ZOOM_connection_option_set(link, "presentChunk", "20");
+    if (atoi(opt_maxrecs) > 20)
+        ZOOM_connection_option_set(link, "presentChunk", "20");
+    else
+        ZOOM_connection_option_set(link, "presentChunk", opt_maxrecs);
         
     if (cl->cqlquery)
     {
