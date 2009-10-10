@@ -1,29 +1,35 @@
 #!/bin/sh
 #
-# Regression test using pazpar2 against z3950.indexdata.com/marc
-# Reads Pazpar2 URLs from test_http_urls
-#            Outputs to test_http_<no>.log
-#            Matches against results in test_http_<no>.res
-#
-
+# Regression test using pazpar2 against z3950.indexdata.com/marc or gils
+# Reads Pazpar2 URLs from $1
+#            Outputs to $1_<no>.log
+#            Matches against results in $1_<no>.res
+# Requires curl
 
 # srcdir might be set by make
 srcdir=${srcdir:-"."}
 
-if test -x /usr/bin/curl; then
-    GET='/usr/bin/curl -s -o $OUT2 "$f"'
-    POST='/usr/bin/curl -s -H "Content-Type: text/xml" --data-binary "@$postfile" -o $OUT2  "$f"'
-elif test -x /usr/bin/wget; then
-    GET='/usr/bin/wget -q -O $OUT2 $f'
-    POST='/usr/bin/wget -q -O $OUT2 --header="Content-Type: text/xml" --post-file=$postfile $f'
-elif test -x /usr/bin/lynx; then
-    GET='/usr/bin/lynx -dump "$f" >$OUT2'
-    POST=''
+# look for curl in PATH
+oIFS=$IFS
+IFS=:
+curl=''
+for p in $PATH; do
+    if test -x $p/curl; then
+	curl=$p/curl
+	break
+    fi
+done
+IFS=$oIFS
+
+if test -z $curl; then
+    echo "curl not found. $PREFIX can not be tested"
+    exit 0
 fi
+GET='$curl --silent --output $OUT2 "$f"'
+POST='$curl --silent --header "Content-Type: text/xml" --data-binary "@$postfile" --output $OUT2  "$f"'
 
 # Fire up pazpar2
 rm -f pazpar2.log
-
 
 PREFIX=$1
 if test "x${PREFIX}" = "x"; then
@@ -76,20 +82,16 @@ for f in `cat ${srcdir}/${URLS}`; do
 	else
 	    eval $GET
 	fi
+	if test ! -f $OUT2; then
+	    touch $OUT2
+	fi
 	if test -f $OUT1; then
-	    if test -f $OUT2; then
-		if diff $OUT1 $OUT2 >$DIFF; then
-		    :
-		else
-		    # wget returns 0-size file on HTTP error, curl dont.
-		    if test -s $OUT1; then
-			echo "Test $testno: Failed. See $OUT1, $OUT2 and $DIFF"
-			echo "URL: $f"
-			code=1
-		    fi
-		fi
+	    if diff $OUT1 $OUT2 >$DIFF; then
+		:
 	    else
-		echo "Test $test: can not be performed"
+		echo "Test $testno: Failed. See $OUT1, $OUT2 and $DIFF"
+		echo "URL: $f"
+		code=1
 	    fi
 	else
 	    echo "Test $testno: Making for the first time"
@@ -111,6 +113,7 @@ for f in `cat ${srcdir}/${URLS}`; do
     if ps -p $PP2PID >/dev/null 2>&1; then
 	:
     else
+	IFS="$oIFS"
 	echo "Test $testno: pazpar2 died"
 	exit 1
     fi
@@ -119,6 +122,7 @@ IFS="$oIFS"
 
 # Kill programs
 
+sleep 1
 if test -n "$PP2PID"; then
     kill $PP2PID
     sleep 1
