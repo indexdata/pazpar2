@@ -78,6 +78,9 @@
       <metadata name="subject" termlist="yes" rank="0"/>
       <metadata name="snippet" brief="yes" merge="unique"/>
       <metadata name="electronic-url" brief="yes" merge="no"/>
+      <metadata name="electronic-format-type" />
+      <metadata name="electronic-format-instruction" />
+      <metadata name="electronic-url" brief="yes" merge="no"/>
       <metadata name="electronic-text" brief="yes" merge="no"/>
       <metadata name="electronic-note"/>
       <metadata name="citation"/>
