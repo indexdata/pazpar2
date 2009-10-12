@@ -470,7 +470,9 @@ static struct database_criterion *parse_filter(NMEM m, const char *buf)
 }
 
 enum pazpar2_error_code search(struct session *se,
-                               const char *query, const char *filter,
+                               const char *query,
+                               const char *maxrecs,
+                               const char *filter,
                                const char **addinfo)
 {
     int live_channels = 0;
@@ -498,6 +500,8 @@ enum pazpar2_error_code search(struct session *se,
 
     for (cl = se->clients; cl; cl = client_next_in_session(cl))
     {
+        if (maxrecs)
+            client_set_maxrecs(cl, atoi(maxrecs));
         if (prepare_session_database(se, client_get_database(cl)) < 0)
             continue;
         // Parse query for target

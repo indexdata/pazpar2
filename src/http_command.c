@@ -870,6 +870,7 @@ static void cmd_search(struct http_channel *c)
     struct http_session *s = locate_session(rq, rs);
     const char *query = http_argbyname(rq, "query");
     const char *filter = http_argbyname(rq, "filter");
+    const char *maxrecs = http_argbyname(rq, "maxrecs");
     enum pazpar2_error_code code;
     const char *addinfo = 0;
 
@@ -885,7 +886,7 @@ static void cmd_search(struct http_channel *c)
         error(rs, PAZPAR2_MALFORMED_PARAMETER_ENCODING, "query");
         return;
     }
-    code = search(s->psession, query, filter, &addinfo);
+    code = search(s->psession, query, maxrecs, filter, &addinfo);
     if (code)
     {
         error(rs, code, addinfo);

@@ -85,6 +85,7 @@ int client_get_diagnostic(struct client *cl);
 void client_set_database(struct client *cl, struct session_database *db);
 struct host *client_get_host(struct client *cl);
 const char *client_get_url(struct client *cl);
+void client_set_maxrecs(struct client *cl, int v);
 
 #endif
 

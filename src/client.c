@@ -74,6 +74,7 @@ struct client {
     char *cqlquery; // used for SRU targets only
     int hits;
     int record_offset;
+    int maxrecs;
     int diagnostic;
     enum client_state state;
     struct show_raw *show_raw;
@@ -497,6 +498,7 @@ void client_start_search(struct client *cl)
     const char *opt_maxrecs = session_setting_oneval(sdb, PZ_MAXRECS);
     const char *opt_sru = session_setting_oneval(sdb, PZ_SRU);
     const char *opt_sort = session_setting_oneval(sdb, PZ_SORT);
+    char maxrecs_str[24];
 
     assert(link);
 
@@ -517,19 +519,22 @@ void client_start_search(struct client *cl)
         ZOOM_connection_option_set(link, "elementSetName", opt_elements);
     if (*opt_requestsyn)
         ZOOM_connection_option_set(link, "preferredRecordSyntax", opt_requestsyn);
+
     if (!*opt_maxrecs)
-        opt_maxrecs = "100";
-
+    {
+        sprintf(maxrecs_str, "%d", cl->maxrecs);
+        opt_maxrecs = maxrecs_str;
+    }
     ZOOM_connection_option_set(link, "count", opt_maxrecs);
-
-    if (databaseName)
-        ZOOM_connection_option_set(link, "databaseName", databaseName);
 
     if (atoi(opt_maxrecs) > 20)
         ZOOM_connection_option_set(link, "presentChunk", "20");
     else
         ZOOM_connection_option_set(link, "presentChunk", opt_maxrecs);
         
+    if (databaseName)
+        ZOOM_connection_option_set(link, "databaseName", databaseName);
+
     if (cl->cqlquery)
     {
         ZOOM_query q = ZOOM_query_create();
@@ -560,6 +565,7 @@ struct client *client_create(void)
     }
     else
         r = xmalloc(sizeof(struct client));
+    r->maxrecs = 100;
     r->pquery = 0;
     r->cqlquery = 0;
     r->database = 0;
@@ -781,6 +787,11 @@ struct host *client_get_host(struct client *cl)
 const char *client_get_url(struct client *cl)
 {
     return client_get_database(cl)->database->url;
+}
+
+void client_set_maxrecs(struct client *cl, int v)
+{
+    cl->maxrecs = v;
 }
 
 /*
