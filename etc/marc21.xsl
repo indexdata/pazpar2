@@ -231,6 +231,12 @@
 	<pz:metadata type="electronic-note">
 	  <xsl:value-of select="marc:subfield[@code='z']"/>
 	</pz:metadata>
+	<pz:metadata type="electronic-format-instruction">
+	  <xsl:value-of select="marc:subfield[@code='i']"/>
+	</pz:metadata>
+	<pz:metadata type="electronic-format-type">
+	  <xsl:value-of select="marc:subfield[@code='q']"/>
+	</pz:metadata>
       </xsl:for-each>
 
       <xsl:for-each select="marc:datafield[@tag='773']">
