@@ -1071,7 +1071,11 @@ struct conf_config *config_create(const char *fname, int verbose)
         {
             yaz_log(YLOG_LOG, "Configuration %s after include processing",
                     fname);
+#if LIBXML_VERSION >= 20600
             xmlDocFormatDump(yaz_log_file(), doc, 0);
+#else
+            xmlDocDump(yaz_log_file(), doc);
+#endif
         }
         r = parse_config(config, n);
     }
