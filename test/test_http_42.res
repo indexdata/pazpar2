@@ -8,18 +8,34 @@
 <num>5</num>
 <hit>
 
-<md-title>The Computer Bible</md-title>
-<md-date>1973-1980</md-date>
-<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="z3950.indexdata.com/marc" name="marc">
-<md-title>The Computer Bible</md-title>
-<md-date>1973-1980</md-date>
-<md-description>Hebrew and Greek; introductions in English</md-description>
-<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
+<md-title>The religious teachers of Greece</md-title>
+<md-date>1972</md-date>
+<md-author>Adam, James</md-author>
+<md-description>Reprint of the 1909 ed., which was issued as the 1904-1906 Gifford lectures</md-description><location id="z3950.indexdata.com/marc" name="marc">
+<md-title>The religious teachers of Greece</md-title>
+<md-date>1972</md-date>
+<md-author>Adam, James</md-author>
+<md-description>Reprint of the 1909 ed., which was issued as the 1904-1906 Gifford lectures</md-description>
+<md-description>Includes bibliographical references</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<relevance>30000</relevance>
-<recid>title the computer bible author medium book</recid>
+<relevance>48000</relevance>
+<recid>title the religious teachers of greece author adam james medium book</recid>
+</hit>
+<hit>
+
+<md-title>The use of passwords for controlled access to computer resources</md-title>
+<md-date>1977</md-date>
+<md-author>Wood, Helen M</md-author><location id="z3950.indexdata.com/marc" name="marc">
+<md-title>The use of passwords for controlled access to computer resources</md-title>
+<md-date>1977</md-date>
+<md-author>Wood, Helen M</md-author>
+<md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
+<md-test-usersetting-2>test-usersetting-2 data: 
+        YYYYYYYYY</md-test-usersetting-2></location>
+<relevance>42857</relevance>
+<recid>title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>
 
@@ -69,21 +85,5 @@
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>25000</relevance>
 <recid>title computer science technology author medium book</recid>
-</hit>
-<hit>
-
-<md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
-<md-title-remainder>the proceedings of a workshop</md-title-remainder>
-<md-date>1974</md-date>
-<md-description>Includes bibliographical references and index</md-description><location id="z3950.indexdata.com/marc" name="marc">
-<md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
-<md-title-remainder>the proceedings of a workshop</md-title-remainder>
-<md-date>1974</md-date>
-<md-description>Includes bibliographical references and index</md-description>
-<md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
-<md-test-usersetting-2>test-usersetting-2 data: 
-        YYYYYYYYY</md-test-usersetting-2></location>
-<relevance>17857</relevance>
-<recid>title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 </show>

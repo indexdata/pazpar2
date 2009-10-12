@@ -75,6 +75,7 @@ struct client {
     int hits;
     int record_offset;
     int maxrecs;
+    int startrecs;
     int diagnostic;
     enum client_state state;
     struct show_raw *show_raw;
@@ -404,7 +405,7 @@ void client_search_response(struct client *cl)
     }
     else
     {
-        cl->record_offset = 0;
+        cl->record_offset = cl->startrecs;
         cl->hits = ZOOM_resultset_size(resultset);
         se->total_hits += cl->hits;
     }
@@ -527,11 +528,20 @@ void client_start_search(struct client *cl)
     }
     ZOOM_connection_option_set(link, "count", opt_maxrecs);
 
+
     if (atoi(opt_maxrecs) > 20)
         ZOOM_connection_option_set(link, "presentChunk", "20");
     else
         ZOOM_connection_option_set(link, "presentChunk", opt_maxrecs);
+
+    if (cl->startrecs)
+    {
+        char startrecs_str[24];
+        sprintf(startrecs_str, "%d", cl->startrecs);
         
+        ZOOM_connection_option_set(link, "start", startrecs_str);
+    }
+
     if (databaseName)
         ZOOM_connection_option_set(link, "databaseName", databaseName);
 
@@ -566,6 +576,7 @@ struct client *client_create(void)
     else
         r = xmalloc(sizeof(struct client));
     r->maxrecs = 100;
+    r->startrecs = 0;
     r->pquery = 0;
     r->cqlquery = 0;
     r->database = 0;
@@ -792,6 +803,11 @@ const char *client_get_url(struct client *cl)
 void client_set_maxrecs(struct client *cl, int v)
 {
     cl->maxrecs = v;
+}
+
+void client_set_startrecs(struct client *cl, int v)
+{
+    cl->startrecs = v;
 }
 
 /*
