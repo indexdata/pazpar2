@@ -122,10 +122,9 @@ IFS="$oIFS"
 
 # Kill programs
 
-sleep 1
 if test -n "$PP2PID"; then
     kill $PP2PID
-    sleep 1
+    sleep 2
 fi
 
 exit $code
