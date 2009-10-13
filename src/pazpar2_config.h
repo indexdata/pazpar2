@@ -77,7 +77,7 @@ struct conf_metadata
     enum conf_metadata_type type;
     enum conf_metadata_merge merge;
     enum conf_setting_type setting; // Value is to be taken from session/db settings?
-    enum conf_metadata_type mergekey;
+    enum conf_metadata_mergekey mergekey;
 };
 
 
