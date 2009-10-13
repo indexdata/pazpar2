@@ -970,7 +970,22 @@
       </para>
      </listitem>
     </varlistentry>
+
+    <varlistentry>
+     <term>pz:recordfilter</term>
+     <listitem>
+      <para>
+       Specifies a filter which allows Pazpar2 to only include
+       records that meet a certain criteria in a result. Unmatched records
+       will be ignored. The filter takes the form name[~value] , which
+       will include only records with metadata element (name) that has the
+       substring (value) given. If value is omitted all records with the
+       metadata present will be included.
+      </para>
+     </listitem>
+    </varlistentry>
    </variablelist>
+
   </refsect2>
   
  </refsect1>
