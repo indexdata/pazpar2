@@ -1023,7 +1023,7 @@ static int check_record_filter(xmlNode *root, struct session_database *sdb)
             if (type)
             {
                 size_t len;
-                const char *eq = strchr(s, '=');
+                const char *eq = strchr(s, '~');
                 if (eq)
                     len = eq - s;
                 else
