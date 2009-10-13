@@ -313,7 +313,7 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
     while (1)
     {
         int t;
-        float relevance = 0;
+        int relevance = 0;
         struct record_cluster *rec = reclist_read_record(reclist);
         if (!rec)
             break;
@@ -323,9 +323,9 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
             if (!rec->term_frequency_vec[0])
                 break;
             termfreq = (float) rec->term_frequency_vec[t] / rec->term_frequency_vec[0];
-            relevance += termfreq * idfvec[t];
+            relevance += 100000 * (termfreq * idfvec[t] + 0.0000005);  
         }
-        rec->relevance = (int) (relevance * 100000);
+        rec->relevance = relevance;
     }
     reclist_rewind(reclist);
     xfree(idfvec);
