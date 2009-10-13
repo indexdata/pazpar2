@@ -499,7 +499,7 @@ void client_start_search(struct client *cl)
     const char *opt_maxrecs = session_setting_oneval(sdb, PZ_MAXRECS);
     const char *opt_sru = session_setting_oneval(sdb, PZ_SRU);
     const char *opt_sort = session_setting_oneval(sdb, PZ_SORT);
-    char maxrecs_str[24];
+    char maxrecs_str[24], startrecs_str[24];
 
     assert(link);
 
@@ -534,13 +534,8 @@ void client_start_search(struct client *cl)
     else
         ZOOM_connection_option_set(link, "presentChunk", opt_maxrecs);
 
-    if (cl->startrecs)
-    {
-        char startrecs_str[24];
-        sprintf(startrecs_str, "%d", cl->startrecs);
-        
-        ZOOM_connection_option_set(link, "start", startrecs_str);
-    }
+    sprintf(startrecs_str, "%d", cl->startrecs);
+    ZOOM_connection_option_set(link, "start", startrecs_str);
 
     if (databaseName)
         ZOOM_connection_option_set(link, "databaseName", databaseName);
