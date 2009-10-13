@@ -129,41 +129,40 @@ static int reclist_cmp(const void *p1, const void *p2)
     {
         union data_types *ut1 = r1->sortkeys[s->offset];
         union data_types *ut2 = r2->sortkeys[s->offset];
+        const char *s1, *s2;
         switch (s->type)
         {
-            const char *s1, *s2;
-            
-            case Metadata_sortkey_relevance:
-                res = r2->relevance - r1->relevance;
-                break;
-            case Metadata_sortkey_string:
-                s1 = ut1 ? ut1->text.sort : "";
-                s2 = ut2 ? ut2->text.sort : "";
-                res = strcmp(s2, s1);
-                if (res)
-                {
-                    if (s->increasing)
-                        res *= -1;
-                }
-                break;
-            case Metadata_sortkey_numeric:
-                if (ut1 && ut2)
-                {
-                    if (s->increasing)
-                        res = ut1->number.min  - ut2->number.min;
-                    else
-                        res = ut2->number.max  - ut1->number.max;
-                }
-                else if (ut1 && !ut2)
-                    res = -1;
-                else if (!ut1 && ut2)
-                    res = 1;
+        case Metadata_sortkey_relevance:
+            res = r2->relevance - r1->relevance;
+            break;
+        case Metadata_sortkey_string:
+            s1 = ut1 ? ut1->text.sort : "";
+            s2 = ut2 ? ut2->text.sort : "";
+            res = strcmp(s2, s1);
+            if (res)
+            {
+                if (s->increasing)
+                    res *= -1;
+            }
+            break;
+        case Metadata_sortkey_numeric:
+            if (ut1 && ut2)
+            {
+                if (s->increasing)
+                    res = ut1->number.min  - ut2->number.min;
                 else
-                    res = 0;
-                break;
-            default:
-                yaz_log(YLOG_WARN, "Bad sort type: %d", s->type);
+                    res = ut2->number.max  - ut1->number.max;
+            }
+            else if (ut1 && !ut2)
+                res = -1;
+            else if (!ut1 && ut2)
+                res = 1;
+            else
                 res = 0;
+            break;
+        default:
+            yaz_log(YLOG_WARN, "Bad sort type: %d", s->type);
+            res = 0;
         }
     }
     return res;
