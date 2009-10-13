@@ -1,8 +1,28 @@
+--- 1.2.2 2009/10/13
+
+Command search takes two optional parameters, startecs and maxrecs,
+that specifies the start offset (0, 1, ...) and maximum number of records
+to fetch for each target.
+
+XSLTs + MARC maps are cached within a session so we don't re-parse
+them over and over again. Even for a session with a single search
+there's much to be gained because many targets use the same
+transformation.
+
 The metadata attribute 'mergekey' now takes one of three values 'no',
 'required', 'optional' .  And the resulting mergekey from metadata
 is now ordered in the same way as metadata in the service definition.
 Older Pazpar2 version use the order in which metadata appeared in a
 record instance.
+
+The search argument 'filter' now offers a new operator ~ which does a 
+substring match. The = operator works as before: string match for
+anything but pz:id, or target match for pz:id.
+
+New setting pz:recordfilter. The value of this setting takes the
+form name[~value]. This setting makes Pazpar2 ignore all retrieved
+records that do not have the metadata element name with value substring
+(if given).
 
 Pazpar2 allows YAZ log level to be set (option -v).
 
