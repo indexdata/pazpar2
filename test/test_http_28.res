@@ -15,13 +15,6 @@
 </hit>
 <hit>
 
-<md-title>UTAH EARTHQUAKE EPICENTERS</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
-<md-title>UTAH EARTHQUAKE EPICENTERS</md-title></location>
-<relevance>127197</relevance>
-<recid>title utah earthquake epicenters author medium book</recid>
-</hit>
-<hit>
-
 <md-title>UTAH CRIB FILE</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
 <md-title>UTAH CRIB FILE</md-title></location>
 <relevance>127197</relevance>
@@ -29,10 +22,17 @@
 </hit>
 <hit>
 
-<md-title>UTAH OIL FIELD FILE</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
-<md-title>UTAH OIL FIELD FILE</md-title></location>
+<md-title>UTAH EARTHQUAKE EPICENTERS</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
+<md-title>UTAH EARTHQUAKE EPICENTERS</md-title></location>
+<relevance>127197</relevance>
+<recid>title utah earthquake epicenters author medium book</recid>
+</hit>
+<hit>
+
+<md-title>BIBLIOGRAPHY OF UTAH GEOLOGY</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
+<md-title>BIBLIOGRAPHY OF UTAH GEOLOGY</md-title></location>
 <relevance>95398</relevance>
-<recid>title utah oil field file author medium book</recid>
+<recid>title bibliography of utah geology author medium book</recid>
 </hit>
 <hit>
 
@@ -43,13 +43,6 @@
 </hit>
 <hit>
 
-<md-title>UTAH GEOLOGICAL SOCIETY PUBLICATIONS</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
-<md-title>UTAH GEOLOGICAL SOCIETY PUBLICATIONS</md-title></location>
-<relevance>95398</relevance>
-<recid>title utah geological society publications author medium book</recid>
-</hit>
-<hit>
-
 <md-title>UTAH GEOLOGICAL ASSOCIATION PUBLICATIONS</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
 <md-title>UTAH GEOLOGICAL ASSOCIATION PUBLICATIONS</md-title></location>
 <relevance>95398</relevance>
@@ -57,10 +50,17 @@
 </hit>
 <hit>
 
-<md-title>BIBLIOGRAPHY OF UTAH GEOLOGY</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
-<md-title>BIBLIOGRAPHY OF UTAH GEOLOGY</md-title></location>
+<md-title>UTAH GEOLOGICAL SOCIETY PUBLICATIONS</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
+<md-title>UTAH GEOLOGICAL SOCIETY PUBLICATIONS</md-title></location>
 <relevance>95398</relevance>
-<recid>title bibliography of utah geology author medium book</recid>
+<recid>title utah geological society publications author medium book</recid>
+</hit>
+<hit>
+
+<md-title>UTAH OIL FIELD FILE</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
+<md-title>UTAH OIL FIELD FILE</md-title></location>
+<relevance>95398</relevance>
+<recid>title utah oil field file author medium book</recid>
 </hit>
 <hit>
 
@@ -78,31 +78,10 @@
 </hit>
 <hit>
 
-<md-title>MINE MAP INDEX</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
-<md-title>MINE MAP INDEX</md-title></location>
-<relevance>0</relevance>
-<recid>title mine map index author medium book</recid>
-</hit>
-<hit>
-
 <md-title>COAL SAMPLE BANK</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
 <md-title>COAL SAMPLE BANK</md-title></location>
 <relevance>0</relevance>
 <recid>title coal sample bank author medium book</recid>
-</hit>
-<hit>
-
-<md-title>MEASURED GEOLOGIC SECTIONS</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
-<md-title>MEASURED GEOLOGIC SECTIONS</md-title></location>
-<relevance>0</relevance>
-<recid>title measured geologic sections author medium book</recid>
-</hit>
-<hit>
-
-<md-title>INTERMOUNTAIN ASSOCIATION OF PETROLEUM GEOLOGISTS/GEOLOGISTS PUBLICATIONS</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
-<md-title>INTERMOUNTAIN ASSOCIATION OF PETROLEUM GEOLOGISTS/GEOLOGISTS PUBLICATIONS</md-title></location>
-<relevance>0</relevance>
-<recid>title intermountain association of petroleum geologists geologists publications author medium book</recid>
 </hit>
 <hit>
 
@@ -113,10 +92,24 @@
 </hit>
 <hit>
 
-<md-title>WELL SAMPLE LIBRARY</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
-<md-title>WELL SAMPLE LIBRARY</md-title></location>
+<md-title>INTERMOUNTAIN ASSOCIATION OF PETROLEUM GEOLOGISTS/GEOLOGISTS PUBLICATIONS</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
+<md-title>INTERMOUNTAIN ASSOCIATION OF PETROLEUM GEOLOGISTS/GEOLOGISTS PUBLICATIONS</md-title></location>
 <relevance>0</relevance>
-<recid>title well sample library author medium book</recid>
+<recid>title intermountain association of petroleum geologists geologists publications author medium book</recid>
+</hit>
+<hit>
+
+<md-title>MEASURED GEOLOGIC SECTIONS</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
+<md-title>MEASURED GEOLOGIC SECTIONS</md-title></location>
+<relevance>0</relevance>
+<recid>title measured geologic sections author medium book</recid>
+</hit>
+<hit>
+
+<md-title>MINE MAP INDEX</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
+<md-title>MINE MAP INDEX</md-title></location>
+<relevance>0</relevance>
+<recid>title mine map index author medium book</recid>
 </hit>
 <hit>
 
@@ -124,5 +117,12 @@
 <md-title>OIL IMPREGNATED ROCK DEPOSITS</md-title></location>
 <relevance>0</relevance>
 <recid>title oil impregnated rock deposits author medium book</recid>
+</hit>
+<hit>
+
+<md-title>WELL SAMPLE LIBRARY</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
+<md-title>WELL SAMPLE LIBRARY</md-title></location>
+<relevance>0</relevance>
+<recid>title well sample library author medium book</recid>
 </hit>
 </show>

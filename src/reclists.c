@@ -165,6 +165,8 @@ static int reclist_cmp(const void *p1, const void *p2)
             res = 0;
         }
     }
+    if (res == 0)
+        res = strcmp(r1->recid, r2->recid);
     return res;
 }
 
