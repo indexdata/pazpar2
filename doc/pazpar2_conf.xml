@@ -157,9 +157,9 @@
 	  One of these elements is required for every data element in
 	  the internal representation of the record (see
 	  <xref linkend="data_model"/>. It governs
-	  subsequent processing as pertains to sorting, relevance
-	  ranking, merging, and display of data elements. It supports
-	  the following attributes:
+	   subsequent processing as pertains to sorting, relevance
+	   ranking, merging, and display of data elements. It supports
+	   the following attributes:
 	 </para>
 	 
 	 <variablelist> <!-- level 3 -->
@@ -257,7 +257,7 @@
 	     longest element (strlen), 'range' (calculate a range
 	     of values across all matching records), 'all' (include
 	     all elements), or 'no' (don't merge; this is the
-			  default);
+	     default);
 	    </para>
 	   </listitem>
 	  </varlistentry>
@@ -288,23 +288,23 @@
 	  <varlistentry><term>setting</term>
 	   <listitem>
 	    <para>
-	      This attribute allows you to make use of static database
-	      settings in the processing of records. Three possible values
-	      are allowed. 'no' is the default and doesn't do anything.
-	      'postproc' copies the value of a setting with the same name
-	      into the output of the normalization stylesheet(s). 'parameter'
-	      makes the value of a setting with the same name available 
-	      as a parameter to the normalization stylesheet, so you
-	      can further process the value inside of the stylesheet, or use
-	      the value to decide how to deal with other data values.
+	     This attribute allows you to make use of static database
+	     settings in the processing of records. Three possible values
+	     are allowed. 'no' is the default and doesn't do anything.
+	     'postproc' copies the value of a setting with the same name
+	     into the output of the normalization stylesheet(s). 'parameter'
+	     makes the value of a setting with the same name available 
+	     as a parameter to the normalization stylesheet, so you
+	     can further process the value inside of the stylesheet, or use
+	     the value to decide how to deal with other data values.
 	    </para>
 	    <para>
-	      The purpose of using settings in this way can either be to
-	      control the behavior of normalization stylesheet in a database-
-	      dependent way, or to easily make database-dependent values
-	      available to display-logic in your user interface, without having
-	      to implement complicated interactions between the user interface
-	      and your configuration system.
+	     The purpose of using settings in this way can either be to
+	     control the behavior of normalization stylesheet in a database-
+	     dependent way, or to easily make database-dependent values
+	     available to display-logic in your user interface, without having
+	     to implement complicated interactions between the user interface
+	     and your configuration system.
 	    </para>
 	   </listitem>
 	  </varlistentry>
@@ -913,7 +913,7 @@
       </para>
      </listitem>
     </varlistentry>
-
+    
     <varlistentry>
      <term>pz:apdulog</term>
      <listitem>
@@ -923,55 +923,56 @@
       </para>
      </listitem>
     </varlistentry>
-
+    
     <varlistentry>
-      <term>pz:sru</term>
-      <listitem>
-        <para>
-	  This setting enables SRU/SRW support. It has three possible settings.
-	  'get', enables SRU access through GET requests. 'post' enables SRU/POST
-	  support, less commonly supported, but useful if very large requests are
-	  to be submitted. 'srw' enables the SRW variation of the protocol.
-	</para>
-      </listitem>
+     <term>pz:sru</term>
+     <listitem>
+      <para>
+       This setting enables SRU/SRW support. It has three possible settings.
+       'get', enables SRU access through GET requests. 'post' enables SRU/POST
+       support, less commonly supported, but useful if very large requests are
+       to be submitted. 'srw' enables the SRW variation of the protocol.
+      </para>
+     </listitem>
     </varlistentry>
-
+    
     <varlistentry>
-      <term>pz:sru_version</term>
-      <listitem>
-        <para>
-	  This allows SRU version to be specified. If unset Pazpar2
-	  will the default of YAZ (currently 1.2). Should be set
-	  to 1.1 or 1.2.
-	</para>
-      </listitem>
+     <term>pz:sru_version</term>
+     <listitem>
+      <para>
+       This allows SRU version to be specified. If unset Pazpar2
+       will the default of YAZ (currently 1.2). Should be set
+       to 1.1 or 1.2.
+      </para>
+     </listitem>
     </varlistentry>
-
+    
     <varlistentry>
-      <term>pz:pqf_prefix</term>
-      <listitem>
-        <para>
-	  Allows you to specify an arbitrary PQF query language substring. The provided
-	  string is prefixed the user's query after it has been normalized to PQF
-	  internally in pazpar2. This allows you to attach complex 'filters' to
-	  queries for a gien target, sometimes necessary to select sub-catalogs
-	  in union catalog systems, etc.
-	</para>
-      </listitem>
+     <term>pz:pqf_prefix</term>
+     <listitem>
+      <para>
+       Allows you to specify an arbitrary PQF query language substring.
+       The provided string is prefixed the user's query after it has been
+       normalized to PQF internally in pazpar2.
+       This allows you to attach complex 'filters' to queries for a given
+       target, sometimes necessary to select sub-catalogs
+       in union catalog systems, etc.
+      </para>
+     </listitem>
     </varlistentry>
-
+    
     <varlistentry>
-      <term>pz:sort</term>
-      <listitem>
-        <para>
-	  Specifies sort criteria to be applied to the result set. Only works for targets
-	  which support the sort service.
-	</para>
-      </listitem>
+     <term>pz:sort</term>
+     <listitem>
+      <para>
+       Specifies sort criteria to be applied to the result set.
+       Only works for targets which support the sort service.
+      </para>
+     </listitem>
     </varlistentry>
    </variablelist>
   </refsect2>
-
+  
  </refsect1>
  <refsect1><title>SEE ALSO</title>
   <para>
