@@ -164,6 +164,7 @@ static struct database *load_database(const char *id,
 
     db->settings = nmem_malloc(service->nmem, sizeof(struct settings*) * 
                                settings_num(service));
+    db->num_settings = settings_num(service);
     memset(db->settings, 0, sizeof(struct settings*) * settings_num(service));
     idset = nmem_malloc(service->nmem, sizeof(*idset));
     idset->precedence = 0;

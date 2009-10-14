@@ -472,6 +472,7 @@ static void cmd_bytarget(struct http_channel *c)
     struct http_request *rq = c->request;
     struct http_session *s = locate_session(rq, rs);
     struct hitsbytarget *ht;
+    const char *settings = http_argbyname(rq, "settings");
     int count, i;
 
     if (!s)
@@ -502,8 +503,14 @@ static void cmd_bytarget(struct http_channel *c)
         wrbuf_puts(c->wrbuf, "<state>");
         wrbuf_xmlputs(c->wrbuf, ht[i].state);
         wrbuf_puts(c->wrbuf, "</state>\n");
-
+        if (settings && *settings == '1')
+        {
+            wrbuf_puts(c->wrbuf, "<settings>\n");
+            wrbuf_puts(c->wrbuf, wrbuf_cstr(ht[i].settings_xml));
+            wrbuf_puts(c->wrbuf, "</settings>\n");
+        }
         wrbuf_puts(c->wrbuf, "</target>");
+        wrbuf_destroy(ht[i].settings_xml);
     }
 
     wrbuf_puts(c->wrbuf, "</bytarget>");

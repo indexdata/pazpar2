@@ -269,6 +269,29 @@ static xmlDoc *normalize_record(struct session_database *sdb,
     return rdoc;
 }
 
+void session_settings_dump(struct session *se,
+                           struct session_database *db,
+                           WRBUF w)
+{
+    if (db->settings)
+    {
+        struct conf_service *service = se->service;
+        int i, num = settings_num(service);
+        for (i = 0; i < num; i++)
+        {
+            struct setting *s = db->settings[i];
+            for (;s; s = s->next)
+            {
+                wrbuf_puts(w, "<set name=\"");
+                wrbuf_xmlputs(w, s->name);
+                wrbuf_puts(w, "\" value=\"");
+                wrbuf_xmlputs(w, s->value);
+                wrbuf_puts(w, "\"/>\n");
+            }
+        }
+    }
+}
+
 // Retrieve first defined value for 'name' for given database.
 // Will be extended to take into account user associated with session
 const char *session_setting_oneval(struct session_database *db, int offset)
@@ -692,6 +715,7 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
     *count = 0;
     for (cl = se->clients; cl; cl = client_next_in_session(cl))
     {
+        WRBUF w = wrbuf_alloc();
         const char *name = session_setting_oneval(client_get_database(cl),
                                                   PZ_NAME);
 
@@ -702,6 +726,8 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
         res[*count].diagnostic = client_get_diagnostic(cl);
         res[*count].state = client_get_state_str(cl);
         res[*count].connected  = client_get_connection(cl) ? 1 : 0;
+        session_settings_dump(se, client_get_database(cl), w);
+        res[*count].settings_xml = w;
         (*count)++;
     }
     return res;
