@@ -1,0 +1,7 @@
+<settings target="z3950.indexdata.com/*">
+ 
+  <set name="pz:elements" value="F"/> 
+  <set name="pz:cclmap:term" value="u=db_wildcard"/>
+  <set name="pz:requestsyntax" value="marc21"/>
+
+</settings>

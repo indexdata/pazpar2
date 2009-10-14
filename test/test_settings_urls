@@ -1,0 +1,4 @@
+http://localhost:9763/search.pz2?session=1&command=init
+http://localhost:9763/search.pz2?session=1&command=search&query=water
+2
+http://localhost:9763/search.pz2?session=1&command=bytarget&settings=1

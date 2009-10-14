@@ -1,0 +1,5 @@
+<settings target="z3950.indexdata.com/marc">
+  <set name="pz:name" value="Target name"/>
+  <set name="pz:elements" value="F"/> 
+  <set name="pz:cclmap:term" value="u=1016"/>
+</settings>

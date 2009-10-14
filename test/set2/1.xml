@@ -1,0 +1,6 @@
+<settings target="*">
+ 
+  <set name="pz:elements" value="F"/> 
+  <set precedence="10" name="pz:cclmap:term" value="u=host_wildcard"/>
+  <set name="pz:requestsyntax" value="sutrs"/>
+</settings>
