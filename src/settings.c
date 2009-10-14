@@ -336,7 +336,7 @@ static void update_database(void *context, struct database *db)
                            context)->set;
     struct conf_service *service = ((struct update_database_context *) 
                                     context)->service;
-    struct setting *s, **sp;
+    struct setting **sp;
     int offset;
 
     // Is this the right database?
@@ -348,24 +348,34 @@ static void update_database(void *context, struct database *db)
 
     // First we determine if this setting is overriding  any existing settings
     // with the same name.
-    for (s = db->settings[offset], sp = &db->settings[offset]; s;
-            sp = &s->next, s = s->next)
-        if (!strcmp(s->name, set->name))
+    assert(offset < db->num_settings);
+    for (sp = &db->settings[offset]; *sp; )
+        if (!strcmp((*sp)->name, set->name))
         {
-            if (s->precedence < set->precedence)
+            if ((*sp)->precedence < set->precedence)
+            {
                 // We discard the value (nmem keeps track of the space)
                 *sp = (*sp)->next; // unlink value from existing setting
-            else if (s->precedence > set->precedence)
+            }
+            else if ((*sp)->precedence > set->precedence)
+            {
                 // Db contains a higher-priority setting. Abort search
                 break;
-            if (zurl_wildcard(s->target) > zurl_wildcard(set->target))
+            }
+            else if (zurl_wildcard((*sp)->target) > zurl_wildcard(set->target))
+            {
                 // target-specific value trumps wildcard. Delete.
                 *sp = (*sp)->next; // unlink.....
-            else if (!zurl_wildcard(s->target))
+            }
+            else if (!zurl_wildcard((*sp)->target))
                 // Db already contains higher-priority setting. Abort search
                 break;
+            else
+                sp = &(*sp)->next;
         }
-    if (!s) // s will be null when there are no higher-priority settings -- we add one
+        else
+            sp = &(*sp)->next;
+    if (!*sp) // is null when there are no higher-priority settings, so we add one
     {
         struct setting *new = nmem_malloc(service->nmem, sizeof(*new));
 
