@@ -20,15 +20,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef DATABASE_H
 #define DATABASE_H
 
-void prepare_databases(void);
-struct database *find_database(const char *id, int new, struct conf_service *service);
-int session_grep_databases(struct session *se, struct database_criterion *cl,
+struct database *find_database(const char *id, struct conf_service *service);
+int session_grep_databases(struct session *se, const char *filter,
         void (*fun)(void *context, struct session_database *db));
 int predef_grep_databases(void *context, struct conf_service *service,
-			  struct database_criterion *cl,
 			  void (*fun)(void *context, struct database *db));
 int match_zurl(const char *zurl, const char *pattern);
 int resolve_database(struct database *db);
-
 
 #endif

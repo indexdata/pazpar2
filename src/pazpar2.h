@@ -52,11 +52,7 @@ enum pazpar2_error_code {
     PAZPAR2_LAST_ERROR
 };
 
-enum pazpar2_database_criterion_type {
-    PAZPAR2_STRING_MATCH,
-    PAZPAR2_SUBSTRING_MATCH
-};
-
+struct host;
 // Represents a (virtual) database on a host
 struct database {
     struct host *host;
@@ -69,17 +65,6 @@ struct database {
     struct database *next;
 };
 
-struct database_criterion_value {
-    char *value;
-    struct database_criterion_value *next;
-};
-
-struct database_criterion {
-    char *name;
-    enum pazpar2_database_criterion_type type;
-    struct database_criterion_value *values;
-    struct database_criterion *next;
-};
 
 // Represents a database as viewed from one session, possibly with settings overriden
 // for that session
@@ -91,8 +76,6 @@ struct session_database
     normalize_record_t map;
     struct session_database *next;
 };
-
-
 
 #define SESSION_WATCH_SHOW      0
 #define SESSION_WATCH_RECORD    1
@@ -159,7 +142,6 @@ struct hitsbytarget {
 };
 
 struct hitsbytarget *hitsbytarget(struct session *s, int *count, NMEM nmem);
-int select_targets(struct session *se, struct database_criterion *crit);
 struct session *new_session(NMEM nmem, struct conf_service *service);
 void destroy_session(struct session *s);
 void session_init_databases(struct session *s);

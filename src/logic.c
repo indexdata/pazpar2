@@ -428,12 +428,12 @@ static void select_targets_callback(void *context, struct session_database *db)
 // Associates a set of clients with a session;
 // Note: Session-databases represent databases with per-session 
 // setting overrides
-int select_targets(struct session *se, struct database_criterion *crit)
+static int select_targets(struct session *se, const char *filter)
 {
     while (se->clients)
         client_destroy(se->clients);
 
-    return session_grep_databases(se, crit, select_targets_callback);
+    return session_grep_databases(se, filter, select_targets_callback);
 }
 
 int session_active_clients(struct session *s)
@@ -448,50 +448,6 @@ int session_active_clients(struct session *s)
     return res;
 }
 
-// parses crit1=val1,crit2=val2|val3,...
-static struct database_criterion *parse_filter(NMEM m, const char *buf)
-{
-    struct database_criterion *res = 0;
-    char **values;
-    int num;
-    int i;
-
-    if (!buf || !*buf)
-        return 0;
-    nmem_strsplit(m, ",", buf,  &values, &num);
-    for (i = 0; i < num; i++)
-    {
-        char **subvalues;
-        int subnum;
-        int subi;
-        struct database_criterion *new = nmem_malloc(m, sizeof(*new));
-        char *eq;
-        if ((eq = strchr(values[i], '=')))
-            new->type = PAZPAR2_STRING_MATCH;
-        else if ((eq = strchr(values[i], '~')))
-            new->type = PAZPAR2_SUBSTRING_MATCH;
-        else
-        {
-            yaz_log(YLOG_WARN, "Missing equal-sign/tilde in filter");
-            return 0;
-        }
-        *(eq++) = '\0';
-        new->name = values[i];
-        nmem_strsplit(m, "|", eq, &subvalues, &subnum);
-        new->values = 0;
-        for (subi = 0; subi < subnum; subi++)
-        {
-            struct database_criterion_value *newv
-                = nmem_malloc(m, sizeof(*newv));
-            newv->value = subvalues[subi];
-            newv->next = new->values;
-            new->values = newv;
-        }
-        new->next = res;
-        res = new;
-    }
-    return res;
-}
 
 enum pazpar2_error_code search(struct session *se,
                                const char *query,
@@ -503,7 +459,6 @@ enum pazpar2_error_code search(struct session *se,
     int no_working = 0;
     int no_failed = 0;
     struct client *cl;
-    struct database_criterion *criteria;
 
     yaz_log(YLOG_DEBUG, "Search");
 
@@ -513,8 +468,7 @@ enum pazpar2_error_code search(struct session *se,
     se->total_records = se->total_hits = se->total_merged = 0;
     se->reclist = 0;
     se->num_termlists = 0;
-    criteria = parse_filter(se->nmem, filter);
-    live_channels = select_targets(se, criteria);
+    live_channels = select_targets(se, filter);
     if (live_channels)
     {
         se->reclist = reclist_create(se->nmem);
@@ -585,7 +539,7 @@ static void session_database_destroy(struct session_database *sdb)
 void session_init_databases(struct session *se)
 {
     se->databases = 0;
-    predef_grep_databases(se, se->service, 0, session_init_databases_fun);
+    predef_grep_databases(se, se->service, session_init_databases_fun);
 }
 
 // Probably session_init_databases_fun should be refactored instead of
@@ -593,7 +547,7 @@ void session_init_databases(struct session *se)
 static struct session_database *load_session_database(struct session *se, 
                                                       char *id)
 {
-    struct database *db = find_database(id, 0, se->service);
+    struct database *db = find_database(id, se->service);
 
     resolve_database(db);
 

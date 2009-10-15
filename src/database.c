@@ -46,6 +46,23 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <netinet/in.h>
 #endif
 
+enum pazpar2_database_criterion_type {
+    PAZPAR2_STRING_MATCH,
+    PAZPAR2_SUBSTRING_MATCH
+};
+
+struct database_criterion_value {
+    char *value;
+    struct database_criterion_value *next;
+};
+
+struct database_criterion {
+    char *name;
+    enum pazpar2_database_criterion_type type;
+    struct database_criterion_value *values;
+    struct database_criterion *next;
+};
+
 static struct host *hosts = 0;  /* thread pr */
 
 static xmlDoc *get_explain_xml(struct conf_targetprofiles *targetprofiles,
@@ -133,8 +150,6 @@ static struct database *load_database(const char *id,
     char *dbname;
     struct setting *idset;
 
-    yaz_log(YLOG_LOG, "New database: %s", id);
-
     if (service->targetprofiles 
         && (doc = get_explain_xml(service->targetprofiles, id)))
     {
@@ -160,12 +175,10 @@ static struct database *load_database(const char *id,
     db->errors = 0;
     db->explain = explain;
 
-    db->settings = 0;
-
-    db->settings = nmem_malloc(service->nmem, sizeof(struct settings*) * 
-                               settings_num(service));
     db->num_settings = settings_num(service);
-    memset(db->settings, 0, sizeof(struct settings*) * settings_num(service));
+    db->settings = nmem_malloc(service->nmem, sizeof(struct settings*) * 
+                               db->num_settings);
+    memset(db->settings, 0, sizeof(struct settings*) * db->num_settings);
     idset = nmem_malloc(service->nmem, sizeof(*idset));
     idset->precedence = 0;
     idset->name = "pz:id";
@@ -181,16 +194,12 @@ static struct database *load_database(const char *id,
 
 // Return a database structure by ID. Load and add to list if necessary
 // new==1 just means we know it's not in the list
-struct database *find_database(const char *id, int new,
-                               struct conf_service *service)
+struct database *find_database(const char *id, struct conf_service *service)
 {
     struct database *p;
-    if (!new)
-    {
-        for (p = service->databases; p; p = p->next)
-            if (!strcmp(p->url, id))
-                return p;
-    }
+    for (p = service->databases; p; p = p->next)
+        if (!strcmp(p->url, id))
+            return p;
     return load_database(id, service);
 }
 
@@ -267,9 +276,55 @@ static int match_criterion(struct setting **settings,
         return 0;
 }
 
-int database_match_criteria(struct setting **settings,
-                            struct conf_service *service,
-                            struct database_criterion *cl)
+// parses crit1=val1,crit2=val2|val3,...
+static struct database_criterion *create_database_criterion(NMEM m,
+                                                            const char *buf)
+{
+    struct database_criterion *res = 0;
+    char **values;
+    int num;
+    int i;
+
+    if (!buf || !*buf)
+        return 0;
+    nmem_strsplit(m, ",", buf,  &values, &num);
+    for (i = 0; i < num; i++)
+    {
+        char **subvalues;
+        int subnum;
+        int subi;
+        struct database_criterion *new = nmem_malloc(m, sizeof(*new));
+        char *eq;
+        if ((eq = strchr(values[i], '=')))
+            new->type = PAZPAR2_STRING_MATCH;
+        else if ((eq = strchr(values[i], '~')))
+            new->type = PAZPAR2_SUBSTRING_MATCH;
+        else
+        {
+            yaz_log(YLOG_WARN, "Missing equal-sign/tilde in filter");
+            return 0;
+        }
+        *(eq++) = '\0';
+        new->name = values[i];
+        nmem_strsplit(m, "|", eq, &subvalues, &subnum);
+        new->values = 0;
+        for (subi = 0; subi < subnum; subi++)
+        {
+            struct database_criterion_value *newv
+                = nmem_malloc(m, sizeof(*newv));
+            newv->value = subvalues[subi];
+            newv->next = new->values;
+            new->values = newv;
+        }
+        new->next = res;
+        res = new;
+    }
+    return res;
+}
+
+static int database_match_criteria(struct setting **settings,
+                                   struct conf_service *service,
+                                   struct database_criterion *cl)
 {
     for (; cl; cl = cl->next)
         if (!match_criterion(settings, service, cl))
@@ -282,11 +337,13 @@ int database_match_criteria(struct setting **settings,
 
 // Cycles through databases, calling a handler function on the ones for
 // which all criteria matched.
-int session_grep_databases(struct session *se, struct database_criterion *cl,
-        void (*fun)(void *context, struct session_database *db))
+int session_grep_databases(struct session *se, const char *filter,
+                           void (*fun)(void *context, struct session_database *db))
 {
     struct session_database *p;
+    NMEM nmem = nmem_create();
     int i = 0;
+    struct database_criterion *cl = create_database_criterion(nmem, filter);
 
     for (p = se->databases; p; p = p->next)
     {
@@ -300,18 +357,18 @@ int session_grep_databases(struct session *se, struct database_criterion *cl,
             i++;
         }
     }
+    nmem_destroy(nmem);
     return i;
 }
 
 int predef_grep_databases(void *context, struct conf_service *service,
-                          struct database_criterion *cl,
                           void (*fun)(void *context, struct database *db))
 {
     struct database *p;
     int i = 0;
 
     for (p = service->databases; p; p = p->next)
-        if (database_match_criteria(p->settings, service, cl))
+        if (database_match_criteria(p->settings, service, 0))
         {
             (*fun)(context, p);
             i++;

@@ -392,7 +392,7 @@ static void update_databases(void *client_data, struct setting *set)
     struct update_database_context context;
     context.set = set;
     context.service = service;
-    predef_grep_databases(&context, service, 0, update_database);
+    predef_grep_databases(&context, service, update_database);
 }
 
 // This simply copies the 'hard' (application-specific) settings
@@ -433,7 +433,7 @@ static void prepare_target_dictionary(void *client_data, struct setting *set)
 
     // If target address is not wildcard, add the database
     if (*set->target && !zurl_wildcard(set->target))
-        find_database(set->target, 0, service);
+        find_database(set->target, service);
 
     // Determine if we already have a dictionary entry
     if (!strncmp(set->name, "pz:", 3) && (p = strchr(set->name + 3, ':')))
