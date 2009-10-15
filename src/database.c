@@ -230,7 +230,7 @@ static int match_criterion(struct setting **settings,
                            struct conf_service *service, 
                            struct database_criterion *c)
 {
-    int offset = settings_offset(service, c->name);
+    int offset = settings_lookup_offset(service, c->name);
     struct database_criterion_value *v;
 
     if (offset < 0)

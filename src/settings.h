@@ -55,14 +55,17 @@ void settings_read_file(struct conf_service *service, const char *path,
 void settings_read_node(struct conf_service *service, xmlNode *n,
                         int pass);
 int settings_num(struct conf_service *service);
-int settings_offset(struct conf_service *service, const char *name);
-int settings_offset_cprefix(struct conf_service *service, const char *name);
+int settings_create_offset(struct conf_service *service, const char *name);
+int settings_lookup_offset(struct conf_service *service, const char *name);
 void init_settings(struct conf_service *service);
 void resolve_databases(struct conf_service *service);
 void settings_read_node_x(xmlNode *n,
                           void *client_data,
                           void (*fun)(void *client_data,
                                       struct setting *set));
+void expand_settings_array(struct setting ***set_ar, int *num, int offset,
+                           NMEM nmem);
+
 
 #endif
 

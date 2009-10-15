@@ -86,6 +86,7 @@ struct database_criterion {
 struct session_database
 {
     struct database *database;
+    int num_settings;
     struct setting **settings;
     normalize_record_t map;
     struct session_database *next;

@@ -191,7 +191,7 @@ static void insert_settings_parameters(struct session_database *sdb,
         int setting;
 
         if (md->setting == Metadata_setting_parameter &&
-            (setting = settings_offset(service, md->name)) > 0)
+            (setting = settings_lookup_offset(service, md->name)) >= 0)
         {
             const char *val = session_setting_oneval(sdb, setting);
             if (val && nparms < MAX_XSLT_ARGS)
@@ -224,7 +224,7 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc,
         int offset;
 
         if (md->setting == Metadata_setting_postproc &&
-            (offset = settings_offset(service, md->name)) > 0)
+            (offset = settings_lookup_offset(service, md->name)) >= 0)
         {
             const char *val = session_setting_oneval(sdb, offset);
             if (val)
@@ -275,19 +275,20 @@ void session_settings_dump(struct session *se,
 {
     if (db->settings)
     {
-        struct conf_service *service = se->service;
-        int i, num = settings_num(service);
+        int i, num = db->num_settings;
         for (i = 0; i < num; i++)
         {
             struct setting *s = db->settings[i];
-            for (;s; s = s->next)
+            for (;s ; s = s->next)
             {
                 wrbuf_puts(w, "<set name=\"");
                 wrbuf_xmlputs(w, s->name);
                 wrbuf_puts(w, "\" value=\"");
                 wrbuf_xmlputs(w, s->value);
-                wrbuf_puts(w, "\"/>\n");
+                wrbuf_puts(w, "\"/>");
             }
+            if (db->settings[i])
+                wrbuf_puts(w, "\n");
         }
     }
 }
@@ -557,23 +558,18 @@ enum pazpar2_error_code search(struct session *se,
 static void session_init_databases_fun(void *context, struct database *db)
 {
     struct session *se = (struct session *) context;
-    struct conf_service *service = se->service;
     struct session_database *new = nmem_malloc(se->session_nmem, sizeof(*new));
-    int num = settings_num(service);
     int i;
 
     new->database = db;
     
     new->map = 0;
-    new->settings 
-        = nmem_malloc(se->session_nmem, sizeof(struct settings *) * num);
-    memset(new->settings, 0, sizeof(struct settings*) * num);
-
-    if (db->settings)
-    {
-        for (i = 0; i < num; i++)
-            new->settings[i] = db->settings[i];
-    }
+    assert(db->settings);
+    new->settings = nmem_malloc(se->session_nmem,
+                                sizeof(struct settings *) * db->num_settings);
+    new->num_settings = db->num_settings;
+    for (i = 0; i < db->num_settings; i++)
+        new->settings[i] = db->settings[i];
     new->next = se->databases;
     se->databases = new;
 }
@@ -625,19 +621,10 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     struct session_database *sdb = find_session_database(se, dbname);
     struct conf_service *service = se->service;
     struct setting *new = nmem_malloc(se->session_nmem, sizeof(*new));
-    int offset = settings_offset_cprefix(service, setting);
+    int offset = settings_create_offset(service, setting);
 
-    if (offset < 0)
-    {
-        yaz_log(YLOG_WARN, "Unknown setting %s", setting);
-        return;
-    }
-    // Jakub: This breaks the filter setting.
-    /*if (offset == PZ_ID)
-      {
-      yaz_log(YLOG_WARN, "No need to set pz:id setting. Ignoring");
-      return;
-      }*/
+    expand_settings_array(&sdb->settings, &sdb->num_settings, offset,
+                          se->session_nmem);
     new->precedence = 0;
     new->target = dbname;
     new->name = setting;

@@ -88,36 +88,53 @@ int settings_num(struct conf_service *service)
     return service->dictionary->num;
 }
 
-int settings_offset(struct conf_service *service, const char *name)
+static int settings_lookup(struct conf_service *service, const char *name,
+                           int allow_create)
 {
+    size_t maxlen;
     int i;
-
-    if (!name)
-        name = "";
-    for (i = 0; i < service->dictionary->num; i++)
-        if (!strcmp(name, service->dictionary->dict[i]))
-            return i;
-    return -1;
-}
-
-// Ignores everything after second colon, if present
-// A bit of a hack to support the pz:cclmap: scheme (and more to come?)
-int settings_offset_cprefix(struct conf_service *service, const char *name)
-{
     const char *p;
-    int maxlen = 100;
-    int i;
+    struct setting_dictionary *dictionary = service->dictionary;
+    
+    assert(name);
 
     if (!strncmp("pz:", name, 3) && (p = strchr(name + 3, ':')))
         maxlen = (p - name) + 1;
-    for (i = 0; i < service->dictionary->num; i++)
-        if (!strncmp(name, service->dictionary->dict[i], maxlen))
+    else
+        maxlen = strlen(name) + 1;
+    for (i = 0; i < dictionary->num; i++)
+        if (!strncmp(name, dictionary->dict[i], maxlen))
             return i;
-    return -1;
+    if (!allow_create)
+        return -1;
+    if (!strncmp("pz:", name, 3))
+        yaz_log(YLOG_WARN, "Adding pz-type setting name %s", name);
+    if (dictionary->num + 1 > dictionary->size)
+    {
+        char **tmp =
+            nmem_malloc(service->nmem, dictionary->size * 2 * sizeof(char*));
+        memcpy(tmp, dictionary->dict, dictionary->size * sizeof(char*));
+        dictionary->dict = tmp;
+        dictionary->size *= 2;
+    }
+    dictionary->dict[dictionary->num] = nmem_strdup(service->nmem, name);
+    dictionary->dict[dictionary->num][maxlen-1] = '\0';
+    return dictionary->num++;
+}
+
+int settings_create_offset(struct conf_service *service, const char *name)
+{
+    return settings_lookup(service, name, 1);
+}
+
+int settings_lookup_offset(struct conf_service *service, const char *name)
+{
+    return settings_lookup(service, name, 0);
 }
 
 char *settings_name(struct conf_service *service, int offset)
 {
+    assert(offset < service->dictionary->num);
     return service->dictionary->dict[offset];
 }
 
@@ -282,51 +299,28 @@ static int zurl_wildcard(const char *zurl)
         return SETTING_WILDCARD_NO;
 }
 
-// Callback. Adds a new entry to the dictionary if necessary
-// This is used in pass 1 to determine layout of dictionary
-// and to load any databases mentioned
-static void prepare_dictionary(struct conf_service *service,
-                               struct setting *set)
-{
-    struct setting_dictionary *dictionary = service->dictionary;
-
-    int i;
-    char *p;
-
-    // Determine if we already have a dictionary entry
-    if (!strncmp(set->name, "pz:", 3) && (p = strchr(set->name + 3, ':')))
-        *(p + 1) = '\0';
-    for (i = 0; i < dictionary->num; i++)
-        if (!strcmp(dictionary->dict[i], set->name))
-            return;
-
-    if (!strncmp(set->name, "pz:", 3)) // Probably a typo in config file
-        {
-            yaz_log(YLOG_FATAL, "Unknown pz: setting '%s'", set->name);
-            exit(1);
-        }
-
-    // Create a new dictionary entry
-    // Grow dictionary if necessary
-    if (!dictionary->size)
-        dictionary->dict =
-            nmem_malloc(service->nmem, (dictionary->size = 50) * sizeof(char*));
-    else if (dictionary->num + 1 > dictionary->size)
-    {
-        char **tmp =
-            nmem_malloc(service->nmem, dictionary->size * 2 * sizeof(char*));
-        memcpy(tmp, dictionary->dict, dictionary->size * sizeof(char*));
-        dictionary->dict = tmp;
-        dictionary->size *= 2;
-    }
-    dictionary->dict[dictionary->num++] = nmem_strdup(service->nmem, set->name);
-}
-
-
 struct update_database_context {
     struct setting *set;
     struct conf_service *service;
 };
+
+void expand_settings_array(struct setting ***set_ar, int *num, int offset,
+                           NMEM nmem)
+{
+    assert(offset >= 0);
+    assert(*set_ar);
+    if (offset >= *num)
+    {
+        int i, n_num = offset + 10;
+        struct setting **n_ar = nmem_malloc(nmem, n_num * sizeof(*n_ar));
+        for (i = 0; i < *num; i++)
+            n_ar[i] = (*set_ar)[i];
+        for (; i < n_num; i++)
+            n_ar[i] = 0;
+        *num = n_num;
+        *set_ar = n_ar;
+    }
+}
 
 // This is called from grep_databases -- adds/overrides setting for a target
 // This is also where the rules for precedence of settings are implemented
@@ -343,8 +337,9 @@ static void update_database(void *context, struct database *db)
     if (!match_zurl(db->url, set->target))
         return;
 
-    if ((offset = settings_offset_cprefix(service, set->name)) < 0)
-        return ;
+    offset = settings_create_offset(service, set->name);
+    expand_settings_array(&db->settings, &db->num_settings, offset,
+                          service->nmem);
 
     // First we determine if this setting is overriding  any existing settings
     // with the same name.
@@ -419,18 +414,12 @@ static void initialize_soft_settings(struct conf_service *service)
 
     for (i = 0; i < service->num_metadata; i++)
     {
-        struct setting set;
         struct conf_metadata *md = &service->metadata[i];
 
         if (md->setting == Metadata_setting_no)
             continue;
 
-        set.precedence = 0;
-        set.target = "";
-        set.name = md->name;
-        set.value = "";
-        set.next = 0;
-        prepare_dictionary(service, &set);
+        settings_create_offset(service, md->name);
     }
 }
 
