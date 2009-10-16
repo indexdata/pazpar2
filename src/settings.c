@@ -362,7 +362,7 @@ static void update_database(void *context, struct database *db)
                 // target-specific value trumps wildcard. Delete.
                 *sp = (*sp)->next; // unlink.....
             }
-            else if (!zurl_wildcard((*sp)->target))
+            else if (zurl_wildcard((*sp)->target) < zurl_wildcard(set->target))
                 // Db already contains higher-priority setting. Abort search
                 break;
             else
