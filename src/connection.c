@@ -346,7 +346,6 @@ static int connection_connect(struct connection *con)
     const char *auth;
     const char *sru;
     const char *sru_version = 0;
-    char ipport[512] = "";
 
     struct session_database *sdb = client_get_database(con->client);
     const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
@@ -382,10 +381,14 @@ static int connection_connect(struct connection *con)
     }
 
     if (sru && *sru)
-        strcpy(ipport, "http://");
-    strcat(ipport, host->ipport);
-
-    ZOOM_connection_connect(link, ipport, 0);
+    {
+        char http_hostport[512];
+        strcpy(http_hostport, "http://");
+        strcat(http_hostport, host->hostport);
+        ZOOM_connection_connect(link, http_hostport, 0);
+    }
+    else
+        ZOOM_connection_connect(link, host->ipport, 0);
     
     con->link = link;
     con->iochan = iochan_create(0, connection_handler, 0);
