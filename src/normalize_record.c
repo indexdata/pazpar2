@@ -137,17 +137,17 @@ int normalize_record_transform(normalize_record_t nt, xmlDoc **doc,
 	    {
 		new = marcmap_apply(m->marcmap, *doc);
 	    }
-	    
+
 	    root = xmlDocGetRootElement(new);
 	    
+	    xmlFreeDoc(*doc);
 	    if (!new || !root || !root->children)
 	    {
 		if (new)
 		    xmlFreeDoc(new);
-		xmlFreeDoc(*doc);
+                *doc = 0;
 		return -1;
 	    }
-	    xmlFreeDoc(*doc);
 	    *doc = new;
 	}
     }
