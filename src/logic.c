@@ -822,15 +822,16 @@ void pazpar2_event_loop()
 }
 
 static struct record_metadata *record_metadata_init(
-    NMEM nmem, char *value, enum conf_metadata_type type)
+    NMEM nmem, const char *value, enum conf_metadata_type type)
 {
     struct record_metadata *rec_md = record_metadata_create(nmem);
     if (type == Metadata_type_generic)
     {
-        char * p = value;
+        char *p = nmem_strdup(nmem, value);
+
         p = normalize7bit_generic(p, " ,/.:([");
         
-        rec_md->data.text.disp = nmem_strdup(nmem, p);
+        rec_md->data.text.disp = p;
         rec_md->data.text.sort = 0;
     }
     else if (type == Metadata_type_year || type == Metadata_type_date)
@@ -1121,7 +1122,7 @@ struct record *ingest_record(struct client *cl, const char *rec,
             }
 
             // non-merged metadata
-            rec_md = record_metadata_init(se->nmem, (char *) value,
+            rec_md = record_metadata_init(se->nmem, (const char *) value,
                                           ser_md->type);
             if (!rec_md)
             {
@@ -1135,7 +1136,7 @@ struct record *ingest_record(struct client *cl, const char *rec,
             *wheretoput = rec_md;
 
             // merged metadata
-            rec_md = record_metadata_init(se->nmem, (char *) value,
+            rec_md = record_metadata_init(se->nmem, (const char *) value,
                                           ser_md->type);
             wheretoput = &cluster->metadata[md_field_id];
 
