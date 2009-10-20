@@ -199,7 +199,8 @@
 			    [@tag != '506' and @tag != '530' and
 			    @tag != '540' and @tag != '546'
                             and @tag != '522']">
-	<pz:metadata type="description">
+        <!-- The tag attribute below will be preserved -->
+	<pz:metadata type="description" tag="{@tag}">
             <xsl:value-of select="*/text()"/>
         </pz:metadata>
       </xsl:for-each>

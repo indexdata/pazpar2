@@ -13,8 +13,8 @@
 <md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
 <md-title>The Computer Bible</md-title>
 <md-date>1973-1980</md-date>
-<md-description>Hebrew and Greek; introductions in English</md-description>
-<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
+<md-description tag="500">Hebrew and Greek; introductions in English</md-description>
+<md-description tag="500">Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
@@ -42,7 +42,7 @@
 <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
 <md-date>1977</md-date>
-<md-description>Includes bibliographical references and index</md-description>
+<md-description tag="504">Includes bibliographical references and index</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
@@ -70,7 +70,7 @@
 <md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
 <md-title-remainder>the proceedings of a workshop</md-title-remainder>
 <md-date>1974</md-date>
-<md-description>Includes bibliographical references and index</md-description>
+<md-description tag="504">Includes bibliographical references and index</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
@@ -87,8 +87,8 @@
 <md-title-remainder>a portfolio of thematic computer maps</md-title-remainder>
 <md-date>1974</md-date>
 <md-author>Mairs, John W</md-author>
-<md-description>Scale of maps ca. 1:1,000,000</md-description>
-<md-description>Bibliography: p. 4</md-description>
+<md-description tag="500">Scale of maps ca. 1:1,000,000</md-description>
+<md-description tag="504">Bibliography: p. 4</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
@@ -101,7 +101,7 @@
 <md-description>Cover title</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
 <md-title>A plan for community college computer development</md-title>
 <md-date>1971</md-date>
-<md-description>Cover title</md-description>
+<md-description tag="500">Cover title</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
@@ -118,7 +118,7 @@
 <md-title-remainder>final report</md-title-remainder>
 <md-date>1971</md-date>
 <md-author>Englund, Carl R</md-author>
-<md-description>&quot;Contract DOT-UT-10003.&quot;</md-description>
+<md-description tag="500">&quot;Contract DOT-UT-10003.&quot;</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>

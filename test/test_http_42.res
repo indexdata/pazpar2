@@ -15,8 +15,8 @@
 <md-title>The religious teachers of Greece</md-title>
 <md-date>1972</md-date>
 <md-author>Adam, James</md-author>
-<md-description>Reprint of the 1909 ed., which was issued as the 1904-1906 Gifford lectures</md-description>
-<md-description>Includes bibliographical references</md-description>
+<md-description tag="500">Reprint of the 1909 ed., which was issued as the 1904-1906 Gifford lectures</md-description>
+<md-description tag="504">Includes bibliographical references</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
@@ -48,8 +48,8 @@
 <md-title-remainder>a portfolio of thematic computer maps</md-title-remainder>
 <md-date>1974</md-date>
 <md-author>Mairs, John W</md-author>
-<md-description>Scale of maps ca. 1:1,000,000</md-description>
-<md-description>Bibliography: p. 4</md-description>
+<md-description tag="500">Scale of maps ca. 1:1,000,000</md-description>
+<md-description tag="504">Bibliography: p. 4</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
@@ -65,7 +65,7 @@
 <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
 <md-date>1977</md-date>
-<md-description>Includes bibliographical references and index</md-description>
+<md-description tag="504">Includes bibliographical references and index</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
