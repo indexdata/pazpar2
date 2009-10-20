@@ -695,6 +695,7 @@ int client_parse_query(struct client *cl, const char *query)
     CCL_bibset ccl_map = prepare_cclmap(cl);
     const char *sru = session_setting_oneval(sdb, PZ_SRU);
     const char *pqf_prefix = session_setting_oneval(sdb, PZ_PQF_PREFIX);
+    const char *pqf_strftime = session_setting_oneval(sdb, PZ_PQF_STRFTIME);
 
     if (!ccl_map)
         return -1;
@@ -715,7 +716,26 @@ int client_parse_query(struct client *cl, const char *query)
         wrbuf_puts(se->wrbuf, pqf_prefix);
         wrbuf_puts(se->wrbuf, " ");
     }
-    ccl_pquery(se->wrbuf, cn);
+    if (!pqf_strftime || !*pqf_strftime)
+        ccl_pquery(se->wrbuf, cn);
+    else
+    {
+        time_t cur_time = time(0);
+        struct tm *tm =  localtime(&cur_time);
+        char tmp_str[300];
+        const char *cp = tmp_str;
+
+        /* see man strftime(3) for things .. In particular %% gets converted
+         to %.. And That's our original query .. */
+        strftime(tmp_str, sizeof(tmp_str)-1, pqf_strftime, tm);
+        for (; *cp; cp++)
+        {
+            if (cp[0] == '%')
+                ccl_pquery(se->wrbuf, cn);
+            else
+                wrbuf_putc(se->wrbuf, cp[0]);
+        }
+    }
     xfree(cl->pquery);
     cl->pquery = xstrdup(wrbuf_cstr(se->wrbuf));
 

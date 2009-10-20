@@ -67,6 +67,7 @@ static char *hard_settings[] = {
     "pz:pqf_prefix",
     "pz:sort",
     "pz:recordfilter",
+    "pz:pqf_strftime",
     0
 };
 

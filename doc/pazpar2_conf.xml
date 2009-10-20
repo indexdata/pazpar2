@@ -962,6 +962,23 @@
     </varlistentry>
     
     <varlistentry>
+     <term>pz:pqf_strftime</term>
+     <listitem>
+      <para>
+       Allows you to extend a query with dates and operators.
+       The provided string allows certain substitutions and serves as a
+       format string.
+       The special two character sequence '%%' gets converted to the
+       original query. Other characters leading with the percent sign are
+       conversions supported by strftime.
+       All other characters are copied verbatim. For example, the string
+       <literal>@and @attr 1=30 @attr 2=3 %Y %%</literal>
+       would search for current year combined with the original PQF (%%).
+      </para>
+     </listitem>
+    </varlistentry>
+    
+    <varlistentry>
      <term>pz:sort</term>
      <listitem>
       <para>

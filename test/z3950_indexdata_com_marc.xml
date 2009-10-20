@@ -21,6 +21,7 @@
   <set name="pz:xslt" value="auto"/>
   
   <set name="pz:apdulog" value="1"/>
+  <set name="pz:pqf_strftime" value="@or %% %Y"/>
 
   <!-- Examples of application-specific setting -->
   <!-- Available in output record and/or normalization stylesheet -->
