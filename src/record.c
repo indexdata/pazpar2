@@ -85,6 +85,7 @@ struct record_metadata * record_metadata_create(NMEM nmem)
     struct record_metadata * rec_md 
         = nmem_malloc(nmem, sizeof(struct record_metadata));
     rec_md->next = 0;
+    rec_md->attributes = 0;
     return rec_md;
 }
 

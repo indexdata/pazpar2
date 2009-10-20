@@ -531,8 +531,16 @@ static void write_metadata(WRBUF w, struct conf_service *service,
             continue;
         for (md = ml[imeta]; md; md = md->next)
         {
-            wrbuf_printf(w, "\n<md-%s>", cmd->name);
+            struct record_metadata_attr *attr = md->attributes;
+            wrbuf_printf(w, "\n<md-%s", cmd->name);
 
+            for (; attr; attr = attr->next)
+            {
+                wrbuf_printf(w, " %s=\"", attr->name);
+                wrbuf_xmlputs(w, attr->value);
+                wrbuf_puts(w, "\"");
+            }
+            wrbuf_puts(w, ">");
             switch (cmd->type)
             {
                 case Metadata_type_generic:

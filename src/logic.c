@@ -822,9 +822,31 @@ void pazpar2_event_loop()
 }
 
 static struct record_metadata *record_metadata_init(
-    NMEM nmem, const char *value, enum conf_metadata_type type)
+    NMEM nmem, const char *value, enum conf_metadata_type type,
+    struct _xmlAttr *attr)
 {
     struct record_metadata *rec_md = record_metadata_create(nmem);
+    struct record_metadata_attr **attrp = &rec_md->attributes;
+    
+    for (; attr; attr = attr->next)
+    {
+        if (attr->children && attr->children->content)
+        {
+            if (strcmp((const char *) attr->name, "type"))
+            {  /* skip the "type" attribute.. Its value is already part of
+                  the element in output (md-%s) and so repeating it here
+                  is redundant */
+                *attrp = nmem_malloc(nmem, sizeof(**attrp));
+                (*attrp)->name =
+                    nmem_strdup(nmem, (const char *) attr->name);
+                (*attrp)->value =
+                    nmem_strdup(nmem, (const char *) attr->children->content);
+                attrp = &(*attrp)->next;
+            }
+        }
+    }
+    *attrp = 0;
+
     if (type == Metadata_type_generic)
     {
         char *p = nmem_strdup(nmem, value);
@@ -1123,7 +1145,7 @@ struct record *ingest_record(struct client *cl, const char *rec,
 
             // non-merged metadata
             rec_md = record_metadata_init(se->nmem, (const char *) value,
-                                          ser_md->type);
+                                          ser_md->type, n->properties);
             if (!rec_md)
             {
                 yaz_log(YLOG_WARN, "bad metadata data '%s' for element '%s'",
@@ -1137,7 +1159,7 @@ struct record *ingest_record(struct client *cl, const char *rec,
 
             // merged metadata
             rec_md = record_metadata_init(se->nmem, (const char *) value,
-                                          ser_md->type);
+                                          ser_md->type, 0);
             wheretoput = &cluster->metadata[md_field_id];
 
             // and polulate with data:

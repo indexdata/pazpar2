@@ -37,11 +37,17 @@ union data_types {
 };
 
 
+struct record_metadata_attr {
+    char *name;
+    char *value;
+    struct record_metadata_attr *next;
+};
 
 struct record_metadata {
     union data_types data;
     // next item of this name
     struct record_metadata *next; 
+    struct record_metadata_attr *attributes;
 };
 
 union data_types * data_types_assign(NMEM nmem, 
