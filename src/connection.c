@@ -183,12 +183,14 @@ static void non_block_events(struct connection *co)
         case ZOOM_EVENT_END:
             {
                 const char *error, *addinfo;
-                if (ZOOM_connection_error(link, &error, &addinfo))
+		int err;
+                if ((err = ZOOM_connection_error(link, &error, &addinfo)))
                 {
                     yaz_log(YLOG_LOG, "Error %s from %s",
                             error, client_get_url(cl));
                 }
                 iochan_settimeout(iochan, co->session_timeout);
+		client_set_diagnostic(cl, err);
                 client_set_state(cl, Client_Idle);
             }
             break;

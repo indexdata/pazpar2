@@ -795,6 +795,11 @@ int client_get_num_records(struct client *cl)
     return cl->record_offset;
 }
 
+void client_set_diagnostic(struct client *cl, int diagnostic)
+{
+    cl->diagnostic = diagnostic;
+}
+
 int client_get_diagnostic(struct client *cl)
 {
     return cl->diagnostic;

@@ -82,6 +82,7 @@ int client_parse_query(struct client *cl, const char *query);
 int client_get_hits(struct client *cl);
 int client_get_num_records(struct client *cl);
 int client_get_diagnostic(struct client *cl);
+void client_set_diagnostic(struct client *cl, int diagnostic);
 void client_set_database(struct client *cl, struct session_database *db);
 struct host *client_get_host(struct client *cl);
 const char *client_get_url(struct client *cl);
