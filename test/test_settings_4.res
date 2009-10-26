@@ -3,7 +3,7 @@
 <target><id>z3950.indexdata.com/marc</id>
 <name>Target name</name>
 <hits>0</hits>
-<diagnostic>0</diagnostic>
+<diagnostic>114</diagnostic>
 <records>0</records>
 <state>Client_Idle</state>
 <settings>
