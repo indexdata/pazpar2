@@ -23,7 +23,7 @@ IFS=$oIFS
 
 if test -z $curl; then
     echo "curl not found. $PREFIX can not be tested"
-    exit 0
+    exit 1
 fi
 GET='$curl --silent --output $OUT2 "$f"'
 POST='$curl --silent --header "Content-Type: text/xml" --data-binary "@$postfile" --output $OUT2  "$f"'
