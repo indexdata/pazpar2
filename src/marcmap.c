@@ -209,7 +209,7 @@ xmlDoc *marcmap_apply(struct marcmap *marcmap, xmlDoc *xml_in)
     if ((field = marchash_get_field(marchash, "245", NULL)) && (subfield = marchash_get_subfield('a', field, NULL)))
         strncat(mergekey, subfield->val, 1023 - strlen(mergekey));
     strncat(mergekey, " author ", 1023 - strlen(mergekey));
-    if ((field = marchash_get_field(marchash, "245", NULL)) && (subfield = marchash_get_subfield('a', field, NULL)))
+    if ((field = marchash_get_field(marchash, "100", NULL)) && (subfield = marchash_get_subfield('a', field, NULL)))
         strncat(mergekey, subfield->val, 1023 - strlen(mergekey));
     strncat(mergekey, " medium ", 1023 - strlen(mergekey));
     strncat(mergekey, medium, 1023 - strlen(mergekey));
