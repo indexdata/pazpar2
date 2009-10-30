@@ -251,6 +251,7 @@ pz2.prototype =
         this.termCounter = 0;
         this.bytargetCounter = 0;
         this.statCounter = 0;
+        this.activeClients = 1;
         
         // no proxy mode
         if( !this.initStatusOK )
