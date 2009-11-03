@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <config.h>
 #endif
 
+#include <assert.h>
 #include <math.h>
 #include <stdlib.h>
 
@@ -90,19 +91,34 @@ static struct word_entry *build_word_entries(pp2_charset_t pct, NMEM nmem,
 }
 
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
-        const char *words, int multiplier)
+                          const char *words, int multiplier, const char *name)
 {
     pp2_relevance_token_t prt = pp2_relevance_tokenize(r->pct, words);
-    
+    int *mult = cluster->term_frequency_vec_tmp;
     const char *norm_str;
-    
+    int i, length = 0;
+
+    for (i = 1; i < r->vec_len; i++)
+        mult[i] = 0;
+
     while ((norm_str = pp2_relevance_token_next(prt)))
     {
         int res = word_entry_match(r->entries, norm_str);
         if (res)
-            cluster->term_frequency_vec[res] += multiplier;
-        cluster->term_frequency_vec[0]++;
+        {
+            assert(res < r->vec_len);
+            mult[res] += multiplier;
+        }
+        length++;
     }
+
+    for (i = 1; i < r->vec_len; i++)
+    {
+        cluster->term_frequency_vecf[i] += (double) mult[i] / length;
+        cluster->term_frequency_vec[i] += mult[i];
+    }
+
+    cluster->term_frequency_vec[0] += length;
     pp2_relevance_token_destroy(prt);
 }
 
@@ -128,8 +144,26 @@ void relevance_newrec(struct relevance *r, struct record_cluster *rec)
 {
     if (!rec->term_frequency_vec)
     {
-        rec->term_frequency_vec = nmem_malloc(r->nmem, r->vec_len * sizeof(int));
-        memset(rec->term_frequency_vec, 0, r->vec_len * sizeof(int));
+        int i;
+
+        // term frequency [1,..] . [0] is total length of all fields
+        rec->term_frequency_vec =
+            nmem_malloc(r->nmem,
+                        r->vec_len * sizeof(*rec->term_frequency_vec));
+        for (i = 0; i < r->vec_len; i++)
+            rec->term_frequency_vec[i] = 0;
+        
+        // term frequency divided by length of field [1,...]
+        rec->term_frequency_vecf =
+            nmem_malloc(r->nmem,
+                        r->vec_len * sizeof(*rec->term_frequency_vecf));
+        for (i = 0; i < r->vec_len; i++)
+            rec->term_frequency_vecf[i] = 0.0;
+        
+        // for relevance_countwords (so we don't have to xmalloc/xfree)
+        rec->term_frequency_vec_tmp =
+            nmem_malloc(r->nmem,
+                        r->vec_len * sizeof(*rec->term_frequency_vec_tmp));
     }
 }
 
@@ -182,9 +216,17 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
         for (t = 1; t < rel->vec_len; t++)
         {
             float termfreq;
-            if (!rec->term_frequency_vec[0])
-                break;
-            termfreq = (float) rec->term_frequency_vec[t] / rec->term_frequency_vec[0];
+#if 1
+            termfreq = (float) rec->term_frequency_vecf[t];
+#else
+            if (rec->term_frequency_vec[0])
+            {
+                termfreq = (float)
+                    rec->term_frequency_vec[t] / rec->term_frequency_vec[0] ;
+            }
+            else
+                termfreq = 0.0;
+#endif
             relevance += 100000 * (termfreq * idfvec[t] + 0.0000005);  
         }
         rec->relevance = relevance;

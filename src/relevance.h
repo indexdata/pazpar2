@@ -31,7 +31,7 @@ struct relevance *relevance_create(pp2_charset_t pct,
                                    NMEM nmem, const char **terms);
 void relevance_newrec(struct relevance *r, struct record_cluster *cluster);
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
-        const char *words, int multiplier);
+                          const char *words, int multiplier, const char *name);
 void relevance_donerecord(struct relevance *r, struct record_cluster *cluster);
 
 void relevance_prepare_read(struct relevance *rel, struct reclist *rec);

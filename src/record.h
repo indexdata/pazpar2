@@ -114,6 +114,8 @@ struct record_cluster
     char *merge_key;
     int relevance;
     int *term_frequency_vec;
+    int *term_frequency_vec_tmp;
+    float *term_frequency_vecf;
     // Set-specific ID for this record
     char *recid;
     struct record *records;
