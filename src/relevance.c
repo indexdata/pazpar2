@@ -114,7 +114,8 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
 
     for (i = 1; i < r->vec_len; i++)
     {
-        cluster->term_frequency_vecf[i] += (double) mult[i] / length;
+        if (length > 0) /* only add if non-empty */
+            cluster->term_frequency_vecf[i] += (double) mult[i] / length;
         cluster->term_frequency_vec[i] += mult[i];
     }
 
