@@ -40,11 +40,7 @@ CFG=${PREFIX}.cfg
 URLS=${PREFIX}_urls
 VALGRINDLOG=${PREFIX}_valgrind.log
 
-usevalgrind=false
 if test -n "$PAZPAR2_USE_VALGRIND"; then
-    usevalgrind=$PAZPAR2_USE_VALGRIND;
-fi
-if $usevalgrind; then
     valgrind --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -X -l pazpar2.log -f ${CFG} >extra_pazpar2.log 2>&1 &
 else
     YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -d -X -l pazpar2.log -f ${srcdir}/${CFG} >extra_pazpar2.log 2>&1 &
