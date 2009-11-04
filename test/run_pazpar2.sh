@@ -69,10 +69,6 @@ fi
 
 # We can start test for real
 
-oIFS="$IFS"
-IFS='
-'
-
 testno=1
 for f in `cat ${srcdir}/${URLS}`; do
     if echo $f | grep '^http' >/dev/null; then
@@ -121,7 +117,6 @@ for f in `cat ${srcdir}/${URLS}`; do
 	exit 1
     fi
 done
-IFS="$oIFS"
 
 # Kill programs
 
