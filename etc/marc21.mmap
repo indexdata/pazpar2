@@ -32,11 +32,11 @@
 300 g physical-unitsize
 300 3 physical-specified
 440 a series-title
-500 $ description
-505 $ description
-518 $ description
-520 $ description
-522 $ description
+500 * description
+505 * description
+518 * description
+520 * description
+522 * description
 600 a subject
 600 a subject
 610 a subject
