@@ -138,6 +138,7 @@ xmlDoc *marcmap_apply(struct marcmap *marcmap, xmlDoc *xml_in)
     struct marcmap *mmcur;
      
     xml_out = xmlNewDoc(BAD_CAST "1.0");
+    xml_out->encoding = xmlCharStrdup("UTF-8");
     xml_out_root = xmlNewNode(NULL, BAD_CAST "record");
     xmlDocSetRootElement(xml_out, xml_out_root);
     ns_pz = xmlNewNs(xml_out_root, BAD_CAST "http://www.indexdata.com/pazpar2/1.0", BAD_CAST "pz"); 
