@@ -1,5 +1,4 @@
 /*
-** $Id: pz2.js,v 1.70 2008-03-12 11:36:57 jakub Exp $
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -750,7 +749,7 @@ pzHttpRequest.prototype =
         for (var key in this.requestHeaders)
             this.request.setRequestHeader(key, this.requestHeaders[key]);
         this.request.onreadystatechange = function () {
-            context._handleResponse();
+            context._handleResponse(url); /// url used ONLY for error reporting
         }
         this.request.send(data);
     },
@@ -763,7 +762,7 @@ pzHttpRequest.prototype =
             return this.url;
     },
 
-    _handleResponse: function ()
+    _handleResponse: function (savedUrlForErrorReporting)
     {
         if ( this.request.readyState == 4 ) { 
             // pick up appplication errors first
@@ -784,6 +783,16 @@ pzHttpRequest.prototype =
                     this.errorHandler(err);
                 }
                 else {
+                    throw err;
+                }
+            } else if (this.request.status == 200 && 
+                       this.request.responseXML == null) {
+                var err = new Error("XML response is empty but no error " +
+                                    "for " + savedUrlForErrorReporting);
+                err.code = -1;
+                if (this.errorHandler) {
+                    this.errorHandler(err);
+                } else {
                     throw err;
                 }
             } else if (this.request.status == 200) {
