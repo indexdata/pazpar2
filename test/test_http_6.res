@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record>
 <recid>title how to program a computer author jack collins medium book</recid>
-<nextrecid>title a plan for community college computer development author medium book</nextrecid>
+<nextrecid>title computer science technology author medium book</nextrecid>
 <activeclients>0</activeclients>
 
 <md-title>How to program a computer</md-title>

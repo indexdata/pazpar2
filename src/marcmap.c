@@ -138,9 +138,11 @@ xmlDoc *marcmap_apply(struct marcmap *marcmap, xmlDoc *xml_in)
     struct marcmap *mmcur;
      
     xml_out = xmlNewDoc(BAD_CAST "1.0");
+    xml_out->encoding = xmlCharStrdup("UTF-8");
     xml_out_root = xmlNewNode(NULL, BAD_CAST "record");
     xmlDocSetRootElement(xml_out, xml_out_root);
     ns_pz = xmlNewNs(xml_out_root, BAD_CAST "http://www.indexdata.com/pazpar2/1.0", BAD_CAST "pz"); 
+    xmlSetNs(xml_out_root, ns_pz);
     nmem = nmem_create();
     rec_node = xmlDocGetRootElement(xml_in);
     marchash = marchash_create(nmem);
@@ -214,7 +216,7 @@ xmlDoc *marcmap_apply(struct marcmap *marcmap, xmlDoc *xml_in)
     strncat(mergekey, " medium ", 1023 - strlen(mergekey));
     strncat(mergekey, medium, 1023 - strlen(mergekey));
 
-    xmlSetProp(xml_out_root, BAD_CAST "mergekey", BAD_CAST mergekey);
+//    xmlSetProp(xml_out_root, BAD_CAST "mergekey", BAD_CAST mergekey);
 
     nmem_destroy(nmem);
     return xml_out;

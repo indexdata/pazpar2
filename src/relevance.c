@@ -21,151 +21,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <config.h>
 #endif
 
+#include <assert.h>
 #include <math.h>
 #include <stdlib.h>
 
 #include "relevance.h"
 #include "pazpar2.h"
 
-#define USE_TRIE 0
-
 struct relevance
 {
     int *doc_frequency_vec;
     int vec_len;
-#if USE_TRIE
-    struct word_trie *wt;
-#else
     struct word_entry *entries;
     pp2_charset_t pct;
-#endif
     NMEM nmem;
 };
 
-#if USE_TRIE
-#define raw_char(c) (((c) >= 'a' && (c) <= 'z') ? (c) - 'a' : -1)
-
-
-// We use this data structure to recognize terms in input records,
-// and map them to record term vectors for counting.
-struct word_trie
-{
-    struct
-    {
-        struct word_trie *child;
-        int termno;
-    } list[26];
-};
-
-static struct word_trie *create_word_trie_node(NMEM nmem)
-{
-    struct word_trie *res = nmem_malloc(nmem, sizeof(struct word_trie));
-    int i;
-    for (i = 0; i < 26; i++)
-    {
-        res->list[i].child = 0;
-        res->list[i].termno = -1;
-    }
-    return res;
-}
-
-static void word_trie_addterm(NMEM nmem, struct word_trie *n, const char *term, int num)
-{
-
-    while (*term) {
-        int c = tolower(*term);
-        if (c < 'a' || c > 'z')
-            term++;
-        else
-        {
-            c -= 'a';
-            if (!*(++term))
-                n->list[c].termno = num;
-            else
-            {
-                if (!n->list[c].child)
-                {
-                    struct word_trie *new = create_word_trie_node(nmem);
-                    n->list[c].child = new;
-                }
-                word_trie_addterm(nmem, n->list[c].child, term, num);
-            }
-            break;
-        }
-    }
-}
-
-static int word_trie_match(struct word_trie *t, const char *word, int *skipped)
-{
-    int c = raw_char(tolower(*word));
-
-    if (!*word)
-        return 0;
-
-    word++;
-    (*skipped)++;
-    if (!*word || raw_char(*word) < 0)
-    {
-        if (t->list[c].termno > 0)
-            return t->list[c].termno;
-        else
-            return 0;
-    }
-    else
-    {
-        if (t->list[c].child)
-        {
-            return word_trie_match(t->list[c].child, word, skipped);
-        }
-        else
-            return 0;
-    }
-
-}
-
-
-static struct word_trie *build_word_trie(NMEM nmem, const char **terms)
-{
-    struct word_trie *res = create_word_trie_node(nmem);
-    const char **p;
-    int i;
-
-    for (i = 1, p = terms; *p; p++, i++)
-        word_trie_addterm(nmem, res, *p, i);
-    return res;
-}
-
-
-// FIXME. The definition of a word is crude here.. should support
-// some form of localization mechanism?
-void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
-                          const char *words, int multiplier)
-{
-    while (*words)
-    {
-        char c;
-        int res;
-        int skipped = 0;
-        while (*words && (c = raw_char(tolower(*words))) < 0)
-            words++;
-        if (!*words)
-            break;
-        res = word_trie_match(r->wt, words, &skipped);
-        if (res)
-        {
-            words += skipped;
-            cluster->term_frequency_vec[res] += multiplier;
-        }
-        else
-        {
-            while (*words && (c = raw_char(tolower(*words))) >= 0)
-                words++;
-        }
-        cluster->term_frequency_vec[0]++;
-    }
-}
-
-#else
 
 struct word_entry {
     const char *norm_str;
@@ -220,25 +91,37 @@ static struct word_entry *build_word_entries(pp2_charset_t pct, NMEM nmem,
 }
 
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
-        const char *words, int multiplier)
+                          const char *words, int multiplier, const char *name)
 {
     pp2_relevance_token_t prt = pp2_relevance_tokenize(r->pct, words);
-    
+    int *mult = cluster->term_frequency_vec_tmp;
     const char *norm_str;
-    
+    int i, length = 0;
+
+    for (i = 1; i < r->vec_len; i++)
+        mult[i] = 0;
+
     while ((norm_str = pp2_relevance_token_next(prt)))
     {
         int res = word_entry_match(r->entries, norm_str);
         if (res)
-            cluster->term_frequency_vec[res] += multiplier;
-        cluster->term_frequency_vec[0]++;
+        {
+            assert(res < r->vec_len);
+            mult[res] += multiplier;
+        }
+        length++;
     }
+
+    for (i = 1; i < r->vec_len; i++)
+    {
+        if (length > 0) /* only add if non-empty */
+            cluster->term_frequency_vecf[i] += (double) mult[i] / length;
+        cluster->term_frequency_vec[i] += mult[i];
+    }
+
+    cluster->term_frequency_vec[0] += length;
     pp2_relevance_token_destroy(prt);
 }
-
-#endif
-
-
 
 struct relevance *relevance_create(pp2_charset_t pct,
                                    NMEM nmem, const char **terms)
@@ -253,12 +136,8 @@ struct relevance *relevance_create(pp2_charset_t pct,
     res->doc_frequency_vec = nmem_malloc(nmem, res->vec_len * sizeof(int));
     memset(res->doc_frequency_vec, 0, res->vec_len * sizeof(int));
     res->nmem = nmem;
-#if USE_TRIE
-    res->wt = build_word_trie(nmem, terms);
-#else
     res->entries = build_word_entries(pct, nmem, terms);
     res->pct = pct;
-#endif
     return res;
 }
 
@@ -266,8 +145,26 @@ void relevance_newrec(struct relevance *r, struct record_cluster *rec)
 {
     if (!rec->term_frequency_vec)
     {
-        rec->term_frequency_vec = nmem_malloc(r->nmem, r->vec_len * sizeof(int));
-        memset(rec->term_frequency_vec, 0, r->vec_len * sizeof(int));
+        int i;
+
+        // term frequency [1,..] . [0] is total length of all fields
+        rec->term_frequency_vec =
+            nmem_malloc(r->nmem,
+                        r->vec_len * sizeof(*rec->term_frequency_vec));
+        for (i = 0; i < r->vec_len; i++)
+            rec->term_frequency_vec[i] = 0;
+        
+        // term frequency divided by length of field [1,...]
+        rec->term_frequency_vecf =
+            nmem_malloc(r->nmem,
+                        r->vec_len * sizeof(*rec->term_frequency_vecf));
+        for (i = 0; i < r->vec_len; i++)
+            rec->term_frequency_vecf[i] = 0.0;
+        
+        // for relevance_countwords (so we don't have to xmalloc/xfree)
+        rec->term_frequency_vec_tmp =
+            nmem_malloc(r->nmem,
+                        r->vec_len * sizeof(*rec->term_frequency_vec_tmp));
     }
 }
 
@@ -320,9 +217,17 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
         for (t = 1; t < rel->vec_len; t++)
         {
             float termfreq;
-            if (!rec->term_frequency_vec[0])
-                break;
-            termfreq = (float) rec->term_frequency_vec[t] / rec->term_frequency_vec[0];
+#if 1
+            termfreq = (float) rec->term_frequency_vecf[t];
+#else
+            if (rec->term_frequency_vec[0])
+            {
+                termfreq = (float)
+                    rec->term_frequency_vec[t] / rec->term_frequency_vec[0] ;
+            }
+            else
+                termfreq = 0.0;
+#endif
             relevance += 100000 * (termfreq * idfvec[t] + 0.0000005);  
         }
         rec->relevance = relevance;

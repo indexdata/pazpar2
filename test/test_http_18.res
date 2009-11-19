@@ -15,7 +15,7 @@
 <md-description tag="513">1692-PRESENT</md-description>
 <md-test-usersetting-2>test-usersetting-2 data: 
 </md-test-usersetting-2></location>
-<relevance>8239</relevance>
+<relevance>9416</relevance>
 <recid>title bibliography of maine geology author medium book</recid>
 </hit>
 <hit>

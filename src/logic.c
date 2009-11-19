@@ -1252,7 +1252,8 @@ struct record *ingest_record(struct client *cl, const char *rec,
             // ranking of _all_ fields enabled ... 
             if (ser_md->rank)
                 relevance_countwords(se->relevance, cluster, 
-                                     (char *) value, ser_md->rank);
+                                     (char *) value, ser_md->rank,
+                                     ser_md->name);
 
             // construct facets ... 
             if (ser_md->termlist)

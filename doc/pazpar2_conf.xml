@@ -848,7 +848,7 @@
        map incoming records to the internal representation.
       </para>
       <para>
-       When mapping MARC XML records, XSLT can be bypassed for increased 
+       When mapping MARC records, XSLT can be bypassed for increased 
        performance with the alternate "MARC map" format.  Provide the
        path of a file with extension ".mmap" containing on each line:
        <programlisting>
