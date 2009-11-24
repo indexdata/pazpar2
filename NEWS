@@ -1,3 +1,27 @@
+--- 1.2.3 2009/11/24
+
+Metadata attribute 'skiparticle' also works for ICU based
+normalization. (was only working for the non-ICU/ASCII before).
+
+Command bytarget with argument settings=1 will show settings per
+target.. This is to be able to verify correct settings and be able to
+test that they are correct. The database settings array size is now
+also stored..  Problems with database settings array is that if not
+careful it will be too small (smaller than dictionary per-service
+in settings).
+
+Make record list sorting stable by comparing mergekey for records if
+relevance/title or other sorting criteria all match. This is merely to
+ensure that our regressions tests works (reproducible output).
+
+Relevance calculation changes: use a different denominator (length) for
+per-field relevance scoring.. Instead of length of all ranked fields we
+now use length of individual fields (as if they were individual "free"
+text fields). This will ensure that documents with a long field with no
+match (say description) will not "hurt" a title match.
+
+Diagnostic member was not set on connection error. Fixed
+
 --- 1.2.2 2009/10/13
 
 Command search takes two optional parameters, startecs and maxrecs,
