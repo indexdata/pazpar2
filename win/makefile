@@ -25,7 +25,7 @@ all: dirs yaz libxslt pazpar2
 
 NSIS="c:\program files\nsis\makensis.exe"
 
-dist:
+dist: pazpar2.nsi
 	nmake DEBUG=1 clean
 	nmake DEBUG=0 clean
 	nmake DEBUG=0
