@@ -39,13 +39,13 @@ int test_normalize7bit_generic(const char *rm_chars, const char *input,
     return ret;
 }
 
-int test_normalize7bit_mergekey(int skiparticle, const char *input,
+int test_normalize7bit_mergekey(const char *input,
                                 const char *expect_output)
 {
     int ret = 0;
 
     char *tmp = xstrdup(input);
-    char *output = normalize7bit_mergekey(tmp, skiparticle);
+    char *output = normalize7bit_mergekey(tmp);
     if (!strcmp(expect_output, output))
         ret = 1;
     xfree(tmp);
@@ -62,10 +62,8 @@ int main(int argc, char **argv)
  
     YAZ_CHECK(test_normalize7bit_generic("/; "," ", ""));
 
-    YAZ_CHECK(test_normalize7bit_mergekey(0, "the art of computer", "the art of computer"));
-    YAZ_CHECK(test_normalize7bit_mergekey(1, "the art of computer", "art of computer"));
-
-    YAZ_CHECK(test_normalize7bit_mergekey(1, "The Art Of Computer", "art of computer"));
+    YAZ_CHECK(test_normalize7bit_mergekey("the art of computer", "the art of computer"));
+    YAZ_CHECK(test_normalize7bit_mergekey("The Art Of Computer", "the art of computer"));
    
     YAZ_CHECK_TERM;
 }
