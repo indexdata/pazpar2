@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/log.h>
 #include <ctype.h>
 #include <assert.h>
+#include <string.h>
 
 #include "charsets.h"
 #include "normalize7bit.h"
@@ -42,7 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /* charset handle */
 struct pp2_charset_s {
     const char *(*token_next_handler)(pp2_relevance_token_t prt);
-    const char *(*get_sort_handler)(pp2_relevance_token_t prt, int skip);
+    const char *(*get_sort_handler)(pp2_relevance_token_t prt);
     int ref_count;
 #if YAZ_HAVE_ICU
     struct icu_chain * icu_chn;
@@ -51,11 +52,11 @@ struct pp2_charset_s {
 };
 
 static const char *pp2_relevance_token_a_to_z(pp2_relevance_token_t prt);
-static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt, int skip_article);
+static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt);
 
 #if YAZ_HAVE_ICU
 static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt);
-static const char *pp2_get_sort_icu(pp2_relevance_token_t prt, int skip_article);
+static const char *pp2_get_sort_icu(pp2_relevance_token_t prt);
 #endif
 
 /* tokenzier handle */
@@ -142,11 +143,29 @@ void pp2_charset_destroy(pp2_charset_t pct)
 }
 
 pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
-                                             const char *buf)
+                                             const char *buf,
+                                             int skip_article)
 {
     pp2_relevance_token_t prt = xmalloc(sizeof(*prt));
 
     assert(pct);
+
+    if (skip_article)
+    {
+        const char *p = buf;
+        char firstword[64];
+        char *pout = firstword;
+        char articles[] = "the den der die des an a "; // must end in space
+        
+        while (*p && !isalnum(*(unsigned char *)p))
+            p++;
+        for (; *p && *p != ' ' && pout - firstword < (sizeof(firstword)-2); p++)
+            *pout++ = tolower(*(unsigned char *)p);
+        *pout++ = ' ';
+        *pout++ = '\0';
+        if (strstr(articles, firstword))
+            buf = p;
+    }
 
     prt->norm_str = wrbuf_alloc();
     prt->sort_str = wrbuf_alloc();
@@ -184,9 +203,9 @@ const char *pp2_relevance_token_next(pp2_relevance_token_t prt)
     return (prt->pct->token_next_handler)(prt);
 }
 
-const char *pp2_get_sort(pp2_relevance_token_t prt, int skip)
+const char *pp2_get_sort(pp2_relevance_token_t prt)
 {
-    return prt->pct->get_sort_handler(prt, skip);
+    return prt->pct->get_sort_handler(prt);
 }
 
 #define raw_char(c) (((c) >= 'a' && (c) <= 'z') ? (c) : -1)
@@ -220,8 +239,7 @@ static const char *pp2_relevance_token_a_to_z(pp2_relevance_token_t prt)
     return wrbuf_cstr(prt->norm_str);
 }
 
-static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt,
-                                    int skip_article)
+static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt)
 {
     if (prt->last_cp == 0)
         return 0;
@@ -229,7 +247,7 @@ static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt,
     {
         char *tmp = xstrdup(prt->last_cp);
         char *result = 0;
-        result = normalize7bit_mergekey(tmp, skip_article);
+        result = normalize7bit_mergekey(tmp);
         
         wrbuf_rewind(prt->sort_str);
         wrbuf_puts(prt->sort_str, result);
@@ -253,8 +271,7 @@ static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)
     return 0;
 }
 
-static const char *pp2_get_sort_icu(pp2_relevance_token_t prt,
-                                    int skip_article)
+static const char *pp2_get_sort_icu(pp2_relevance_token_t prt)
 {
     return icu_chain_token_sortkey(prt->pct->icu_chn);
 }

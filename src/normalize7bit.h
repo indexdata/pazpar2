@@ -20,7 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef NORMALIZE7BIT_H
 #define NORMALIZE7BIT_H
 
-char *normalize7bit_mergekey(char *buf, int skiparticle);
+char *normalize7bit_mergekey(char *buf);
 char * normalize7bit_generic(char * str, const char * rm_chars);
 int extract7bit_dates(const char *buf, int *first, int *last, int longdate);
 

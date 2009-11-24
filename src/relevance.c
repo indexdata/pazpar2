@@ -77,7 +77,7 @@ static struct word_entry *build_word_entries(pp2_charset_t pct, NMEM nmem,
 
     for (; *p; p++)
     {
-        pp2_relevance_token_t prt = pp2_relevance_tokenize(pct, *p);
+        pp2_relevance_token_t prt = pp2_relevance_tokenize(pct, *p, 0);
         const char *norm_str;
 
         while ((norm_str = pp2_relevance_token_next(prt)))
@@ -93,7 +93,7 @@ static struct word_entry *build_word_entries(pp2_charset_t pct, NMEM nmem,
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
                           const char *words, int multiplier, const char *name)
 {
-    pp2_relevance_token_t prt = pp2_relevance_tokenize(r->pct, words);
+    pp2_relevance_token_t prt = pp2_relevance_tokenize(r->pct, words, 0);
     int *mult = cluster->term_frequency_vec_tmp;
     const char *norm_str;
     int i, length = 0;

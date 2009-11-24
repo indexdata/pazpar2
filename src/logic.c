@@ -895,7 +895,7 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
                     pp2_relevance_token_t prt =
                         pp2_relevance_tokenize(
                             service->mergekey_pct,
-                            (const char *) value);
+                            (const char *) value, 0);
                     
                     wrbuf_puts(norm_wr, name);
                     wrbuf_puts(norm_wr, "=");
@@ -935,7 +935,7 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
         pp2_relevance_token_t prt =
             pp2_relevance_tokenize(
                 service->mergekey_pct,
-                (const char *) mergekey);
+                (const char *) mergekey, 0);
         
         while ((norm_str = pp2_relevance_token_next(prt)))
         {
@@ -1197,11 +1197,11 @@ struct record *ingest_record(struct client *cl, const char *rec,
                          
                         prt = pp2_relevance_tokenize(
                             service->sort_pct,
-                            rec_md->data.text.disp);
+                            rec_md->data.text.disp, skip_article);
 
                         pp2_relevance_token_next(prt);
                          
-                        sort_str = pp2_get_sort(prt, skip_article);
+                        sort_str = pp2_get_sort(prt);
                          
                         cluster->sortkeys[sk_field_id]->text.disp = 
                             rec_md->data.text.disp;

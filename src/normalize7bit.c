@@ -44,29 +44,9 @@ char * normalize7bit_generic(char * str, const char * rm_chars)
     return p;
 }
 
-
-
-char * normalize7bit_mergekey(char *buf, int skiparticle)
+char *normalize7bit_mergekey(char *buf)
 {
     char *p = buf, *pout = buf;
-
-    if (skiparticle)
-    {
-        char firstword[64];
-        char articles[] = "the den der die des an a "; // must end in space
-
-        while (*p && !isalnum(*(unsigned char *)p))
-            p++;
-        pout = firstword;
-        while (*p && *p != ' ' && pout - firstword < 62)
-            *(pout++) = tolower(*(unsigned char *)(p++));
-        *(pout++) = ' ';
-        *(pout++) = '\0';
-        if (!strstr(articles, firstword))
-            p = buf;
-        pout = buf;
-    }
-
     while (*p)
     {
         while (*p && !isalnum(*(unsigned char *)p))

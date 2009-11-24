@@ -38,10 +38,11 @@ void pp2_charset_destroy(pp2_charset_t pct);
 void pp2_charset_incref(pp2_charset_t pct);
 
 pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
-                                             const char *buf);
+                                             const char *buf,
+                                             int skip_article);
 void pp2_relevance_token_destroy(pp2_relevance_token_t prt);
 const char *pp2_relevance_token_next(pp2_relevance_token_t prt);
-const char *pp2_get_sort(pp2_relevance_token_t prt, int skip_article);
+const char *pp2_get_sort(pp2_relevance_token_t prt);
 
 #if 0
 typedef int pp2_charset_normalize_t(pp2_charset_t pct,

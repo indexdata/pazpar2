@@ -8,16 +8,17 @@
 <num>9</num>
 <hit>
 
-<md-title>A plan for community college computer development</md-title>
-<md-date>1971</md-date>
-<md-description>Cover title</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
-<md-title>A plan for community college computer development</md-title>
-<md-date>1971</md-date>
-<md-description tag="500">Cover title</md-description>
+<md-title>The Computer Bible</md-title>
+<md-date>1973-1980</md-date>
+<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-title>The Computer Bible</md-title>
+<md-date>1973-1980</md-date>
+<md-description tag="500">Hebrew and Greek; introductions in English</md-description>
+<md-description tag="500">Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<recid>title a plan for community college computer development author medium book</recid>
+<recid>title the computer bible author medium book</recid>
 </hit>
 <hit>
 
@@ -67,32 +68,16 @@
 </hit>
 <hit>
 
-<md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
-<md-title-remainder>proceedings of the workshop</md-title-remainder>
-<md-date>1977</md-date>
-<md-description>Includes bibliographical references and index</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
-<md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
-<md-title-remainder>proceedings of the workshop</md-title-remainder>
-<md-date>1977</md-date>
-<md-description tag="504">Includes bibliographical references and index</md-description>
+<md-title>A plan for community college computer development</md-title>
+<md-date>1971</md-date>
+<md-description>Cover title</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-title>A plan for community college computer development</md-title>
+<md-date>1971</md-date>
+<md-description tag="500">Cover title</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<recid>title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
-</hit>
-<hit>
-
-<md-title>The Computer Bible</md-title>
-<md-date>1973-1980</md-date>
-<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
-<md-title>The Computer Bible</md-title>
-<md-date>1973-1980</md-date>
-<md-description tag="500">Hebrew and Greek; introductions in English</md-description>
-<md-description tag="500">Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
-<md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
-<md-test-usersetting-2>test-usersetting-2 data: 
-        YYYYYYYYY</md-test-usersetting-2></location>
-<recid>title the computer bible author medium book</recid>
+<recid>title a plan for community college computer development author medium book</recid>
 </hit>
 <hit>
 
@@ -111,6 +96,21 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <recid>title the puget sound region author mairs john w medium book</recid>
+</hit>
+<hit>
+
+<md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
+<md-title-remainder>proceedings of the workshop</md-title-remainder>
+<md-date>1977</md-date>
+<md-description>Includes bibliographical references and index</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
+<md-title-remainder>proceedings of the workshop</md-title-remainder>
+<md-date>1977</md-date>
+<md-description tag="504">Includes bibliographical references and index</md-description>
+<md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
+<md-test-usersetting-2>test-usersetting-2 data: 
+        YYYYYYYYY</md-test-usersetting-2></location>
+<recid>title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 <hit>
 
