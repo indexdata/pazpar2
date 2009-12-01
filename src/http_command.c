@@ -379,7 +379,8 @@ static void targets_termlist(WRBUF wrbuf, struct session *se, int num,
             wrbuf_xmlputs(wrbuf, ht[i].name);
         wrbuf_puts(wrbuf, "</name>\n");
         
-        wrbuf_printf(wrbuf, "<frequency>%d</frequency>\n", ht[i].hits);
+        wrbuf_printf(wrbuf, "<frequency>" ODR_INT_PRINTF "</frequency>\n",
+                     ht[i].hits);
         
         wrbuf_puts(wrbuf, "<state>");
         wrbuf_xmlputs(wrbuf, ht[i].state);
@@ -496,7 +497,7 @@ static void cmd_bytarget(struct http_channel *c)
             wrbuf_puts(c->wrbuf, "</name>\n");
         }
 
-        wrbuf_printf(c->wrbuf, "<hits>%d</hits>\n", ht[i].hits);
+        wrbuf_printf(c->wrbuf, "<hits>" ODR_INT_PRINTF "</hits>\n", ht[i].hits);
         wrbuf_printf(c->wrbuf, "<diagnostic>%d</diagnostic>\n", ht[i].diagnostic);
         wrbuf_printf(c->wrbuf, "<records>%d</records>\n", ht[i].records);
 
@@ -747,7 +748,7 @@ static void show_records(struct http_channel *c, int active)
     int startn = 0;
     int numn = 20;
     int total;
-    int total_hits;
+    Odr_int total_hits;
     int i;
 
     if (!s)
@@ -775,7 +776,7 @@ static void show_records(struct http_channel *c, int active)
     wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<show>\n<status>OK</status>\n");
     wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", active);
     wrbuf_printf(c->wrbuf, "<merged>%d</merged>\n", total);
-    wrbuf_printf(c->wrbuf, "<total>%d</total>\n", total_hits);
+    wrbuf_printf(c->wrbuf, "<total>" ODR_INT_PRINTF "</total>\n", total_hits);
     wrbuf_printf(c->wrbuf, "<start>%d</start>\n", startn);
     wrbuf_printf(c->wrbuf, "<num>%d</num>\n", numn);
 
@@ -936,7 +937,7 @@ static void cmd_stat(struct http_channel *c)
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<stat>");
     wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", clients);
-    wrbuf_printf(c->wrbuf, "<hits>%d</hits>\n", stat.num_hits);
+    wrbuf_printf(c->wrbuf, "<hits>" ODR_INT_PRINTF "</hits>\n", stat.num_hits);
     wrbuf_printf(c->wrbuf, "<records>%d</records>\n", stat.num_records);
     wrbuf_printf(c->wrbuf, "<clients>%d</clients>\n", stat.num_clients);
     wrbuf_printf(c->wrbuf, "<unconnected>%d</unconnected>\n", stat.num_no_connection);

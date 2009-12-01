@@ -719,7 +719,7 @@ struct record_cluster *show_single(struct session *s, const char *id,
 }
 
 struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, 
-                             int start, int *num, int *total, int *sumhits, 
+                             int start, int *num, int *total, Odr_int *sumhits, 
                              NMEM nmem_show)
 {
     struct record_cluster **recs = nmem_malloc(nmem_show, *num 

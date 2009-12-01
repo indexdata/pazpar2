@@ -79,7 +79,7 @@ int client_is_active(struct client *cl);
 struct client *client_next_in_session(struct client *cl);
 
 int client_parse_query(struct client *cl, const char *query);
-int client_get_hits(struct client *cl);
+Odr_int client_get_hits(struct client *cl);
 int client_get_num_records(struct client *cl);
 int client_get_diagnostic(struct client *cl);
 void client_set_diagnostic(struct client *cl, int diagnostic);

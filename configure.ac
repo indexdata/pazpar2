@@ -21,7 +21,7 @@ AC_LANG(C)
 
 AC_C_INLINE
 
-YAZ_INIT([static icu threads],[3.0.46])
+YAZ_INIT([static icu threads],[3.0.47])
 if test -z "$YAZLIB"; then
 	AC_MSG_ERROR([YAZ development libraries missing])
 fi

@@ -110,7 +110,7 @@ struct session {
     struct relevance *relevance;
     struct reclist *reclist;
     struct session_watchentry watchlist[SESSION_WATCH_MAX + 1];
-    int total_hits;
+    Odr_int total_hits;
     int total_records;
     int total_merged;
     int number_of_warnings_unknown_elements;
@@ -126,14 +126,14 @@ struct statistics {
     int num_idle;
     int num_failed;
     int num_error;
-    int num_hits;
+    Odr_int num_hits;
     int num_records;
 };
 
 struct hitsbytarget {
     char *id;
     const char *name;
-    int hits;
+    Odr_int hits;
     int diagnostic;
     int records;
     const char *state;
@@ -151,7 +151,7 @@ enum pazpar2_error_code search(struct session *s, const char *query,
                                const char *startrecs, const char *maxrecs,
                                const char *filter, const char **addinfo);
 struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, int start,
-        int *num, int *total, int *sumhits, NMEM nmem_show);
+        int *num, int *total, Odr_int *sumhits, NMEM nmem_show);
 struct record_cluster *show_single(struct session *s, const char *id,
                                    struct record_cluster **prev_r,
                                    struct record_cluster **next_r);

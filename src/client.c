@@ -72,7 +72,7 @@ struct client {
     struct session *session;
     char *pquery; // Current search
     char *cqlquery; // used for SRU targets only
-    int hits;
+    Odr_int hits;
     int record_offset;
     int maxrecs;
     int startrecs;
@@ -785,7 +785,7 @@ struct client *client_next_in_session(struct client *cl)
 
 }
 
-int client_get_hits(struct client *cl)
+Odr_int client_get_hits(struct client *cl)
 {
     return cl->hits;
 }
