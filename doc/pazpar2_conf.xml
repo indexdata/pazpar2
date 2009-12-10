@@ -779,7 +779,7 @@
       </para>
      </listitem>
     </varlistentry>
-    <varlistentry>
+    <varlistentry id="requestsyntax">
      <term>pz:requestsyntax</term>
      <listitem>
       <para>
@@ -844,8 +844,19 @@
      <term>pz:xslt</term>
      <listitem>
       <para>
-       Provides the path of an XSLT stylesheet which will be used to
-       map incoming records to the internal representation.
+       Is a comma separated list of of files that specifies
+       how to convert incoming records to the internal representation.
+      </para>
+      <para>
+       The suffix of each file specifies the kind of tranformation.
+       Suffix "<literal>.xsl</literal>" makes an XSL transform. Suffix
+       "<literal>.mmap</literal>" will use the MMAP transform (described below).
+      </para>
+      <para>
+       The special value "<literal>auto</literal>" will use a file
+       which is the <link linkend="requestsyntax">pz:requestsyntax's</link>
+       value followed by
+       <literal>'.xsl'</literal>.
       </para>
       <para>
        When mapping MARC records, XSLT can be bypassed for increased 
