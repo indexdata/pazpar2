@@ -8,25 +8,25 @@
 
     <relevance>
       <icu_chain id="relevance" locale="en">
-	<transform rule="[:Control:] Any-Remove"/>
-	<tokenize rule="l"/>
-	<transform rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
-	<casemap rule="l"/>
+        <transform rule="[:Control:] Any-Remove"/>
+        <tokenize rule="l"/>
+        <transform rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
+        <casemap rule="l"/>
       </icu_chain>
     </relevance>
 
     <sort>
       <icu_chain id="sort" locale="en">
-	<transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
-	<casemap rule="l"/>
+        <transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
+        <casemap rule="l"/>
       </icu_chain>
     </sort>
     
     <mergekey>
       <icu_chain id="mergekey" locale="en">
-	<tokenize rule="l"/>
-	<transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
-	<casemap rule="l"/>
+        <tokenize rule="l"/>
+        <transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
+        <casemap rule="l"/>
       </icu_chain>
     </mergekey>
     
@@ -50,9 +50,9 @@
       <metadata name="meeting-location"/>
       <metadata name="meeting-date"/>
       <metadata name="date" brief="yes" sortkey="numeric" type="year"
-		merge="range" termlist="yes"/>
+        merge="range" termlist="yes"/>
       <metadata name="title" brief="yes" sortkey="skiparticle"
-		merge="longest" rank="6" mergekey="required"/>
+        merge="longest" rank="6" mergekey="required"/>
       <metadata name="title-remainder" brief="yes" merge="longest" rank="5"/>
       <metadata name="title-responsibility" brief="yes" merge="longest"/>
       <metadata name="title-dates" brief="yes" merge="longest"/>
@@ -64,15 +64,15 @@
       <metadata name="publication-place"/>
       <metadata name="publication-name"/>
       <metadata name="publication-date"/>
-      <metadata name="physical-extent"/>	
-      <metadata name="physical-format"/>	
-      <metadata name="physical-dimensions"/>	
-      <metadata name="physical-accomp"/>	
-      <metadata name="physical-unittype"/>	
-      <metadata name="physical-unitsize"/>	
-      <metadata name="physical-specified"/>	
+      <metadata name="physical-extent"/>
+      <metadata name="physical-format"/>
+      <metadata name="physical-dimensions"/>
+      <metadata name="physical-accomp"/>
+      <metadata name="physical-unittype"/>
+      <metadata name="physical-unitsize"/>
+      <metadata name="physical-specified"/>
 
-      <metadata name="series-title"/>	
+      <metadata name="series-title"/>
 
       <metadata name="description" brief="yes" merge="unique" rank="3"/>
       <metadata name="subject-long" rank="3"/>
