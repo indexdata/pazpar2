@@ -897,15 +897,15 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
                             service->mergekey_pct,
                             (const char *) value, 0);
                     
+                    if (wrbuf_len(norm_wr) > 0)
+                        wrbuf_puts(norm_wr, " ");
                     wrbuf_puts(norm_wr, name);
-                    wrbuf_puts(norm_wr, "=");
                     while ((norm_str =
                             pp2_relevance_token_next(prt)))
                     {
                         if (*norm_str)
                         {
-                            if (wrbuf_len(norm_wr))
-                                wrbuf_puts(norm_wr, " ");
+                            wrbuf_puts(norm_wr, " ");
                             wrbuf_puts(norm_wr, norm_str);
                         }
                     }
