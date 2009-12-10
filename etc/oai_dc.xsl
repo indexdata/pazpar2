@@ -20,13 +20,6 @@
   <xsl:template match="/oai:record/oai:metadata/*">
     <pz:record>
 
-      <xsl:attribute name="mergekey">
-        <xsl:text>title </xsl:text>
-	<xsl:value-of select="dc:title[1]"/>
-	<xsl:text> author </xsl:text>
-	<xsl:value-of select="dc:creator[1]"/>
-      </xsl:attribute>
-
       <pz:metadata type="id">
         <xsl:value-of select="/oai:record/oai:header/oai:identifier"/>
       </pz:metadata>
