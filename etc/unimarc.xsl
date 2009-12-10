@@ -11,19 +11,6 @@
   <xsl:template match="/marc:record">
     <pz:record>
 
-      <xsl:attribute name="mergekey">
-        <xsl:text>title </xsl:text>
-	<xsl:value-of 
-            select="marc:datafield[@tag='200']/marc:subfield[@code='a']"/>
-	<xsl:text> author </xsl:text>
-	<xsl:value-of 
-            select="marc:datafield[@tag='700']/marc:subfield[@code='a']"/>
-        <xsl:text> </xsl:text>
-	<xsl:value-of 
-            select="marc:datafield[@tag='700']/marc:subfield[@code='b']"/>
-      </xsl:attribute>
-
-
       <xsl:for-each select="marc:controlfield[@tag='001']">
         <pz:metadata type="id">
           <xsl:value-of select="."/>

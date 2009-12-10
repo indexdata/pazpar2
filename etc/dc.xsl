@@ -17,13 +17,6 @@
   <xsl:template match="/*">
     <pz:record>
 
-      <xsl:attribute name="mergekey">
-        <xsl:text>title </xsl:text>
-      	<xsl:value-of select="dc:title[1]"/>
-      	<xsl:text> author </xsl:text>
-      	<xsl:value-of select="dc:creator[1]"/>
-      </xsl:attribute>
-
       <pz:metadata type="id">
         <xsl:value-of select="dc:identifier"/>
       </pz:metadata>
@@ -68,6 +61,12 @@
         <pz:metadata type="medium">
 	        <xsl:value-of select="."/>
 	      </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="dcterms:bibliographicCitation">
+        <pz:metadata type="citation">
+          <xsl:value-of select="."/>
+        </pz:metadata>
       </xsl:for-each>
 
     </pz:record>
