@@ -7,7 +7,8 @@
     version="1.0"
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:pz="http://www.indexdata.com/pazpar2/1.0"
-    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:dcterms="http://purl.org/dc/terms/">
 
  <xsl:output indent="yes"
         method="xml"
