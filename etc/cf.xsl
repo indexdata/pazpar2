@@ -16,12 +16,6 @@
 
   <xsl:template match="/record">
     <pz:record>
-      <xsl:attribute name="mergekey">
-	      <xsl:text>title </xsl:text>
-        <xsl:value-of select="title" />
-	      <xsl:text> author </xsl:text>
-        <xsl:value-of select="author"/>
-      </xsl:attribute>
       <xsl:apply-templates/>
     </pz:record>
   </xsl:template>
