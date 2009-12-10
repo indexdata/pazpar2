@@ -62,10 +62,15 @@
 
       <xsl:for-each select="dc:type">
         <pz:metadata type="medium">
-	  <xsl:value-of select="."/>
-	</pz:metadata>
+	      <xsl:value-of select="."/>
+	    </pz:metadata>
       </xsl:for-each>
 
+      <xsl:for-each select="dcterms:bibliographicCitation">
+        <pz:metadata type="citation">
+          <xsl:value-of select="."/>
+        </pz:metadata>
+      </xsl:for-each>
 
     </pz:record>
   </xsl:template>
