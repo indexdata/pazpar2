@@ -56,6 +56,12 @@
     </pz:metadata>
   </xsl:template>
 
+  <xsl:template match="thumburl">
+    <pz:metadata type="thumburl">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
   <xsl:template match="text()"/>
 
 </xsl:stylesheet>
