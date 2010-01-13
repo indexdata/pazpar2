@@ -106,7 +106,7 @@
       <metadata name="publisher"/>
       <metadata name="available"/>
       <metadata name="due"/>
-      <metadata name="thumburl"/>
+      <metadata name="thumburl" brief="yes" merge="unique"/>
       <metadata name="score"/>
     </service>
   </server>
