@@ -81,13 +81,13 @@
   </xsl:template>
 
   <xsl:template match="location">
-    <pz:metadata type="location">
+    <pz:metadata type="locallocation">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
 
   <xsl:template match="callno">
-    <pz:metadata type="callno">
+    <pz:metadata type="callnumber">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
