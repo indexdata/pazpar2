@@ -92,7 +92,7 @@ static void log_xml_doc(xmlDoc *doc)
 #endif
     if (lf && len)
     {
-        fwrite(result, 1, len, lf);
+        (void) fwrite(result, 1, len, lf);
         fprintf(lf, "\n");
     }
     xmlFree(result);
