@@ -26,14 +26,14 @@
       in the "cf" git module.
   -->
 
-  <xsl:template match="url">
-    <pz:metadata type="electronic-url">
+  <xsl:template match="date">
+    <pz:metadata type="publication-date">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
 
-  <xsl:template match="author">
-    <pz:metadata type="author">
+  <xsl:template match="url">
+    <pz:metadata type="electronic-url">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
@@ -44,8 +44,8 @@
     </pz:metadata>
   </xsl:template>
 
-  <xsl:template match="date">
-    <pz:metadata type="publication-date">
+  <xsl:template match="author">
+    <pz:metadata type="author">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
@@ -56,20 +56,14 @@
     </pz:metadata>
   </xsl:template>
   
-  <xsl:template match="subject">
-    <pz:metadata type="subject">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="thumburl">
-    <pz:metadata type="thumburl">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
   <xsl:template match="publisher">
     <pz:metadata type="publisher">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="subject">
+    <pz:metadata type="subject">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
@@ -94,6 +88,12 @@
 
   <xsl:template match="callno">
     <pz:metadata type="callno">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="thumburl">
+    <pz:metadata type="thumburl">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
