@@ -20,6 +20,12 @@
     </pz:record>
   </xsl:template>
 
+  <!--
+      The elements mapped in the following clauses should be kept more
+      or less in sync with those named in builder/templates/search.cft
+      in the "cf" git module.
+  -->
+
   <xsl:template match="url">
     <pz:metadata type="electronic-url">
       <xsl:value-of select="."/>
@@ -58,6 +64,42 @@
 
   <xsl:template match="thumburl">
     <pz:metadata type="thumburl">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="publisher">
+    <pz:metadata type="publisher">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="available">
+    <pz:metadata type="available">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="due">
+    <pz:metadata type="due">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="location">
+    <pz:metadata type="location">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="callno">
+    <pz:metadata type="callno">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="score">
+    <pz:metadata type="score">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
