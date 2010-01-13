@@ -1,3 +1,9 @@
+pazpar2 (1.2.3-3indexdata) unstable; urgency=low
+
+  * Upstream: another interrim package.
+
+ -- Mike Taylor <mike@miketaylor.org.uk>  Wed, 13 Jan 2010 15:31:12 +0000
+
 pazpar2 (1.2.3-2indexdata) unstable; urgency=low
 
   * Upstream: interrim Debian package incorporating some of the changes
