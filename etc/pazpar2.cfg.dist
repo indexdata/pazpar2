@@ -106,9 +106,7 @@
       <metadata name="publisher"/>
       <metadata name="available"/>
       <metadata name="due"/>
-      <metadata name="location"/> <!-- ### same thing as locallocation? -->
       <metadata name="thumburl"/>
-      <metadata name="callno"/>
       <metadata name="score"/>
     </service>
   </server>
