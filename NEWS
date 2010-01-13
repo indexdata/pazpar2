@@ -1,3 +1,9 @@
+--- 1.2.4 IN PROGRESS
+
+Support for additional fields in cf.xsl and pazpar2.conf.dist:
+publisher, available, due, location (=locallocation), callno
+(=callnumber), thumburl and score.
+
 --- 1.2.3 2009/11/24
 
 Metadata attribute 'skiparticle' also works for ICU based
