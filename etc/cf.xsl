@@ -20,14 +20,20 @@
     </pz:record>
   </xsl:template>
 
-  <xsl:template match="url">
-    <pz:metadata type="electronic-url">
+  <!--
+      The elements mapped in the following clauses should be kept more
+      or less in sync with those named in builder/templates/search.cft
+      in the "cf" git module.
+  -->
+
+  <xsl:template match="date">
+    <pz:metadata type="publication-date">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
 
-  <xsl:template match="author">
-    <pz:metadata type="author">
+  <xsl:template match="url">
+    <pz:metadata type="electronic-url">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
@@ -38,8 +44,8 @@
     </pz:metadata>
   </xsl:template>
 
-  <xsl:template match="date">
-    <pz:metadata type="publication-date">
+  <xsl:template match="author">
+    <pz:metadata type="author">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
@@ -50,8 +56,50 @@
     </pz:metadata>
   </xsl:template>
   
+  <xsl:template match="publisher">
+    <pz:metadata type="publisher">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
   <xsl:template match="subject">
     <pz:metadata type="subject">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="available">
+    <pz:metadata type="available">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="due">
+    <pz:metadata type="due">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="location">
+    <pz:metadata type="locallocation">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="callno">
+    <pz:metadata type="callnumber">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="thumburl">
+    <pz:metadata type="thumburl">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="score">
+    <pz:metadata type="score">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>

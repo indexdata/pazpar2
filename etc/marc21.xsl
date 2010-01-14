@@ -231,12 +231,22 @@
       </xsl:for-each>
 
       <xsl:for-each select="marc:datafield[@tag='773']">
-	<pz:metadata type="citation">
-	  <xsl:for-each select="*">
-	    <xsl:value-of select="normalize-space(.)"/>
-	    <xsl:text> </xsl:text>
-	  </xsl:for-each>
-	</pz:metadata>
+    	<pz:metadata type="citation">
+	      <xsl:for-each select="*">
+	        <xsl:value-of select="normalize-space(.)"/>
+	        <xsl:text> </xsl:text>
+    	  </xsl:for-each>
+        </pz:metadata>
+        <xsl:if test="marc:subfield[@code='t']">
+    	  <pz:metadata type="journal-title">
+	        <xsl:value-of select="marc:subfield[@code='t']"/>
+          </pz:metadata>          
+        </xsl:if>
+        <xsl:if test="marc:subfield[@code='g']">
+    	  <pz:metadata type="journal-subpart">
+	        <xsl:value-of select="marc:subfield[@code='g']"/>
+          </pz:metadata>          
+        </xsl:if>
       </xsl:for-each>
 
       <xsl:for-each select="marc:datafield[@tag='852']">

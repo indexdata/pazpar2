@@ -101,7 +101,7 @@ static void *sel_thread_handler(void *vp)
         pthread_mutex_unlock(&p->mutex);
 
         /* wake up select/poll with a single byte */
-        write(p->fd[1], "", 1);
+        (void) write(p->fd[1], "", 1);
     }        
     pthread_mutex_unlock(&p->mutex);
     return 0;
@@ -207,7 +207,7 @@ void *sel_thread_result(sel_thread_t p)
         p->free_queue = work_this;
         
         data = work_this->data;
-        read(p->fd[0], read_buf, 1);
+        (void) read(p->fd[0], read_buf, 1);
     }
     pthread_mutex_unlock(&p->mutex);
     return data;
