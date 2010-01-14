@@ -62,7 +62,7 @@ dist-hook:
 	done
 
 doc-clean:
-	rm -f *.html *.[0-9] *.pdf
+	rm -f manref.xml *.html *.[0-9] *.pdf
 
 install-data-hook:
 	if test -f index.html; then d=.; else d="$(srcdir)"; fi; \
