@@ -1,3 +1,9 @@
+pazpar2 (1.2.4-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Fri, 15 Jan 2010 10:08:36 +0100
+
 pazpar2 (1.2.3-3indexdata) unstable; urgency=low
 
   * Upstream: another interrim package.

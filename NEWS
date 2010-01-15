@@ -1,8 +1,16 @@
---- 1.2.4 IN PROGRESS
+--- 1.2.4 2010/01/15
 
 Support for additional fields in cf.xsl and pazpar2.conf.dist:
 publisher, available, due, location (=locallocation), callno
 (=callnumber), thumburl and score.
+
+Describe pz:xslt and the auto setting.
+
+Move mergekey definition away from the normalization stylesheets and
+define a mergekey common for all target types in pazpar2.cfg.
+
+Code update: Use the Odr_int type for hit counts. This is part of
+YAZ 3.0.47 and later and so configure checks for that.
 
 --- 1.2.3 2009/11/24
 
