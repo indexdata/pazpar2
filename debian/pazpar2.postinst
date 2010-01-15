@@ -11,7 +11,10 @@ if [ -x "/etc/init.d/pazpar2" ]; then
 	else
 		/etc/init.d/pazpar2 start || exit $?
 	fi
-	ln -sf ../services-available/default.xml \
-		/etc/pazpar2/services-enabled/default.xml
+fi
+ln -sf ../services-available/default.xml \
+	/etc/pazpar2/services-enabled/default.xml
+if [ -f "/etc/pazpar2/pazpar2.cfg" ]; then
+	echo "pazpar2.cfg is obsolete. Pazpar2 uses /etc/pazpar2/server.xml"
 fi
 exit 0
