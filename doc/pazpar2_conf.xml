@@ -846,7 +846,8 @@
       <para>
        Sets character set for Z39.50 negotiation. Most targets do not support
        this, and some will even close connection if set (crash on server
-       side or similar). If set, the value is most likely to be "UTF-8".
+       side or similar). If set, you probably want to set it to
+       <literal>UTF-8</literal>.
       </para>
      </listitem>
     </varlistentry>
