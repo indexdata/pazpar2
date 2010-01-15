@@ -260,7 +260,7 @@
       in the same invocation. For example:
       <screen>
 	cd \MyPazpar2\etc
-	..\bin\pazpar2 -install -c pazpar2.cfg -l pazpar2.log
+	..\bin\pazpar2 -install -f pazpar2.cfg -l pazpar2.log
       </screen>
       The Pazpar2 service may now be controlled via the Service Control
       Panel. It may be unregistered by passing the <literal>-remove</literal>
