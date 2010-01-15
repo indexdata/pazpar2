@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+if [ "$1" = "purge" ] ; then
+	update-rc.d pazpar2 remove >/dev/null || exit $?
+	rm -f /var/log/pazpar2.log
+	for f in /etc/pazpar2/services-enabled/*; do
+		[ -L "$f" ] && rm -f "$f"
+	done	
+fi
+exit 0
