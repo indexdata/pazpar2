@@ -795,8 +795,7 @@ static struct conf_server *server_create(struct conf_config *config,
                 }
                 else if (!(*sp)->id && !service_id)
                 {
-                    yaz_log(YLOG_FATAL, "Duplicate unnamed service '%s'",
-                        service_id);
+                    yaz_log(YLOG_FATAL, "Duplicate unnamed service");
                     break;
                 }
 
