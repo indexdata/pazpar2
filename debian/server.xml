@@ -2,9 +2,9 @@
 <pazpar2 xmlns="http://www.indexdata.com/pazpar2/1.0">
   
   <server>
-    <listen port="9004"/>
-    <proxy host="localhost:80"/>
-    <include src="default.xml"/>
+    <listen port="8004"/>
+    <settings src="settings/edu.xml"/>
+    <include src="services-enabled/*.xml"/>
   </server>
   
 </pazpar2>

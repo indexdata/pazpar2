@@ -7,4 +7,4 @@
 #
 
 # Additional options that are passed to the Daemon.
-DAEMON_OPTS="-D -u nobody -p /var/run/pazpar2.pid -l /var/log/pazpar2.log -f /etc/pazpar2/pazpar2.cfg"
+DAEMON_OPTS="-D -u nobody -p /var/run/pazpar2.pid -l /var/log/pazpar2.log -f /etc/pazpar2/server.xml"

@@ -1,0 +1,17 @@
+#!/bin/sh
+set -e
+
+if [ "$1" != "configure" ]; then
+    exit 0
+fi
+if [ -x "/etc/init.d/pazpar2" ]; then
+	update-rc.d pazpar2 defaults >/dev/null
+	if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
+		invoke-rc.d pazpar2 start || exit $?
+	else
+		/etc/init.d/pazpar2 start || exit $?
+	fi
+	ln -sf ../services-available/default.xml \
+		/etc/pazpar2/services-enabled/default.xml
+fi
+exit 0

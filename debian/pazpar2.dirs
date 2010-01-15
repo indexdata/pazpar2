@@ -1,4 +1,6 @@
 etc/pazpar2
 etc/pazpar2/settings
+etc/pazpar2/services-enabled
+etc/pazpar2/services-available
 usr/bin
 usr/sbin
