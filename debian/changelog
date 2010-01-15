@@ -1,3 +1,9 @@
+pazpar2 (1.2.4-2indexdata) karmic; urgency=low
+
+  * services-available/enabled structure.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Fri, 15 Jan 2010 13:29:58 +0100
+
 pazpar2 (1.2.4-1indexdata) unstable; urgency=low
 
   * Upstream.
