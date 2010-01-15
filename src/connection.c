@@ -346,6 +346,7 @@ static int connection_connect(struct connection *con)
     struct host *host = connection_get_host(con);
     ZOOM_options zoptions = ZOOM_options_create();
     const char *auth;
+    const char *charset;
     const char *sru;
     const char *sru_version = 0;
 
@@ -359,6 +360,10 @@ static int connection_connect(struct connection *con)
     ZOOM_options_set(zoptions, "async", "1");
     ZOOM_options_set(zoptions, "implementationName", PACKAGE_NAME);
     ZOOM_options_set(zoptions, "implementationVersion", VERSION);
+	
+    if ((charset = session_setting_oneval(sdb, PZ_NEGOTIATION_CHARSET)))
+        ZOOM_options_set(zoptions, "charset", charset);
+    
     if (zproxy && *zproxy)
     {
         con->zproxy = xstrdup(zproxy);

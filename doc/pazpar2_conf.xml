@@ -841,6 +841,17 @@
     </varlistentry>
 
     <varlistentry>
+     <term>pz:negotiation_charset</term>
+     <listitem>
+      <para>
+       Sets character set for Z39.50 negotiation. Most targets do not support
+       this, and some will even close connection if set (crash on server
+       side or similar). If set, the value is most likely to be "UTF-8".
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
      <term>pz:xslt</term>
      <listitem>
       <para>
