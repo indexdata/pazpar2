@@ -3,7 +3,6 @@
   
   <server>
     <listen port="8004"/>
-    <settings src="settings/edu.xml"/>
     <include src="services-enabled/*.xml"/>
   </server>
   
