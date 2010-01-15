@@ -65,6 +65,11 @@
       Enables dump of XML records to the current log file.
       It is useful if stylesheets are being debugged.
      </para>
+     <para>
+      This option may also be used together with option <option>-t</option>
+      in which case the configuration, after include processing, will be
+      dumped to stdout.
+     </para>
     </listitem>
    </varlistentry>
    <varlistentry>
@@ -120,9 +125,13 @@
       started. Useful for checking a new configuration before a
       Pazpar2 is restarted.
      </para>
+     <para>
+      The configuration, after include processing, may also be dumped
+      to stdout by supplying option <option>-d</option> as well.
+     </para>
      <note>
       <para>
-       In Pazpar2 1.2 and earlier releasese, option -t specified a
+       In Pazpar2 1.2 and earlier releases, option -t specified a
        local target settings file.
       </para>
      </note>
