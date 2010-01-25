@@ -4,10 +4,10 @@
 !include version.nsi
 
 ; Microsoft runtime CRT 
-; Uncomment exactly ONE section of the three below
+; Uncomment exactly ONE of the sections below
 ; 1: MSVC 6
-!define VS_RUNTIME_DLL ""
-!define VS_RUNTIME_MANIFEST ""
+;!define VS_RUNTIME_DLL ""
+;!define VS_RUNTIME_MANIFEST ""
 
 ; 2: VS 2003
 ; !define VS_RUNTIME_DLL "c:\Program Files\Microsoft Visual Studio .NET 2003\SDK\v1.1\Bin\msvcr71.dll"
@@ -16,6 +16,10 @@
 ; 3: VS 2005
 ;!define VS_RUNTIME_DLL      "c:\Program Files\Microsoft Visual Studio 8\VC\redist\x86\Microsoft.VC80.CRT\msvcr80.dll"
 ;!define VS_RUNTIME_MANIFEST "c:\Program Files\Microsoft Visual Studio 8\VC\redist\x86\Microsoft.VC80.CRT\Microsoft.VC80.CRT.manifest"
+
+; 4: VS 2008
+!define VS_RUNTIME_DLL      "c:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
+!define VS_RUNTIME_MANIFEST "c:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest"
 
 
 !include "MUI.nsh"
