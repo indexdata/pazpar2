@@ -1,0 +1,5 @@
+Pazpar2 service for running against a local ztest. The ztest can be started with:
+
+ztest/yaz-ztest
+
+
