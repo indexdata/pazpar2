@@ -1,3 +1,21 @@
+--- 1.3.0 2010/01/25
+
+Debian version depends on on libyaz4. Note that Pazpar2 will still
+ompile from source with YAZ 3
+Split services into separate files. The example configuration file
+pazpar2.cfg.dist now includes a default service default.xml (part of
+etc). And default.xml includes settings/edu.xml. The default.xml file,
+not to be confused with settings/defaults.xml, is a template for jsdemo
+and other services. The Debian package installs /etc/pazpar2/server.xml
+which is now the main pazpar2 configuration (used to be called pazpar2.cfg).
+server.xml includes services from /etc/pazpar2/services-enabled/*.xml .
+The default.xml (from etc) is installed in /etc/pazpar2/services-available
+and a symlink to it is created from services-enabled. The default.xml
+service is unnamed and, thus, will be used by jsdemo and test1.
+
+New setting pz:negotiation_charset. Patch from Andrei V. Toutoukine. The
+new setting pz:negotiation_charset specifies character set for Z39.50 Init.  
+
 --- 1.2.4 2010/01/15
 
 Support for additional fields in cf.xsl and pazpar2.conf.dist:
