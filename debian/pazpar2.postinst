@@ -4,6 +4,15 @@ set -e
 if [ "$1" != "configure" ]; then
     exit 0
 fi
+# add default.xml if there are no enabled services
+no_services=true
+for f in /etc/pazpar2/services-enabled/*.xml; do
+	test -e $f && no_services=false
+done
+if ${no_services}; then
+	ln -sf ../services-available/default.xml \
+		/etc/pazpar2/services-enabled/default.xml
+fi
 if [ -x "/etc/init.d/pazpar2" ]; then
 	update-rc.d pazpar2 defaults >/dev/null
 	if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
@@ -12,8 +21,6 @@ if [ -x "/etc/init.d/pazpar2" ]; then
 		/etc/init.d/pazpar2 start || exit $?
 	fi
 fi
-ln -sf ../services-available/default.xml \
-	/etc/pazpar2/services-enabled/default.xml
 if [ -f "/etc/pazpar2/pazpar2.cfg" ]; then
 	echo "pazpar2.cfg is obsolete. Pazpar2 uses /etc/pazpar2/server.xml"
 fi
