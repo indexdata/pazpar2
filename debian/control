@@ -2,7 +2,7 @@ Source: pazpar2
 Section: net
 Priority: extra
 Maintainer: Adam Dickmeiss <adam@indexdata.dk>
-Build-Depends: debhelper (>= 5), autotools-dev, libyaz3-dev, docbook-xsl
+Build-Depends: debhelper (>= 5), autotools-dev, libyaz4-dev, docbook-xsl
 Standards-Version: 3.7.2
 
 Package: pazpar2
