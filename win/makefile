@@ -2,9 +2,9 @@
 # Copyright (C) 2006-2010 Index Data
 
 DEBUG=0   # 0 for release, 1 for debug
-USE_MANIFEST = 0 # Can be enabled Visual Studio 2005/2008
+USE_MANIFEST = 1 # Can be enabled Visual Studio 2005/2008
 PACKAGE_NAME=pazpar2
-PACKAGE_VERSION=1.2.4
+PACKAGE_VERSION=1.3.0
 
 # YAZ
 YAZ_DIR=..\..\yaz
@@ -12,8 +12,8 @@ YAZ_DIR=..\..\yaz
 # Libxml2 + libxslt + associates
 ZLIB_DIR=\zlib-1.2.3.win32
 ICONV_DIR=\iconv-1.9.2.win32
-LIBXML2_DIR=\libxml2-2.7.1.win32
-LIBXSLT_DIR=\libxslt-1.1.24.win32
+LIBXML2_DIR=\libxml2-2.7.6.win32
+LIBXSLT_DIR=\libxslt-1.1.26.win32
 
 # ICU
 HAVE_ICU=1
