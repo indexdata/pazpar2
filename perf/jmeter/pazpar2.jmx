@@ -212,7 +212,7 @@
               <bytes>true</bytes>
             </value>
           </objProp>
-          <stringProp name="filename">/home/jakub/results.jmeter</stringProp>
+          <stringProp name="filename">results.jmeter</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
