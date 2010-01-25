@@ -117,6 +117,7 @@ static const char *get_msg(enum pazpar2_error_code code)
         { PAZPAR2_CONFIG_TARGET, "Target cannot be configured"},
         { PAZPAR2_RECORD_FAIL, "Record command failed"},
         { PAZPAR2_NOT_IMPLEMENTED, "Not implemented"},
+        { PAZPAR2_NO_SERVICE, "No service"},
         { PAZPAR2_LAST_ERROR, "Last error"},
         { 0, 0 }
     };
@@ -279,7 +280,7 @@ static void cmd_init(struct http_channel *c)
         service = locate_service(c->server, service_name);
         if (!service)
         {
-            error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "service");
+            error(rs, PAZPAR2_NO_SERVICE, service_name ? service_name : "unnamed");
             return;
         }
         service_incref(service);
