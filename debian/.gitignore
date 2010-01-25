@@ -7,4 +7,4 @@ pazpar2-doc
 pazpar2-js
 pazpar2-jsdemo
 pazpar2-test1
-pazpar2.substvars
+*.substvars
