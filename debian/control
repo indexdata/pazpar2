@@ -41,7 +41,7 @@ Description: Documentation for Pazpar2 metasearcher
 
 Package: pazpar2-apache2
 Architecture: all
-Depends: pazpar2, apache2.2-common
+Depends: pazpar2, apache2
 Description: Apache2 configuration for Pazpar2
  Pazpar2 is a high-performance, user interface-independent, data
  model-independent metasearching middleware featuring merging, relevance
