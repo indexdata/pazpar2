@@ -672,6 +672,60 @@
    </para>
   </section>
 
+  <section id="load_balancing">
+   <title>Load balancing</title>
+   <para>
+     Just like any web server, Pazpar2, can be load balanced by a standard hardware or software load balancer as long as the session stickiness is ensured. If you are already running the Apache2 web server in front of Pazpar2 and use the apache mod_proxy module to 'relay' client requests to Pazpar2, this set up can be easily extended to include load balancing capabilites. To do so you need to enable the <ulink url="http://httpd.apache.org/docs/2.2/mod/mod_proxy_balancer.html">
+     mod_proxy_balancer
+    </ulink> module in your Apache2 installation.
+   </para>
+   
+   <para>
+    On a Debian based Apache 2 system, the relevant modules can
+    be enabled with:
+    <screen>
+     sudo a2enmod proxy_http
+    </screen>
+   </para>
+
+   <para>
+     The mod_proxy_balancer can pass all 'sessionsticky' requests to the same backend worker as long as the requests are marked with the originating worker's ID (called 'route'). If the Pazpar2 serverID is configured (by setting an 'id' attribute on the 'server' element in the Pazpar2 configuration file) Pazpar2 will append it to the 'session' element returned during the 'init' in a mod_proxy_balancer compatible manner. Since the 'session' is then re-sent by the client (for all pazpar2 request besides 'init'), the balancer can use the marker to pass the request to the right route. To do so the balancer needs to be configured to inspect the 'session' parameter.
+   </para>
+
+   <example id="load_balancing.example">
+    <title>Apache 2 load balancing configuration</title>
+    <para>
+     Having 4 Pazpar2 instances running on the same host, port range of 8004-8007 and serverIDs of: pz1, pz2, pz3 and pz4 respectively we could use the following Apache 2 configuration to expose a single pazpar2 'endpoint' on a standard (<filename>/pazpar2/search.pz2</filename>) location:
+
+     <screen><![CDATA[
+       <Proxy *>
+         AddDefaultCharset off
+         Order deny,allow
+         Allow from all
+       </Proxy>
+       ProxyVia Off
+
+       # 'route' has to match the configured pazpar2 server ID
+       <Proxy balancer://pz2cluster>
+         BalancerMember http://localhost:8004 route=pz1
+         BalancerMember http://localhost:8005 route=pz2
+         BalancerMember http://localhost:8006 route=pz3
+         BalancerMember http://localhost:8007 route=pz4
+       </Proxy>
+
+       # route is resent in the 'session' param which has the form: 
+       # 'sessid.serverid', understandable by the mod_proxy_load_balancer
+       # this is not going to work if the client tampers with the 'session' param
+       ProxyPass /pazpar2/search.pz2 balancer://pz2cluster lbmethod=byrequests stickysession=session nofailover=On]]></screen>
+
+     The 'ProxyPass' line sets up a reverse proxy for request ‘/pazpar2/search.pz2’ and delegates all requests to the load balancer (virtual worker) with name ‘pz2cluster’. Sticky sessions are enabled and implemented using the ‘session’ parameter. The ‘Proxy’ section lists all the servers (real workers) which the load balancer can use.
+   </para>
+
+  </example>
+
+  </section>
+
+
  </chapter> <!-- Using Pazpar2 -->
 
  <reference id="reference">
