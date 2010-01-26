@@ -707,6 +707,7 @@ static struct conf_server *server_create(struct conf_config *config,
 {
     xmlNode *n;
     struct conf_server *server = nmem_malloc(nmem, sizeof(struct conf_server));
+    xmlChar *server_id = xmlGetProp(node, (xmlChar *) "id");
 
     server->host = 0;
     server->port = 0;
@@ -722,7 +723,6 @@ static struct conf_server *server_create(struct conf_config *config,
     server->mergekey_pct = 0;
     server->server_settings = 0;
 
-    xmlChar *server_id = xmlGetProp(node, (xmlChar *) "id");
     if (server_id)
         server->server_id = nmem_strdup(nmem, (const char *)server_id);
     else
