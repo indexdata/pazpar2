@@ -297,8 +297,16 @@ static void cmd_init(struct http_channel *c)
     s->session_id = sesid;
     if (process_settings(s->psession, c->request, c->response) < 0)
         return;
-    sprintf(buf, HTTP_COMMAND_RESPONSE_PREFIX "<init><status>OK</status><session>%u</session>"
-            "<protocol>" PAZPAR2_PROTOCOL_VERSION "</protocol></init>", sesid);
+    
+    sprintf(buf, HTTP_COMMAND_RESPONSE_PREFIX 
+            "<init><status>OK</status><session>%u", sesid);
+    if (c->server->server_id)
+    {
+        strcat(buf, ".");
+        strcat(buf, c->server->server_id);
+    }
+    strcat(buf, "</session>"
+           "<protocol>" PAZPAR2_PROTOCOL_VERSION "</protocol></init>");
     rs->payload = nmem_strdup(c->nmem, buf);
     http_send_response(c);
 }

@@ -135,6 +135,7 @@ struct conf_server
     struct sockaddr_in *proxy_addr;
     int listener_socket;
     char *server_settings;
+    char *server_id;
 
     pp2_charset_t relevance_pct;
     pp2_charset_t sort_pct;

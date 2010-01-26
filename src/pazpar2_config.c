@@ -722,6 +722,12 @@ static struct conf_server *server_create(struct conf_config *config,
     server->mergekey_pct = 0;
     server->server_settings = 0;
 
+    xmlChar *server_id = xmlGetProp(node, (xmlChar *) "id");
+    if (server_id)
+        server->server_id = nmem_strdup(nmem, (const char *)server_id);
+    else
+        server->server_id = 0;
+
     for (n = node->children; n; n = n->next)
     {
         if (n->type != XML_ELEMENT_NODE)
