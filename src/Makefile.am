@@ -26,7 +26,7 @@ libpazpar2_a_SOURCES = pazpar2_config.c pazpar2_config.h eventl.c eventl.h \
 	settings.h settings.c sel_thread.c sel_thread.h getaddrinfo.c \
 	charsets.c charsets.h \
 	client.c client.h connection.c connection.h host.h parameters.h \
-	dirent.c direntz.h marcmap.c marcmap.h marchash.c marchash.h \
+	marcmap.c marcmap.h marchash.c marchash.h \
 	jenkins_hash.c jenkins_hash.h normalize_record.c normalize_record.h \
 	normalize_cache.c normalize_cache.h
 
