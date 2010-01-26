@@ -48,7 +48,7 @@
  
  <refsect1><title>FORMAT</title>
   <para>
-   The configuration file is XML-structured. It must be valid XML. All
+   The configuration file is XML-structured. It must be well-formed XML. All
    elements specific to Pazpar2 should belong to the namespace
    <literal>http://www.indexdata.com/pazpar2/1.0</literal> 
    (this is assumed in the
@@ -59,7 +59,12 @@
   
   <refsect2 id="config-server"><title>server</title>
    <para>
-    This section governs overall behavior of the server. The data
+    This section governs overall behavior of the server. It is identified
+    by the element "server" which takes an optional attribute, "id", which
+    identifies this particular Pazpar2 server. Any string value for "id"
+    may be given.
+   </para>
+   <para>The data
     elements are described below. From Pazpar2 version 1.2 this is
     a repeatable element.
    </para>

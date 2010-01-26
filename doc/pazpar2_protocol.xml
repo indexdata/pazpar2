@@ -41,7 +41,9 @@
   <refsect2 id="command-init"><title>init</title>
    <para>
     Initializes a session.
-    Returns session ID to be used in subsequent requests.
+    Returns session ID to be used in subsequent requests. If
+    a server ID is given in the Pazpar2 server section, then a
+    period (.) and the server ID is appended to the session ID.
    </para>
    <para>
     Example:
