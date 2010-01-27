@@ -812,7 +812,7 @@ static iochan_man_t pazpar2_chan_man = 0; /* thread pr */
 
 void pazpar2_chan_man_start(void)
 {
-    pazpar2_chan_man = iochan_man_create();
+    pazpar2_chan_man = iochan_man_create(0 /* use threads */);
 }
 
 void pazpar2_add_channel(IOCHAN chan)

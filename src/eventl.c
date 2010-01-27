@@ -53,15 +53,22 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/comstack.h>
 #include <yaz/xmalloc.h>
 #include "eventl.h"
+#include "sel_thread.h"
 
 struct iochan_man_s {
     IOCHAN channel_list;
+    sel_thread_t sel_thread;
+    int sel_fd;
+    int use_threads;
 };
 
-iochan_man_t iochan_man_create(void)
+iochan_man_t iochan_man_create(int use_threads)
 {
     iochan_man_t man = xmalloc(sizeof(*man));
     man->channel_list = 0;
+    man->sel_thread = 0; /* can't create sel_thread yet because we may fork */
+    man->sel_fd = -1;
+    man->use_threads = use_threads;
     return man;
 }
 
@@ -69,6 +76,8 @@ void iochan_man_destroy(iochan_man_t *mp)
 {
     if (*mp)
     {
+        if ((*mp)->sel_thread)
+            sel_thread_destroy((*mp)->sel_thread);
         xfree(*mp);
         *mp = 0;
     }
@@ -76,6 +85,7 @@ void iochan_man_destroy(iochan_man_t *mp)
 
 void iochan_add(iochan_man_t man, IOCHAN chan)
 {
+    chan->man = man;
     chan->next = man->channel_list;
     man->channel_list = chan;
 }
@@ -95,10 +105,35 @@ IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags)
     new_iochan->force_event = 0;
     new_iochan->last_event = new_iochan->max_idle = 0;
     new_iochan->next = NULL;
+    new_iochan->man = 0;
+    new_iochan->thread_users = 0;
     return new_iochan;
 }
 
-static int event_loop(IOCHAN *iochans)
+static void work_handler(void *work_data)
+{
+    IOCHAN p = work_data;
+    (*p->fun)(p, p->this_event);
+}
+
+static void run_fun(iochan_man_t man, IOCHAN p, int event)
+{
+    if (!p->destroyed)
+    {
+        p->this_event = event;
+        if (man->sel_thread)
+        {
+            yaz_log(YLOG_LOG, "eventl: add fun chan=%p event=%d",
+                    p, event);
+            p->thread_users++;
+            sel_thread_add(man->sel_thread, p);
+        }
+        else
+            (*p->fun)(p, p->this_event);
+    }
+}
+
+static int event_loop(iochan_man_t man, IOCHAN *iochans)
 {
     do /* loop as long as there are active associations to process */
     {
@@ -117,6 +152,8 @@ static int event_loop(IOCHAN *iochans)
 	max = 0;
     	for (p = *iochans; p; p = p->next)
     	{
+            if (p->thread_users > 0)
+                continue;
             if (p->maskfun)
                 p->flags = (*p->maskfun)(p);
             if (p->socketfun)
@@ -136,7 +173,16 @@ static int event_loop(IOCHAN *iochans)
             if (p->max_idle && p->max_idle < to.tv_sec)
                 to.tv_sec = p->max_idle;
 	}
-        res = select(max + 1, &in, &out, &except, timeout);        
+        if (man->sel_fd != -1)
+        {
+            if (man->sel_fd > max)
+                max = man->sel_fd;
+            yaz_log(YLOG_LOG, "select on sel fd=%d", man->sel_fd);
+            FD_SET(man->sel_fd, &in);
+        }
+        yaz_log(YLOG_LOG, "select begin");
+        res = select(max + 1, &in, &out, &except, timeout);
+        yaz_log(YLOG_LOG, "select returned res=%d", res);
         if (res < 0)
 	{
 	    if (errno == EINTR)
@@ -147,6 +193,22 @@ static int event_loop(IOCHAN *iochans)
                 return 0;
             }
 	}
+        if (man->sel_fd != -1)
+        {
+            if (FD_ISSET(man->sel_fd, &in))
+            {
+                IOCHAN chan;
+
+                yaz_log(YLOG_LOG, "eventl: sel input on sel_fd=%d",
+                        man->sel_fd);
+                while ((chan = sel_thread_result(man->sel_thread)))
+                {
+                    yaz_log(YLOG_LOG, "eventl: got thread result p=%p",
+                            chan);
+                    chan->thread_users--;
+                }
+            }
+        }
     	for (p = *iochans; p; p = p->next)
     	{
 	    int force_event = p->force_event;
@@ -157,7 +219,7 @@ static int event_loop(IOCHAN *iochans)
 	        p->max_idle) || force_event == EVENT_TIMEOUT))
 	    {
 	        p->last_event = now;
-	        (*p->fun)(p, EVENT_TIMEOUT);
+	        run_fun(man, p, EVENT_TIMEOUT);
 	    }
             if (p->fd < 0)
                 continue;
@@ -166,20 +228,20 @@ static int event_loop(IOCHAN *iochans)
 	    {
     		p->last_event = now;
                 yaz_log(YLOG_DEBUG, "Eventl input event");
-		(*p->fun)(p, EVENT_INPUT);
+		run_fun(man, p, EVENT_INPUT);
 	    }
 	    if (!p->destroyed && (FD_ISSET(p->fd, &out) ||
 	        force_event == EVENT_OUTPUT))
 	    {
 	  	p->last_event = now;
                 yaz_log(YLOG_DEBUG, "Eventl output event");
-	    	(*p->fun)(p, EVENT_OUTPUT);
+	    	run_fun(man, p, EVENT_OUTPUT);
 	    }
 	    if (!p->destroyed && (FD_ISSET(p->fd, &except) ||
 	        force_event == EVENT_EXCEPT))
 	    {
 		p->last_event = now;
-	    	(*p->fun)(p, EVENT_EXCEPT);
+	    	run_fun(man, p, EVENT_EXCEPT);
 	    }
 	}
 	for (p = *iochans; p; p = nextp)
@@ -213,7 +275,13 @@ static int event_loop(IOCHAN *iochans)
 
 void iochan_man_events(iochan_man_t man)
 {
-    event_loop(&man->channel_list);
+    if (man->use_threads && !man->sel_thread)
+    {
+        man->sel_thread = sel_thread_create(
+            work_handler, 0 /*work_destroy */, &man->sel_fd, 10);
+        yaz_log(YLOG_LOG, "iochan_man_events. sel_thread started");
+    }
+    event_loop(man, &man->channel_list);
 }
 
 /*

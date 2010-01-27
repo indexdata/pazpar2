@@ -28,6 +28,8 @@ typedef void (*IOC_CALLBACK)(struct iochan *i, int event);
 typedef int (*IOC_SOCKETFUN)(struct iochan *i);
 typedef int (*IOC_MASKFUN)(struct iochan *i);
 
+typedef struct iochan_man_s *iochan_man_t;
+
 typedef struct iochan
 {
     int fd;
@@ -44,13 +46,16 @@ typedef struct iochan
     int destroyed;
     time_t last_event;
     time_t max_idle;
-    
+    int this_event;
+    int thread_users;
+
+    iochan_man_t man;
+
     struct iochan *next;
 } *IOCHAN;
 
-typedef struct iochan_man_s *iochan_man_t;
 
-iochan_man_t iochan_man_create(void);
+iochan_man_t iochan_man_create(int use_threads);
 void iochan_add(iochan_man_t man, IOCHAN chan);
 void iochan_man_events(iochan_man_t man);
 void iochan_man_destroy(iochan_man_t *mp);
