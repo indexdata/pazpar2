@@ -116,6 +116,7 @@ static void test_for_real_work(int no_threads)
 
         iochan_man_events(chan_man);
         sel_thread_destroy(p);
+        iochan_man_destroy(&chan_man);
     }
 }
 
