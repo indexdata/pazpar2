@@ -78,3 +78,12 @@ void iochan_man_destroy(iochan_man_t *mp);
 IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags);
 
 #endif
+/*
+ * Local variables:
+ * c-basic-offset: 4
+ * c-file-style: "Stroustrup"
+ * indent-tabs-mode: nil
+ * End:
+ * vim: shiftwidth=4 tabstop=8 expandtab
+ */
+
