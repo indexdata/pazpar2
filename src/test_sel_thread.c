@@ -107,12 +107,14 @@ static void test_for_real_work(int no_threads)
     YAZ_CHECK(p);
     if (p)
     {
+        iochan_man_t chan_man = iochan_man_create();
         IOCHAN chan = iochan_create(thread_fd, iochan_handler,
                                     EVENT_INPUT|EVENT_TIMEOUT);
         iochan_settimeout(chan, 1);
         iochan_setdata(chan, p);
+        iochan_add(chan_man, chan);
 
-        event_loop(&chan);
+        iochan_man_events(chan_man);
         sel_thread_destroy(p);
     }
 }

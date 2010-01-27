@@ -808,17 +808,23 @@ void statistics(struct session *se, struct statistics *stat)
 
 
 // Master list of connections we're handling events to
-static IOCHAN channel_list = 0;  /* thread pr */
+static iochan_man_t pazpar2_chan_man = 0; /* thread pr */
+
+void pazpar2_chan_man_start(void)
+{
+    pazpar2_chan_man = iochan_man_create();
+}
 
 void pazpar2_add_channel(IOCHAN chan)
 {
-    chan->next = channel_list;
-    channel_list = chan;
+    assert(pazpar2_chan_man);
+    iochan_add(pazpar2_chan_man, chan);
 }
 
 void pazpar2_event_loop()
 {
-    event_loop(&channel_list);
+    assert(pazpar2_chan_man);
+    iochan_man_events(pazpar2_chan_man);
 }
 
 static struct record_metadata *record_metadata_init(

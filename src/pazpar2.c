@@ -194,6 +194,7 @@ static int sc_main(
                     "mode");
             return 1;
         }
+        pazpar2_chan_man_start();
         ret = config_start_listeners(config, listener_override);
         if (ret)
             return ret; /* error starting http listener */

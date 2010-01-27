@@ -48,6 +48,13 @@ typedef struct iochan
     struct iochan *next;
 } *IOCHAN;
 
+typedef struct iochan_man_s *iochan_man_t;
+
+iochan_man_t iochan_man_create(void);
+void iochan_add(iochan_man_t man, IOCHAN chan);
+void iochan_man_events(iochan_man_t man);
+void iochan_man_destroy(iochan_man_t *mp);
+
 #define iochan_destroy(i) (void)((i)->destroyed = 1)
 #define iochan_getfd(i) ((i)->fd)
 #define iochan_setfd(i, f) ((i)->fd = (f))
@@ -61,7 +68,6 @@ typedef struct iochan
 #define iochan_getfun(i) ((i)->fun)
 #define iochan_setfun(i, d) ((i)->fun = d)
 #define iochan_setevent(i, e) ((i)->force_event = (e))
-#define iochan_getnext(i) ((i)->next)
 #define iochan_settimeout(i, t) ((i)->max_idle = (t), (i)->last_event = time(0))
 #define iochan_activity(i) ((i)->last_event = time(0))
 #define iochan_setsocketfun(i, f) ((i)->socketfun = (f))
@@ -70,6 +76,5 @@ typedef struct iochan
 #define iochan_getmaskfun(i) ((i)->maskfun)
 
 IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags);
-int event_loop(IOCHAN *iochans);
 
 #endif

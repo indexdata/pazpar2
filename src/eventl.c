@@ -53,7 +53,32 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/comstack.h>
 #include <yaz/xmalloc.h>
 #include "eventl.h"
-#include <yaz/statserv.h>
+
+struct iochan_man_s {
+    IOCHAN channel_list;
+};
+
+iochan_man_t iochan_man_create(void)
+{
+    iochan_man_t man = xmalloc(sizeof(*man));
+    man->channel_list = 0;
+    return man;
+}
+
+void iochan_man_destroy(iochan_man_t *mp)
+{
+    if (*mp)
+    {
+        xfree(*mp);
+        *mp = 0;
+    }
+}
+
+void iochan_add(iochan_man_t man, IOCHAN chan)
+{
+    chan->next = man->channel_list;
+    man->channel_list = chan;
+}
 
 IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags)
 {
@@ -73,7 +98,7 @@ IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags)
     return new_iochan;
 }
 
-int event_loop(IOCHAN *iochans)
+static int event_loop(IOCHAN *iochans)
 {
     do /* loop as long as there are active associations to process */
     {
@@ -184,6 +209,11 @@ int event_loop(IOCHAN *iochans)
     }
     while (*iochans);
     return 0;
+}
+
+void iochan_man_events(iochan_man_t man)
+{
+    event_loop(&man->channel_list);
 }
 
 /*
