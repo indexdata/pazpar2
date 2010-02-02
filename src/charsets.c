@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/xmalloc.h>
 #include <yaz/wrbuf.h>
 #include <yaz/log.h>
+#include <yaz/yaz-version.h>
 #include <ctype.h>
 #include <assert.h>
 #include <string.h>
@@ -37,8 +38,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #if YAZ_HAVE_ICU
 #include <yaz/icu.h>
+
+#if YAZ_VERSIONL >= 0x40002
+/* YAZ 4.0.2 or later as icu_iter */
+#define ICU_ITER 1
 #endif
 
+#endif
 
 /* charset handle */
 struct pp2_charset_s {
@@ -66,6 +72,9 @@ struct pp2_relevance_token_s {
     pp2_charset_t pct;  /* our main charset handle (type+config) */
     WRBUF norm_str;     /* normized string we return (temporarily) */
     WRBUF sort_str;     /* sort string we return (temporarily) */
+#if ICU_ITER
+    yaz_icu_iter_t iter;
+#endif
 };
 
 
@@ -174,11 +183,20 @@ pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
     prt->pct = pct;
 
 #if YAZ_HAVE_ICU
+#if ICU_ITER
+    prt->iter = 0;
+#endif
     if (pct->icu_chn)
     {
+#if ICU_ITER
+        prt->iter = icu_iter_create(pct->icu_chn);
+        icu_iter_first(prt->iter, buf);
+#else        
         int ok = 0;
         pct->icu_sts = U_ZERO_ERROR;
+
         ok = icu_chain_assign_cstr(pct->icu_chn, buf, &pct->icu_sts);
+#endif
         //printf("\nfield ok: %d '%s'\n", ok, buf);
         prt->pct = pct;
     }
@@ -190,6 +208,10 @@ pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
 void pp2_relevance_token_destroy(pp2_relevance_token_t prt)
 {
     assert(prt);
+#if ICU_ITER
+    if (prt->iter)
+        icu_iter_destroy(prt->iter);
+#endif
     if(prt->norm_str) 
         wrbuf_destroy(prt->norm_str);
     if(prt->sort_str) 
@@ -260,6 +282,12 @@ static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt)
 #if YAZ_HAVE_ICU
 static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)
 {
+#if ICU_ITER
+    if (icu_iter_next(prt->iter))
+    {
+        return icu_iter_get_norm(prt->iter);
+    }
+#else
     if (icu_chain_next_token(prt->pct->icu_chn, &prt->pct->icu_sts))
     {
         if (U_FAILURE(prt->pct->icu_sts))
@@ -268,12 +296,17 @@ static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)
         }
         return icu_chain_token_norm(prt->pct->icu_chn);
     }
+#endif
     return 0;
 }
 
 static const char *pp2_get_sort_icu(pp2_relevance_token_t prt)
 {
+#if ICU_ITER
+    return icu_iter_get_sortkey(prt->iter);
+#else
     return icu_chain_token_sortkey(prt->pct->icu_chn);
+#endif
 }
 
 #endif // YAZ_HAVE_ICU
