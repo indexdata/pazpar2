@@ -55,7 +55,7 @@ typedef struct iochan
 } *IOCHAN;
 
 
-iochan_man_t iochan_man_create(int use_threads);
+iochan_man_t iochan_man_create(int no_threads);
 void iochan_add(iochan_man_t man, IOCHAN chan);
 void iochan_man_events(iochan_man_t man);
 void iochan_man_destroy(iochan_man_t *mp);

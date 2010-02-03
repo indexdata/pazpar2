@@ -52,14 +52,24 @@
    elements specific to Pazpar2 should belong to the namespace
    <literal>http://www.indexdata.com/pazpar2/1.0</literal> 
    (this is assumed in the
-   following examples). The root element is named <literal>pazpar2</literal>.
+   following examples). The root element is named "<literal>pazpar2</literal>".
    Under the  root element are a number of elements which group categories of
    information. The categories are described below.
   </para>
   
+  <refsect2 id="config-threads"><title>threads</title>
+    <para>
+      This section is optional and is supported for Pazpar2 version 1.3.1 and
+      later . It is identified by element "<literal>threads</literal>" which
+      may include one attribute "<literal>number</literal>" which specifies
+      the number of worker-threads that the Pazpar2 instance is to use.
+      A value of 0 (zero) disables worker-threads (all work is carried out
+      in main thread).
+    </para>
+  </refsect2>
   <refsect2 id="config-server"><title>server</title>
    <para>
-    This section governs overall behavior of the server. It is identified
+    This section governs overall behavior of a server endpoint. It is identified
     by the element "server" which takes an optional attribute, "id", which
     identifies this particular Pazpar2 server. Any string value for "id"
     may be given.
@@ -450,6 +460,7 @@
     <?xml version="1.0" encoding="UTF-8"?>
     <pazpar2 xmlns="http://www.indexdata.com/pazpar2/1.0">
     
+      <threads number="10"/>
       <server>
         <listen port="9004"/>
         <service>

@@ -107,7 +107,7 @@ static void test_for_real_work(int no_threads)
     YAZ_CHECK(p);
     if (p)
     {
-        iochan_man_t chan_man = iochan_man_create(1 /* use_threads */);
+        iochan_man_t chan_man = iochan_man_create(10);
         IOCHAN chan = iochan_create(thread_fd, iochan_handler,
                                     EVENT_INPUT|EVENT_TIMEOUT);
         iochan_settimeout(chan, 1);

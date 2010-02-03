@@ -59,16 +59,16 @@ struct iochan_man_s {
     IOCHAN channel_list;
     sel_thread_t sel_thread;
     int sel_fd;
-    int use_threads;
+    int no_threads;
 };
 
-iochan_man_t iochan_man_create(int use_threads)
+iochan_man_t iochan_man_create(int no_threads)
 {
     iochan_man_t man = xmalloc(sizeof(*man));
     man->channel_list = 0;
     man->sel_thread = 0; /* can't create sel_thread yet because we may fork */
     man->sel_fd = -1;
-    man->use_threads = use_threads;
+    man->no_threads = no_threads;
     return man;
 }
 
@@ -275,11 +275,12 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
 
 void iochan_man_events(iochan_man_t man)
 {
-    if (man->use_threads && !man->sel_thread)
+    if (man->no_threads > 0 && !man->sel_thread)
     {
         man->sel_thread = sel_thread_create(
-            work_handler, 0 /*work_destroy */, &man->sel_fd, 10);
-        yaz_log(YLOG_LOG, "iochan_man_events. sel_thread started");
+            work_handler, 0 /*work_destroy */, &man->sel_fd, man->no_threads);
+        yaz_log(YLOG_LOG, "iochan_man_events. Using %d threads",
+                man->no_threads);
     }
     event_loop(man, &man->channel_list);
 }

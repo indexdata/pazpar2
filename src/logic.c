@@ -810,9 +810,9 @@ void statistics(struct session *se, struct statistics *stat)
 // Master list of connections we're handling events to
 static iochan_man_t pazpar2_chan_man = 0; /* thread pr */
 
-void pazpar2_chan_man_start(void)
+void pazpar2_chan_man_start(int no_threads)
 {
-    pazpar2_chan_man = iochan_man_create(0 /* use threads */);
+    pazpar2_chan_man = iochan_man_create(no_threads);
 }
 
 void pazpar2_add_channel(IOCHAN chan)

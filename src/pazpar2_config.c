@@ -47,6 +47,7 @@ struct conf_config
 {
     NMEM nmem; /* for conf_config and servers memory */
     struct conf_server *servers;
+    int no_threads;
     WRBUF confdir;
 };
 
@@ -903,6 +904,15 @@ static int parse_config(struct conf_config *config, xmlNode *root)
             tmp->next = config->servers;
             config->servers = tmp;
         }
+        else if (!strcmp((const char *) n->name, "threads"))
+        {
+            xmlChar *number = xmlGetProp(n, (xmlChar *) "number");
+            if (number)
+            {
+                config->no_threads = atoi(number);
+                xmlFree(number);
+            }
+        }
         else if (!strcmp((const char *) n->name, "targetprofiles"))
         {
             yaz_log(YLOG_FATAL, "targetprofiles unsupported here. Must be part of service");
@@ -938,6 +948,7 @@ struct conf_config *config_create(const char *fname, int verbose)
 
     config->nmem = nmem;
     config->servers = 0;
+    config->no_threads = 0;
 
     config->confdir = wrbuf_alloc();
     if ((p = strrchr(fname, 
@@ -1031,6 +1042,7 @@ int config_start_listeners(struct conf_config *conf,
                            const char *listener_override)
 {
     struct conf_server *ser;
+    pazpar2_chan_man_start(conf->no_threads);
     for (ser = conf->servers; ser; ser = ser->next)
     {
         WRBUF w = wrbuf_alloc();
