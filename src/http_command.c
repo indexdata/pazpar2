@@ -283,7 +283,6 @@ static void cmd_init(struct http_channel *c)
             error(rs, PAZPAR2_NO_SERVICE, service_name ? service_name : "unnamed");
             return;
         }
-        service_incref(service);
     }
     s = http_session_create(service);
     

@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#include "incref.h"
 #include "pazpar2_config.h"
 #include "settings.h"
 #include "eventl.h"
@@ -111,6 +112,7 @@ static struct conf_service *service_init(struct conf_server *server,
     NMEM nmem = nmem_create();
 
     service = nmem_malloc(nmem, sizeof(struct conf_service));
+    service->mutex = 0;
     service->ref_count = 1;
     service->nmem = nmem;
     service->next = 0;
@@ -238,13 +240,14 @@ void service_destroy(struct conf_service *service)
 {
     if (service)
     {
-        assert(service->ref_count > 0);
-        service->ref_count--;
-        if (service->ref_count == 0)
+        yaz_log(YLOG_LOG, "service_destroy. p=%p cnt=%d", service,
+                service->ref_count);
+        if (!pazpar2_decref(&service->ref_count, service->mutex))
         {
             pp2_charset_destroy(service->relevance_pct);
             pp2_charset_destroy(service->sort_pct);
             pp2_charset_destroy(service->mergekey_pct);
+            yaz_mutex_destroy(&service->mutex);
             nmem_destroy(service->nmem);
         }
     }
@@ -252,7 +255,9 @@ void service_destroy(struct conf_service *service)
 
 void service_incref(struct conf_service *service)
 {
-    service->ref_count++;
+    yaz_log(YLOG_LOG, "service_incref. p=%p cnt=%d", service,
+            service->ref_count);
+    pazpar2_incref(&service->ref_count, service->mutex);
 }
 
 static int parse_metadata(struct conf_service *service, xmlNode *n,
@@ -690,6 +695,8 @@ struct conf_service *service_create(struct conf_server *server,
     {
         inherit_server_settings(service);
         resolve_databases(service);
+        assert(service->mutex == 0);
+        yaz_mutex_create(&service->mutex);
     }
     return service;
 }
@@ -881,10 +888,12 @@ struct conf_service *locate_service(struct conf_server *server,
     struct conf_service *s = server->service;
     for (; s; s = s->next)
         if (s->id && service_id && 0 == strcmp(s->id, service_id))
-            return s;
+            break;
         else if (!s->id && !service_id)
-            return s;
-    return 0;
+            break;
+    if (s)
+        service_incref(s);
+    return s;
 }
 
 
@@ -909,7 +918,7 @@ static int parse_config(struct conf_config *config, xmlNode *root)
             xmlChar *number = xmlGetProp(n, (xmlChar *) "number");
             if (number)
             {
-                config->no_threads = atoi(number);
+                config->no_threads = atoi((const char *) number);
                 xmlFree(number);
             }
         }
@@ -1034,7 +1043,11 @@ void config_start_databases(struct conf_config *conf)
     {
         struct conf_service *s = ser->service;
         for (;s ; s = s->next)
+        {
             resolve_databases(s);
+            assert(s->mutex == 0);
+            yaz_mutex_create(&s->mutex);
+        }
     }
 }
 

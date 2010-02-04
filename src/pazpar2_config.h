@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "normalize_cache.h"
 
 #include <yaz/nmem.h>
+#include <yaz/mutex.h>
 #include "charsets.h"
 
 enum conf_metadata_type {
@@ -97,6 +98,7 @@ struct conf_server;
 // however, only a single service is possible.
 struct conf_service
 {
+    YAZ_MUTEX mutex;
     int num_metadata;
     struct conf_metadata *metadata;
     int num_sortkeys;

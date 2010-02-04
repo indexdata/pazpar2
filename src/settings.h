@@ -68,6 +68,7 @@ void settings_read_node_x(xmlNode *n,
 void expand_settings_array(struct setting ***set_ar, int *num, int offset,
                            NMEM nmem);
 
+void pazpar2_chan_man_start(int no_threads);
 
 #endif
 
