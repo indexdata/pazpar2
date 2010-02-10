@@ -26,6 +26,7 @@ struct http_buf;
 typedef struct http_channel_observer_s *http_channel_observer_t;
 
 typedef struct http_server *http_server_t;
+typedef struct http_sessions *http_sessions_t;
 
 struct http_channel
 {
@@ -49,6 +50,7 @@ struct http_channel
     http_channel_observer_t observers;
     struct conf_server *server;
     http_server_t http_server;
+    http_sessions_t http_sessions;
 };
 
 struct http_proxy //  attached to iochan for proxy connection
@@ -127,6 +129,9 @@ void http_remove_observer(http_channel_observer_t obs);
 struct http_channel *http_channel_observer_chan(http_channel_observer_t obs);
 
 void http_command(struct http_channel *c);
+
+http_sessions_t http_sessions_create(void);
+void http_sessions_destroy(http_sessions_t hs);
 
 #endif
 

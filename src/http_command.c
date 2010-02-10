@@ -56,6 +56,30 @@ struct http_session {
 
 static struct http_session *session_list = 0; /* thread pr */
 
+
+struct http_sessions {
+    struct http_session *session_list;
+    YAZ_MUTEX mutex;
+};
+
+http_sessions_t http_sessions_create(void)
+{
+    http_sessions_t hs = xmalloc(sizeof(*hs));
+    hs->session_list = 0;
+    yaz_mutex_create(&hs->mutex);
+    return hs;
+}
+
+void http_sessions_destroy(http_sessions_t hs)
+{
+    if (hs)
+    {
+        yaz_mutex_destroy(&hs->mutex);
+        /* should remove session_list too */
+        xfree(hs);
+    }
+}
+
 void http_session_destroy(struct http_session *s);
 
 static void session_timeout(IOCHAN i, int event)

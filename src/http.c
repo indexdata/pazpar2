@@ -84,9 +84,9 @@ struct http_buf
 
 
 static void proxy_io(IOCHAN i, int event);
-static struct http_channel *http_create(http_server_t http_server,
-                                        const char *addr,
-                                        struct conf_server *server);
+static struct http_channel *http_channel_create(http_server_t http_server,
+                                                const char *addr,
+                                                struct conf_server *server);
 static void http_destroy(IOCHAN i);
 static http_server_t http_server_create(void);
 static void http_server_incref(http_server_t hs);
@@ -98,6 +98,7 @@ struct http_server
     YAZ_MUTEX mutex;
     int listener_socket;
     int ref_count;
+    http_sessions_t http_sessions;
     struct sockaddr_in *proxy_addr;
 };
 
@@ -1102,9 +1103,9 @@ static void http_destroy(IOCHAN i)
     iochan_destroy(i);
 }
 
-static struct http_channel *http_create(http_server_t hs,
-                                        const char *addr,
-                                        struct conf_server *server)
+static struct http_channel *http_channel_create(http_server_t hs,
+                                                const char *addr,
+                                                struct conf_server *server)
 {
     struct http_channel *r;
 
@@ -1127,6 +1128,7 @@ static struct http_channel *http_create(http_server_t hs,
     }
     http_server_incref(hs);
     r->http_server = hs;
+    r->http_sessions = hs->http_sessions;
     r->server = server;
     r->proxy = 0;
     r->iochan = 0;
@@ -1168,7 +1170,8 @@ static void http_accept(IOCHAN i, int event)
     yaz_log(YLOG_DEBUG, "New command connection");
     c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT);
     
-    ch = http_create(server->http_server, inet_ntoa(addr.sin_addr), server);
+    ch = http_channel_create(server->http_server, inet_ntoa(addr.sin_addr),
+                             server);
     ch->iochan = c;
     iochan_setdata(c, ch);
 
@@ -1360,6 +1363,7 @@ http_server_t http_server_create(void)
     hs->ref_count = 1;
     hs->http_buf_freelist = 0;
     hs->http_channel_freelist = 0;
+    hs->http_sessions = 0;
     return hs;
 }
 
@@ -1394,6 +1398,7 @@ void http_server_destroy(http_server_t hs)
                 xfree(c);
                 c = c_next;
             }
+            http_sessions_destroy(hs->http_sessions);
             xfree(hs->proxy_addr);
             yaz_mutex_destroy(&hs->mutex);
             xfree(hs);
@@ -1415,6 +1420,7 @@ void http_mutex_init(struct conf_server *server)
 
     assert(server->http_server->mutex == 0);
     yaz_mutex_create(&server->http_server->mutex);
+    server->http_server->http_sessions = http_sessions_create();
 }
 
 /*
