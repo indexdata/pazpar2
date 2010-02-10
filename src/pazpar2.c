@@ -43,6 +43,8 @@ void child_handler(void *data)
     config_start_databases(config);
 
     pazpar2_event_loop();
+
+    config_destroy(config);
 }
 
 static void show_version(void)

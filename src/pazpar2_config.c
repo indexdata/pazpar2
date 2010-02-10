@@ -240,8 +240,6 @@ void service_destroy(struct conf_service *service)
 {
     if (service)
     {
-        yaz_log(YLOG_LOG, "service_destroy. p=%p cnt=%d", service,
-                service->ref_count);
         if (!pazpar2_decref(&service->ref_count, service->mutex))
         {
             pp2_charset_destroy(service->relevance_pct);
@@ -713,7 +711,6 @@ static struct conf_server *server_create(struct conf_config *config,
     server->proxy_host = 0;
     server->proxy_port = 0;
     server->myurl = 0;
-    server->proxy_addr = 0;
     server->service = 0;
     server->config = config;
     server->next = 0;
@@ -721,6 +718,7 @@ static struct conf_server *server_create(struct conf_config *config,
     server->sort_pct = 0;
     server->mergekey_pct = 0;
     server->server_settings = 0;
+    server->http_server = 0;
 
     if (server_id)
     {
@@ -1011,6 +1009,8 @@ void server_destroy(struct conf_server *server)
     pp2_charset_destroy(server->relevance_pct);
     pp2_charset_destroy(server->sort_pct);
     pp2_charset_destroy(server->mergekey_pct);
+    yaz_log(YLOG_LOG, "server_destroy server=%p", server);
+    http_server_destroy(server->http_server);
 }
 
 void config_destroy(struct conf_config *config)
@@ -1048,6 +1048,7 @@ void config_start_databases(struct conf_config *conf)
             assert(s->mutex == 0);
             yaz_mutex_create(&s->mutex);
         }
+        http_mutex_init(ser);
     }
 }
 

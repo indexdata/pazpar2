@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/nmem.h>
 #include <yaz/mutex.h>
 #include "charsets.h"
+#include "http.h"
 
 enum conf_metadata_type {
     Metadata_type_generic,    // Generic text field
@@ -134,8 +135,6 @@ struct conf_server
     char *proxy_host;
     int proxy_port;
     char *myurl;
-    struct sockaddr_in *proxy_addr;
-    int listener_socket;
     char *server_settings;
     char *server_id;
 
@@ -145,6 +144,7 @@ struct conf_server
     struct conf_service *service;
     struct conf_server *next;
     struct conf_config *config;
+    http_server_t http_server;
 };
 
 struct conf_targetprofiles

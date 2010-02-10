@@ -22,16 +22,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "eventl.h"
 // Generic I/O buffer
-struct http_buf
-{
-#define HTTP_BUF_SIZE 4096
-    char buf[4096];
-    int offset;
-    int len;
-    struct http_buf *next;
-};
-
+struct http_buf;
 typedef struct http_channel_observer_s *http_channel_observer_t;
+
+typedef struct http_server *http_server_t;
 
 struct http_channel
 {
@@ -54,6 +48,7 @@ struct http_channel
     char addr[20]; // forwarded address
     http_channel_observer_t observers;
     struct conf_server *server;
+    http_server_t http_server;
 };
 
 struct http_proxy //  attached to iochan for proxy connection
@@ -100,6 +95,9 @@ struct http_response
     char *payload;
     char *content_type;
 };
+
+void http_mutex_init(struct conf_server *server);
+void http_server_destroy(http_server_t hs);
 
 void http_set_proxyaddr(const char *url, struct conf_server *ser);
 int http_init(const char *addr, struct conf_server *ser);
