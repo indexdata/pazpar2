@@ -2,7 +2,7 @@ http://localhost:9763/search.pz2?command=init
 http://localhost:9763/search.pz2?command=init&clear=1
 http://localhost:9763/search.pz2?session=1&command=settings&category%5Bz3950.indexdata.com%2Fmarc%5D=1
 http://localhost:9763/search.pz2?session=1&command=search&query=water
-http://localhost:9763/search.pz2?session=2&command=settings&category%5Bz3950.indexdata.com%2Fmarc%5D=1&pz:cclmap:term%5Bz3950.indexdata.com%2Fmarc%5D=u%3D1016&pz:elements%5Bz3950.indexdata.com%2Fmarc%5D=F
+http://localhost:9763/search.pz2?session=2&command=settings&pz:name%5Bz3950.indexdata.com%2Fmarc%5D=1&pz:cclmap:term%5Bz3950.indexdata.com%2Fmarc%5D=u%3D1016&pz:elements%5Bz3950.indexdata.com%2Fmarc%5D=F
 http://localhost:9763/search.pz2?session=2&command=search&query=water
 2 http://localhost:9763/search.pz2?session=1&command=bytarget&settings=1
 http://localhost:9763/search.pz2?session=2&command=bytarget&settings=1

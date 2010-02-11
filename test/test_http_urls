@@ -30,7 +30,7 @@ http://localhost:9763/search.pz2?command=init&clear=1
 http://localhost:9763/search.pz2?session=4&command=settings&pz:name%5Bz3950.indexdata.com%2Fgils%5D=gils&pz:requestsyntax%5Bz3950.indexdata.com%2Fgils%5D=usmarc&pz:nativesyntax%5Bz3950.indexdata.com%2Fgils%5D=iso2709&pz:xslt%5Bz3950.indexdata.com%2Fgils%5D=marc21.mmap
 http://localhost:9763/search.pz2?session=4&command=search&query=computer
 2 http://localhost:9763/search.pz2?session=4&command=show&block=1
-http://localhost:9763/search.pz2?command=init&clear=1
+http://localhost:9763/search.pz2?command=init
 http://localhost:9763/search.pz2?session=5&command=settings&pz:name%5Bz3950.indexdata.com%2Fmarc%5D=marc&pz:requestsyntax%5Bz3950.indexdata.com%2Fmarc%5D=usmarc&pz:nativesyntax%5Bz3950.indexdata.com%2Fmarc%5D=iso2709&pz:xslt%5Bz3950.indexdata.com%2Fmarc%5D=marc21.xsl&pz:recordfilter%5Bz3950.indexdata.com%2Fmarc%5D=date
 http://localhost:9763/search.pz2?session=5&command=search&query=computer&filter=pz%3Aid%3Dz3950.indexdata.com%2Fmarc
 2 http://localhost:9763/search.pz2?session=5&command=show&block=1

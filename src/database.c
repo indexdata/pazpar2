@@ -140,23 +140,12 @@ void resolve_databases(struct conf_service *service)
         resolve_database(db);
 }
 
-static struct database *load_database(const char *id,
-    struct conf_service *service)
+struct database *new_database(const char *id, NMEM nmem)
 {
-    xmlDoc *doc = 0;
-    struct zr_explain *explain = 0;
     struct database *db;
     char hostport[256];
     char *dbname;
     struct setting *idset;
-
-    if (service->targetprofiles 
-        && (doc = get_explain_xml(service->targetprofiles, id)))
-    {
-        explain = zr_read_xml(service->nmem, xmlDocGetRootElement(doc));
-        if (!explain)
-            return 0;
-    }
 
     if (strlen(id) > 255)
         return 0;
@@ -165,27 +154,47 @@ static struct database *load_database(const char *id,
         *(dbname++) = '\0';
     else
         dbname = "";
-    db = nmem_malloc(service->nmem, sizeof(*db));
+    db = nmem_malloc(nmem, sizeof(*db));
     memset(db, 0, sizeof(*db));
     db->host = 0;
-    db->url = nmem_strdup(service->nmem, id);
-    db->databases = nmem_malloc(service->nmem, 2 * sizeof(char *));
-    db->databases[0] = nmem_strdup(service->nmem, dbname);
+    db->url = nmem_strdup(nmem, id);
+    db->databases = nmem_malloc(nmem, 2 * sizeof(char *));
+    db->databases[0] = nmem_strdup(nmem, dbname);
     db->databases[1] = 0;
     db->errors = 0;
-    db->explain = explain;
+    db->explain = 0;
 
-    db->num_settings = settings_num(service);
-    db->settings = nmem_malloc(service->nmem, sizeof(struct settings*) * 
+    db->num_settings = PZ_NEGOTIATION_CHARSET+1;
+    db->settings = nmem_malloc(nmem, sizeof(struct settings*) * 
                                db->num_settings);
     memset(db->settings, 0, sizeof(struct settings*) * db->num_settings);
-    idset = nmem_malloc(service->nmem, sizeof(*idset));
+    idset = nmem_malloc(nmem, sizeof(*idset));
     idset->precedence = 0;
     idset->name = "pz:id";
     idset->target = idset->value = db->url;
     idset->next = 0;
     db->settings[PZ_ID] = idset;
+    db->next = 0;
 
+    return db;
+}
+
+static struct database *load_database(const char *id,
+                                      struct conf_service *service)
+{
+    struct database *db;
+    struct zr_explain *explain = 0;
+    xmlDoc *doc = 0;
+
+    if (service->targetprofiles 
+        && (doc = get_explain_xml(service->targetprofiles, id)))
+    {
+        explain = zr_read_xml(service->nmem, xmlDocGetRootElement(doc));
+        if (!explain)
+            return 0;
+    }
+    db = new_database(id, service->nmem);
+    db->explain = explain;
     db->next = service->databases;
     service->databases = db;
 

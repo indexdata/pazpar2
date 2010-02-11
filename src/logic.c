@@ -297,7 +297,7 @@ void session_settings_dump(struct session *se,
 // Will be extended to take into account user associated with session
 const char *session_setting_oneval(struct session_database *db, int offset)
 {
-    if (!db->settings[offset])
+    if (offset >= db->num_settings || !db->settings[offset])
         return "";
     return db->settings[offset]->value;
 }
@@ -523,7 +523,10 @@ static void session_init_databases_fun(void *context, struct database *db)
                                 sizeof(struct settings *) * db->num_settings);
     new->num_settings = db->num_settings;
     for (i = 0; i < db->num_settings; i++)
-        new->settings[i] = db->settings[i];
+    {
+        struct setting *setting = db->settings[i];
+        new->settings[i] = setting;
+    }
     new->next = se->databases;
     se->databases = new;
 }
@@ -547,11 +550,12 @@ void session_init_databases(struct session *se)
 static struct session_database *load_session_database(struct session *se, 
                                                       char *id)
 {
-    struct database *db = find_database(id, se->service);
+    struct database *db = new_database(id, se->session_nmem);
 
     resolve_database(db);
 
     session_init_databases_fun((void*) se, db);
+
     // New sdb is head of se->databases list
     return se->databases;
 }

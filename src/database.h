@@ -27,5 +27,5 @@ int predef_grep_databases(void *context, struct conf_service *service,
 			  void (*fun)(void *context, struct database *db));
 int match_zurl(const char *zurl, const char *pattern);
 int resolve_database(struct database *db);
-
+struct database *new_database(const char *id, NMEM nmem);
 #endif

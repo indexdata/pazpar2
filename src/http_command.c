@@ -66,6 +66,7 @@ http_sessions_t http_sessions_create(void)
 {
     http_sessions_t hs = xmalloc(sizeof(*hs));
     hs->session_list = 0;
+    hs->mutex = 0;
     yaz_mutex_create(&hs->mutex);
     return hs;
 }
