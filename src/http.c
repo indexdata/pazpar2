@@ -87,7 +87,7 @@ static void proxy_io(IOCHAN i, int event);
 static struct http_channel *http_channel_create(http_server_t http_server,
                                                 const char *addr,
                                                 struct conf_server *server);
-static void http_destroy(IOCHAN i);
+static void http_channel_destroy(IOCHAN i);
 static http_server_t http_server_create(void);
 static void http_server_incref(http_server_t hs);
 
@@ -847,7 +847,7 @@ void http_send_response(struct http_channel *ch)
     if (!hb)
     {
         yaz_log(YLOG_WARN, "Failed to serialize HTTP response");
-        http_destroy(ch->iochan);
+        http_channel_destroy(ch->iochan);
     }
     else
     {
@@ -893,7 +893,7 @@ static void http_io(IOCHAN i, int event)
             if (res <= 0)
             {
                 http_buf_destroy(hc->http_server, htbuf);
-                http_destroy(i);
+                http_channel_destroy(i);
                 return;
             }
             htbuf->buf[res] = '\0';
@@ -940,7 +940,7 @@ static void http_io(IOCHAN i, int event)
                 if (res <= 0)
                 {
                     yaz_log(YLOG_WARN|YLOG_ERRNO, "write");
-                    http_destroy(i);
+                    http_channel_destroy(i);
                     return;
                 }
                 if (res == wb->len)
@@ -956,7 +956,7 @@ static void http_io(IOCHAN i, int event)
                 if (!hc->oqueue) {
                     if (!hc->keep_alive)
                     {
-                        http_destroy(i);
+                        http_channel_destroy(i);
                         return;
                     }
                     else
@@ -969,11 +969,11 @@ static void http_io(IOCHAN i, int event)
             }
 
             if (!hc->oqueue && hc->proxy && !hc->proxy->iochan) 
-                http_destroy(i); // Server closed; we're done
+                http_channel_destroy(i); // Server closed; we're done
             break;
         default:
             yaz_log(YLOG_WARN, "Unexpected event on connection");
-            http_destroy(i);
+            http_channel_destroy(i);
     }
 }
 
@@ -1008,7 +1008,7 @@ static void proxy_io(IOCHAN pi, int event)
                 }
                 else
                 {
-                    http_destroy(hc->iochan);
+                    http_channel_destroy(hc->iochan);
                     return;
                 }
             }
@@ -1033,7 +1033,7 @@ static void proxy_io(IOCHAN pi, int event)
             if (res <= 0)
             {
                 yaz_log(YLOG_WARN|YLOG_ERRNO, "write");
-                http_destroy(hc->iochan);
+                http_channel_destroy(hc->iochan);
                 return;
             }
             if (res == htbuf->len)
@@ -1054,7 +1054,7 @@ static void proxy_io(IOCHAN pi, int event)
             break;
         default:
             yaz_log(YLOG_WARN, "Unexpected event on connection");
-            http_destroy(hc->iochan);
+            http_channel_destroy(hc->iochan);
     }
 }
 
@@ -1062,7 +1062,7 @@ static void http_fire_observers(struct http_channel *c);
 static void http_destroy_observers(struct http_channel *c);
 
 // Cleanup channel
-static void http_destroy(IOCHAN i)
+static void http_channel_destroy(IOCHAN i)
 {
     struct http_channel *s = iochan_getdata(i);
     http_server_t http_server;
@@ -1188,7 +1188,6 @@ int http_init(const char *addr, struct conf_server *server)
     int one = 1;
     const char *pp;
     short port;
-    http_server_t http_server;
 
     yaz_log(YLOG_LOG, "HTTP listener %s", addr);
 
@@ -1241,10 +1240,9 @@ int http_init(const char *addr, struct conf_server *server)
         return 1;
     }
 
-    http_server = http_server_create();
-    server->http_server = http_server;
+    server->http_server = http_server_create();
 
-    http_server->listener_socket = l;
+    server->http_server->listener_socket = l;
 
     c = iochan_create(l, http_accept, EVENT_INPUT | EVENT_EXCEPT);
     iochan_setdata(c, server);
@@ -1381,7 +1379,7 @@ void http_server_destroy(http_server_t hs)
         }
         else
             r = --(hs->ref_count);
-        
+
         if (r == 0)
         {
             struct http_buf *b = hs->http_buf_freelist;
@@ -1395,6 +1393,8 @@ void http_server_destroy(http_server_t hs)
             while (c)
             {
                 struct http_channel *c_next = c->next;
+                nmem_destroy(c->nmem);
+                wrbuf_destroy(c->wrbuf);
                 xfree(c);
                 c = c_next;
             }
