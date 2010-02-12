@@ -94,16 +94,17 @@ static void remove_connection_from_host(struct connection *con)
 {
     struct connection **conp = &con->host->connections;
     assert(con);
+    yaz_mutex_enter(con->host->mutex);
     while (*conp)
     {
         if (*conp == con)
         {
             *conp = (*conp)->next;
-            return;
+            break;
         }
         conp = &(*conp)->next;
     }
-    assert(*conp == 0);
+    yaz_mutex_leave(con->host->mutex);
 }
 
 // Close connection and recycle structure
@@ -137,8 +138,12 @@ static struct connection *connection_create(struct client *cl,
 
     new = xmalloc(sizeof(*new));
     new->host = host;
+
+    yaz_mutex_enter(host->mutex);
     new->next = new->host->connections;
     new->host->connections = new;
+    yaz_mutex_leave(host->mutex);
+
     new->client = cl;
     new->zproxy = 0;
     client_set_connection(cl, new);
@@ -268,37 +273,43 @@ void connection_release(struct connection *co)
 
 void connect_resolver_host(struct host *host, iochan_man_t iochan_man)
 {
-    struct connection *con = host->connections;
+    struct connection *con;
+
+    yaz_mutex_enter(host->mutex);
+    con = host->connections;
     while (con)
     {
         if (con->state == Conn_Resolving)
         {
             if (!host->ipport) /* unresolved */
             {
+                yaz_mutex_leave(host->mutex);
                 connection_destroy(con);
                 /* start all over .. at some point it will be NULL */
                 con = host->connections;
-                continue;
             }
             else if (!con->client)
             {
+                yaz_mutex_leave(host->mutex);
                 connection_destroy(con);
                 /* start all over .. at some point it will be NULL */
                 con = host->connections;
-                continue;
             }
             else
             {
+                yaz_mutex_leave(host->mutex);
                 connection_connect(con, iochan_man);
                 client_start_search(con->client);
+                con = host->connections;
             }
         }
         else
         {
             yaz_log(YLOG_LOG, "connect_resolver_host: state=%d", con->state);
+            con = con->next;
         }
-        con = con->next;
     }
+    yaz_mutex_leave(host->mutex);
 }
 
 static struct host *connection_get_host(struct connection *con)
@@ -430,6 +441,7 @@ int client_prep_connection(struct client *cl,
     {
         // See if someone else has an idle connection
         // We should look at timestamps here to select the longest-idle connection
+        yaz_mutex_enter(host->mutex);
         for (co = host->connections; co; co = co->next)
             if (connection_is_idle(co) &&
                 (!co->client || client_get_session(co->client) != se) &&
@@ -447,6 +459,7 @@ int client_prep_connection(struct client *cl,
             connection_release(co);
             client_set_connection(cl, co);
             co->client = cl;
+            yaz_mutex_leave(host->mutex);
             co->operation_timeout = operation_timeout;
             co->session_timeout = session_timeout;
             /* tells ZOOM to reconnect if necessary. Disabled becuase
@@ -455,6 +468,7 @@ int client_prep_connection(struct client *cl,
         }
         else
         {
+            yaz_mutex_leave(host->mutex);
             co = connection_create(cl, operation_timeout, session_timeout,
                                    iochan_man);
         }

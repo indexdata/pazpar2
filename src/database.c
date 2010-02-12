@@ -95,6 +95,7 @@ static struct host *create_host(const char *hostport, iochan_man_t iochan_man)
     host->hostport = xstrdup(hostport);
     host->connections = 0;
     host->ipport = 0;
+    host->mutex = 0;
 
     if (host_getaddrinfo(host, iochan_man))
     {
@@ -102,6 +103,8 @@ static struct host *create_host(const char *hostport, iochan_man_t iochan_man)
         xfree(host);
         return 0;
     }
+    yaz_mutex_create(&host->mutex);
+
     host->next = hosts;
     hosts = host;
     return host;

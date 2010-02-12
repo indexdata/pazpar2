@@ -26,6 +26,7 @@ struct host {
     char *ipport;
     struct connection *connections; // All connections to this
     struct host *next;
+    YAZ_MUTEX mutex;
 };
 
 
