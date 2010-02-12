@@ -848,7 +848,8 @@ static void show_records(struct http_channel *c, int active)
         if (ccount > 1)
             wrbuf_printf(c->wrbuf, "<count>%d</count>\n", ccount);
 	if (strstr(sort, "relevance"))
-	    wrbuf_printf(c->wrbuf, "<relevance>%d</relevance>\n", rec->relevance);
+	    wrbuf_printf(c->wrbuf, "<relevance>%d</relevance>\n",
+                         rec->relevance_score);
         wrbuf_puts(c->wrbuf, "<recid>");
         wrbuf_xmlputs(c->wrbuf, rec->recid);
         wrbuf_puts(c->wrbuf, "</recid>\n");

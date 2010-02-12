@@ -39,6 +39,7 @@ struct reclist
     struct reclist_bucket *sorted_ptr;
     struct reclist_bucket **last;
     NMEM nmem;
+    YAZ_MUTEX mutex;
 };
 
 static struct reclist_sortparms *qsort_sortparms = 0; /* thread pr */
@@ -133,7 +134,7 @@ static int reclist_cmp(const void *p1, const void *p2)
         switch (s->type)
         {
         case Metadata_sortkey_relevance:
-            res = r2->relevance - r1->relevance;
+            res = r2->relevance_score - r1->relevance_score;
             break;
         case Metadata_sortkey_string:
             s1 = ut1 ? ut1->text.sort : "";
@@ -172,10 +173,16 @@ static int reclist_cmp(const void *p1, const void *p2)
 
 void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
 {
+
     struct reclist_bucket **flatlist = xmalloc(sizeof(*flatlist) * l->num_records);
-    struct reclist_bucket *ptr = l->sorted_list;
-    struct reclist_bucket **prev = &l->sorted_list;
+    struct reclist_bucket *ptr;
+    struct reclist_bucket **prev;
     int i = 0;
+
+    reclist_enter(l);
+
+    ptr = l->sorted_list;
+    prev = &l->sorted_list;
     while (ptr)
     {
         flatlist[i] = ptr;
@@ -196,7 +203,7 @@ void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
 
     xfree(flatlist);
 
-    reclist_rewind(l);
+    reclist_leave(l);
 }
 
 struct record_cluster *reclist_read_record(struct reclist *l)
@@ -211,11 +218,21 @@ struct record_cluster *reclist_read_record(struct reclist *l)
         return 0;
 }
 
-void reclist_rewind(struct reclist *l)
+void reclist_enter(struct reclist *l)
 {
+    yaz_mutex_enter(l->mutex);
     if (l)
         l->sorted_ptr = l->sorted_list;
 }
+
+
+void reclist_leave(struct reclist *l)
+{
+    yaz_mutex_leave(l->mutex);
+    if (l)
+        l->sorted_ptr = l->sorted_list;
+}
+
 
 struct reclist *reclist_create(NMEM nmem)
 {
@@ -231,7 +248,14 @@ struct reclist *reclist_create(NMEM nmem)
     res->last = &res->sorted_list;
 
     res->num_records = 0;
+    res->mutex = 0;
+    yaz_mutex_create(&res->mutex);
     return res;
+}
+
+void reclist_destroy(struct reclist *l)
+{
+    yaz_mutex_destroy(&l->mutex);
 }
 
 int reclist_get_num_records(struct reclist *l)
@@ -259,6 +283,7 @@ struct record_cluster *reclist_insert( struct reclist *l,
 
     bucket = jenkins_hash((unsigned char*) merge_key) % l->hash_size;
 
+    yaz_mutex_enter(l->mutex);
     for (p = &l->hashtable[bucket]; *p; p = &(*p)->hnext)
     {
         // We found a matching record. Merge them
@@ -283,7 +308,7 @@ struct record_cluster *reclist_insert( struct reclist *l,
         new->hnext = 0;
         cluster->records = record;
         cluster->merge_key = merge_key;
-        cluster->relevance = 0;
+        cluster->relevance_score = 0;
         cluster->term_frequency_vec = 0;
         cluster->recid = merge_key;
         (*total)++;
@@ -308,9 +333,9 @@ struct record_cluster *reclist_insert( struct reclist *l,
 
         l->num_records++;
     }
+    yaz_mutex_leave(l->mutex);
     return cluster;
 }
-
 
 /*
  * Local variables:

@@ -186,7 +186,7 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
     int i;
     float *idfvec = xmalloc(rel->vec_len * sizeof(float));
 
-    reclist_rewind(reclist);
+    reclist_enter(reclist);
     // Calculate document frequency vector for each term.
     for (i = 1; i < rel->vec_len; i++)
     {
@@ -230,9 +230,9 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
 #endif
             relevance += 100000 * (termfreq * idfvec[t] + 0.0000005);  
         }
-        rec->relevance = relevance;
+        rec->relevance_score = relevance;
     }
-    reclist_rewind(reclist);
+    reclist_leave(reclist);
     xfree(idfvec);
 }
 

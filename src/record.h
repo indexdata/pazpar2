@@ -112,7 +112,7 @@ struct record_cluster
     struct record_metadata **metadata; 
     union data_types **sortkeys;
     char *merge_key;
-    int relevance;
+    int relevance_score;
     int *term_frequency_vec;
     int *term_frequency_vec_tmp;
     float *term_frequency_vecf;

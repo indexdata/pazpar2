@@ -613,6 +613,7 @@ void destroy_session(struct session *s)
     for (sdb = s->databases; sdb; sdb = sdb->next)
         session_database_destroy(sdb);
     normalize_cache_destroy(s->normalize_cache);
+    reclist_destroy(s->reclist);
     nmem_destroy(s->nmem);
     service_destroy(s->service);
     wrbuf_destroy(s->wrbuf);
@@ -708,7 +709,7 @@ struct record_cluster *show_single(struct session *s, const char *id,
 {
     struct record_cluster *r;
 
-    reclist_rewind(s->reclist);
+    reclist_enter(s->reclist);
     *prev_r = 0;
     *next_r = 0;
     while ((r = reclist_read_record(s->reclist)))
@@ -716,11 +717,12 @@ struct record_cluster *show_single(struct session *s, const char *id,
         if (!strcmp(r->recid, id))
         {
             *next_r = reclist_read_record(s->reclist);
-            return r;
+            break;
         }
         *prev_r = r;
     }
-    return 0;
+    reclist_leave(s->reclist);
+    return r;
 }
 
 struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, 
@@ -752,6 +754,7 @@ struct record_cluster **show(struct session *s, struct reclist_sortparms *sp,
             }
         reclist_sort(s->reclist, sp);
         
+        reclist_enter(s->reclist);
         *total = reclist_get_num_records(s->reclist);
         *sumhits = s->total_hits;
         
@@ -773,6 +776,7 @@ struct record_cluster **show(struct session *s, struct reclist_sortparms *sp,
             }
             recs[i] = r;
         }
+        reclist_leave(s->reclist);
     }
 #if USE_TIMING
     yaz_timing_stop(t);
