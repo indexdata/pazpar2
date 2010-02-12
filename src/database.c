@@ -63,7 +63,11 @@ struct database_criterion {
     struct database_criterion *next;
 };
 
-static struct host *hosts = 0;  /* thread pr */
+
+struct database_hosts {
+    struct host *hosts;
+    YAZ_MUTEX mutex;
+};
 
 static xmlDoc *get_explain_xml(struct conf_targetprofiles *targetprofiles,
                                const char *id)
@@ -105,18 +109,28 @@ static struct host *create_host(const char *hostport, iochan_man_t iochan_man)
     }
     yaz_mutex_create(&host->mutex);
 
-    host->next = hosts;
-    hosts = host;
     return host;
 }
 
-static struct host *find_host(const char *hostport, iochan_man_t iochan_man)
+static struct host *find_host(database_hosts_t hosts,
+                              const char *hostport, iochan_man_t iochan_man)
 {
     struct host *p;
-    for (p = hosts; p; p = p->next)
+    yaz_mutex_enter(hosts->mutex);
+    for (p = hosts->hosts; p; p = p->next)
         if (!strcmp(p->hostport, hostport))
-            return p;
-    return create_host(hostport, iochan_man);
+            break;
+    if (!p)
+    {
+        p = create_host(hostport, iochan_man);
+        if (p)
+        {
+            p->next = hosts->hosts;
+            hosts->hosts = p;
+        }
+    }
+    yaz_mutex_leave(hosts->mutex);
+    return p;
 }
 
 int resolve_database(struct conf_service *service, struct database *db)
@@ -129,7 +143,8 @@ int resolve_database(struct conf_service *service, struct database *db)
         strcpy(hostport, db->url);
         if ((p = strchr(hostport, '/')))
             *p = '\0';
-        if (!(host = find_host(hostport, service->server->iochan_man)))
+        if (!(host = find_host(service->server->database_hosts,
+                               hostport, service->server->iochan_man)))
             return -1;
         db->host = host;
     }
@@ -386,6 +401,15 @@ int predef_grep_databases(void *context, struct conf_service *service,
             i++;
         }
     return i;
+}
+
+database_hosts_t database_hosts_create(void)
+{
+    database_hosts_t p = xmalloc(sizeof(*p));
+    p->hosts = 0;
+    p->mutex = 0;
+    yaz_mutex_create(&p->mutex);
+    return p;
 }
 
 /*

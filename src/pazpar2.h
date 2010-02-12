@@ -27,7 +27,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "termlists.h"
 #include "reclists.h"
-#include "pazpar2_config.h"
 #include "http.h"
 
 struct record;

@@ -52,6 +52,7 @@ struct conf_config
     int no_threads;
     WRBUF confdir;
     iochan_man_t iochan_man;
+    database_hosts_t database_hosts;
 };
 
 
@@ -722,6 +723,7 @@ static struct conf_server *server_create(struct conf_config *config,
     server->server_settings = 0;
     server->http_server = 0;
     server->iochan_man = 0;
+    server->database_hosts = 0;
 
     if (server_id)
     {
@@ -1043,9 +1045,14 @@ void config_stop_listeners(struct conf_config *conf)
 void config_process_events(struct conf_config *conf)
 {
     struct conf_server *ser;
+    
+    conf->database_hosts = database_hosts_create();
     for (ser = conf->servers; ser; ser = ser->next)
     {
         struct conf_service *s = ser->service;
+
+        ser->database_hosts = conf->database_hosts;
+
         for (;s ; s = s->next)
         {
             resolve_databases(s);
