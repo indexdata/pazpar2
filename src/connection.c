@@ -55,8 +55,6 @@ struct connection {
     ZOOM_connection link;
     struct host *host;
     struct client *client;
-    char *ibuf;
-    int ibufsize;
     char *zproxy;
     enum {
         Conn_Resolving,
@@ -146,8 +144,6 @@ static struct connection *connection_create(struct client *cl,
     else
     {
         new = xmalloc(sizeof (struct connection));
-        new->ibuf = 0;
-        new->ibufsize = 0;
     }
     new->host = host;
     new->next = new->host->connections;
