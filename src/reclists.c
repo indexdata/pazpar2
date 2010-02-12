@@ -42,13 +42,12 @@ struct reclist
     YAZ_MUTEX mutex;
 };
 
-static struct reclist_sortparms *qsort_sortparms = 0; /* thread pr */
-
 struct reclist_bucket
 {
     struct record_cluster *record;
     struct reclist_bucket *hnext;
     struct reclist_bucket *snext;
+    struct reclist_sortparms *sort_parms;
 };
 
 struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
@@ -121,12 +120,14 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
 
 static int reclist_cmp(const void *p1, const void *p2)
 {
+    struct reclist_sortparms *sortparms = 
+        (*(struct reclist_bucket **) p1)->sort_parms;
     struct record_cluster *r1 = (*(struct reclist_bucket**) p1)->record;
     struct record_cluster *r2 = (*(struct reclist_bucket**) p2)->record;
     struct reclist_sortparms *s;
     int res = 0;
 
-    for (s = qsort_sortparms; s && res == 0; s = s->next)
+    for (s = sortparms; s && res == 0; s = s->next)
     {
         union data_types *ut1 = r1->sortkeys[s->offset];
         union data_types *ut2 = r2->sortkeys[s->offset];
@@ -173,7 +174,6 @@ static int reclist_cmp(const void *p1, const void *p2)
 
 void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
 {
-
     struct reclist_bucket **flatlist = xmalloc(sizeof(*flatlist) * l->num_records);
     struct reclist_bucket *ptr;
     struct reclist_bucket **prev;
@@ -185,13 +185,13 @@ void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
     prev = &l->sorted_list;
     while (ptr)
     {
+        ptr->sort_parms = parms;
         flatlist[i] = ptr;
         ptr = ptr->snext;
         i++;
     }
     assert(i == l->num_records);
 
-    qsort_sortparms = parms;
     qsort(flatlist, l->num_records, sizeof(*flatlist), reclist_cmp);
     for (i = 0; i < l->num_records; i++)
     {
