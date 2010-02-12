@@ -104,8 +104,6 @@ static const char *client_states[] = {
     "Client_Disconnected"
 };
 
-static struct client *client_freelist = 0; /* thread pr */
-
 const char *client_get_state_str(struct client *cl)
 {
     return client_states[cl->state];
@@ -562,14 +560,7 @@ void client_start_search(struct client *cl)
 
 struct client *client_create(void)
 {
-    struct client *r;
-    if (client_freelist)
-    {
-        r = client_freelist;
-        client_freelist = client_freelist->next;
-    }
-    else
-        r = xmalloc(sizeof(struct client));
+    struct client *r = xmalloc(sizeof(*r));
     r->maxrecs = 100;
     r->startrecs = 0;
     r->pquery = 0;
@@ -607,9 +598,7 @@ void client_destroy(struct client *c)
         connection_release(c->connection);
 
     ZOOM_resultset_destroy(c->resultset);
-    c->resultset = 0;
-    c->next = client_freelist;
-    client_freelist = c;
+    xfree(c);
 }
 
 void client_set_connection(struct client *cl, struct connection *con)
