@@ -68,9 +68,9 @@ struct connection {
     struct connection *next; // next for same host or next in free list
 };
 
-static struct connection *connection_freelist = 0;
+static struct connection *connection_freelist = 0; /* thread pr */
 
-static int connection_connect(struct connection *con);
+static int connection_connect(struct connection *con, iochan_man_t iochan_man);
 
 static int connection_is_idle(struct connection *co)
 {
@@ -135,7 +135,8 @@ void connection_destroy(struct connection *co)
 // client's database
 static struct connection *connection_create(struct client *cl,
                                             int operation_timeout,
-                                            int session_timeout)
+                                            int session_timeout,
+                                            iochan_man_t iochan_man)
 {
     struct connection *new;
     struct host *host = client_get_host(cl);
@@ -159,7 +160,7 @@ static struct connection *connection_create(struct client *cl,
     new->operation_timeout = operation_timeout;
     new->session_timeout = session_timeout;
     if (host->ipport)
-        connection_connect(new);
+        connection_connect(new, iochan_man);
     return new;
 }
 
@@ -278,7 +279,7 @@ void connection_release(struct connection *co)
     co->client = 0;
 }
 
-void connect_resolver_host(struct host *host)
+void connect_resolver_host(struct host *host, iochan_man_t iochan_man)
 {
     struct connection *con = host->connections;
     while (con)
@@ -301,7 +302,7 @@ void connect_resolver_host(struct host *host)
             }
             else
             {
-                connection_connect(con);
+                connection_connect(con, iochan_man);
                 client_start_search(con->client);
             }
         }
@@ -340,7 +341,7 @@ static int maskfun(IOCHAN c)
     return ZOOM_connection_get_mask(co->link);
 }
 
-static int connection_connect(struct connection *con)
+static int connection_connect(struct connection *con, iochan_man_t iochan_man)
 {
     ZOOM_connection link = 0;
     struct host *host = connection_get_host(con);
@@ -404,7 +405,7 @@ static int connection_connect(struct connection *con)
     iochan_setdata(con->iochan, con);
     iochan_setsocketfun(con->iochan, socketfun);
     iochan_setmaskfun(con->iochan, maskfun);
-    pazpar2_add_channel(con->iochan);
+    iochan_add(iochan_man, con->iochan);
 
     /* this fragment is bad DRY: from client_prep_connection */
     client_set_state(con->client, Client_Connecting);
@@ -419,7 +420,8 @@ const char *connection_get_url(struct connection *co)
 
 // Ensure that client has a connection associated
 int client_prep_connection(struct client *cl,
-                           int operation_timeout, int session_timeout)
+                           int operation_timeout, int session_timeout,
+                           iochan_man_t iochan_man)
 {
     struct connection *co;
     struct session *se = client_get_session(cl);
@@ -466,7 +468,8 @@ int client_prep_connection(struct client *cl,
         }
         else
         {
-            co = connection_create(cl, operation_timeout, session_timeout);
+            co = connection_create(cl, operation_timeout, session_timeout,
+                                   iochan_man);
         }
     }
 

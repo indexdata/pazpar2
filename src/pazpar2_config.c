@@ -48,8 +48,10 @@ struct conf_config
 {
     NMEM nmem; /* for conf_config and servers memory */
     struct conf_server *servers;
+    
     int no_threads;
     WRBUF confdir;
+    iochan_man_t iochan_man;
 };
 
 
@@ -719,6 +721,7 @@ static struct conf_server *server_create(struct conf_config *config,
     server->mergekey_pct = 0;
     server->server_settings = 0;
     server->http_server = 0;
+    server->iochan_man = 0;
 
     if (server_id)
     {
@@ -956,6 +959,7 @@ struct conf_config *config_create(const char *fname, int verbose)
     config->nmem = nmem;
     config->servers = 0;
     config->no_threads = 0;
+    config->iochan_man = 0;
 
     config->confdir = wrbuf_alloc();
     if ((p = strrchr(fname, 
@@ -1036,7 +1040,7 @@ void config_stop_listeners(struct conf_config *conf)
         http_close_server(ser);
 }
 
-void config_start_databases(struct conf_config *conf)
+void config_process_events(struct conf_config *conf)
 {
     struct conf_server *ser;
     for (ser = conf->servers; ser; ser = ser->next)
@@ -1050,17 +1054,21 @@ void config_start_databases(struct conf_config *conf)
         }
         http_mutex_init(ser);
     }
+    iochan_man_events(conf->iochan_man);    
 }
 
 int config_start_listeners(struct conf_config *conf,
                            const char *listener_override)
 {
     struct conf_server *ser;
-    pazpar2_chan_man_start(conf->no_threads);
+
+    conf->iochan_man = iochan_man_create(conf->no_threads);
     for (ser = conf->servers; ser; ser = ser->next)
     {
         WRBUF w = wrbuf_alloc();
         int r;
+
+        ser->iochan_man = conf->iochan_man;
         if (listener_override)
         {
             wrbuf_puts(w, listener_override);

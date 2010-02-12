@@ -145,6 +145,7 @@ struct conf_server
     struct conf_server *next;
     struct conf_config *config;
     http_server_t http_server;
+    iochan_man_t iochan_man;
 };
 
 struct conf_targetprofiles
@@ -157,7 +158,7 @@ struct conf_targetprofiles
 
 struct conf_config *config_create(const char *fname, int verbose);
 void config_destroy(struct conf_config *config);
-void config_start_databases(struct conf_config *config);
+void config_process_events(struct conf_config *config);
 
 struct conf_service *locate_service(struct conf_server *server,
                                     const char *service_id);

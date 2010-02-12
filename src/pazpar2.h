@@ -162,10 +162,7 @@ int session_active_clients(struct session *s);
 void session_apply_setting(struct session *se, char *dbname, char *setting, char *value);
 const char *session_setting_oneval(struct session_database *db, int offset);
 
-void pazpar2_add_channel(IOCHAN c);
-void pazpar2_event_loop(void);
-
-int host_getaddrinfo(struct host *host);
+int host_getaddrinfo(struct host *host, iochan_man_t iochan_man);
 
 struct record *ingest_record(struct client *cl, const char *rec,
                              int record_no);

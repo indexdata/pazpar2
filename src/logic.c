@@ -491,7 +491,8 @@ enum pazpar2_error_code search(struct session *se,
         {
             no_working++;
             if (client_prep_connection(cl, se->service->z3950_operation_timeout,
-                                       se->service->z3950_session_timeout))
+                                       se->service->z3950_session_timeout,
+                                       se->service->server->iochan_man))
                 client_start_search(cl);
         }
     }
@@ -552,7 +553,7 @@ static struct session_database *load_session_database(struct session *se,
 {
     struct database *db = new_database(id, se->session_nmem);
 
-    resolve_database(db);
+    resolve_database(se->service, db);
 
     session_init_databases_fun((void*) se, db);
 
@@ -808,27 +809,6 @@ void statistics(struct session *se, struct statistics *stat)
     stat->num_records = se->total_records;
 
     stat->num_clients = count;
-}
-
-
-// Master list of connections we're handling events to
-static iochan_man_t pazpar2_chan_man = 0; /* thread pr */
-
-void pazpar2_chan_man_start(int no_threads)
-{
-    pazpar2_chan_man = iochan_man_create(no_threads);
-}
-
-void pazpar2_add_channel(IOCHAN chan)
-{
-    assert(pazpar2_chan_man);
-    iochan_add(pazpar2_chan_man, chan);
-}
-
-void pazpar2_event_loop()
-{
-    assert(pazpar2_chan_man);
-    iochan_man_events(pazpar2_chan_man);
 }
 
 static struct record_metadata *record_metadata_init(

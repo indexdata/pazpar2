@@ -64,6 +64,7 @@ struct work {
     char *hostport;  /* hostport to be resolved in separate thread */
     char *ipport;    /* result or NULL if it could not be resolved */
     struct host *host; /* host that we're dealing with - mother thread */
+    iochan_man_t iochan_man; /* iochan manager */
 };
 
 static int log_level = YLOG_LOG;
@@ -158,14 +159,14 @@ void iochan_handler(struct iochan *i, int event)
     {
         struct work *w = sel_thread_result(p);
         w->host->ipport = w->ipport;
-        connect_resolver_host(w->host);
+        connect_resolver_host(w->host, w->iochan_man);
         xfree(w);
     }
 }
 
 static sel_thread_t resolver_thread = 0;
 
-static void getaddrinfo_start(void)
+static void getaddrinfo_start(iochan_man_t iochan_man)
 {
     int fd;
     sel_thread_t p = resolver_thread = 
@@ -180,14 +181,14 @@ static void getaddrinfo_start(void)
     {
         IOCHAN chan = iochan_create(fd, iochan_handler, EVENT_INPUT);
         iochan_setdata(chan, p);
-        pazpar2_add_channel(chan);
+        iochan_add(iochan_man, chan);
     }
     yaz_log(log_level, "resolver start");
     resolver_thread = p;
 }
 #endif
 
-int host_getaddrinfo(struct host *host)
+int host_getaddrinfo(struct host *host, iochan_man_t iochan_man)
 {
     struct work *w = xmalloc(sizeof(*w));
     int use_thread = 1; /* =0 to disable threading entirely */
@@ -195,11 +196,12 @@ int host_getaddrinfo(struct host *host)
     w->hostport = host->hostport;
     w->ipport = 0;
     w->host = host;
+    w->iochan_man = iochan_man;
 #if USE_THREADED_RESOLVER
     if (use_thread)
     {
         if (resolver_thread == 0)
-            getaddrinfo_start();
+            getaddrinfo_start(iochan_man);
         assert(resolver_thread);
         sel_thread_add(resolver_thread, w);
         return 0;

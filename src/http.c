@@ -799,7 +799,8 @@ static int http_proxy(struct http_request *rq)
         // We will add EVENT_OUTPUT below
         p->iochan = iochan_create(sock, proxy_io, EVENT_INPUT);
         iochan_setdata(p->iochan, p);
-        pazpar2_add_channel(p->iochan);
+
+        iochan_add(ser->iochan_man, p->iochan);
     }
 
     // Do _not_ modify Host: header, just checking it's existence
@@ -1175,8 +1176,7 @@ static void http_accept(IOCHAN i, int event)
                              server);
     ch->iochan = c;
     iochan_setdata(c, ch);
-
-    pazpar2_add_channel(c);
+    iochan_add(server->iochan_man, c);
 }
 
 /* Create a http-channel listener, syntax [host:]port */
@@ -1247,7 +1247,8 @@ int http_init(const char *addr, struct conf_server *server)
 
     c = iochan_create(l, http_accept, EVENT_INPUT | EVENT_EXCEPT);
     iochan_setdata(c, server);
-    pazpar2_add_channel(c);
+
+    iochan_add(server->iochan_man, c);
     return 0;
 }
 

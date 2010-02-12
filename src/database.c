@@ -87,7 +87,7 @@ static xmlDoc *get_explain_xml(struct conf_targetprofiles *targetprofiles,
 }
 
 // Create a new host structure for hostport
-static struct host *create_host(const char *hostport)
+static struct host *create_host(const char *hostport, iochan_man_t iochan_man)
 {
     struct host *host;
 
@@ -96,7 +96,7 @@ static struct host *create_host(const char *hostport)
     host->connections = 0;
     host->ipport = 0;
 
-    if (host_getaddrinfo(host))
+    if (host_getaddrinfo(host, iochan_man))
     {
         xfree(host->hostport);
         xfree(host);
@@ -107,16 +107,16 @@ static struct host *create_host(const char *hostport)
     return host;
 }
 
-static struct host *find_host(const char *hostport)
+static struct host *find_host(const char *hostport, iochan_man_t iochan_man)
 {
     struct host *p;
     for (p = hosts; p; p = p->next)
         if (!strcmp(p->hostport, hostport))
             return p;
-    return create_host(hostport);
+    return create_host(hostport, iochan_man);
 }
 
-int resolve_database(struct database *db)
+int resolve_database(struct conf_service *service, struct database *db)
 {
     if (db->host == 0)
     {
@@ -126,7 +126,7 @@ int resolve_database(struct database *db)
         strcpy(hostport, db->url);
         if ((p = strchr(hostport, '/')))
             *p = '\0';
-        if (!(host = find_host(hostport)))
+        if (!(host = find_host(hostport, service->server->iochan_man)))
             return -1;
         db->host = host;
     }
@@ -137,7 +137,7 @@ void resolve_databases(struct conf_service *service)
 {
     struct database *db = service->databases;
     for (; db; db = db->next)
-        resolve_database(db);
+        resolve_database(service, db);
 }
 
 struct database *new_database(const char *id, NMEM nmem)

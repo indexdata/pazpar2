@@ -72,7 +72,8 @@ void client_destroy(struct client *c);
 void client_set_connection(struct client *cl, struct connection *con);
 void client_disconnect(struct client *cl);
 int client_prep_connection(struct client *cl,
-                           int operation_timeout, int session_timeout);
+                           int operation_timeout, int session_timeout,
+                           iochan_man_t iochan);
 void client_start_search(struct client *cl);
 void client_set_session(struct client *cl, struct session *se);
 int client_is_active(struct client *cl);

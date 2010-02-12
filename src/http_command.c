@@ -116,7 +116,7 @@ struct http_session *http_session_create(struct conf_service *service,
     iochan_setdata(r->timeout_iochan, r);
     iochan_settimeout(r->timeout_iochan, service->session_timeout);
 
-    pazpar2_add_channel(r->timeout_iochan);
+    iochan_add(service->server->iochan_man, r->timeout_iochan);
     return r;
 }
 

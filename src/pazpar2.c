@@ -40,9 +40,7 @@ void child_handler(void *data)
 {
     struct conf_config *config = (struct conf_config *) data;
 
-    config_start_databases(config);
-
-    pazpar2_event_loop();
+    config_process_events(config);
 
     config_destroy(config);
 }
