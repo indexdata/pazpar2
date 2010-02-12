@@ -66,8 +66,6 @@ struct connection {
     struct connection *next; // next for same host or next in free list
 };
 
-static struct connection *connection_freelist = 0; /* thread pr */
-
 static int connection_connect(struct connection *con, iochan_man_t iochan_man);
 
 static int connection_is_idle(struct connection *co)
@@ -124,9 +122,7 @@ void connection_destroy(struct connection *co)
         client_disconnect(co->client);
     }
     xfree(co->zproxy);
-    co->zproxy = 0;
-    co->next = connection_freelist;
-    connection_freelist = co;
+    xfree(co);
 }
 
 // Creates a new connection for client, associated with the host of 
@@ -139,12 +135,7 @@ static struct connection *connection_create(struct client *cl,
     struct connection *new;
     struct host *host = client_get_host(cl);
 
-    if ((new = connection_freelist))
-        connection_freelist = new->next;
-    else
-    {
-        new = xmalloc(sizeof (struct connection));
-    }
+    new = xmalloc(sizeof(*new));
     new->host = host;
     new->next = new->host->connections;
     new->host->connections = new;
