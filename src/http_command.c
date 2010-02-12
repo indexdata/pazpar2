@@ -51,11 +51,9 @@ struct http_session {
     unsigned int session_id;
     int timestamp;
     NMEM nmem;
+    http_sessions_t http_sessions;
     struct http_session *next;
 };
-
-static struct http_session *session_list = 0; /* thread pr */
-
 
 struct http_sessions {
     struct http_session *session_list;
@@ -75,8 +73,16 @@ void http_sessions_destroy(http_sessions_t hs)
 {
     if (hs)
     {
+        struct http_session *s = hs->session_list;
+        while (s)
+        {
+            struct http_session *s_next = s->next;
+            iochan_destroy(s->timeout_iochan);
+            destroy_session(s->psession);
+            nmem_destroy(s->nmem);
+            s = s_next;
+        }
         yaz_mutex_destroy(&hs->mutex);
-        /* should remove session_list too */
         xfree(hs);
     }
 }
@@ -89,7 +95,8 @@ static void session_timeout(IOCHAN i, int event)
     http_session_destroy(s);
 }
 
-struct http_session *http_session_create(struct conf_service *service)
+struct http_session *http_session_create(struct conf_service *service,
+                                         http_sessions_t http_sessions)
 {
     NMEM nmem = nmem_create();
     struct http_session *r = nmem_malloc(nmem, sizeof(*r));
@@ -98,8 +105,13 @@ struct http_session *http_session_create(struct conf_service *service)
     r->session_id = 0;
     r->timestamp = 0;
     r->nmem = nmem;
-    r->next = session_list;
-    session_list = r;
+    r->http_sessions = http_sessions;
+
+    yaz_mutex_enter(http_sessions->mutex);
+    r->next = http_sessions->session_list;
+    http_sessions->session_list = r;
+    yaz_mutex_leave(http_sessions->mutex);
+
     r->timeout_iochan = iochan_create(-1, session_timeout, 0);
     iochan_setdata(r->timeout_iochan, r);
     iochan_settimeout(r->timeout_iochan, service->session_timeout);
@@ -112,12 +124,16 @@ void http_session_destroy(struct http_session *s)
 {
     struct http_session **p;
 
-    for (p = &session_list; *p; p = &(*p)->next)
+    http_sessions_t http_sessions = s->http_sessions;
+
+    yaz_mutex_enter(http_sessions->mutex);
+    for (p = &http_sessions->session_list; *p; p = &(*p)->next)
         if (*p == s)
         {
             *p = (*p)->next;
             break;
         }
+    yaz_mutex_leave(http_sessions->mutex);
     yaz_log(YLOG_LOG, "Destroying session %u", s->session_id);
     iochan_destroy(s->timeout_iochan);
     destroy_session(s->psession);
@@ -210,10 +226,13 @@ unsigned int make_sessionid(void)
     return res;
 }
 
-static struct http_session *locate_session(struct http_request *rq, struct http_response *rs)
+static struct http_session *locate_session(struct http_channel *c)
 {
+    struct http_response *rs = c->response;
+    struct http_request *rq = c->request;
     struct http_session *p;
     const char *session = http_argbyname(rq, "session");
+    http_sessions_t http_sessions = c->http_sessions;
     unsigned int id;
 
     if (!session)
@@ -222,14 +241,16 @@ static struct http_session *locate_session(struct http_request *rq, struct http_
         return 0;
     }
     id = atoi(session);
-    for (p = session_list; p; p = p->next)
+    yaz_mutex_enter(http_sessions->mutex);
+    for (p = http_sessions->session_list; p; p = p->next)
         if (id == p->session_id)
-        {
-            iochan_activity(p->timeout_iochan);
-            return p;
-        }
-    error(rs, PAZPAR2_NO_SESSION, session);
-    return 0;
+            break;
+    yaz_mutex_leave(http_sessions->mutex);
+    if (p)
+        iochan_activity(p->timeout_iochan);
+    else
+        error(rs, PAZPAR2_NO_SESSION, session);
+    return p;
 }
 
 // Decode settings parameters and apply to session
@@ -309,7 +330,7 @@ static void cmd_init(struct http_channel *c)
             return;
         }
     }
-    s = http_session_create(service);
+    s = http_session_create(service, c->http_sessions);
     
     yaz_log(YLOG_DEBUG, "HTTP Session init");
     if (!clear || *clear == '0')
@@ -349,7 +370,7 @@ static void cmd_settings(struct http_channel *c)
 {
     struct http_response *rs = c->response;
     struct http_request *rq = c->request;
-    struct http_session *s = locate_session(rq, rs);
+    struct http_session *s = locate_session(c);
     const char *content_type = http_lookup_header(rq->headers, "Content-Type");
 
     if (!s)
@@ -429,7 +450,7 @@ static void cmd_termlist(struct http_channel *c)
 {
     struct http_response *rs = c->response;
     struct http_request *rq = c->request;
-    struct http_session *s = locate_session(rq, rs);
+    struct http_session *s = locate_session(c);
     struct termlist_score **p;
     int len;
     int i;
@@ -504,7 +525,7 @@ static void cmd_bytarget(struct http_channel *c)
 {
     struct http_response *rs = c->response;
     struct http_request *rq = c->request;
-    struct http_session *s = locate_session(rq, rs);
+    struct http_session *s = locate_session(c);
     struct hitsbytarget *ht;
     const char *settings = http_argbyname(rq, "settings");
     int count, i;
@@ -664,7 +685,7 @@ static void cmd_record(struct http_channel *c)
 {
     struct http_response *rs = c->response;
     struct http_request *rq = c->request;
-    struct http_session *s = locate_session(rq, rs);
+    struct http_session *s = locate_session(c);
     struct record_cluster *rec, *prev_r, *next_r;
     struct record *r;
     struct conf_service *service;
@@ -772,7 +793,7 @@ static void show_records(struct http_channel *c, int active)
 {
     struct http_request *rq = c->request;
     struct http_response *rs = c->response;
-    struct http_session *s = locate_session(rq, rs);
+    struct http_session *s = locate_session(c);
     struct record_cluster **rl;
     struct reclist_sortparms *sp;
     const char *start = http_argbyname(rq, "start");
@@ -849,8 +870,7 @@ static void show_records_ready(void *data)
 static void cmd_show(struct http_channel *c)
 {
     struct http_request *rq = c->request;
-    struct http_response *rs = c->response;
-    struct http_session *s = locate_session(rq, rs);
+    struct http_session *s = locate_session(c);
     const char *block = http_argbyname(rq, "block");
     int status;
 
@@ -878,9 +898,8 @@ static void cmd_show(struct http_channel *c)
 
 static void cmd_ping(struct http_channel *c)
 {
-    struct http_request *rq = c->request;
     struct http_response *rs = c->response;
-    struct http_session *s = locate_session(rq, rs);
+    struct http_session *s = locate_session(c);
     if (!s)
         return;
     rs->payload = HTTP_COMMAND_RESPONSE_PREFIX "<ping><status>OK</status></ping>";
@@ -916,7 +935,7 @@ static void cmd_search(struct http_channel *c)
 {
     struct http_request *rq = c->request;
     struct http_response *rs = c->response;
-    struct http_session *s = locate_session(rq, rs);
+    struct http_session *s = locate_session(c);
     const char *query = http_argbyname(rq, "query");
     const char *filter = http_argbyname(rq, "filter");
     const char *maxrecs = http_argbyname(rq, "maxrecs");
@@ -949,9 +968,8 @@ static void cmd_search(struct http_channel *c)
 
 static void cmd_stat(struct http_channel *c)
 {
-    struct http_request *rq = c->request;
     struct http_response *rs = c->response;
-    struct http_session *s = locate_session(rq, rs);
+    struct http_session *s = locate_session(c);
     struct statistics stat;
     int clients;
 

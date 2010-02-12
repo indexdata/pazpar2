@@ -1129,6 +1129,7 @@ static struct http_channel *http_channel_create(http_server_t hs,
     http_server_incref(hs);
     r->http_server = hs;
     r->http_sessions = hs->http_sessions;
+    assert(r->http_sessions);
     r->server = server;
     r->proxy = 0;
     r->iochan = 0;
