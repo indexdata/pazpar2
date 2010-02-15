@@ -36,10 +36,10 @@ struct reclist_sortparms
 
 struct reclist *reclist_create(NMEM);
 void reclist_destroy(struct reclist *l);
-struct record_cluster *reclist_insert( struct reclist *tl,
-                                       struct conf_service *service,
-                                       struct record  *record,
-                                       char *merge_key, int *total);
+struct record_cluster *reclist_insert(struct reclist *tl,
+                                      struct conf_service *service,
+                                      struct record  *record,
+                                      const char *merge_key, int *total);
 void reclist_sort(struct reclist *l, struct reclist_sortparms *parms);
 struct record_cluster *reclist_read_record(struct reclist *l);
 void reclist_enter(struct reclist *l);

@@ -702,7 +702,7 @@ static void cmd_record(struct http_channel *c)
         return;
     }
     wrbuf_rewind(c->wrbuf);
-    if (!(rec = show_single(s->psession, idstr, &prev_r, &next_r)))
+    if (!(rec = show_single_start(s->psession, idstr, &prev_r, &next_r)))
     {
         if (session_active_clients(s->psession) == 0)
         {
@@ -732,7 +732,6 @@ static void cmd_record(struct http_channel *c)
         if (!r)
         {
             error(rs, PAZPAR2_RECORD_FAIL, "no record at offset given");
-            return;
         }
         else
         {
@@ -780,6 +779,7 @@ static void cmd_record(struct http_channel *c)
         rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
         http_send_response(c);
     }
+    show_single_stop(s->psession, rec);
 }
 
 static void cmd_record_ready(void *data)
@@ -824,7 +824,8 @@ static void show_records(struct http_channel *c, int active)
         return;
     }
 
-    rl = show(s->psession, sp, startn, &numn, &total, &total_hits, c->nmem);
+    
+    rl = show_range_start(s->psession, sp, startn, &numn, &total, &total_hits);
 
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<show>\n<status>OK</status>\n");
@@ -855,6 +856,8 @@ static void show_records(struct http_channel *c, int active)
         wrbuf_puts(c->wrbuf, "</recid>\n");
         wrbuf_puts(c->wrbuf, "</hit>\n");
     }
+
+    show_range_stop(s->psession, rl);
 
     wrbuf_puts(c->wrbuf, "</show>\n");
     rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));

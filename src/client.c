@@ -455,13 +455,14 @@ void client_record_response(struct client *cl)
                 else
                 {
                     struct session_database *sdb = client_get_database(cl);
+                    NMEM nmem = nmem_create();
                     const char *xmlrec;
                     char type[80];
                     if (nativesyntax_to_type(sdb, type, rec))
                         yaz_log(YLOG_WARN, "Failed to determine record type");
                     if ((xmlrec = ZOOM_record_get(rec, type, NULL)))
                     {
-                        if (ingest_record(cl, xmlrec, cl->record_offset))
+                        if (!ingest_record(cl, xmlrec, cl->record_offset, nmem))
                         {
                             session_alert_watch(cl->session, SESSION_WATCH_SHOW);
                             session_alert_watch(cl->session, SESSION_WATCH_RECORD);
@@ -471,6 +472,7 @@ void client_record_response(struct client *cl)
                     }
                     else
                         yaz_log(YLOG_WARN, "Failed to extract ZOOM record");
+                    nmem_destroy(nmem);
                 }
 
             }

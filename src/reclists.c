@@ -255,7 +255,8 @@ struct reclist *reclist_create(NMEM nmem)
 
 void reclist_destroy(struct reclist *l)
 {
-    yaz_mutex_destroy(&l->mutex);
+    if (l)
+        yaz_mutex_destroy(&l->mutex);
 }
 
 int reclist_get_num_records(struct reclist *l)
@@ -266,10 +267,10 @@ int reclist_get_num_records(struct reclist *l)
 }
 
 // Insert a record. Return record cluster (newly formed or pre-existing)
-struct record_cluster *reclist_insert( struct reclist *l,
-                                       struct conf_service *service, 
-                                       struct record  *record,
-                                       char *merge_key, int *total)
+struct record_cluster *reclist_insert(struct reclist *l,
+                                      struct conf_service *service, 
+                                      struct record *record,
+                                      const char *merge_key, int *total)
 {
     unsigned int bucket;
     struct reclist_bucket **p;
@@ -307,10 +308,10 @@ struct record_cluster *reclist_insert( struct reclist *l,
         new->record = cluster;
         new->hnext = 0;
         cluster->records = record;
-        cluster->merge_key = merge_key;
+        cluster->merge_key = nmem_strdup(l->nmem, merge_key);
         cluster->relevance_score = 0;
         cluster->term_frequency_vec = 0;
-        cluster->recid = merge_key;
+        cluster->recid = nmem_strdup(l->nmem, merge_key);
         (*total)++;
         cluster->metadata =
             nmem_malloc(l->nmem,

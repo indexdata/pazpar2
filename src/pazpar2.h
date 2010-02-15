@@ -116,6 +116,7 @@ struct session {
     int number_of_warnings_unknown_elements;
     int number_of_warnings_unknown_metadata;
     normalize_cache_t normalize_cache;
+    YAZ_MUTEX mutex;
 };
 
 struct statistics {
@@ -150,11 +151,16 @@ void statistics(struct session *s, struct statistics *stat);
 enum pazpar2_error_code search(struct session *s, const char *query,
                                const char *startrecs, const char *maxrecs,
                                const char *filter, const char **addinfo);
-struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, int start,
-        int *num, int *total, Odr_int *sumhits, NMEM nmem_show);
-struct record_cluster *show_single(struct session *s, const char *id,
-                                   struct record_cluster **prev_r,
-                                   struct record_cluster **next_r);
+struct record_cluster **show_range_start(struct session *s,
+                                         struct reclist_sortparms *sp,
+                                         int start,
+                                         int *num, int *total, Odr_int *sumhits);
+void show_range_stop(struct session *s, struct record_cluster **recs);
+
+struct record_cluster *show_single_start(struct session *s, const char *id,
+                                         struct record_cluster **prev_r,
+                                         struct record_cluster **next_r);
+void show_single_stop(struct session *s, struct record_cluster *rec);
 struct termlist_score **termlist(struct session *s, const char *name, int *num);
 int session_set_watch(struct session *s, int what, session_watchfun fun, void *data, struct http_channel *c);
 int session_active_clients(struct session *s);
@@ -163,8 +169,7 @@ const char *session_setting_oneval(struct session_database *db, int offset);
 
 int host_getaddrinfo(struct host *host, iochan_man_t iochan_man);
 
-struct record *ingest_record(struct client *cl, const char *rec,
-                             int record_no);
+int ingest_record(struct client *cl, const char *rec, int record_no, NMEM nmem);
 void session_alert_watch(struct session *s, int what);
 void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num);
 

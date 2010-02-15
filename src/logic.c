@@ -98,6 +98,16 @@ static void log_xml_doc(xmlDoc *doc)
     xmlFree(result);
 }
 
+static void session_enter(struct session *s)
+{
+    yaz_mutex_enter(s->mutex);
+}
+
+static void session_leave(struct session *s)
+{
+    yaz_mutex_leave(s->mutex);
+}
+
 // Recursively traverse query structure to extract terms.
 void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
 {
@@ -123,7 +133,6 @@ void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
         break;
     }
 }
-
 
 
 static void add_facet(struct session *s, const char *type, const char *value)
@@ -178,9 +187,10 @@ static xmlDoc *record_to_xml(struct session_database *sdb, const char *rec)
 
 // Add static values from session database settings if applicable
 static void insert_settings_parameters(struct session_database *sdb,
-                                       struct session *se, char **parms)
+                                       struct conf_service *service,
+                                       char **parms,
+                                       NMEM nmem)
 {
-    struct conf_service *service = se->service;
     int i;
     int nparms = 0;
     int offset = 0;
@@ -198,7 +208,7 @@ static void insert_settings_parameters(struct session_database *sdb,
             {
                 char *buf;
                 int len = strlen(val);
-                buf = nmem_malloc(se->nmem, len + 3);
+                buf = nmem_malloc(nmem, len + 3);
                 buf[0] = '\'';
                 strcpy(buf + 1, val);
                 buf[len+1] = '\'';
@@ -239,8 +249,8 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc,
 }
 
 static xmlDoc *normalize_record(struct session_database *sdb,
-                                struct session *se,
-                                const char *rec)
+                                struct conf_service *service,
+                                const char *rec, NMEM nmem)
 {
     xmlDoc *rdoc = record_to_xml(sdb, rec);
 
@@ -248,7 +258,7 @@ static xmlDoc *normalize_record(struct session_database *sdb,
     {
         char *parms[MAX_XSLT_ARGS*2+1];
         
-        insert_settings_parameters(sdb, se, parms);
+        insert_settings_parameters(sdb, service, parms, nmem);
         
         if (normalize_record_transform(sdb->map, &rdoc, (const char **)parms))
         {
@@ -256,7 +266,7 @@ static xmlDoc *normalize_record(struct session_database *sdb,
         }
         else
         {
-            insert_settings_values(sdb, rdoc, se->service);
+            insert_settings_values(sdb, rdoc, service);
             
             if (global_parameters.dump_records)
             {
@@ -463,18 +473,21 @@ enum pazpar2_error_code search(struct session *se,
     yaz_log(YLOG_DEBUG, "Search");
 
     *addinfo = 0;
+    
+    session_enter(se);
     nmem_reset(se->nmem);
     se->relevance = 0;
     se->total_records = se->total_hits = se->total_merged = 0;
+    reclist_destroy(se->reclist);
     se->reclist = 0;
     se->num_termlists = 0;
     live_channels = select_targets(se, filter);
-    if (live_channels)
+    if (!live_channels)
     {
-        se->reclist = reclist_create(se->nmem);
-    }
-    else
+        session_leave(se);
         return PAZPAR2_NO_TARGETS;
+    }
+    se->reclist = reclist_create(se->nmem);
 
     for (cl = se->clients; cl; cl = client_next_in_session(cl))
     {
@@ -496,6 +509,7 @@ enum pazpar2_error_code search(struct session *se,
                 client_start_search(cl);
         }
     }
+    session_leave(se);
     if (no_working == 0)
     {
         if (no_failed > 0)
@@ -616,6 +630,7 @@ void destroy_session(struct session *s)
     reclist_destroy(s->reclist);
     nmem_destroy(s->nmem);
     service_destroy(s->service);
+    yaz_mutex_destroy(&s->mutex);
     wrbuf_destroy(s->wrbuf);
 }
 
@@ -645,6 +660,8 @@ struct session *new_session(NMEM nmem, struct conf_service *service)
         session->watchlist[i].fun = 0;
     }
     session->normalize_cache = normalize_cache_create();
+    session->mutex = 0;
+    yaz_mutex_create(&session->mutex);
 
     return session;
 }
@@ -655,6 +672,7 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
     struct client *cl;
     size_t sz = 0;
 
+    session_enter(se);
     for (cl = se->clients; cl; cl = client_next_in_session(cl))
         sz++;
 
@@ -677,17 +695,24 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
         res[*count].settings_xml = w;
         (*count)++;
     }
+    session_leave(se);
     return res;
 }
 
 struct termlist_score **termlist(struct session *s, const char *name, int *num)
 {
     int i;
+    struct termlist_score **tl = 0;
 
+    session_enter(s);
     for (i = 0; i < s->num_termlists; i++)
         if (!strcmp((const char *) s->termlists[i].name, name))
-            return termlist_highscore(s->termlists[i].termlist, num);
-    return 0;
+        {
+            tl = termlist_highscore(s->termlists[i].termlist, num);
+            break;
+        }
+    session_leave(s);
+    return tl;
 }
 
 #ifdef MISSING_HEADERS
@@ -703,12 +728,13 @@ void report_nmem_stats(void)
 }
 #endif
 
-struct record_cluster *show_single(struct session *s, const char *id,
-                                   struct record_cluster **prev_r,
-                                   struct record_cluster **next_r)
+struct record_cluster *show_single_start(struct session *s, const char *id,
+                                         struct record_cluster **prev_r,
+                                         struct record_cluster **next_r)
 {
     struct record_cluster *r;
 
+    session_enter(s);
     reclist_enter(s->reclist);
     *prev_r = 0;
     *next_r = 0;
@@ -722,14 +748,21 @@ struct record_cluster *show_single(struct session *s, const char *id,
         *prev_r = r;
     }
     reclist_leave(s->reclist);
+    if (!r)
+        session_leave(s);
     return r;
 }
 
-struct record_cluster **show(struct session *s, struct reclist_sortparms *sp, 
-                             int start, int *num, int *total, Odr_int *sumhits, 
-                             NMEM nmem_show)
+void show_single_stop(struct session *s, struct record_cluster *rec)
 {
-    struct record_cluster **recs = nmem_malloc(nmem_show, *num 
+    session_leave(s);
+}
+
+struct record_cluster **show_range_start(struct session *s,
+                                         struct reclist_sortparms *sp, 
+                                         int start, int *num, int *total, Odr_int *sumhits)
+{
+    struct record_cluster **recs = nmem_malloc(s->nmem, *num 
                                                * sizeof(struct record_cluster *));
     struct reclist_sortparms *spp;
     int i;
@@ -737,6 +770,7 @@ struct record_cluster **show(struct session *s, struct reclist_sortparms *sp,
     yaz_timing_t t = yaz_timing_create();
 #endif
 
+    session_enter(s);
     if (!s->relevance)
     {
         *num = 0;
@@ -786,6 +820,11 @@ struct record_cluster **show(struct session *s, struct reclist_sortparms *sp,
     yaz_timing_destroy(&t);
 #endif
     return recs;
+}
+
+void show_range_stop(struct session *s, struct record_cluster **recs)
+{
+    session_leave(s);
 }
 
 void statistics(struct session *se, struct statistics *stat)
@@ -1031,28 +1070,32 @@ static int check_record_filter(xmlNode *root, struct session_database *sdb)
 }
 
 
+static int ingest_to_cluster(struct client *cl,
+                             xmlDoc *xdoc,
+                             xmlNode *root,
+                             int record_no,
+                             const char *mergekey_norm);
+
 /** \brief ingest XML record
     \param cl client holds the result set for record
     \param rec record buffer (0 terminated)
     \param record_no record position (1, 2, ..)
-    \returns resulting record or NULL on failure
+    \retval 0 OK
+    \retval -1 failure
 */
-struct record *ingest_record(struct client *cl, const char *rec,
-                             int record_no)
+int ingest_record(struct client *cl, const char *rec,
+                  int record_no, NMEM nmem)
 {
     struct session_database *sdb = client_get_database(cl);
     struct session *se = client_get_session(cl);
-    xmlDoc *xdoc = normalize_record(sdb, se, rec);
-    xmlNode *root, *n;
-    struct record *record;
-    struct record_cluster *cluster;
-    const char *mergekey_norm;
-    xmlChar *type = 0;
-    xmlChar *value = 0;
     struct conf_service *service = se->service;
+    xmlDoc *xdoc = normalize_record(sdb, service, rec, nmem);
+    xmlNode *root;
+    const char *mergekey_norm;
+    int ret;
 
     if (!xdoc)
-        return 0;
+        return -1;
 
     root = xmlDocGetRootElement(xdoc);
 
@@ -1061,30 +1104,48 @@ struct record *ingest_record(struct client *cl, const char *rec,
         yaz_log(YLOG_WARN, "Filtered out record no %d from %s", record_no,
             sdb->database->url);
         xmlFreeDoc(xdoc);
-        return 0;
+        return -1;
     }
 
-    mergekey_norm = get_mergekey(xdoc, cl, record_no, service, se->nmem);
+    mergekey_norm = get_mergekey(xdoc, cl, record_no, service, nmem);
     if (!mergekey_norm)
     {
         yaz_log(YLOG_WARN, "Got no mergekey");
         xmlFreeDoc(xdoc);
-        return 0;
+        return -1;
     }
-    record = record_create(se->nmem, 
-                           service->num_metadata, service->num_sortkeys, cl,
-                           record_no);
+    session_enter(se);
+    ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
+    session_leave(se);
 
-    cluster = reclist_insert(se->reclist, 
-                             service, 
-                             record, (char *) mergekey_norm, 
-                             &se->total_merged);
+    xmlFreeDoc(xdoc);
+
+    return ret;
+}
+
+static int ingest_to_cluster(struct client *cl,
+                             xmlDoc *xdoc,
+                             xmlNode *root,
+                             int record_no,
+                             const char *mergekey_norm)
+{
+    xmlNode *n;
+    xmlChar *type = 0;
+    xmlChar *value = 0;
+    struct session_database *sdb = client_get_database(cl);
+    struct session *se = client_get_session(cl);
+    struct conf_service *service = se->service;
+    struct record *record = record_create(se->nmem, 
+                                          service->num_metadata,
+                                          service->num_sortkeys, cl,
+                                          record_no);
+    struct record_cluster *cluster = reclist_insert(se->reclist,
+                                                    service, 
+                                                    record,
+                                                    mergekey_norm,
+                                                    &se->total_merged);
     if (!cluster)
-    {
-        /* no room for record */
-        xmlFreeDoc(xdoc);
-        return 0;
-    }
+        return -1;
     if (global_parameters.dump_records)
         yaz_log(YLOG_LOG, "Cluster id %s from %s (#%d)", cluster->recid,
                 sdb->database->url, record_no);
@@ -1285,15 +1346,11 @@ struct record *ingest_record(struct client *cl, const char *rec,
     if (value)
         xmlFree(value);
 
-    xmlFreeDoc(xdoc);
-
     relevance_donerecord(se->relevance, cluster);
     se->total_records++;
 
-    return record;
+    return 0;
 }
-
-
 
 /*
  * Local variables:
