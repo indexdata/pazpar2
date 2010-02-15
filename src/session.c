@@ -17,7 +17,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-/** \file logic.c
+/** \file session.c
     \brief high-level logic; mostly user sessions and settings
 */
 
@@ -58,7 +58,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #include "parameters.h"
-#include "pazpar2.h"
+#include "session.h"
 #include "eventl.h"
 #include "http.h"
 #include "termlists.h"

@@ -63,7 +63,7 @@ typedef int socklen_t;
 #include <yaz/nmem.h>
 #include <yaz/mutex.h>
 
-#include "pazpar2.h"
+#include "session.h"
 #include "http.h"
 
 #define MAX_HTTP_HEADER 4096

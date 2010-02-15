@@ -58,7 +58,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/timing.h>
 #endif
 
-#include "pazpar2.h"
+#include "session.h"
 #include "parameters.h"
 #include "client.h"
 #include "connection.h"

@@ -27,9 +27,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <yaz/log.h>
+#include <yaz/nmem.h>
 
-#include "pazpar2.h"
+#include "session.h"
 #include "host.h"
+#include "pazpar2_config.h"
 #include "settings.h"
 #include "http.h"
 #include "zeerex.h"

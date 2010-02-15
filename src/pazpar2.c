@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <assert.h>
 
 #include "parameters.h"
-#include "pazpar2.h"
+#include "session.h"
 #include <yaz/daemon.h>
 #include <yaz/log.h>
 #include <yaz/options.h>

@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "eventl.h"
 #include "parameters.h"
-#include "pazpar2.h"
+#include "session.h"
 #include "http.h"
 #include "settings.h"
 #include "client.h"

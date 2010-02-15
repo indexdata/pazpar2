@@ -47,7 +47,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/nmem.h>
 #include <yaz/tcpip.h>
 
-#include "pazpar2.h"
+#include "session.h"
 #include "connection.h"
 #include "host.h"
 

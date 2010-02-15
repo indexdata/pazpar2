@@ -183,7 +183,7 @@ PAZPAR2_OBJS = \
    "$(OBJDIR)\http.obj" \
    "$(OBJDIR)\eventl.obj" \
    "$(OBJDIR)\http_command.obj" \
-   "$(OBJDIR)\logic.obj" \
+   "$(OBJDIR)\session.obj" \
    "$(OBJDIR)\record.obj" \
    "$(OBJDIR)\reclists.obj" \
    "$(OBJDIR)\relevance.obj" \

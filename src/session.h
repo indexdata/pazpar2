@@ -17,8 +17,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-#ifndef PAZPAR2_H
-#define PAZPAR2_H
+#ifndef PAZPAR2_SESSION_H
+#define PAZPAR2_SESSION_H
 
 #include <yaz/comstack.h>
 #include <yaz/pquery.h>
