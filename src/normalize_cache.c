@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <string.h>
 
 #include <yaz/yaz-util.h>
+#include <yaz/mutex.h>
 #include <yaz/nmem.h>
 
 #if HAVE_CONFIG_H
@@ -39,6 +40,7 @@ struct cached_item {
 struct normalize_cache_s {
     struct cached_item *items;
     NMEM nmem;
+    YAZ_MUTEX mutex;
 };
 
 normalize_cache_t normalize_cache_create(void)
@@ -47,6 +49,8 @@ normalize_cache_t normalize_cache_create(void)
     normalize_cache_t nc = nmem_malloc(nmem, sizeof(*nc));
     nc->nmem = nmem;
     nc->items = 0;
+    nc->mutex = 0;
+    yaz_mutex_create(&nc->mutex);
     return nc;
 }
 
@@ -55,20 +59,27 @@ normalize_record_t normalize_cache_get(normalize_cache_t nc,
                                        const char *spec)
 {
     normalize_record_t nt;
-    struct cached_item *ci = nc->items;
-    for (; ci; ci = ci->next)
-        if (!strcmp(spec, ci->spec))
-            return ci->nt;
+    struct cached_item *ci;
 
-    nt = normalize_record_create(service, spec);
-    if (nt)
+    yaz_mutex_enter(nc->mutex);
+    for (ci = nc->items; ci; ci = ci->next)
+        if (!strcmp(spec, ci->spec))
+            break;
+    if (ci)
+        nt = ci->nt;
+    else
     {
-        ci = nmem_malloc(nc->nmem, sizeof(*ci));
-        ci->next = nc->items;
-        nc->items = ci;
-        ci->nt = nt;
-        ci->spec = nmem_strdup(nc->nmem, spec);
+        nt = normalize_record_create(service, spec);
+        if (nt)
+        {
+            ci = nmem_malloc(nc->nmem, sizeof(*ci));
+            ci->next = nc->items;
+            nc->items = ci;
+            ci->nt = nt;
+            ci->spec = nmem_strdup(nc->nmem, spec);
+        }
     }
+    yaz_mutex_leave(nc->mutex);
     return nt;
 }
 
@@ -79,6 +90,7 @@ void normalize_cache_destroy(normalize_cache_t nc)
         struct cached_item *ci = nc->items;
         for (; ci; ci = ci->next)
             normalize_record_destroy(ci->nt);
+        yaz_mutex_destroy(&nc->mutex);
         nmem_destroy(nc->nmem);
     }
 }
