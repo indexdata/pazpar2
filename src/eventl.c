@@ -60,6 +60,7 @@ struct iochan_man_s {
     sel_thread_t sel_thread;
     int sel_fd;
     int no_threads;
+    int log_level;
 };
 
 iochan_man_t iochan_man_create(int no_threads)
@@ -69,6 +70,7 @@ iochan_man_t iochan_man_create(int no_threads)
     man->sel_thread = 0; /* can't create sel_thread yet because we may fork */
     man->sel_fd = -1;
     man->no_threads = no_threads;
+    man->log_level = YLOG_DEBUG;
     return man;
 }
 
@@ -123,7 +125,7 @@ static void run_fun(iochan_man_t man, IOCHAN p, int event)
         p->this_event = event;
         if (man->sel_thread)
         {
-            yaz_log(YLOG_LOG, "eventl: add fun chan=%p event=%d",
+            yaz_log(man->log_level, "eventl: add fun chan=%p event=%d",
                     p, event);
             p->thread_users++;
             sel_thread_add(man->sel_thread, p);
@@ -177,12 +179,12 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
         {
             if (man->sel_fd > max)
                 max = man->sel_fd;
-            yaz_log(YLOG_LOG, "select on sel fd=%d", man->sel_fd);
+            yaz_log(man->log_level, "select on sel fd=%d", man->sel_fd);
             FD_SET(man->sel_fd, &in);
         }
-        yaz_log(YLOG_LOG, "select begin");
+        yaz_log(man->log_level, "select begin");
         res = select(max + 1, &in, &out, &except, timeout);
-        yaz_log(YLOG_LOG, "select returned res=%d", res);
+        yaz_log(man->log_level, "select returned res=%d", res);
         if (res < 0)
 	{
 	    if (errno == EINTR)
@@ -199,11 +201,11 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
             {
                 IOCHAN chan;
 
-                yaz_log(YLOG_LOG, "eventl: sel input on sel_fd=%d",
+                yaz_log(man->log_level, "eventl: sel input on sel_fd=%d",
                         man->sel_fd);
                 while ((chan = sel_thread_result(man->sel_thread)))
                 {
-                    yaz_log(YLOG_LOG, "eventl: got thread result p=%p",
+                    yaz_log(man->log_level, "eventl: got thread result p=%p",
                             chan);
                     chan->thread_users--;
                 }
@@ -279,7 +281,7 @@ void iochan_man_events(iochan_man_t man)
     {
         man->sel_thread = sel_thread_create(
             work_handler, 0 /*work_destroy */, &man->sel_fd, man->no_threads);
-        yaz_log(YLOG_LOG, "iochan_man_events. Using %d threads",
+        yaz_log(man->log_level, "iochan_man_events. Using %d threads",
                 man->no_threads);
     }
     event_loop(man, &man->channel_list);
