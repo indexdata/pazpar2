@@ -395,17 +395,26 @@ int session_set_watch(struct session *s, int what,
                       session_watchfun fun, void *data,
                       struct http_channel *chan)
 {
+    int ret;
+    session_enter(s);
     if (s->watchlist[what].fun)
-        return -1;
-    s->watchlist[what].fun = fun;
-    s->watchlist[what].data = data;
-    s->watchlist[what].obs = http_add_observer(chan, &s->watchlist[what],
-                                               session_watch_cancel);
+        ret = -1;
+    else
+    {
+        
+        s->watchlist[what].fun = fun;
+        s->watchlist[what].data = data;
+        s->watchlist[what].obs = http_add_observer(chan, &s->watchlist[what],
+                                                   session_watch_cancel);
+        ret = 0;
+    }
+    session_leave(s);
     return 0;
 }
 
 void session_alert_watch(struct session *s, int what)
 {
+    session_enter(s);
     if (s->watchlist[what].fun)
     {
         /* our watch is no longer associated with http_channel */
@@ -422,8 +431,11 @@ void session_alert_watch(struct session *s, int what)
         s->watchlist[what].data = 0;
         s->watchlist[what].obs = 0;
 
+        session_leave(s);
         fun(data);
     }
+    else
+        session_leave(s);
 }
 
 //callback for grep_databases
