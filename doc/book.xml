@@ -35,7 +35,7 @@
     merging, relevance ranking, record sorting,
     and faceted results.
     It is middleware: it has no user interface of its own, but can be
-    configured and controlled by a REST-like web-service to provide
+    configured and controlled by an XML-over-HTTP web-service to provide
     metasearching functionality behind any user interface.
    </simpara>
    <simpara>
@@ -80,7 +80,7 @@
    Additional functionality such as
    user management and attractive displays are expected to be implemented by
    applications that use Pazpar2. Pazpar2 itself is user-interface independent.
-   Its functionality is exposed through a simple REST-style web-service API,
+   Its functionality is exposed through a simple XML RPC web-service API,
    designed to be easy to use from an AJAX-enabled browser, Flash
    animation, Java applet, etc., or from a higher-level server-side language
    like PHP, Perl or Java. Because session information can be shared between
