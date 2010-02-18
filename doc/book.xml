@@ -181,9 +181,9 @@
  <chapter id="installation">
   <title>Installation</title>
   <para>
-   The Pazpar2 package is very small. It includes documentation as well
+   The Pazpar2 package includes documentation as well
    as the Pazpar2 server. The package also includes a simple user
-   interface test1 which consists of a single HTML page and a single
+   interface called "test1", which consists of a single HTML page and a single
    JavaScript file to illustrate the use of Pazpar2.
   </para>
   <para>
@@ -223,28 +223,32 @@
   </para>
 
   <section id="installation.unix">
-   <title>Installation on Unix (from Source)</title>
+   <title>Installation from source on Unix (including Linux, MacOS, etc.)</title>
    <para>
     The latest source code for Pazpar2 is available from
     <ulink url="&url.pazpar2.download;"/>.
-     Only few systems have none of the required
-     tools binary packages.
-     If, for example, Libxml2/libXSLT libraries
-    are already installed as development packages use these.
+    Most Unix-based operating systems have the required
+    tools available as binary packages.
+    For example, if Libxml2/libXSLT libraries
+    are already installed as development packages, use these.
    </para>
    
    <para>
-    Ensure that the development libraries + header files are
+    Ensure that the development libraries and header files are
     available on your system before compiling Pazpar2. For installation
-    of YAZ, refer to the YAZ installation chapter.
+    of YAZ, refer to the Installation chapter of the YAZ manual at
+    <ulink url="&url.yaz.install;"/>.
+   </para>
+   <para>
+    Once the dependencies are in place, Pazpar2 can be unpacked and
+    installed as follows:
    </para>
    <screen>
-    gunzip -c pazpar2-version.tar.gz|tar xf -
-    cd pazpar2-version
+    tar xzf pazpar2-VERSION.tar.gz
+    cd pazpar2-VERSION
     ./configure
     make
-    su
-    make install
+    sudo make install
    </screen>
    <para>
     The <literal>make install</literal> will install manpages as well as the
@@ -256,7 +260,7 @@
   </section>
 
   <section id="installation.win32">
-    <title>Installation on Windows (from Source)</title>
+    <title>Installation from source on Windows</title>
     <para>
       Pazpar2 can be built for Windows using
       <ulink url="&url.vstudio;">Microsoft Visual Studio</ulink>.
@@ -266,16 +270,19 @@
       processed by the NMAKE utility part of Visual Studio.
     </para>
     <para>
-      Ensure that the development libraries + header files are
+      Ensure that the development libraries and header files are
       available on your system before compiling Pazpar2. For installation
-      of YAZ, refer to the YAZ installation chapter.
+      of YAZ, refer to
+      the Installation chapter of the YAZ manual at
+      <ulink url="&url.yaz.install;"/>.
       It is easiest if YAZ and Pazpar2 are unpacked in the same
       directory (side-by-side).
     </para>
     <para>
       The compilation is tuned by editing the makefile of Pazpar2.
       The process is similar to YAZ. Adjust the various directories
-      <literal>YAZ_DIR</literal>, <literal>ZLIB_DIR</literal>, ..
+      <literal>YAZ_DIR</literal>, <literal>ZLIB_DIR</literal>, etc.,
+      as required.
     </para>
     <para>
       Compile Pazpar2 by invoking <application>nmake</application> in
