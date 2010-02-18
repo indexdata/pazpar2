@@ -127,15 +127,6 @@
    usability and let Pazpar2 do what it does best -- metasearch.
   </para>
   <para>
-   If you wish to connect to commercial or other databases which do not
-   support open standards, please contact Index Data on
-   <email>info@indexdata.com</email>. We have a
-   proprietary framework for building connectors that enable Pazpar2
-   to access
-   thousands of online databases, in addition to the vast number of catalogs
-   and online services that support the Z39.50/SRU/SRW protocols.
-  </para>
-  <para>
    Pazpar2 is our attempt to re-think the traditional paradigms for
    implementing and deploying metasearch logic, with an uncompromising
    approach to performance, and attempting to make maximum use of the
@@ -156,6 +147,19 @@
   <para>
    Pazpar2 is covered by the GNU General Public License (GPL) version 2.
    See <xref linkend="license"/> for further information.
+  </para>
+  </section>
+
+  <section id="connectors">
+  <title>Connectors to non-standard databases</title>
+  <para>
+   If you wish to connect to commercial or other databases which do not
+   support open standards, please contact Index Data on
+   <email>info@indexdata.com</email>. We have a
+   proprietary framework for building connectors that enable Pazpar2
+   to access
+   thousands of online databases, in addition to the vast number of catalogs
+   and online services that support the Z39.50/SRU/SRW protocols.
   </para>
   </section>
 
