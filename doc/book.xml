@@ -74,8 +74,7 @@
    protocol. Proprietary
    backend modules can function as connectors between these standard
    protocols and any non-standard API, including web-site scraping, to
-   support a large number of other protocols
-   (please contact Index Data for further information about this).
+   support a large number of other protocols.
   </para>
   <para>
    Additional functionality such as
@@ -123,7 +122,8 @@
   </para>
   <para>
    If you wish to connect to commercial or other databases which do not
-   support open standards, please contact Index Data. We have a
+   support open standards, please contact Index Data on
+   <info@indexdata.com>. We have a
    proprietary framework for building connectors that enable Pazpar2
    to access
    thousands of online databases, in addition to the vast number of catalogs
