@@ -24,6 +24,9 @@
   <author>
    <firstname>Jakub</firstname><surname>Skoczen</surname>
   </author>
+  <author>
+   <firstname>Mike</firstname><surname>Taylor</surname>
+  </author>
   <releaseinfo>&version;</releaseinfo>
   <copyright>
    <year>&copyright-year;</year>
@@ -56,6 +59,9 @@
  
  <chapter id="introduction">
   <title>Introduction</title>
+
+  <section id="what.pazpar2.is">
+  <title>What Pazpar2 is</title>
   <para>
    Pazpar2 is a stand-alone metasearch engine with a web-service API, designed
    to be used either from a browser-based client (JavaScript, Flash,
@@ -151,6 +157,7 @@
    Pazpar2 is covered by the GNU General Public License (GPL) version 2.
    See <xref linkend="license"/> for further information.
   </para>
+  </section>
 
   <section id="name">
    <title>A note on the name Pazpar2</title>
