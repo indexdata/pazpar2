@@ -81,7 +81,7 @@
    user management and attractive displays are expected to be implemented by
    applications that use Pazpar2. Pazpar2 itself is user-interface independent.
    Its functionality is exposed through a simple XML-based web-service API,
-   designed to be easy to use from an AJAX-enabled browser, Flash
+   designed to be easy to use from an Ajax-enabled browser, Flash
    animation, Java applet, etc., or from a higher-level server-side language
    like PHP, Perl or Java. Because session information can be shared between
    browser-based logic and server-side scripting, there is tremendous
@@ -444,11 +444,11 @@
     possible to combine Pazpar2 either with your server-side dynamic
     website scripting, with scripting or code running in the browser, or
     with any combination of the two. Pazpar2 is an excellent tool for
-    building advanced, AJAX-based user interfaces for metasearch
+    building advanced, Ajax-based user interfaces for metasearch
     functionality, but it isn't a requirement -- you can choose to use
     Pazpar2 entirely as a backend to your regular server-side scripting.
     When you do use Pazpar2 in conjunction
-    with browser scripting (JavaScript/AJAX, Flash, applets,
+    with browser scripting (JavaScript/Ajax, Flash, applets,
     etc.), there are	special considerations.
    </para>
 
@@ -573,7 +573,7 @@
    <para>
     You can use Pazpar2 from any environment that allows you to use
     webservices. The initial goal of the software was to support
-    AJAX-based applications, but there literally are no limits to what
+    Ajax-based applications, but there literally are no limits to what
     you can do. You can use Pazpar2 from Javascript, Flash, Java, etc.,
     on the browser side, and from any development environment on the
     server side, and you can pass session tokens and record IDs freely

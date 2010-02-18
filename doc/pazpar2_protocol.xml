@@ -32,7 +32,7 @@
    request is forwarded to the HTTP server specified in the configuration
    using the proxy setting.
    This way, a regular webserver can host the user interface (itself dynamic
-   or static HTML), and AJAX-style calls can be used from JS (or any other client-based
+   or static HTML), and Ajax-style calls can be used from JS (or any other client-based
    scripting environment) to interact with the search logic in Pazpar2. 
   </para>
   <para>

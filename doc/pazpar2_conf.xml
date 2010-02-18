@@ -568,7 +568,7 @@
   <note>
    <para>
     The following discussion of practical issues related to session and settings
-    management are cast in terms of a user interface based on AJAX/Javascript
+    management are cast in terms of a user interface based on Ajax/Javascript
     technology. It would apply equally well to many other kinds of browser-based logic.
    </para>
   </note>
@@ -588,7 +588,7 @@
   <para>
    Step 1: The Javascript client loads, and asks the webserver for a new Pazpar2
    session ID. This can be done using a Javascript call, for instance. Note that
-   it is possible to submit AJAX HTTPXmlRequest calls either to Pazpar2 or to the
+   it is possible to submit Ajax HTTPXmlRequest calls either to Pazpar2 or to the
    webserver that Pazpar2 is proxying for. See (XXX Insert link to Pazpar2 protocol).
     </para>
   
