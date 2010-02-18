@@ -80,7 +80,7 @@
    Additional functionality such as
    user management and attractive displays are expected to be implemented by
    applications that use Pazpar2. Pazpar2 itself is user-interface independent.
-   Its functionality is exposed through a simple XML RPC web-service API,
+   Its functionality is exposed through a simple XML-based web-service API,
    designed to be easy to use from an AJAX-enabled browser, Flash
    animation, Java applet, etc., or from a higher-level server-side language
    like PHP, Perl or Java. Because session information can be shared between
