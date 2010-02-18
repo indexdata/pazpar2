@@ -123,7 +123,7 @@
   <para>
    If you wish to connect to commercial or other databases which do not
    support open standards, please contact Index Data on
-   <info@indexdata.com>. We have a
+   <email>info@indexdata.com</email>. We have a
    proprietary framework for building connectors that enable Pazpar2
    to access
    thousands of online databases, in addition to the vast number of catalogs
@@ -151,6 +151,20 @@
    Pazpar2 is covered by the GNU General Public License (GPL) version 2.
    See <xref linkend="license"/> for further information.
   </para>
+
+  <section id="name">
+   <title>A note on the name Pazpar2</title>
+   <para>
+    The name Pazpar2 derives from three sources.  One one hand, it is
+    Index Data's second major piece of software that does parallel
+    searching of Z39.50 targets.  On the other, it is a near-homophone
+    of Passpartout, the ever-helpful servant in Jules Verne's novel
+    Around the World in Eighty Days (who helpfully uses the language
+    of his master).  Finally, "passe par tout" means something like
+    "passes through anything" in French -- on other words, a universal
+    solution, or if you like a MasterKey.
+   </para>
+  </section>
  </chapter>
 
  <chapter id="installation">
