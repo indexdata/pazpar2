@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section id="ajaxdev">
-  <title>Ajax client development</title>
+  <title>AJAX client development</title>
 
   <para>
-  Pazpar2 offers programmer a simple Web Service protocol that can be used (queried in a request/response fashion) from any, server- or client-side, programming language with an XML support. However, when programming a Web-based client to Pazpar2, to achieve certain level of interactivity and instant notification of latest changes in the result set, Ajax (Asynchronous JavaScript and XML) technology may be used. An Ajax client allows user to browse the results before the lengthy process of information retrieval from the back-end targets is finished. Blocking and waiting for usually slow back-end targets is one of the biggest functionality issues in a federated search engine.
+  Pazpar2 offers programmer a simple Web Service protocol that can be used (queried in a request/response fashion) from any, server- or client-side, programming language with an XML support. However, when programming a Web-based client to Pazpar2, to achieve certain level of interactivity and instant notification of latest changes in the result set, AJAX (Asynchronous JavaScript and XML) technology may be used. An AJAX client allows user to browse the results before the lengthy process of information retrieval from the back-end targets is finished. Blocking and waiting for usually slow back-end targets is one of the biggest functionality issues in a federated search engine.
   </para>
   
   <para><bridgehead>Pz2.js</bridgehead></para>
   
   <para>
-  Pazpar2 comes with a small JavaScript library called pz2.js. This library is designed to simplify development of an Ajax-based pazpar2 client and alleviate programmer from the low-level details like polling the web service, fetching and parsing returned XML output or managing timers, sessions and basic state variables.
+  Pazpar2 comes with a small JavaScript library called pz2.js. This library is designed to simplify development of an AJAX-based pazpar2 client and alleviate programmer from the low-level details like polling the web service, fetching and parsing returned XML output or managing timers, sessions and basic state variables.
   </para>
   
   <para>
@@ -217,7 +217,7 @@
     <para><bridgehead>AJAX helper class</bridgehead></para>
 
     <varlistentry><term>pzHttpRequest</term> 
-    <listitem><para>a cross-browser Ajax wrapper class</para></listitem></varlistentry>
+    <listitem><para>a cross-browser AJAX wrapper class</para></listitem></varlistentry>
 
     <varlistentry><term>constructor (url, errorHandler)</term>
     <listitem><para>create new request for a given url</para></listitem></varlistentry>
