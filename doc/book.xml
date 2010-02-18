@@ -31,10 +31,12 @@
   </copyright>
   <abstract>
    <simpara>
-    Pazpar2 is a high-performance, user interface-independent, data
-    model-independent metasearching
-    middle-ware featuring merging, relevance ranking, record sorting, 
+    Pazpar2 is a high-performance metasearch engine featuring
+    merging, relevance ranking, record sorting,
     and faceted results.
+    It is middleware: it has no user interface of its own, but can be
+    configured and controlled by a REST-like web-service to provide
+    metasearching functionality behind any user interface.
    </simpara>
    <simpara>
     This document is a guide and reference to Pazpar2 version &version;.
@@ -55,41 +57,45 @@
  <chapter id="introduction">
   <title>Introduction</title>
   <para>
-   Pazpar2 is a stand-alone metasearch client with a web-service API, designed
-   to be used either from a browser-based client (JavaScript, Flash, Java,
+   Pazpar2 is a stand-alone metasearch engine with a web-service API, designed
+   to be used either from a browser-based client (JavaScript, Flash,
+   Java applet,
    etc.), from server-side code, or any combination of the two.
    Pazpar2 is a highly optimized client designed to
    search many resources in parallel. It implements record merging,
    relevance-ranking and sorting by arbitrary data content, and facet
-   analysis for browsing purposes. It is designed to be data model
+   analysis for browsing purposes. It is designed to be data-model
    independent, and is capable of working with MARC, DublinCore, or any
    other <ulink url="&url.xml;">XML</ulink>-structured response format
    -- <ulink url="&url.xslt;">XSLT</ulink> is used to normalize and extract
    data from retrieval records for display and analysis. It can be used
    against any server which supports the 
-   <ulink url="&url.z39.50;">Z39.50</ulink> and <ulink url="&url.sru;">SRU/SRW</ulink>
+   <ulink url="&url.z39.50;">Z39.50</ulink> or <ulink url="&url.sru;">SRU/SRW</ulink>
    protocol. Proprietary
-   backend modules can be used to support a large number of other protocols
+   backend modules can function as connectors between these standard
+   protocols and any non-standard API, including web-site scraping, to
+   support a large number of other protocols
    (please contact Index Data for further information about this).
   </para>
   <para>
    Additional functionality such as
-   user management, attractive displays are expected to be implemented by
-   applications that use Pazpar2. Pazpar2 is user interface independent.
+   user management and attractive displays are expected to be implemented by
+   applications that use Pazpar2. Pazpar2 itself is user-interface independent.
    Its functionality is exposed through a simple REST-style web-service API,
-   designed to be simple to use from an Ajax-enabled browser, Flash
+   designed to be easy to use from an AJAX-enabled browser, Flash
    animation, Java applet, etc., or from a higher-level server-side language
-   like PHP or Java. Because session information can be shared between
-   browser-based logic and your server-side scripting, there is tremendous
-   flexibility in how you implement your business logic on top of Pazpar2.
+   like PHP, Perl or Java. Because session information can be shared between
+   browser-based logic and server-side scripting, there is tremendous
+   flexibility in how you implement application-specific logic on top
+   of Pazpar2.
   </para>
   <para>
    Once you launch a search in Pazpar2, the operation continues behind the
    scenes. Pazpar2 connects to servers, carries out searches, and
    retrieves, deduplicates, and stores results internally. Your application
    code may periodically inquire about the status of an ongoing operation,
-   and ask to see records or other result set facets. Result becomes
-   available immediately, and it is easy to build end-user interfaces which
+   and ask to see records or result set facets. Results become
+   available immediately, and it is easy to build end-user interfaces than
    feel extremely responsive, even when searching more than 100 servers
    concurrently.
   </para>
@@ -98,12 +104,12 @@
    normalized to XML/UTF-8, and then further normalized using XSLT to a
    simple internal representation that is suitable for analysis. By
    providing XSLT stylesheets for different kinds of result records, you
-   can tune Pazpar2 to work against different kinds of information
-   retrieval servers. Finally, metadata is extracted, in a configurable
-   way, from this internal record, to support display, merging, ranking,
+   can configure Pazpar2 to work against different kinds of information
+   retrieval servers. Finally, metadata is extracted in a configurable
+   way from this internal record, to support display, merging, ranking,
    result set facets, and sorting. Pazpar2 is not bound to a specific model
-   of metadata, such as DublinCore or MARC -- by providing the right
-   configuration, it can work with a number of different kinds of data in
+   of metadata, such as DublinCore or MARC: by providing the right
+   configuration, it can work with any combination of different kinds of data in
    support of many different applications.
   </para>
   <para>
@@ -111,14 +117,15 @@
    search several hundred targets in parallel, or you can use it to support
    hundreds of concurrent users. It is implemented with the same attention
    to performance and economy that we use in our indexing engines, so that
-   you can focus on building your application, without worrying about the
+   you can focus on building your application without worrying about the
    details of metasearch logic. You can devote all of your attention to
    usability and let Pazpar2 do what it does best -- metasearch.
   </para>
   <para>
    If you wish to connect to commercial or other databases which do not
-   support open standards, please contact Index Data. We have a licensing
-   agreement with a third party vendor which will enable Pazpar2 to access
+   support open standards, please contact Index Data. We have a
+   proprietary framework for building connectors that enable Pazpar2
+   to access
    thousands of online databases, in addition to the vast number of catalogs
    and online services that support the Z39.50/SRU/SRW protocols.
   </para>
@@ -141,7 +148,7 @@
    Enjoy!
   </para>
   <para>
-   Pazpar2 is covered by the GNU license version 2.
+   Pazpar2 is covered by the GNU General Public License (GPL) version 2.
    See <xref linkend="license"/> for further information.
   </para>
  </chapter>
@@ -423,11 +430,11 @@
     possible to combine Pazpar2 either with your server-side dynamic
     website scripting, with scripting or code running in the browser, or
     with any combination of the two. Pazpar2 is an excellent tool for
-    building advanced, Ajax-based user interfaces for metasearch
+    building advanced, AJAX-based user interfaces for metasearch
     functionality, but it isn't a requirement -- you can choose to use
     Pazpar2 entirely as a backend to your regular server-side scripting.
     When you do use Pazpar2 in conjunction
-    with browser scripting (JavaScript/Ajax, Flash, applets,
+    with browser scripting (JavaScript/AJAX, Flash, applets,
     etc.), there are	special considerations.
    </para>
 
@@ -552,7 +559,7 @@
    <para>
     You can use Pazpar2 from any environment that allows you to use
     webservices. The initial goal of the software was to support
-    Ajax-based applications, but there literally are no limits to what
+    AJAX-based applications, but there literally are no limits to what
     you can do. You can use Pazpar2 from Javascript, Flash, Java, etc.,
     on the browser side, and from any development environment on the
     server side, and you can pass session tokens and record IDs freely
