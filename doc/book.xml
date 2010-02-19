@@ -312,14 +312,15 @@
   </section>
 
   <section id="installation.test1">
-   <title>Installation of test1 interface</title>
+   <title>Installation of test interfaces</title>
    <para>
-    In this section we outline how to install a simple interface that
-    is part of the Pazpar2 source package. Note that Debian users can
-    save time by just installing package <literal>pazpar2-test1</literal>.
+    In this section we show how to make available the set of simple
+    interfaces that are part of the Pazpar2 source package, and which
+    demonstrate some ways to use Pazpar2.  (Note that Debian users can 
+    save time by just installing the package <literal>pazpar2-test1</literal>.)
    </para>
    <para>
-    A web server must be installed and running on the system, such as Apache.
+    A web server, such as Apache, must be installed and running on the system.
    </para>
 
    <para>
@@ -337,31 +338,51 @@
      ..\bin\pazpar2 -f pazpar2.cfg
     </screen>
     This will start a Pazpar2 listener on port 9004. It will proxy 
-    HTTP requests to localhost - port 80, which we assume will be the regular
+    HTTP requests to port 80 on localhost, which we assume will be the regular
     HTTP server on the system. Inspect and modify pazpar2.cfg as needed
-    if this is to be changed. The pazpar2.cfg includes settings from the
+    if this is to be changed. The pazpar2.cfg file includes settings from the
     file <filename>settings/edu.xml</filename>
     to use for searches.
    </para>
+
    <para>
-    Make a new console and move to the other stuff.
-    For more information about pazpar2 options refer to the manpage.
+    The test UIs are located in <literal>www</literal>. Ensure that this
+    directory is available to the web server by copying 
+    <literal>www</literal> to the document root, 
+    using Apache's <literal>Alias</literal> directive, or
+    creating a symbolic link: for example, on a Debian or Ubuntu
+    system with Apache2 installed from the standard package, you might
+    make the link as follows:
+    <screen>
+     cd .../pazpar2
+     sudo ln -s `pwd`/www /var/www/pazpar2-demo
+    </screen>
+   </para>
+   
+   <para>
+    This makes the test applications visible at
+    <ulink url="http://localhost/pazpar2-demo/"/>
+    but they can not be run successfully from that URL, as they submit
+    search requests back to the server form which they were served,
+    and Apache2 doesn't know how to handle them.  Instead, the test
+    applications must be accessed from Pazpar2 itself, acting as a
+    proxy to Apache2, at the URL
+    <ulink url="http://localhost:9004/pazpar2-demo/"/>
    </para>
 
    <para>
-    The test1 UI is located in <literal>www/test1</literal>. Ensure this
-    directory is available to the web server by either copying 
-    <literal>test1</literal> to the document root, create a symlink or
-    use Apache's <literal>Alias</literal> directive.
+    From here, the demo applications can be
+    accessed: <literal>test1</literal>, <literal>test2</literal> and
+    <literal>jsdemo</literal>
+    are pure HTML+JavaScript setups, needing no server-side
+    intelligence; 
+    <literal>demo</literal>
+    requires PHP on the server.
    </para>
-
    <para>
-    The interface test1 interface should now be available on port 8004.
-   </para>
-   <para>
-    If you don't see the test1 interface. See if test1 is really available
-    on the same URL but on port 80. If it's not, the Apache configuration
-    (or other) is not correct. 
+    If you don't see the test interfaces, check whether they are available
+    on port 80 (i.e. directly from the Apache2 server).  If not, the
+    Apache configuration is incorrect.
    </para>
    <para>
     In order to use Apache as frontend for the interface on port 80
@@ -371,12 +392,15 @@
   </section>
 
   <section id="installation.debian">
-   <title>Installation on Debian GNU/Linux</title>
+   <title>Installation on Debian or Ubuntu GNU/Linux</title>
    <para>
-    Index Data provides Debian packages for Pazpar2. These are prepared
-    for Debian versions Etch and Lenny (as of 2007).
-    These packages are available at
-    <ulink url="&url.pazpar2.download.debian;"/>.
+    Index Data provides Debian and Ubuntu packages for Pazpar2.
+    As of February 2010, these
+    are prepared for Debian versions Etch, Lenny and Squeeze; and for
+    Ubuntu versions 8.04 (hardy), 8.10 (intrepid), 9.04 (jaunty) and
+    9.10 (karmic).  These packages are available at
+    <ulink url="&url.pazpar2.download.debian;"/> and
+    <ulink url="&url.pazpar2.download.ubuntu;"/>.
    </para>
   </section>
 
