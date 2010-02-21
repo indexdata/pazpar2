@@ -214,7 +214,7 @@
 
   <variablelist>
 
-    <para><bridgehead>AJAX helper class</bridgehead></para>
+    <para><bridgehead>Ajax helper class</bridgehead></para>
 
     <varlistentry><term>pzHttpRequest</term> 
     <listitem><para>a cross-browser Ajax wrapper class</para></listitem></varlistentry>
