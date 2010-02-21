@@ -1,0 +1,17 @@
+# Script to test performance for local ztest's.
+
+client.sh - single session dong init, search, show
+par.sh - parallel invocation of client.sh
+get_session.xsl - get session from response
+
+Start in one session pazpar2:
+cd etc
+../src/pazpar2 -f perf.xml -X
+
+Start in one session yaz-ztest:
+yaz-ztest
+
+Start the par.sh:
+./par.sh
+
+
