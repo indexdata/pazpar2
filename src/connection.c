@@ -274,6 +274,7 @@ void connect_resolver_host(struct host *host, iochan_man_t iochan_man)
 {
     struct connection *con;
 
+start:
     yaz_mutex_enter(host->mutex);
     con = host->connections;
     while (con)
@@ -284,22 +285,22 @@ void connect_resolver_host(struct host *host, iochan_man_t iochan_man)
             {
                 yaz_mutex_leave(host->mutex);
                 connection_destroy(con);
+                goto start;
                 /* start all over .. at some point it will be NULL */
-                con = host->connections;
             }
             else if (!con->client)
             {
                 yaz_mutex_leave(host->mutex);
                 connection_destroy(con);
                 /* start all over .. at some point it will be NULL */
-                con = host->connections;
+                goto start;
             }
             else
             {
                 yaz_mutex_leave(host->mutex);
                 connection_connect(con, iochan_man);
                 client_start_search(con->client);
-                con = host->connections;
+                goto start;
             }
         }
         else
