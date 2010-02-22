@@ -264,7 +264,6 @@ void connection_release(struct connection *co)
 {
     struct client *cl = co->client;
 
-    yaz_log(YLOG_DEBUG, "Connection release %s", co->host->hostport);
     if (!cl)
         return;
     client_set_connection(cl, 0);
@@ -444,7 +443,7 @@ int client_prep_connection(struct client *cl,
         yaz_mutex_enter(host->mutex);
         for (co = host->connections; co; co = co->next)
             if (connection_is_idle(co) &&
-                (!co->client || client_get_session(co->client) != se) &&
+                (!co->client || client_get_state(co->client) == Client_Idle) &&
                 !strcmp(ZOOM_connection_option_get(co->link, "user"),
                         session_setting_oneval(client_get_database(cl),
                                                PZ_AUTHENTICATION)))
