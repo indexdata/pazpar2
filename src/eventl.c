@@ -265,9 +265,9 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
 	    {
                 *nextp = p->next;
                 xfree(p);
-                break;
 	    }
-            nextp = &p->next;
+            else
+                nextp = &p->next;
         }
     }
     while (*iochans);
