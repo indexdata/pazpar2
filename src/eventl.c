@@ -115,23 +115,29 @@ IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags)
 static void work_handler(void *work_data)
 {
     IOCHAN p = work_data;
-    (*p->fun)(p, p->this_event);
+    if (!p->destroyed && (p->this_event & EVENT_TIMEOUT))
+        (*p->fun)(p, EVENT_TIMEOUT);
+    if (!p->destroyed && (p->this_event & EVENT_INPUT))
+        (*p->fun)(p, EVENT_INPUT);
+    if (!p->destroyed && (p->this_event & EVENT_OUTPUT))
+        (*p->fun)(p, EVENT_OUTPUT);
+    if (!p->destroyed && (p->this_event & EVENT_EXCEPT))
+        (*p->fun)(p, EVENT_EXCEPT);
 }
 
-static void run_fun(iochan_man_t man, IOCHAN p, int event)
+static void run_fun(iochan_man_t man, IOCHAN p)
 {
-    if (!p->destroyed)
+    if (!p->destroyed && p->this_event)
     {
-        p->this_event = event;
         if (man->sel_thread)
         {
             yaz_log(man->log_level, "eventl: add fun chan=%p event=%d",
-                    p, event);
+                    p, p->this_event);
             p->thread_users++;
             sel_thread_add(man->sel_thread, p);
         }
         else
-            (*p->fun)(p, p->this_event);
+            work_handler(p);
     }
 }
 
@@ -211,46 +217,54 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                 }
             }
         }
-    	for (p = *iochans; p; p = p->next)
-    	{
-	    int force_event = p->force_event;
-	    time_t now = time(0);
-
-	    p->force_event = 0;
-	    if (!p->destroyed && ((p->max_idle && now - p->last_event >
-	        p->max_idle) || force_event == EVENT_TIMEOUT))
-	    {
-	        p->last_event = now;
-	        run_fun(man, p, EVENT_TIMEOUT);
-	    }
-            if (p->fd < 0)
+        for (p = *iochans; p; p = p->next)
+        {
+            int force_event = p->force_event;
+            time_t now = time(0);
+            
+            if (p->thread_users > 0)
+            {
+                yaz_log(man->log_level, "eventl: skip chan=%p users=%d", p, p->thread_users);
                 continue;
-	    if (!p->destroyed && (FD_ISSET(p->fd, &in) ||
-		force_event == EVENT_INPUT))
-	    {
-    		p->last_event = now;
-                yaz_log(YLOG_DEBUG, "Eventl input event");
-		run_fun(man, p, EVENT_INPUT);
-	    }
-	    if (!p->destroyed && (FD_ISSET(p->fd, &out) ||
-	        force_event == EVENT_OUTPUT))
-	    {
-	  	p->last_event = now;
-                yaz_log(YLOG_DEBUG, "Eventl output event");
-	    	run_fun(man, p, EVENT_OUTPUT);
-	    }
-	    if (!p->destroyed && (FD_ISSET(p->fd, &except) ||
-	        force_event == EVENT_EXCEPT))
-	    {
-		p->last_event = now;
-	    	run_fun(man, p, EVENT_EXCEPT);
-	    }
+            }
+            p->this_event = 0;
+            p->force_event = 0;
+            if (!p->destroyed && ((p->max_idle && now - p->last_event >
+                                   p->max_idle) || force_event == EVENT_TIMEOUT))
+            {
+                p->last_event = now;
+                p->this_event |= EVENT_TIMEOUT;
+            }
+            if (p->fd >= 0)
+            {
+                if (!p->destroyed && (FD_ISSET(p->fd, &in) ||
+                                      force_event == EVENT_INPUT))
+                {
+                    p->last_event = now;
+                    yaz_log(YLOG_DEBUG, "Eventl input event");
+                    p->this_event |= EVENT_INPUT;
+                }
+                if (!p->destroyed && (FD_ISSET(p->fd, &out) ||
+                                      force_event == EVENT_OUTPUT))
+                {
+                    p->last_event = now;
+                    yaz_log(YLOG_DEBUG, "Eventl output event");
+                    p->this_event |= EVENT_OUTPUT;
+                }
+                if (!p->destroyed && (FD_ISSET(p->fd, &except) ||
+                                      force_event == EVENT_EXCEPT))
+                {
+                    p->last_event = now;
+                    p->this_event |= EVENT_EXCEPT;
+                }
+            }
+            run_fun(man, p);
 	}
 	for (p = *iochans; p; p = nextp)
 	{
 	    nextp = p->next;
 
-	    if (p->destroyed)
+	    if (p->destroyed && p->thread_users == 0)
 	    {
 		IOCHAN tmp = p, pr;
 
