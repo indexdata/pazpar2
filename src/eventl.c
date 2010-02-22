@@ -145,7 +145,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
 {
     do /* loop as long as there are active associations to process */
     {
-    	IOCHAN p, nextp;
+    	IOCHAN p, *nextp;
 	fd_set in, out, except;
 	int res, max;
 	static struct timeval nullto = {0, 0}, to;
@@ -260,30 +260,17 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
             }
             run_fun(man, p);
 	}
-	for (p = *iochans; p; p = nextp)
-	{
-	    nextp = p->next;
-
+        for (nextp = iochans; *nextp; )
+        {
+            IOCHAN p = *nextp;
 	    if (p->destroyed && p->thread_users == 0)
 	    {
-		IOCHAN tmp = p, pr;
-
-	    	/* Now reset the pointers */
-                if (p == *iochans)
-		    *iochans = p->next;
-		else
-		{
-		    for (pr = *iochans; pr; pr = pr->next)
-		        if (pr->next == p)
-    		            break;
-		    assert(pr); /* grave error if it weren't there */
-		    pr->next = p->next;
-		}
-		if (nextp == p)
-		    nextp = p->next;
-		xfree(tmp);
+                *nextp = p->next;
+                xfree(p);
+                break;
 	    }
-	}
+            nextp = &p->next;
+        }
     }
     while (*iochans);
     return 0;
