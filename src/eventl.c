@@ -127,7 +127,7 @@ static void work_handler(void *work_data)
 
 static void run_fun(iochan_man_t man, IOCHAN p)
 {
-    if (!p->destroyed && p->this_event)
+    if (p->this_event)
     {
         if (man->sel_thread)
         {
@@ -222,37 +222,35 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
             int force_event = p->force_event;
             time_t now = time(0);
             
-            if (p->thread_users > 0)
+            if (p->thread_users > 0 || p->destroyed)
             {
                 yaz_log(man->log_level, "eventl: skip chan=%p users=%d", p, p->thread_users);
                 continue;
             }
             p->this_event = 0;
             p->force_event = 0;
-            if (!p->destroyed && ((p->max_idle && now - p->last_event >
-                                   p->max_idle) || force_event == EVENT_TIMEOUT))
+
+            if ((p->max_idle && now - p->last_event > p->max_idle) 
+                || force_event == EVENT_TIMEOUT)
             {
                 p->last_event = now;
                 p->this_event |= EVENT_TIMEOUT;
             }
             if (p->fd >= 0)
             {
-                if (!p->destroyed && (FD_ISSET(p->fd, &in) ||
-                                      force_event == EVENT_INPUT))
+                if (FD_ISSET(p->fd, &in) || force_event == EVENT_INPUT)
                 {
                     p->last_event = now;
                     yaz_log(YLOG_DEBUG, "Eventl input event");
                     p->this_event |= EVENT_INPUT;
                 }
-                if (!p->destroyed && (FD_ISSET(p->fd, &out) ||
-                                      force_event == EVENT_OUTPUT))
+                if (FD_ISSET(p->fd, &out) || force_event == EVENT_OUTPUT)
                 {
                     p->last_event = now;
                     yaz_log(YLOG_DEBUG, "Eventl output event");
                     p->this_event |= EVENT_OUTPUT;
                 }
-                if (!p->destroyed && (FD_ISSET(p->fd, &except) ||
-                                      force_event == EVENT_EXCEPT))
+                if (FD_ISSET(p->fd, &except) || force_event == EVENT_EXCEPT)
                 {
                     p->last_event = now;
                     p->this_event |= EVENT_EXCEPT;
