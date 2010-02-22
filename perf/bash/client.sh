@@ -4,7 +4,7 @@ if test -z "$O"; then
 	O=1
 fi
 H='http://localhost:9004/search.pz2'
-wget -q -O $O.init.xml "$H/?command=init"
+wget -q -O $O.init.xml "$H/?command=init&service=perf"
 S=`xsltproc get_session.xsl $O.init.xml`
 wget -q -O $O.search.xml "$H?command=search&query=utah&session=$S"
 sleep 0.5

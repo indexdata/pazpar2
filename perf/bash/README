@@ -6,7 +6,10 @@ get_session.xsl - get session from response
 
 Start in one session pazpar2:
 cd etc
-../src/pazpar2 -f perf.xml -X
+cp ../perf/ztest/perf.xml .
+cp pazpar2.cfg.dist pazpar2.cfg
+# set number of threads and use perf.xml as service
+../src/pazpar2 -f pazpar2.cfg -X
 
 Start in one session yaz-ztest:
 yaz-ztest
