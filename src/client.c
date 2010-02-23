@@ -117,7 +117,9 @@ enum client_state client_get_state(struct client *cl)
 void client_set_state(struct client *cl, enum client_state st)
 {
     cl->state = st;
-    if (cl->session)
+    /* no need to check for all client being non-active if this one
+       already is. Note that session_active_clients also LOCKS session */
+    if (!client_is_active(cl) && cl->session)
     {
         int no_active = session_active_clients(cl->session);
         if (no_active == 0)
