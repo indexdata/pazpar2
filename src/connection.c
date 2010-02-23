@@ -225,16 +225,15 @@ static void connection_handler(IOCHAN iochan, int event)
 {
     struct connection *co = iochan_getdata(iochan);
     struct client *cl = co->client;
-    struct session *se = 0;
 
-    if (cl)
-        se = client_get_session(cl);
-    else
+    if (!cl) 
     {
+        /* no client associated with it.. We are probably getting
+           a closed connection from the target.. Or, perhaps, an unexpected
+           package.. We will just close the connection */
         connection_destroy(co);
         return;
     }
-
     if (event & EVENT_TIMEOUT)
     {
         if (co->state == Conn_Connecting)
@@ -422,7 +421,6 @@ int client_prep_connection(struct client *cl,
                            iochan_man_t iochan_man)
 {
     struct connection *co;
-    struct session *se = client_get_session(cl);
     struct host *host = client_get_host(cl);
     struct session_database *sdb = client_get_database(cl);
     const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
