@@ -155,7 +155,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
 	FD_ZERO(&out);
 	FD_ZERO(&except);
 	timeout = &to; /* hang on select */
-	to.tv_sec = 15;
+	to.tv_sec = 300;
 	to.tv_usec = 0;
 	max = 0;
     	for (p = *iochans; p; p = p->next)
@@ -166,6 +166,8 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                 p->flags = (*p->maskfun)(p);
             if (p->socketfun)
                 p->fd = (*p->socketfun)(p);
+            if (p->max_idle && p->max_idle < to.tv_sec)
+                to.tv_sec = p->max_idle;
             if (p->fd < 0)
                 continue;
 	    if (p->force_event)
@@ -178,8 +180,6 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
 	        FD_SET(p->fd, &except);
 	    if (p->fd > max)
 	        max = p->fd;
-            if (p->max_idle && p->max_idle < to.tv_sec)
-                to.tv_sec = p->max_idle;
 	}
         if (man->sel_fd != -1)
         {
