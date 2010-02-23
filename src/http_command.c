@@ -50,6 +50,8 @@ struct http_session {
     struct session *psession;
     unsigned int session_id;
     int timestamp;
+    int destroy_counter;
+    int activity_counter;
     NMEM nmem;
     http_sessions_t http_sessions;
     struct http_session *next;
@@ -105,6 +107,7 @@ struct http_session *http_session_create(struct conf_service *service,
     r->session_id = 0;
     r->timestamp = 0;
     r->nmem = nmem;
+    r->destroy_counter = r->activity_counter;
     r->http_sessions = http_sessions;
 
     yaz_mutex_enter(http_sessions->mutex);
@@ -114,6 +117,7 @@ struct http_session *http_session_create(struct conf_service *service,
 
     r->timeout_iochan = iochan_create(-1, session_timeout, 0);
     iochan_setdata(r->timeout_iochan, r);
+    yaz_log(YLOG_LOG, "timeout=%d", service->session_timeout);
     iochan_settimeout(r->timeout_iochan, service->session_timeout);
 
     iochan_add(service->server->iochan_man, r->timeout_iochan);
@@ -122,22 +126,42 @@ struct http_session *http_session_create(struct conf_service *service,
 
 void http_session_destroy(struct http_session *s)
 {
-    struct http_session **p;
+    int must_destroy = 1;
 
     http_sessions_t http_sessions = s->http_sessions;
 
+    yaz_log(YLOG_LOG, "http_session_destroy %u", s->session_id);
     yaz_mutex_enter(http_sessions->mutex);
-    for (p = &http_sessions->session_list; *p; p = &(*p)->next)
-        if (*p == s)
-        {
-            *p = (*p)->next;
-            break;
-        }
+
+    /* only if http_session destroy was already called, we will allow it
+       to be destroyed */
+    if (s->destroy_counter != s->activity_counter)
+        must_destroy = 0;
+
+    /* only if there are no active Z39.50 clients we will allow it to be
+       destroyed */
+    if (session_active_clients(s->psession))
+        must_destroy = 0;
+
+    s->destroy_counter = s->activity_counter = 0;
+    if (must_destroy)
+    {
+        struct http_session **p = 0;
+        for (p = &http_sessions->session_list; *p; p = &(*p)->next)
+            if (*p == s)
+            {
+                *p = (*p)->next;
+                break;
+            }
+    }
     yaz_mutex_leave(http_sessions->mutex);
-    yaz_log(YLOG_LOG, "Destroying session %u", s->session_id);
-    iochan_destroy(s->timeout_iochan);
-    destroy_session(s->psession);
-    nmem_destroy(s->nmem);
+    if (must_destroy)
+    {   /* destroying for real */
+        yaz_log(YLOG_LOG, "Destroying session %u", s->session_id);
+        iochan_destroy(s->timeout_iochan);
+        destroy_session(s->psession);
+        nmem_destroy(s->nmem);
+    }
 }
 
 static const char *get_msg(enum pazpar2_error_code code)
@@ -245,6 +269,8 @@ static struct http_session *locate_session(struct http_channel *c)
     for (p = http_sessions->session_list; p; p = p->next)
         if (id == p->session_id)
             break;
+    if (p)
+        p->activity_counter++;
     yaz_mutex_leave(http_sessions->mutex);
     if (p)
         iochan_activity(p->timeout_iochan);
