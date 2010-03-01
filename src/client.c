@@ -394,7 +394,7 @@ void client_search_response(struct client *cl)
     struct session *se = cl->session;
     ZOOM_connection link = connection_get_link(co);
     ZOOM_resultset resultset = cl->resultset;
-    const char *error, *addinfo;
+    const char *error, *addinfo = 0;
 
     if (ZOOM_connection_error(link, &error, &addinfo))
     {
@@ -462,18 +462,21 @@ void client_record_response(struct client *cl)
                     char type[80];
                     if (nativesyntax_to_type(sdb, type, rec))
                         yaz_log(YLOG_WARN, "Failed to determine record type");
-                    if ((xmlrec = ZOOM_record_get(rec, type, NULL)))
+                    xmlrec = ZOOM_record_get(rec, type, NULL);
+                    if (!xmlrec)
+                        yaz_log(YLOG_WARN, "ZOOM_record_get failed from %s",
+                                client_get_url(cl));
+                    else
                     {
-                        if (!ingest_record(cl, xmlrec, cl->record_offset, nmem))
+                        if (ingest_record(cl, xmlrec, cl->record_offset, nmem))
+                            yaz_log(YLOG_WARN, "Failed to ingest from %s",
+                                    client_get_url(cl));
+                        else
                         {
                             session_alert_watch(cl->session, SESSION_WATCH_SHOW);
                             session_alert_watch(cl->session, SESSION_WATCH_RECORD);
                         }
-                        else
-                            yaz_log(YLOG_WARN, "Failed to ingest");
                     }
-                    else
-                        yaz_log(YLOG_WARN, "Failed to extract ZOOM record");
                     nmem_destroy(nmem);
                 }
 
