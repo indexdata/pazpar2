@@ -447,14 +447,25 @@ static void select_targets_callback(void *context, struct session_database *db)
     client_set_session(cl, se);
 }
 
+static void session_remove_clients(struct session *se)
+{
+    struct client *cl = se->clients;
+    while (cl)
+    {
+        struct client *cl_next = client_next_in_session(cl);
+        client_remove_from_session(cl);
+        client_destroy(cl);
+        cl = cl_next;
+    }
+    se->clients = 0;
+}
+
 // Associates a set of clients with a session;
 // Note: Session-databases represent databases with per-session 
 // setting overrides
 static int select_targets(struct session *se, const char *filter)
 {
-    while (se->clients)
-        client_destroy(se->clients);
-
+    session_remove_clients(se);
     return session_grep_databases(se, filter, select_targets_callback);
 }
 
@@ -634,8 +645,8 @@ void destroy_session(struct session *s)
 {
     struct session_database *sdb;
 
-    while (s->clients)
-        client_destroy(s->clients);
+    session_remove_clients(s);
+
     for (sdb = s->databases; sdb; sdb = sdb->next)
         session_database_destroy(sdb);
     normalize_cache_destroy(s->normalize_cache);
@@ -1098,27 +1109,27 @@ static int ingest_to_cluster(struct client *cl,
 int ingest_record(struct client *cl, const char *rec,
                   int record_no, NMEM nmem)
 {
-    struct session_database *sdb = client_get_database(cl);
     struct session *se = client_get_session(cl);
+    int ret;
+    struct session_database *sdb = client_get_database(cl);
     struct conf_service *service = se->service;
     xmlDoc *xdoc = normalize_record(sdb, service, rec, nmem);
     xmlNode *root;
     const char *mergekey_norm;
-    int ret;
-
+    
     if (!xdoc)
         return -1;
-
+    
     root = xmlDocGetRootElement(xdoc);
-
+    
     if (!check_record_filter(root, sdb))
     {
         yaz_log(YLOG_WARN, "Filtered out record no %d from %s", record_no,
-            sdb->database->url);
+                sdb->database->url);
         xmlFreeDoc(xdoc);
         return -1;
     }
-
+    
     mergekey_norm = get_mergekey(xdoc, cl, record_no, service, nmem);
     if (!mergekey_norm)
     {
@@ -1129,9 +1140,8 @@ int ingest_record(struct client *cl, const char *rec,
     session_enter(se);
     ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
     session_leave(se);
-
+    
     xmlFreeDoc(xdoc);
-
     return ret;
 }
 

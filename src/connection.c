@@ -117,11 +117,12 @@ void connection_destroy(struct connection *co)
     }
     yaz_log(YLOG_DEBUG, "Connection destroy %s", co->host->hostport);
 
-    remove_connection_from_host(co);
     if (co->client)
     {
         client_disconnect(co->client);
     }
+
+    remove_connection_from_host(co);
     xfree(co->zproxy);
     xfree(co);
 }
