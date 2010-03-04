@@ -55,27 +55,27 @@ function my_onshow(data) {
     drawPager(pager);
     // navi
     var results = document.getElementById("results");
-    results.innerHTML = "";
-    
+  
+    var html = '';
     for (var i = 0; i < data.hits.length; i++) {
         var hit = data.hits[i];
-	var html = '<div class="record" id="recdiv_'+hit.recid+'" >'
+	    html += '<div class="record" id="recdiv_'+hit.recid+'" >'
             +'<span>'+ (i + 1 + recPerPage * (curPage - 1)) +'. </span>'
             +'<a href="#" id="rec_'+hit.recid
             +'" onclick="showDetails(this.id);return false;"><b>' 
-            + hit["md-title"] +' </b></a>'; 
-	if (hit["md-title-remainder"] !== undefined) {
-	    html += '<span>' + hit["md-title-remainder"] + ' </span>';
-	}
-	if (hit["md-title-responsibility"] !== undefined) {
-	    html += '<span><i>'+ hit["md-title-responsibility"] +'</i></span>';
-	}
-	html += '</div>';
-	results.innerHTML += html;
-        if (hit.recid == curDetRecId) {
-            drawCurDetails();
+            + hit["md-title"] +' </b></a>';
+        if (hit["md-title-remainder"] !== undefined) {
+            html += '<span>' + hit["md-title-remainder"] + ' </span>';
         }
+        if (hit["md-title-responsibility"] !== undefined) {
+            html += '<span><i>'+ hit["md-title-responsibility"] +'</i></span>';
+        }
+        if (hit.recid == curDetRecId) {
+            html += renderDetails(curDetRecData);
+        }
+      	html += '</div>';
     }
+    replaceHtml(results, html);
 }
 
 function my_onstat(data) {
@@ -130,12 +130,15 @@ function my_onterm(data) {
 }
 
 function my_onrecord(data) {
+    // FIXME: record is async!!
+    clearTimeout(my_paz.recordTimer);
     // in case on_show was faster to redraw element
     var detRecordDiv = document.getElementById('det_'+data.recid);
-    if ( detRecordDiv )
-        return;
+    if (detRecordDiv) return;
     curDetRecData = data;
-    drawCurDetails();
+    var recordDiv = document.getElementById('recdiv_'+curDetRecData.recid);
+    var html = renderDetails(curDetRecData);
+    recordDiv.innerHTML += html;
 }
 
 function my_onbytarget(data) {
@@ -324,40 +327,54 @@ function switchView(view) {
 }
 
 // detailed record drawing
-function showDetails ( prefixRecId ) {
+function showDetails (prefixRecId) {
     var recId = prefixRecId.replace('rec_', '');
+    var oldRecId = curDetRecId;
+    curDetRecId = recId;
     
     // remove current detailed view if any
-    var detRecordDiv = document.getElementById('det_'+curDetRecId);
+    var detRecordDiv = document.getElementById('det_'+oldRecId);
     // lovin DOM!
-    if ( detRecordDiv )
-            detRecordDiv.parentNode.removeChild(detRecordDiv);
+    if (detRecordDiv)
+      detRecordDiv.parentNode.removeChild(detRecordDiv);
 
-    // if the same clicked do not redraw
-    if ( recId == curDetRecId ) {
+    // if the same clicked, just hide
+    if (recId == oldRecId) {
         curDetRecId = '';
+        curDetRecData = null;
         return;
     }
-
-    curDetRecId = recId;
     // request the record
     my_paz.record(recId);
 }
 
-function drawCurDetails ()
+function replaceHtml(el, html) {
+  var oldEl = typeof el === "string" ? document.getElementById(el) : el;
+  /*@cc_on // Pure innerHTML is slightly faster in IE
+    oldEl.innerHTML = html;
+    return oldEl;
+    @*/
+  var newEl = oldEl.cloneNode(false);
+  newEl.innerHTML = html;
+  oldEl.parentNode.replaceChild(newEl, oldEl);
+  /* Since we just removed the old element from the DOM, return a reference
+     to the new element, which can be used to restore variable references. */
+  return newEl;
+};
+
+function renderDetails(data, marker)
 {
-    var data = curDetRecData;
-    var recordDiv = document.getElementById('recdiv_'+data.recid);
-    var details = "";
+    var details = '<div class="details" id="det_'+data.recid+'"><table>';
+    if (marker) details += '<tr><td>'+ marker + '</td></tr>';
     if (data["md-title"] != undefined) {
         details += '<tr><td><b>Title</b></td><td><b>:</b> '+data["md-title"];
-	if (data["md-title-remainder"] !== undefined) {
-	    details += ' : <span>' + data["md-title-remainder"] + ' </span>';
-	}
-	if (data["md-title-responsibility"] !== undefined) {
-	    details += ' <span><i>'+ data["md-title-responsibility"] +'</i></span>';
-	}
- 	details += '</td></tr>';
+  	if (data["md-title-remainder"] !== undefined) {
+	      details += ' : <span>' + data["md-title-remainder"] + ' </span>';
+  	}
+  	if (data["md-title-responsibility"] !== undefined) {
+	      details += ' <span><i>'+ data["md-title-responsibility"] +'</i></span>';
+  	}
+ 	  details += '</td></tr>';
     }
     if (data["md-date"] != undefined)
         details += '<tr><td><b>Date</b></td><td><b>:</b> ' + data["md-date"] + '</td></tr>';
@@ -369,6 +386,7 @@ function drawCurDetails ()
         details += '<tr><td><b>Subject</b></td><td><b>:</b> ' + data["location"][0]["md-subject"] + '</td></tr>';
     if (data["location"][0]["@name"] != undefined)
         details += '<tr><td><b>Location</b></td><td><b>:</b> ' + data["location"][0]["@name"] + " (" +data["location"][0]["@id"] + ")" + '</td></tr>';
-    recordDiv.innerHTML += '<div class="details" id="det_'+data.recid+'"><table>' + details + '</table></div>';
+    details += '</table></div>';
+    return details;
 }
  //EOF
