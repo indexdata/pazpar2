@@ -56,26 +56,26 @@ function my_onshow(data) {
     // navi
     var results = document.getElementById("results");
   
-    var html = '';
+    var html = [];
     for (var i = 0; i < data.hits.length; i++) {
         var hit = data.hits[i];
-	    html += '<div class="record" id="recdiv_'+hit.recid+'" >'
+	      html.push('<div class="record" id="recdiv_'+hit.recid+'" >'
             +'<span>'+ (i + 1 + recPerPage * (curPage - 1)) +'. </span>'
             +'<a href="#" id="rec_'+hit.recid
             +'" onclick="showDetails(this.id);return false;"><b>' 
-            + hit["md-title"] +' </b></a>';
-        if (hit["md-title-remainder"] !== undefined) {
-            html += '<span>' + hit["md-title-remainder"] + ' </span>';
-        }
-        if (hit["md-title-responsibility"] !== undefined) {
-            html += '<span><i>'+ hit["md-title-responsibility"] +'</i></span>';
-        }
+            + hit["md-title"] +' </b></a>'); 
+	      if (hit["md-title-remainder"] !== undefined) {
+	        html.push('<span>' + hit["md-title-remainder"] + ' </span>');
+	      }
+	      if (hit["md-title-responsibility"] !== undefined) {
+    	    html.push('<span><i>'+hit["md-title-responsibility"]+'</i></span>');
+      	}
         if (hit.recid == curDetRecId) {
-            html += renderDetails(curDetRecData);
+            html.push(renderDetails(curDetRecData));
         }
-      	html += '</div>';
+      	html.push('</div>');
     }
-    replaceHtml(results, html);
+    replaceHtml(results, html.join(''));
 }
 
 function my_onstat(data) {
@@ -91,42 +91,30 @@ function my_onstat(data) {
 }
 
 function my_onterm(data) {
-    var termlist = document.getElementById("termlist");
-    termlist.innerHTML = "<hr/><b>TERMLISTS:</b><hr/>";
-    
-    termlist.innerHTML += '<div class="termtitle">.::Sources</div>';
+    var termlists = [];
+    termlists.push('<hr/><b>TERMLISTS:</b><hr/><div class="termtitle">.::Sources</div>');
     for (var i = 0; i < data.xtargets.length && i < SourceMax; i++ ) {
-        termlist.innerHTML += '<a href="#" target_id='
-            + data.xtargets[i].id
-            + ' onclick="limitTarget(this.getAttribute(\'target_id\'), this.firstChild.nodeValue);return false;">' 
-                            + data.xtargets[i].name 
-                            + ' </a><span> (' 
-                            + data.xtargets[i].freq 
-                            + ')</span><br/>';
+        termlists.push('<a href="#" target_id='+data.xtargets[i].id
+            + ' onclick="limitTarget(this.getAttribute(\'target_id\'), this.firstChild.nodeValue);return false;">' + data.xtargets[i].name 
+        + ' </a><span> (' + data.xtargets[i].freq + ')</span><br/>');
     }
-    
-    termlist.innerHTML += "<hr/>";
-    
-    termlist.innerHTML += '<div class="termtitle">.::Subjects</div>';
+     
+    termlists.push('<hr/><div class="termtitle">.::Subjects</div>');
     for (var i = 0; i < data.subject.length && i < SubjectMax; i++ ) {
-        termlist.innerHTML += '<a href="#" onclick="limitQuery(\'su\', this.firstChild.nodeValue);return false;">' 
-                            + data.subject[i].name 
-                            + '</a><span>  (' 
-                            + data.subject[i].freq 
-                            + ')</span><br/>';
+        termlists.push('<a href="#" onclick="limitQuery(\'su\', this.firstChild.nodeValue);return false;">' + data.subject[i].name + '</a><span>  (' 
+              + data.subject[i].freq + ')</span><br/>');
     }
-    
-    termlist.innerHTML += "<hr/>";
-    
-    termlist.innerHTML += '<div class="termtitle">.::Authors</div>';
+     
+    termlists.push('<hr/><div class="termtitle">.::Authors</div>');
     for (var i = 0; i < data.author.length && i < AuthorMax; i++ ) {
-        termlist.innerHTML += '<a href="#" onclick="limitQuery(\'au\', this.firstChild.nodeValue);return false;">' 
+        termlists.push('<a href="#" onclick="limitQuery(\'au\', this.firstChild.nodeValue);return false;">' 
                             + data.author[i].name 
                             + ' </a><span> (' 
                             + data.author[i].freq 
-                            + ')</span><br/>';
+                            + ')</span><br/>');
     }
-
+    var termlist = document.getElementById("termlist");
+    replaceHtml(termlist, termlists.join(''));
 }
 
 function my_onrecord(data) {
