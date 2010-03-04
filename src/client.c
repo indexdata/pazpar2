@@ -107,17 +107,6 @@ static const char *client_states[] = {
     "Client_Disconnected"
 };
 
-static void client_enter(struct client *cl)
-{
-    yaz_mutex_enter(cl->mutex);
-}
-
-static void client_leave(struct client *cl)
-{
-    yaz_mutex_leave(cl->mutex);
-}
-
-
 const char *client_get_state_str(struct client *cl)
 {
     return client_states[cl->state];
@@ -404,7 +393,7 @@ static void ingest_raw_record(struct client *cl, ZOOM_record rec)
     client_show_raw_dequeue(cl);
 }
 
-static void search_response(struct client *cl)
+void client_search_response(struct client *cl)
 {
     struct connection *co = cl->connection;
     struct session *se = cl->session;
@@ -428,12 +417,7 @@ static void search_response(struct client *cl)
     }
 }
 
-void client_search_response(struct client *cl)
-{
-    search_response(cl);
-}
-
-static void record_response(struct client *cl)
+void client_record_response(struct client *cl)
 {
     struct connection *co = cl->connection;
     ZOOM_connection link = connection_get_link(co);
@@ -510,11 +494,6 @@ static void record_response(struct client *cl)
             }
         }
     }
-}
-
-void client_record_response(struct client *cl)
-{
-    record_response(cl);
 }
 
 void client_start_search(struct client *cl)
@@ -635,12 +614,7 @@ int client_destroy(struct client *c)
             c->pquery = 0;
             xfree(c->cqlquery);
             c->cqlquery = 0;
-            c->hits = 12345678;
 
-#if 0            
-            if (c->connection)
-                connection_release(c->connection);
-#endif       
             ZOOM_resultset_destroy(c->resultset);
             yaz_mutex_destroy(&c->mutex);
             xfree(c);
@@ -813,8 +787,10 @@ int client_parse_query(struct client *cl, const char *query)
 
 void client_remove_from_session(struct client *c)
 {
-    struct session *se = c->session;
-    
+    struct session *se;
+    client_incref(c);
+
+    se = c->session;
     assert(se);
     if (se)
     {
@@ -828,6 +804,7 @@ void client_remove_from_session(struct client *c)
         c->session = 0;
         c->next = 0;
     }
+    client_destroy(c);
 }
 
 void client_set_session(struct client *cl, struct session *se)

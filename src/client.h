@@ -90,6 +90,7 @@ const char *client_get_url(struct client *cl);
 void client_set_maxrecs(struct client *cl, int v);
 void client_set_startrecs(struct client *cl, int v);
 void client_remove_from_session(struct client *c);
+void client_incref(struct client *c);
 
 #endif
 
