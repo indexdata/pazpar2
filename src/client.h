@@ -67,7 +67,7 @@ int client_is_our_response(struct client *cl);
 void client_continue(struct client *cl);
 
 struct client *client_create(void);
-void client_destroy(struct client *c);
+int client_destroy(struct client *c);
 
 void client_set_connection(struct client *cl, struct connection *con);
 void client_disconnect(struct client *cl);
@@ -89,6 +89,8 @@ struct host *client_get_host(struct client *cl);
 const char *client_get_url(struct client *cl);
 void client_set_maxrecs(struct client *cl, int v);
 void client_set_startrecs(struct client *cl, int v);
+void client_remove_from_session(struct client *c);
+void client_incref(struct client *c);
 
 #endif
 
