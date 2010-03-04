@@ -498,11 +498,11 @@ enum pazpar2_error_code search(struct session *se,
     *addinfo = 0;
     
     session_enter(se);
+    reclist_destroy(se->reclist);
+    se->reclist = 0;
     nmem_reset(se->nmem);
     se->relevance = 0;
     se->total_records = se->total_hits = se->total_merged = 0;
-    reclist_destroy(se->reclist);
-    se->reclist = 0;
     se->num_termlists = 0;
     live_channels = select_targets(se, filter);
     if (!live_channels)
