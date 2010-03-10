@@ -28,20 +28,24 @@ fi
 GET='$curl --silent --output $OUT2 "$f"'
 POST='$curl --silent --header "Content-Type: text/xml" --data-binary "@$postfile" --output $OUT2  "$f"'
 
+if [ -z "$SKIP_PAZPAR2" ] ; then
 # Fire up pazpar2
-rm -f pazpar2.log
-
+    rm -f pazpar2.log
+fi
 PREFIX=$1
 if test "x${PREFIX}" = "x"; then
     echo Missing prefix for run_pazpar2.sh
     exit 1
 fi
+
 CFG=${PREFIX}.cfg
 URLS=${PREFIX}_urls
 VALGRINDLOG=${PREFIX}_valgrind.log
 
 if test -n "$PAZPAR2_USE_VALGRIND"; then
     valgrind --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -X -l pazpar2.log -f ${CFG} >extra_pazpar2.log 2>&1 &
+elif test -n "$SKIP_PAZPAR2"; then 
+    echo "Skipping pazpar2. Must already be running with correct config!!! " 
 else
     YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -d -X -l pazpar2.log -f ${srcdir}/${CFG} >extra_pazpar2.log 2>&1 &
 fi
@@ -55,12 +59,14 @@ sleep 3
 # Set to success by default.. Will be set to non-zero in case of failure
 code=0
 
-if ps -p $PP2PID >/dev/null 2>&1; then
-    :
-else
-    code=1
-    PP2PID=""
-    echo "pazpar2 failed to start"
+if [ -z "$SKIP_PAZPAR2" ] ; then 
+    if ps -p $PP2PID >/dev/null 2>&1; then
+	:
+    else
+	code=1
+	PP2PID=""
+	echo "pazpar2 failed to start"
+    fi
 fi
 
 # We can start test for real
@@ -105,20 +111,24 @@ for f in `cat ${srcdir}/${URLS}`; do
 	    code=1
 	fi
     fi
-    if ps -p $PP2PID >/dev/null 2>&1; then
-	:
-    else
-	IFS="$oIFS"
-	echo "Test $testno: pazpar2 died"
-	exit 1
+    if [ -z "$SKIP_PAZPAR2" ] ; then  
+	if ps -p $PP2PID >/dev/null 2>&1; then
+	    :
+	else
+	    IFS="$oIFS"
+	    echo "Test $testno: pazpar2 died"
+	    exit 1
+	fi
     fi
 done
 
 # Kill programs
 
-if test -n "$PP2PID"; then
-    kill $PP2PID
-    sleep 2
+if [ -z "$SKIP_PAZPAR2" ] ; then 
+    if test -n "$PP2PID"; then
+	kill $PP2PID
+	sleep 2
+    fi
 fi
 
 exit $code
