@@ -162,6 +162,10 @@ void http_session_destroy(struct http_session *s)
         destroy_session(s->psession);
         nmem_destroy(s->nmem);
     }
+    else {
+        yaz_log(YLOG_LOG, "Active clients on session %u. Waiting for new timeout.", s->session_id);
+    }
+
 }
 
 static const char *get_msg(enum pazpar2_error_code code)
