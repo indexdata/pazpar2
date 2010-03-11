@@ -107,7 +107,7 @@ struct http_session *http_session_create(struct conf_service *service,
     r->session_id = 0;
     r->timestamp = 0;
     r->nmem = nmem;
-    r->destroy_counter = r->activity_counter;
+    r->destroy_counter = r->activity_counter = 0;
     r->http_sessions = http_sessions;
 
     yaz_mutex_enter(http_sessions->mutex);
