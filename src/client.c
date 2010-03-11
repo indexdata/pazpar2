@@ -64,6 +64,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "connection.h"
 #include "settings.h"
 #include "relevance.h"
+#include "incref.h"
 
 /** \brief Represents client state for a connection to one search target */
 struct client {
@@ -81,6 +82,8 @@ struct client {
     struct show_raw *show_raw;
     struct client *next;     // next client in session or next in free list
     ZOOM_resultset resultset;
+    YAZ_MUTEX mutex;
+    int ref_count;
 };
 
 struct show_raw {
@@ -119,12 +122,14 @@ void client_set_state(struct client *cl, enum client_state st)
     cl->state = st;
     /* no need to check for all client being non-active if this one
        already is. Note that session_active_clients also LOCKS session */
+#if 0
     if (!client_is_active(cl) && cl->session)
     {
         int no_active = session_active_clients(cl->session);
         if (no_active == 0)
             session_alert_watch(cl->session, SESSION_WATCH_SHOW);
     }
+#endif
 }
 
 static void client_show_raw_error(struct client *cl, const char *addinfo);
@@ -395,22 +400,31 @@ void client_search_response(struct client *cl)
     ZOOM_connection link = connection_get_link(co);
     ZOOM_resultset resultset = cl->resultset;
     const char *error, *addinfo = 0;
-
+    
     if (ZOOM_connection_error(link, &error, &addinfo))
     {
         cl->hits = 0;
         client_set_state(cl, Client_Error);
         yaz_log(YLOG_WARN, "Search error %s (%s): %s",
-            error, addinfo, client_get_url(cl));
+                error, addinfo, client_get_url(cl));
     }
     else
     {
         cl->record_offset = cl->startrecs;
         cl->hits = ZOOM_resultset_size(resultset);
-        se->total_hits += cl->hits;
+        if (se)
+            se->total_hits += cl->hits;
     }
 }
 
+void client_got_records(struct client *cl)
+{
+    if (cl->session)
+    {
+        session_alert_watch(cl->session, SESSION_WATCH_SHOW);
+        session_alert_watch(cl->session, SESSION_WATCH_RECORD);
+    }
+}
 
 void client_record_response(struct client *cl)
 {
@@ -450,7 +464,9 @@ void client_record_response(struct client *cl)
             if ((rec = ZOOM_resultset_record(resultset, offset)))
             {
                 cl->record_offset++;
-                if (ZOOM_record_error(rec, &msg, &addinfo, 0))
+                if (cl->session == 0)
+                    ;
+                else if (ZOOM_record_error(rec, &msg, &addinfo, 0))
                     yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
                             error, addinfo, client_get_url(cl),
                             cl->record_offset);
@@ -471,15 +487,9 @@ void client_record_response(struct client *cl)
                         if (ingest_record(cl, xmlrec, cl->record_offset, nmem))
                             yaz_log(YLOG_WARN, "Failed to ingest from %s",
                                     client_get_url(cl));
-                        else
-                        {
-                            session_alert_watch(cl->session, SESSION_WATCH_SHOW);
-                            session_alert_watch(cl->session, SESSION_WATCH_RECORD);
-                        }
                     }
                     nmem_destroy(nmem);
                 }
-
             }
             else
             {
@@ -582,35 +592,55 @@ struct client *client_create(void)
     r->show_raw = 0;
     r->resultset = 0;
     r->next = 0;
+    r->mutex = 0;
+    yaz_mutex_create(&r->mutex);
+    r->ref_count = 1;
+    
     return r;
 }
 
-void client_destroy(struct client *c)
+void client_incref(struct client *c)
 {
-    struct session *se = c->session;
-    if (c == se->clients)
-        se->clients = c->next;
-    else
+    pazpar2_incref(&c->ref_count, c->mutex);
+    yaz_log(YLOG_DEBUG, "client_incref %s %d", client_get_url(c), c->ref_count);
+}
+
+int client_destroy(struct client *c)
+{
+    if (c)
     {
-        struct client *cc;
-        for (cc = se->clients; cc && cc->next != c; cc = cc->next)
-            ;
-        if (cc)
-            cc->next = c->next;
+        yaz_log(YLOG_DEBUG, "client_destroy %s %d",
+                client_get_url(c), c->ref_count);
+        if (!pazpar2_decref(&c->ref_count, c->mutex))
+        {
+            c->next = 0;
+            xfree(c->pquery);
+            c->pquery = 0;
+            xfree(c->cqlquery);
+            c->cqlquery = 0;
+
+            ZOOM_resultset_destroy(c->resultset);
+            yaz_mutex_destroy(&c->mutex);
+            xfree(c);
+            return 1;
+        }
     }
-    xfree(c->pquery);
-    xfree(c->cqlquery);
-
-    if (c->connection)
-        connection_release(c->connection);
-
-    ZOOM_resultset_destroy(c->resultset);
-    xfree(c);
+    return 0;
 }
 
 void client_set_connection(struct client *cl, struct connection *con)
 {
-    cl->connection = con;
+    if (con)
+    {
+        assert(cl->connection == 0);
+        cl->connection = con;
+        client_incref(cl);
+    }
+    else
+    {
+        cl->connection = con;
+        client_destroy(cl);
+    }
 }
 
 void client_disconnect(struct client *cl)
@@ -756,6 +786,29 @@ int client_parse_query(struct client *cl, const char *query)
 
     ccl_rpn_delete(cn);
     return 0;
+}
+
+
+void client_remove_from_session(struct client *c)
+{
+    struct session *se;
+    client_incref(c);
+
+    se = c->session;
+    assert(se);
+    if (se)
+    {
+        struct client **ccp = &se->clients;
+        
+        while (*ccp && *ccp != c)
+            ccp = &(*ccp)->next;
+        assert(*ccp == c);
+        *ccp = c->next;
+        
+        c->session = 0;
+        c->next = 0;
+    }
+    client_destroy(c);
 }
 
 void client_set_session(struct client *cl, struct session *se)
