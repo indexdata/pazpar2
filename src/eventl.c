@@ -78,8 +78,17 @@ void iochan_man_destroy(iochan_man_t *mp)
 {
     if (*mp)
     {
+        IOCHAN c;
         if ((*mp)->sel_thread)
             sel_thread_destroy((*mp)->sel_thread);
+        
+        c = (*mp)->channel_list;
+        while (c)
+        {
+            IOCHAN c_next = c->next;
+            xfree(c);
+            c = c_next;
+        }
         xfree(*mp);
         *mp = 0;
     }
