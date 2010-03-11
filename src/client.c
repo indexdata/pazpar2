@@ -805,6 +805,7 @@ void client_remove_from_session(struct client *c)
         assert(*ccp == c);
         *ccp = c->next;
         
+        c->database = 0;
         c->session = 0;
         c->next = 0;
     }
@@ -866,7 +867,10 @@ struct host *client_get_host(struct client *cl)
 
 const char *client_get_url(struct client *cl)
 {
-    return client_get_database(cl)->database->url;
+    if (cl->database)
+        return client_get_database(cl)->database->url;
+    else
+        return "NOURL";
 }
 
 void client_set_maxrecs(struct client *cl, int v)
