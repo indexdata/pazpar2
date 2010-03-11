@@ -602,14 +602,14 @@ struct client *client_create(void)
 void client_incref(struct client *c)
 {
     pazpar2_incref(&c->ref_count, c->mutex);
-    yaz_log(YLOG_LOG, "client_incref %s %d", client_get_url(c), c->ref_count);
+    yaz_log(YLOG_DEBUG, "client_incref %s %d", client_get_url(c), c->ref_count);
 }
 
 int client_destroy(struct client *c)
 {
     if (c)
     {
-        yaz_log(YLOG_LOG, "client_destroy %s %d",
+        yaz_log(YLOG_DEBUG, "client_destroy %s %d",
                 client_get_url(c), c->ref_count);
         if (!pazpar2_decref(&c->ref_count, c->mutex))
         {
