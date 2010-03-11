@@ -414,6 +414,7 @@ int session_set_watch(struct session *s, int what,
 
 void session_alert_watch(struct session *s, int what)
 {
+    assert(s);
     session_enter(s);
     if (s->watchlist[what].fun)
     {
