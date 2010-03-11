@@ -159,6 +159,7 @@ static struct connection *connection_create(struct client *cl,
 
 static void non_block_events(struct connection *co)
 {
+    int got_records = 0;
     IOCHAN iochan = co->iochan;
     ZOOM_connection link = co->link;
     while (1)
@@ -213,12 +214,23 @@ static void non_block_events(struct connection *co)
             break;
         case ZOOM_EVENT_RECV_RECORD:
             client_record_response(cl);
+            got_records = 1;
             break;
         default:
             yaz_log(YLOG_LOG, "Unhandled event (%d) from %s",
                     ev, client_get_url(cl));
         }
         client_destroy(cl);
+    }
+    if (got_records)
+    {
+        struct client *cl = co->client;
+        if (cl)
+        {
+            client_incref(cl); 
+            client_got_records(cl);
+            client_destroy(cl);
+        }
     }
 }
 

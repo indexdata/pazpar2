@@ -417,6 +417,15 @@ void client_search_response(struct client *cl)
     }
 }
 
+void client_got_records(struct client *cl)
+{
+    if (cl->session)
+    {
+        session_alert_watch(cl->session, SESSION_WATCH_SHOW);
+        session_alert_watch(cl->session, SESSION_WATCH_RECORD);
+    }
+}
+
 void client_record_response(struct client *cl)
 {
     struct connection *co = cl->connection;
@@ -478,11 +487,6 @@ void client_record_response(struct client *cl)
                         if (ingest_record(cl, xmlrec, cl->record_offset, nmem))
                             yaz_log(YLOG_WARN, "Failed to ingest from %s",
                                     client_get_url(cl));
-                        else
-                        {
-                            session_alert_watch(cl->session, SESSION_WATCH_SHOW);
-                            session_alert_watch(cl->session, SESSION_WATCH_RECORD);
-                        }
                     }
                     nmem_destroy(nmem);
                 }
