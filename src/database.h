@@ -33,4 +33,5 @@ int resolve_database(struct conf_service *service, struct database *db);
 struct database *new_database(const char *id, NMEM nmem);
 
 database_hosts_t database_hosts_create(void);
+void database_hosts_destroy(database_hosts_t *);
 #endif

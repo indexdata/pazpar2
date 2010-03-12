@@ -414,6 +414,25 @@ database_hosts_t database_hosts_create(void)
     return p;
 }
 
+void database_hosts_destroy(database_hosts_t *pp)
+{
+    if (*pp)
+    {
+        struct host *p = (*pp)->hosts;
+        while (p)
+        {
+            struct host *p_next = p->next;
+            yaz_mutex_destroy(&p->mutex);
+            xfree(p->ipport);
+            xfree(p->hostport);
+            xfree(p);
+            p = p_next;
+        }
+        yaz_mutex_destroy(&(*pp)->mutex);
+        xfree(*pp);
+    }
+}
+
 /*
  * Local variables:
  * c-basic-offset: 4

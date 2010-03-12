@@ -117,11 +117,12 @@ void connection_destroy(struct connection *co)
     }
     yaz_log(YLOG_DEBUG, "Connection destroy %s", co->host->hostport);
 
-    remove_connection_from_host(co);
     if (co->client)
     {
         client_disconnect(co->client);
     }
+
+    remove_connection_from_host(co);
     xfree(co->zproxy);
     xfree(co);
 }
@@ -158,16 +159,21 @@ static struct connection *connection_create(struct client *cl,
 
 static void non_block_events(struct connection *co)
 {
-    struct client *cl = co->client;
+    int got_records = 0;
     IOCHAN iochan = co->iochan;
     ZOOM_connection link = co->link;
     while (1)
     {
+        struct client *cl = co->client;
         int ev;
         int r = ZOOM_event_nonblock(1, &link);
         if (!r)
             break;
+        if (!cl)
+            continue;
         ev = ZOOM_connection_last_event(link);
+        
+        client_incref(cl);
 #if 0
         yaz_log(YLOG_LOG, "ZOOM_EVENT_%s", ZOOM_get_event_str(ev));
 #endif
@@ -208,10 +214,22 @@ static void non_block_events(struct connection *co)
             break;
         case ZOOM_EVENT_RECV_RECORD:
             client_record_response(cl);
+            got_records = 1;
             break;
         default:
             yaz_log(YLOG_LOG, "Unhandled event (%d) from %s",
                     ev, client_get_url(cl));
+        }
+        client_destroy(cl);
+    }
+    if (got_records)
+    {
+        struct client *cl = co->client;
+        if (cl)
+        {
+            client_incref(cl); 
+            client_got_records(cl);
+            client_destroy(cl);
         }
     }
 }

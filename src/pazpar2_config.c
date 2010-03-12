@@ -1024,12 +1024,15 @@ void config_destroy(struct conf_config *config)
     if (config)
     {
         struct conf_server *server = config->servers;
+        iochan_man_destroy(&config->iochan_man);    
         while (server)
         {
             struct conf_server *s_next = server->next;
             server_destroy(server);
             server = s_next;
         }
+        database_hosts_destroy(&config->database_hosts);
+
         wrbuf_destroy(config->confdir);
         nmem_destroy(config->nmem);
     }
