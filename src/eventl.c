@@ -70,7 +70,7 @@ iochan_man_t iochan_man_create(int no_threads)
     man->sel_thread = 0; /* can't create sel_thread yet because we may fork */
     man->sel_fd = -1;
     man->no_threads = no_threads;
-    man->log_level = YLOG_DEBUG;
+    man->log_level = YLOG_LOG;
     return man;
 }
 
@@ -150,7 +150,7 @@ static void run_fun(iochan_man_t man, IOCHAN p)
     {
         if (man->sel_thread)
         {
-            yaz_log(man->log_level, "eventl: add fun chan=%p name=%s event=%d",
+            yaz_log(man->log_level, "eventl: work add chan=%p name=%s event=%d",
                     p, p->name ? p->name : "", p->this_event);
             p->thread_users++;
             sel_thread_add(man->sel_thread, p);
