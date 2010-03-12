@@ -50,7 +50,7 @@ typedef struct iochan
     int thread_users;
 
     iochan_man_t man;
-
+    char *name;
     struct iochan *next;
 } *IOCHAN;
 
@@ -80,7 +80,7 @@ void iochan_man_destroy(iochan_man_t *mp);
 #define iochan_setmaskfun(i, f) ((i)->maskfun = (f))
 #define iochan_getmaskfun(i) ((i)->maskfun)
 
-IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags);
+IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags, const char *name);
 
 #endif
 /*

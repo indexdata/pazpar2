@@ -686,6 +686,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service)
     session->normalize_cache = normalize_cache_create();
     session->mutex = 0;
     yaz_mutex_create(&session->mutex);
+    yaz_mutex_set_name(session->mutex, "session");
 
     return session;
 }

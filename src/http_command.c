@@ -115,7 +115,7 @@ struct http_session *http_session_create(struct conf_service *service,
     http_sessions->session_list = r;
     yaz_mutex_leave(http_sessions->mutex);
 
-    r->timeout_iochan = iochan_create(-1, session_timeout, 0);
+    r->timeout_iochan = iochan_create(-1, session_timeout, 0, "http_session_timeout");
     iochan_setdata(r->timeout_iochan, r);
     yaz_log(YLOG_LOG, "timeout=%d", service->session_timeout);
     iochan_settimeout(r->timeout_iochan, service->session_timeout);

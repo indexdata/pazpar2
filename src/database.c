@@ -110,6 +110,7 @@ static struct host *create_host(const char *hostport, iochan_man_t iochan_man)
         return 0;
     }
     yaz_mutex_create(&host->mutex);
+    yaz_mutex_set_name(host->mutex, "host");
 
     return host;
 }
@@ -411,6 +412,7 @@ database_hosts_t database_hosts_create(void)
     p->hosts = 0;
     p->mutex = 0;
     yaz_mutex_create(&p->mutex);
+    yaz_mutex_set_name(p->mutex, "database");
     return p;
 }
 

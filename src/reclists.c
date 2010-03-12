@@ -250,6 +250,7 @@ struct reclist *reclist_create(NMEM nmem)
     res->num_records = 0;
     res->mutex = 0;
     yaz_mutex_create(&res->mutex);
+    yaz_mutex_set_name(res->mutex, "reclist");
     return res;
 }
 

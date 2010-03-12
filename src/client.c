@@ -476,6 +476,7 @@ void client_record_response(struct client *cl)
                     NMEM nmem = nmem_create();
                     const char *xmlrec;
                     char type[80];
+                    yaz_log(YLOG_LOG, "Record ingest begin client=%p session=%p", cl, cl->session);
                     if (nativesyntax_to_type(sdb, type, rec))
                         yaz_log(YLOG_WARN, "Failed to determine record type");
                     xmlrec = ZOOM_record_get(rec, type, NULL);
@@ -489,6 +490,7 @@ void client_record_response(struct client *cl)
                                     client_get_url(cl));
                     }
                     nmem_destroy(nmem);
+                    yaz_log(YLOG_LOG, "Record ingest end client=%p session=%p", cl, cl->session);
                 }
             }
             else
@@ -594,6 +596,8 @@ struct client *client_create(void)
     r->next = 0;
     r->mutex = 0;
     yaz_mutex_create(&r->mutex);
+    yaz_mutex_set_name(r->mutex, "client");
+
     r->ref_count = 1;
     
     return r;

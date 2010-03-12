@@ -51,6 +51,7 @@ normalize_cache_t normalize_cache_create(void)
     nc->items = 0;
     nc->mutex = 0;
     yaz_mutex_create(&nc->mutex);
+    yaz_mutex_set_name(nc->mutex, "normalize_cache");
     return nc;
 }
 

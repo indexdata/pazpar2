@@ -86,6 +86,7 @@ void iochan_man_destroy(iochan_man_t *mp)
         while (c)
         {
             IOCHAN c_next = c->next;
+            xfree(c->name);
             xfree(c);
             c = c_next;
         }
@@ -101,7 +102,8 @@ void iochan_add(iochan_man_t man, IOCHAN chan)
     man->channel_list = chan;
 }
 
-IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags)
+IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags,
+                     const char *name)
 {
     IOCHAN new_iochan;
 
@@ -118,12 +120,17 @@ IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags)
     new_iochan->next = NULL;
     new_iochan->man = 0;
     new_iochan->thread_users = 0;
+    new_iochan->name = name ? xstrdup(name) : 0;
     return new_iochan;
 }
 
 static void work_handler(void *work_data)
 {
     IOCHAN p = work_data;
+
+    yaz_log(p->man->log_level, "eventl: work begin chan=%p name=%s event=%d",
+            p, p->name ? p->name : "", p->this_event);
+    
     if (!p->destroyed && (p->this_event & EVENT_TIMEOUT))
         (*p->fun)(p, EVENT_TIMEOUT);
     if (!p->destroyed && (p->this_event & EVENT_INPUT))
@@ -132,6 +139,9 @@ static void work_handler(void *work_data)
         (*p->fun)(p, EVENT_OUTPUT);
     if (!p->destroyed && (p->this_event & EVENT_EXCEPT))
         (*p->fun)(p, EVENT_EXCEPT);
+
+    yaz_log(p->man->log_level, "eventl: work end chan=%p name=%s event=%d",
+            p, p->name ? p->name : "", p->this_event);
 }
 
 static void run_fun(iochan_man_t man, IOCHAN p)
@@ -140,8 +150,8 @@ static void run_fun(iochan_man_t man, IOCHAN p)
     {
         if (man->sel_thread)
         {
-            yaz_log(man->log_level, "eventl: add fun chan=%p event=%d",
-                    p, p->this_event);
+            yaz_log(man->log_level, "eventl: add fun chan=%p name=%s event=%d",
+                    p, p->name ? p->name : "", p->this_event);
             p->thread_users++;
             sel_thread_add(man->sel_thread, p);
         }
@@ -194,10 +204,9 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
         {
             if (man->sel_fd > max)
                 max = man->sel_fd;
-            yaz_log(man->log_level, "select on sel fd=%d", man->sel_fd);
             FD_SET(man->sel_fd, &in);
         }
-        yaz_log(man->log_level, "select begin");
+        yaz_log(man->log_level, "select begin nofds=%d", max);
         res = select(max + 1, &in, &out, &except, timeout);
         yaz_log(man->log_level, "select returned res=%d", res);
         if (res < 0)
@@ -220,8 +229,8 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                         man->sel_fd);
                 while ((chan = sel_thread_result(man->sel_thread)))
                 {
-                    yaz_log(man->log_level, "eventl: got thread result p=%p",
-                            chan);
+                    yaz_log(man->log_level, "eventl: got thread result chan=%p name=%s",
+                            chan, chan->name ? chan->name : "");
                     chan->thread_users--;
                 }
             }
@@ -231,9 +240,14 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
             int force_event = p->force_event;
             time_t now = time(0);
             
-            if (p->thread_users > 0 || p->destroyed)
+            if (p->destroyed)
             {
-                yaz_log(man->log_level, "eventl: skip chan=%p users=%d", p, p->thread_users);
+                yaz_log(man->log_level, "eventl: skip destroyed chan=%p name=%s", p, p->name ? p->name : "");
+                continue;
+            }
+            if (p->thread_users > 0)
+            {
+                yaz_log(man->log_level, "eventl: skip chan=%p name=%s users=%d", p, p->name ? p->name : "", p->thread_users);
                 continue;
             }
             p->this_event = 0;
@@ -273,6 +287,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
 	    if (p->destroyed && p->thread_users == 0)
 	    {
                 *nextp = p->next;
+                xfree(p->name);
                 xfree(p);
 	    }
             else

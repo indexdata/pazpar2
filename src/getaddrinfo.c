@@ -179,7 +179,8 @@ static void getaddrinfo_start(iochan_man_t iochan_man)
     }
     else
     {
-        IOCHAN chan = iochan_create(fd, iochan_handler, EVENT_INPUT);
+        IOCHAN chan = iochan_create(fd, iochan_handler, EVENT_INPUT,
+            "getaddrinfo_socket");
         iochan_setdata(chan, p);
         iochan_add(iochan_man, chan);
     }
@@ -191,7 +192,7 @@ static void getaddrinfo_start(iochan_man_t iochan_man)
 int host_getaddrinfo(struct host *host, iochan_man_t iochan_man)
 {
     struct work *w = xmalloc(sizeof(*w));
-    int use_thread = 1; /* =0 to disable threading entirely */
+    int use_thread = 0; /* =0 to disable threading entirely */
 
     w->hostport = host->hostport;
     w->ipport = 0;

@@ -797,7 +797,7 @@ static int http_proxy(struct http_request *rq)
         p->first_response = 1;
         c->proxy = p;
         // We will add EVENT_OUTPUT below
-        p->iochan = iochan_create(sock, proxy_io, EVENT_INPUT);
+        p->iochan = iochan_create(sock, proxy_io, EVENT_INPUT, "http_proxy");
         iochan_setdata(p->iochan, p);
 
         iochan_add(ser->iochan_man, p->iochan);
@@ -1170,7 +1170,7 @@ static void http_accept(IOCHAN i, int event)
     enable_nonblock(s);
 
     yaz_log(YLOG_DEBUG, "New command connection");
-    c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT);
+    c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT, "http_session_socket");
     
     ch = http_channel_create(server->http_server, inet_ntoa(addr.sin_addr),
                              server);
@@ -1245,7 +1245,7 @@ int http_init(const char *addr, struct conf_server *server)
 
     server->http_server->listener_socket = l;
 
-    c = iochan_create(l, http_accept, EVENT_INPUT | EVENT_EXCEPT);
+    c = iochan_create(l, http_accept, EVENT_INPUT | EVENT_EXCEPT, "http_server");
     iochan_setdata(c, server);
 
     iochan_add(server->iochan_man, c);
