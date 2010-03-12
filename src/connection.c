@@ -79,7 +79,7 @@ static int connection_is_idle(struct connection *co)
     if (!ZOOM_connection_is_idle(link))
         return 0;
     event = ZOOM_connection_peek_event(link);
-    if (event == ZOOM_EVENT_NONE || event == ZOOM_EVENT_END)
+    if (event == ZOOM_EVENT_NONE)
         return 1;
     else
         return 0;
