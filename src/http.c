@@ -63,6 +63,7 @@ typedef int socklen_t;
 #include <yaz/nmem.h>
 #include <yaz/mutex.h>
 
+#include "ppmutex.h"
 #include "session.h"
 #include "http.h"
 
@@ -1421,7 +1422,7 @@ void http_mutex_init(struct conf_server *server)
     assert(server);
 
     assert(server->http_server->mutex == 0);
-    yaz_mutex_create(&server->http_server->mutex);
+    pazpar2_mutex_create(&server->http_server->mutex, "http_server");
     server->http_server->http_sessions = http_sessions_create();
 }
 

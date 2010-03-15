@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/log.h>
 #include <yaz/nmem.h>
 
+#include "ppmutex.h"
 #include "session.h"
 #include "host.h"
 #include "pazpar2_config.h"
@@ -109,8 +110,7 @@ static struct host *create_host(const char *hostport, iochan_man_t iochan_man)
         xfree(host);
         return 0;
     }
-    yaz_mutex_create(&host->mutex);
-    yaz_mutex_set_name(host->mutex, "host");
+    pazpar2_mutex_create(&host->mutex, "host");
 
     return host;
 }
@@ -411,8 +411,7 @@ database_hosts_t database_hosts_create(void)
     database_hosts_t p = xmalloc(sizeof(*p));
     p->hosts = 0;
     p->mutex = 0;
-    yaz_mutex_create(&p->mutex);
-    yaz_mutex_set_name(p->mutex, "database");
+    pazpar2_mutex_create(&p->mutex, "database");
     return p;
 }
 

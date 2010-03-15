@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <config.h>
 #endif
 
+#include "ppmutex.h"
 #include "normalize_cache.h"
 
 #include "pazpar2_config.h"
@@ -50,8 +51,7 @@ normalize_cache_t normalize_cache_create(void)
     nc->nmem = nmem;
     nc->items = 0;
     nc->mutex = 0;
-    yaz_mutex_create(&nc->mutex);
-    yaz_mutex_set_name(nc->mutex, "normalize_cache");
+    pazpar2_mutex_create(&nc->mutex, "normalize_cache");
     return nc;
 }
 

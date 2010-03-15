@@ -37,9 +37,11 @@ pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn);
 void pp2_charset_destroy(pp2_charset_t pct);
 void pp2_charset_incref(pp2_charset_t pct);
 
-pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
-                                             const char *buf,
-                                             int skip_article);
+pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct);
+void pp2_relevance_first(pp2_relevance_token_t prt,
+                         const char *buf,
+                         int skip_article);
+
 void pp2_relevance_token_destroy(pp2_relevance_token_t prt);
 const char *pp2_relevance_token_next(pp2_relevance_token_t prt);
 const char *pp2_get_sort(pp2_relevance_token_t prt);

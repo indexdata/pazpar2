@@ -57,6 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/timing.h>
 #endif
 
+#include "ppmutex.h"
 #include "parameters.h"
 #include "session.h"
 #include "eventl.h"
@@ -502,7 +503,7 @@ enum pazpar2_error_code search(struct session *se,
     reclist_destroy(se->reclist);
     se->reclist = 0;
     nmem_reset(se->nmem);
-    se->relevance = 0;
+    relevance_destroy(&se->relevance);
     se->total_records = se->total_hits = se->total_merged = 0;
     se->num_termlists = 0;
     live_channels = select_targets(se, filter);
@@ -651,6 +652,7 @@ void destroy_session(struct session *s)
     for (sdb = s->databases; sdb; sdb = sdb->next)
         session_database_destroy(sdb);
     normalize_cache_destroy(s->normalize_cache);
+    relevance_destroy(&s->relevance);
     reclist_destroy(s->reclist);
     nmem_destroy(s->nmem);
     service_destroy(s->service);
@@ -658,7 +660,8 @@ void destroy_session(struct session *s)
     wrbuf_destroy(s->wrbuf);
 }
 
-struct session *new_session(NMEM nmem, struct conf_service *service) 
+struct session *new_session(NMEM nmem, struct conf_service *service,
+                            const char *name)
 {
     int i;
     struct session *session = nmem_malloc(nmem, sizeof(*session));
@@ -685,8 +688,8 @@ struct session *new_session(NMEM nmem, struct conf_service *service)
     }
     session->normalize_cache = normalize_cache_create();
     session->mutex = 0;
-    yaz_mutex_create(&session->mutex);
-    yaz_mutex_set_name(session->mutex, "session");
+
+    pazpar2_mutex_create(&session->mutex, name);
 
     return session;
 }
@@ -951,10 +954,9 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
                 {
                     const char *norm_str;
                     pp2_relevance_token_t prt =
-                        pp2_relevance_tokenize(
-                            service->mergekey_pct,
-                            (const char *) value, 0);
+                        pp2_relevance_tokenize(service->mergekey_pct);
                     
+                    pp2_relevance_first(prt, (const char *) value, 0);
                     if (wrbuf_len(norm_wr) > 0)
                         wrbuf_puts(norm_wr, " ");
                     wrbuf_puts(norm_wr, name);
@@ -991,10 +993,9 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     {
         const char *norm_str;
         pp2_relevance_token_t prt =
-            pp2_relevance_tokenize(
-                service->mergekey_pct,
-                (const char *) mergekey, 0);
-        
+            pp2_relevance_tokenize(service->mergekey_pct);
+
+        pp2_relevance_first(prt, (const char *) mergekey, 0);
         while ((norm_str = pp2_relevance_token_next(prt)))
         {
             if (*norm_str)
@@ -1274,9 +1275,10 @@ static int ingest_to_cluster(struct client *cl,
                                 nmem_malloc(se->nmem, 
                                             sizeof(union data_types));
                          
-                        prt = pp2_relevance_tokenize(
-                            service->sort_pct,
-                            rec_md->data.text.disp, skip_article);
+                        prt = pp2_relevance_tokenize(service->sort_pct);
+
+                        pp2_relevance_first(prt, rec_md->data.text.disp,
+                                            skip_article);
 
                         pp2_relevance_token_next(prt);
                          

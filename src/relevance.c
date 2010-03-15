@@ -33,7 +33,7 @@ struct relevance
     int *doc_frequency_vec;
     int vec_len;
     struct word_entry *entries;
-    pp2_charset_t pct;
+    pp2_relevance_token_t prt;
     NMEM nmem;
 };
 
@@ -68,7 +68,8 @@ int word_entry_match(struct word_entry *entries, const char *norm_str)
     return 0;
 }
 
-static struct word_entry *build_word_entries(pp2_charset_t pct, NMEM nmem,
+static struct word_entry *build_word_entries(pp2_relevance_token_t prt,
+                                             NMEM nmem,
                                              const char **terms)
 {
     int termno = 1; /* >0 signals THERE is an entry */
@@ -77,14 +78,11 @@ static struct word_entry *build_word_entries(pp2_charset_t pct, NMEM nmem,
 
     for (; *p; p++)
     {
-        pp2_relevance_token_t prt = pp2_relevance_tokenize(pct, *p, 0);
         const char *norm_str;
 
+        pp2_relevance_first(prt, *p, 0);
         while ((norm_str = pp2_relevance_token_next(prt)))
             add_word_entry(nmem, &entries, norm_str, termno);
-
-        pp2_relevance_token_destroy(prt);
-
         termno++;
     }
     return entries;
@@ -93,15 +91,15 @@ static struct word_entry *build_word_entries(pp2_charset_t pct, NMEM nmem,
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
                           const char *words, int multiplier, const char *name)
 {
-    pp2_relevance_token_t prt = pp2_relevance_tokenize(r->pct, words, 0);
     int *mult = cluster->term_frequency_vec_tmp;
     const char *norm_str;
     int i, length = 0;
 
+    pp2_relevance_first(r->prt, words, 0);
     for (i = 1; i < r->vec_len; i++)
         mult[i] = 0;
 
-    while ((norm_str = pp2_relevance_token_next(prt)))
+    while ((norm_str = pp2_relevance_token_next(r->prt)))
     {
         int res = word_entry_match(r->entries, norm_str);
         if (res)
@@ -120,7 +118,6 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
     }
 
     cluster->term_frequency_vec[0] += length;
-    pp2_relevance_token_destroy(prt);
 }
 
 struct relevance *relevance_create(pp2_charset_t pct,
@@ -136,9 +133,18 @@ struct relevance *relevance_create(pp2_charset_t pct,
     res->doc_frequency_vec = nmem_malloc(nmem, res->vec_len * sizeof(int));
     memset(res->doc_frequency_vec, 0, res->vec_len * sizeof(int));
     res->nmem = nmem;
-    res->entries = build_word_entries(pct, nmem, terms);
-    res->pct = pct;
+    res->prt = pp2_relevance_tokenize(pct);
+    res->entries = build_word_entries(res->prt, nmem, terms);
     return res;
+}
+
+void relevance_destroy(struct relevance **rp)
+{
+    if (*rp)
+    {
+        pp2_relevance_token_destroy((*rp)->prt);
+        *rp = 0;
+    }
 }
 
 void relevance_newrec(struct relevance *r, struct record_cluster *rec)

@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/snprintf.h>
 #include <yaz/yaz-util.h>
 
+#include "ppmutex.h"
 #include "eventl.h"
 #include "parameters.h"
 #include "session.h"
@@ -67,7 +68,7 @@ http_sessions_t http_sessions_create(void)
     http_sessions_t hs = xmalloc(sizeof(*hs));
     hs->session_list = 0;
     hs->mutex = 0;
-    yaz_mutex_create(&hs->mutex);
+    pazpar2_mutex_create(&hs->mutex, "http_sessions");
     return hs;
 }
 
@@ -98,13 +99,16 @@ static void session_timeout(IOCHAN i, int event)
 }
 
 struct http_session *http_session_create(struct conf_service *service,
-                                         http_sessions_t http_sessions)
+                                         http_sessions_t http_sessions,
+                                         unsigned int sesid)
 {
     NMEM nmem = nmem_create();
     struct http_session *r = nmem_malloc(nmem, sizeof(*r));
+    char tmp_str[50];
 
-    r->psession = new_session(nmem, service);
-    r->session_id = 0;
+    sprintf(tmp_str, "session#%u", sesid);
+    r->psession = new_session(nmem, service, tmp_str);
+    r->session_id = sesid;
     r->timestamp = 0;
     r->nmem = nmem;
     r->destroy_counter = r->activity_counter = 0;
@@ -356,7 +360,8 @@ static void cmd_init(struct http_channel *c)
             return;
         }
     }
-    s = http_session_create(service, c->http_sessions);
+    sesid = make_sessionid();
+    s = http_session_create(service, c->http_sessions, sesid);
     
     yaz_log(YLOG_DEBUG, "HTTP Session init");
     if (!clear || *clear == '0')
@@ -364,13 +369,11 @@ static void cmd_init(struct http_channel *c)
     else
         yaz_log(YLOG_LOG, "No databases preloaded");
     
-    sesid = make_sessionid();
-    s->session_id = sesid;
     if (process_settings(s->psession, c->request, c->response) < 0)
         return;
     
     sprintf(buf, HTTP_COMMAND_RESPONSE_PREFIX 
-            "<init><status>OK</status><session>%u", sesid);
+            "<init><status>OK</status><session>%d", sesid);
     if (c->server->server_id)
     {
         strcat(buf, ".");

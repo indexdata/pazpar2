@@ -58,6 +58,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/timing.h>
 #endif
 
+#include "ppmutex.h"
 #include "session.h"
 #include "parameters.h"
 #include "client.h"
@@ -595,8 +596,7 @@ struct client *client_create(void)
     r->resultset = 0;
     r->next = 0;
     r->mutex = 0;
-    yaz_mutex_create(&r->mutex);
-    yaz_mutex_set_name(r->mutex, "client");
+    pazpar2_mutex_create(&r->mutex, "client");
 
     r->ref_count = 1;
     

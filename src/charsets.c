@@ -38,12 +38,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #if YAZ_HAVE_ICU
 #include <yaz/icu.h>
-
-#if YAZ_VERSIONL >= 0x40002
-/* YAZ 4.0.2 or later as icu_iter */
-#define ICU_ITER 1
-#endif
-
 #endif
 
 /* charset handle */
@@ -72,9 +66,7 @@ struct pp2_relevance_token_s {
     pp2_charset_t pct;  /* our main charset handle (type+config) */
     WRBUF norm_str;     /* normized string we return (temporarily) */
     WRBUF sort_str;     /* sort string we return (temporarily) */
-#if ICU_ITER
     yaz_icu_iter_t iter;
-#endif
 };
 
 
@@ -151,14 +143,30 @@ void pp2_charset_destroy(pp2_charset_t pct)
     }
 }
 
-pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
-                                             const char *buf,
-                                             int skip_article)
+pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct)
 {
     pp2_relevance_token_t prt = xmalloc(sizeof(*prt));
 
     assert(pct);
 
+    prt->norm_str = wrbuf_alloc();
+    prt->sort_str = wrbuf_alloc();
+    prt->cp = 0;
+    prt->last_cp = 0;
+    prt->pct = pct;
+
+#if YAZ_HAVE_ICU
+    prt->iter = 0;
+    if (pct->icu_chn)
+        prt->iter = icu_iter_create(pct->icu_chn);
+#endif
+    return prt;
+}
+
+void pp2_relevance_first(pp2_relevance_token_t prt,
+                         const char *buf,
+                         int skip_article)
+{ 
     if (skip_article)
     {
         const char *p = buf;
@@ -176,39 +184,23 @@ pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct,
             buf = p;
     }
 
-    prt->norm_str = wrbuf_alloc();
-    prt->sort_str = wrbuf_alloc();
+    wrbuf_rewind(prt->norm_str);
+    wrbuf_rewind(prt->sort_str);
     prt->cp = buf;
     prt->last_cp = 0;
-    prt->pct = pct;
 
 #if YAZ_HAVE_ICU
-#if ICU_ITER
-    prt->iter = 0;
-#endif
-    if (pct->icu_chn)
+    if (prt->iter)
     {
-#if ICU_ITER
-        prt->iter = icu_iter_create(pct->icu_chn);
         icu_iter_first(prt->iter, buf);
-#else        
-        int ok = 0;
-        pct->icu_sts = U_ZERO_ERROR;
-
-        ok = icu_chain_assign_cstr(pct->icu_chn, buf, &pct->icu_sts);
-#endif
-        //printf("\nfield ok: %d '%s'\n", ok, buf);
-        prt->pct = pct;
     }
 #endif // YAZ_HAVE_ICU
-    return prt;
 }
-
 
 void pp2_relevance_token_destroy(pp2_relevance_token_t prt)
 {
     assert(prt);
-#if ICU_ITER
+#if YAZ_HAVE_ICU
     if (prt->iter)
         icu_iter_destroy(prt->iter);
 #endif
@@ -282,31 +274,16 @@ static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt)
 #if YAZ_HAVE_ICU
 static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)
 {
-#if ICU_ITER
     if (icu_iter_next(prt->iter))
     {
         return icu_iter_get_norm(prt->iter);
     }
-#else
-    if (icu_chain_next_token(prt->pct->icu_chn, &prt->pct->icu_sts))
-    {
-        if (U_FAILURE(prt->pct->icu_sts))
-        {
-            return 0;
-        }
-        return icu_chain_token_norm(prt->pct->icu_chn);
-    }
-#endif
     return 0;
 }
 
 static const char *pp2_get_sort_icu(pp2_relevance_token_t prt)
 {
-#if ICU_ITER
     return icu_iter_get_sortkey(prt->iter);
-#else
-    return icu_chain_token_sortkey(prt->pct->icu_chn);
-#endif
 }
 
 #endif // YAZ_HAVE_ICU

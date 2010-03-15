@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#include "ppmutex.h"
 #include "incref.h"
 #include "pazpar2_config.h"
 #include "settings.h"
@@ -697,7 +698,7 @@ struct conf_service *service_create(struct conf_server *server,
         inherit_server_settings(service);
         resolve_databases(service);
         assert(service->mutex == 0);
-        yaz_mutex_create(&service->mutex);
+        pazpar2_mutex_create(&service->mutex, "conf");
     }
     return service;
 }
@@ -1060,7 +1061,7 @@ void config_process_events(struct conf_config *conf)
         {
             resolve_databases(s);
             assert(s->mutex == 0);
-            yaz_mutex_create(&s->mutex);
+            pazpar2_mutex_create(&s->mutex, "service");
         }
         http_mutex_init(ser);
     }

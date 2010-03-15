@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <yaz/yaz-util.h>
 
+#include "ppmutex.h"
 #include "session.h"
 #include "reclists.h"
 #include "jenkins_hash.h"
@@ -249,8 +250,7 @@ struct reclist *reclist_create(NMEM nmem)
 
     res->num_records = 0;
     res->mutex = 0;
-    yaz_mutex_create(&res->mutex);
-    yaz_mutex_set_name(res->mutex, "reclist");
+    pazpar2_mutex_create(&res->mutex, "reclist");
     return res;
 }
 
