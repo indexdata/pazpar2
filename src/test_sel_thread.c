@@ -109,7 +109,7 @@ static void test_for_real_work(int no_threads)
     {
         iochan_man_t chan_man = iochan_man_create(10);
         IOCHAN chan = iochan_create(thread_fd, iochan_handler,
-                                    EVENT_INPUT|EVENT_TIMEOUT);
+                                    EVENT_INPUT|EVENT_TIMEOUT, "test_chan");
         iochan_settimeout(chan, 1);
         iochan_setdata(chan, p);
         iochan_add(chan_man, chan);
