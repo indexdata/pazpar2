@@ -28,7 +28,8 @@ libpazpar2_a_SOURCES = pazpar2_config.c pazpar2_config.h eventl.c eventl.h \
 	client.c client.h connection.c connection.h host.h parameters.h \
 	marcmap.c marcmap.h marchash.c marchash.h \
 	jenkins_hash.c jenkins_hash.h normalize_record.c normalize_record.h \
-	normalize_cache.c normalize_cache.h incref.c incref.h
+	normalize_cache.c normalize_cache.h incref.c incref.h \
+	ppmutex.c ppmutex.h
 
 pazpar2_SOURCES = pazpar2.c
 pazpar2_LDADD = libpazpar2.a $(YAZLIB)

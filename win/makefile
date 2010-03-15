@@ -200,6 +200,7 @@ PAZPAR2_OBJS = \
    "$(OBJDIR)\marchash.obj" \
    "$(OBJDIR)\normalize_record.obj" \
    "$(OBJDIR)\normalize_cache.obj" \
+   "$(OBJDIR)\ppmutex.obj" \
    "$(OBJDIR)\connection.obj" 
 
 
