@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if HAVE_CONFIG_H
 #include <config.h>
 #endif
-
+#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -429,6 +429,8 @@ void client_got_records(struct client *cl)
 
 void client_record_response(struct client *cl)
 {
+    static pthread_mutex_t ingest_mutex = PTHREAD_MUTEX_INITIALIZER;
+    static int ingest_counter = 0, ingest_max = 0;
     struct connection *co = cl->connection;
     ZOOM_connection link = connection_get_link(co);
     ZOOM_resultset resultset = cl->resultset;
@@ -476,8 +478,19 @@ void client_record_response(struct client *cl)
                     struct session_database *sdb = client_get_database(cl);
                     NMEM nmem = nmem_create();
                     const char *xmlrec;
+                    int new_max = 0;
                     char type[80];
                     yaz_log(YLOG_LOG, "Record ingest begin client=%p session=%p", cl, cl->session);
+                    pthread_mutex_lock(&ingest_mutex);
+                    ++ingest_counter;
+                    if (ingest_counter > ingest_max)
+                    {
+                        ingest_max = ingest_counter;
+                        new_max = ingest_max;
+                    }
+                    pthread_mutex_unlock(&ingest_mutex);
+                    if (new_max)
+                        yaz_log(YLOG_LOG, "New max client=%p new_max=%d", cl, new_max);
                     if (nativesyntax_to_type(sdb, type, rec))
                         yaz_log(YLOG_WARN, "Failed to determine record type");
                     xmlrec = ZOOM_record_get(rec, type, NULL);
@@ -490,8 +503,11 @@ void client_record_response(struct client *cl)
                             yaz_log(YLOG_WARN, "Failed to ingest from %s",
                                     client_get_url(cl));
                     }
+                    pthread_mutex_lock(&ingest_mutex);
+                    --ingest_counter;
+                    pthread_mutex_unlock(&ingest_mutex);
                     nmem_destroy(nmem);
-                    yaz_log(YLOG_LOG, "Record ingest end client=%p session=%p", cl, cl->session);
+                    yaz_log(YLOG_LOG, "Record ingest end client=%p session=%p max=%d", cl, cl->session, ingest_max);
                 }
             }
             else
