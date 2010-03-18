@@ -12,9 +12,7 @@
 
 
 	<xsl:template match="/">
-		<pz:collection>
 			<xsl:apply-templates />
-		</pz:collection>
 	</xsl:template>
 
 	<xsl:template match="tmarc:r">
@@ -49,6 +47,7 @@
 		</xsl:variable>
 
 		<pz:record>
+<!--
 			<xsl:attribute name="mergekey">
         <xsl:text>title </xsl:text>
 	<xsl:value-of select="tmarc:d245/tmarc:sa" />
@@ -57,6 +56,7 @@
 	<xsl:text> medium </xsl:text>
 	<xsl:value-of select="$medium" />
       </xsl:attribute>
+  -->
 
 			<xsl:for-each select="tmarc:c001">
 				<pz:metadata type="id">
