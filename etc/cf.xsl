@@ -68,26 +68,35 @@
     </pz:metadata>
   </xsl:template>
 
-  <xsl:template match="available">
-    <pz:metadata type="available">
-      <xsl:value-of select="."/>
+  <xsl:template match="item">
+    <pz:metadata type="location">
+      <xsl:choose>
+	<xsl:when test="location">
+	  <xsl:value-of select="location"/>
+	</xsl:when>
+	<xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
+      </xsl:choose>
+    </pz:metadata>
+    <pz:metadata type="callno">
+      <xsl:choose>
+	<xsl:when test="callno">
+	  <xsl:value-of select="callno"/>
+	</xsl:when>
+	<xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
+      </xsl:choose>
+    </pz:metadata>
+    <pz:metadata type="avaliable">
+      <xsl:choose>
+	<xsl:when test="available">
+	  <xsl:value-of select="available"/>
+	</xsl:when>
+	<xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
+      </xsl:choose>
     </pz:metadata>
   </xsl:template>
 
   <xsl:template match="due">
     <pz:metadata type="due">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="location">
-    <pz:metadata type="locallocation">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="callno">
-    <pz:metadata type="callnumber">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
