@@ -70,7 +70,8 @@ iochan_man_t iochan_man_create(int no_threads)
     man->sel_thread = 0; /* can't create sel_thread yet because we may fork */
     man->sel_fd = -1;
     man->no_threads = no_threads;
-    man->log_level = YLOG_LOG;
+    man->log_level = yaz_log_module_level("iochan");
+
     return man;
 }
 
