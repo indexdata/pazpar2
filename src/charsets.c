@@ -66,7 +66,9 @@ struct pp2_relevance_token_s {
     pp2_charset_t pct;  /* our main charset handle (type+config) */
     WRBUF norm_str;     /* normized string we return (temporarily) */
     WRBUF sort_str;     /* sort string we return (temporarily) */
+#if YAZ_HAVE_ICU
     yaz_icu_iter_t iter;
+#endif
 };
 
 
