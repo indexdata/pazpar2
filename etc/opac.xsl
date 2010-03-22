@@ -16,13 +16,28 @@
   <xsl:template name="record-hook">
     <xsl:for-each select="/opacRecord/holdings/holding">
       <pz:metadata type="locallocation">
-        <xsl:value-of select="localLocation"/>
+        <xsl:choose>
+	  <xsl:when test="localLocation">
+	    <xsl:value-of select="localLocation"/>
+	  </xsl:when>
+	  <xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
+	</xsl:choose>
       </pz:metadata>
       <pz:metadata type="callnumber">
-        <xsl:value-of select="callNumber"/>
+        <xsl:choose>
+	  <xsl:when test="callNumber">
+	    <xsl:value-of select="callNumber"/>
+	  </xsl:when>
+	  <xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
+	</xsl:choose>
       </pz:metadata>
       <pz:metadata type="publicnote">
-        <xsl:value-of select="publicNote"/>
+        <xsl:choose>
+	  <xsl:when test="publicNote">
+	    <xsl:value-of select="publicNote"/>
+	  </xsl:when>
+	  <xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
+	</xsl:choose>
       </pz:metadata>
     </xsl:for-each>
   </xsl:template>
