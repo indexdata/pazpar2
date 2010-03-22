@@ -11,7 +11,7 @@ fi
 
 
 H="http://localhost:${PORT}/search.pz2"
-wget -q -O $OF.init.xml "$H/?command=init&service=perf_t&extra=$OF"
+wget -q -O $OF.init.xml "$H/?command=init&service=perf&extra=$OF"
 S=`xsltproc get_session.xsl $OF.init.xml`
 wget -q -O $OF.search.xml "$H?command=search&query=100&session=$S"
 sleep 1
