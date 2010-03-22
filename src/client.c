@@ -480,9 +480,11 @@ void client_record_response(struct client *cl)
                 if (cl->session == 0)
                     ;
                 else if (ZOOM_record_error(rec, &msg, &addinfo, 0))
+                {
                     yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
-                            error, addinfo, client_get_url(cl),
+                            msg, addinfo, client_get_url(cl),
                             cl->record_offset);
+                }
                 else
                 {
                     struct session_database *sdb = client_get_database(cl);
