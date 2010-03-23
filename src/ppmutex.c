@@ -26,22 +26,21 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #include <assert.h>
-
+#include <yaz/log.h>
 #include "ppmutex.h"
 
-static int pazpar2_mutex_debug = 0;
+static int ppmutex_level = 0;
 
-void pazpar2_mutex_enable_debug(int debug)
+void pazpar2_mutex_init(void)
 {
-    pazpar2_mutex_debug = debug;
+    ppmutex_level = yaz_log_module_level("mutex");
 }
 
 void pazpar2_mutex_create(YAZ_MUTEX *p, const char *name)
 {
     assert(p);
     yaz_mutex_create(p);
-    if (pazpar2_mutex_debug && name)
-        yaz_mutex_set_name(*p, name);
+    yaz_mutex_set_name(*p, ppmutex_level, name);
 }
 
 /*

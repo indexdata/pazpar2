@@ -26,10 +26,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <yaz/mutex.h>
 
-YAZ_EXPORT
-void pazpar2_mutex_enable_debug(int debug);
+void pazpar2_mutex_init(void);
 
-YAZ_EXPORT
 void pazpar2_mutex_create(YAZ_MUTEX *p, const char *name);
 
 #endif
