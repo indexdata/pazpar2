@@ -73,7 +73,7 @@ static void *sel_thread_handler(void *vp)
 {
     sel_thread_t p = (sel_thread_t) vp;
 
-    while(1)
+    while (1)
     {
         struct work_item *work_this = 0;
         /* wait for some work */
@@ -140,7 +140,7 @@ sel_thread_t sel_thread_create(void (*work_handler)(void *work_data),
 
     p->thread_id = nmem_malloc(nmem, sizeof(*p->thread_id) * p->no_threads);
     for (i = 0; i < p->no_threads; i++)
-        pthread_create (p->thread_id + i, 0, sel_thread_handler, p);
+        pthread_create(p->thread_id + i, 0, sel_thread_handler, p);
     return p;
 }
 
