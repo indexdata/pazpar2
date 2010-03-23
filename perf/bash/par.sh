@@ -3,6 +3,9 @@ DELAY=0.001
 WAIT=5
 NUMBER=40
 ROUNDS=5
+if test -n "$1"; then
+	. $1
+fi
 let r=0
 while test $r -lt $ROUNDS; do
 	echo "$r"
