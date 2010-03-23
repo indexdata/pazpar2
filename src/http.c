@@ -1374,14 +1374,9 @@ void http_server_destroy(http_server_t hs)
     {
         int r;
 
-        if (hs->mutex)
-        {
-            yaz_mutex_enter(hs->mutex);
-            r = --(hs->ref_count);
-            yaz_mutex_leave(hs->mutex);
-        }
-        else
-            r = --(hs->ref_count);
+        yaz_mutex_enter(hs->mutex); /* OK: hs->mutex may be NULL */
+        r = --(hs->ref_count);
+        yaz_mutex_leave(hs->mutex);
 
         if (r == 0)
         {
