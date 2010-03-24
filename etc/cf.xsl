@@ -69,7 +69,7 @@
   </xsl:template>
 
   <xsl:template match="item">
-    <pz:metadata type="location">
+    <pz:metadata type="locallocation">
       <xsl:choose>
 	<xsl:when test="location">
 	  <xsl:value-of select="location"/>
@@ -77,7 +77,7 @@
 	<xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
       </xsl:choose>
     </pz:metadata>
-    <pz:metadata type="callno">
+    <pz:metadata type="callnumber">
       <xsl:choose>
 	<xsl:when test="callno">
 	  <xsl:value-of select="callno"/>
