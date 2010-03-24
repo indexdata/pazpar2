@@ -85,7 +85,7 @@
 	<xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
       </xsl:choose>
     </pz:metadata>
-    <pz:metadata type="avaliable">
+    <pz:metadata type="publicnote">
       <xsl:choose>
 	<xsl:when test="available">
 	  <xsl:value-of select="available"/>
