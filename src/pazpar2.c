@@ -171,8 +171,7 @@ static int sc_main(
         yaz_log(YLOG_FATAL, "Configuration must be given with option -f");
         return 1;
     }
-    if (global_parameters.debug_mode > 1)
-        pazpar2_mutex_enable_debug(1);
+    pazpar2_mutex_init();
     
     config = config_create(config_fname, global_parameters.dump_records);
     if (!config)
