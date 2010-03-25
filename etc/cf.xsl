@@ -71,7 +71,7 @@
   <xsl:template match="item">
     <pz:metadata type="locallocation">
       <xsl:choose>
-	<xsl:when test="location">
+	<xsl:when test="string-length(location)">
 	  <xsl:value-of select="location"/>
 	</xsl:when>
 	<xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
@@ -79,16 +79,24 @@
     </pz:metadata>
     <pz:metadata type="callnumber">
       <xsl:choose>
-	<xsl:when test="callno">
+	<xsl:when test="string-length(callno)">
 	  <xsl:value-of select="callno"/>
+	</xsl:when>
+	<xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
+      </xsl:choose>
+    </pz:metadata>
+    <pz:metadata type="available">
+      <xsl:choose>
+	<xsl:when test="string-length(available)">
+	  <xsl:value-of select="available"/>
 	</xsl:when>
 	<xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
       </xsl:choose>
     </pz:metadata>
     <pz:metadata type="publicnote">
       <xsl:choose>
-	<xsl:when test="available">
-	  <xsl:value-of select="available"/>
+	<xsl:when test="string-length(publicnote)">
+	  <xsl:value-of select="publicnote"/>
 	</xsl:when>
 	<xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
       </xsl:choose>
