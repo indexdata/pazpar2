@@ -236,6 +236,13 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                 }
             }
         }
+        if (man->log_level)
+        {
+            int no = 0;
+            for (p = *iochans; p; p = p->next)
+                no++;
+            yaz_log(man->log_level, "%d channels", no);
+        }
         for (p = *iochans; p; p = p->next)
         {
             int force_event = p->force_event;
