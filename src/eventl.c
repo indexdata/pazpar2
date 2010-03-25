@@ -265,13 +265,11 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                 if (FD_ISSET(p->fd, &in) || force_event == EVENT_INPUT)
                 {
                     p->last_event = now;
-                    yaz_log(YLOG_DEBUG, "Eventl input event");
                     p->this_event |= EVENT_INPUT;
                 }
                 if (FD_ISSET(p->fd, &out) || force_event == EVENT_OUTPUT)
                 {
                     p->last_event = now;
-                    yaz_log(YLOG_DEBUG, "Eventl output event");
                     p->this_event |= EVENT_OUTPUT;
                 }
                 if (FD_ISSET(p->fd, &except) || force_event == EVENT_EXCEPT)
