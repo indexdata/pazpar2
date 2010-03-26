@@ -30,6 +30,9 @@
     <pz:metadata type="publication-date">
       <xsl:value-of select="."/>
     </pz:metadata>
+    <pz:metadata type="date">
+      <xsl:value-of select="."/>
+    </pz:metadata>
   </xsl:template>
 
   <xsl:template match="url">
@@ -105,6 +108,18 @@
 
   <xsl:template match="due">
     <pz:metadata type="due">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="location">
+    <pz:metadata type="locallocation">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="callno">
+    <pz:metadata type="callnumber">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
