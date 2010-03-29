@@ -475,6 +475,9 @@ int client_prep_connection(struct client *cl,
             connection_release(co);
             client_set_connection(cl, co);
             co->client = cl;
+            /* ensure that connection is only assigned to this client
+               by marking the client non Idle */
+            client_set_state(cl, Client_Working);
             yaz_mutex_leave(host->mutex);
             co->operation_timeout = operation_timeout;
             co->session_timeout = session_timeout;
