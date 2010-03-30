@@ -878,13 +878,13 @@ static void http_error(struct http_channel *hc, int no, const char *msg)
 static void http_io(IOCHAN i, int event)
 {
     struct http_channel *hc = iochan_getdata(i);
-
-    switch (event)
+    while (event)
     {
-        int res, reqlen;
-        struct http_buf *htbuf;
-
-        case EVENT_INPUT:
+        if (event == EVENT_INPUT)
+        {
+            int res, reqlen;
+            struct http_buf *htbuf;
+            
             htbuf = http_buf_create(hc->http_server);
             res = recv(iochan_getfd(i), htbuf->buf, HTTP_BUF_SIZE -1, 0);
             if (res == -1 && errno == EAGAIN)
@@ -933,12 +933,16 @@ static void http_io(IOCHAN i, int event)
                     http_command(hc);
                 }
             }
-            break;
-        case EVENT_OUTPUT:
+        }
+        else if (event == EVENT_OUTPUT)
+        {
+            event = 0;
             if (hc->oqueue)
             {
                 struct http_buf *wb = hc->oqueue;
-                res = send(iochan_getfd(hc->iochan), wb->buf + wb->offset, wb->len, 0);
+                int res;
+                res = send(iochan_getfd(hc->iochan),
+                           wb->buf + wb->offset, wb->len, 0);
                 if (res <= 0)
                 {
                     yaz_log(YLOG_WARN|YLOG_ERRNO, "write");
@@ -955,7 +959,8 @@ static void http_io(IOCHAN i, int event)
                     wb->len -= res;
                     wb->offset += res;
                 }
-                if (!hc->oqueue) {
+                if (!hc->oqueue)
+                {
                     if (!hc->keep_alive)
                     {
                         http_channel_destroy(i);
@@ -965,17 +970,19 @@ static void http_io(IOCHAN i, int event)
                     {
                         iochan_clearflag(i, EVENT_OUTPUT);
                         if (hc->iqueue)
-                            iochan_setevent(hc->iochan, EVENT_INPUT);
+                            event = EVENT_INPUT;
                     }
                 }
             }
-
             if (!hc->oqueue && hc->proxy && !hc->proxy->iochan) 
                 http_channel_destroy(i); // Server closed; we're done
-            break;
-        default:
+        }
+        else
+        {
             yaz_log(YLOG_WARN, "Unexpected event on connection");
             http_channel_destroy(i);
+            event = 0;
+        }
     }
 }
 
