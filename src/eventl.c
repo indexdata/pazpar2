@@ -116,7 +116,6 @@ IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags,
     new_iochan->fun = cb;
     new_iochan->socketfun = NULL;
     new_iochan->maskfun = NULL;
-    new_iochan->force_event = 0;
     new_iochan->last_event = new_iochan->max_idle = 0;
     new_iochan->next = NULL;
     new_iochan->man = 0;
@@ -190,8 +189,6 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                 to.tv_sec = p->max_idle;
             if (p->fd < 0)
                 continue;
-	    if (p->force_event)
-		timeout = &nullto;        /* polling select */
 	    if (p->flags & EVENT_INPUT)
 		FD_SET(p->fd, &in);
 	    if (p->flags & EVENT_OUTPUT)
@@ -245,7 +242,6 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
         }
         for (p = *iochans; p; p = p->next)
         {
-            int force_event = p->force_event;
             time_t now = time(0);
             
             if (p->destroyed)
@@ -259,27 +255,25 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                 continue;
             }
             p->this_event = 0;
-            p->force_event = 0;
 
-            if ((p->max_idle && now - p->last_event > p->max_idle) 
-                || force_event == EVENT_TIMEOUT)
+            if (p->max_idle && now - p->last_event > p->max_idle)
             {
                 p->last_event = now;
                 p->this_event |= EVENT_TIMEOUT;
             }
             if (p->fd >= 0)
             {
-                if (FD_ISSET(p->fd, &in) || force_event == EVENT_INPUT)
+                if (FD_ISSET(p->fd, &in))
                 {
                     p->last_event = now;
                     p->this_event |= EVENT_INPUT;
                 }
-                if (FD_ISSET(p->fd, &out) || force_event == EVENT_OUTPUT)
+                if (FD_ISSET(p->fd, &out))
                 {
                     p->last_event = now;
                     p->this_event |= EVENT_OUTPUT;
                 }
-                if (FD_ISSET(p->fd, &except) || force_event == EVENT_EXCEPT)
+                if (FD_ISSET(p->fd, &except))
                 {
                     p->last_event = now;
                     p->this_event |= EVENT_EXCEPT;

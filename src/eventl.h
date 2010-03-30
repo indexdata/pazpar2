@@ -38,7 +38,6 @@ typedef struct iochan
 #define EVENT_OUTPUT    0x02
 #define EVENT_EXCEPT    0x04
 #define EVENT_TIMEOUT   0x08
-    int force_event;
     IOC_CALLBACK fun;
     IOC_SOCKETFUN socketfun;
     IOC_MASKFUN maskfun;
@@ -68,7 +67,6 @@ void iochan_man_destroy(iochan_man_t *mp);
 #define iochan_setflag(i, d) ((i)->flags |= d)
 #define iochan_clearflag(i, d) ((i)->flags &= ~(d))
 #define iochan_getflag(i, d) ((i)->flags & d ? 1 : 0)
-#define iochan_setevent(i, e) ((i)->force_event = (e))
 #define iochan_settimeout(i, t) ((i)->max_idle = (t), (i)->last_event = time(0))
 #define iochan_activity(i) ((i)->last_event = time(0))
 #define iochan_setsocketfun(i, f) ((i)->socketfun = (f))
