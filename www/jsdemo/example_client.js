@@ -7,9 +7,9 @@
 // autoInit is set to true on default
 var usesessions = true;
 var pazpar2path = '/pazpar2/search.pz2';
-if (document.location.hash == '#nosessions') {
+if (true || document.location.hash == '#nosessions') {
     usesessions = false;
-    pazpar2path = '/pazpar2-proxy/';
+    pazpar2path = '/service-proxy/';
 }
 
 my_paz = new pz2( { "onshow": my_onshow,
@@ -21,6 +21,7 @@ my_paz = new pz2( { "onshow": my_onshow,
                     "termlist": "xtargets,subject,author",
                     "onbytarget": my_onbytarget,
 	 	    "usesessions" : usesessions,
+                    "showResponseType": "json",
                     "onrecord": my_onrecord } );
 // some state vars
 var curPage = 1;

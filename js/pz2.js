@@ -1,4 +1,5 @@
 /*
+ * Mine
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -47,6 +48,7 @@ var pz2 = function ( paramArray )
     }
     
     this.errorHandler = paramArray.errorhandler || null;
+    this.showResponseType = paramArray.showResponseType || "xml";
     
     // function callbacks
     this.initCallback = paramArray.oninit || null;
@@ -293,11 +295,11 @@ pz2.prototype =
                     context.searchStatusOK = true;
                     //piggyback search
                     context.show(start, num, sort);
-                    if ( context.statCallback )
+                    if (context.statCallback)
                         context.stat();
-                    if ( context.termlistCallback )
+                    if (context.termlistCallback)
                         context.termlist();
-                    if ( context.bytargetCallback )
+                    if (context.bytargetCallback)
                         context.bytarget();
                 }
                 else
@@ -367,61 +369,71 @@ pz2.prototype =
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.safeGet(
-            { 
-                "command": "show", 
-                "session": this.sessionID, 
-                "start": this.currentStart,
-                "num": this.currentNum, 
-                "sort": this.currentSort, 
-                "block": 1 
-            },
-            function(data) {
-                if ( data.getElementsByTagName("status")[0]
-                        .childNodes[0].nodeValue == "OK" ) {
-                    // first parse the status data send along with records
-                    // this is strictly bound to the format
-                    var activeClients = 
-                        Number( data.getElementsByTagName("activeclients")[0]
-                                    .childNodes[0].nodeValue );
-                    context.activeClients = activeClients; 
-                    var show = {
-                        "activeclients": activeClients,
-                        "merged": 
-                            Number( data.getElementsByTagName("merged")[0]
-                                        .childNodes[0].nodeValue ),
-                        "total": 
-                            Number( data.getElementsByTagName("total")[0]
-                                        .childNodes[0].nodeValue ),
-                        "start": 
-                            Number( data.getElementsByTagName("start")[0]
-                                        .childNodes[0].nodeValue ),
-                        "num": 
-                            Number( data.getElementsByTagName("num")[0]
-                                        .childNodes[0].nodeValue ),
-                        "hits": []
-                    };
-                    // parse all the first-level nodes for all <hit> tags
-                    var hits = data.getElementsByTagName("hit");
-                    for (i = 0; i < hits.length; i++)
-                        show.hits[i] = Element_parseChildNodes(hits[i]);
-                    
-                    context.showCounter++;
-		    var delay = context.showTime;
-		    if (context.showCounter > context.showFastCount)
-                            delay += context.showCounter * context.dumpFactor;
-                    if ( activeClients > 0 )
-                        context.showTimer = setTimeout(
-                            function () {
-                                context.show();
-                            }, 
-                            delay);
-                    global_show = show;
-                    context.showCallback(show);
-                }
-                else
-                    context.throwError('Show failed. Malformed WS resonse.',
-                                        114);
+          {
+            "command": "show", 
+            "session": this.sessionID, 
+            "start": this.currentStart,
+            "num": this.currentNum, 
+            "sort": this.currentSort, 
+            "block": 1,
+            "type": this.showResponseType
+          },
+          function(data, type) {           
+            var show = null;
+            if (type === "json") {
+              show = {};
+              context.activeClients = Number(data.activeclients[0]);
+              show.activeclients = context.activeclients;
+              show.merged = Number(data.merged[0]);
+              show.total = Number(data.total[0]);
+              show.start = Number(data.start[0]);
+              show.num = Number(data.num[0]);
+              show.hits = data.hit;
+            } else if (data.getElementsByTagName("status")[0]
+                  .childNodes[0].nodeValue == "OK") {
+                // first parse the status data send along with records
+                // this is strictly bound to the format
+                var activeClients = 
+                  Number(data.getElementsByTagName("activeclients")[0]
+                      .childNodes[0].nodeValue);
+                context.activeClients = activeClients; 
+                show = {
+                  "activeclients": activeClients,
+                  "merged": 
+                    Number( data.getElementsByTagName("merged")[0]
+                        .childNodes[0].nodeValue ),
+                  "total": 
+                    Number( data.getElementsByTagName("total")[0]
+                        .childNodes[0].nodeValue ),
+                  "start": 
+                    Number( data.getElementsByTagName("start")[0]
+                        .childNodes[0].nodeValue ),
+                  "num": 
+                    Number( data.getElementsByTagName("num")[0]
+                        .childNodes[0].nodeValue ),
+                  "hits": []
+                };                
+                // parse all the first-level nodes for all <hit> tags
+                var hits = data.getElementsByTagName("hit");
+                for (i = 0; i < hits.length; i++)
+                  show.hits[i] = Element_parseChildNodes(hits[i]);
+            } else {
+              context.throwError('Show failed. Malformed WS resonse.',
+                  114);
             }
+            context.showCounter++;
+            var delay = context.showTime;
+            if (context.showCounter > context.showFastCount)
+              delay += context.showCounter * context.dumpFactor;
+            if ( activeClients > 0 )
+              context.showTimer = setTimeout(
+                function () {
+                  context.show();
+                }, 
+                delay);
+            global_show = show;
+            context.showCallback(show);
+          }
         );
     },
     record: function(id, offset, syntax, handler)
@@ -788,6 +800,11 @@ pzHttpRequest.prototype =
                 }
             } else if (this.request.status == 200 && 
                        this.request.responseXML == null) {
+              if (this.request.responseText != null) {
+                //assume JSON
+                var json = eval("(" + this.request.responseText + ")");
+                this.callback(json, "json");
+              } else {
                 var err = new Error("XML response is empty but no error " +
                                     "for " + savedUrlForErrorReporting);
                 err.code = -1;
@@ -796,14 +813,14 @@ pzHttpRequest.prototype =
                 } else {
                     throw err;
                 }
+              }
             } else if (this.request.status == 200) {
                 this.callback(this.request.responseXML);
             } else {
                 var err = new Error("HTTP response not OK: " 
                             + this.request.status + " - " 
                             + this.request.statusText );
-                err.code = '00' + this.request.status;
-                
+                err.code = '00' + this.request.status;        
                 if (this.errorHandler) {
                     this.errorHandler(err);
                 }
