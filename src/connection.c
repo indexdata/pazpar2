@@ -236,9 +236,9 @@ static void non_block_events(struct connection *co)
 
 void connection_continue(struct connection *co)
 {
-    ZOOM_connection link = co->link;
-
-    ZOOM_event_nonblock(1, &link);
+    int r = ZOOM_connection_exec_task(co->link);
+    if (!r)
+        yaz_log(YLOG_WARN, "No task was executed for connection");
 }
 
 static void connection_handler(IOCHAN iochan, int event)
