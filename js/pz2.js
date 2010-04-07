@@ -967,7 +967,7 @@ Element_parseChildNodes = function (node)
     // if no nested elements, get text content
     if (node.hasChildNodes() && !hasChildElems) {
         if (node.attributes.length) 
-            parsed['textContent'] = node.firstChild.nodeValue;
+            parsed['#text'] = node.firstChild.nodeValue;
         else
             parsed = node.firstChild.nodeValue;
     }
