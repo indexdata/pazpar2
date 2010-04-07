@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE x
+[
+	<!ENTITY parm "?search-delay=0.1:0:5">
+]
+>
 <service id="perf" xmlns="http://www.indexdata.com/pazpar2/1.0">
   <timeout session="60" z3950_operation="30" z3950_session="180"/>
-  
   <settings target="*">
-    <set target="localhost:9999/db01" name="pz:name" value="db01"/>
+    <set target="localhost:9999/db01&parm;" name="pz:name" value="db01"/>
     <set target="localhost:9999/db02" name="pz:name" value="db02"/>
     <set target="localhost:9999/db03" name="pz:name" value="db03"/>
     <set target="localhost:9999/db04" name="pz:name" value="db04"/>
