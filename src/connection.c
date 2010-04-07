@@ -236,7 +236,9 @@ static void non_block_events(struct connection *co)
 
 void connection_continue(struct connection *co)
 {
-    non_block_events(co);
+    ZOOM_connection link = co->link;
+
+    ZOOM_event_nonblock(1, &link);
 }
 
 static void connection_handler(IOCHAN iochan, int event)
