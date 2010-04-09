@@ -383,7 +383,7 @@ pz2.prototype =
             if (type === "json") {
               show = {};
               context.activeClients = Number(data.activeclients[0]);
-              show.activeclients = context.activeclients;
+              show.activeclients = context.activeClients;
               show.merged = Number(data.merged[0]);
               show.total = Number(data.total[0]);
               show.start = Number(data.start[0]);
@@ -431,7 +431,6 @@ pz2.prototype =
                   context.show();
                 }, 
                 delay);
-            global_show = show;
             context.showCallback(show);
           }
         );
