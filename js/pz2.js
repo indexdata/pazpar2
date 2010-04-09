@@ -378,12 +378,13 @@ pz2.prototype =
             "block": 1,
             "type": this.showResponseType
           },
-          function(data, type) {           
+          function(data, type) {
             var show = null;
+            var activeClients = 0;
             if (type === "json") {
               show = {};
-              context.activeClients = Number(data.activeclients[0]);
-              show.activeclients = context.activeClients;
+              activeClients = Number(data.activeclients[0]);
+              show.activeclients = activeClients;
               show.merged = Number(data.merged[0]);
               show.total = Number(data.total[0]);
               show.start = Number(data.start[0]);
@@ -393,10 +394,9 @@ pz2.prototype =
                   .childNodes[0].nodeValue == "OK") {
                 // first parse the status data send along with records
                 // this is strictly bound to the format
-                var activeClients = 
+                activeClients = 
                   Number(data.getElementsByTagName("activeclients")[0]
                       .childNodes[0].nodeValue);
-                context.activeClients = activeClients; 
                 show = {
                   "activeclients": activeClients,
                   "merged": 
@@ -412,7 +412,7 @@ pz2.prototype =
                     Number( data.getElementsByTagName("num")[0]
                         .childNodes[0].nodeValue ),
                   "hits": []
-                };                
+                };
                 // parse all the first-level nodes for all <hit> tags
                 var hits = data.getElementsByTagName("hit");
                 for (i = 0; i < hits.length; i++)
@@ -421,6 +421,7 @@ pz2.prototype =
               context.throwError('Show failed. Malformed WS resonse.',
                   114);
             }
+            context.activeClients = activeClients; 
             context.showCounter++;
             var delay = context.showTime;
             if (context.showCounter > context.showFastCount)
