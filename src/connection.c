@@ -251,6 +251,7 @@ static void connection_handler(IOCHAN iochan, int event)
         /* no client associated with it.. We are probably getting
            a closed connection from the target.. Or, perhaps, an unexpected
            package.. We will just close the connection */
+        yaz_log(YLOG_LOG, "timeout connection %p event=%d", co, event);
         connection_destroy(co);
         return;
     }
