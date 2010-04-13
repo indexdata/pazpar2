@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <config.h>
 #endif
 
+#include <math.h>
 #include <stdio.h>
 #include <assert.h>
 
@@ -167,7 +168,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
     	IOCHAN p, *nextp;
 	fd_set in, out, except;
 	int res, max;
-	static struct timeval nullto = {0, 0}, to;
+	static struct timeval to;
 	struct timeval *timeout;
 
 	FD_ZERO(&in);
@@ -308,6 +309,18 @@ void iochan_man_events(iochan_man_t man)
                 man->no_threads);
     }
     event_loop(man, &man->channel_list);
+}
+
+void pazpar2_sleep(double d)
+{
+#ifdef WIN32
+    Sleep( (DWORD) (d * 1000));
+#else
+    struct timeval tv;
+    tv.tv_sec = floor(d);
+    tv.tv_usec = (d - floor(d)) * 1000000;
+    select(0, 0, 0, 0, &tv);
+#endif
 }
 
 /*

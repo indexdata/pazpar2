@@ -76,6 +76,8 @@ void iochan_man_destroy(iochan_man_t *mp);
 
 IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags, const char *name);
 
+void pazpar2_sleep(double d);
+
 #endif
 /*
  * Local variables:
