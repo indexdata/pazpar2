@@ -451,15 +451,8 @@ static void select_targets_callback(void *context, struct session_database *db)
 
 static void session_remove_clients(struct session *se)
 {
-    struct client *cl = se->clients;
-    while (cl)
-    {
-        struct client *cl_next = client_next_in_session(cl);
-        client_remove_from_session(cl);
-        client_destroy(cl);
-        cl = cl_next;
-    }
-    se->clients = 0;
+    while (se->clients)
+        client_remove_from_session(se->clients);
 }
 
 // Associates a set of clients with a session;
