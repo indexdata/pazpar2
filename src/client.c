@@ -633,8 +633,9 @@ int client_destroy(struct client *c)
             c->pquery = 0;
             xfree(c->cqlquery);
             c->cqlquery = 0;
-
-            ZOOM_resultset_destroy(c->resultset);
+            assert(!c->connection);
+            assert(!c->resultset);
+            
             yaz_mutex_destroy(&c->mutex);
             xfree(c);
             return 1;
@@ -645,6 +646,11 @@ int client_destroy(struct client *c)
 
 void client_set_connection(struct client *cl, struct connection *con)
 {
+    if (cl->resultset)
+    {
+        ZOOM_resultset_destroy(cl->resultset);
+        cl->resultset = 0;
+    }
     if (con)
     {
         assert(cl->connection == 0);
