@@ -617,15 +617,16 @@ struct client *client_create(void)
 void client_incref(struct client *c)
 {
     pazpar2_incref(&c->ref_count, c->mutex);
-    yaz_log(YLOG_DEBUG, "client_incref %s %d", client_get_url(c), c->ref_count);
+    yaz_log(YLOG_LOG, "client_incref c=%p %s cnt=%d",
+            c, client_get_url(c), c->ref_count);
 }
 
 int client_destroy(struct client *c)
 {
     if (c)
     {
-        yaz_log(YLOG_DEBUG, "client_destroy %s %d",
-                client_get_url(c), c->ref_count);
+        yaz_log(YLOG_LOG, "client_destroy c=%p %s cnt=%d",
+                c, client_get_url(c), c->ref_count);
         if (!pazpar2_decref(&c->ref_count, c->mutex))
         {
             c->next = 0;
@@ -807,7 +808,6 @@ int client_parse_query(struct client *cl, const char *query)
 void client_remove_from_session(struct client *c)
 {
     struct session *se;
-    client_incref(c);
 
     se = c->session;
     assert(se);
@@ -824,7 +824,6 @@ void client_remove_from_session(struct client *c)
         c->session = 0;
         c->next = 0;
     }
-    client_destroy(c);
 }
 
 void client_set_session(struct client *cl, struct session *se)
