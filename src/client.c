@@ -67,6 +67,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "relevance.h"
 #include "incref.h"
 
+/* client counting (1) , disable client counting (0) */
+#if 1
+static YAZ_MUTEX g_mutex = 0;
+static int no_clients = 0;
+
+static void client_use(int delta)
+{
+    if (!g_mutex)
+        yaz_mutex_create(&g_mutex);
+    yaz_mutex_enter(g_mutex);
+    no_clients += delta;
+    yaz_mutex_leave(g_mutex);
+    yaz_log(YLOG_LOG, "%s clients=%d", delta > 0 ? "INC" : "DEC", no_clients);
+}
+#else
+#define client_use(x)
+#endif
+
 /** \brief Represents client state for a connection to one search target */
 struct client {
     struct session_database *database;
@@ -610,6 +628,7 @@ struct client *client_create(void)
     pazpar2_mutex_create(&r->mutex, "client");
 
     r->ref_count = 1;
+    client_use(1);
     
     return r;
 }
@@ -639,6 +658,7 @@ int client_destroy(struct client *c)
             
             yaz_mutex_destroy(&c->mutex);
             xfree(c);
+            client_use(-1);
             return 1;
         }
     }
