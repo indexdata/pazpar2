@@ -173,7 +173,6 @@ static void non_block_events(struct connection *co)
             continue;
         ev = ZOOM_connection_last_event(link);
         
-        client_incref(cl);
 #if 0
         yaz_log(YLOG_LOG, "ZOOM_EVENT_%s", ZOOM_get_event_str(ev));
 #endif
@@ -220,16 +219,13 @@ static void non_block_events(struct connection *co)
             yaz_log(YLOG_LOG, "Unhandled event (%d) from %s",
                     ev, client_get_url(cl));
         }
-        client_destroy(cl);
     }
     if (got_records)
     {
         struct client *cl = co->client;
         if (cl)
         {
-            client_incref(cl); 
             client_got_records(cl);
-            client_destroy(cl);
         }
     }
 }
