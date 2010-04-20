@@ -94,7 +94,6 @@ static void remove_connection_from_host(struct connection *con)
 {
     struct connection **conp = &con->host->connections;
     assert(con);
-    yaz_mutex_enter(con->host->mutex);
     while (*conp)
     {
         if (*conp == con)
@@ -104,7 +103,6 @@ static void remove_connection_from_host(struct connection *con)
         }
         conp = &(*conp)->next;
     }
-    yaz_mutex_leave(con->host->mutex);
 }
 
 // Close connection and recycle structure
@@ -140,11 +138,6 @@ static struct connection *connection_create(struct client *cl,
     new = xmalloc(sizeof(*new));
     new->host = host;
 
-    yaz_mutex_enter(host->mutex);
-    new->next = new->host->connections;
-    new->host->connections = new;
-    yaz_mutex_leave(host->mutex);
-
     new->client = cl;
     new->zproxy = 0;
     client_set_connection(cl, new);
@@ -154,6 +147,12 @@ static struct connection *connection_create(struct client *cl,
     new->session_timeout = session_timeout;
     if (host->ipport)
         connection_connect(new, iochan_man);
+
+    yaz_mutex_enter(host->mutex);
+    new->next = new->host->connections;
+    new->host->connections = new;
+    yaz_mutex_leave(host->mutex);
+
     return new;
 }
 
@@ -241,7 +240,9 @@ static void connection_handler(IOCHAN iochan, int event)
 {
     struct connection *co = iochan_getdata(iochan);
     struct client *cl = co->client;
+    struct host *host = co->host;
 
+    yaz_mutex_enter(host->mutex);
     if (!cl) 
     {
         /* no client associated with it.. We are probably getting
@@ -249,19 +250,22 @@ static void connection_handler(IOCHAN iochan, int event)
            package.. We will just close the connection */
         yaz_log(YLOG_LOG, "timeout connection %p event=%d", co, event);
         connection_destroy(co);
-        return;
     }
-    if (event & EVENT_TIMEOUT)
+    else if (event & EVENT_TIMEOUT)
     {
         if (co->state == Conn_Connecting)
         {
             yaz_log(YLOG_WARN,  "connect timeout %s", client_get_url(cl));
             client_fatal(cl);
         }
-        else
+        else if (client_get_state(co->client) == Client_Idle)
         {
             yaz_log(YLOG_LOG,  "idle timeout %s", client_get_url(cl));
             connection_destroy(co);
+        }
+        else
+        {
+            yaz_log(YLOG_LOG,  "ignore timeout %s", client_get_url(cl));
         }
     }
     else
@@ -272,6 +276,7 @@ static void connection_handler(IOCHAN iochan, int event)
         
         non_block_events(co);
     }
+    yaz_mutex_leave(host->mutex);
 }
 
 
