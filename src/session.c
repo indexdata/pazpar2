@@ -81,6 +81,11 @@ struct parameters global_parameters =
     0    // debug_mode
 };
 
+struct client_list {
+    struct client *client;
+    struct client_list *next;
+};
+
 static void log_xml_doc(xmlDoc *doc)
 {
     FILE *lf = yaz_log_file();
@@ -445,18 +450,28 @@ static void select_targets_callback(void *context, struct session_database *db)
 {
     struct session *se = (struct session*) context;
     struct client *cl = client_create();
+    struct client_list *l;
     client_set_database(cl, db);
+
     client_set_session(cl, se);
+    l = xmalloc(sizeof(*l));
+    l->client = cl;
+    l->next = se->clients;
+    se->clients = l;
 }
 
 static void session_remove_clients(struct session *se)
 {
-    while (se->clients)
+    struct client_list *l = se->clients;
+    while (l)
     {
-        struct client *cl = se->clients;
-        client_remove_from_session(cl);
-        client_destroy(cl);
+        struct client_list *l_next = l->next;
+        client_set_session(l->client, 0);
+        client_destroy(l->client);
+        xfree(l);
+        l = l_next;
     }
+    se->clients = 0;
 }
 
 // Associates a set of clients with a session;
@@ -470,11 +485,11 @@ static int select_targets(struct session *se, const char *filter)
 
 int session_active_clients(struct session *s)
 {
-    struct client *c;
+    struct client_list *l;
     int res = 0;
 
-    for (c = s->clients; c; c = client_next_in_session(c))
-        if (client_is_active(c))
+    for (l = s->clients; l; l = l->next)
+        if (client_is_active(l->client))
             res++;
 
     return res;
@@ -490,7 +505,7 @@ enum pazpar2_error_code search(struct session *se,
     int live_channels = 0;
     int no_working = 0;
     int no_failed = 0;
-    struct client *cl;
+    struct client_list *l;
 
     yaz_log(YLOG_DEBUG, "Search");
 
@@ -511,8 +526,9 @@ enum pazpar2_error_code search(struct session *se,
     }
     se->reclist = reclist_create(se->nmem);
 
-    for (cl = se->clients; cl; cl = client_next_in_session(cl))
+    for (l = se->clients; l; l = l->next)
     {
+        struct client *cl = l->client;
         if (maxrecs)
             client_set_maxrecs(cl, atoi(maxrecs));
         if (startrecs)
@@ -694,17 +710,18 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
 struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
 {
     struct hitsbytarget *res = 0;
-    struct client *cl;
+    struct client_list *l;
     size_t sz = 0;
 
     session_enter(se);
-    for (cl = se->clients; cl; cl = client_next_in_session(cl))
+    for (l = se->clients; l; l = l->next)
         sz++;
 
     res = nmem_malloc(nmem, sizeof(*res) * sz);
     *count = 0;
-    for (cl = se->clients; cl; cl = client_next_in_session(cl))
+    for (l = se->clients; l; l = l->next)
     {
+        struct client *cl = l->client;
         WRBUF w = wrbuf_alloc();
         const char *name = session_setting_oneval(client_get_database(cl),
                                                   PZ_NAME);
@@ -854,12 +871,13 @@ void show_range_stop(struct session *s, struct record_cluster **recs)
 
 void statistics(struct session *se, struct statistics *stat)
 {
-    struct client *cl;
+    struct client_list *l;
     int count = 0;
 
     memset(stat, 0, sizeof(*stat));
-    for (cl = se->clients; cl; cl = client_next_in_session(cl))
+    for (l = se->clients; l; l = l->next)
     {
+        struct client *cl = l->client;
         if (!client_get_connection(cl))
             stat->num_no_connection++;
         switch (client_get_state(cl))

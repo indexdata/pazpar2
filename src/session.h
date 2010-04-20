@@ -97,11 +97,13 @@ struct session_watchentry {
     session_watchfun fun;
 };
 
+struct client_list;
+
 // End-user session
 struct session {
     struct conf_service *service; /* service in use for this session */
     struct session_database *databases;  // All databases, settings overriden
-    struct client *clients;              // Clients connected for current search
+    struct client_list *clients;   // Clients connected for current search
     NMEM session_nmem;  // Nmem for session-permanent storage
     NMEM nmem;          // Nmem for each operation (i.e. search, result set, etc)
     WRBUF wrbuf;        // Wrbuf for scratch(i.e. search)
