@@ -250,6 +250,7 @@ static void connection_handler(IOCHAN iochan, int event)
            package.. We will just close the connection */
         yaz_log(YLOG_LOG, "timeout connection %p event=%d", co, event);
         connection_destroy(co);
+        yaz_mutex_leave(host->mutex);
     }
     else if (event & EVENT_TIMEOUT)
     {
@@ -269,16 +270,17 @@ static void connection_handler(IOCHAN iochan, int event)
         {
             yaz_log(YLOG_LOG,  "ignore timeout %s", client_get_url(cl));
         }
+        yaz_mutex_leave(host->mutex);
     }
     else
     {
+        yaz_mutex_leave(host->mutex);
         non_block_events(co);
 
         ZOOM_connection_fire_event_socket(co->link, event);
         
         non_block_events(co);
     }
-    yaz_mutex_leave(host->mutex);
 }
 
 
