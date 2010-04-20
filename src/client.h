@@ -50,7 +50,6 @@ void client_show_raw_remove(struct client *cl, void *rr);
 const char *client_get_state_str(struct client *cl);
 enum client_state client_get_state(struct client *cl);
 void client_set_state(struct client *cl, enum client_state st);
-void client_fatal(struct client *cl);
 struct connection *client_get_connection(struct client *cl);
 struct session_database *client_get_database(struct client *cl);
 void client_set_database(struct client *cl, struct session_database *db);

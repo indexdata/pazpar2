@@ -153,14 +153,6 @@ void client_set_state(struct client *cl, enum client_state st)
 
 static void client_show_raw_error(struct client *cl, const char *addinfo);
 
-// Close connection and set state to error
-void client_fatal(struct client *cl)
-{
-    yaz_log(YLOG_WARN, "Fatal error from %s", client_get_url(cl));
-    connection_destroy(cl->connection);
-    client_set_state(cl, Client_Error);
-}
-
 struct connection *client_get_connection(struct client *cl)
 {
     return cl->connection;

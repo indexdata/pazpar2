@@ -106,7 +106,7 @@ static void remove_connection_from_host(struct connection *con)
 }
 
 // Close connection and recycle structure
-void connection_destroy(struct connection *co)
+static void connection_destroy(struct connection *co)
 {
     if (co->link)
     {
@@ -256,7 +256,9 @@ static void connection_handler(IOCHAN iochan, int event)
         if (co->state == Conn_Connecting)
         {
             yaz_log(YLOG_WARN,  "connect timeout %s", client_get_url(cl));
-            client_fatal(cl);
+
+            connection_destroy(co);
+            client_set_state(cl, Client_Error);
         }
         else if (client_get_state(co->client) == Client_Idle)
         {

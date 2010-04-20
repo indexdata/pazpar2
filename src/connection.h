@@ -33,7 +33,6 @@ struct connection;
 struct host;
 struct session;
 
-void connection_destroy(struct connection *co);
 void connect_resolver_host(struct host *host, iochan_man_t iochan);
 const char *connection_get_url(struct connection *co);
 void connection_release(struct connection *co);
