@@ -106,12 +106,12 @@ static void log_xml_doc(xmlDoc *doc)
 
 static void session_enter(struct session *s)
 {
-    yaz_mutex_enter(s->mutex);
+    yaz_mutex_enter(s->session_mutex);
 }
 
 static void session_leave(struct session *s)
 {
-    yaz_mutex_leave(s->mutex);
+    yaz_mutex_leave(s->session_mutex);
 }
 
 // Recursively traverse query structure to extract terms.
@@ -669,7 +669,7 @@ void destroy_session(struct session *s)
     reclist_destroy(s->reclist);
     nmem_destroy(s->nmem);
     service_destroy(s->service);
-    yaz_mutex_destroy(&s->mutex);
+    yaz_mutex_destroy(&s->session_mutex);
     wrbuf_destroy(s->wrbuf);
 }
 
@@ -700,9 +700,8 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
         session->watchlist[i].fun = 0;
     }
     session->normalize_cache = normalize_cache_create();
-    session->mutex = 0;
-
-    pazpar2_mutex_create(&session->mutex, name);
+    session->session_mutex = 0;
+    pazpar2_mutex_create(&session->session_mutex, name);
 
     return session;
 }

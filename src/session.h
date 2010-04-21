@@ -118,7 +118,7 @@ struct session {
     int number_of_warnings_unknown_elements;
     int number_of_warnings_unknown_metadata;
     normalize_cache_t normalize_cache;
-    YAZ_MUTEX mutex;
+    YAZ_MUTEX session_mutex;
 };
 
 struct statistics {
