@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define CONNECTION_H
 #include <yaz/zoom.h>
 
-#include <yaz/proto.h>
 #include "eventl.h"
 
 struct client;
