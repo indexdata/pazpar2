@@ -132,28 +132,28 @@ static struct connection *connection_create(struct client *cl,
                                             int session_timeout,
                                             iochan_man_t iochan_man)
 {
-    struct connection *new;
+    struct connection *co;
     struct host *host = client_get_host(cl);
 
-    new = xmalloc(sizeof(*new));
-    new->host = host;
+    co = xmalloc(sizeof(*co));
+    co->host = host;
 
-    new->client = cl;
-    new->zproxy = 0;
-    client_set_connection(cl, new);
-    new->link = 0;
-    new->state = Conn_Resolving;
-    new->operation_timeout = operation_timeout;
-    new->session_timeout = session_timeout;
+    co->client = cl;
+    co->zproxy = 0;
+    client_set_connection(cl, co);
+    co->link = 0;
+    co->state = Conn_Resolving;
+    co->operation_timeout = operation_timeout;
+    co->session_timeout = session_timeout;
     if (host->ipport)
-        connection_connect(new, iochan_man);
+        connection_connect(co, iochan_man);
 
     yaz_mutex_enter(host->mutex);
-    new->next = new->host->connections;
-    new->host->connections = new;
+    co->next = co->host->connections;
+    co->host->connections = co;
     yaz_mutex_leave(host->mutex);
 
-    return new;
+    return co;
 }
 
 static void non_block_events(struct connection *co)
