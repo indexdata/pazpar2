@@ -1164,7 +1164,6 @@ int ingest_record(struct client *cl, const char *rec,
         return -1;
     }
     client_unlock(cl);
-    pazpar2_sleep(0.01);
     session_enter(se);
     client_lock(cl);
     if (client_get_session(cl) == se)
