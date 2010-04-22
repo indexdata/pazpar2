@@ -34,7 +34,6 @@ struct host;
 struct session;
 
 void connect_resolver_host(struct host *host, iochan_man_t iochan);
-void connection_release(struct connection *co);
 ZOOM_connection connection_get_link(struct connection *co);
 void connection_continue(struct connection *co);
 

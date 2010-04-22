@@ -288,7 +288,7 @@ static void connection_handler(IOCHAN iochan, int event)
 
 
 // Disassociate connection from client
-void connection_release(struct connection *co)
+static void connection_release(struct connection *co)
 {
     struct client *cl = co->client;
 
@@ -437,11 +437,6 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     client_set_state(con->client, Client_Connecting);
     ZOOM_options_destroy(zoptions);
     return 0;
-}
-
-const char *connection_get_url(struct connection *co)
-{
-    return client_get_url(co->client);
 }
 
 // Ensure that client has a connection associated
