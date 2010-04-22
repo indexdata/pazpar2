@@ -439,10 +439,13 @@ void client_search_response(struct client *cl)
 
 void client_got_records(struct client *cl)
 {
-    if (cl->session)
+    struct session *se = cl->session;
+    if (se)
     {
-        session_alert_watch(cl->session, SESSION_WATCH_SHOW);
-        session_alert_watch(cl->session, SESSION_WATCH_RECORD);
+        client_unlock(cl);
+        session_alert_watch(se, SESSION_WATCH_SHOW);
+        session_alert_watch(se, SESSION_WATCH_RECORD);
+        client_lock(cl);
     }
 }
 
@@ -621,6 +624,16 @@ struct client *client_create(void)
     client_use(1);
     
     return r;
+}
+
+void client_lock(struct client *c)
+{
+    yaz_mutex_enter(c->mutex);
+}
+
+void client_unlock(struct client *c)
+{
+    yaz_mutex_leave(c->mutex);
 }
 
 void client_incref(struct client *c)

@@ -462,16 +462,24 @@ static void select_targets_callback(void *context, struct session_database *db)
 
 static void session_remove_clients(struct session *se)
 {
-    struct client_list *l = se->clients;
+    struct client_list *l;
+
+    session_enter(se);
+    l = se->clients;
+    se->clients = 0;
+    session_leave(se);
+
     while (l)
     {
         struct client_list *l_next = l->next;
+        client_lock(l->client);
         client_set_session(l->client, 0);
+        client_set_database(l->client, 0);
+        client_unlock(l->client);
         client_destroy(l->client);
         xfree(l);
         l = l_next;
     }
-    se->clients = 0;
 }
 
 // Associates a set of clients with a session;
@@ -479,7 +487,6 @@ static void session_remove_clients(struct session *se)
 // setting overrides
 static int select_targets(struct session *se, const char *filter)
 {
-    session_remove_clients(se);
     return session_grep_databases(se, filter, select_targets_callback);
 }
 
@@ -510,6 +517,8 @@ enum pazpar2_error_code search(struct session *se,
     yaz_log(YLOG_DEBUG, "Search");
 
     *addinfo = 0;
+
+    session_remove_clients(se);
     
     session_enter(se);
     reclist_destroy(se->reclist);
@@ -529,14 +538,14 @@ enum pazpar2_error_code search(struct session *se,
     for (l = se->clients; l; l = l->next)
     {
         struct client *cl = l->client;
+
         if (maxrecs)
             client_set_maxrecs(cl, atoi(maxrecs));
         if (startrecs)
             client_set_startrecs(cl, atoi(startrecs));
         if (prepare_session_database(se, client_get_database(cl)) < 0)
-            continue;
-        // Parse query for target
-        if (client_parse_query(cl, query) < 0)
+            ;
+        else if (client_parse_query(cl, query) < 0)
             no_failed++;
         else
         {
@@ -1127,7 +1136,7 @@ int ingest_record(struct client *cl, const char *rec,
                   int record_no, NMEM nmem)
 {
     struct session *se = client_get_session(cl);
-    int ret;
+    int ret = 0;
     struct session_database *sdb = client_get_database(cl);
     struct conf_service *service = se->service;
     xmlDoc *xdoc = normalize_record(sdb, service, rec, nmem);
@@ -1154,9 +1163,15 @@ int ingest_record(struct client *cl, const char *rec,
         xmlFreeDoc(xdoc);
         return -1;
     }
+    client_unlock(cl);
+    pazpar2_sleep(0.01);
     session_enter(se);
-    ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
+    client_lock(cl);
+    if (client_get_session(cl) == se)
+        ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
+    client_unlock(cl);
     session_leave(se);
+    client_lock(cl);
     
     xmlFreeDoc(xdoc);
     return ret;

@@ -91,6 +91,8 @@ void client_set_startrecs(struct client *cl, int v);
 void client_remove_from_session(struct client *c);
 void client_incref(struct client *c);
 void client_got_records(struct client *c);
+void client_lock(struct client *c);
+void client_unlock(struct client *c);
 #endif
 
 /*
