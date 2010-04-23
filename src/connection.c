@@ -258,8 +258,8 @@ static void connection_handler(IOCHAN iochan, int event)
         {
             yaz_log(YLOG_WARN,  "connect timeout %s", client_get_url(cl));
 
-            connection_destroy(co);
             client_set_state(cl, Client_Error);
+            connection_destroy(co);
         }
         else if (client_get_state(co->client) == Client_Idle)
         {
