@@ -239,10 +239,11 @@ void connection_continue(struct connection *co)
 static void connection_handler(IOCHAN iochan, int event)
 {
     struct connection *co = iochan_getdata(iochan);
-    struct client *cl = co->client;
+    struct client *cl;
     struct host *host = co->host;
 
     yaz_mutex_enter(host->mutex);
+    cl = co->client;
     if (!cl) 
     {
         /* no client associated with it.. We are probably getting
