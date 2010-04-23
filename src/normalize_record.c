@@ -45,7 +45,7 @@ struct normalize_record_s {
     NMEM nmem;
 };
 
-normalize_record_t normalize_record_create(struct conf_service *service,
+normalize_record_t normalize_record_create(struct conf_config *conf,
                                            const char *spec)
 {
     NMEM nmem = nmem_create();
@@ -60,7 +60,7 @@ normalize_record_t normalize_record_create(struct conf_service *service,
     nmem_strsplit(nt->nmem, ",", spec, &stylesheets, &num);
     for (i = 0; i < num; i++)
     {
-        WRBUF fname = conf_get_fname(service, stylesheets[i]);
+        WRBUF fname = conf_get_fname(conf, stylesheets[i]);
         
         *m = nmem_malloc(nt->nmem, sizeof(**m));
         (*m)->marcmap = NULL;

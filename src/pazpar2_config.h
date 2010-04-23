@@ -175,7 +175,7 @@ int config_start_listeners(struct conf_config *conf,
 
 void config_stop_listeners(struct conf_config *conf);
 
-WRBUF conf_get_fname(struct conf_service *service, const char *fname);
+WRBUF conf_get_fname(struct conf_config *config, const char *fname);
 
 #endif
 
