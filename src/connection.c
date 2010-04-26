@@ -47,6 +47,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "client.h"
 #include "settings.h"
 
+/* connection counting (1) , disable connection counting (0) */
+#if 0
+static YAZ_MUTEX g_mutex = 0;
+static int no_connections = 0;
+
+static void connection_use(int delta)
+{
+    if (!g_mutex)
+        yaz_mutex_create(&g_mutex);
+    yaz_mutex_enter(g_mutex);
+    no_connections += delta;
+    yaz_mutex_leave(g_mutex);
+    yaz_log(YLOG_LOG, "%s connections=%d", delta > 0 ? "INC" : "DEC",
+            no_connections);
+}
+#else
+#define connection_use(x)
+#endif
+
 
 /** \brief Represents a physical, reusable  connection to a remote Z39.50 host
  */
@@ -123,6 +142,7 @@ static void connection_destroy(struct connection *co)
     remove_connection_from_host(co);
     xfree(co->zproxy);
     xfree(co);
+    connection_use(-1);
 }
 
 // Creates a new connection for client, associated with the host of 
@@ -153,6 +173,7 @@ static struct connection *connection_create(struct client *cl,
     co->host->connections = co;
     yaz_mutex_leave(host->mutex);
 
+    connection_use(1);
     return co;
 }
 
