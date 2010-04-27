@@ -53,6 +53,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/log.h>
 #include <yaz/comstack.h>
 #include <yaz/xmalloc.h>
+#include <yaz/mutex.h>
 #include "eventl.h"
 #include "sel_thread.h"
 
@@ -62,6 +63,13 @@ struct iochan_man_s {
     int sel_fd;
     int no_threads;
     int log_level;
+    YAZ_MUTEX iochan_mutex;
+};
+
+struct iochan_man_iter {
+    iochan_man_t man;
+    IOCHAN current; 
+    int first;
 };
 
 iochan_man_t iochan_man_create(int no_threads)
@@ -72,7 +80,8 @@ iochan_man_t iochan_man_create(int no_threads)
     man->sel_fd = -1;
     man->no_threads = no_threads;
     man->log_level = yaz_log_module_level("iochan");
-
+    man->iochan_mutex = 0;
+    yaz_mutex_create(&man->iochan_mutex);
     return man;
 }
 
@@ -100,8 +109,11 @@ void iochan_man_destroy(iochan_man_t *mp)
 void iochan_add(iochan_man_t man, IOCHAN chan)
 {
     chan->man = man;
+    yaz_mutex_enter(man->iochan_mutex);
+    yaz_log(man->log_level, "iochan_add : chan=%p channel list=%p", chan, man->channel_list);
     chan->next = man->channel_list;
     man->channel_list = chan;
+    yaz_mutex_leave(man->iochan_mutex);
 }
 
 IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags,
@@ -161,6 +173,33 @@ static void run_fun(iochan_man_t man, IOCHAN p)
     }
 }
 
+static IOCHAN iochan_man_get_first(struct iochan_man_iter *iter, iochan_man_t man) {
+    iter->man = man;
+    iter->first = 1;
+    yaz_mutex_enter(man->iochan_mutex);
+    iter->current = man->channel_list;
+    yaz_log(man->log_level, "iochan_man_get_first : chan=%p ", iter->current);
+    if (!iter->current)
+        yaz_mutex_leave(man->iochan_mutex);
+    return iter->current;
+}
+
+static IOCHAN iochan_man_get_next(struct iochan_man_iter *iter) {
+    IOCHAN current = NULL, next = NULL;
+    current = iter->current;
+    assert(current);
+    if (current) {
+        next = current->next;
+        iter->current = iter->current->next;
+        if (iter->first) {
+            yaz_log(iter->man->log_level, "iochan_man_get_next : chan=%p next=%p", current, next);
+            iter->first = 0;
+            yaz_mutex_leave(iter->man->iochan_mutex);
+        }
+    }
+    return iter->current;
+}
+
 static int event_loop(iochan_man_t man, IOCHAN *iochans)
 {
     do /* loop as long as there are active associations to process */
@@ -168,8 +207,9 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
     	IOCHAN p, *nextp;
 	fd_set in, out, except;
 	int res, max;
-	static struct timeval to;
-	struct timeval *timeout;
+        static struct timeval to;
+        struct timeval *timeout;
+        static struct iochan_man_iter iter; 
 
 	FD_ZERO(&in);
 	FD_ZERO(&out);
@@ -178,7 +218,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
 	to.tv_sec = 300;
 	to.tv_usec = 0;
 	max = 0;
-    	for (p = *iochans; p; p = p->next)
+    	for (p = iochan_man_get_first(&iter, man); p; p = iochan_man_get_next(&iter) )
     	{
             if (p->thread_users > 0)
                 continue;
@@ -199,6 +239,8 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
 	    if (p->fd > max)
 	        max = p->fd;
 	}
+        yaz_log(man->log_level, "max=%d nofds=%d", max, man->sel_fd);
+        
         if (man->sel_fd != -1)
         {
             if (man->sel_fd > max)
@@ -237,11 +279,12 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
         if (man->log_level)
         {
             int no = 0;
-            for (p = *iochans; p; p = p->next)
+            for (p = iochan_man_get_first(&iter, man); p; p = iochan_man_get_next(&iter)) {
                 no++;
+            }
             yaz_log(man->log_level, "%d channels", no);
         }
-        for (p = *iochans; p; p = p->next)
+        for (p = iochan_man_get_first(&iter, man); p; p = iochan_man_get_next(&iter))
         {
             time_t now = time(0);
             
@@ -282,6 +325,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
             }
             run_fun(man, p);
 	}
+        yaz_mutex_enter(man->iochan_mutex);
         for (nextp = iochans; *nextp; )
         {
             IOCHAN p = *nextp;
@@ -294,6 +338,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
             else
                 nextp = &p->next;
         }
+        yaz_mutex_leave(man->iochan_mutex);
     }
     while (*iochans);
     return 0;
