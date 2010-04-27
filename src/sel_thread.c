@@ -69,6 +69,8 @@ struct sel_thread {
     void (*work_destroy)(void *work_data);
 };
 
+static int input_queue_length = 0;
+
 static void *sel_thread_handler(void *vp)
 {
     sel_thread_t p = (sel_thread_t) vp;
@@ -87,6 +89,8 @@ static void *sel_thread_handler(void *vp)
 
         assert(p->input_queue);
         work_this = queue_remove_last(&p->input_queue);
+        input_queue_length--;
+        yaz_log(YLOG_DEBUG, "input queue length after pop: %d", input_queue_length);
         assert(work_this);
 
         pthread_mutex_unlock(&p->mutex);
@@ -185,7 +189,8 @@ void sel_thread_add(sel_thread_t p, void *data)
     work_p->data = data;
     work_p->next = p->input_queue;
     p->input_queue = work_p;
-
+    input_queue_length++;
+    yaz_log(YLOG_DEBUG, "sel_thread_add: Input queue length after push: %d", input_queue_length);
     pthread_cond_signal(&p->input_data);
     pthread_mutex_unlock(&p->mutex);
 }
