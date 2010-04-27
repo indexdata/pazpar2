@@ -669,6 +669,7 @@ void destroy_session(struct session *s)
 {
     struct session_database *sdb;
 
+    yaz_log(YLOG_DEBUG, "%p Pazpar2 session destroy", s);
     session_remove_clients(s);
 
     for (sdb = s->databases; sdb; sdb = sdb->next)
@@ -688,7 +689,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     int i;
     struct session *session = nmem_malloc(nmem, sizeof(*session));
 
-    yaz_log(YLOG_DEBUG, "New Pazpar2 session");
+    yaz_log(YLOG_DEBUG, "%p New Pazpar2 session", session);
 
     session->service = service;
     session->relevance = 0;
