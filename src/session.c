@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <config.h>
 #endif
 
+#include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -513,6 +514,8 @@ enum pazpar2_error_code search(struct session *se,
     int no_working = 0;
     int no_failed = 0;
     struct client_list *l;
+    struct timespec abstime;
+    struct timeval tval;
 
     yaz_log(YLOG_DEBUG, "Search");
 
@@ -535,6 +538,11 @@ enum pazpar2_error_code search(struct session *se,
     }
     se->reclist = reclist_create(se->nmem);
 
+    gettimeofday(&tval, 0);
+    
+    abstime.tv_sec = tval.tv_sec + 5;
+    abstime.tv_nsec = tval.tv_usec * 1000;
+
     for (l = se->clients; l; l = l->next)
     {
         struct client *cl = l->client;
@@ -552,7 +560,8 @@ enum pazpar2_error_code search(struct session *se,
             no_working++;
             if (client_prep_connection(cl, se->service->z3950_operation_timeout,
                                        se->service->z3950_session_timeout,
-                                       se->service->server->iochan_man))
+                                       se->service->server->iochan_man,
+                                       &abstime))
                 client_start_search(cl);
         }
     }
