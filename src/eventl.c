@@ -127,8 +127,6 @@ IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags,
     new_iochan->fd = fd;
     new_iochan->flags = flags;
     new_iochan->fun = cb;
-    new_iochan->socketfun = NULL;
-    new_iochan->maskfun = NULL;
     new_iochan->last_event = new_iochan->max_idle = 0;
     new_iochan->next = NULL;
     new_iochan->man = 0;
@@ -222,10 +220,6 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
     	{
             if (p->thread_users > 0)
                 continue;
-            if (p->maskfun)
-                p->flags = (*p->maskfun)(p);
-            if (p->socketfun)
-                p->fd = (*p->socketfun)(p);
             if (p->max_idle && p->max_idle < to.tv_sec)
                 to.tv_sec = p->max_idle;
             if (p->fd < 0)

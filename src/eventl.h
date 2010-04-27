@@ -25,8 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 struct iochan;
 
 typedef void (*IOC_CALLBACK)(struct iochan *i, int event);
-typedef int (*IOC_SOCKETFUN)(struct iochan *i);
-typedef int (*IOC_MASKFUN)(struct iochan *i);
 
 typedef struct iochan_man_s *iochan_man_t;
 
@@ -39,8 +37,6 @@ typedef struct iochan
 #define EVENT_EXCEPT    0x04
 #define EVENT_TIMEOUT   0x08
     IOC_CALLBACK fun;
-    IOC_SOCKETFUN socketfun;
-    IOC_MASKFUN maskfun;
     void *data;
     int destroyed;
     time_t last_event;
@@ -61,6 +57,7 @@ void iochan_man_destroy(iochan_man_t *mp);
 
 #define iochan_destroy(i) (void)((i)->destroyed = 1)
 #define iochan_getfd(i) ((i)->fd)
+#define iochan_setfd(i, d) ((i)->fd = d)
 #define iochan_getdata(i) ((i)->data)
 #define iochan_setdata(i, d) ((i)->data = d)
 #define iochan_setflags(i, d) ((i)->flags = d)
@@ -69,10 +66,6 @@ void iochan_man_destroy(iochan_man_t *mp);
 #define iochan_getflag(i, d) ((i)->flags & d ? 1 : 0)
 #define iochan_settimeout(i, t) ((i)->max_idle = (t), (i)->last_event = time(0))
 #define iochan_activity(i) ((i)->last_event = time(0))
-#define iochan_setsocketfun(i, f) ((i)->socketfun = (f))
-#define iochan_getsocketfun(i) ((i)->socketfun)
-#define iochan_setmaskfun(i, f) ((i)->maskfun = (f))
-#define iochan_getmaskfun(i) ((i)->maskfun)
 
 IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags, const char *name);
 

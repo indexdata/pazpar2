@@ -47,6 +47,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "client.h"
 #include "settings.h"
 
+/* connection counting (1) , disable connection counting (0) */
+#if 0
+static YAZ_MUTEX g_mutex = 0;
+static int no_connections = 0;
+
+static void connection_use(int delta)
+{
+    if (!g_mutex)
+        yaz_mutex_create(&g_mutex);
+    yaz_mutex_enter(g_mutex);
+    no_connections += delta;
+    yaz_mutex_leave(g_mutex);
+    yaz_log(YLOG_LOG, "%s connections=%d", delta > 0 ? "INC" : "DEC",
+            no_connections);
+}
+#else
+#define connection_use(x)
+#endif
+
 
 /** \brief Represents a physical, reusable  connection to a remote Z39.50 host
  */
@@ -123,6 +142,7 @@ static void connection_destroy(struct connection *co)
     remove_connection_from_host(co);
     xfree(co->zproxy);
     xfree(co);
+    connection_use(-1);
 }
 
 // Creates a new connection for client, associated with the host of 
@@ -153,6 +173,7 @@ static struct connection *connection_create(struct client *cl,
     co->host->connections = co;
     yaz_mutex_leave(host->mutex);
 
+    connection_use(1);
     return co;
 }
 
@@ -234,6 +255,8 @@ void connection_continue(struct connection *co)
     int r = ZOOM_connection_exec_task(co->link);
     if (!r)
         yaz_log(YLOG_WARN, "No task was executed for connection");
+    iochan_setflags(co->iochan, ZOOM_connection_get_mask(co->link));
+    iochan_setfd(co->iochan, ZOOM_connection_get_socket(co->link));
 }
 
 static void connection_handler(IOCHAN iochan, int event)
@@ -284,6 +307,12 @@ static void connection_handler(IOCHAN iochan, int event)
         
         non_block_events(co);
         client_unlock(cl);
+
+        if (co->link)
+        {
+            iochan_setflags(iochan, ZOOM_connection_get_mask(co->link));
+            iochan_setfd(iochan, ZOOM_connection_get_socket(co->link));
+        }
     }
 }
 
@@ -344,28 +373,6 @@ start:
 static struct host *connection_get_host(struct connection *con)
 {
     return con->host;
-}
-
-// Callback for use by event loop
-// We do this because ZOOM connections don't always have (the same) sockets
-static int socketfun(IOCHAN c)
-{
-    struct connection *co = iochan_getdata(c);
-    if (!co->link)
-        return -1;
-    return ZOOM_connection_get_socket(co->link);
-}
-
-// Because ZOOM always knows what events it is interested in; we may not
-static int maskfun(IOCHAN c)
-{
-    struct connection *co = iochan_getdata(c);
-    if (!co->link)
-        return 0;
-
-    // This is cheating a little, and assuming that eventl mask IDs are always
-    // the same as ZOOM-C's.
-    return ZOOM_connection_get_mask(co->link);
 }
 
 static int connection_connect(struct connection *con, iochan_man_t iochan_man)
@@ -430,8 +437,6 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     con->state = Conn_Connecting;
     iochan_settimeout(con->iochan, con->operation_timeout);
     iochan_setdata(con->iochan, con);
-    iochan_setsocketfun(con->iochan, socketfun);
-    iochan_setmaskfun(con->iochan, maskfun);
     iochan_add(iochan_man, con->iochan);
 
     /* this fragment is bad DRY: from client_prep_connection */
