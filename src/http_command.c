@@ -121,7 +121,7 @@ struct http_session *http_session_create(struct conf_service *service,
 
     r->timeout_iochan = iochan_create(-1, session_timeout, 0, "http_session_timeout");
     iochan_setdata(r->timeout_iochan, r);
-    yaz_log(YLOG_LOG, "timeout=%d", service->session_timeout);
+    yaz_log(YLOG_LOG, "%p HTTP session %u created. timeout chan=%p timeout=%d", r, sesid, r->timeout_iochan, service->session_timeout);
     iochan_settimeout(r->timeout_iochan, service->session_timeout);
 
     iochan_add(service->server->iochan_man, r->timeout_iochan);
@@ -134,7 +134,7 @@ void http_session_destroy(struct http_session *s)
 
     http_sessions_t http_sessions = s->http_sessions;
 
-    yaz_log(YLOG_LOG, "http_session_destroy %u", s->session_id);
+    yaz_log(YLOG_LOG, "%p HTTP session destroy %u", s, s->session_id);
     yaz_mutex_enter(http_sessions->mutex);
 
     /* only if http_session destroy was already called, we will allow it
@@ -156,13 +156,12 @@ void http_session_destroy(struct http_session *s)
     yaz_mutex_leave(http_sessions->mutex);
     if (must_destroy)
     {   /* destroying for real */
-        yaz_log(YLOG_LOG, "Destroying session %u", s->session_id);
-        iochan_destroy(s->timeout_iochan);
+		yaz_log(YLOG_LOG, "%p HTTP session destroying. session id %u", s, s->session_id);	        iochan_destroy(s->timeout_iochan);
         destroy_session(s->psession);
         nmem_destroy(s->nmem);
     }
     else {
-        yaz_log(YLOG_LOG, "Active clients on session %u. Waiting for new timeout.", s->session_id);
+        yaz_log(YLOG_DEBUG, "%p HTTP Session. Active clients on session %u. Waiting for new timeout.", s, s->session_id);
     }
 
 }
