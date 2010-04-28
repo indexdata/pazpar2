@@ -1164,14 +1164,10 @@ int ingest_record(struct client *cl, const char *rec,
         xmlFreeDoc(xdoc);
         return -1;
     }
-    client_unlock(cl);
     session_enter(se);
-    client_lock(cl);
     if (client_get_session(cl) == se)
         ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
-    client_unlock(cl);
     session_leave(se);
-    client_lock(cl);
     
     xmlFreeDoc(xdoc);
     return ret;
