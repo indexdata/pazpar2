@@ -138,8 +138,8 @@ void http_session_destroy(struct http_session *s)
     yaz_mutex_enter(http_sessions->mutex);
     /* only if http_session has no active http sessions on it can be destroyed */
     if (s->destroy_counter == s->activity_counter) {
-        must_destroy = 1;
         struct http_session **p = 0;
+        must_destroy = 1;
         for (p = &http_sessions->session_list; *p; p = &(*p)->next)
             if (*p == s)
             {
@@ -277,7 +277,7 @@ static struct http_session *locate_session(struct http_channel *c)
 }
 
 // Call after use of locate_session, in order to increment the destroy_counter
-static struct http_session *release_session(struct http_channel *c, struct http_session *session) {
+static void *release_session(struct http_channel *c, struct http_session *session) {
     http_sessions_t http_sessions = c->http_sessions;
     yaz_mutex_enter(http_sessions->mutex);
     if (session)
