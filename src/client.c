@@ -99,7 +99,6 @@ struct client {
     int diagnostic;
     enum client_state state;
     struct show_raw *show_raw;
-    struct client *next;     // next client in session or next in free list
     ZOOM_resultset resultset;
     YAZ_MUTEX mutex;
     int ref_count;
@@ -440,10 +439,13 @@ void client_search_response(struct client *cl)
 
 void client_got_records(struct client *cl)
 {
-    if (cl->session)
+    struct session *se = cl->session;
+    if (se)
     {
-        session_alert_watch(cl->session, SESSION_WATCH_SHOW);
-        session_alert_watch(cl->session, SESSION_WATCH_RECORD);
+        client_unlock(cl);
+        session_alert_watch(se, SESSION_WATCH_SHOW);
+        session_alert_watch(se, SESSION_WATCH_RECORD);
+        client_lock(cl);
     }
 }
 
@@ -615,7 +617,6 @@ struct client *client_create(void)
     r->state = Client_Disconnected;
     r->show_raw = 0;
     r->resultset = 0;
-    r->next = 0;
     r->mutex = 0;
     pazpar2_mutex_create(&r->mutex, "client");
 
@@ -623,6 +624,16 @@ struct client *client_create(void)
     client_use(1);
     
     return r;
+}
+
+void client_lock(struct client *c)
+{
+    yaz_mutex_enter(c->mutex);
+}
+
+void client_unlock(struct client *c)
+{
+    yaz_mutex_leave(c->mutex);
 }
 
 void client_incref(struct client *c)
@@ -640,7 +651,6 @@ int client_destroy(struct client *c)
                 c, client_get_url(c), c->ref_count);
         if (!pazpar2_decref(&c->ref_count, c->mutex))
         {
-            c->next = 0;
             xfree(c->pquery);
             c->pquery = 0;
             xfree(c->cqlquery);
@@ -822,33 +832,9 @@ int client_parse_query(struct client *cl, const char *query)
     return 0;
 }
 
-
-void client_remove_from_session(struct client *c)
-{
-    struct session *se;
-
-    se = c->session;
-    assert(se);
-    if (se)
-    {
-        struct client **ccp = &se->clients;
-        
-        while (*ccp && *ccp != c)
-            ccp = &(*ccp)->next;
-        assert(*ccp == c);
-        *ccp = c->next;
-        
-        c->database = 0;
-        c->session = 0;
-        c->next = 0;
-    }
-}
-
 void client_set_session(struct client *cl, struct session *se)
 {
     cl->session = se;
-    cl->next = se->clients;
-    se->clients = cl;
 }
 
 int client_is_active(struct client *cl)
@@ -857,14 +843,6 @@ int client_is_active(struct client *cl)
                            cl->state == Client_Working))
         return 1;
     return 0;
-}
-
-struct client *client_next_in_session(struct client *cl)
-{
-    if (cl)
-        return cl->next;
-    return 0;
-
 }
 
 Odr_int client_get_hits(struct client *cl)

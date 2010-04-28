@@ -42,6 +42,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PZ_RECORDFILTER	 19
 #define PZ_PQF_STRFTIME  20
 #define PZ_NEGOTIATION_CHARSET  21
+#define PZ_MAX_CONNECTIONS 22
+#define PZ_MAX_EOF       23
 
 struct setting
 {

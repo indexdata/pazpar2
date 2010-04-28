@@ -840,9 +840,8 @@ static struct conf_server *server_create(struct conf_config *config,
     return server;
 }
 
-WRBUF conf_get_fname(struct conf_service *service, const char *fname)
+WRBUF conf_get_fname(struct conf_config *config, const char *fname)
 {
-    struct conf_config *config = service->server->config;
     WRBUF w = wrbuf_alloc();
 
     conf_dir_path(config, w, fname);

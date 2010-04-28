@@ -69,6 +69,7 @@ static char *hard_settings[] = {
     "pz:recordfilter",
     "pz:pqf_strftime",
     "pz:negotiation_charset",
+    "pz:max_connections",
     0
 };
 

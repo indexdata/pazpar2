@@ -142,11 +142,6 @@ void http_session_destroy(struct http_session *s)
     if (s->destroy_counter != s->activity_counter)
         must_destroy = 0;
 
-    /* only if there are no active Z39.50 clients we will allow it to be
-       destroyed */
-    if (session_active_clients(s->psession))
-        must_destroy = 0;
-
     s->destroy_counter = s->activity_counter = 0;
     if (must_destroy)
     {

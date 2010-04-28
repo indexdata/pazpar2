@@ -22,7 +22,7 @@ http://localhost:9763/search.pz2?session=2&command=search&query=kubiak%20sts%C5%
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
 1 http://localhost:9763/search.pz2?session=1&command=record&id=title+how+to+program+a+computer+author+jack+collins+medium+book
 http://localhost:9763/search.pz2?session=1&command=record&id=title+how+to+program+a+computer+author+jack+collins+medium+book&offset=0&binary=1
-http://localhost:9763/search.pz2?session=1&command=record&id=title+how+to+program+a+computer+author+jack+collins+medium+book&offset=0&binary=1&syntax=xml
+http://localhost:9763/search.pz2?session=1&command=record&id=title+how+to+program+a+computer+author+jack+collins+medium+book&offset=0&binary=1&syntax=usmarc
 http://localhost:9763/search.pz2?command=init&service=gils
 http://localhost:9763/search.pz2?session=3&command=search&query=utah
 2 http://localhost:9763/search.pz2?session=3&command=show&block=1

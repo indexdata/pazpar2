@@ -1,7 +1,1 @@
-<usmarc><tag value="001">   11224467 </tag><tag value="003">DLC</tag><tag value="005">00000000000000.0</tag><tag value="008">910710c19910701nju           00010 eng  </tag><tag value="010"><tag value="  "><a>   11224467 </a></tag></tag><tag value="040"><tag value="  "><a>DLC</a><c>DLC</c></tag></tag><tag value="050"><tag value="00"><a>123-xyz</a></tag></tag><tag value="100"><tag value="10"><a>Jack Collins</a></tag></tag><tag value="245"><tag value="10"><a>How to program a computer</a></tag></tag><tag value="260"><tag value="1 "><a>Penguin</a></tag></tag><tag value="263"><tag value="  "><a>8710</a></tag></tag><tag value="300"><tag value="  "><a>p. cm.</a></tag></tag>
-  <idzebra xmlns="http://www.indexdata.dk/zebra/">
-    <size>366</size>
-    <localnumber>8407</localnumber>
-    <filename>records/marc/sample-marc</filename>
-  </idzebra>
-</usmarc>
+00362nam  22001698a 4504001001300000003000400013005001700017008004100034010001300075040001300088050001200101100001700113245003000130260001200160263000900172300001100181   11224467 DLC00000000000000.0910710c19910701nju           00010 eng    a11224467  aDLCcDLC00a123-xyz10aJack Collins10aHow to program a computer1 aPenguin  a8710  ap. cm.

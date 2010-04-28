@@ -56,7 +56,7 @@ normalize_cache_t normalize_cache_create(void)
 }
 
 normalize_record_t normalize_cache_get(normalize_cache_t nc,
-                                       struct conf_service *service,
+                                       struct conf_config *conf,
                                        const char *spec)
 {
     normalize_record_t nt;
@@ -70,7 +70,7 @@ normalize_record_t normalize_cache_get(normalize_cache_t nc,
         nt = ci->nt;
     else
     {
-        nt = normalize_record_create(service, spec);
+        nt = normalize_record_create(conf, spec);
         if (nt)
         {
             ci = nmem_malloc(nc->nmem, sizeof(*ci));

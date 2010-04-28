@@ -1,5 +1,4 @@
 /* A very simple client that shows a basic usage of the pz2.js
-** $Id: example_client.js,v 1.6 2008-01-15 13:59:18 jakub Exp $
 */
 
 // create a parameters array and pass it to the pz2's constructor

@@ -25,17 +25,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define CONNECTION_H
 #include <yaz/zoom.h>
 
-#include <yaz/proto.h>
 #include "eventl.h"
 
-struct client;
 struct connection;
 struct host;
-struct session;
 
 void connect_resolver_host(struct host *host, iochan_man_t iochan);
-const char *connection_get_url(struct connection *co);
-void connection_release(struct connection *co);
 ZOOM_connection connection_get_link(struct connection *co);
 void connection_continue(struct connection *co);
 

@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <config.h>
 #endif
 
+#include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -81,6 +82,11 @@ struct parameters global_parameters =
     0    // debug_mode
 };
 
+struct client_list {
+    struct client *client;
+    struct client_list *next;
+};
+
 static void log_xml_doc(xmlDoc *doc)
 {
     FILE *lf = yaz_log_file();
@@ -101,12 +107,12 @@ static void log_xml_doc(xmlDoc *doc)
 
 static void session_enter(struct session *s)
 {
-    yaz_mutex_enter(s->mutex);
+    yaz_mutex_enter(s->session_mutex);
 }
 
 static void session_leave(struct session *s)
 {
-    yaz_mutex_leave(s->mutex);
+    yaz_mutex_leave(s->session_mutex);
 }
 
 // Recursively traverse query structure to extract terms.
@@ -354,7 +360,7 @@ static int prepare_map(struct session *se, struct session_database *sdb)
             }
         }
         sdb->map = normalize_cache_get(se->normalize_cache,
-                                       se->service, s);
+                                       se->service->server->config, s);
         if (!sdb->map)
             return -1;
     }
@@ -445,17 +451,35 @@ static void select_targets_callback(void *context, struct session_database *db)
 {
     struct session *se = (struct session*) context;
     struct client *cl = client_create();
+    struct client_list *l;
     client_set_database(cl, db);
+
     client_set_session(cl, se);
+    l = xmalloc(sizeof(*l));
+    l->client = cl;
+    l->next = se->clients;
+    se->clients = l;
 }
 
 static void session_remove_clients(struct session *se)
 {
-    while (se->clients)
+    struct client_list *l;
+
+    session_enter(se);
+    l = se->clients;
+    se->clients = 0;
+    session_leave(se);
+
+    while (l)
     {
-        struct client *cl = se->clients;
-        client_remove_from_session(cl);
-        client_destroy(cl);
+        struct client_list *l_next = l->next;
+        client_lock(l->client);
+        client_set_session(l->client, 0);
+        client_set_database(l->client, 0);
+        client_unlock(l->client);
+        client_destroy(l->client);
+        xfree(l);
+        l = l_next;
     }
 }
 
@@ -464,17 +488,16 @@ static void session_remove_clients(struct session *se)
 // setting overrides
 static int select_targets(struct session *se, const char *filter)
 {
-    session_remove_clients(se);
     return session_grep_databases(se, filter, select_targets_callback);
 }
 
 int session_active_clients(struct session *s)
 {
-    struct client *c;
+    struct client_list *l;
     int res = 0;
 
-    for (c = s->clients; c; c = client_next_in_session(c))
-        if (client_is_active(c))
+    for (l = s->clients; l; l = l->next)
+        if (client_is_active(l->client))
             res++;
 
     return res;
@@ -490,17 +513,20 @@ enum pazpar2_error_code search(struct session *se,
     int live_channels = 0;
     int no_working = 0;
     int no_failed = 0;
-    struct client *cl;
+    struct client_list *l;
+    struct timeval tval;
 
     yaz_log(YLOG_DEBUG, "Search");
 
     *addinfo = 0;
+
+    session_remove_clients(se);
     
     session_enter(se);
     reclist_destroy(se->reclist);
     se->reclist = 0;
-    nmem_reset(se->nmem);
     relevance_destroy(&se->relevance);
+    nmem_reset(se->nmem);
     se->total_records = se->total_hits = se->total_merged = 0;
     se->num_termlists = 0;
     live_channels = select_targets(se, filter);
@@ -511,23 +537,29 @@ enum pazpar2_error_code search(struct session *se,
     }
     se->reclist = reclist_create(se->nmem);
 
-    for (cl = se->clients; cl; cl = client_next_in_session(cl))
+    gettimeofday(&tval, 0);
+    
+    tval.tv_sec += 5;
+
+    for (l = se->clients; l; l = l->next)
     {
+        struct client *cl = l->client;
+
         if (maxrecs)
             client_set_maxrecs(cl, atoi(maxrecs));
         if (startrecs)
             client_set_startrecs(cl, atoi(startrecs));
         if (prepare_session_database(se, client_get_database(cl)) < 0)
-            continue;
-        // Parse query for target
-        if (client_parse_query(cl, query) < 0)
+            ;
+        else if (client_parse_query(cl, query) < 0)
             no_failed++;
         else
         {
             no_working++;
             if (client_prep_connection(cl, se->service->z3950_operation_timeout,
                                        se->service->z3950_session_timeout,
-                                       se->service->server->iochan_man))
+                                       se->service->server->iochan_man,
+                                       &tval))
                 client_start_search(cl);
         }
     }
@@ -653,7 +685,7 @@ void destroy_session(struct session *s)
     reclist_destroy(s->reclist);
     nmem_destroy(s->nmem);
     service_destroy(s->service);
-    yaz_mutex_destroy(&s->mutex);
+    yaz_mutex_destroy(&s->session_mutex);
     wrbuf_destroy(s->wrbuf);
 }
 
@@ -684,9 +716,8 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
         session->watchlist[i].fun = 0;
     }
     session->normalize_cache = normalize_cache_create();
-    session->mutex = 0;
-
-    pazpar2_mutex_create(&session->mutex, name);
+    session->session_mutex = 0;
+    pazpar2_mutex_create(&session->session_mutex, name);
 
     return session;
 }
@@ -694,17 +725,18 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
 struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
 {
     struct hitsbytarget *res = 0;
-    struct client *cl;
+    struct client_list *l;
     size_t sz = 0;
 
     session_enter(se);
-    for (cl = se->clients; cl; cl = client_next_in_session(cl))
+    for (l = se->clients; l; l = l->next)
         sz++;
 
     res = nmem_malloc(nmem, sizeof(*res) * sz);
     *count = 0;
-    for (cl = se->clients; cl; cl = client_next_in_session(cl))
+    for (l = se->clients; l; l = l->next)
     {
+        struct client *cl = l->client;
         WRBUF w = wrbuf_alloc();
         const char *name = session_setting_oneval(client_get_database(cl),
                                                   PZ_NAME);
@@ -854,12 +886,13 @@ void show_range_stop(struct session *s, struct record_cluster **recs)
 
 void statistics(struct session *se, struct statistics *stat)
 {
-    struct client *cl;
+    struct client_list *l;
     int count = 0;
 
     memset(stat, 0, sizeof(*stat));
-    for (cl = se->clients; cl; cl = client_next_in_session(cl))
+    for (l = se->clients; l; l = l->next)
     {
+        struct client *cl = l->client;
         if (!client_get_connection(cl))
             stat->num_no_connection++;
         switch (client_get_state(cl))
@@ -1110,7 +1143,7 @@ int ingest_record(struct client *cl, const char *rec,
                   int record_no, NMEM nmem)
 {
     struct session *se = client_get_session(cl);
-    int ret;
+    int ret = 0;
     struct session_database *sdb = client_get_database(cl);
     struct conf_service *service = se->service;
     xmlDoc *xdoc = normalize_record(sdb, service, rec, nmem);
@@ -1138,7 +1171,8 @@ int ingest_record(struct client *cl, const char *rec,
         return -1;
     }
     session_enter(se);
-    ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
+    if (client_get_session(cl) == se)
+        ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
     session_leave(se);
     
     xmlFreeDoc(xdoc);
