@@ -451,7 +451,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
 int client_prep_connection(struct client *cl,
                            int operation_timeout, int session_timeout,
                            iochan_man_t iochan_man,
-                           const struct timespec *abstime)
+                           const struct timeval *abstime)
 {
     struct connection *co;
     struct host *host = client_get_host(cl);
