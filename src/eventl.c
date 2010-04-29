@@ -67,12 +67,6 @@ struct iochan_man_s {
     YAZ_MUTEX iochan_mutex;
 };
 
-struct iochan_man_iter {
-    iochan_man_t man;
-    IOCHAN current;
-    int first;
-};
-
 iochan_man_t iochan_man_create(int no_threads) {
     iochan_man_t man = xmalloc(sizeof(*man));
     man->channel_list = 0;
@@ -91,7 +85,10 @@ void iochan_man_destroy(iochan_man_t *mp) {
         if ((*mp)->sel_thread)
             sel_thread_destroy((*mp)->sel_thread);
 
+        yaz_mutex_enter((*mp)->iochan_mutex);
         c = (*mp)->channel_list;
+        (*mp)->channel_list = NULL;
+        yaz_mutex_leave((*mp)->iochan_mutex);
         while (c) {
             IOCHAN c_next = c->next;
             xfree(c->name);
@@ -162,45 +159,16 @@ static void run_fun(iochan_man_t man, IOCHAN p) {
     }
 }
 
-static IOCHAN iochan_man_get_first(struct iochan_man_iter *iter,
-        iochan_man_t man) {
-    iter->man = man;
-    iter->first = 1;
-    yaz_mutex_enter(man->iochan_mutex);
-    iter->current = man->channel_list;
-    yaz_log(man->log_level, "iochan_man_get_first : chan=%p ", iter->current);
-    if (!iter->current)
-        yaz_mutex_leave(man->iochan_mutex);
-    return iter->current;
-}
-
-static IOCHAN iochan_man_get_next(struct iochan_man_iter *iter) {
-    IOCHAN current = NULL, next = NULL;
-    current = iter->current;
-    assert(current);
-    if (current) {
-        next = current->next;
-        iter->current = iter->current->next;
-        if (iter->first) {
-            yaz_log(iter->man->log_level,
-                    "iochan_man_get_next : chan=%p next=%p", current, next);
-            iter->first = 0;
-            yaz_mutex_leave(iter->man->iochan_mutex);
-        }
-    }
-    return iter->current;
-}
-
 static int event_loop(iochan_man_t man, IOCHAN *iochans) {
     do /* loop as long as there are active associations to process */
     {
         IOCHAN p, *nextp;
         IOCHAN start;
+        IOCHAN inv_start;
         fd_set in, out, except;
         int res, max;
         static struct timeval to;
         struct timeval *timeout;
-        static struct iochan_man_iter iter;
 
 //        struct yaz_poll_fd *fds;
         int no_fds = 0;
@@ -211,11 +179,13 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         to.tv_sec = 300;
         to.tv_usec = 0;
 
-        // INV: Start must no change through the loop
+        // INV: start must no change through the loop
 
-        start = iochan_man_get_first(&iter, man);
-        IOCHAN inv_start = start;
-        for (p = start; p; p = iochan_man_get_next(&iter)) {
+        yaz_mutex_enter(man->iochan_mutex);
+        start = man->channel_list;
+        yaz_mutex_leave(man->iochan_mutex);
+        inv_start = start;
+        for (p = start; p; p = p->next) {
             no_fds++;
         }
 //        fds = (struct yaz_poll_fd *) xmalloc(no_fds * sizeof(*fds));
@@ -271,8 +241,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         }
         if (man->log_level) {
             int no = 0;
-            for (p = iochan_man_get_first(&iter, man); p; p
-                    = iochan_man_get_next(&iter)) {
+            for (p = start; p; p = p->next) {
                 no++;
             }
             yaz_log(man->log_level, "%d channels", no);
