@@ -514,7 +514,6 @@ enum pazpar2_error_code search(struct session *se,
     int no_working = 0;
     int no_failed = 0;
     struct client_list *l;
-    struct timespec abstime;
     struct timeval tval;
 
     yaz_log(YLOG_DEBUG, "Search");
@@ -540,8 +539,7 @@ enum pazpar2_error_code search(struct session *se,
 
     gettimeofday(&tval, 0);
     
-    abstime.tv_sec = tval.tv_sec + 5;
-    abstime.tv_nsec = tval.tv_usec * 1000;
+    tval.tv_sec += 5;
 
     for (l = se->clients; l; l = l->next)
     {
@@ -561,7 +559,7 @@ enum pazpar2_error_code search(struct session *se,
             if (client_prep_connection(cl, se->service->z3950_operation_timeout,
                                        se->service->z3950_session_timeout,
                                        se->service->server->iochan_man,
-                                       &abstime))
+                                       &tval))
                 client_start_search(cl);
         }
     }
