@@ -112,6 +112,8 @@ static struct host *create_host(const char *hostport, iochan_man_t iochan_man)
     }
     pazpar2_mutex_create(&host->mutex, "host");
 
+    yaz_cond_create(&host->cond_ready);
+
     return host;
 }
 
@@ -185,7 +187,7 @@ struct database *new_database(const char *id, NMEM nmem)
     db->errors = 0;
     db->explain = 0;
 
-    db->num_settings = PZ_NEGOTIATION_CHARSET+1;
+    db->num_settings = PZ_MAX_EOF;
     db->settings = nmem_malloc(nmem, sizeof(struct settings*) * 
                                db->num_settings);
     memset(db->settings, 0, sizeof(struct settings*) * db->num_settings);
@@ -424,6 +426,7 @@ void database_hosts_destroy(database_hosts_t *pp)
         {
             struct host *p_next = p->next;
             yaz_mutex_destroy(&p->mutex);
+            yaz_cond_destroy(&p->cond_ready);
             xfree(p->ipport);
             xfree(p->hostport);
             xfree(p);

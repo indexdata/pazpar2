@@ -29,6 +29,7 @@ struct host {
     struct connection *connections; // All connections to this
     struct host *next;
     YAZ_MUTEX mutex;
+    YAZ_COND cond_ready;
 };
 
 
