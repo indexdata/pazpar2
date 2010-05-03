@@ -1,7 +1,7 @@
 #!/bin/bash
 DELAY=0.001
 WAIT=5
-NUMBER=40
+NUMBER=10
 ROUNDS=5
 if test -n "$1"; then
 	. $1
