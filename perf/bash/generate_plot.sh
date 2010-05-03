@@ -14,7 +14,7 @@ fi
 echo "plot 'range.stat' using 1:2 title 'init', 'range.stat'using 1:3 title 'search', 'range.stat'using 1:4 title 'show'" >> range.gnuplot
 echo "plot 'init.stat' using 1:2 title 'init'" >> init.gnuplot
 echo "plot 'search.stat' using 1:2 title 'Search'" >> search.gnuplot
-echo "plot 'search.stat' using 1:2 title 'Search'" >> show.gnuplot
+echo "plot 'search.stat' using 1:2 title 'Show'" >> show.gnuplot
 
 if [ "$1" != "" ] ; then 
     gnuplot < range.gnuplot > range.$1
