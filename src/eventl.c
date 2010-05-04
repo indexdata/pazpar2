@@ -95,6 +95,7 @@ void iochan_man_destroy(iochan_man_t *mp) {
             xfree(c);
             c = c_next;
         }
+        yaz_mutex_destroy(&(*mp)->iochan_mutex);
         xfree(*mp);
         *mp = 0;
     }
