@@ -513,13 +513,13 @@ int client_prep_connection(struct client *cl,
                 }
                 yaz_log(YLOG_LOG, "num_connections = %d (waiting) max = %d",
                         num_connections, max_connections);
-            }
-            if (yaz_cond_wait(host->cond_ready, host->mutex, abstime))
-            {
-                yaz_log(YLOG_LOG, "out of connections %s", client_get_url(cl));
-                client_set_state(cl, Client_Error);
-                yaz_mutex_leave(host->mutex);
-                return 0;
+                if (yaz_cond_wait(host->cond_ready, host->mutex, abstime))
+                {
+                    yaz_log(YLOG_LOG, "out of connections %s", client_get_url(cl));
+                    client_set_state(cl, Client_Error);
+                    yaz_mutex_leave(host->mutex);
+                    return 0;
+                }
             }
         }
         if (co)
