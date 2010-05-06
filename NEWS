@@ -1,3 +1,6 @@
+Default value of setting pz:max_connections is 0 which means that there
+is no limit on number of connections.
+
 --- 1.4.0 2010/03/29
 
 Pazpar2 may operate in threaded mode. Enabled by element threads in
