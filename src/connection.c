@@ -504,22 +504,20 @@ int client_prep_connection(struct client *cl,
                         num_connections);
                 break;
             }
-            if (max_connections > 0) {
-                if (num_connections < max_connections)
-                {
-                    yaz_log(YLOG_LOG, "num_connections = %d (new); max = %d",
-                            num_connections, max_connections);
-                    break;
-                }
-                yaz_log(YLOG_LOG, "num_connections = %d (waiting) max = %d",
+            if (max_connections <= 0 || num_connections < max_connections)
+            {
+                yaz_log(YLOG_LOG, "num_connections = %d (new); max = %d",
                         num_connections, max_connections);
-                if (yaz_cond_wait(host->cond_ready, host->mutex, abstime))
-                {
-                    yaz_log(YLOG_LOG, "out of connections %s", client_get_url(cl));
-                    client_set_state(cl, Client_Error);
-                    yaz_mutex_leave(host->mutex);
-                    return 0;
-                }
+                break;
+            }
+            yaz_log(YLOG_LOG, "num_connections = %d (waiting) max = %d",
+                    num_connections, max_connections);
+            if (yaz_cond_wait(host->cond_ready, host->mutex, abstime))
+            {
+                yaz_log(YLOG_LOG, "out of connections %s", client_get_url(cl));
+                client_set_state(cl, Client_Error);
+                yaz_mutex_leave(host->mutex);
+                return 0;
             }
         }
         if (co)
