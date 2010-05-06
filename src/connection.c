@@ -470,7 +470,7 @@ int client_prep_connection(struct client *cl,
 
     if (!co)
     {
-        int max_connections = 30;
+        int max_connections = 0;
         const char *v = session_setting_oneval(client_get_database(cl),
                                                PZ_MAX_CONNECTIONS);
         if (v && *v)
@@ -504,14 +504,16 @@ int client_prep_connection(struct client *cl,
                         num_connections);
                 break;
             }
-            if (num_connections < max_connections)
-            {
-                yaz_log(YLOG_LOG, "num_connections = %d (new); max = %d",
+            if (max_connections > 0) {
+                if (num_connections < max_connections)
+                {
+                    yaz_log(YLOG_LOG, "num_connections = %d (new); max = %d",
+                            num_connections, max_connections);
+                    break;
+                }
+                yaz_log(YLOG_LOG, "num_connections = %d (waiting) max = %d",
                         num_connections, max_connections);
-                break;
             }
-            yaz_log(YLOG_LOG, "num_connections = %d (waiting) max = %d",
-                    num_connections, max_connections);
             if (yaz_cond_wait(host->cond_ready, host->mutex, abstime))
             {
                 yaz_log(YLOG_LOG, "out of connections %s", client_get_url(cl));
