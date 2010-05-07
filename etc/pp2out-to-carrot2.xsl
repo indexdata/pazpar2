@@ -8,10 +8,10 @@
     <xsl:for-each select="show/hit">
     <document>
       <xsl:attribute name="id">
-        <xsl:value-of select="location/md-id" />
+        <xsl:value-of select="recid" />
       </xsl:attribute>
       <title><xsl:value-of select="md-title" /></title>
-      <url><xsl:value-of select="recid" /></url>
+      <url><xsl:value-of select="location/md-electronic-url" /></url>
       <snippet xml:space="preserve">
         <xsl:for-each select="md-description">
           <xsl:value-of select="." />
