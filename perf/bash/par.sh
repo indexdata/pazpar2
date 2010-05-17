@@ -4,7 +4,7 @@ WAIT=5
 NUMBER=10
 ROUNDS=5
 PORT=9004
-SERVICE=perf
+SERVICE=perf_t
 SHUTDOWN=1
 if test -n "$1"; then
 	. $1
