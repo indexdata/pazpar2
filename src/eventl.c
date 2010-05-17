@@ -208,7 +208,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
             if (p->fd > max)
                 max = p->fd;
         }
-        yaz_log(man->log_level, "max=%d nofds=%d", max, man->sel_fd);
+        yaz_log(man->log_level, "max=%d sel_fd=%d", max, man->sel_fd);
 
         if (man->sel_fd != -1) {
             if (man->sel_fd > max)
