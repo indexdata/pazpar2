@@ -104,8 +104,8 @@ for f in `cat ${srcdir}/${URLS}`; do
     elif echo $f | grep '^[0-9]' >/dev/null; then
 	sleep $f
     else
-	if test -f $f; then
-	    postfile=$f
+	if test -f $srcdir/$f; then
+	    postfile=$srcdir/$f
 	else
 	    echo "File $f does not exist"
 	    code=1
