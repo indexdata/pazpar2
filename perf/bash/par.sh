@@ -23,5 +23,5 @@ while test $r -lt $ROUNDS; do
 done
 wait
 if [ "$SHUTDOWN" == "1" ] ; then 
-    wget -O x "http://localhost:${PORT}/?command=exit"
+    wget -O x "http://localhost:${PORT}/search.pz2?command=exit"
 fi
