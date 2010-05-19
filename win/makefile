@@ -59,14 +59,14 @@ pazpar2: $(PAZPAR2_EXE)
 
 YAZBINDIR=$(YAZ_DIR)\bin
 !if $(DEBUG)
-YAZ_LIB="$(YAZ_DIR)\lib\yaz4d.lib"
+YAZ_LIB="$(YAZ_DIR)\lib\yaz4d.lib" "$(YAZ_DIR)\lib\yaz_cond4d.lib" 
 !if $(HAVE_ICU)
 YAZ_LIB=$(YAZ_LIB) "$(YAZ_DIR)\lib\yaz_icu4d.lib"
 !endif
 YAZ_DLL_SOURCE="$(YAZBINDIR)\yaz4d.dll"
 YAZ_DLL_TARGET="$(BINDIR)\yaz4d.dll"
 !else
-YAZ_LIB="$(YAZ_DIR)\lib\yaz4.lib"
+YAZ_LIB="$(YAZ_DIR)\lib\yaz4.lib" "$(YAZ_DIR)\lib\yaz_cond4.lib"
 !if $(HAVE_ICU)
 YAZ_LIB=$(YAZ_LIB) "$(YAZ_DIR)\lib\yaz_icu4.lib"
 !endif
@@ -201,6 +201,7 @@ PAZPAR2_OBJS = \
    "$(OBJDIR)\normalize_record.obj" \
    "$(OBJDIR)\normalize_cache.obj" \
    "$(OBJDIR)\ppmutex.obj" \
+   "$(OBJDIR)\incref.obj" \
    "$(OBJDIR)\connection.obj" 
 
 
