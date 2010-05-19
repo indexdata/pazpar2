@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
