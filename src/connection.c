@@ -195,21 +195,21 @@ static void non_block_events(struct connection *co)
         ev = ZOOM_connection_last_event(link);
         
 #if 0
-        yaz_log(YLOG_LOG, "ZOOM_EVENT_%s", ZOOM_get_event_str(ev));
+        yaz_log(YLOG_LOG, "%p Connection ZOOM_EVENT_%s", co, ZOOM_get_event_str(ev));
 #endif
         switch (ev) 
         {
         case ZOOM_EVENT_END:
             {
                 const char *error, *addinfo;
-		int err;
+                int err;
                 if ((err = ZOOM_connection_error(link, &error, &addinfo)))
                 {
                     yaz_log(YLOG_LOG, "Error %s from %s",
                             error, client_get_url(cl));
                 }
                 iochan_settimeout(iochan, co->session_timeout);
-		client_set_diagnostic(cl, err);
+                client_set_diagnostic(cl, err);
                 client_set_state(cl, Client_Idle);
                 yaz_cond_broadcast(co->host->cond_ready);
             }
