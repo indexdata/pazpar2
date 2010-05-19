@@ -59,19 +59,19 @@ pazpar2: $(PAZPAR2_EXE)
 
 YAZBINDIR=$(YAZ_DIR)\bin
 !if $(DEBUG)
-YAZ_LIB="$(YAZ_DIR)\lib\yaz3d.lib"
+YAZ_LIB="$(YAZ_DIR)\lib\yaz4d.lib"
 !if $(HAVE_ICU)
-YAZ_LIB=$(YAZ_LIB) "$(YAZ_DIR)\lib\yaz_icu3d.lib"
+YAZ_LIB=$(YAZ_LIB) "$(YAZ_DIR)\lib\yaz_icu4d.lib"
 !endif
-YAZ_DLL_SOURCE="$(YAZBINDIR)\yaz3d.dll"
-YAZ_DLL_TARGET="$(BINDIR)\yaz3d.dll"
+YAZ_DLL_SOURCE="$(YAZBINDIR)\yaz4d.dll"
+YAZ_DLL_TARGET="$(BINDIR)\yaz4d.dll"
 !else
-YAZ_LIB="$(YAZ_DIR)\lib\yaz3.lib"
+YAZ_LIB="$(YAZ_DIR)\lib\yaz4.lib"
 !if $(HAVE_ICU)
-YAZ_LIB=$(YAZ_LIB) "$(YAZ_DIR)\lib\yaz_icu3.lib"
+YAZ_LIB=$(YAZ_LIB) "$(YAZ_DIR)\lib\yaz_icu4.lib"
 !endif
-YAZ_DLL_SOURCE="$(YAZBINDIR)\yaz3.dll"
-YAZ_DLL_TARGET="$(BINDIR)\yaz3.dll"
+YAZ_DLL_SOURCE="$(YAZBINDIR)\yaz4.dll"
+YAZ_DLL_TARGET="$(BINDIR)\yaz4.dll"
 !endif
 
 YAZ_DEF=/DYAZ_HAVE_XML2=2 /DYAZ_HAVE_XSLT=1 /I"$(YAZ_DIR)\include"
