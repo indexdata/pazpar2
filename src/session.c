@@ -981,7 +981,10 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
         if (!strcmp((const char *) n->name, "metadata"))
         {
             xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
-            if (!strcmp(name, (const char *) type))
+            if (type == NULL) {
+                yaz_log(YLOG_FATAL, "Missing type attribute on metadata element. Skipping!");
+            }
+            else if (!strcmp(name, (const char *) type))
             {
                 xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
                 if (value)
