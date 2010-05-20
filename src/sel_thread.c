@@ -24,7 +24,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "sel_thread.h"
 #include <yaz/log.h>
 #include <yaz/nmem.h>
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
+#ifdef WIN32
+#include <winsock2.h>
+#endif
 #include <stdlib.h>
 #include <yaz/thread_create.h>
 #include <yaz/mutex.h>
