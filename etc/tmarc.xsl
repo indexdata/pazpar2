@@ -643,12 +643,6 @@
         </pz:metadata>
       </xsl:for-each>
 
-      <pz:metadata tag="tag100">
-        <xsl:call-template name="shortTitle">
-          <xsl:with-param name="tag" select="100" />
-        </xsl:call-template>
-      </pz:metadata>
-
       <!-- passthrough id data -->
       <xsl:for-each select="pz:metadata">
         <xsl:copy-of select="." />
