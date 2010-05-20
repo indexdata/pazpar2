@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <stdlib.h>
 #include <yaz/thread_create.h>
 #include <yaz/mutex.h>
+#include <yaz/spipe.h>
 #include <assert.h>
 
 struct work_item {
@@ -56,7 +57,9 @@ static void queue_trav(struct work_item *q, void (*f)(void *data))
 }
 
 struct sel_thread {
-    int fd[2];
+    int write_fd;
+    int read_fd;
+    yaz_spipe_t spipe;
     NMEM nmem;
     yaz_thread_t *thread_id;
     YAZ_MUTEX mutex;
@@ -106,7 +109,11 @@ static void *sel_thread_handler(void *vp)
         yaz_mutex_leave(p->mutex);
 
         /* wake up select/poll with a single byte */
-        (void) write(p->fd[1], "", 1);
+#ifdef WIN32
+        (void) send(p->write_fd, "", 1, 0);
+#else
+        (void) write(p->write_fd, "", 1);
+#endif
     }        
     yaz_mutex_leave(p->mutex);
     return 0;
@@ -126,12 +133,22 @@ sel_thread_t sel_thread_create(void (*work_handler)(void *work_data),
     assert(no_of_threads >= 1);
 
     p->nmem = nmem;
-    if (pipe(p->fd))
+
+#ifdef WIN32
+    /* use port 12119 temporarily on Windos and hope for the best */
+    p->spipe = yaz_spipe_create(12119, 0);
+#else
+    p->spipe = yaz_spipe_create(0, 0);
+#endif
+    if (!p->spipe)
     {
         nmem_destroy(nmem);
         return 0;
-    }
-    *read_fd = p->fd[0];
+    }    
+
+    *read_fd = p->read_fd = yaz_spipe_get_read_fd(p->spipe);
+    p->write_fd = yaz_spipe_get_write_fd(p->spipe);
+
     p->input_queue = 0;
     p->output_queue = 0;
     p->free_queue = 0;
@@ -172,8 +189,7 @@ void sel_thread_destroy(sel_thread_t p)
         queue_trav(p->output_queue, p->work_destroy);
     }
 
-    close(p->fd[0]);
-    close(p->fd[1]);
+    yaz_spipe_destroy(p->spipe);
     yaz_cond_destroy(&p->input_data);
     yaz_mutex_destroy(&p->mutex);
     nmem_destroy(p->nmem);
@@ -219,7 +235,11 @@ void *sel_thread_result(sel_thread_t p)
         p->free_queue = work_this;
         
         data = work_this->data;
-        (void) read(p->fd[0], read_buf, 1);
+#ifdef WIN32
+        (void) recv(p->read_fd, read_buf, 1, 0);
+#else
+        (void) read(p->read_fd, read_buf, 1);
+#endif
     }
     yaz_mutex_leave(p->mutex);
     return data;
