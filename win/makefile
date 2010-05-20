@@ -4,7 +4,7 @@
 DEBUG=0   # 0 for release, 1 for debug
 USE_MANIFEST = 1 # Can be enabled Visual Studio 2005/2008
 PACKAGE_NAME=pazpar2
-PACKAGE_VERSION=1.3.0
+PACKAGE_VERSION=1.4.0
 
 # YAZ
 YAZ_DIR=..\..\yaz
@@ -202,6 +202,7 @@ PAZPAR2_OBJS = \
    "$(OBJDIR)\normalize_cache.obj" \
    "$(OBJDIR)\ppmutex.obj" \
    "$(OBJDIR)\incref.obj" \
+   "$(OBJDIR)\sel_thread.obj" \
    "$(OBJDIR)\connection.obj" 
 
 

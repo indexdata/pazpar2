@@ -1143,6 +1143,7 @@ static int ingest_to_cluster(struct client *cl,
     \param cl client holds the result set for record
     \param rec record buffer (0 terminated)
     \param record_no record position (1, 2, ..)
+    \param nmem working NMEM
     \retval 0 OK
     \retval -1 failure
 */
