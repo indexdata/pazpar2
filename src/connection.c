@@ -207,10 +207,14 @@ static void non_block_events(struct connection *co)
                 {
                     yaz_log(YLOG_LOG, "Error %s from %s",
                             error, client_get_url(cl));
+                    client_set_diagnostic(cl, err);
+                    client_set_state(cl, Client_Error);
                 }
-                iochan_settimeout(iochan, co->session_timeout);
-                client_set_diagnostic(cl, err);
-                client_set_state(cl, Client_Idle);
+                else
+                {
+                    iochan_settimeout(iochan, co->session_timeout);
+                    client_set_state(cl, Client_Idle);
+                }
                 yaz_cond_broadcast(co->host->cond_ready);
             }
             break;
@@ -287,14 +291,10 @@ static void connection_handler(IOCHAN iochan, int event)
             client_set_state(cl, Client_Error);
             connection_destroy(co);
         }
-        else if (client_get_state(co->client) == Client_Idle)
+        else
         {
             yaz_log(YLOG_LOG,  "idle timeout %s", client_get_url(cl));
             connection_destroy(co);
-        }
-        else
-        {
-            yaz_log(YLOG_LOG,  "ignore timeout %s", client_get_url(cl));
         }
         yaz_mutex_leave(host->mutex);
     }
