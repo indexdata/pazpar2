@@ -22,4 +22,4 @@ if [ "$SETTINGS" != "" ] ; then
 fi
 wget -q -O $OF.search.xml "$H?command=search&query=$WHAT&session=$S"
 sleep 1
-wget -q -O $OF.show.xml "$H?command=show&session=$S&num=100&block=1"
+wget -q -O $OF.show.xml "$H?command=show&session=$S&sort=relevance&start=0&num=100&block=1"
