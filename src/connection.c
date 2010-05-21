@@ -435,7 +435,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
         ZOOM_connection_connect(link, host->ipport, 0);
     
     con->link = link;
-    con->iochan = iochan_create(0, connection_handler, 0, "connection_socket");
+    con->iochan = iochan_create(-1, connection_handler, 0, "connection_socket");
     con->state = Conn_Connecting;
     iochan_settimeout(con->iochan, con->operation_timeout);
     iochan_setdata(con->iochan, con);
