@@ -138,9 +138,16 @@
         </pz:metadata>
       </xsl:for-each>
 
-      <xsl:for-each select="tmarc:d035">
+      <xsl:for-each select="tmarc:d035"> 
         <pz:metadata type="system-control-nr">
-          <xsl:value-of select="tmarc:sa" />
+          <xsl:choose>
+            <xsl:when test="tmarc:sa">
+              <xsl:value-of select="tmarc:sa"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="tmarc:sb"/>
+            </xsl:otherwise>
+          </xsl:choose>
         </pz:metadata>
       </xsl:for-each>
 
