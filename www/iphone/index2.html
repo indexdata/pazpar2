@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+ 
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Pazpar2 demo client</title>
+  <link rel="stylesheet" href="styles.css"></link>
+
+  <script>
+    var count = 0;
+    var termlist = {};
+    var JSON = JSON || {};
+
+    // implement JSON.stringify serialization
+    JSON.stringify = JSON.stringify || function (obj) {
+    var t = typeof (obj);
+    if (t != "object" || obj === null) {
+    // simple data type
+    if (t == "string") obj = '"'+obj+'"';
+    return String(obj);
+    }
+    else {
+    // recurse array or object
+    var n, v, json = [], arr = (obj && obj.constructor == Array);
+    for (n in obj) {
+    v = obj[n]; t = typeof(v);
+    if (t == "string") v = '"'+v+'"';
+    else if (t == "object" && v !== null) v = JSON.stringify(v);
+    json.push((arr ? "" : '"' + n + '":') + String(v));
+    }
+    return (arr ? "[" : "{") + String(json) + (arr ? "]" : "}");
+    }
+    };
+
+    function search(message) 
+    {
+      var body = document.getElementById("body");
+      body.innerHTML = message;
+      count = count + 1;
+      //document.location = "myapp:myfunction:record:" + count ":value1:value2:value3";
+      termlist[message] = count + 1;
+      document.location = "myapp:" + "myfunction:" + count + ":" + message + ":" + JSON.stringify(termlist));
+    }
+
+
+  </script>
+
+ </head>
+
+ <body onload="">
+   <div id="body">
+   </div>
+   <div id="callback">
+     <a href="myapp:myfunction:record:id:value1:value2:value3">callback</a>
+   </div>
+ </body>
+</html>
+ 
