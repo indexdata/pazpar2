@@ -57,9 +57,15 @@
       </pz:metadata>
     </xsl:for-each>
   </xsl:template>
-
   <xsl:template match="/">
-    <xsl:apply-templates select="opacRecord/bibliographicRecord"/>
+    <xsl:choose>
+      <xsl:when test="opacRecord">
+        <xsl:apply-templates select="opacRecord/bibliographicRecord"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:apply-templates/>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
 </xsl:stylesheet>

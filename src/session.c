@@ -35,6 +35,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef WIN32
+#include <windows.h>
+#endif
 #include <signal.h>
 #include <ctype.h>
 #include <assert.h>
@@ -52,6 +55,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/querytowrbuf.h>
 #include <yaz/oid_db.h>
 #include <yaz/snprintf.h>
+#include <yaz/gettimeofday.h>
 
 #define USE_TIMING 0
 #if USE_TIMING
@@ -537,7 +541,7 @@ enum pazpar2_error_code search(struct session *se,
     }
     se->reclist = reclist_create(se->nmem);
 
-    gettimeofday(&tval, 0);
+    yaz_gettimeofday(&tval);
     
     tval.tv_sec += 5;
 
@@ -977,7 +981,10 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
         if (!strcmp((const char *) n->name, "metadata"))
         {
             xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
-            if (!strcmp(name, (const char *) type))
+            if (type == NULL) {
+                yaz_log(YLOG_FATAL, "Missing type attribute on metadata element. Skipping!");
+            }
+            else if (!strcmp(name, (const char *) type))
             {
                 xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
                 if (value)
@@ -1136,6 +1143,7 @@ static int ingest_to_cluster(struct client *cl,
     \param cl client holds the result set for record
     \param rec record buffer (0 terminated)
     \param record_no record position (1, 2, ..)
+    \param nmem working NMEM
     \retval 0 OK
     \retval -1 failure
 */

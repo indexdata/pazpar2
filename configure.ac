@@ -4,7 +4,7 @@
 
 # Autoconf and automake setup
 AC_PREREQ(2.60)
-AC_INIT([pazpar2],[1.4.0],[pazpar2-help@indexdata.dk])
+AC_INIT([pazpar2],[1.4.1],[pazpar2-help@indexdata.dk])
 
 AC_CONFIG_HEADERS(src/config.h)
 
@@ -21,7 +21,7 @@ AC_LANG(C)
 
 AC_C_INLINE
 
-YAZ_INIT([static icu],[4.0.4])
+YAZ_INIT([static icu],[4.0.9])
 if test -z "$YAZLIB"; then
 	AC_MSG_ERROR([YAZ development libraries missing])
 fi

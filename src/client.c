@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -79,7 +78,7 @@ static void client_use(int delta)
     yaz_mutex_enter(g_mutex);
     no_clients += delta;
     yaz_mutex_leave(g_mutex);
-    yaz_log(YLOG_LOG, "%s clients=%d", delta > 0 ? "INC" : "DEC", no_clients);
+    yaz_log(YLOG_DEBUG, "%s clients=%d", delta > 0 ? "INC" : "DEC", no_clients);
 }
 #else
 #define client_use(x)
@@ -639,7 +638,7 @@ void client_unlock(struct client *c)
 void client_incref(struct client *c)
 {
     pazpar2_incref(&c->ref_count, c->mutex);
-    yaz_log(YLOG_LOG, "client_incref c=%p %s cnt=%d",
+    yaz_log(YLOG_DEBUG, "client_incref c=%p %s cnt=%d",
             c, client_get_url(c), c->ref_count);
 }
 
@@ -647,7 +646,7 @@ int client_destroy(struct client *c)
 {
     if (c)
     {
-        yaz_log(YLOG_LOG, "client_destroy c=%p %s cnt=%d",
+        yaz_log(YLOG_DEBUG, "client_destroy c=%p %s cnt=%d",
                 c, client_get_url(c), c->ref_count);
         if (!pazpar2_decref(&c->ref_count, c->mutex))
         {

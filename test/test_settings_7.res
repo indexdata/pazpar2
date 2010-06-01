@@ -5,7 +5,7 @@
 <hits>0</hits>
 <diagnostic>114</diagnostic>
 <records>0</records>
-<state>Client_Idle</state>
+<state>Client_Error</state>
 <settings>
 <set name="pz:elements" value="F"/>
 <set name="pz:requestsyntax" value="marc21"/>

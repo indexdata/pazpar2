@@ -195,22 +195,26 @@ static void non_block_events(struct connection *co)
         ev = ZOOM_connection_last_event(link);
         
 #if 0
-        yaz_log(YLOG_LOG, "ZOOM_EVENT_%s", ZOOM_get_event_str(ev));
+        yaz_log(YLOG_LOG, "%p Connection ZOOM_EVENT_%s", co, ZOOM_get_event_str(ev));
 #endif
         switch (ev) 
         {
         case ZOOM_EVENT_END:
             {
                 const char *error, *addinfo;
-		int err;
+                int err;
                 if ((err = ZOOM_connection_error(link, &error, &addinfo)))
                 {
                     yaz_log(YLOG_LOG, "Error %s from %s",
                             error, client_get_url(cl));
+                    client_set_diagnostic(cl, err);
+                    client_set_state(cl, Client_Error);
                 }
-                iochan_settimeout(iochan, co->session_timeout);
-		client_set_diagnostic(cl, err);
-                client_set_state(cl, Client_Idle);
+                else
+                {
+                    iochan_settimeout(iochan, co->session_timeout);
+                    client_set_state(cl, Client_Idle);
+                }
                 yaz_cond_broadcast(co->host->cond_ready);
             }
             break;
@@ -287,14 +291,10 @@ static void connection_handler(IOCHAN iochan, int event)
             client_set_state(cl, Client_Error);
             connection_destroy(co);
         }
-        else if (client_get_state(co->client) == Client_Idle)
+        else
         {
             yaz_log(YLOG_LOG,  "idle timeout %s", client_get_url(cl));
             connection_destroy(co);
-        }
-        else
-        {
-            yaz_log(YLOG_LOG,  "ignore timeout %s", client_get_url(cl));
         }
         yaz_mutex_leave(host->mutex);
     }
@@ -435,7 +435,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
         ZOOM_connection_connect(link, host->ipport, 0);
     
     con->link = link;
-    con->iochan = iochan_create(0, connection_handler, 0, "connection_socket");
+    con->iochan = iochan_create(-1, connection_handler, 0, "connection_socket");
     con->state = Conn_Connecting;
     iochan_settimeout(con->iochan, con->operation_timeout);
     iochan_setdata(con->iochan, con);

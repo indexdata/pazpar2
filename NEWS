@@ -1,3 +1,15 @@
+--- 1.4.1 2010/05/21
+
+Fixes for threaded operation.
+
+New stylesheets for TurboMARC: tmarc.xsl and opac_turbomarc.xsl.
+
+New example services in etc/services in source. In the Debian packages
+these are located in /etc/pazpar2/services-available
+
+Threaded mode operational on Windows. Requires Windows 7 or Windows
+Server 2008.
+
 Default value of setting pz:max_connections is 0 which means that there
 is no limit on number of connections.
 
