@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+ 
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Pazpar2 demo client</title>
+  <meta id="viewport" name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+  <script type="text/javascript" src="/pazpar2/js/pz2.js"></script>
+  <script type="text/javascript" src="iphone.js" ></script>
+  <script type="text/javascript" src="example_client.js"></script>
+  <link rel="stylesheet" href="UiUIKIT/stylesheets/iphone.css" />
+  <link rel="apple-touch-icon" href="UiUIKIT/stylesheets/images/apple-touch-icon.png" />
+ </head>
+ 
+ <body id="normal" onload="domReady();">
+    <div id="log" style="display: none;"></div>
+  <div id="noscript">
+    <noscript>
+	<p>Your browser does not support or allow execution of scripts required by this site to work properly.</p>
+	<p>If you run Internet Explorer 6+ or FireFox 2.0+ and see this message ensure the JavaScript is enabled in your browser.</p>
+	<p>If you run Internet Explorer 7 add the site to the Trusted Sites group.</p>
+	<p>Finally, check your personal firewall settings.</p>
+    </noscript>
+  </div>
+
+  <div id="switchmenu" style="display:none" >
+   <a href="#" onclick="switchView('recordview')">Record Browser</a>
+   <span> | </span>
+   <a href="#" onclick="switchView('targetview')">Target Info</a>
+  </div>
+ 
+  <div id="heading">
+   <table width="100%" border="0" cellpadding="6" cellspacing="0">
+    <tr>
+<!--
+     <td style="visibility:hidden;" height="100" align="center"><b>Pazpar2</b></td>
+-->
+     <td width="100%">
+      <form id="searchForm" name="search">
+       <input id="query" type="text" />
+<!--  
+       <input id="button" type="submit" value="Search" />
+-->
+      </form>
+     </td>
+    </tr>
+    <tr>
+     <td  width="100%">
+	  <div id="tabs>
+	    <a href="javascript:showhide()"></a>
+	    <a href="javascript:showhide('recordview')">Results</a>
+	    <a href="javascript:showhide('xtargets')">Sources</a>
+	    <a href="javascript:showhide('subjects')">Subjects</a>
+	    <a href="javascript:showhide('authors')">Authors</a>
+        <a href="javascript:showhide('sort')">Sort</a>
+	  </div>   
+	 </td>
+     
+<!--
+     <td style="visibility:hidden;" >
+      <a href="http://www.indexdata.com"><img border="0" title="IndexData home page" src="indexdata_logo.png" height="98" align="right" alt="" /></a>
+     </td>
+-->
+    </tr>
+   </table>
+  </div>
+    
+  <div id="termlist"></div>
+  
+  <div id="recordview">
+   <table width="100%" border="0" cellpadding="6" cellspacing="0">
+   <tr>
+     <td valign="top">
+      <div id="ranking" style="display: none;">
+       <form name="select">
+        Sort by
+        <select name="sort" id="sort">
+         <option value="relevance" selected="selected">relevance</option>
+         <option value="title:1">title</option>
+         <option value="date:0">newest</option>
+         <option value="date:1">oldest</option>
+        </select>
+        and show 
+        <select name="perpage" id="perpage">
+         <option value="10">10</option>
+         <option value="20">20</option>
+         <option value="30">30</option>
+         <option value="50" selected="selected">50</option>
+        </select>
+        per page.
+       </form>
+      </div>
+      <div id="pager" style="display: none;"></div>
+      <div id="navi"></div>
+      <h4>Results</h4>
+      <ul id="results">
+      </ul>
+     </td>
+    </tr>
+   </table>
+  </div>
+  
+  <div id="targetview" style="display: none">
+   <div id="bytarget">
+       No information available yet.
+   </div>
+  </div>
+  
+  <div id="footer">
+      <div id="stat"></div>
+      <span>Copyright &copy; 1999-2010 by <a href="http://www.indexdata.com">Index Data</a></span> 
+  </div>
+ </body>
+</html>
