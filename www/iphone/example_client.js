@@ -18,10 +18,10 @@ my_paz = new pz2( { "onshow": my_onshow,
                     "pazpar2path": pazpar2path,
                     "oninit": my_oninit,
                     "onstat": my_onstat,
-                    "onterm": my_onterm,
+                    "onterm": my_onterm_iphone,
                     "termlist": "xtargets,subject,author",
                     "onbytarget": my_onbytarget,
-	 	    "usesessions" : usesessions,
+	 	            "usesessions" : usesessions,
                     "showResponseType": showResponseType,
                     "onrecord": my_onrecord } );
 // some state vars
@@ -36,6 +36,9 @@ var submitted = false;
 var SourceMax = 16;
 var SubjectMax = 10;
 var AuthorMax = 10;
+var tab = "recordview"; 
+var inApp = false;
+
 
 //
 // pz2.js event handlers:
@@ -61,16 +64,16 @@ function my_onshow(data) {
     var html = [];
     for (var i = 0; i < data.hits.length; i++) {
         var hit = data.hits[i];
-	      html.push('<div class="record" id="recdiv_'+hit.recid+'" >'
-            +'<span>'+ (i + 1 + recPerPage * (curPage - 1)) +'. </span>'
+	      html.push('<li id="recdiv_'+hit.recid+'" >'
+           /* +'<span>'+ (i + 1 + recPerPage * (curPage - 1)) +'. </span>' */
             +'<a href="#" id="rec_'+hit.recid
-            +'" onclick="showDetails(this.id);return false;"><b>' 
-            + hit["md-title"] +' </b></a>'); 
-	      if (hit["md-title-remainder"] !== undefined) {
-	        html.push('<span>' + hit["md-title-remainder"] + ' </span>');
-	      }
+            +'" onclick="showDetails(this.id);return false;">' 
+            + hit["md-title"] +'</a> '); 
 	      if (hit["md-title-responsibility"] !== undefined) {
-    	    html.push('<span><i>'+hit["md-title-responsibility"]+'</i></span>');
+    	    html.push('<a href="#">'+hit["md-title-responsibility"]+'</a> ');
+  	      if (hit["md-title-remainder"] !== undefined) {
+  	        html.push('<a href="#">' + hit["md-title-remainder"] + ' </a> ');
+  	      }
       	}
         if (hit.recid == curDetRecId) {
             html.push(renderDetails(curDetRecData));
@@ -92,22 +95,64 @@ function my_onstat(data) {
                         + '/' + data.hits + ' :.</span>';
 }
 
+function showhide(newtab) {
+	var showtermlist = false;
+	if (newtab != null)
+		tab = newtab;
+
+	if (tab == "recordview") {
+		document.getElementById("recordview").style.display = '';
+	}
+	else 
+		document.getElementById("recordview").style.display = 'none';
+
+	if (tab == "xtargets") {
+		document.getElementById("term_xtargets").style.display = '';
+		showtermlist = true;
+	}
+	else
+		document.getElementById("term_xtargets").style.display = 'none';
+	if (tab == "subjects") {
+		document.getElementById("term_subjects").style.display = '';
+		showtermlist = true;
+	}
+	else
+		document.getElementById("term_subjects").style.display = 'none';
+	if (tab == "authors") {
+		document.getElementById("term_authors").style.display = '';
+		showtermlist = true;
+	}
+	else
+		document.getElementById("term_authors").style.display = 'none';
+
+	if (showtermlist == false) 
+		document.getElementById("termlist").style.display = 'none';
+	else 
+		document.getElementById("termlist").style.display = '';
+}
+
 function my_onterm(data) {
     var termlists = [];
-    termlists.push('<hr/><b>TERMLISTS:</b><hr/><div class="termtitle">.::Sources</div>');
+    
+    termlists.push('<div id="term_xtargets" >');
+    termlists.push('<div class="termtitle">.::Sources</div>');
     for (var i = 0; i < data.xtargets.length && i < SourceMax; i++ ) {
         termlists.push('<a href="#" target_id='+data.xtargets[i].id
             + ' onclick="limitTarget(this.getAttribute(\'target_id\'), this.firstChild.nodeValue);return false;">' + data.xtargets[i].name 
         + ' </a><span> (' + data.xtargets[i].freq + ')</span><br/>');
     }
+    termlists.push('</div>');
      
-    termlists.push('<hr/><div class="termtitle">.::Subjects</div>');
+    termlists.push('<div id="term_subjects" >');
+    termlists.push('<div id="subjects" class="termtitle">.::Subjects</div>');
     for (var i = 0; i < data.subject.length && i < SubjectMax; i++ ) {
         termlists.push('<a href="#" onclick="limitQuery(\'su\', this.firstChild.nodeValue);return false;">' + data.subject[i].name + '</a><span>  (' 
               + data.subject[i].freq + ')</span><br/>');
     }
-     
-    termlists.push('<hr/><div class="termtitle">.::Authors</div>');
+    termlists.push('</div>');
+            
+    termlists.push('<div id="term_authors" >');
+    termlists.push('<div class="termtitle">.::Authors</div>');
     for (var i = 0; i < data.author.length && i < AuthorMax; i++ ) {
         termlists.push('<a href="#" onclick="limitQuery(\'au\', this.firstChild.nodeValue);return false;">' 
                             + data.author[i].name 
@@ -115,8 +160,76 @@ function my_onterm(data) {
                             + data.author[i].freq 
                             + ')</span><br/>');
     }
+    termlists.push('</div>');
     var termlist = document.getElementById("termlist");
     replaceHtml(termlist, termlists.join(''));
+    var d;
+/*
+    for (d in ("xtargets", "subjects", "authors")) {
+    	alert(d);
+    	if (tab == d)
+    		document.getElementById("term_" + d).style.display = '';
+    	else 
+    		document.getElementById("term_" +d ).style.display = 'none';
+    }
+*/
+    showhide();
+}
+
+function serialize(array) {
+	var t = typeof (obj);
+	if (t != "object" || obj === null) {
+		// simple data type
+		return String(obj);
+	} else {
+		// recurse array or object
+		var n, v, json = [], arr = (obj && obj.constructor == Array);
+		for (n in obj) {
+			v = obj[n];
+			t = typeof (v);
+			if (t == "string")
+				v = '"' + v + '"';
+			else if (t == "object" && v !== null)
+				v = JSON.stringify(v);
+			json.push((arr ? "" : '"' + n + '":') + String(v));
+		}
+		return (arr ? "" : "") + String(json) + (arr ? "]" : "}");
+	}
+}
+
+var termlist = {};
+function my_onterm_iphone(data) {
+    my_onterm(data);
+    var targets = "";
+    for (var i = 0; i < data.xtargets.length; i++ ) {
+    	
+        targets = targets + data.xtargets[i].id + "|" + data.xtargets[i].name + "|" + data.xtargets[i].freq + "\n";
+    }
+    termlist["xtargets"] = targets;
+    var subjects = "";
+    for (var i = 0; i < data.subject.length; i++ ) {
+        subjects = subjects + "-" + "|" + data.subject[i].name + "|" + data.subject[i].freq + "\n";
+    }
+    termlist["subjects"] = subjects;
+    var authors = "";
+    for (var i = 0; i < data.author.length; i++ ) {
+        authors = authors + "-" + "|" + data.author[i].name + "|" + data.author[i].freq + "\n";
+    }
+    termlist["authors"] = authors;
+    //document.getElementById("log").innerHTML = targets + "\n" + subjects + "\n" + authors;
+    callback.send("termlist", "refresh");
+}
+
+function getTargets() {
+	return termlist['xtargets'];
+}
+
+function getSubjects() {
+	return termlist['subjects'];
+}
+
+function getAuthors() {
+	return termlist['authors'];
 }
 
 function my_onrecord(data) {
@@ -130,6 +243,12 @@ function my_onrecord(data) {
     var html = renderDetails(curDetRecData);
     recordDiv.innerHTML += html;
 }
+
+function my_onrecord_iphone(data) {
+    my_onrecord(data);
+    callback.send("record", data.recid, data, data.xtargets[i].freq);
+}
+
 
 function my_onbytarget(data) {
     var targetDiv = document.getElementById("bytarget");
@@ -158,6 +277,8 @@ function domReady ()
     document.search.query.value = '';
     document.select.sort.onchange = onSelectDdChange;
     document.select.perpage.onchange = onSelectDdChange;
+    if (!inApp)
+    	document.getElementById("heading").style.display="";
 }
 
 // when search button pressed
@@ -201,6 +322,7 @@ function limitQuery (field, value)
 {
     document.search.query.value += ' and ' + field + '="' + value + '"';
     onFormSubmitEventHandler();
+    showhide("recordview");
 }
 
 // limit by target functions
@@ -215,6 +337,7 @@ function limitTarget (id, name)
     resetPage();
     loadSelect();
     triggerSearch();
+    showhide("recordview");
     return false;
 }
 

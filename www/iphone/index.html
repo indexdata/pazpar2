@@ -6,13 +6,15 @@
  <head>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Pazpar2 demo client</title>
-  <link rel="stylesheet" href="styles.css"></link>
   <script type="text/javascript" src="/pazpar2/js/pz2.js"></script>
+  <script type="text/javascript" src="iphone.js" ></script>
   <script type="text/javascript" src="example_client.js"></script>
+  <link rel="stylesheet" href="/UiUIKIT/stylesheets/iphone.css" />
+  <link rel="apple-touch-icon" href="/UiUIKIT/stylesheets/images/apple-touch-icon.png" />
  </head>
  
- <body onload="domReady();">
-
+ <body id="normal" onload="domReady();">
+    <div id="log" style="display: none;"></div>
   <div id="noscript">
     <noscript>
 	<p>Your browser does not support or allow execution of scripts required by this site to work properly.</p>
@@ -22,43 +24,55 @@
     </noscript>
   </div>
 
-  <div id="switchmenu" style="visibility:hidden" >
+  <div id="switchmenu" style="display:none" >
    <a href="#" onclick="switchView('recordview')">Record Browser</a>
    <span> | </span>
    <a href="#" onclick="switchView('targetview')">Target Info</a>
   </div>
  
-  <div id="heading" >
+  <div id="heading" style="display:none">
    <table width="100%" border="0" cellpadding="6" cellspacing="0">
     <tr>
 <!--
-     <td width="250" style="visibility:hidden" height="100" align="center"><b>Pazpar2</b></td>
+     <td style="visibility:hidden;" height="100" align="center"><b>Pazpar2</b></td>
 -->
-     <td>
+     <td width="100%">
       <form id="searchForm" name="search">
-       <input id="query" type="text" size="50"/>
-       <input id="button" type="submit" value="Search"/>
+       <input id="query" type="text" />
+<!--  
+       <input id="button" type="submit" value="Search" />
+-->
       </form>
      </td>
+    </tr>
+    <tr>
+     <td  width="100%">
+	  <div id="tabs>
+	    <a href="javascript:showhide()"></a>
+	    <a href="javascript:showhide('recordview')">Results</a>
+	    <a href="javascript:showhide('xtargets')">Sources</a>
+	    <a href="javascript:showhide('subjects')">Subjects</a>
+	    <a href="javascript:showhide('authors')">Authors</a>
+        <a href="javascript:showhide('sort')">Sort</a>
+	  </div>   
+	 </td>
+     
 <!--
-     <td style="visibility:hidden" >
+     <td style="visibility:hidden;" >
       <a href="http://www.indexdata.com"><img border="0" title="IndexData home page" src="indexdata_logo.png" height="98" align="right" alt="" /></a>
      </td>
 -->
     </tr>
    </table>
   </div>
+    
+  <div id="termlist"></div>
   
   <div id="recordview">
    <table width="100%" border="0" cellpadding="6" cellspacing="0">
-    <tr>
-<!--
-     <td width="250" valign="top" style="visibility:hidden;">
-      <div id="termlist"></div>
-     </td>
--->
+   <tr>
      <td valign="top">
-      <div id="ranking" style="visibility:hidden;">
+      <div id="ranking" style="display: none;">
        <form name="select">
         Sort by
         <select name="sort" id="sort">
@@ -70,16 +84,18 @@
         and show 
         <select name="perpage" id="perpage">
          <option value="10">10</option>
-         <option value="20" selected="selected">20</option>
+         <option value="20">20</option>
          <option value="30">30</option>
-         <option value="50">50</option>
+         <option value="50" selected="selected">50</option>
         </select>
         per page.
        </form>
       </div>
-      <div id="pager"></div>
+      <div id="pager" style="display: none;"></div>
       <div id="navi"></div>
-      <div id="results"></div>
+      <h4>Results</h4>
+      <ul id="results">
+      </ul>
      </td>
     </tr>
    </table>
@@ -95,6 +111,5 @@
       <div id="stat"></div>
       <span>Copyright &copy; 1999-2010 by <a href="http://www.indexdata.com">Index Data</a></span> 
   </div>
-  <div id="termlist" style="visibility:hidden;"></div>
  </body>
 </html>
