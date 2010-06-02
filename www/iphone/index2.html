@@ -7,54 +7,22 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <title>Pazpar2 demo client</title>
   <link rel="stylesheet" href="styles.css"></link>
+  <script type="text/javascript" src="iphone.js"></script>
 
-  <script>
-    var count = 0;
-    var termlist = {};
-    var JSON = JSON || {};
+</head>
 
-    // implement JSON.stringify serialization
-    JSON.stringify = JSON.stringify || function (obj) {
-    var t = typeof (obj);
-    if (t != "object" || obj === null) {
-    // simple data type
-    if (t == "string") obj = '"'+obj+'"';
-    return String(obj);
-    }
-    else {
-    // recurse array or object
-    var n, v, json = [], arr = (obj && obj.constructor == Array);
-    for (n in obj) {
-    v = obj[n]; t = typeof(v);
-    if (t == "string") v = '"'+v+'"';
-    else if (t == "object" && v !== null) v = JSON.stringify(v);
-    json.push((arr ? "" : '"' + n + '":') + String(v));
-    }
-    return (arr ? "[" : "{") + String(json) + (arr ? "]" : "}");
-    }
-    };
-
-    function search(message) 
-    {
-      var body = document.getElementById("body");
-      body.innerHTML = message;
-      count = count + 1;
-      //document.location = "myapp:myfunction:record:" + count ":value1:value2:value3";
-      termlist[message] = count + 1;
-      document.location = "myapp:" + "myfunction:" + count + ":" + message + ":" + JSON.stringify(termlist));
-    }
-
-
-  </script>
-
- </head>
-
- <body onload="">
+ <body onload="loaded()">
    <div id="body">
    </div>
    <div id="callback">
-     <a href="myapp:myfunction:record:id:value1:value2:value3">callback</a>
+     <a href="javascript:callback.send('myapp:myfunction:record:id:value1:value2:value3');">Call back</a>
    </div>
+   <div id="searchdiv" style="visibility:visible;">   
+        <form id="search" name="search">
+            <input id="query" type="text" size="50"/>
+            <input id="button" type="submit" value="Search"/>
+         </form>
+    </div>
  </body>
 </html>
  
