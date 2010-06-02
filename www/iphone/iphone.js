@@ -8,17 +8,9 @@ var callback = {};
 callback.init = function() {
 	if (!inApp) {
 		callback.type = 'browser';
-		document.getElementById("heading").style.display="";
-	} else
+	} else {
 		callback.type = 'iphone';
-
-	var searchdiv = document.getElementById("searchdiv");
-	if (this.type != 'iphone') {
-		searchdiv.style.display = '';
-		document.search.onsubmit = onFormSubmit;
 	}
-	else
-		searchdiv.style.display = 'none';
 };
 
 String.prototype.replaceAll = function(stringToFind,stringToReplace) {
