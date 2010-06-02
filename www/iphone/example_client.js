@@ -37,7 +37,6 @@ var SourceMax = 16;
 var SubjectMax = 10;
 var AuthorMax = 10;
 var tab = "recordview"; 
-var inApp = false;
 
 
 //
@@ -277,10 +276,24 @@ function domReady ()
     document.search.query.value = '';
     document.select.sort.onchange = onSelectDdChange;
     document.select.perpage.onchange = onSelectDdChange;
-    if (!inApp)
-    	document.getElementById("heading").style.display="";
+    applicationMode(true);
 }
-
+ 
+function applicationMode(newmode) 
+{
+	var searchdiv = document.getElementById("searchForm");
+	if (newmode)
+		inApp = newmode;
+	if (inApp) {
+    	document.getElementById("heading").style.display="none";
+		searchdiv.style.display = 'none';
+	}
+	else { 
+		searchdiv.style.display = '';
+		document.search.onsubmit = onFormSubmit;
+	}
+	callback.init();
+}
 // when search button pressed
 function onFormSubmitEventHandler() 
 {
