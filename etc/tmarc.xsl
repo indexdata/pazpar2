@@ -586,10 +586,9 @@
 
       <pz:metadata type="medium">
         <xsl:value-of select="$medium" />
-      </pz:metadata>
-
-      <pz:metadata type="electronic">
-        <xsl:value-of select="$electronic"/>
+	<xsl:if test="string-length($electronic) and $medium != 'electronic'">
+	  <xsl:text> (electronic)</xsl:text>
+	</xsl:if>
       </pz:metadata>
 
       <xsl:for-each select="tmarc:d900/tmarc:sa">
