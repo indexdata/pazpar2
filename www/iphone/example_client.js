@@ -199,20 +199,21 @@ function serialize(array) {
 var termlist = {};
 function my_onterm_iphone(data) {
     my_onterm(data);
-    var targets = "";
+    var targets = "-|All|\n";
+    
     for (var i = 0; i < data.xtargets.length; i++ ) {
     	
         targets = targets + data.xtargets[i].id + "|" + data.xtargets[i].name + "|" + data.xtargets[i].freq + "\n";
     }
     termlist["xtargets"] = targets;
-    var subjects = "";
+    var subjects = "-|All|\n";
     for (var i = 0; i < data.subject.length; i++ ) {
-        subjects = subjects + "-" + "|" + data.subject[i].name + "|" + data.subject[i].freq + "\n";
+        subjects = subjects + "su" + "|" + data.subject[i].name + "|" + data.subject[i].freq + "\n";
     }
     termlist["subjects"] = subjects;
-    var authors = "";
+    var authors = "-|All|\n";
     for (var i = 0; i < data.author.length; i++ ) {
-        authors = authors + "-" + "|" + data.author[i].name + "|" + data.author[i].freq + "\n";
+        authors = authors + "au" + "|" + data.author[i].name + "|" + data.author[i].freq + "\n";
     }
     termlist["authors"] = authors;
     //document.getElementById("log").innerHTML = targets + "\n" + subjects + "\n" + authors;
@@ -276,7 +277,8 @@ function domReady ()
     document.search.query.value = '';
     document.select.sort.onchange = onSelectDdChange;
     document.select.perpage.onchange = onSelectDdChange;
-    applicationMode(true);
+    if (document.location.search.match("inApp=true")) 
+    	applicationMode(true);
 }
  
 function applicationMode(newmode) 
