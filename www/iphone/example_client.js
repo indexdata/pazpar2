@@ -140,8 +140,8 @@ function my_onterm(data) {
     termlists.push('<ul>');
     for (var i = 0; i < data.xtargets.length && i < SourceMax; i++ ) {
         termlists.push('<li><a href="#" target_id='+data.xtargets[i].id
-            + ' onclick="limitTarget(this.getAttribute(\'target_id\'), this.firstChild.nodeValue);return false;">' + data.xtargets[i].name 
-        + ' (' + data.xtargets[i].freq + ')</a></li>');
+            + ' onclick="limitTarget(this.getAttribute(\'target_id\'), \'' + data.xtargets[i].name + '\');return false;">' 
+	    + data.xtargets[i].name + ' (' + data.xtargets[i].freq + ')<a></li>');
     }
     termlists.push('</ul>');
     termlists.push('</div>');
@@ -150,8 +150,8 @@ function my_onterm(data) {
     termlists.push('<h4 id="subjects" class="termtitle">Subjects</h4>');
     termlists.push('<ul>');
     for (var i = 0; i < data.subject.length && i < SubjectMax; i++ ) {
-        termlists.push('<li><a href="#" onclick="limitQuery(\'su\', this.firstChild.nodeValue);return false;">' + data.subject[i].name + '(' 
-              + data.subject[i].freq + ')</a></li>');
+        termlists.push('<li><a href="#" onclick="limitQuery(\'su\', \'' + data.subject[i].name + '\');return false;">' 
+		       + data.subject[i].name + ' (' + data.subject[i].freq + ')</a></li>');
     }
     termlists.push('</ul>');
     termlists.push('</div>');
@@ -160,7 +160,7 @@ function my_onterm(data) {
     termlists.push('<h4 class="termtitle">Authors</h4>');
     termlists.push('<ul>');
     for (var i = 0; i < data.author.length && i < AuthorMax; i++ ) {
-        termlists.push('<li><a href="#" onclick="limitQuery(\'au\', this.firstChild.nodeValue);return false;">' 
+        termlists.push('<li><a href="#" onclick="limitQuery(\'au\', \'' + data.subject[i].name +'\');return false;">' 
                             + data.author[i].name 
                             + '  (' 
                             + data.author[i].freq 
