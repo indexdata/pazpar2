@@ -296,7 +296,7 @@ function applicationMode(newmode)
 		inApp = newmode;
 	if (inApp) {
     	document.getElementById("heading").style.display="none";
-		searchdiv.style.display = 'none';
+       	searchdiv.style.display = 'none';
 	}
 	else { 
 		searchdiv.style.display = '';
