@@ -7,6 +7,8 @@
 var usesessions = true;
 var pazpar2path = '/pazpar2/search.pz2';
 var showResponseType = '';
+var queryBeforeLimit = null;
+
 if (document.location.hash == '#useproxy') {
     usesessions = false;
     pazpar2path = '/service-proxy/';
@@ -134,31 +136,37 @@ function my_onterm(data) {
     var termlists = [];
     
     termlists.push('<div id="term_xtargets" >');
-    termlists.push('<div class="termtitle">.::Sources</div>');
+    termlists.push('<h4 class="termtitle">Sources</h4>');
+    termlists.push('<ul>');
     for (var i = 0; i < data.xtargets.length && i < SourceMax; i++ ) {
-        termlists.push('<a href="#" target_id='+data.xtargets[i].id
+        termlists.push('<li><a href="#" target_id='+data.xtargets[i].id
             + ' onclick="limitTarget(this.getAttribute(\'target_id\'), this.firstChild.nodeValue);return false;">' + data.xtargets[i].name 
-        + ' </a><span> (' + data.xtargets[i].freq + ')</span><br/>');
+        + ' (' + data.xtargets[i].freq + ')</a></li>');
     }
+    termlists.push('</ul>');
     termlists.push('</div>');
      
     termlists.push('<div id="term_subjects" >');
-    termlists.push('<div id="subjects" class="termtitle">.::Subjects</div>');
+    termlists.push('<h4 id="subjects" class="termtitle">Subjects</h4>');
+    termlists.push('<ul>');
     for (var i = 0; i < data.subject.length && i < SubjectMax; i++ ) {
-        termlists.push('<a href="#" onclick="limitQuery(\'su\', this.firstChild.nodeValue);return false;">' + data.subject[i].name + '</a><span>  (' 
-              + data.subject[i].freq + ')</span><br/>');
+        termlists.push('<li><a href="#" onclick="limitQuery(\'su\', this.firstChild.nodeValue);return false;">' + data.subject[i].name + '(' 
+              + data.subject[i].freq + ')</a></li>');
     }
+    termlists.push('</ul>');
     termlists.push('</div>');
             
     termlists.push('<div id="term_authors" >');
-    termlists.push('<div class="termtitle">.::Authors</div>');
+    termlists.push('<h4 class="termtitle">Authors</h4>');
+    termlists.push('<ul>');
     for (var i = 0; i < data.author.length && i < AuthorMax; i++ ) {
-        termlists.push('<a href="#" onclick="limitQuery(\'au\', this.firstChild.nodeValue);return false;">' 
+        termlists.push('<li><a href="#" onclick="limitQuery(\'au\', this.firstChild.nodeValue);return false;">' 
                             + data.author[i].name 
-                            + ' </a><span> (' 
+                            + '  (' 
                             + data.author[i].freq 
-                            + ')</span><br/>');
+                            + ')</a></li>');
     }
+    termlists.push('</ul>');
     termlists.push('</div>');
     var termlist = document.getElementById("termlist");
     replaceHtml(termlist, termlists.join(''));
@@ -199,19 +207,19 @@ function serialize(array) {
 var termlist = {};
 function my_onterm_iphone(data) {
     my_onterm(data);
-    var targets = "-|All|\n";
+    var targets = "reset_to_all|All\n";
     
     for (var i = 0; i < data.xtargets.length; i++ ) {
     	
         targets = targets + data.xtargets[i].id + "|" + data.xtargets[i].name + "|" + data.xtargets[i].freq + "\n";
     }
     termlist["xtargets"] = targets;
-    var subjects = "-|All|\n";
+    var subjects = "reset_to_all|All\n";
     for (var i = 0; i < data.subject.length; i++ ) {
         subjects = subjects + "su" + "|" + data.subject[i].name + "|" + data.subject[i].freq + "\n";
     }
     termlist["subjects"] = subjects;
-    var authors = "-|All|\n";
+    var authors = "reset_to_all|All\n";
     for (var i = 0; i < data.author.length; i++ ) {
         authors = authors + "au" + "|" + data.author[i].name + "|" + data.author[i].freq + "\n";
     }
@@ -335,9 +343,29 @@ function loadSelect ()
 // limit the query after clicking the facet
 function limitQuery (field, value)
 {
+	if (!queryBeforeLimit) 
+		queryBeforeLimit = document.search.query.value;
     document.search.query.value += ' and ' + field + '="' + value + '"';
     onFormSubmitEventHandler();
     showhide("recordview");
+}
+
+//limit the query after clicking the facet
+function removeQuery (field, value) {
+	document.search.query.value.replace(' and ' + field + '="' + value + '"', '');
+    onFormSubmitEventHandler();
+    showhide("recordview");
+}
+
+//limit the query after clicking the facet
+function limitOrResetQuery (field, value, selected) {
+	if (field == 'reset_to_all') {
+		document.search.query.value = queryBeforeLimit;
+		queryBeforeLimit = null;
+	}
+	else 
+		limitQuery(field, value);
+	alert("query: " + document.search.query.value);
 }
 
 // limit by target functions
