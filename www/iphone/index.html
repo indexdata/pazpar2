@@ -28,7 +28,7 @@
 	<p>Finally, check your personal firewall settings.</p>
     </noscript>
   </div>
-
+  
   <div id="switchmenu" style="display:none" >
    <a href="#" onclick="switchView('recordview')">Record Browser</a>
    <span> | </span>
@@ -50,14 +50,6 @@
     </tr>
     <tr>
      <td  width="100%">
-	  <div id="tabs>
-	    <a href="javascript:showhide()"></a>
-	    <a href="javascript:showhide('recordview')">Results</a>
-	    <a href="javascript:showhide('xtargets')">Sources</a>
-	    <a href="javascript:showhide('subjects')">Subjects</a>
-	    <a href="javascript:showhide('authors')">Authors</a>
-        <a href="javascript:showhide('sort')">Sort</a>
-	  </div>   
 	 </td>
      
 <!--
@@ -68,14 +60,20 @@
     </tr>
    </table>
   </div>
+      <ul id="nav">
+            <!--   
+            <li><a href="javascript:showhide()"></a></li>
+            -->
+            <li><a href="javascript:showhide('recordview')">Results</a></li>
+            <li><a href="javascript:showhide('xtargets')">Sources</a></li>
+            <li><a href="javascript:showhide('subjects')">Subjects</a></li>
+            <li><a href="javascript:showhide('authors')">Authors</a></li>
+      </ul>
     
   <div id="termlist"></div>
   
   <div id="recordview">
-   <table width="100%" border="0" cellpadding="6" cellspacing="0">
-   <tr>
-     <td valign="top">
-      <div id="ranking" style="display: none;">
+     <div id="ranking" style="display: none;">
        <form name="select">
         Sort by
         <select name="sort" id="sort">
@@ -99,9 +97,6 @@
       <h4>Results</h4>
       <ul id="results">
       </ul>
-     </td>
-    </tr>
-   </table>
   </div>
   
   <div id="targetview" style="display: none">
@@ -110,7 +105,7 @@
    </div>
   </div>
   
-  <div id="footer">
+  <div id="footer" style="display: none;" >
       <div id="stat"></div>
       <span>Copyright &copy; 1999-2010 by <a href="http://www.indexdata.com">Index Data</a></span> 
   </div>
