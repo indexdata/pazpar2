@@ -7,7 +7,7 @@
 var usesessions = true;
 var pazpar2path = '/pazpar2/search.pz2';
 var showResponseType = '';
-var queryBeforeLimit = null;
+var querys = {'su': '', 'au': '', 'xt': ''};
 
 if (document.location.hash == '#useproxy') {
     usesessions = false;
@@ -113,12 +113,14 @@ function showhide(newtab) {
 	}
 	else
 		document.getElementById("term_xtargets").style.display = 'none';
+
 	if (tab == "subjects") {
 		document.getElementById("term_subjects").style.display = '';
 		showtermlist = true;
 	}
 	else
 		document.getElementById("term_subjects").style.display = 'none';
+
 	if (tab == "authors") {
 		document.getElementById("term_authors").style.display = '';
 		showtermlist = true;
@@ -138,19 +140,21 @@ function my_onterm(data) {
     termlists.push('<div id="term_xtargets" >');
     termlists.push('<h4 class="termtitle">Sources</h4>');
     termlists.push('<ul>');
+    termlists.push('<li><a href="#" target_id="reset_xt" onclick="limitOrResetTarget(\'reset_xt\',\'All\');return false;">All</a></li>');
     for (var i = 0; i < data.xtargets.length && i < SourceMax; i++ ) {
         termlists.push('<li><a href="#" target_id='+data.xtargets[i].id
-            + ' onclick="limitTarget(this.getAttribute(\'target_id\'), \'' + data.xtargets[i].name + '\');return false;">' 
-	    + data.xtargets[i].name + ' (' + data.xtargets[i].freq + ')<a></li>');
+            + ' onclick="limitOrResetTarget(this.getAttribute(\'target_id\'), \'' + data.xtargets[i].name + '\');return false;">' 
+	    + data.xtargets[i].name + ' (' + data.xtargets[i].freq + ')</a></li>');
     }
     termlists.push('</ul>');
     termlists.push('</div>');
      
     termlists.push('<div id="term_subjects" >');
-    termlists.push('<h4 id="subjects" class="termtitle">Subjects</h4>');
+    termlists.push('<h4>Subjects</h4>');
     termlists.push('<ul>');
+    termlists.push('<li><a href="#" target_id="reset_su" onclick="limitOrResetQuery(\'reset_su\',\'All\');return false;">All</a></li>');
     for (var i = 0; i < data.subject.length && i < SubjectMax; i++ ) {
-        termlists.push('<li><a href="#" onclick="limitQuery(\'su\', \'' + data.subject[i].name + '\');return false;">' 
+        termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'su\', \'' + data.subject[i].name + '\');return false;">' 
 		       + data.subject[i].name + ' (' + data.subject[i].freq + ')</a></li>');
     }
     termlists.push('</ul>');
@@ -159,8 +163,9 @@ function my_onterm(data) {
     termlists.push('<div id="term_authors" >');
     termlists.push('<h4 class="termtitle">Authors</h4>');
     termlists.push('<ul>');
+    termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'reset_au\',\'All\');return false;">All<a></li>');
     for (var i = 0; i < data.author.length && i < AuthorMax; i++ ) {
-        termlists.push('<li><a href="#" onclick="limitQuery(\'au\', \'' + data.subject[i].name +'\');return false;">' 
+        termlists.push('<li><a href="#" onclick="limitQuery(\'au\', \'' + data.author[i].name +'\');return false;">' 
                             + data.author[i].name 
                             + '  (' 
                             + data.author[i].freq 
@@ -170,16 +175,6 @@ function my_onterm(data) {
     termlists.push('</div>');
     var termlist = document.getElementById("termlist");
     replaceHtml(termlist, termlists.join(''));
-    var d;
-/*
-    for (d in ("xtargets", "subjects", "authors")) {
-    	alert(d);
-    	if (tab == d)
-    		document.getElementById("term_" + d).style.display = '';
-    	else 
-    		document.getElementById("term_" +d ).style.display = 'none';
-    }
-*/
     showhide();
 }
 
@@ -207,19 +202,19 @@ function serialize(array) {
 var termlist = {};
 function my_onterm_iphone(data) {
     my_onterm(data);
-    var targets = "reset_to_all|All\n";
+    var targets = "reset_xt|All\n";
     
     for (var i = 0; i < data.xtargets.length; i++ ) {
     	
         targets = targets + data.xtargets[i].id + "|" + data.xtargets[i].name + "|" + data.xtargets[i].freq + "\n";
     }
     termlist["xtargets"] = targets;
-    var subjects = "reset_to_all|All\n";
+    var subjects = "reset_su|All\n";
     for (var i = 0; i < data.subject.length; i++ ) {
         subjects = subjects + "su" + "|" + data.subject[i].name + "|" + data.subject[i].freq + "\n";
     }
     termlist["subjects"] = subjects;
-    var authors = "reset_to_all|All\n";
+    var authors = "reset_au|All\n";
     for (var i = 0; i < data.author.length; i++ ) {
         authors = authors + "au" + "|" + data.author[i].name + "|" + data.author[i].freq + "\n";
     }
@@ -292,11 +287,13 @@ function domReady ()
 function applicationMode(newmode) 
 {
 	var searchdiv = document.getElementById("searchForm");
+	var navi = document.getElementById("navi");
 	if (newmode)
 		inApp = newmode;
 	if (inApp) {
     	document.getElementById("heading").style.display="none";
        	searchdiv.style.display = 'none';
+       	navi.style.display = 'none';
 	}
 	else { 
 		searchdiv.style.display = '';
@@ -341,11 +338,11 @@ function loadSelect ()
 }
 
 // limit the query after clicking the facet
-function limitQuery (field, value)
+function limitQuery(field, value)
 {
-	if (!queryBeforeLimit) 
-		queryBeforeLimit = document.search.query.value;
-    document.search.query.value += ' and ' + field + '="' + value + '"';
+	var newQuery = ' and ' + field + '="' + value + '"';
+	querys[field] += newQuery;
+    document.search.query.value += newQuery;
     onFormSubmitEventHandler();
     showhide("recordview");
 }
@@ -359,13 +356,16 @@ function removeQuery (field, value) {
 
 //limit the query after clicking the facet
 function limitOrResetQuery (field, value, selected) {
-	if (field == 'reset_to_all') {
-		document.search.query.value = queryBeforeLimit;
-		queryBeforeLimit = null;
+	if (field == 'reset_su' || field == 'reset_au') {
+		var reset_field = field.substring(6);
+		document.search.query.value = document.search.query.value.replace(querys[reset_field], '');
+		querys[reset_field] = '';
+	    onFormSubmitEventHandler();
+	    showhide("recordview");
 	}
 	else 
 		limitQuery(field, value);
-	alert("query: " + document.search.query.value);
+	//alert("limitOrResetQuerry: query after: " + document.search.query.value);
 }
 
 // limit by target functions
@@ -393,6 +393,15 @@ function delimitTarget ()
     loadSelect();
     triggerSearch();
     return false;
+}
+
+function limitOrResetTarget(id, name) {
+	if (id == 'reset_xt') {
+		delimitTarget();
+	}
+	else {
+		limitTarget(id,name);
+	}
 }
 
 function drawPager (pagerDiv)
