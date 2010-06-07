@@ -490,6 +490,7 @@ function showDetails (prefixRecId) {
     
     // remove current detailed view if any
     var detRecordDiv = document.getElementById('det_'+oldRecId);
+    //alert("oldRecId: " + oldRecId + " " + detRecordDiv != null); 
     // lovin DOM!
     if (detRecordDiv)
       detRecordDiv.parentNode.removeChild(detRecordDiv);
@@ -569,7 +570,7 @@ function renderDetails_iphone(data, marker)
 	//return renderDetails(data,marker);
 
 
-    var details = ''
+    var details = '<div class="details" id="det_'+data.recid+'" >'
 /*
     details = '<div id="header" id="det_'+data.recid+'">' 
     	+ '<h1>Detailed Info</h1>' 
@@ -598,7 +599,7 @@ function renderDetails_iphone(data, marker)
     
     if (data["location"][0]["@name"] != undefined)
     	details += renderLine('Location', data["location"][0]["@name"] + " (" +data["location"][0]["@id"] + ")");
-    details += '</ul>';
+    details += '</ul></div>';
     return details;
 }
 
