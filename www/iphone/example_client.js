@@ -77,7 +77,7 @@ function my_onshow(data) {
   	      }
       	}
         if (hit.recid == curDetRecId) {
-            html.push(renderDetails(curDetRecData));
+            html.push(renderDetails_iphone(curDetRecData));
         }
       	html.push('</div>');
     }
@@ -243,7 +243,7 @@ function my_onrecord(data) {
     if (detRecordDiv) return;
     curDetRecData = data;
     var recordDiv = document.getElementById('recdiv_'+curDetRecData.recid);
-    var html = renderDetails(curDetRecData);
+    var html = renderDetails_iphone(curDetRecData);
     recordDiv.innerHTML += html;
 }
 
@@ -446,7 +446,7 @@ function drawPager (pagerDiv)
     if (lastClkbl < pages)
         postdots = '...';
 
-    pagerDiv.innerHTML += '<div style="float: clear">' 
+    pagerDiv.innerHTML += '<div style="float: none">' 
         + prev + predots + middle + postdots + next + '</div><hr/>';
 }
 
@@ -554,4 +554,54 @@ function renderDetails(data, marker)
     details += '</table></div>';
     return details;
 }
- //EOF
+
+function renderLine(title, value) {
+    if (value != undefined)
+        return '<li><h3>' + title + '</h3> <big>' + value + '<big></li>';
+    return '';
+}
+
+function renderLineURL(title, URL, display) {
+    if (URL != undefined)
+    	return '<li><h3>' + title + '</h3> <a href="' + URL + '" target="_blank">' + display + '</a></li>';
+    return '';
+}
+
+function renderLineEmail(dtitle, email, display) {
+    if (email != undefined)
+        return '<li><h3>' + title + '</h3> <a href="mailto:' + email + '" target="_blank">' + display + '</a></li>';
+    return '';
+}
+
+function renderDetails_iphone(data, marker)
+{
+	//return renderDetails(data,marker);
+	
+    var details = '<div id="det_'+data.recid+'">';
+    if (marker) 
+    	details += '<h4>'+ marker + '</h4>'; 
+    details += '<ul class="field">';
+    if (data["md-title"] != undefined) {
+    	details += '<li><h3>Title</h3> <big> ' + data["md-title"];
+        if (data["md-title-remainder"] !== undefined) {
+	      details += '<span>' + data["md-title-remainder"] + ' </span>';
+        }
+        if (data["md-title-responsibility"] !== undefined) {
+	      details += ' <span><i>'+ data["md-title-responsibility"] +'</i></span>';
+        }
+        details += '</big>'
+        details += '</li>'
+    }
+    details 
+    	+=renderLine('Date', 	data["md-date"])
+    	+ renderLine('Author', 	data["md-author"])
+    	+ renderLineURL('URL', 	data["md-electronic-url"], data["md-electronic-url"])
+    	+ renderLine('Subject', data["location"][0]["md-subject"]);
+    
+    if (data["location"][0]["@name"] != undefined)
+    	renderLine(details, 'Location', data["location"][0]["@name"] + " (" +data["location"][0]["@id"] + ")");
+    details += '</ul>';
+    return details;
+}
+
+//EOF
