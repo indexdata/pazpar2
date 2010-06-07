@@ -59,7 +59,7 @@ function my_onshow(data) {
                      ' of ' + data.merged + ' (found: ' 
                      + data.total + ')</div>';
     drawPager(pager);
-    // navi
+
     var results = document.getElementById("results");
   
     var html = [];
@@ -287,13 +287,11 @@ function domReady ()
 function applicationMode(newmode) 
 {
 	var searchdiv = document.getElementById("searchForm");
-	var navi = document.getElementById("navi");
 	if (newmode)
 		inApp = newmode;
 	if (inApp) {
     	document.getElementById("heading").style.display="none";
        	searchdiv.style.display = 'none';
-       	navi.style.display = 'none';
 	}
 	else { 
 		searchdiv.style.display = '';
@@ -371,11 +369,6 @@ function limitOrResetQuery (field, value, selected) {
 // limit by target functions
 function limitTarget (id, name)
 {
-    var navi = document.getElementById('navi');
-    navi.innerHTML = 
-        'Source: <a class="crossout" href="#" onclick="delimitTarget();return false;">'
-        + name + '</a>';
-    navi.innerHTML += '<hr/>';
     curFilter = 'pz:id=' + id;
     resetPage();
     loadSelect();
@@ -386,8 +379,6 @@ function limitTarget (id, name)
 
 function delimitTarget ()
 {
-    var navi = document.getElementById('navi');
-    navi.innerHTML = '';
     curFilter = null; 
     resetPage();
     loadSelect();
@@ -557,7 +548,7 @@ function renderDetails(data, marker)
 
 function renderLine(title, value) {
     if (value != undefined)
-        return '<li><h3>' + title + '</h3> <big>' + value + '<big></li>';
+        return '<li><h3>' + title + '</h3> <big>' + value + '</big></li>';
     return '';
 }
 
@@ -576,18 +567,25 @@ function renderLineEmail(dtitle, email, display) {
 function renderDetails_iphone(data, marker)
 {
 	//return renderDetails(data,marker);
-	
-    var details = '<div id="det_'+data.recid+'">';
+
+
+    var details = ''
+/*
+    details = '<div id="header" id="det_'+data.recid+'">' 
+    	+ '<h1>Detailed Info</h1>' 
+    	+ '<a id="backbutton" href="hidedetail(\'det_' + data.recid + '\')">Back</a>' 
+    	+ '</div>';
+*/
     if (marker) 
     	details += '<h4>'+ marker + '</h4>'; 
     details += '<ul class="field">';
     if (data["md-title"] != undefined) {
     	details += '<li><h3>Title</h3> <big> ' + data["md-title"];
         if (data["md-title-remainder"] !== undefined) {
-	      details += '<span>' + data["md-title-remainder"] + ' </span>';
+	      details += ' ' + data["md-title-remainder"] + ' ';
         }
         if (data["md-title-responsibility"] !== undefined) {
-	      details += ' <span><i>'+ data["md-title-responsibility"] +'</i></span>';
+	      details += '<i>'+ data["md-title-responsibility"] +'</i>';
         }
         details += '</big>'
         details += '</li>'
@@ -599,7 +597,7 @@ function renderDetails_iphone(data, marker)
     	+ renderLine('Subject', data["location"][0]["md-subject"]);
     
     if (data["location"][0]["@name"] != undefined)
-    	renderLine(details, 'Location', data["location"][0]["@name"] + " (" +data["location"][0]["@id"] + ")");
+    	details += renderLine('Location', data["location"][0]["@name"] + " (" +data["location"][0]["@id"] + ")");
     details += '</ul>';
     return details;
 }
