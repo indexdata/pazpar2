@@ -12,7 +12,7 @@ var querys = {'su': '', 'au': '', 'xt': ''};
 if (document.location.hash == '#useproxy') {
     usesessions = false;
     pazpar2path = '/service-proxy/';
-    showResponseType = 'json';
+    showResponseType = 'xml';
 }
 
 my_paz = new pz2( { "onshow": my_onshow,
