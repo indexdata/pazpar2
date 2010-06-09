@@ -303,6 +303,7 @@ function applicationMode(newmode)
 function onFormSubmitEventHandler() 
 {
     resetPage();
+    document.getElementById("logo").style.display = 'none';
     loadSelect();
     triggerSearch();
     submitted = true;
