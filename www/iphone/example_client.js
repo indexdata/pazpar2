@@ -40,9 +40,43 @@ var SubjectMax = 10;
 var AuthorMax = 10;
 var tab = "recordview"; 
 
+function loggedOut() {
+    var login = document.getElementById("login");
+    login.innerHTML = 'Login';
+}
+
+function loggingOutFailed() {
+    alert("Logging out failed");
+}
+
+function login() {
+    window.location = "login.html";
+}
+
+function logout() {
+    auth.logOut(loggedOut, loggingOutFailed, false);
+}
+
+function logInOrOut() {
+    var loginElement = document.getElementById("login");
+    if (loginElement.innerHTML == 'Login')
+	login();
+    else
+	logout();
+}
+function loggedIn() {
+    var login = document.getElementById("login");
+    login.innerHTML = 'Logout';
+    //    login.onclick = 'logout();';
+    domReady();
+}
+
+function auth_check() {
+    auth.check(loggedIn, login);
+}
 
 //
-// pz2.js event handlers:
+// Pz2.js event handlers:
 //
 function my_oninit() {
     my_paz.stat();

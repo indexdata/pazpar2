@@ -11,24 +11,26 @@
 <!-- 
   <meta id="viewport" name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
  -->  
+
 	<script type="text/javascript" src="/mk2-ui-core/js/ui_bootstrap.js"></script>
 	<script type="text/javascript" src="/mk2-ui-core/js/state.js"></script>
 	<script type="text/javascript" src="/mk2-ui-core/js/recipe.js"></script>
 	<script type="text/javascript" src="/mk2-ui-core/js/snippet.js"></script>
 	<script type="text/javascript" src="/mk2-ui-core/js/auth.js"></script>        
-	<script type="text/javascript" src="/mk2-ui-core/js/torus.js"></script>
-<!-- 
-    <script type="text/javascript" src="/mk2-ui-core/js/client.js"></script>
+ 	<script type="text/javascript" src="/mk2-ui-core/js/torus.js"></script>
+<!--
+        <script type="text/javascript" src="/mk2-ui-core/js/client.js"></script>
 -->
+
+ 
     <script type="text/javascript" src="iphone.js" ></script>
     <script type="text/javascript" src="/pazpar2/js/pz2.js"></script>
     <script type="text/javascript" src="example_client.js"></script>
-
     <link rel="stylesheet" href="UiUIKit/stylesheets/iphone.css" />
     <link rel="apple-touch-icon" href="UiUIKit/stylesheets/images/apple-touch-icon.png" />
  </head>
  
- <body id="normal" onload="domReady();">
+ <body id="normal" onload="auth_check();">
     <div id="log" style="display: none;"></div>
   <div id="noscript">
     <noscript>
@@ -77,7 +79,7 @@
             <li><a href="javascript:showhide('xtargets')">Sources</a></li>
             <li><a href="javascript:showhide('subjects')">Subjects</a></li>
             <li><a href="javascript:showhide('authors')">Authors</a></li>
-            <li><a href="/login.html">Login</a></li>
+            <li><a href="#" onclick="logInOrOut(); return 0;" id="login">Login</a></li>
       </ul>
   </div>
     
