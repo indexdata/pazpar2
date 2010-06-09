@@ -9,7 +9,7 @@ var pazpar2path = '/pazpar2/search.pz2';
 var showResponseType = '';
 var querys = {'su': '', 'au': '', 'xt': ''};
 
-if (document.location.hash == '#useproxy') {
+if (document.location.hash == '#useproxy' || document.location.search.match("useproxy=true")) {
     usesessions = false;
     pazpar2path = '/service-proxy/';
     showResponseType = 'xml';
@@ -282,6 +282,8 @@ function domReady ()
     document.select.perpage.onchange = onSelectDdChange;
     if (document.location.search.match("inApp=true")) 
     	applicationMode(true);
+    else
+    	applicationMode(false);
 }
  
 function applicationMode(newmode) 
