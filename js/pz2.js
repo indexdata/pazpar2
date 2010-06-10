@@ -69,6 +69,7 @@ var pz2 = function ( paramArray )
         this.keepAlive = paramArray.keepAlive;
 
     this.sessionID = null;
+    this.serviceId = paramArray.serviceId || null;
     this.initStatusOK = false;
     this.pingStatusOK = false;
     this.searchStatusOK = false;
@@ -121,7 +122,7 @@ var pz2 = function ( paramArray )
     }
     // else, auto init session or wait for a user init?
     if (this.useSessions && paramArray.autoInit !== false) {
-        this.init();
+        this.init(this.sessionId, this.serviceId);
     }
 };
 
@@ -165,12 +166,12 @@ pz2.prototype =
                 this.resetCallback();
     },
 
-    init: function ( sessionId ) 
+    init: function (sessionId, serviceId) 
     {
         this.reset();
         
         // session id as a param
-        if ( sessionId != undefined && this.useSessions ) {
+        if (sessionId && this.useSessions ) {
             this.initStatusOK = true;
             this.sessionID = sessionId;
             this.ping();
@@ -178,8 +179,10 @@ pz2.prototype =
         } else if (this.useSessions) {
             var context = this;
             var request = new pzHttpRequest(this.pz2String, this.errorHandler);
+            var opts = {'command' : 'init'};
+            if (serviceId) opts.service = serviceId;
             request.safeGet(
-                { "command": "init" },
+                opts,
                 function(data) {
                     if ( data.getElementsByTagName("status")[0]
                             .childNodes[0].nodeValue == "OK" ) {
