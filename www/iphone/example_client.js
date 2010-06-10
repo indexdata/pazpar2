@@ -364,6 +364,7 @@ function applicationMode(newmode)
        	searchdiv.style.display = 'none';
 	}
 	else { 
+	    document.getElementById("nav").style.display="";
 		searchdiv.style.display = '';
 		document.search.onsubmit = onFormSubmit;
 	}
