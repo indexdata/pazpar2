@@ -23,7 +23,7 @@ my_paz = new pz2( { "onshow": my_onshow,
                     "onterm": my_onterm_iphone,
                     "termlist": "xtargets,subject,author",
                     "onbytarget": my_onbytarget,
-	 	            "usesessions" : usesessions,
+		    "usesessions" : usesessions,
                     "showResponseType": showResponseType,
                     "onrecord": my_onrecord } );
 // some state vars
@@ -33,12 +33,38 @@ var totalRec = 0;
 var curDetRecId = '';
 var curDetRecData = null;
 var curSort = 'relevance';
-var curFilter = null;
+var curFilter = 'ALL';
 var submitted = false;
 var SourceMax = 16;
 var SubjectMax = 10;
 var AuthorMax = 10;
 var tab = "recordview"; 
+
+var triedPass = "";
+var triedUser = "";
+
+function loginFormSubmit() {
+    triedUser = document.loginForm.username.value;
+    triedPass = document.loginForm.password.value;
+    auth.login( {"username": triedUser,
+		"password": triedPass},
+	authCb, authCb);
+}
+
+function authCb(authData) {
+    if (!authData.loginFailed) {
+	triedUser = "";
+	triedPass = "";
+    }
+
+    if (authData.loggedIn == true) {        
+	showhide("recordview");
+    }
+}
+
+function logOutClick() {
+    auth.logOut(authCb, authCb);
+}
 
 function loggedOut() {
     var login = document.getElementById("login");
@@ -50,7 +76,7 @@ function loggingOutFailed() {
 }
 
 function login() {
-    window.location = "login.html";
+    showhide("login");
 }
 
 function logout() {
@@ -72,7 +98,7 @@ function loggedIn() {
 }
 
 function auth_check() {
-    auth.check(loggedIn, login);
+    auth.check(loggedIn, login, false);
 }
 
 //
@@ -131,41 +157,49 @@ function my_onstat(data) {
 }
 
 function showhide(newtab) {
-	var showtermlist = false;
-	if (newtab != null)
-		tab = newtab;
+    var showtermlist = false;
+    if (newtab != null)
+	tab = newtab;
+    
+    if (tab == "recordview") {
+	document.getElementById("recordview").style.display = '';
+    }
+    else 
+	document.getElementById("recordview").style.display = 'none';
 
-	if (tab == "recordview") {
-		document.getElementById("recordview").style.display = '';
-	}
-	else 
-		document.getElementById("recordview").style.display = 'none';
+    if (tab == "xtargets") {
+	document.getElementById("term_xtargets").style.display = '';
+	showtermlist = true;
+    }
+    else
+	document.getElementById("term_xtargets").style.display = 'none';
 
-	if (tab == "xtargets") {
-		document.getElementById("term_xtargets").style.display = '';
-		showtermlist = true;
-	}
-	else
-		document.getElementById("term_xtargets").style.display = 'none';
+    if (tab == "subjects") {
+	document.getElementById("term_subjects").style.display = '';
+	showtermlist = true;
+    }
+    else
+	document.getElementById("term_subjects").style.display = 'none';
 
-	if (tab == "subjects") {
-		document.getElementById("term_subjects").style.display = '';
-		showtermlist = true;
-	}
-	else
-		document.getElementById("term_subjects").style.display = 'none';
+    if (tab == "authors") {
+	document.getElementById("term_authors").style.display = '';
+	showtermlist = true;
+    }
+    else
+	document.getElementById("term_authors").style.display = 'none';
 
-	if (tab == "authors") {
-		document.getElementById("term_authors").style.display = '';
-		showtermlist = true;
-	}
-	else
-		document.getElementById("term_authors").style.display = 'none';
+    if (showtermlist == false) 
+	document.getElementById("termlist").style.display = 'none';
+    else 
+	document.getElementById("termlist").style.display = '';
 
-	if (showtermlist == false) 
-		document.getElementById("termlist").style.display = 'none';
-	else 
-		document.getElementById("termlist").style.display = '';
+    var tabDiv = document.getElementById("loginDiv");
+    if (tab == "login") {
+	tabDiv.style.display = '';
+    }
+    else {
+	tabDiv.style.display = 'none';
+    }
 }
 
 function my_onterm(data) {
@@ -343,7 +377,7 @@ function onFormSubmitEventHandler()
     loadSelect();
     triggerSearch();
     submitted = true;
-    return false;
+    return true;
 }
 
 function onSelectDdChange()
@@ -416,7 +450,7 @@ function limitTarget (id, name)
 
 function delimitTarget ()
 {
-    curFilter = null; 
+    curFilter = 'ALL'; 
     resetPage();
     loadSelect();
     triggerSearch();
