@@ -80,7 +80,7 @@ function login() {
 }
 
 function logout() {
-    auth.logOut(loggedOut, loggingOutFailed, false);
+    auth.logOut(loggedOut, loggingOutFailed, true);
 }
 
 function logInOrOut() {
@@ -98,7 +98,7 @@ function loggedIn() {
 }
 
 function auth_check() {
-    auth.check(loggedIn, login, false);
+    auth.check(loggedIn, login, true);
 }
 
 //
