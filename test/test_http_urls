@@ -40,3 +40,10 @@ http://localhost:9763/search.pz2?session=3&command=search&query=the
 http://localhost:9763/search.pz2?session=5&command=search&query=the&maxrecs=5&startrecs=2
 2 http://localhost:9763/search.pz2?session=3&command=show&block=1
 http://localhost:9763/search.pz2?session=5&command=show&block=1
+http://localhost:9763/search.pz2?command=init&pz:elements%5Bz3950.indexdata.com%2Fmarc%5D=F
+1 http://localhost:9763/search.pz2?session=6&command=search&query=louis
+http://localhost:9763/search.pz2?session=6&command=show&block=1
+http://localhost:9763/search.pz2?command=init&pz:elements%5Bz3950.indexdata.com%2Fmarc%5D=F
+1 http://localhost:9763/search.pz2?session=7&command=search&query=greece
+http://localhost:9763/search.pz2?session=7&command=show&block=1
+http://localhost:9763/search.pz2?session=6&command=record&id=title+computer+processing+of+dynamic+images+from+an+anger+scintillation+camera+author+medium+book&offset=0
