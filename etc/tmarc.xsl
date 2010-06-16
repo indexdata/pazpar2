@@ -82,11 +82,11 @@
 	<xsl:when test="$typeofrec='c' or $typeofrec='d'">music-score</xsl:when>
 	<xsl:when test="$form1='a' or $form1='b' or $form1='c'">microform</xsl:when>
 	<xsl:when test="$typeofrec='t'">thesis</xsl:when>
-        <xsl:when test="$journal_title">article</xsl:when>
+        <!-- <xsl:when test="$journal_title">article</xsl:when> -->
 	<xsl:when test="$typeofrec='a' or $typeofrec='i' and
-	    ($typeofserial='d' or $typeofserial='w')">data</xsl:when>
+	    ($typeofserial='d' or $typeofserial='w')">web</xsl:when>
 	<xsl:when test="$typeofrec='a' and $biblevel='b'">article</xsl:when>
-	<xsl:when test="$typeofrec='m'">software</xsl:when>
+	<xsl:when test="$typeofrec='m'">electronic</xsl:when>
         <xsl:when test="$title_medium">
           <xsl:value-of select="translate($title_medium, ' []/:', '')" />
         </xsl:when>
@@ -138,9 +138,16 @@
         </pz:metadata>
       </xsl:for-each>
 
-      <xsl:for-each select="tmarc:d035">
+      <xsl:for-each select="tmarc:d035"> 
         <pz:metadata type="system-control-nr">
-          <xsl:value-of select="tmarc:sa" />
+          <xsl:choose>
+            <xsl:when test="tmarc:sa">
+              <xsl:value-of select="tmarc:sa"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="tmarc:sb"/>
+            </xsl:otherwise>
+          </xsl:choose>
         </pz:metadata>
       </xsl:for-each>
 
@@ -579,10 +586,9 @@
 
       <pz:metadata type="medium">
         <xsl:value-of select="$medium" />
-      </pz:metadata>
-
-      <pz:metadata type="electronic">
-        <xsl:value-of select="$electronic"/>
+	<xsl:if test="string-length($electronic) and $medium != 'electronic'">
+	  <xsl:text> (electronic)</xsl:text>
+	</xsl:if>
       </pz:metadata>
 
       <xsl:for-each select="tmarc:d900/tmarc:sa">
