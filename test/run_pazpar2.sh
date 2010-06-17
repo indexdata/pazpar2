@@ -78,6 +78,9 @@ for f in `cat ${srcdir}/${URLS}`; do
 	OUT2=${PREFIX}_${testno}.log
 	DIFF=${PREFIX}_${testno}.dif
 	rm -f $OUT2 $DIFF
+	if [ -n "$DEBUG" ] ; then 
+	    echo "test $testno: $f" 
+	fi
 	if test -n "${postfile}"; then
 	    eval $POST
 	else
@@ -102,6 +105,9 @@ for f in `cat ${srcdir}/${URLS}`; do
 	testno=`expr $testno + 1`
 	postfile=
     elif echo $f | grep '^[0-9]' >/dev/null; then
+	if [ -n "$DEBUG" ] ; then 
+	    echo "Sleeping $f"
+	fi
 	sleep $f
     else
 	if test -f $srcdir/$f; then
