@@ -471,11 +471,17 @@ int client_prep_connection(struct client *cl,
     if (!co)
     {
         int max_connections = 0;
+        int reuse_connection = 0;
         const char *v = session_setting_oneval(client_get_database(cl),
                                                PZ_MAX_CONNECTIONS);
         if (v && *v)
             max_connections = atoi(v);
-        
+
+        v = session_setting_oneval(client_get_database(cl),
+                PZ_REUSE_CONNECTIONS);
+        if (v && *v)
+            reuse_connections = atoi(v);
+
         // See if someone else has an idle connection
         // We should look at timestamps here to select the longest-idle connection
         yaz_mutex_enter(host->mutex);
@@ -484,25 +490,26 @@ int client_prep_connection(struct client *cl,
             int num_connections = 0;
             for (co = host->connections; co; co = co->next)
                 num_connections++;
-            for (co = host->connections; co; co = co->next)
-            {
-                if (connection_is_idle(co) &&
-                    (!co->client || client_get_state(co->client) == Client_Idle) &&
-                    !strcmp(ZOOM_connection_option_get(co->link, "user"),
-                            session_setting_oneval(client_get_database(cl),
-                                                   PZ_AUTHENTICATION)))
+            if (reuse_connection) {
+                for (co = host->connections; reuse_connection && co; co = co->next)
                 {
-                    if (zproxy == 0 && co->zproxy == 0)
-                        break;
-                    if (zproxy && co->zproxy && !strcmp(zproxy, co->zproxy))
-                        break;
+                    if (connection_is_idle(co) &&
+                        (!co->client || client_get_state(co->client) == Client_Idle) &&
+                        !strcmp(ZOOM_connection_option_get(co->link, "user"),
+                                session_setting_oneval(client_get_database(cl),
+                                                       PZ_AUTHENTICATION)))
+                    {
+                        if (zproxy == 0 && co->zproxy == 0)
+                            break;
+                        if (zproxy && co->zproxy && !strcmp(zproxy, co->zproxy))
+                            break;
+                    }
                 }
-            }
-            if (co)
-            {
-                yaz_log(YLOG_LOG, "num_connections = %d (reusing)",
-                        num_connections);
-                break;
+                if (co)
+                {
+                    yaz_log(YLOG_LOG, "num_connections = %d (reusing)", num_connections);
+                    break;
+                }
             }
             if (max_connections <= 0 || num_connections < max_connections)
             {
