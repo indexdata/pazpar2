@@ -38,12 +38,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PZ_SRU           15
 #define PZ_SRU_VERSION   16
 #define PZ_PQF_PREFIX    17
-#define PZ_SORT		 18
+#define PZ_SORT          18
 #define PZ_RECORDFILTER	 19
 #define PZ_PQF_STRFTIME  20
 #define PZ_NEGOTIATION_CHARSET  21
-#define PZ_MAX_CONNECTIONS 22
-#define PZ_MAX_EOF       23
+#define PZ_MAX_CONNECTIONS      22
+#define PZ_REUSE_CONNECTIONS    23
+#define PZ_MAX_EOF              24
 
 struct setting
 {
