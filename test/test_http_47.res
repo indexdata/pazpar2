@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<search><status>OK</status></search>
+<init><status>OK</status><session>7</session><protocol>1</protocol></init>
