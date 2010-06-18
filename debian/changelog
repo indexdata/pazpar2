@@ -1,3 +1,9 @@
+pazpar2 (1.4.2-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Fri, 18 Jun 2010 11:32:46 +0200
+
 pazpar2 (1.4.1-1indexdata) unstable; urgency=low
 
   * Upstream.
