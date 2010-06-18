@@ -671,6 +671,8 @@ int client_destroy(struct client *c)
 
 void client_set_connection(struct client *cl, struct connection *con)
 {
+    if (cl->resultset)
+        ZOOM_resultset_release(cl->resultset);
     if (con)
     {
         assert(cl->connection == 0);
