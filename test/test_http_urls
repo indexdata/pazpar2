@@ -33,25 +33,19 @@ http://localhost:9763/search.pz2?session=4&command=search&query=computer
 http://localhost:9763/search.pz2?command=init
 http://localhost:9763/search.pz2?session=5&command=settings&pz:name%5Bz3950.indexdata.com%2Fmarc%5D=marc&pz:requestsyntax%5Bz3950.indexdata.com%2Fmarc%5D=usmarc&pz:nativesyntax%5Bz3950.indexdata.com%2Fmarc%5D=iso2709&pz:xslt%5Bz3950.indexdata.com%2Fmarc%5D=marc21%5Ftest.xsl&pz:recordfilter%5Bz3950.indexdata.com%2Fmarc%5D=date
 http://localhost:9763/search.pz2?session=5&command=search&query=computer&filter=pz%3Aid%3Dz3950.indexdata.com%2Fmarc
-2 
-http://localhost:9763/search.pz2?session=5&command=show&block=1
+2 http://localhost:9763/search.pz2?session=5&command=show&block=1
 http://localhost:9763/search.pz2?session=5&command=search&query=computer&filter=pz%3Aid%3Dunknown
 http://localhost:9763/search.pz2?session=3&command=settings&pz:maxrecs%5Bz3950.indexdata.com%2Fgils%5D=8
 http://localhost:9763/search.pz2?session=3&command=search&query=the
 http://localhost:9763/search.pz2?session=5&command=search&query=the&maxrecs=5&startrecs=2
-2
-http://localhost:9763/search.pz2?session=3&command=show&block=1
+2 http://localhost:9763/search.pz2?session=3&command=show&block=1
 http://localhost:9763/search.pz2?session=5&command=show&block=1
 http://localhost:9763/search.pz2?command=init&pz:elements%5Bz3950.indexdata.com%2Fmarc%5D=F
-1
-http://localhost:9763/search.pz2?session=6&command=search&query=louis
-1
-http://localhost:9763/search.pz2?session=6&command=show&block=1
+1 http://localhost:9763/search.pz2?session=6&command=search&query=louis
+1 http://localhost:9763/search.pz2?session=6&command=show&block=1
 http://localhost:9763/search.pz2?session=6&command=record&id=title+computer+processing+of+dynamic+images+from+an+anger+scintillation+camera+author+medium+book&offset=0
 http://localhost:9763/search.pz2?command=init&pz:elements%5Bz3950.indexdata.com%2Fmarc%5D=F
 http://localhost:9763/search.pz2?session=7&command=search&query=greece
-1
-http://localhost:9763/search.pz2?session=7&command=show&block=1
-1
-http://localhost:9763/search.pz2?session=6&command=show&block=1
+1 http://localhost:9763/search.pz2?session=7&command=show&block=1
+1 http://localhost:9763/search.pz2?session=6&command=show&block=1
 http://localhost:9763/search.pz2?session=6&command=record&id=title+computer+processing+of+dynamic+images+from+an+anger+scintillation+camera+author+medium+book&offset=0
