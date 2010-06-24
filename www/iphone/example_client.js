@@ -12,8 +12,11 @@ var querys = {'su': '', 'au': '', 'xt': ''};
 if (document.location.hash == '#useproxy' || document.location.search.match("useproxy=true")) {
     usesessions = false;
     pazpar2path = '/service-proxy/';
-    showResponseType = 'xml';
+    showResponseType = 'json';
 }
+
+if (this.JSON )
+	alert("Native JSON support");
 
 my_paz = new pz2( { "onshow": my_onshow,
                     "showtime": 500,            //each timer (show, stat, term, bytarget) can be specified this way
@@ -86,19 +89,18 @@ function logout() {
 function logInOrOut() {
     var loginElement = document.getElementById("login");
     if (loginElement.innerHTML == 'Login')
-	login();
+    	login();
     else
-	logout();
+    	logout();
 }
 function loggedIn() {
     var login = document.getElementById("login");
     login.innerHTML = 'Logout';
-    //    login.onclick = 'logout();';
-    domReady();
 }
 
 function auth_check() {
     auth.check(loggedIn, login, true);
+    domReady();
 }
 
 //
@@ -244,27 +246,6 @@ function my_onterm(data) {
     var termlist = document.getElementById("termlist");
     replaceHtml(termlist, termlists.join(''));
     showhide();
-}
-
-function serialize(array) {
-	var t = typeof (obj);
-	if (t != "object" || obj === null) {
-		// simple data type
-		return String(obj);
-	} else {
-		// recurse array or object
-		var n, v, json = [], arr = (obj && obj.constructor == Array);
-		for (n in obj) {
-			v = obj[n];
-			t = typeof (v);
-			if (t == "string")
-				v = '"' + v + '"';
-			else if (t == "object" && v !== null)
-				v = JSON.stringify(v);
-			json.push((arr ? "" : '"' + n + '":') + String(v));
-		}
-		return (arr ? "" : "") + String(json) + (arr ? "]" : "}");
-	}
 }
 
 var termlist = {};
