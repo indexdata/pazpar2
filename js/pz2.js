@@ -805,8 +805,13 @@ pzHttpRequest.prototype =
                        this.request.responseXML == null) {
               if (this.request.responseText != null) {
                 //assume JSON
-                var json = eval("(" + this.request.responseText + ")");
-                this.callback(json, "json");
+                
+		var json = null; 
+		if (this.JSON == null)
+		    json = eval("(" + this.request.responseText + ")");
+		else 
+		    json = JSON.parse(this.request.responseText, null);
+		this.callback(json, "json");
               } else {
                 var err = new Error("XML response is empty but no error " +
                                     "for " + savedUrlForErrorReporting);
