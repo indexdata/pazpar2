@@ -9,11 +9,8 @@ EXTRA_DIST = README NEWS LICENSE buildconf.sh Doxyfile.in m4/yaz.m4 \
 
 dist-hook:
 	if test -x /usr/bin/git -a -d .git; then git log >ChangeLog ; cp ChangeLog $(distdir); fi
-	for d in etc etc/settings etc/services www/test1 www/jsdemo; do \
-		mkdir -p $(distdir)/$$d; \
-		for f in $(srcdir)/$$d/*; do \
-			test -f $$f && cp $$f $(distdir)/$$d; \
-		done; \
+	for d in etc etc/settings etc/services www/test1 www/jsdemo www/iphone; do \
+		mkdir -p $(distdir)/$$d; cp -r $$d/* $(distdir)/$$d; \
 	done; rm -f $(distdir)/etc/pazpar2.cfg; exit 0
 
 .PHONY:debian
