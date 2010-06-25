@@ -471,7 +471,7 @@ int client_prep_connection(struct client *cl,
     if (!co)
     {
         int max_connections = 0;
-        int reuse_connection = 0;
+        int reuse_connections = 1;
         const char *v = session_setting_oneval(client_get_database(cl),
                                                PZ_MAX_CONNECTIONS);
         if (v && *v)
@@ -490,8 +490,8 @@ int client_prep_connection(struct client *cl,
             int num_connections = 0;
             for (co = host->connections; co; co = co->next)
                 num_connections++;
-            if (reuse_connection) {
-                for (co = host->connections; reuse_connection && co; co = co->next)
+            if (reuse_connections) {
+                for (co = host->connections; co; co = co->next)
                 {
                     if (connection_is_idle(co) &&
                         (!co->client || client_get_state(co->client) == Client_Idle) &&
