@@ -34,8 +34,10 @@ callback.send = function()
 	var message = "myapp:" + args.join(":");
 	if (this.type == 'iphone')
 		document.location = message;
-	else
-		document.getElementById("log").innerHTML = message;
+	else {
+	    // Debug communication with Web View
+	    // document.getElementById("log").innerHTML = message;
+	}
 }
 
 
