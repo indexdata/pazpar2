@@ -156,6 +156,8 @@ alert('IMPORTANT: Remove this line from json2.js before deployment.');
     test, toJSON, toString, valueOf
 */
 
+// Create a stand-alone object (not sure it will work
+this.JSON2 = {}; 
 
 // Create a JSON object only if one does not already exist. We create the
 // methods in a closure to avoid creating global variables.
