@@ -707,6 +707,7 @@ var pzHttpRequest = function ( url, errorHandler ) {
         }
 };
 
+
 pzHttpRequest.prototype = 
 {
     safeGet: function ( params, callback )
@@ -805,17 +806,32 @@ pzHttpRequest.prototype =
                        this.request.responseXML == null) {
               if (this.request.responseText != null) {
                 //assume JSON
-                
+		
 		var json = null; 
-		if (this.JSON == null)
-		    json = eval("(" + this.request.responseText + ")");
+		var text = this.request.responseText;
+		if (typeof window.JSON == "undefined") 
+		    json = eval("(" + text + ")");
 		else { 
 		    try	{
-		    	json = JSON.parse(this.request.responseText, null);
+		    	json = JSON.parse(text);
 		    }
 		    catch (e) {
-			    json = eval("(" + this.request.responseText + ")");
+			// Safari: eval will fail as well. Considering trying JSON2 (non-native implementation) instead
+			/* DEBUG only works in mk2-mobile
+			if (document.getElementById("log")) 
+			    document.getElementById("log").innerHTML = "" + e + " " + length + ": " + text;
+			*/
+			try {
+			    json = eval("(" + text + ")");
+			}
+			catch (e) {
+			    /* DEBUG only works in mk2-mobile
+			    if (document.getElementById("log")) 
+				document.getElementById("log").innerHTML = "" + e + " " + length + ": " + text;
+			    */
+			}
 		    }
+		} 
 		this.callback(json, "json");
               } else {
                 var err = new Error("XML response is empty but no error " +
