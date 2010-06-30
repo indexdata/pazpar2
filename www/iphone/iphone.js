@@ -1,6 +1,5 @@
 var count = 0;
 var termlist = {};
-var JSON = JSON || {};
 var inApp = false;
 
 var callback = {};
@@ -35,33 +34,12 @@ callback.send = function()
 	var message = "myapp:" + args.join(":");
 	if (this.type == 'iphone')
 		document.location = message;
-	else
-		document.getElementById("log").innerHTML = message;
+	else {
+	    // Debug communication with Web View
+	    // document.getElementById("log").innerHTML = message;
+	}
 }
 
-// implement JSON.stringify serialization
-JSON.stringify = JSON.stringify || function(obj) {
-	var t = typeof (obj);
-	if (t != "object" || obj === null) {
-		// simple data type
-		if (t == "string")
-			obj = '"' + obj + '"';
-		return String(obj);
-	} else {
-		// recurse array or object
-		var n, v, json = [], arr = (obj && obj.constructor == Array);
-		for (n in obj) {
-			v = obj[n];
-			t = typeof (v);
-			if (t == "string")
-				v = '"' + v + '"';
-			else if (t == "object" && v !== null)
-				v = JSON.stringify(v);
-			json.push((arr ? "" : '"' + n + '":') + String(v));
-		}
-		return (arr ? "[" : "{") + String(json) + (arr ? "]" : "}");
-	}
-};
 
 function search(message) {
 	document.search.query.value = message;

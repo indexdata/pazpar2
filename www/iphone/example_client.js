@@ -15,8 +15,6 @@ if (document.location.hash == '#useproxy' || document.location.search.match("use
     showResponseType = 'json';
 }
 
-if (this.JSON )
-	alert("Native JSON support");
 
 my_paz = new pz2( { "onshow": my_onshow,
                     "showtime": 500,            //each timer (show, stat, term, bytarget) can be specified this way
@@ -95,7 +93,8 @@ function logInOrOut() {
 }
 function loggedIn() {
     var login = document.getElementById("login");
-    login.innerHTML = 'Logout';
+    login.innerHTML = 'Logout(' + auth.displayName + ')';
+    document.getElementById("log").innerHTML = login.innerHTML;
 }
 
 function auth_check() {
@@ -268,7 +267,6 @@ function my_onterm_iphone(data) {
         authors = authors + "au" + "|" + data.author[i].name + "|" + data.author[i].freq + "\n";
     }
     termlist["authors"] = authors;
-    //document.getElementById("log").innerHTML = targets + "\n" + subjects + "\n" + authors;
     callback.send("termlist", "refresh");
 }
 
@@ -622,7 +620,8 @@ function renderDetails_iphone(data, marker)
 {
 	//return renderDetails(data,marker);
 
-
+    if (!data) 
+	return ""; 
     var details = '<div class="details" id="det_'+data.recid+'" >'
 /*
     details = '<div id="header" id="det_'+data.recid+'">' 

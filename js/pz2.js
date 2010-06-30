@@ -637,6 +637,13 @@ pz2.prototype =
                                 bytarget[i][nodeName] = nodeText;
                             }
                         }
+                        if (bytarget[i]["state"]=="Client_Disconnected") {
+                          bytarget[i]["hits"] = "Error";
+                        } else if (bytarget[i]["state"]=="Client_Error") {
+                          bytarget[i]["hits"] = "Error";                          
+                        } else if (bytarget[i]["state"]=="Client_Working") {
+                          bytarget[i]["hits"] = "...";
+                        }
                     }
                     
                     context.bytargetCounter++;
@@ -706,6 +713,7 @@ var pzHttpRequest = function ( url, errorHandler ) {
             }
         }
 };
+
 
 pzHttpRequest.prototype = 
 {
@@ -805,12 +813,32 @@ pzHttpRequest.prototype =
                        this.request.responseXML == null) {
               if (this.request.responseText != null) {
                 //assume JSON
-                
+		
 		var json = null; 
-		if (this.JSON == null)
-		    json = eval("(" + this.request.responseText + ")");
-		else 
-		    json = JSON.parse(this.request.responseText, null);
+		var text = this.request.responseText;
+		if (typeof window.JSON == "undefined") 
+		    json = eval("(" + text + ")");
+		else { 
+		    try	{
+		    	json = JSON.parse(text);
+		    }
+		    catch (e) {
+			// Safari: eval will fail as well. Considering trying JSON2 (non-native implementation) instead
+			/* DEBUG only works in mk2-mobile
+			if (document.getElementById("log")) 
+			    document.getElementById("log").innerHTML = "" + e + " " + length + ": " + text;
+			*/
+			try {
+			    json = eval("(" + text + ")");
+			}
+			catch (e) {
+			    /* DEBUG only works in mk2-mobile
+			    if (document.getElementById("log")) 
+				document.getElementById("log").innerHTML = "" + e + " " + length + ": " + text;
+			    */
+			}
+		    }
+		} 
 		this.callback(json, "json");
               } else {
                 var err = new Error("XML response is empty but no error " +
