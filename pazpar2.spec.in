@@ -1,0 +1,62 @@
+Summary: Metasearcher
+Name: pazpar2
+Version: @VERSION@
+Release: 1
+License: BSD
+Group: Applications/Internet
+Vendor: Index Data ApS <info@indexdata.dk>
+Source: pazpar2-%{version}.tar.gz
+BuildRoot: %{_tmppath}/%{name}-%{version}-root
+BuildRequires: libyaz4-devel
+Packager: Adam Dickmeiss <adam@indexdata.dk>
+URL: http://www.indexdata.com/pazpar2
+
+%description
+Pazpar2 is a high-performance, user interface-independent, data
+model-independent metasearching middleware featuring merging, relevance
+ranking, record sorting, and faceted results.
+
+%package -n pazpar2
+Summary: pazpar2 daemon
+Group: Applications/Internet
+Requires: libyaz4
+
+%description -n pazpar2-js
+This package includes the Java Script library pz2.js. It also adds an
+Alias for Apache2 so that this library and other demo portals are
+available.
+
+%post -p /sbin/ldconfig 
+%postun -p /sbin/ldconfig 
+
+%prep
+%setup
+
+%build
+
+CFLAGS="$RPM_OPT_FLAGS" \
+ ./configure --prefix=%{_prefix} --libdir=%{_libdir} --mandir=%{_mandir} \
+	--with-yaz=/usr/bin
+make CFLAGS="$RPM_OPT_FLAGS"
+
+%install
+rm -fr ${RPM_BUILD_ROOT}
+make prefix=${RPM_BUILD_ROOT}/%{_prefix} mandir=${RPM_BUILD_ROOT}/%{_mandir} \
+	libdir=${RPM_BUILD_ROOT}/%{_libdir} install
+rm ${RPM_BUILD_ROOT}/%{_libdir}/*.la
+
+%clean
+rm -fr ${RPM_BUILD_ROOT}
+
+%files
+%defattr(-,root,root)
+%doc README LICENSE NEWS
+%{_sbindir}/pazpar2
+%{_etcdir}/pazpar2
+%{_mandir}/man5/pazpar2*
+%{_mandir}/man7/pazpar2*
+%{_mandir}/man8/pazpar2*
+
+%files -n pazpar2-js
+%defattr(-,root,root)
+%{_datadir}/js/pz2.js

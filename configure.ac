@@ -51,6 +51,7 @@ AC_DEFINE_UNQUOTED([PAZPAR2_VERSION_SHA1], ["$sha"], [Git SHA1])
 AC_CONFIG_FILES([
 	Doxyfile
 	Makefile
+	pazpar2.spec
 	src/Makefile
 	test/Makefile
 	js/Makefile
