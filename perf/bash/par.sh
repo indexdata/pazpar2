@@ -14,7 +14,7 @@ while test $r -lt $ROUNDS; do
 	echo "$r"
 	let i=0
 	while test $i -lt $NUMBER; do
-		./client.sh $r.$i $PORT $SERVICE $SETTINGS >$r.$i.log 2>&1 &
+		./client.sh --outfile=$r.$i --prefix=http://localhost:${PORT}/search.pz2 --service=$SERVICE >$r.$i.log 2>&1 &
 		sleep $DELAY
 		let i=$i+1
 	done
