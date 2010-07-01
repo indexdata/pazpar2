@@ -19,19 +19,36 @@ ranking, record sorting, and faceted results.
 Summary: pazpar2 daemon
 Requires: libyaz4
 
-%post -p /sbin/ldconfig 
-%postun -p /sbin/ldconfig 
-
 %package -n pazpar2-js
 Summary: pazpar2 JS
 Group: Data
 Requires: pazpar2
+
+%post
+/sbin/chkconfig --add pazpar2
+/sbin/service pazpar2 start > /dev/null 2>&1
+
+%preun
+if [ $1 = 0 ]; then
+	/sbin/service pazpar2 stop > /dev/null 2>&1
+	/sbin/chkconfig --del pazpar2
+fi
 
 %description -n pazpar2-js
 This package includes the Java Script library pz2.js. It also adds an
 Alias for Apache2 so that this library and other demo portals are
 available.
 
+%post -n pazpar2-js
+if [ -d /etc/httpd/conf.d ]; then
+	ln -sf /etc/pazpar2/ap2pazpar2-js.cfg /etc/httpd/conf.d/pazpar2-js.conf
+	/sbin/service httpd condrestart
+fi
+%preun -n pazpar2-js
+if [ -L /etc/httpd/conf.d/pazpar2-js.conf ]; then
+	rm /etc/httpd/conf.d/pazpar2-js.conf
+	/sbin/service httpd condrestart
+fi
 %package -n pazpar2-doc
 Summary: pazpar2 documentation
 Group: Data
@@ -62,7 +79,9 @@ cp etc/default.xml ${RPM_BUILD_ROOT}/etc/pazpar2/services-available/
 cp etc/services/*.xml ${RPM_BUILD_ROOT}/etc/pazpar2/services-available/
 cp etc/settings/*.xml ${RPM_BUILD_ROOT}/etc/pazpar2/settings/
 cp etc/*.xsl ${RPM_BUILD_ROOT}/etc/pazpar2/
-
+mkdir -p ${RPM_BUILD_ROOT}/etc/rc.d/init.d
+install -m755 src/pazpar2.rpm.init ${RPM_BUILD_ROOT}/etc/rc.d/init.d/pazpar2
+echo "Alias /pazpar2 /usr/share/pazpar2" >${RPM_BUILD_ROOT}/etc/pazpar2/ap2pazpar2-js.cfg
 %clean
 rm -fr ${RPM_BUILD_ROOT}
 
@@ -78,6 +97,7 @@ rm -fr ${RPM_BUILD_ROOT}
 %config %{_sysconfdir}/pazpar2/*.xsl
 %config %{_sysconfdir}/pazpar2/settings/*.xml
 %config %{_sysconfdir}/pazpar2/services-available/*.xml
+%config %{_sysconfdir}/rc.d/init.d/pazpar2
 %{_mandir}/man5/pazpar2*
 %{_mandir}/man7/pazpar2*
 %{_mandir}/man8/pazpar2*
@@ -85,6 +105,7 @@ rm -fr ${RPM_BUILD_ROOT}
 %files -n pazpar2-js
 %defattr(-,root,root)
 %{_datadir}/pazpar2/js/pz2.js
+%config %{_sysconfdir}/pazpar2/ap2pazpar2-js.cfg
 
 %files -n pazpar2-doc
 %defattr(-,root,root)
