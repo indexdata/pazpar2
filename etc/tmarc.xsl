@@ -189,7 +189,7 @@
 
       <xsl:for-each select="tmarc:d260">
         <pz:metadata type="date">
-          <xsl:value-of select="tmarc:sc" />
+          <xsl:value-of select="translate(tmarc:sc, 'cp[].', '')" />
         </pz:metadata>
       </xsl:for-each>
 
