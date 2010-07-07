@@ -2,6 +2,8 @@
 
 sbin_PROGRAMS = pazpar2
 
+EXTRA_DIST = pazpar2.rpm.init
+
 check_PROGRAMS = \
       test_sel_thread \
       test_normalize
