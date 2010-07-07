@@ -45,6 +45,9 @@
     <pz:metadata type="title">
       <xsl:value-of select="."/>
     </pz:metadata>
+    <pz:metadata type="title-complete">
+      <xsl:value-of select="." />
+    </pz:metadata>
   </xsl:template>
 
   <xsl:template match="author">

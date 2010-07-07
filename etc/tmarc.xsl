@@ -230,6 +230,10 @@
         <pz:metadata type="title-number-section">
           <xsl:value-of select="tmarc:sn" />
         </pz:metadata>
+        <pz:metadata type="title-complete">
+          <xsl:value-of select="tmarc:sa" />
+          <xsl:if test="tmarc:sb" ><xsl:value-of select="concat(' ', tmarc:sb)" /></xsl:if>
+        </pz:metadata>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d250">
