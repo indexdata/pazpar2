@@ -4,7 +4,7 @@
 
 # Autoconf and automake setup
 AC_PREREQ(2.60)
-AC_INIT([pazpar2],[1.4.2],[pazpar2-help@indexdata.dk])
+AC_INIT([pazpar2],[1.4.3],[pazpar2-help@indexdata.dk])
 
 AC_CONFIG_HEADERS(src/config.h)
 
@@ -51,6 +51,7 @@ AC_DEFINE_UNQUOTED([PAZPAR2_VERSION_SHA1], ["$sha"], [Git SHA1])
 AC_CONFIG_FILES([
 	Doxyfile
 	Makefile
+	pazpar2.spec
 	src/Makefile
 	test/Makefile
 	js/Makefile

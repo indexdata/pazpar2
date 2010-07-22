@@ -1,3 +1,8 @@
+--- 1.4.3 2010/07/02
+
+New RPM packages: pazpar2, pazpar2-js, pazpar2-doc. These have been
+tested on CentOS 5.5 only.
+
 --- 1.4.2 2010/06/18
 
 Fix problem with result sets being removed from a client session

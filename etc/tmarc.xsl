@@ -189,7 +189,7 @@
 
       <xsl:for-each select="tmarc:d260">
         <pz:metadata type="date">
-          <xsl:value-of select="tmarc:sc" />
+          <xsl:value-of select="translate(tmarc:sc, 'cp[].', '')" />
         </pz:metadata>
       </xsl:for-each>
 
@@ -229,6 +229,10 @@
         </pz:metadata>
         <pz:metadata type="title-number-section">
           <xsl:value-of select="tmarc:sn" />
+        </pz:metadata>
+        <pz:metadata type="title-complete">
+          <xsl:value-of select="tmarc:sa" />
+          <xsl:if test="tmarc:sb" ><xsl:value-of select="concat(' ', tmarc:sb)" /></xsl:if>
         </pz:metadata>
       </xsl:for-each>
 
@@ -617,14 +621,27 @@
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d926">
-        <pz:metadata type="holding">
-          <xsl:for-each select="tmarc:s">
-            <xsl:if test="position() > 1">
-              <xsl:text> </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
+        <pz:metadata type="locallocation">
+	  <xsl:choose><xsl:when test="tmarc:sa">
+	    <xsl:value-of select="tmarc:sa"/>
+	  </xsl:when><xsl:otherwise>
+	    <xsl:text>PAZPAR2_NULL_VALUE</xsl:text>
+	  </xsl:otherwise></xsl:choose>
+	</pz:metadata>
+        <pz:metadata type="callnumber">
+	  <xsl:choose><xsl:when test="tmarc:sc">
+	    <xsl:value-of select="tmarc:sc"/>
+	  </xsl:when><xsl:otherwise>
+	    <xsl:text>PAZPAR2_NULL_VALUE</xsl:text>
+	  </xsl:otherwise></xsl:choose>
+	</pz:metadata>
+        <pz:metadata type="available">
+	  <xsl:choose><xsl:when test="tmarc:se">
+	    <xsl:value-of select="tmarc:se"/>
+	  </xsl:when><xsl:otherwise>
+	    <xsl:text>PAZPAR2_NULL_VALUE</xsl:text>
+	  </xsl:otherwise></xsl:choose>
+	</pz:metadata>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d948">

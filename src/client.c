@@ -139,14 +139,12 @@ void client_set_state(struct client *cl, enum client_state st)
     cl->state = st;
     /* no need to check for all client being non-active if this one
        already is. Note that session_active_clients also LOCKS session */
-#if 0
     if (!client_is_active(cl) && cl->session)
     {
         int no_active = session_active_clients(cl->session);
         if (no_active == 0)
             session_alert_watch(cl->session, SESSION_WATCH_SHOW);
     }
-#endif
 }
 
 static void client_show_raw_error(struct client *cl, const char *addinfo);
