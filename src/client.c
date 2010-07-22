@@ -817,6 +817,7 @@ int client_parse_query(struct client *cl, const char *query)
     else
         cl->cqlquery = 0;
 
+    /* TODO FIX Not thread safe */
     if (!se->relevance)
     {
         // Initialize relevance structure with query terms
