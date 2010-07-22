@@ -523,6 +523,76 @@ void client_record_response(struct client *cl)
     }
 }
 
+static int client_set_facets_request(struct client *cl, ZOOM_connection link) {
+    int index = 0;
+    struct session_database *sdb = client_get_database(cl);
+    const char *opt_facet_term_sort  = session_setting_oneval(sdb, PZ_TERMLIST_TERM_SORT);
+    const char *opt_facet_term_count = session_setting_oneval(sdb, PZ_TERMLIST_TERM_COUNT);
+    struct session *session = client_get_session(cl);
+    struct conf_service *service = session->service;
+    int num = service->num_metadata;
+    WRBUF wrbuf = wrbuf_alloc();
+    int first = 1;
+    for (index = 0; index < num; index++) {
+        struct conf_metadata *conf_meta = &service->metadata[index];
+        if (conf_meta->termlist) {
+            if (first)
+                first = 0;
+            else
+                wrbuf_puts(wrbuf, ",");
+            wrbuf_printf(wrbuf, "@attr 1=%s ", conf_meta->name);
+
+            if (opt_facet_term_sort && opt_facet_term_sort[0] != '\0') {
+                wrbuf_printf(wrbuf, " 2=%s ", opt_facet_term_sort);
+            }
+            if (opt_facet_term_count && opt_facet_term_count[0] != '\0') {
+                wrbuf_printf(wrbuf, " 3=%s ", opt_facet_term_count);
+            }
+        }
+    }
+    if (wrbuf_len(wrbuf)) {
+        yaz_log(YLOG_LOG, "Setting ZOOM facets option: %s", wrbuf_cstr(wrbuf));
+        ZOOM_connection_option_set(link, "facets", wrbuf_cstr(wrbuf));
+        return 1;
+    }
+    return 0;
+}
+
+int client_has_facet(struct client *cl, const char *name) {
+    ZOOM_facet_field facet_field;
+    if (!cl || !cl->resultset || !name)
+        return 0;
+    facet_field = ZOOM_resultset_get_facet_field(cl->resultset, name);
+    if (facet_field)
+        return 1;
+    return 0;
+}
+
+/**
+ * TODO Consider thread safety!!!
+ *
+ */
+int client_report_facets(struct client *cl, ZOOM_resultset rs) {
+    int facet_idx;
+    ZOOM_facet_field *facets = ZOOM_resultset_facets(rs);
+    struct session *se = client_get_session(cl);
+
+    int facet_num = ZOOM_resultset_facets_size(rs);
+    for (facet_idx = 0; facet_idx < facet_num; facet_idx++) {
+        const char *name = ZOOM_facet_field_name(facets[facet_idx]);
+        size_t term_idx;
+        size_t term_num = ZOOM_facet_field_term_count(facets[facet_idx]);
+        for (term_idx = 0; term_idx < term_num; term_idx++ ) {
+            int freq;
+            const char *term = ZOOM_facet_field_get_term(facets[facet_idx], term_idx, &freq);
+            if (term)
+                add_facet(se, name, term, freq);
+        }
+    }
+
+    return 0;
+}
+
 void client_start_search(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
@@ -583,15 +653,18 @@ void client_start_search(struct client *cl)
         ZOOM_query q = ZOOM_query_create();
         yaz_log(YLOG_LOG, "Search %s CQL: %s", sdb->database->url, cl->cqlquery);
         ZOOM_query_cql(q, cl->cqlquery);
-	if (*opt_sort)
-	    ZOOM_query_sortby(q, opt_sort);
+        if (*opt_sort)
+            ZOOM_query_sortby(q, opt_sort);
         rs = ZOOM_connection_search(link, q);
         ZOOM_query_destroy(q);
     }
     else
     {
+        int has_facets = client_set_facets_request(cl, link);
         yaz_log(YLOG_LOG, "Search %s PQF: %s", sdb->database->url, cl->pquery);
         rs = ZOOM_connection_search_pqf(link, cl->pquery);
+        if (has_facets)
+            client_report_facets(cl, rs);
     }
     ZOOM_resultset_destroy(cl->resultset);
     cl->resultset = rs;
