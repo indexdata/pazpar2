@@ -70,6 +70,9 @@ static char *hard_settings[] = {
     "pz:pqf_strftime",
     "pz:negotiation_charset",
     "pz:max_connections",
+    "pz:reuse_connections",     // PZ_REUSE_CONNECTION
+    "pz:termlist_term_sort",    // PZ_TERMLIST_TERM_SORT
+    "pz:termlist_term_count",   // PZ_TERMLIST_TERM_COUNT
     0
 };
 
