@@ -41,6 +41,7 @@
     width: 100%;
     overflow: hidden;
     border-bottom-width: 0px;
+    border-bottom-top: 0px;
 }
 #nav li {
   margin: 10px 5px 0 5px;
@@ -48,6 +49,8 @@
   padding: 0;
   margin: 0;
   list-style: none;
+  border-bottom-width: 0px;
+  border-bottom-top: 0px;
 }
 #nav a {
   color: #fff;
