@@ -107,7 +107,7 @@ static void update_highscore(struct termlist *tl, struct termlist_score *t)
     }
 }
 
-void termlist_insert(struct termlist *tl, const char *term)
+void termlist_insert(struct termlist *tl, const char *term, int freq)
 {
     unsigned int bucket;
     struct termlist_bucket **p;
@@ -125,7 +125,7 @@ void termlist_insert(struct termlist *tl, const char *term)
     {
         if (!strcmp(buf, (*p)->term.term))
         {
-            (*p)->term.frequency++;
+            (*p)->term.frequency += freq;
             update_highscore(tl, &((*p)->term));
             break;
         }
@@ -135,7 +135,7 @@ void termlist_insert(struct termlist *tl, const char *term)
         struct termlist_bucket *new = nmem_malloc(tl->nmem,
                 sizeof(struct termlist_bucket));
         new->term.term = nmem_strdup(tl->nmem, buf);
-        new->term.frequency = 1;
+        new->term.frequency = freq;
         new->next = 0;
         *p = new;
         update_highscore(tl, &new->term);
