@@ -146,7 +146,7 @@ void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
 }
 
 
-static void add_facet(struct session *s, const char *type, const char *value)
+void add_facet(struct session *s, const char *type, const char *value, int count)
 {
     int i;
 
@@ -168,7 +168,7 @@ static void add_facet(struct session *s, const char *type, const char *value)
             = termlist_create(s->nmem, TERMLIST_HIGH_SCORE);
         s->num_termlists = i + 1;
     }
-    termlist_insert(s->termlists[i].termlist, value);
+    termlist_insert(s->termlists[i].termlist, value, count);
 }
 
 static xmlDoc *record_to_xml(struct session_database *sdb, const char *rec)
@@ -1375,22 +1375,23 @@ static int ingest_to_cluster(struct client *cl,
                                      (char *) value, ser_md->rank,
                                      ser_md->name);
 
-            // construct facets ... 
-            if (ser_md->termlist)
+            // construct facets ... unless the client already has reported them
+            if (ser_md->termlist && !client_has_facet(cl, (char *) type))
             {
+
                 if (ser_md->type == Metadata_type_year)
                 {
                     char year[64];
                     sprintf(year, "%d", rec_md->data.number.max);
-                    add_facet(se, (char *) type, year);
+                    add_facet(se, (char *) type, year, 1);
                     if (rec_md->data.number.max != rec_md->data.number.min)
                     {
                         sprintf(year, "%d", rec_md->data.number.min);
-                        add_facet(se, (char *) type, year);
+                        add_facet(se, (char *) type, year, 1);
                     }
                 }
                 else
-                    add_facet(se, (char *) type, (char *) value);
+                    add_facet(se, (char *) type, (char *) value, 1);
             }
 
             // cleaning up
