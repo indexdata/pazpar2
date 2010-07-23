@@ -168,6 +168,8 @@ void add_facet(struct session *s, const char *type, const char *value, int count
             = termlist_create(s->nmem, TERMLIST_HIGH_SCORE);
         s->num_termlists = i + 1;
     }
+    yaz_log(YLOG_DEBUG, "Session: facets for %s: %s (%d)", type, value, count);
+
     termlist_insert(s->termlists[i].termlist, value, count);
 }
 
