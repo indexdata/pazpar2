@@ -391,6 +391,33 @@ static int nativesyntax_to_type(struct session_database *sdb, char *type,
     }
 }
 
+/**
+ * TODO Consider thread safety!!!
+ *
+ */
+int client_report_facets(struct client *cl, ZOOM_resultset rs) {
+    int facet_idx;
+    ZOOM_facet_field *facets = ZOOM_resultset_facets(rs);
+    int facet_num;
+    struct session *se = client_get_session(cl);
+    yaz_log(YLOG_DEBUG, "client_report_facets %p %p", rs, cl->resultset);
+
+    facet_num = ZOOM_resultset_facets_size(rs);
+    for (facet_idx = 0; facet_idx < facet_num; facet_idx++) {
+        const char *name = ZOOM_facet_field_name(facets[facet_idx]);
+        size_t term_idx;
+        size_t term_num = ZOOM_facet_field_term_count(facets[facet_idx]);
+        for (term_idx = 0; term_idx < term_num; term_idx++ ) {
+            int freq;
+            const char *term = ZOOM_facet_field_get_term(facets[facet_idx], term_idx, &freq);
+            if (term)
+                add_facet(se, name, term, freq);
+        }
+    }
+
+    return 0;
+}
+
 static void ingest_raw_record(struct client *cl, ZOOM_record rec)
 {
     const char *buf;
@@ -416,6 +443,7 @@ void client_search_response(struct client *cl)
     struct session *se = cl->session;
     ZOOM_connection link = connection_get_link(co);
     ZOOM_resultset resultset = cl->resultset;
+
     const char *error, *addinfo = 0;
     
     if (ZOOM_connection_error(link, &error, &addinfo))
@@ -427,6 +455,7 @@ void client_search_response(struct client *cl)
     }
     else
     {
+        client_report_facets(cl, resultset);
         cl->record_offset = cl->startrecs;
         cl->hits = ZOOM_resultset_size(resultset);
         if (se)
@@ -563,35 +592,14 @@ int client_has_facet(struct client *cl, const char *name) {
     if (!cl || !cl->resultset || !name)
         return 0;
     facet_field = ZOOM_resultset_get_facet_field(cl->resultset, name);
-    if (facet_field)
+    if (facet_field) {
+        yaz_log(YLOG_DEBUG, "target has facets for %s", name);
         return 1;
-    return 0;
-}
-
-/**
- * TODO Consider thread safety!!!
- *
- */
-int client_report_facets(struct client *cl, ZOOM_resultset rs) {
-    int facet_idx;
-    ZOOM_facet_field *facets = ZOOM_resultset_facets(rs);
-    struct session *se = client_get_session(cl);
-
-    int facet_num = ZOOM_resultset_facets_size(rs);
-    for (facet_idx = 0; facet_idx < facet_num; facet_idx++) {
-        const char *name = ZOOM_facet_field_name(facets[facet_idx]);
-        size_t term_idx;
-        size_t term_num = ZOOM_facet_field_term_count(facets[facet_idx]);
-        for (term_idx = 0; term_idx < term_num; term_idx++ ) {
-            int freq;
-            const char *term = ZOOM_facet_field_get_term(facets[facet_idx], term_idx, &freq);
-            if (term)
-                add_facet(se, name, term, freq);
-        }
     }
-
+    yaz_log(YLOG_DEBUG, "target: No facets for %s", name);
     return 0;
 }
+
 
 void client_start_search(struct client *cl)
 {
@@ -660,11 +668,9 @@ void client_start_search(struct client *cl)
     }
     else
     {
-        int has_facets = client_set_facets_request(cl, link);
+        client_set_facets_request(cl, link);
         yaz_log(YLOG_LOG, "Search %s PQF: %s", sdb->database->url, cl->pquery);
         rs = ZOOM_connection_search_pqf(link, cl->pquery);
-        if (has_facets)
-            client_report_facets(cl, rs);
     }
     ZOOM_resultset_destroy(cl->resultset);
     cl->resultset = rs;
