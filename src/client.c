@@ -400,9 +400,9 @@ int client_report_facets(struct client *cl, ZOOM_resultset rs) {
     ZOOM_facet_field *facets = ZOOM_resultset_facets(rs);
     int facet_num;
     struct session *se = client_get_session(cl);
-    yaz_log(YLOG_DEBUG, "client_report_facets %p %p", rs, cl->resultset);
-
     facet_num = ZOOM_resultset_facets_size(rs);
+    yaz_log(YLOG_DEBUG, "client_report_facets: %d", facet_num);
+
     for (facet_idx = 0; facet_idx < facet_num; facet_idx++) {
         const char *name = ZOOM_facet_field_name(facets[facet_idx]);
         size_t term_idx;
@@ -560,6 +560,7 @@ static int client_set_facets_request(struct client *cl, ZOOM_connection link) {
     struct session *session = client_get_session(cl);
     struct conf_service *service = session->service;
     int num = service->num_metadata;
+    yaz_log(YLOG_DEBUG, "Facet settings, sort: %s count: %s", opt_facet_term_sort, opt_facet_term_count);
     WRBUF wrbuf = wrbuf_alloc();
     int first = 1;
     for (index = 0; index < num; index++) {
@@ -572,10 +573,10 @@ static int client_set_facets_request(struct client *cl, ZOOM_connection link) {
             wrbuf_printf(wrbuf, "@attr 1=%s ", conf_meta->name);
 
             if (opt_facet_term_sort && opt_facet_term_sort[0] != '\0') {
-                wrbuf_printf(wrbuf, " 2=%s ", opt_facet_term_sort);
+                wrbuf_printf(wrbuf, " @attr 2=%s ", opt_facet_term_sort);
             }
             if (opt_facet_term_count && opt_facet_term_count[0] != '\0') {
-                wrbuf_printf(wrbuf, " 3=%s ", opt_facet_term_count);
+                wrbuf_printf(wrbuf, " @attr 3=%s ", opt_facet_term_count);
             }
         }
     }
@@ -589,14 +590,16 @@ static int client_set_facets_request(struct client *cl, ZOOM_connection link) {
 
 int client_has_facet(struct client *cl, const char *name) {
     ZOOM_facet_field facet_field;
-    if (!cl || !cl->resultset || !name)
+    if (!cl || !cl->resultset || !name) {
+        yaz_log(YLOG_DEBUG, "client has facet: Missing %p %p %s", cl, (cl ? cl->resultset: 0), name);
         return 0;
+    }
     facet_field = ZOOM_resultset_get_facet_field(cl->resultset, name);
     if (facet_field) {
-        yaz_log(YLOG_DEBUG, "target has facets for %s", name);
+        yaz_log(YLOG_DEBUG, "client: has facets for %s", name);
         return 1;
     }
-    yaz_log(YLOG_DEBUG, "target: No facets for %s", name);
+    yaz_log(YLOG_DEBUG, "client: No facets for %s", name);
     return 0;
 }
 
