@@ -4,6 +4,7 @@ aclocal.m4
 ChangeLog
 autom4te.cache
 *-stamp
+pazpar2.spec
 config
 config.cache
 config.log
