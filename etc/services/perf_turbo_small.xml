@@ -22,10 +22,14 @@
     <set name="pz:requestsyntax" value="marc21"/>
     <set name="pz:elements" value="F"/>
 
+    <!-- Termlist/facet settings -->
+    <set name="pz:termlist_term_count" value="0"/>
+    <set name="pz:termlist_term_sort" value="1"/>
+
     <!-- Result normalization settings -->
 
     <set name="pz:nativesyntax" value="txml"/>
-    <set name="pz:xslt" value="tmarcxml.xsl"/>
+    <set name="pz:xslt" value="tmarc.xsl"/>
   </settings>
 
   <relevance>
