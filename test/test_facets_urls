@@ -1,0 +1,6 @@
+http://localhost:9763/search.pz2?command=init&clear=1
+http://localhost:9763/search.pz2?session=1&command=settings&pz:name%5Blocalhost:9999%2Fdb1%5D=db1&pz:requestsyntax%5Blocalhost:9999%2Fdb1%5D=usmarc&pz:nativesyntax%5Blocalhost:9999%2Fdb1%5D=txml&pz:xslt%5Blocalhost:9999%2Fdb1%5D=tmarc.xsl&pz:termlist_term_count%5Blocalhost:9999%2Fdb1%5D=5
+http://localhost:9763/search.pz2?session=1&command=search&query=computer
+http://localhost:9763/search.pz2?session=1&command=show&block=1
+http://localhost:9763/search.pz2?session=1&command=bytarget
+http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Ctitle%2Cdate
