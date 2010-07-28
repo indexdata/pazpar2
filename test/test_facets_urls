@@ -15,6 +15,5 @@ http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauth
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
 http://localhost:9763/search.pz2?session=1&command=show
 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate
-2 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate
-2 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate
-2 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate
+10 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate
+
