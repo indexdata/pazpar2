@@ -444,7 +444,7 @@ static int cmp_ht(const void *p1, const void *p2)
 }
 
 // This implements functionality somewhat similar to 'bytarget', but in a termlist form
-static void targets_termlist(WRBUF wrbuf, struct session *se, int num,
+static int targets_termlist(WRBUF wrbuf, struct session *se, int num,
                              NMEM nmem)
 {
     struct hitsbytarget *ht;
@@ -481,6 +481,7 @@ static void targets_termlist(WRBUF wrbuf, struct session *se, int num,
                      ht[i].diagnostic);
         wrbuf_puts(wrbuf, "</term>\n");
     }
+    return count;
 }
 
 static void cmd_termlist(struct http_channel *c)
@@ -495,6 +496,7 @@ static void cmd_termlist(struct http_channel *c)
     const char *nums = http_argbyname(rq, "num");
     int num = 15;
     int status;
+    WRBUF debug_log = wrbuf_alloc();
 
     if (!s)
         return;
@@ -521,16 +523,19 @@ static void cmd_termlist(struct http_channel *c)
             tp = name + strlen(name);
         strncpy(tname, name, tp - name);
         tname[tp - name] = '\0';
-
         wrbuf_puts(c->wrbuf, "<list name=\"");
         wrbuf_xmlputs(c->wrbuf, tname);
         wrbuf_puts(c->wrbuf, "\">\n");
-        if (!strcmp(tname, "xtargets"))
-            targets_termlist(c->wrbuf, s->psession, num, c->nmem);
+        if (!strcmp(tname, "xtargets")) {
+            int targets = targets_termlist(c->wrbuf, s->psession, num, c->nmem);
+            wrbuf_printf(debug_log, " xtargets: %d", targets);
+        }
         else
         {
             p = termlist(s->psession, tname, &len);
-            if (p)
+            if (p && len)
+                wrbuf_printf(debug_log, " %s: %d", tname, len);
+            if (p) {
                 for (i = 0; i < len && i < num; i++){
                     // prevnt sending empty term elements
                     if (!p[i]->term || !p[i]->term[0])
@@ -546,6 +551,7 @@ static void cmd_termlist(struct http_channel *c)
                                  p[i]->frequency);
                     wrbuf_puts(c->wrbuf, "</term>\n");
                }
+            }
         }
         wrbuf_puts(c->wrbuf, "</list>\n");
         name = tp;
@@ -553,6 +559,8 @@ static void cmd_termlist(struct http_channel *c)
             name++;
     }
     wrbuf_puts(c->wrbuf, "</termlist>\n");
+    yaz_log(YLOG_DEBUG, "termlist response: %s ", wrbuf_cstr(debug_log));
+    wrbuf_destroy(debug_log);
     rs->payload = nmem_strdup(rq->channel->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
     release_session(c,s);
