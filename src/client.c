@@ -560,9 +560,9 @@ static int client_set_facets_request(struct client *cl, ZOOM_connection link) {
     struct session *session = client_get_session(cl);
     struct conf_service *service = session->service;
     int num = service->num_metadata;
-    yaz_log(YLOG_DEBUG, "Facet settings, sort: %s count: %s", opt_facet_term_sort, opt_facet_term_count);
     WRBUF wrbuf = wrbuf_alloc();
     int first = 1;
+    yaz_log(YLOG_DEBUG, "Facet settings, sort: %s count: %s", opt_facet_term_sort, opt_facet_term_count);
     for (index = 0; index < num; index++) {
         struct conf_metadata *conf_meta = &service->metadata[index];
         if (conf_meta->termlist) {
