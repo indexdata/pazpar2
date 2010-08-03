@@ -2,9 +2,16 @@
 <activeclients>0</activeclients>
 <list name="xtargets">
 <term>
+<id>localhost:9999/db2</id>
+<name>db2</name>
+<frequency>7</frequency>
+<state>Client_Idle</state>
+<diagnostic>0</diagnostic>
+</term>
+<term>
 <id>localhost:9999/db1</id>
 <name>db1</name>
-<frequency>7</frequency>
+<frequency>1</frequency>
 <state>Client_Idle</state>
 <diagnostic>0</diagnostic>
 </term>
@@ -15,6 +22,7 @@
 <term><name>author2</name><frequency>80</frequency></term>
 <term><name>author3</name><frequency>70</frequency></term>
 <term><name>author4</name><frequency>60</frequency></term>
+<term><name>Jack Collins</name><frequency>1</frequency></term>
 </list>
 <list name="subject">
 <term><name>subject0</name><frequency>100</frequency></term>
