@@ -32,9 +32,11 @@ if test ! -f ztest.pid; then
 fi
 
 ${srcdir}/run_pazpar2.sh test_facets
+E=$?
 
 kill `cat ztest.pid`
 rm ztest.pid
+exit $E
 
 # Local Variables:
 # mode:shell-script
