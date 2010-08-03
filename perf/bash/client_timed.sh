@@ -44,3 +44,4 @@ while [ ${DO_DISPLAY} ] ; do
 	break;
     fi
 done
+/usr/bin/time --format "$OF, termlist, %e" wget -q -O $OF.termlist.$r.xml "$H?command=termlist&session=$S&name=xtargets%2Csubject%2Cauthor" 2>> $OF.termlist.time
