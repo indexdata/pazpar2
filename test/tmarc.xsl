@@ -15,6 +15,12 @@
       <xsl:apply-templates />
   </xsl:template>
 
+  <xsl:template match="tmarc:collection">
+    <collection>
+      <xsl:apply-templates />
+    </collection>
+  </xsl:template>
+
   <xsl:template match="tmarc:r">
     <xsl:variable name="title_medium" select="tmarc:d245/tmarc:sh" />
     <xsl:variable name="journal_title" select="tmarc:d773/tmarc:st" />
