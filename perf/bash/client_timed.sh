@@ -20,9 +20,9 @@ NUM=20
 H="http://localhost:${PORT}/search.pz2"
 
 declare -i MAX_WAIT=2
-/usr/bin/time --format "$OF, init, %e" wget -q -O $OF.init.xml "$H/?command=init&service=${SERVICE}&extra=$OF" 2> $OF.init.time
+/usr/bin/time --format "$OF, init, %e" wget -q -O ${TMP_DIR}$OF.init.xml "$H/?command=init&service=${SERVICE}&extra=$OF" 2> ${TMP_DIR}$OF.init.time
 S=`xsltproc get_session.xsl $OF.init.xml`
-/usr/bin/time --format "$OF, search, %e" wget -q -O $OF.search.xml "$H?command=search&query=${QUERY}&session=$S" 2> $OF.search.time
+/usr/bin/time --format "$OF, search, %e" wget -q -O ${TMP_DIR}$OF.search.xml "$H?command=search&query=${QUERY}&session=$S" 2> ${TMP_DIR}$OF.search.time
 
 let r=0
 DO_DISPLAY=true
@@ -30,7 +30,7 @@ while [ ${DO_DISPLAY} ] ; do
     SLEEP=$[ ($RANDOM % $MAX_WAIT ) ]
     echo "show in $SLEEP"
     sleep $SLEEP
-    /usr/bin/time --format "$OF, show2, %e" wget -q -O $OF.show.$r.xml "$H?command=show&session=$S&start=$r&num=${NUM}&block=1" 2>> $OF.show.time
+    /usr/bin/time --format "$OF, show2, %e" wget -q -O ${TMP_DIR}$OF.show.$r.xml "$H?command=show&session=$S&start=$r&num=${NUM}&block=1" 2>> ${TMP_DIR}$OF.show.time
     AC=`xsltproc get_activeclients.xsl ${OF}.show.$r.xml`
     if [ "$AC" != "0" ] ; then 
 	echo "Active clients: ${AC}" 
@@ -44,3 +44,4 @@ while [ ${DO_DISPLAY} ] ; do
 	break;
     fi
 done
+/usr/bin/time --format "$OF, termlist, %e" wget -q -O ${TMP_DIR}$OF.termlist.$r.xml "$H?command=termlist&session=$S&name=xtargets%2Csubject%2Cauthor" 2>> ${TMP_DIR}$OF.termlist.time
