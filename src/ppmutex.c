@@ -36,11 +36,15 @@ void pazpar2_mutex_init(void)
     ppmutex_level = yaz_log_module_level("mutex");
 }
 
-void pazpar2_mutex_create(YAZ_MUTEX *p, const char *name)
+void pazpar2_mutex_create_flag(YAZ_MUTEX *p, const char *name, int flags)
 {
     assert(p);
-    yaz_mutex_create(p);
+    yaz_mutex_create_attr(p, flags);
     yaz_mutex_set_name(*p, ppmutex_level, name);
+}
+
+void pazpar2_mutex_create(YAZ_MUTEX *p, const char *name) {
+    pazpar2_mutex_create_flag(p, name, 0);
 }
 
 /*
