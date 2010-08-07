@@ -47,7 +47,7 @@ if test -n "$PAZPAR2_USE_VALGRIND"; then
 elif test -n "$SKIP_PAZPAR2"; then 
     echo "Skipping pazpar2. Must already be running with correct config!!! " 
 else
-    YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -d -X -l pazpar2.log -f ${srcdir}/${CFG} >extra_pazpar2.log 2>&1 &
+    YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -v all -d -X -l pazpar2.log -f ${srcdir}/${CFG} >extra_pazpar2.log 2>&1 &
 fi
 
 
