@@ -724,7 +724,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     }
     session->normalize_cache = normalize_cache_create();
     session->session_mutex = 0;
-    pazpar2_mutex_create(&session->session_mutex, name);
+    pazpar2_mutex_create_flag(&session->session_mutex, name, PTHREAD_MUTEX_RECURSIVE);
 
     return session;
 }
