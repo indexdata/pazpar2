@@ -136,10 +136,14 @@ enum client_state client_get_state(struct client *cl)
 
 void client_set_state(struct client *cl, enum client_state st)
 {
+    int was_active = 0;
+    if (client_is_active(cl))
+        was_active = 1;
     cl->state = st;
-    /* no need to check for all client being non-active if this one
-       already is. Note that session_active_clients also LOCKS session */
-    if (!client_is_active(cl) && cl->session)
+    /* If client is going from being active to inactive and all clients
+       are now idle we fire a watch for the session . The assumption is
+       that session is not mutex locked if client is already active */
+    if (was_active && !client_is_active(cl) && cl->session)
     {
         int no_active = session_active_clients(cl->session);
         if (no_active == 0)
