@@ -25,11 +25,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PAZPAR2_PPMUTEXF_H
 
 #include <yaz/mutex.h>
-#include <pthread.h>
 
 void pazpar2_mutex_init(void);
 
-void pazpar2_mutex_create_flag(YAZ_MUTEX *p, const char *name, int flags);
 void pazpar2_mutex_create(YAZ_MUTEX *p, const char *name);
 
 #endif
