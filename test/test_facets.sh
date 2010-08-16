@@ -10,7 +10,7 @@ F=''
 for p in $PATH; do
     if test -x $p/yaz-ztest -a -x $p/yaz-config; then
 	VERSION=`$p/yaz-config -V|awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
-	if test $VERSION -ge 4000012; then
+	if test $VERSION -ge 4000011; then
 	    F=$p/yaz-ztest
             break
 	fi
