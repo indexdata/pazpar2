@@ -844,6 +844,34 @@ static char *make_cqlquery(struct client *cl)
     return r;
 }
 
+// returns a xmalloced SOLR query corresponding to the pquery in client
+// TODO Could prob. be merge with the similar make_cqlquery
+static char *make_solrquery(struct client *cl)
+{
+    cql_transform_t sqlt = solr_transform_create();
+    Z_RPNQuery *zquery;
+    char *r;
+    WRBUF wrb = wrbuf_alloc();
+    int status;
+    ODR odr_out = odr_createmem(ODR_ENCODE);
+
+    zquery = p_query_rpn(odr_out, cl->pquery);
+    yaz_log(YLOG_LOG, "PQF: %s", cl->pquery);
+    if ((status = solr_transform_rpn2solr_wrbuf(sqlt, wrb, zquery)))
+    {
+        yaz_log(YLOG_WARN, "Failed to generate SOLR query, code=%d", status);
+        r = 0;
+    }
+    else
+    {
+        r = xstrdup(wrbuf_cstr(wrb));
+    }
+    wrbuf_destroy(wrb);
+    odr_destroy(odr_out);
+    cql_transform_close(sqlt);
+    return r;
+}
+
 // Parse the query given the settings specific to this client
 int client_parse_query(struct client *cl, const char *query)
 {
@@ -901,6 +929,8 @@ int client_parse_query(struct client *cl, const char *query)
     xfree(cl->cqlquery);
     if (*sru)
     {
+        if (!strcmp(sru, "solr")
+
         if (!(cl->cqlquery = make_cqlquery(cl)))
             return -1;
     }
