@@ -51,6 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/diagbib1.h>
 #include <yaz/snprintf.h>
 #include <yaz/rpn2cql.h>
+#include <yaz/rpn2solr.h>
 
 #define USE_TIMING 0
 #if USE_TIMING
@@ -562,6 +563,7 @@ static int client_set_facets_request(struct client *cl, ZOOM_connection link)
     const char *opt_facet_term_sort  = session_setting_oneval(sdb, PZ_TERMLIST_TERM_SORT);
     const char *opt_facet_term_count = session_setting_oneval(sdb, PZ_TERMLIST_TERM_COUNT);
     /* Disable when no count is set */
+    /* TODO Verify: Do we need to reset the  ZOOM facets if a ZOOM Connection is being reused??? */
     if (opt_facet_term_count && *opt_facet_term_count)
     {
         int index = 0;
@@ -845,7 +847,7 @@ static char *make_cqlquery(struct client *cl)
 // TODO Could prob. be merge with the similar make_cqlquery
 static char *make_solrquery(struct client *cl)
 {
-    cql_transform_t sqlt = solr_transform_create();
+    solr_transform_t sqlt = solr_transform_create();
     Z_RPNQuery *zquery;
     char *r;
     WRBUF wrb = wrbuf_alloc();
@@ -865,7 +867,7 @@ static char *make_solrquery(struct client *cl)
     }
     wrbuf_destroy(wrb);
     odr_destroy(odr_out);
-    cql_transform_close(sqlt);
+    solr_transform_close(sqlt);
     return r;
 }
 
@@ -926,10 +928,14 @@ int client_parse_query(struct client *cl, const char *query)
     xfree(cl->cqlquery);
     if (*sru)
     {
-        if (!strcmp(sru, "solr")
-
-        if (!(cl->cqlquery = make_cqlquery(cl)))
-            return -1;
+        if (!strcmp(sru, "solr")) {
+            if (!(cl->cqlquery = make_solrquery(cl)))
+                return -1;
+        }
+        else {
+            if (!(cl->cqlquery = make_cqlquery(cl)))
+                return -1;
+        }
     }
     else
         cl->cqlquery = 0;
