@@ -562,8 +562,11 @@ static int client_set_facets_request(struct client *cl, ZOOM_connection link) {
     const char *opt_facet_term_sort  = session_setting_oneval(sdb, PZ_TERMLIST_TERM_SORT);
     const char *opt_facet_term_count = session_setting_oneval(sdb, PZ_TERMLIST_TERM_COUNT);
     /* Disable when no count is set */
-    if (opt_facet_term_count == 0)
+    if (opt_facet_term_count == 0 || opt_facet_term_count[0] == '\0') {
+        yaz_log(YLOG_LOG, "Resetting ZOOM facets option to empty.");
+        ZOOM_connection_option_set(link, "facets", "");
         return 0;
+    }
     struct session *session = client_get_session(cl);
     struct conf_service *service = session->service;
     int num = service->num_metadata;
