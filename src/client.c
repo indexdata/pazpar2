@@ -556,44 +556,41 @@ void client_record_response(struct client *cl)
     }
 }
 
-static int client_set_facets_request(struct client *cl, ZOOM_connection link) {
-    int index = 0;
+static int client_set_facets_request(struct client *cl, ZOOM_connection link)
+{
     struct session_database *sdb = client_get_database(cl);
     const char *opt_facet_term_sort  = session_setting_oneval(sdb, PZ_TERMLIST_TERM_SORT);
     const char *opt_facet_term_count = session_setting_oneval(sdb, PZ_TERMLIST_TERM_COUNT);
     /* Disable when no count is set */
-    if (opt_facet_term_count == 0 || opt_facet_term_count[0] == '\0') {
-        yaz_log(YLOG_LOG, "Resetting ZOOM facets option to empty.");
-        ZOOM_connection_option_set(link, "facets", "");
-        return 0;
-    }
-    struct session *session = client_get_session(cl);
-    struct conf_service *service = session->service;
-    int num = service->num_metadata;
-    WRBUF wrbuf = wrbuf_alloc();
-    int first = 1;
-    yaz_log(YLOG_DEBUG, "Facet settings, sort: %s count: %s", opt_facet_term_sort, opt_facet_term_count);
-    for (index = 0; index < num; index++) {
-        struct conf_metadata *conf_meta = &service->metadata[index];
-        if (conf_meta->termlist) {
-            if (first)
-                first = 0;
-            else
-                wrbuf_puts(wrbuf, ",");
-            wrbuf_printf(wrbuf, "@attr 1=%s ", conf_meta->name);
-
-            if (opt_facet_term_sort && opt_facet_term_sort[0] != '\0') {
-                wrbuf_printf(wrbuf, " @attr 2=%s ", opt_facet_term_sort);
-            }
-            if (opt_facet_term_count && opt_facet_term_count[0] != '\0') {
-                wrbuf_printf(wrbuf, " @attr 3=%s ", opt_facet_term_count);
+    if (opt_facet_term_count && *opt_facet_term_count)
+    {
+        int index = 0;
+        struct session *session = client_get_session(cl);
+        struct conf_service *service = session->service;
+        int num = service->num_metadata;
+        WRBUF wrbuf = wrbuf_alloc();
+        yaz_log(YLOG_DEBUG, "Facet settings, sort: %s count: %s",
+                opt_facet_term_sort, opt_facet_term_count);
+        for (index = 0; index < num; index++)
+        {
+            struct conf_metadata *conf_meta = &service->metadata[index];
+            if (conf_meta->termlist)
+            {
+                if (wrbuf_len(wrbuf))
+                    wrbuf_puts(wrbuf, ", ");
+                wrbuf_printf(wrbuf, "@attr 1=%s", conf_meta->name);
+                
+                if (opt_facet_term_sort && *opt_facet_term_sort)
+                    wrbuf_printf(wrbuf, " @attr 2=%s", opt_facet_term_sort);
+                wrbuf_printf(wrbuf, " @attr 3=%s", opt_facet_term_count);
             }
         }
-    }
-    if (wrbuf_len(wrbuf)) {
-        yaz_log(YLOG_LOG, "Setting ZOOM facets option: %s", wrbuf_cstr(wrbuf));
-        ZOOM_connection_option_set(link, "facets", wrbuf_cstr(wrbuf));
-        return 1;
+        if (wrbuf_len(wrbuf))
+        {
+            yaz_log(YLOG_LOG, "Setting ZOOM facets option: %s", wrbuf_cstr(wrbuf));
+            ZOOM_connection_option_set(link, "facets", wrbuf_cstr(wrbuf));
+            return 1;
+        }
     }
     return 0;
 }
