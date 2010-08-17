@@ -1,3 +1,8 @@
+--- 1.4.4 2010/08/17
+
+Fix for show command and block=1 (dead lock). Bug was introduced in
+1.4.0.
+
 --- 1.4.3 2010/07/02
 
 New RPM packages: pazpar2, pazpar2-js, pazpar2-doc. These have been
