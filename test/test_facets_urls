@@ -18,7 +18,7 @@ http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauth
 10 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate
 http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?command=init
-http://localhost:9763/search.pz2?session=2&command=settings&pz:name%5Blocalhost:9999%2Fdb2%5D=db2&pz:requestsyntax%5Blocalhost:9999%2Fdb2%5D=usmarc&pz:nativesyntax%5Blocalhost:9999%2Fdb2%5D=txml&pz:xslt%5Blocalhost:9999%2Fdb2%5D=tmarc.xsl
-http://localhost:9763/search.pz2?session=2&command=search&query=computer
+http://localhost:9763/search.pz2?session=2&command=settings&pz:name%5Blocalhost:9999%2Fdb2%5D=db2&pz:requestsyntax%5Blocalhost:9999%2Fdb2%5D=usmarc&pz:nativesyntax%5Blocalhost:9999%2Fdb2%5D=txml&pz:xslt%5Blocalhost:9999%2Fdb2%5D=tmarc.xsl&pz:apdulog%5Blocalhost:9999%2Fdb2%5D=1
+http://localhost:9763/search.pz2?session=2&command=search&query=water
 http://localhost:9763/search.pz2?session=2&command=show&block=1
 http://localhost:9763/search.pz2?session=2&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate
