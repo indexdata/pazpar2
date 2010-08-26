@@ -1,11 +1,11 @@
 <record xmlns="http://www.loc.gov/MARC21/slim">
-  <leader>01365nam a2200265 i 4504</leader>
+  <leader>01369nam a2200265 i 4504</leader>
   <controlfield tag="001">   73090924 //r82</controlfield>
   <controlfield tag="003">DLC</controlfield>
   <controlfield tag="005">19820524000000.0</controlfield>
   <controlfield tag="008">760609s1974    nyua     b    10110 eng  </controlfield>
   <datafield tag="010" ind1=" " ind2=" ">
-    <subfield code="a">73090924 //r82</subfield>
+    <subfield code="a">   73090924 //r82</subfield>
   </datafield>
   <datafield tag="040" ind1=" " ind2=" ">
     <subfield code="a">DLC</subfield>
@@ -60,7 +60,7 @@
     <subfield code="a">Larson, Kenneth B.</subfield>
   </datafield>
   <datafield tag="700" ind1="1" ind2="0">
-    <subfield code="a">Cox, Jerome R.</subfield>
+    <subfield code="a">Cox, Jerome R. </subfield>
   </datafield>
   <datafield tag="710" ind1="2" ind2="0">
     <subfield code="a">Washington University, St. Louis.</subfield>
