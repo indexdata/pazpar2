@@ -2,8 +2,8 @@
 <bytarget><status>OK</status>
 <target><id>donut:8983/solr/select</id>
 <name>SOLR Test</name>
-<hits>1627</hits>
+<hits>29</hits>
 <diagnostic>0</diagnostic>
-<records>20</records>
-<state>Client_Working</state>
+<records>29</records>
+<state>Client_Idle</state>
 </target></bytarget>
