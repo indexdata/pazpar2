@@ -12,6 +12,10 @@ PORT=$2
 SERVICE=$3
 CLIENT_SCRIPT="client_timed.sh"
 rm -f *.time
+export TMP_DIR=run_`date +"%Y%m%d_%H%M%S"`/
+mkdir ${TMP_DIR}
+rm -f latest
+ln -s ${TMP_DIR} latest
 while test $r -lt $ROUNDS; do
     echo "$r"
     i=0
@@ -30,6 +34,6 @@ while test $r -lt $ROUNDS; do
     let r=$r+1
 done
 wait
-cat *.time >> timed.$SERVICE.$NUMBER.log
+cat ${TMP_DIR}*.time >> ${TMP_DIR}timed.$SERVICE.$NUMBER.log
 #wget --tries=1 -O x "http://localhost:${PORT}/?command=exit"
 
