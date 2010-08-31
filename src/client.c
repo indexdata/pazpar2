@@ -668,6 +668,9 @@ void client_start_search(struct client *cl)
     if (databaseName)
         ZOOM_connection_option_set(link, "databaseName", databaseName);
 
+    /* TODO Verify does it break something for CQL targets(non-SOLR) ? */
+    client_set_facets_request(cl, link);
+
     if (cl->cqlquery)
     {
         ZOOM_query q = ZOOM_query_create();
@@ -680,7 +683,6 @@ void client_start_search(struct client *cl)
     }
     else
     {
-        client_set_facets_request(cl, link);
         yaz_log(YLOG_LOG, "Search %s PQF: %s", sdb->database->url, cl->pquery);
         rs = ZOOM_connection_search_pqf(link, cl->pquery);
     }
