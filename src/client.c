@@ -669,6 +669,7 @@ void client_start_search(struct client *cl)
         ZOOM_connection_option_set(link, "databaseName", databaseName);
 
     /* TODO Verify does it break something for CQL targets(non-SOLR) ? */
+    /* facets definition is in PQF */
     client_set_facets_request(cl, link);
 
     if (cl->cqlquery)
