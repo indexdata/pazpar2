@@ -10,7 +10,7 @@
 </term>
 </list>
 <list name="author">
-<term><name>Rosenberg, Donald</name><frequency>1</frequency></term>
+<term><name>Steinberg, Louis A</name><frequency>1</frequency></term>
 <term><name>Lencevicius, Raimondas</name><frequency>1</frequency></term>
 <term><name>Mills, Kyle</name><frequency>1</frequency></term>
 <term><name>Simon, Frank</name><frequency>1</frequency></term>
@@ -30,18 +30,18 @@
 <term><name>Debugging in computer science</name><frequency>7</frequency></term>
 <term><name>Women computer programmers</name><frequency>4</frequency></term>
 <term><name>Virtual computer systems</name><frequency>4</frequency></term>
-<term><name>Cataloging of computer network resources</name><frequency>3</frequency></term>
 <term><name>Embedded computer systems</name><frequency>3</frequency></term>
-<term><name>Internet searching</name><frequency>2</frequency></term>
+<term><name>Cataloging of computer network resources</name><frequency>3</frequency></term>
+<term><name>Interactive computer systems</name><frequency>2</frequency></term>
+<term><name>Real-time data processing</name><frequency>2</frequency></term>
 <term><name>Computer software</name><frequency>2</frequency></term>
+<term><name>Internet searching</name><frequency>2</frequency></term>
 <term><name>Microcomputers</name><frequency>2</frequency></term>
 <term><name>Library surveys</name><frequency>2</frequency></term>
 <term><name>Microprocessors</name><frequency>2</frequency></term>
 <term><name>Computer simulation</name><frequency>2</frequency></term>
-<term><name>Interactive computer systems</name><frequency>2</frequency></term>
-<term><name>Real-time data processing</name><frequency>2</frequency></term>
+<term><name>Special forces (Military science)</name><frequency>1</frequency></term>
 <term><name>Chinese</name><frequency>1</frequency></term>
-<term><name>Computer viruses</name><frequency>1</frequency></term>
 </list>
 <list name="date">
 <term><name>2000</name><frequency>17</frequency></term>
