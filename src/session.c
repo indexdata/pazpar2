@@ -436,7 +436,7 @@ void session_alert_watch(struct session *s, int what)
         session_watchfun fun;
 
         http_remove_observer(s->watchlist[what].obs);
-        fun = s->watchlist[what].fun;
+        fun  = s->watchlist[what].fun;
         data = s->watchlist[what].data;
 
         /* reset watch before fun is invoked - in case fun wants to set
@@ -508,6 +508,19 @@ int session_active_clients(struct session *s)
 
     return res;
 }
+
+int session_preferred_clients_ready(struct session *s)
+{
+    struct client_list *l;
+    int res = 0;
+
+    for (l = s->clients; l; l = l->next)
+        if (client_is_active_preferred(l->client))
+            res++;
+
+    return res == 0;
+}
+
 
 
 enum pazpar2_error_code search(struct session *se,
