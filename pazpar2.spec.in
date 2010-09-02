@@ -25,9 +25,12 @@ Group: Data
 Requires: pazpar2
 
 %post
-/sbin/chkconfig --add pazpar2
-/sbin/service pazpar2 start > /dev/null 2>&1
-
+if [ $1 = 1 ]; then
+	/sbin/chkconfig --add pazpar2
+	/sbin/service pazpar2 start > /dev/null 2>&1
+else
+	/sbin/service pazpar2 restart > /dev/null 2>&1
+fi
 %preun
 if [ $1 = 0 ]; then
 	/sbin/service pazpar2 stop > /dev/null 2>&1
@@ -39,15 +42,15 @@ This package includes the Java Script library pz2.js. It also adds an
 Alias for Apache2 so that this library and other demo portals are
 available.
 
-%post -n pazpar2-js
+%posttrans -n pazpar2-js
 if [ -d /etc/httpd/conf.d ]; then
 	ln -sf /etc/pazpar2/ap2pazpar2-js.cfg /etc/httpd/conf.d/pazpar2-js.conf
-	/sbin/service httpd condrestart
 fi
 %preun -n pazpar2-js
-if [ -L /etc/httpd/conf.d/pazpar2-js.conf ]; then
-	rm /etc/httpd/conf.d/pazpar2-js.conf
-	/sbin/service httpd condrestart
+if [ $1 = 0 ]; then
+	if [ -L /etc/httpd/conf.d/pazpar2-js.conf ]; then
+		rm /etc/httpd/conf.d/pazpar2-js.conf
+	fi
 fi
 %package -n pazpar2-doc
 Summary: pazpar2 documentation
