@@ -446,6 +446,7 @@ void session_alert_watch(struct session *s, int what)
         s->watchlist[what].obs = 0;
 
         session_leave(s);
+        yaz_log(YLOG_DEBUG, "session_alert_watch: %d calling function: %p", what, fun);
         fun(data);
     }
     else
@@ -509,7 +510,7 @@ int session_active_clients(struct session *s)
     return res;
 }
 
-int session_preferred_clients_ready(struct session *s)
+int session_is_preferred_clients_ready(struct session *s)
 {
     struct client_list *l;
     int res = 0;
@@ -517,7 +518,7 @@ int session_preferred_clients_ready(struct session *s)
     for (l = s->clients; l; l = l->next)
         if (client_is_active_preferred(l->client))
             res++;
-
+    yaz_log(YLOG_DEBUG, "%p Session has %d active preferred clients.", s, res);
     return res == 0;
 }
 
