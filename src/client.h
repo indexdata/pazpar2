@@ -77,6 +77,7 @@ int client_prep_connection(struct client *cl,
 void client_start_search(struct client *cl);
 void client_set_session(struct client *cl, struct session *se);
 int client_is_active(struct client *cl);
+int client_is_active_preferred(struct client *cl);
 struct client *client_next_in_session(struct client *cl);
 
 int client_parse_query(struct client *cl, const char *query);

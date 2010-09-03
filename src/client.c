@@ -147,7 +147,9 @@ void client_set_state(struct client *cl, enum client_state st)
        that session is not mutex locked if client is already active */
     if (was_active && !client_is_active(cl) && cl->session)
     {
+
         int no_active = session_active_clients(cl->session);
+        yaz_log(YLOG_DEBUG, "%s: releasing watches on zero active: %d", client_get_url(cl), no_active);
         if (no_active == 0) {
             session_alert_watch(cl->session, SESSION_WATCH_SHOW);
             session_alert_watch(cl->session, SESSION_WATCH_SHOW_PREF);
@@ -447,14 +449,22 @@ static void ingest_raw_record(struct client *cl, ZOOM_record rec)
 
 static void client_check_preferred_watch(struct client *cl)
 {
+    yaz_log(YLOG_DEBUG, "client_check_preferred_watch: %s ", client_get_url(cl));
     struct session *se = cl->session;
     if (se)
     {
         client_unlock(cl);
-        if (session_preferred_clients_ready(se))
+        if (session_is_preferred_clients_ready(se)) {
             session_alert_watch(se, SESSION_WATCH_SHOW_PREF);
+        }
+        else
+            yaz_log(YLOG_DEBUG, "client_check_preferred_watch: %s ", client_get_url(cl));
+
         client_lock(cl);
     }
+    else
+        yaz_log(YLOG_WARN, "client_check_preferred_watch: %s. No session!", client_get_url(cl));
+
 }
 
 void client_search_response(struct client *cl)
