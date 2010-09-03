@@ -4,49 +4,60 @@
 <term>
 <id>donut:8983/solr/select</id>
 <name>SOLR Test</name>
-<frequency>29</frequency>
+<frequency>1128</frequency>
 <state>Client_Idle</state>
 <diagnostic>0</diagnostic>
 </term>
 </list>
 <list name="author">
-<term><name>Steinberg, Louis A</name><frequency>1</frequency></term>
-<term><name>Lencevicius, Raimondas</name><frequency>1</frequency></term>
-<term><name>Mills, Kyle</name><frequency>1</frequency></term>
-<term><name>Simon, Frank</name><frequency>1</frequency></term>
-<term><name>Myers, Katherine</name><frequency>1</frequency></term>
-<term><name>Compton, Jason</name><frequency>1</frequency></term>
-<term><name>Adair, Cherry</name><frequency>1</frequency></term>
-<term><name>Shearer, Beverly</name><frequency>1</frequency></term>
-<term><name>Arnold, Ken</name><frequency>1</frequency></term>
-<term><name>Steinberg, Gene</name><frequency>1</frequency></term>
-<term><name>Smith, George A</name><frequency>1</frequency></term>
-<term><name>Crookston, Newell W</name><frequency>1</frequency></term>
-<term><name>Ferguson, Derek</name><frequency>1</frequency></term>
-<term><name>Thomas, Thomas M</name><frequency>1</frequency></term>
-<term><name>Mitchell, Will David</name><frequency>1</frequency></term>
+<term><name>D&apos;Ignazio, Fred</name><frequency>4</frequency></term>
+<term><name>Lampton, Christopher</name><frequency>2</frequency></term>
+<term><name>Grauer, Robert T</name><frequency>2</frequency></term>
+<term><name>Carlson, Edward H</name><frequency>2</frequency></term>
+<term><name>Groner, Gabriel F</name><frequency>2</frequency></term>
+<term><name>Jones, Aubrey B</name><frequency>2</frequency></term>
+<term><name>Boren, Sharon</name><frequency>2</frequency></term>
+<term><name>Fiday, David</name><frequency>2</frequency></term>
+<term><name>Nevile, Liddy</name><frequency>2</frequency></term>
+<term><name>Ledin, Jim</name><frequency>1</frequency></term>
+<term><name>Tagg, W</name><frequency>1</frequency></term>
+<term><name>Zaks, Rodnay</name><frequency>1</frequency></term>
+<term><name>Wyner, Keith</name><frequency>1</frequency></term>
+<term><name>Zuanich, Margaret Ann</name><frequency>1</frequency></term>
+<term><name>Salz, Fredrick R</name><frequency>1</frequency></term>
 </list>
 <list name="subject">
-<term><name>Debugging in computer science</name><frequency>7</frequency></term>
-<term><name>Women computer programmers</name><frequency>4</frequency></term>
-<term><name>Virtual computer systems</name><frequency>4</frequency></term>
-<term><name>Embedded computer systems</name><frequency>3</frequency></term>
-<term><name>Cataloging of computer network resources</name><frequency>3</frequency></term>
-<term><name>Interactive computer systems</name><frequency>2</frequency></term>
-<term><name>Real-time data processing</name><frequency>2</frequency></term>
-<term><name>Computer software</name><frequency>2</frequency></term>
-<term><name>Internet searching</name><frequency>2</frequency></term>
-<term><name>Microcomputers</name><frequency>2</frequency></term>
-<term><name>Library surveys</name><frequency>2</frequency></term>
-<term><name>Microprocessors</name><frequency>2</frequency></term>
-<term><name>Computer simulation</name><frequency>2</frequency></term>
-<term><name>Special forces (Military science)</name><frequency>1</frequency></term>
-<term><name>Chinese</name><frequency>1</frequency></term>
+<term><name>Apple computer</name><frequency>40</frequency></term>
+<term><name>BASIC (Computer program language)</name><frequency>38</frequency></term>
+<term><name>Atari computer</name><frequency>35</frequency></term>
+<term><name>Programming (Computers)</name><frequency>30</frequency></term>
+<term><name>Digital computer simulation</name><frequency>20</frequency></term>
+<term><name>Computer graphics</name><frequency>18</frequency></term>
+<term><name>LOGO (Computer program language)</name><frequency>14</frequency></term>
+<term><name>Computer games</name><frequency>14</frequency></term>
+<term><name>Debugging in computer science</name><frequency>8</frequency></term>
+<term><name>Time-sharing computer systems</name><frequency>8</frequency></term>
+<term><name>Virtual computer systems</name><frequency>8</frequency></term>
+<term><name>Interactive computer systems</name><frequency>8</frequency></term>
+<term><name>Embedded computer systems</name><frequency>7</frequency></term>
+<term><name>Computers</name><frequency>6</frequency></term>
+<term><name>Engineering</name><frequency>6</frequency></term>
 </list>
 <list name="date">
-<term><name>2000</name><frequency>17</frequency></term>
-<term><name>2001</name><frequency>6</frequency></term>
-<term><name>1999</name><frequency>5</frequency></term>
-<term><name>1986</name><frequency>1</frequency></term>
+<term><name>1984</name><frequency>23</frequency></term>
+<term><name>2000</name><frequency>18</frequency></term>
+<term><name>1983</name><frequency>9</frequency></term>
+<term><name>2001</name><frequency>7</frequency></term>
+<term><name>1999</name><frequency>6</frequency></term>
+<term><name>1985</name><frequency>6</frequency></term>
+<term><name>1986</name><frequency>4</frequency></term>
+<term><name>1970</name><frequency>4</frequency></term>
+<term><name>1966</name><frequency>2</frequency></term>
+<term><name>1964</name><frequency>2</frequency></term>
+<term><name>1973</name><frequency>2</frequency></term>
+<term><name>1971</name><frequency>1</frequency></term>
+<term><name>1987</name><frequency>1</frequency></term>
+<term><name>1960</name><frequency>1</frequency></term>
+<term><name>1959</name><frequency>1</frequency></term>
 </list>
 </termlist>
