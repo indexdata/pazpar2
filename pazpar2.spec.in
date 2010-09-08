@@ -85,6 +85,9 @@ cp etc/*.xsl ${RPM_BUILD_ROOT}/etc/pazpar2/
 mkdir -p ${RPM_BUILD_ROOT}/etc/rc.d/init.d
 install -m755 src/pazpar2.rpm.init ${RPM_BUILD_ROOT}/etc/rc.d/init.d/pazpar2
 echo "Alias /pazpar2 /usr/share/pazpar2" >${RPM_BUILD_ROOT}/etc/pazpar2/ap2pazpar2-js.cfg
+mkdir -p ${RPM_BUILD_ROOT}/etc/logrotate.d
+install -m644 src/pazpar2.rpm.logrotate ${RPM_BUILD_ROOT}/etc/logrotate.d/pazpar2
+
 %clean
 rm -fr ${RPM_BUILD_ROOT}
 
@@ -101,6 +104,7 @@ rm -fr ${RPM_BUILD_ROOT}
 %config %{_sysconfdir}/pazpar2/settings/*.xml
 %config %{_sysconfdir}/pazpar2/services-available/*.xml
 %config %{_sysconfdir}/rc.d/init.d/pazpar2
+%config(noreplace) /etc/logrotate.d/pazpar2
 %{_mandir}/man5/pazpar2*
 %{_mandir}/man7/pazpar2*
 %{_mandir}/man8/pazpar2*

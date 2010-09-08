@@ -2,7 +2,7 @@
 
 sbin_PROGRAMS = pazpar2
 
-EXTRA_DIST = pazpar2.rpm.init
+EXTRA_DIST = pazpar2.rpm.init pazpar2.rpm.logrotate
 
 check_PROGRAMS = \
       test_sel_thread \

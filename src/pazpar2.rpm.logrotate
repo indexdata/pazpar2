@@ -1,0 +1,13 @@
+/var/log/pazpar2.log {
+	weekly
+	missingok
+	rotate 4
+	compress
+	delaycompress
+	notifempty
+	postrotate
+		if [ -f /var/run/pazpar2.pid ]; then
+			/sbin/service pazpar2 restart > /dev/null
+		fi
+	endscript
+}
