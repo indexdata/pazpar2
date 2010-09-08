@@ -1,3 +1,9 @@
+pazpar2 (1.4.4-2indexdata) lucid; urgency=low
+
+  * Rebuild for libicu44.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Wed, 08 Sep 2010 11:01:35 +0200
+
 pazpar2 (1.4.4-1indexdata) unstable; urgency=low
 
   * Upstream.
