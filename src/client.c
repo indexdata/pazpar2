@@ -447,10 +447,10 @@ static void ingest_raw_record(struct client *cl, ZOOM_record rec)
     client_show_raw_dequeue(cl);
 }
 
-static void client_check_preferred_watch(struct client *cl)
+void client_check_preferred_watch(struct client *cl)
 {
-    yaz_log(YLOG_DEBUG, "client_check_preferred_watch: %s ", client_get_url(cl));
     struct session *se = cl->session;
+    yaz_log(YLOG_DEBUG, "client_check_preferred_watch: %s ", client_get_url(cl));
     if (se)
     {
         client_unlock(cl);
@@ -458,7 +458,7 @@ static void client_check_preferred_watch(struct client *cl)
             session_alert_watch(se, SESSION_WATCH_SHOW_PREF);
         }
         else
-            yaz_log(YLOG_DEBUG, "client_check_preferred_watch: %s ", client_get_url(cl));
+            yaz_log(YLOG_DEBUG, "client_check_preferred_watch: Still locked on preferred targets.");
 
         client_lock(cl);
     }
@@ -490,8 +490,6 @@ void client_search_response(struct client *cl)
         cl->hits = ZOOM_resultset_size(resultset);
         if (se)
             se->total_hits += cl->hits;
-        if (cl->preferred)
-            client_check_preferred_watch(cl);
     }
 }
 
@@ -665,7 +663,8 @@ void client_start_search(struct client *cl)
 
     if (opt_preferred) {
         cl->preferred = atoi(opt_preferred);
-        yaz_log(YLOG_LOG, "Target %s has preferred: %d", sdb->database->url, cl->preferred);
+        if (cl->preferred)
+            yaz_log(YLOG_LOG, "Target %s has preferred status: %d", sdb->database->url, cl->preferred);
     }
     client_set_state(cl, Client_Working);
 
