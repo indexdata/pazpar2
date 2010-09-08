@@ -936,7 +936,7 @@ static void cmd_show(struct http_channel *c)
 
     if (block)
     {
-        if (!strcmp(block, "preferred") && !session_is_preferred_clients_ready(s->psession)) {
+        if (!strcmp(block, "preferred") && !session_is_preferred_clients_ready(s->psession) && reclist_get_num_records(s->psession->reclist) == 0) {
             // if there is already a watch/block. we do not block this one
             if (session_set_watch(s->psession, SESSION_WATCH_SHOW_PREF,
                                   show_records_ready, c, c) != 0)
