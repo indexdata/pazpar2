@@ -251,6 +251,7 @@ static void non_block_events(struct connection *co)
         struct client *cl = co->client;
         if (cl)
         {
+            client_check_preferred_watch(cl);
             client_got_records(cl);
         }
     }
