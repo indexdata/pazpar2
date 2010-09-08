@@ -97,6 +97,7 @@ struct client {
     int maxrecs;
     int startrecs;
     int diagnostic;
+    int preferred;
     enum client_state state;
     struct show_raw *show_raw;
     ZOOM_resultset resultset;
@@ -146,9 +147,13 @@ void client_set_state(struct client *cl, enum client_state st)
        that session is not mutex locked if client is already active */
     if (was_active && !client_is_active(cl) && cl->session)
     {
+
         int no_active = session_active_clients(cl->session);
-        if (no_active == 0)
+        yaz_log(YLOG_DEBUG, "%s: releasing watches on zero active: %d", client_get_url(cl), no_active);
+        if (no_active == 0) {
             session_alert_watch(cl->session, SESSION_WATCH_SHOW);
+            session_alert_watch(cl->session, SESSION_WATCH_SHOW_PREF);
+        }
     }
 }
 
@@ -442,6 +447,26 @@ static void ingest_raw_record(struct client *cl, ZOOM_record rec)
     client_show_raw_dequeue(cl);
 }
 
+static void client_check_preferred_watch(struct client *cl)
+{
+    yaz_log(YLOG_DEBUG, "client_check_preferred_watch: %s ", client_get_url(cl));
+    struct session *se = cl->session;
+    if (se)
+    {
+        client_unlock(cl);
+        if (session_is_preferred_clients_ready(se)) {
+            session_alert_watch(se, SESSION_WATCH_SHOW_PREF);
+        }
+        else
+            yaz_log(YLOG_DEBUG, "client_check_preferred_watch: %s ", client_get_url(cl));
+
+        client_lock(cl);
+    }
+    else
+        yaz_log(YLOG_WARN, "client_check_preferred_watch: %s. No session!", client_get_url(cl));
+
+}
+
 void client_search_response(struct client *cl)
 {
     struct connection *co = cl->connection;
@@ -465,6 +490,8 @@ void client_search_response(struct client *cl)
         cl->hits = ZOOM_resultset_size(resultset);
         if (se)
             se->total_hits += cl->hits;
+        if (cl->preferred)
+            client_check_preferred_watch(cl);
     }
 }
 
@@ -620,13 +647,14 @@ void client_start_search(struct client *cl)
     ZOOM_connection link = connection_get_link(co);
     ZOOM_resultset rs;
     char *databaseName = sdb->database->databases[0];
-    const char *opt_piggyback = session_setting_oneval(sdb, PZ_PIGGYBACK);
-    const char *opt_queryenc = session_setting_oneval(sdb, PZ_QUERYENCODING);
-    const char *opt_elements = session_setting_oneval(sdb, PZ_ELEMENTS);
-    const char *opt_requestsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
-    const char *opt_maxrecs = session_setting_oneval(sdb, PZ_MAXRECS);
-    const char *opt_sru = session_setting_oneval(sdb, PZ_SRU);
-    const char *opt_sort = session_setting_oneval(sdb, PZ_SORT);
+    const char *opt_piggyback   = session_setting_oneval(sdb, PZ_PIGGYBACK);
+    const char *opt_queryenc    = session_setting_oneval(sdb, PZ_QUERYENCODING);
+    const char *opt_elements    = session_setting_oneval(sdb, PZ_ELEMENTS);
+    const char *opt_requestsyn  = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
+    const char *opt_maxrecs     = session_setting_oneval(sdb, PZ_MAXRECS);
+    const char *opt_sru         = session_setting_oneval(sdb, PZ_SRU);
+    const char *opt_sort        = session_setting_oneval(sdb, PZ_SORT);
+    const char *opt_preferred   = session_setting_oneval(sdb, PZ_PREFERRED);
     char maxrecs_str[24], startrecs_str[24];
 
     assert(link);
@@ -634,6 +662,11 @@ void client_start_search(struct client *cl)
     cl->hits = -1;
     cl->record_offset = 0;
     cl->diagnostic = 0;
+
+    if (opt_preferred) {
+        cl->preferred = atoi(opt_preferred);
+        yaz_log(YLOG_LOG, "Target %s has preferred: %d", sdb->database->url, cl->preferred);
+    }
     client_set_state(cl, Client_Working);
 
     if (*opt_piggyback)
@@ -669,6 +702,7 @@ void client_start_search(struct client *cl)
         ZOOM_connection_option_set(link, "databaseName", databaseName);
 
     /* TODO Verify does it break something for CQL targets(non-SOLR) ? */
+    /* facets definition is in PQF */
     client_set_facets_request(cl, link);
 
     if (cl->cqlquery)
@@ -709,7 +743,7 @@ struct client *client_create(void)
     r->resultset = 0;
     r->mutex = 0;
     pazpar2_mutex_create(&r->mutex, "client");
-
+    r->preferred = 0;
     r->ref_count = 1;
     client_use(1);
     
@@ -970,6 +1004,19 @@ int client_is_active(struct client *cl)
     return 0;
 }
 
+int client_is_active_preferred(struct client *cl)
+{
+    /* only count if this is a preferred target. */
+    if (!cl->preferred)
+        return 0;
+    /* TODO No sure this the condition that Seb wants */
+    if (cl->connection && (cl->state == Client_Connecting ||
+                           cl->state == Client_Working))
+        return 1;
+    return 0;
+}
+
+
 Odr_int client_get_hits(struct client *cl)
 {
     return cl->hits;
@@ -1017,6 +1064,12 @@ void client_set_startrecs(struct client *cl, int v)
 {
     cl->startrecs = v;
 }
+
+void client_set_preferred(struct client *cl, int v)
+{
+    cl->preferred = v;
+}
+
 
 /*
  * Local variables:

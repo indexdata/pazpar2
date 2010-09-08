@@ -79,7 +79,8 @@ struct session_database
 
 #define SESSION_WATCH_SHOW      0
 #define SESSION_WATCH_RECORD    1
-#define SESSION_WATCH_MAX       1
+#define SESSION_WATCH_SHOW_PREF 2
+#define SESSION_WATCH_MAX       2
 
 #define SESSION_MAX_TERMLISTS 10
 
@@ -167,6 +168,7 @@ void show_single_stop(struct session *s, struct record_cluster *rec);
 struct termlist_score **termlist(struct session *s, const char *name, int *num);
 int session_set_watch(struct session *s, int what, session_watchfun fun, void *data, struct http_channel *c);
 int session_active_clients(struct session *s);
+int session_is_preferred_clients_ready(struct session *s);
 void session_apply_setting(struct session *se, char *dbname, char *setting, char *value);
 const char *session_setting_oneval(struct session_database *db, int offset);
 

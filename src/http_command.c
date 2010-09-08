@@ -936,7 +936,19 @@ static void cmd_show(struct http_channel *c)
 
     if (block)
     {
-        if (status && reclist_get_num_records(s->psession->reclist) == 0)
+        if (!strcmp(block, "preferred") && !session_is_preferred_clients_ready(s->psession)) {
+            // if there is already a watch/block. we do not block this one
+            if (session_set_watch(s->psession, SESSION_WATCH_SHOW_PREF,
+                                  show_records_ready, c, c) != 0)
+            {
+                yaz_log(c->http_sessions->log_level,
+                        "%p Session %u: Blocking on cmd_show. Waiting for preferred targets", s, s->session_id);
+            }
+            release_session(c,s);
+            return;
+
+        }
+        else if (status && reclist_get_num_records(s->psession->reclist) == 0)
         {
             // if there is already a watch/block. we do not block this one
             if (session_set_watch(s->psession, SESSION_WATCH_SHOW,
