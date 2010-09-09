@@ -430,7 +430,8 @@
 -->
    <field name="id" type="string" indexed="true" stored="true" required="true" /> 
 
-   <field name="author"       type="text" indexed="true" stored="true" omitNorms="true"/>
+   <field name="author"       type="text" indexed="true" stored="true" compressed="true" omitNorms="true"/>
+   <field name="author_exact" type="string" indexed="true" stored="true" compressed="true" omitNorms="true"/>
    <field name="author-date"  type="text" indexed="true" stored="true" omitNorms="true"/>
    <field name="author-title" type="text" indexed="true" stored="true" omitNorms="true"/>
 
@@ -439,17 +440,17 @@
    <field name="corporate-name"     type="text" indexed="true" stored="true" omitNorms="true"/>
 
    <field name="callnumber" type="text" indexed="true" stored="true" multiValued="true" omitNorms="true"/>
-   <field name="citation"   type="text" indexed="true" stored="true" multiValued="true" omitNorms="true"/>
+   <field name="citation"   type="text" indexed="true" stored="true" multiValued="true" compressed="true" omitNorms="true"/>
 
    <field name="date"        type="text"    indexed="true" stored="true" multiValued="true" omitNorms="true"/>
-   <field name="description" type="text_ws" indexed="true" stored="true" multiValued="true" omitNorms="true"/>
+   <field name="description" type="text_ws" indexed="true" stored="true" multiValued="true" compressed="true" omitNorms="true"/>
 
    <field name="edition" type="text" indexed="true" stored="true" multiValued="true" omitNorms="true"/>
 
    <field name="electronic-format-instruction" type="text" indexed="true" stored="true" multiValued="true" omitNorms="true"/>
    <field name="electronic-format-type"        type="text" indexed="true" stored="true" multiValued="true" omitNorms="true"/>
-   <field name="electronic-note"               type="text" indexed="true" stored="true" multiValued="true" omitNorms="true"/>
-   <field name="electronic-text"               type="text" indexed="true" stored="true" multiValued="true" omitNorms="true"/>
+   <field name="electronic-note"               type="text" indexed="true" stored="true" multiValued="true" compressed="true" omitNorms="true"/>
+   <field name="electronic-text"               type="text" indexed="true" stored="true" multiValued="true" compressed="true" omitNorms="true"/>
    <field name="electronic-url"                type="text" indexed="true" stored="true" multiValued="true" omitNorms="true"/>
 
    <field name="isbn" type="text" indexed="true" stored="true" multiValued="true" omitNorms="true"/>
@@ -465,14 +466,16 @@
    <field name="series-title" type="text" indexed="true" stored="true" multiValued="true" omitNorms="true"/>
 
    <field name="subject" type="text_ws" indexed="true" stored="true" multiValued="true" omitNorms="true" />
+   <field name="subject_exact" type="string" indexed="true" stored="true" multiValued="true" omitNorms="true" />
 
    <field name="subject-long" type="text_ws" indexed="true" stored="true"   multiValued="true" omitNorms="true"/>
    <field name="system-control-nr" type="text" indexed="true" stored="true" multiValued="true" omitNorms="true"/>
 
    <field name="tech-rep-nr" type="text" indexed="true" multiValued="true" stored="true"/>
 
-   <field name="title" type="text" indexed="true" stored="true"/>
-   <field name="title-complete" type="text" indexed="true" stored="true"/>
+   <field name="title" type="text" indexed="true" compressed="true" stored="true"/>
+   <field name="title_exact" type="string" indexed="true" compressed="true" stored="true"/>
+   <field name="title-complete" type="text" indexed="true" compressed="true" stored="true"/>
    <field name="title-dates" type="text" indexed="true" stored="true"/>
    <field name="title-medium" type="text" indexed="true" stored="true"/>
    <field name="title-number-section" type="text" indexed="true" stored="true"/>
@@ -596,8 +599,10 @@
    <copyField source="manu" dest="text"/>
    <copyField source="features" dest="text"/>
    <copyField source="includes" dest="text"/>
-   <copyField source="manu" dest="manu_exact"/>
 -->
+   <copyField source="title"   dest="title_exact"/>
+   <copyField source="author"  dest="author_exact"/>
+   <copyField source="subject" dest="subject_exact"/>
 	
    <!-- Above, multiple source fields are copied to the [text] field. 
 	  Another way to map multiple source fields to the same 
