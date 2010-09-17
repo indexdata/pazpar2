@@ -831,16 +831,27 @@
      <term>pz:nativesyntax</term>
      <listitem>
       <para>
-       The representation (syntax) of the retrieval records. Currently
-       recognized values are iso2709 and xml.
+       Specifies how Pazpar2 shoule map retrieved records to XML. Currently
+       supported values are <literal>xml</literal>,
+       <literal>iso2709</literal> and <literal>txml</literal>.
       </para>
       <para>
-       For iso2709, can also specify a native character set, e.g. "iso2709;latin-1".
-       If no character set is provided, MARC-8 is assumed.
+       The value <literal>iso2709</literal> makes Pazpar2 convert retrieved
+       MARC records to MARCXML. In order to convert to XML, the exact
+       chacater set of the MARC must be known (if not, the resulting
+       XML is probably not well-formed). The character set may be 
+       specified by adding:
+       <literal>;charset=</literal><replaceable>charset</replaceable> to
+       <literal>iso2709</literal>. If omitted, a charset of
+       MARC-8 is assumed. This is correct for most MARC21/USMARC records.
       </para>
       <para>
-        If pz:nativesyntax is not specified, pazpar2 will attempt to determine
-	the value based on the response from the server.
+       The value <literal>txml</literal> is like <literal>iso2709</literal>
+       except that records are converted to TurboMARC instead of MARCXML.
+      </para>
+      <para>
+       The value <literal>xml</literal> is used if Pazpar2 retrieves
+       records that are already XML (no conversion takes place).
       </para>
      </listitem>
     </varlistentry>
