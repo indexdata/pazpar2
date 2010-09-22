@@ -1,0 +1,4 @@
+http://localhost:9763/search.pz2?command=init
+http://localhost:9763/search.pz2?session=1&command=search&query=cql:schafroth
+10 http://localhost:9763/search.pz2?session=1&command=show&block=1
+
