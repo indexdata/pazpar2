@@ -485,11 +485,14 @@ void client_search_response(struct client *cl)
     }
     else
     {
+        yaz_log(YLOG_DEBUG, "client_search_response: hits %d", cl->hits);
         client_report_facets(cl, resultset);
         cl->record_offset = cl->startrecs;
         cl->hits = ZOOM_resultset_size(resultset);
-        if (se)
+        if (se) {
             se->total_hits += cl->hits;
+            yaz_log(YLOG_DEBUG, "client_search_response: total hits %d", se->total_hits);
+        }
     }
 }
 
