@@ -5,6 +5,7 @@
 
   <xsl:output indent="yes" method="xml" version="1.0"
     encoding="UTF-8" />
+  <xsl:param name="medium"/>
 
   <!-- Extract metadata from MARC21/USMARC from streamlined marcxml format 
     http://www.loc.gov/marc/bibliographic/ecbdhome.html -->
@@ -53,9 +54,10 @@
       </xsl:choose>
     </xsl:variable>
 
-    <xsl:variable name="medium">
+    <xsl:variable name="vmedium">
       <xsl:choose>
-	<xsl:when test="($typeofrec='a' or $typeofrec='t') and $biblevel='m'">book</xsl:when>
+        <xsl:when test="string-length($medium)"><xsl:value-of select="$medium" /></xsl:when>
+        <xsl:when test="($typeofrec='a' or $typeofrec='t') and $biblevel='m'">book</xsl:when>
         <xsl:when test="$typeofrec='j' or $typeofrec='i'">
 	  <xsl:text>recording</xsl:text>
 	  <xsl:choose>
@@ -595,8 +597,8 @@
       </xsl:for-each>
 
       <pz:metadata type="medium">
-        <xsl:value-of select="$medium" />
-	<xsl:if test="string-length($electronic) and $medium != 'electronic'">
+        <xsl:value-of select="$vmedium" />
+	<xsl:if test="string-length($electronic) and $vmedium != 'electronic'">
 	  <xsl:text> (electronic)</xsl:text>
 	</xsl:if>
       </pz:metadata>
