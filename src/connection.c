@@ -432,6 +432,8 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
         strcat(http_hostport, host->hostport);
         ZOOM_connection_connect(link, http_hostport, 0);
     }
+    else if (zproxy && *zproxy)
+        ZOOM_connection_connect(link, host->hostport, 0);        
     else
         ZOOM_connection_connect(link, host->ipport, 0);
     
