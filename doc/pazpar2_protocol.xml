@@ -13,10 +13,12 @@
  <refentryinfo>
   <productname>Pazpar2</productname>
   <productnumber>&version;</productnumber>
+  <info><orgname>Index Data</orgname></info>
  </refentryinfo>
  <refmeta>
   <refentrytitle>Pazpar2 protocol</refentrytitle>
   <manvolnum>7</manvolnum>
+  <refmiscinfo class="manual">Conventions and miscellaneous</refmiscinfo>
  </refmeta>
 
  <refnamediv>
