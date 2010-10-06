@@ -674,6 +674,23 @@
         </pz:metadata>
       </xsl:for-each>
 
+      <xsl:for-each select="tmarc:d999">
+        <pz:metadata type="localid">
+          <xsl:choose>
+            <xsl:when test="tmarc:sa">
+              <xsl:value-of select="tmarc:sa"/>
+            </xsl:when>
+            <xsl:when test="tmarc:sc">
+              <xsl:value-of select="tmarc:sc"/>
+            </xsl:when> 
+            <xsl:otherwise>
+              <xsl:value-of select="tmarc:sd"/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </pz:metadata>
+      </xsl:for-each>
+
+
       <!-- passthrough id data -->
       <xsl:for-each select="pz:metadata">
         <xsl:copy-of select="." />
