@@ -978,10 +978,18 @@
      <term>pz:sru</term>
      <listitem>
       <para>
-       This setting enables SRU/SRW support. It has three possible settings.
+       This setting enables
+       <ulink url="&url.sru;">SRU</ulink>/<ulink url="&url.solr;">SOLR</ulink>
+       support.
+       It has four possible settings.
        'get', enables SRU access through GET requests. 'post' enables SRU/POST
        support, less commonly supported, but useful if very large requests are
-       to be submitted. 'srw' enables the SRW variation of the protocol.
+       to be submitted. 'srw' enables the SRW (SRU over SOAP) variation of
+       the protocol.
+      </para>
+      <para>
+	A value of 'solr' anables SOLR client support. This is supported
+	for Pazpar version 1.5.0 and later.
       </para>
      </listitem>
     </varlistentry>
