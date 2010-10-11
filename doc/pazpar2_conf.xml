@@ -1003,7 +1003,7 @@
       <para>
        This allows SRU version to be specified. If unset Pazpar2
        will the default of YAZ (currently 1.2). Should be set
-       to 1.1 or 1.2.
+       to 1.1 or 1.2. For SOLR, the current supported/tested version is 1.4
       </para>
      </listitem>
     </varlistentry>
