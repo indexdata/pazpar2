@@ -14,8 +14,13 @@
         version="1.0"
         encoding="UTF-8"/>
 
+  <xsl:param name="medium" />
+
   <xsl:template match="/record">
     <pz:record>
+      <pz:metadata type="medium">
+         <xsl:value-of select="$medium" />
+      </pz:metadata>
       <xsl:apply-templates/>
     </pz:record>
   </xsl:template>
