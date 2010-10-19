@@ -24,7 +24,7 @@ if test -z "$F"; then
 fi
 
 rm -f ztest.pid
-$F -l ztest.log -p ztest.pid -D @:9999
+$F -l ztest.log -p ztest.pid -D tcp:localhost:9999
 sleep 1
 if test ! -f ztest.pid; then
     echo "yaz-ztest could not be started"

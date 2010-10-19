@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN"
- "http://www.oasis-open.org/docbook/xml/4.1/docbookx.dtd"
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
 [
      <!ENTITY % local SYSTEM "local.ent">
      %local;
@@ -13,10 +13,13 @@
  <refentryinfo>
   <productname>Pazpar2</productname>
   <productnumber>&version;</productnumber>
+  <info><orgname>Index Data</orgname></info>
  </refentryinfo>
+
  <refmeta>
   <refentrytitle>Pazpar2 conf</refentrytitle>
   <manvolnum>5</manvolnum>
+  <refmiscinfo class="manual">File formats and conventions</refmiscinfo>
  </refmeta>
  
  <refnamediv>
@@ -978,10 +981,18 @@
      <term>pz:sru</term>
      <listitem>
       <para>
-       This setting enables SRU/SRW support. It has three possible settings.
+       This setting enables
+       <ulink url="&url.sru;">SRU</ulink>/<ulink url="&url.solr;">SOLR</ulink>
+       support.
+       It has four possible settings.
        'get', enables SRU access through GET requests. 'post' enables SRU/POST
        support, less commonly supported, but useful if very large requests are
-       to be submitted. 'srw' enables the SRW variation of the protocol.
+       to be submitted. 'srw' enables the SRW (SRU over SOAP) variation of
+       the protocol.
+      </para>
+      <para>
+	   A value of 'solr' anables SOLR client support. This is supported
+	   for Pazpar version 1.5.0 and later.
       </para>
      </listitem>
     </varlistentry>
@@ -992,7 +1003,7 @@
       <para>
        This allows SRU version to be specified. If unset Pazpar2
        will the default of YAZ (currently 1.2). Should be set
-       to 1.1 or 1.2.
+       to 1.1 or 1.2. For SOLR, the current supported/tested version is 1.4
       </para>
      </listitem>
     </varlistentry>
@@ -1051,6 +1062,47 @@
       </para>
      </listitem>
     </varlistentry>
+    
+    <varlistentry>
+     <term>pz:termlist_term_count</term>
+     <listitem>
+      <para>
+       Specifies that the target should return up to n terms for each facets (where termlist="yes"). This implies 
+       that the target can return facets on the search command. Requesting facets on targets that doesn't, 
+       will return unpredictable or error result.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:termlist_term_sort</term>
+     <listitem>
+      <para>
+       Specifies how the terms should be sorted. (Not yet implemented)
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:preferred</term>
+     <listitem>
+      <para>
+       Specifies that a target is preferred, e.g. possible local, faster target. Using block=pref on show command  
+       will wait for all these targets to return records before releasing the block. If no target is preferred, 
+       the block=pref will identical to block=1, which release when one target has returned records.     
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:block_timeout</term>
+     <listitem>
+      <para>
+       (Not yet implemented). Specifies the time for which a block should be released anyway.      
+      </para>
+     </listitem>
+    </varlistentry>
+    
    </variablelist>
 
   </refsect2>
