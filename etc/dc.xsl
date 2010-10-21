@@ -15,6 +15,8 @@
         version="1.0"
         encoding="UTF-8"/>
 
+  <xsl:param name="medium" />
+
   <xsl:template match="/*">
     <pz:record>
 
@@ -69,6 +71,10 @@
           <xsl:value-of select="."/>
         </pz:metadata>
       </xsl:for-each>
+
+      <pz:metadata type="medium">
+        <xsl:value-of select="$medium" />
+      </pz:metadata>
 
     </pz:record>
   </xsl:template>
