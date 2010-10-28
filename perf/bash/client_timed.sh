@@ -21,7 +21,7 @@ H="http://localhost:${PORT}/search.pz2"
 
 declare -i MAX_WAIT=2
 /usr/bin/time --format "$OF, init, %e" wget -q -O ${TMP_DIR}$OF.init.xml "$H/?command=init&service=${SERVICE}&extra=$OF" 2> ${TMP_DIR}$OF.init.time
-S=`xsltproc get_session.xsl $OF.init.xml`
+S=`xsltproc get_session.xsl ${TMP_DIR}$OF.init.xml`
 /usr/bin/time --format "$OF, search, %e" wget -q -O ${TMP_DIR}$OF.search.xml "$H?command=search&query=${QUERY}&session=$S" 2> ${TMP_DIR}$OF.search.time
 
 let r=0
@@ -31,7 +31,7 @@ while [ ${DO_DISPLAY} ] ; do
     echo "show in $SLEEP"
     sleep $SLEEP
     /usr/bin/time --format "$OF, show2, %e" wget -q -O ${TMP_DIR}$OF.show.$r.xml "$H?command=show&session=$S&start=$r&num=${NUM}&block=1" 2>> ${TMP_DIR}$OF.show.time
-    AC=`xsltproc get_activeclients.xsl ${OF}.show.$r.xml`
+    AC=`xsltproc get_activeclients.xsl ${TMP_DIR}${OF}.show.$r.xml`
     if [ "$AC" != "0" ] ; then 
 	echo "Active clients: ${AC}" 
 #    else
