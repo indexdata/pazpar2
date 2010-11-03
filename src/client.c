@@ -931,7 +931,7 @@ int client_parse_query(struct client *cl, const char *query)
     if (!cn)
     {
         client_set_state(cl, Client_Error);
-        yaz_log(YLOG_WARN, "Failed to parse CCL query %s for %s",
+        session_log(se, YLOG_WARN, "Failed to parse CCL query '%s' for %s",
                 query,
                 client_get_database(cl)->database->url);
         return -1;
