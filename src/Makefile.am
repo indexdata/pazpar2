@@ -12,8 +12,6 @@ TESTS = $(check_PROGRAMS)
 
 noinst_LIBRARIES = libpazpar2.a
 
-MAINTAINERCLEANFILES = Makefile.in cconfig.h 
-
 CONFIG_CLEAN_FILES=*.log
 
 AM_CFLAGS = $(YAZINC)
