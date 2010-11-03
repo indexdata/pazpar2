@@ -13,7 +13,7 @@ http://localhost:9763/search.pz2?command=search&query=function%20()%20%7B%250A%2
 http://localhost:9763/search.pz2?session=1&command=show&sort=date:1&block=1
 http://localhost:9763/search.pz2?session=1&command=show&start=0&number=1
 http://localhost:9763/search.pz2?command=init&clear=1
-http://localhost:9763/search.pz2?session=2&command=settings&pz:name%5Bz3950.indexdata.com%2Fgils%5D=gils&pz:requestsyntax%5Bz3950.indexdata.com%2Fgils%5D=usmarc&pz:nativesyntax%5Bz3950.indexdata.com%2Fgils%5D=iso2709&pz:xslt%5Bz3950.indexdata.com%2Fgils%5D=marc21%5Ftest.xsl
+http://localhost:9763/search.pz2?session=2&command=settings&pz:name%5Bz3950.indexdata.com%2Fgils%23DUMMY%5D=gils&pz:requestsyntax%5Bz3950.indexdata.com%2Fgils%23DUMMY%5D=usmarc&pz:nativesyntax%23DUMMY%5Bz3950.indexdata.com%2Fgils%23DUMMY%5D=iso2709&pz:xslt%5Bz3950.indexdata.com%2Fgils%23DUMMY%5D=marc21%5Ftest.xsl
 http://localhost:9763/search.pz2?session=2&command=search&query=computer
 2 http://localhost:9763/search.pz2?session=2&command=show&block=1
 http://localhost:9763/search.pz2?session=2&command=search&query=kubiak%20stanis%C5%82aw
