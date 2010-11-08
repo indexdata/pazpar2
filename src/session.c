@@ -148,30 +148,51 @@ void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
 
 void add_facet(struct session *s, const char *type, const char *value, int count)
 {
-    int i;
-
-    if (!*value)
-        return;
-    for (i = 0; i < s->num_termlists; i++)
-        if (!strcmp(s->termlists[i].name, type))
-            break;
-    if (i == s->num_termlists)
+    struct conf_service *service = s->service;
+    pp2_relevance_token_t prt;
+    const char *facet_component;
+    WRBUF facet_wrbuf = wrbuf_alloc();
+    prt = pp2_relevance_tokenize(service->facet_pct);
+    
+    pp2_relevance_first(prt, value, 0);
+    while ((facet_component = pp2_relevance_token_next(prt)))
     {
-        if (i == SESSION_MAX_TERMLISTS)
+        if (*facet_component)
         {
-            session_log(s, YLOG_FATAL, "Too many termlists");
-            return;
+            if (wrbuf_len(facet_wrbuf))
+                wrbuf_puts(facet_wrbuf, " ");
+            wrbuf_puts(facet_wrbuf, facet_component);
         }
-
-        s->termlists[i].name = nmem_strdup(s->nmem, type);
-        s->termlists[i].termlist 
-            = termlist_create(s->nmem, TERMLIST_HIGH_SCORE);
-        s->num_termlists = i + 1;
     }
-    session_log(s, YLOG_DEBUG, "Session: facets for %s: %s (%d)",
-                type, value, count);
-
-    termlist_insert(s->termlists[i].termlist, value, count);
+    pp2_relevance_token_destroy(prt);
+    
+    if (wrbuf_len(facet_wrbuf))
+    {
+        int i;
+        for (i = 0; i < s->num_termlists; i++)
+            if (!strcmp(s->termlists[i].name, type))
+                break;
+        if (i == s->num_termlists)
+        {
+            if (i == SESSION_MAX_TERMLISTS)
+            {
+                session_log(s, YLOG_FATAL, "Too many termlists");
+                wrbuf_destroy(facet_wrbuf);
+                return;
+            }
+            
+            s->termlists[i].name = nmem_strdup(s->nmem, type);
+            s->termlists[i].termlist 
+                = termlist_create(s->nmem, TERMLIST_HIGH_SCORE);
+            s->num_termlists = i + 1;
+        }
+        
+        session_log(s, YLOG_DEBUG, "Session: facets for %s: %s norm:%s (%d)",
+                    type, value, wrbuf_cstr(facet_wrbuf), count);
+        termlist_insert(s->termlists[i].termlist, wrbuf_cstr(facet_wrbuf),
+                        count);
+    }
+    wrbuf_destroy(facet_wrbuf);
 }
 
 static xmlDoc *record_to_xml(struct session *se,
