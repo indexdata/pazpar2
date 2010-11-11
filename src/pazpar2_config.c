@@ -678,7 +678,7 @@ static void inherit_server_settings(struct conf_service *s)
             pp2_charset_incref(s->relevance_pct);
         }
         else
-            s->relevance_pct = pp2_charset_create(0);
+            s->relevance_pct = pp2_charset_create_a_to_z();
     }
     
     if (!s->sort_pct)
@@ -689,7 +689,7 @@ static void inherit_server_settings(struct conf_service *s)
             pp2_charset_incref(s->sort_pct);
         }
         else
-            s->sort_pct = pp2_charset_create(0);
+            s->sort_pct = pp2_charset_create_a_to_z();
     }
     
     if (!s->mergekey_pct)
@@ -700,7 +700,7 @@ static void inherit_server_settings(struct conf_service *s)
             pp2_charset_incref(s->mergekey_pct);
         }
         else
-            s->mergekey_pct = pp2_charset_create(0);
+            s->mergekey_pct = pp2_charset_create_a_to_z();
     }
 
     if (!s->facet_pct)
