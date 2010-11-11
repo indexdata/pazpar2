@@ -7,7 +7,7 @@
 <term><name>Englund, Carl R</name><frequency>1</frequency></term>
 </list>
 <list name="subject">
-<term><name>Radioisotope Scanning</name><frequency>1</frequency></term>
+<term><name>Community Colleges</name><frequency>1</frequency></term>
 <term><name>Scintillation Cameras</name><frequency>1</frequency></term>
 <term><name>Imaging Systems In Medicine</name><frequency>1</frequency></term>
 <term><name>Cartography</name><frequency>1</frequency></term>
@@ -16,6 +16,6 @@
 <term><name>Computers</name><frequency>1</frequency></term>
 <term><name>Railroads</name><frequency>1</frequency></term>
 <term><name>Universities And Colleges</name><frequency>1</frequency></term>
-<term><name>Community Colleges</name><frequency>1</frequency></term>
+<term><name>Radioisotope Scanning</name><frequency>1</frequency></term>
 </list>
 </termlist>
