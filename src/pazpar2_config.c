@@ -131,6 +131,7 @@ static struct conf_service *service_init(struct conf_server *server,
     service->relevance_pct = 0;
     service->sort_pct = 0;
     service->mergekey_pct = 0;
+    service->facet_pct = 0;
 
     service->id = service_id ? nmem_strdup(nmem, service_id) : 0;
     service->num_metadata = num_metadata;
@@ -249,6 +250,7 @@ void service_destroy(struct conf_service *service)
             pp2_charset_destroy(service->relevance_pct);
             pp2_charset_destroy(service->sort_pct);
             pp2_charset_destroy(service->mergekey_pct);
+            pp2_charset_destroy(service->facet_pct);
             yaz_mutex_destroy(&service->mutex);
             nmem_destroy(service->nmem);
         }
@@ -566,6 +568,20 @@ static struct conf_service *service_create_static(struct conf_server *server,
                     return 0;
             }
         }
+        else if (!strcmp((const char *) n->name, "facet"))
+        {
+            if (service->mergekey_pct)
+            {
+                yaz_log(YLOG_LOG, "facety may not repeat in service");
+                return 0;
+            }
+            else
+            {
+                service->facet_pct = pp2_charset_create_xml(n);
+                if (!service->mergekey_pct)
+                    return 0;
+            }
+        }
         else if (!strcmp((const char *) n->name, (const char *) "metadata"))
         {
             if (parse_metadata(service, n, &md_node, &sk_node))
@@ -652,7 +668,7 @@ static void inherit_server_settings(struct conf_service *s)
         }
     }
     
-    /* use relevance/sort/mergekey from server if not defined
+    /* use relevance/sort/mergekey/facet from server if not defined
        for this service.. */
     if (!s->relevance_pct)
     {
@@ -662,7 +678,7 @@ static void inherit_server_settings(struct conf_service *s)
             pp2_charset_incref(s->relevance_pct);
         }
         else
-            s->relevance_pct = pp2_charset_create(0);
+            s->relevance_pct = pp2_charset_create_a_to_z();
     }
     
     if (!s->sort_pct)
@@ -673,7 +689,7 @@ static void inherit_server_settings(struct conf_service *s)
             pp2_charset_incref(s->sort_pct);
         }
         else
-            s->sort_pct = pp2_charset_create(0);
+            s->sort_pct = pp2_charset_create_a_to_z();
     }
     
     if (!s->mergekey_pct)
@@ -684,7 +700,18 @@ static void inherit_server_settings(struct conf_service *s)
             pp2_charset_incref(s->mergekey_pct);
         }
         else
-            s->mergekey_pct = pp2_charset_create(0);
+            s->mergekey_pct = pp2_charset_create_a_to_z();
+    }
+
+    if (!s->facet_pct)
+    {
+        if (server->facet_pct)
+        {
+            s->facet_pct = server->facet_pct;
+            pp2_charset_incref(s->facet_pct);
+        }
+        else
+            s->facet_pct = pp2_charset_create(0);
     }
 }
 
@@ -721,6 +748,7 @@ static struct conf_server *server_create(struct conf_config *config,
     server->relevance_pct = 0;
     server->sort_pct = 0;
     server->mergekey_pct = 0;
+    server->facet_pct = 0;
     server->server_settings = 0;
     server->http_server = 0;
     server->iochan_man = 0;
@@ -789,6 +817,12 @@ static struct conf_server *server_create(struct conf_config *config,
         {
             server->mergekey_pct = pp2_charset_create_xml(n);
             if (!server->mergekey_pct)
+                return 0;
+        }
+        else if (!strcmp((const char *) n->name, "facet"))
+        {
+            server->facet_pct = pp2_charset_create_xml(n);
+            if (!server->facet_pct)
                 return 0;
         }
         else if (!strcmp((const char *) n->name, "service"))
@@ -1015,6 +1049,7 @@ void server_destroy(struct conf_server *server)
     pp2_charset_destroy(server->relevance_pct);
     pp2_charset_destroy(server->sort_pct);
     pp2_charset_destroy(server->mergekey_pct);
+    pp2_charset_destroy(server->facet_pct);
     yaz_log(YLOG_LOG, "server_destroy server=%p", server);
     http_server_destroy(server->http_server);
 }

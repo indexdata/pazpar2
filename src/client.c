@@ -485,13 +485,15 @@ void client_search_response(struct client *cl)
     }
     else
     {
-        yaz_log(YLOG_DEBUG, "client_search_response: hits %d", cl->hits);
+        yaz_log(YLOG_DEBUG, "client_search_response: hits "
+                ODR_INT_PRINTF, cl->hits);
         client_report_facets(cl, resultset);
         cl->record_offset = cl->startrecs;
         cl->hits = ZOOM_resultset_size(resultset);
         if (se) {
             se->total_hits += cl->hits;
-            yaz_log(YLOG_DEBUG, "client_search_response: total hits %d", se->total_hits);
+            yaz_log(YLOG_DEBUG, "client_search_response: total hits "
+                    ODR_INT_PRINTF, se->total_hits);
         }
     }
 }
@@ -929,7 +931,7 @@ int client_parse_query(struct client *cl, const char *query)
     if (!cn)
     {
         client_set_state(cl, Client_Error);
-        yaz_log(YLOG_WARN, "Failed to parse CCL query %s for %s",
+        session_log(se, YLOG_WARN, "Failed to parse CCL query '%s' for %s",
                 query,
                 client_get_database(cl)->database->url);
         return -1;

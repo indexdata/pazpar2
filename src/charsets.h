@@ -34,6 +34,8 @@ typedef struct pp2_relevance_token_s *pp2_relevance_token_t;
 
 pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node);
 pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn);
+pp2_charset_t pp2_charset_create_a_to_z(void);
+
 void pp2_charset_destroy(pp2_charset_t pct);
 void pp2_charset_incref(pp2_charset_t pct);
 

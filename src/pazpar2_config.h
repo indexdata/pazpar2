@@ -119,6 +119,7 @@ struct conf_service
     pp2_charset_t relevance_pct;
     pp2_charset_t sort_pct;
     pp2_charset_t mergekey_pct;
+    pp2_charset_t facet_pct;
 
     struct database *databases;
     struct conf_targetprofiles *targetprofiles;
@@ -142,6 +143,8 @@ struct conf_server
     pp2_charset_t relevance_pct;
     pp2_charset_t sort_pct;
     pp2_charset_t mergekey_pct;
+    pp2_charset_t facet_pct;
+
     struct conf_service *service;
     struct conf_server *next;
     struct conf_config *config;

@@ -168,6 +168,7 @@ struct database *new_database(const char *id, NMEM nmem)
     struct database *db;
     char hostport[256];
     char *dbname;
+    char *db_comment;
     struct setting *idset;
 
     if (strlen(id) > 255)
@@ -177,6 +178,9 @@ struct database *new_database(const char *id, NMEM nmem)
         *(dbname++) = '\0';
     else
         dbname = "";
+    db_comment = strchr(dbname, '#');
+    if (db_comment)
+        *db_comment = '\0';
     db = nmem_malloc(nmem, sizeof(*db));
     memset(db, 0, sizeof(*db));
     db->host = 0;

@@ -121,11 +121,11 @@
     </varlistentry>
 
     <varlistentry>
-     <term>relevance / sort / mergekey</term>
+     <term>relevance / sort / mergekey / facet</term>
      <listitem>
       <para>
-       Specifies character set normalization for relevancy / sorting 
-       and the mergekey - for the server. These definitions serves as
+       Specifies character set normalization for relevancy / sorting /
+       mergekey and facets - for the server. These definitions serves as
        default for services that don't have these given. For the meaning
        of these settings refer to the "relevance" element inside service.
       </para>
@@ -409,6 +409,17 @@
 	 <para>
 	  Specifies ICU tokenization and transformation rules
 	  for tokens that are used in Pazpar2's mergekey. The contents
+	  is similar to that of <literal>relevance</literal>.
+	 </para>
+	</listitem>
+       </varlistentry>
+
+       <varlistentry>
+	<term>facet</term>
+	<listitem>
+	 <para>
+	  Specifies ICU tokenization and transformation rules
+	  for tokens that are used in Pazpar2's facets. The contents
 	  is similar to that of <literal>relevance</literal>.
 	 </para>
 	</listitem>

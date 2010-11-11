@@ -109,7 +109,7 @@ struct http_session *http_session_create(struct conf_service *service,
     char tmp_str[50];
 
     sprintf(tmp_str, "session#%u", sesid);
-    r->psession = new_session(nmem, service, tmp_str);
+    r->psession = new_session(nmem, service, sesid);
     r->session_id = sesid;
     r->timestamp = 0;
     r->nmem = nmem;

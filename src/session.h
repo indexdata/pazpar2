@@ -120,6 +120,7 @@ struct session {
     int number_of_warnings_unknown_metadata;
     normalize_cache_t normalize_cache;
     YAZ_MUTEX session_mutex;
+    unsigned session_id;
 };
 
 struct statistics {
@@ -147,7 +148,7 @@ struct hitsbytarget {
 
 struct hitsbytarget *hitsbytarget(struct session *s, int *count, NMEM nmem);
 struct session *new_session(NMEM nmem, struct conf_service *service,
-                            const char *name);
+                            unsigned session_id);
 void destroy_session(struct session *s);
 void session_init_databases(struct session *s);
 int load_targets(struct session *s, const char *fn);
@@ -179,7 +180,11 @@ void session_alert_watch(struct session *s, int what);
 void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num);
 
 void add_facet(struct session *s, const char *type, const char *value, int count);
-
+void session_log(struct session *s, int level, const char *fmt, ...)
+#ifdef __GNUC__
+    __attribute__ ((format (printf, 3, 4)))
+#endif
+    ;
 #endif
 
 /*
