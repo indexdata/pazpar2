@@ -140,7 +140,6 @@ static void connection_destroy(struct connection *co)
         client_disconnect(co->client);
     }
 
-    remove_connection_from_host(co);
     xfree(co->zproxy);
     xfree(co);
     connection_use(-1);
@@ -280,8 +279,9 @@ static void connection_handler(IOCHAN iochan, int event)
            a closed connection from the target.. Or, perhaps, an unexpected
            package.. We will just close the connection */
         yaz_log(YLOG_LOG, "timeout connection %p event=%d", co, event);
-        connection_destroy(co);
+        remove_connection_from_host(co);
         yaz_mutex_leave(host->mutex);
+        connection_destroy(co);
     }
     else if (event & EVENT_TIMEOUT)
     {
@@ -344,6 +344,7 @@ start:
         {
             if (!host->ipport) /* unresolved */
             {
+                remove_connection_from_host(con);
                 yaz_mutex_leave(host->mutex);
                 connection_destroy(con);
                 goto start;
@@ -351,6 +352,7 @@ start:
             }
             else if (!con->client)
             {
+                remove_connection_from_host(con);
                 yaz_mutex_leave(host->mutex);
                 connection_destroy(con);
                 /* start all over .. at some point it will be NULL */
