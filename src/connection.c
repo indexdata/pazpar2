@@ -78,7 +78,8 @@ struct connection {
     enum {
         Conn_Resolving,
         Conn_Connecting,
-        Conn_Open
+        Conn_Open,
+        Conn_Dead
     } state;
     int operation_timeout;
     int session_timeout;
@@ -133,7 +134,7 @@ static void connection_destroy(struct connection *co)
         ZOOM_connection_destroy(co->link);
         iochan_destroy(co->iochan);
     }
-    yaz_log(YLOG_DEBUG, "Connection destroy %s", co->host->hostport);
+    yaz_log(YLOG_DEBUG, "%p Connection destroy %s", co, co->host->hostport);
 
     if (co->client)
     {
@@ -287,17 +288,20 @@ static void connection_handler(IOCHAN iochan, int event)
     {
         if (co->state == Conn_Connecting)
         {
-            yaz_log(YLOG_WARN,  "connect timeout %s", client_get_url(cl));
+            yaz_log(YLOG_WARN, "%p connect timeout %s", co, client_get_url(cl));
 
             client_set_state(cl, Client_Error);
+            remove_connection_from_host(co);
+            yaz_mutex_leave(host->mutex);
             connection_destroy(co);
         }
         else
         {
-            yaz_log(YLOG_LOG,  "idle timeout %s", client_get_url(cl));
+            yaz_log(YLOG_LOG,  "%p Connection idle timeout %s", co, client_get_url(cl));
+            remove_connection_from_host(co);
+            yaz_mutex_leave(host->mutex);
             connection_destroy(co);
         }
-        yaz_mutex_leave(host->mutex);
     }
     else
     {
@@ -534,6 +538,7 @@ int client_prep_connection(struct client *cl,
         }
         if (co)
         {
+            yaz_log(YLOG_LOG,  "%p Connection reuse. state: %d", co, co->state);
             connection_release(co);
             client_set_connection(cl, co);
             co->client = cl;
