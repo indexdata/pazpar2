@@ -581,6 +581,16 @@
             <xsl:text> </xsl:text>
           </xsl:for-each>
         </pz:metadata>
+        <xsl:if test="tmarc:st">
+          <pz:metadata type="journal-title">
+            <xsl:value-of select="tmarc:st"/>
+          </pz:metadata>
+        </xsl:if>
+        <xsl:if test="tmarc:sg">
+          <pz:metadata type="journal-subpart">
+            <xsl:value-of select="tmarc:sg"/>
+          </pz:metadata>
+        </xsl:if>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d852">
