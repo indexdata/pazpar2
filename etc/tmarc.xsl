@@ -650,6 +650,49 @@
         </pz:metadata>
       </xsl:for-each>
 
+      <xsl:for-each select="tmarc:d900/tmarc:se">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="tmarc:d900/tmarc:sf">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="tmarc:d900/tmarc:si">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="tmarc:d900/tmarc:sk">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="tmarc:d900/tmarc:sq">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="tmarc:d900/tmarc:su">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="tmarc:d900/tmarc:sy">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+
       <!-- <xsl:if test="$fulltext_b"> <pz:metadata type="fulltext"> <xsl:value-of 
         select="$fulltext_b"/> </pz:metadata> </xsl:if> -->
 
