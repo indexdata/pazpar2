@@ -346,6 +346,14 @@
         </pz:metadata>
       </xsl:for-each>
 
+      <xsl:for-each select="tmarc:d911">
+        <pz:metadata type="description">
+          <xsl:for-each select="node()">
+            <xsl:value-of select="text()" />
+          </xsl:for-each>
+        </pz:metadata>
+      </xsl:for-each>
+
       <xsl:for-each select="tmarc:d600">
         <pz:metadata type="subject">
           <xsl:value-of select="tmarc:sa" />
