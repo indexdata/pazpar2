@@ -104,6 +104,20 @@
       </xsl:choose>
     </xsl:variable>
 
+    <xsl:variable name="has_fulltext">
+      <xsl:choose>
+        <xsl:when test="tmarc:d856/tmarc:sq">
+          <xsl:text>yes</xsl:text>
+        </xsl:when>
+        <xsl:when test="tmarc:d856/tmarc:si='TEXT*'">
+          <xsl:text>yes</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>no</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
     <pz:record>
 <!--
       <xsl:attribute name="mergekey">
@@ -630,6 +644,10 @@
 
       <!-- <xsl:if test="$fulltext_b"> <pz:metadata type="fulltext"> <xsl:value-of 
         select="$fulltext_b"/> </pz:metadata> </xsl:if> -->
+
+      <pz:metadata type="has-fulltext">
+        <xsl:value-of select="$has_fulltext"/>
+      </pz:metadata>
 
       <xsl:for-each select="tmarc:d907">
         <!-- or tmarc:d901"> -->
