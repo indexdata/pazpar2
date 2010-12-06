@@ -118,6 +118,21 @@
       </xsl:choose>
     </xsl:variable>
 
+    <xsl:variable name="oclc_number">
+      <xsl:choose>
+        <xsl:when test='contains(tmarc:c001,"ocn") or
+                        contains(tmarc:c001,"ocm") or
+                        contains(tmarc:c001,"OCoLC") '>
+         <xsl:value-of select="tmarc:c001"/>
+        </xsl:when>
+        <xsl:when test='contains(tmarc:d035/tmarc:sa,"ocn") or
+                        contains(tmarc:d035/tmarc:sa,"ocm") or
+                        contains(tmarc:d035/tmarc:sa,"OCoLC") '>
+         <xsl:value-of select="tmarc:d035/tmarc:sa"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+
     <pz:record>
 <!--
       <xsl:attribute name="mergekey">
@@ -135,6 +150,10 @@
           <xsl:value-of select="." />
         </pz:metadata>
       </xsl:for-each>
+
+      <pz:metadata type="oclc-number">
+        <xsl:value-of select="$oclc_number" />
+      </pz:metadata>
 
       <xsl:for-each select="tmarc:d010">
         <pz:metadata type="lccn">
