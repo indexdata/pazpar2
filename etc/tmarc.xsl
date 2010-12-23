@@ -597,12 +597,15 @@
           <xsl:value-of select="tmarc:su" />
         </pz:metadata>
         <pz:metadata type="electronic-text">
-          <xsl:if test="tmarc:sy">
-            <xsl:value-of select="tmarc:sy/text()" />
-          </xsl:if>
-          <xsl:if test="tmarc:s3">
-            <xsl:value-of select="tmarc:s3/text()" />
-          </xsl:if>
+          <xsl:choose>
+	    <xsl:when test="tmarc:sy">
+	      <xsl:value-of select="tmarc:sy/text()" />
+	    </xsl:when>
+	    <xsl:when test="tmarc:s3">
+	      <xsl:value-of select="tmarc:s3/text()" />
+	    </xsl:when>
+	     <xsl:otherwise>Get resource</xsl:otherwise>
+	   </xsl:choose>
         </pz:metadata>
         <pz:metadata type="electronic-note">
           <xsl:value-of select="tmarc:sz" />
