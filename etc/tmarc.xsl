@@ -104,6 +104,35 @@
       </xsl:choose>
     </xsl:variable>
 
+    <xsl:variable name="has_fulltext">
+      <xsl:choose>
+        <xsl:when test="tmarc:d856/tmarc:sq">
+          <xsl:text>yes</xsl:text>
+        </xsl:when>
+        <xsl:when test="tmarc:d856/tmarc:si='TEXT*'">
+          <xsl:text>yes</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>no</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
+    <xsl:variable name="oclc_number">
+      <xsl:choose>
+        <xsl:when test='contains(tmarc:c001,"ocn") or
+                        contains(tmarc:c001,"ocm") or
+                        contains(tmarc:c001,"OCoLC") '>
+         <xsl:value-of select="tmarc:c001"/>
+        </xsl:when>
+        <xsl:when test='contains(tmarc:d035/tmarc:sa,"ocn") or
+                        contains(tmarc:d035/tmarc:sa,"ocm") or
+                        contains(tmarc:d035/tmarc:sa,"OCoLC") '>
+         <xsl:value-of select="tmarc:d035/tmarc:sa"/>
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+
     <pz:record>
 <!--
       <xsl:attribute name="mergekey">
@@ -121,6 +150,10 @@
           <xsl:value-of select="." />
         </pz:metadata>
       </xsl:for-each>
+
+      <pz:metadata type="oclc-number">
+        <xsl:value-of select="$oclc_number" />
+      </pz:metadata>
 
       <xsl:for-each select="tmarc:d010">
         <pz:metadata type="lccn">
@@ -325,6 +358,14 @@
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d522">
+        <pz:metadata type="description">
+          <xsl:for-each select="node()">
+            <xsl:value-of select="text()" />
+          </xsl:for-each>
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="tmarc:d911">
         <pz:metadata type="description">
           <xsl:for-each select="node()">
             <xsl:value-of select="text()" />
@@ -556,12 +597,15 @@
           <xsl:value-of select="tmarc:su" />
         </pz:metadata>
         <pz:metadata type="electronic-text">
-          <xsl:if test="tmarc:sy">
-            <xsl:value-of select="tmarc:sy/text()" />
-          </xsl:if>
-          <xsl:if test="tmarc:s3">
-            <xsl:value-of select="tmarc:s3/text()" />
-          </xsl:if>
+          <xsl:choose>
+	    <xsl:when test="tmarc:sy">
+	      <xsl:value-of select="tmarc:sy/text()" />
+	    </xsl:when>
+	    <xsl:when test="tmarc:s3">
+	      <xsl:value-of select="tmarc:s3/text()" />
+	    </xsl:when>
+	     <xsl:otherwise>Get resource</xsl:otherwise>
+	   </xsl:choose>
         </pz:metadata>
         <pz:metadata type="electronic-note">
           <xsl:value-of select="tmarc:sz" />
@@ -581,6 +625,16 @@
             <xsl:text> </xsl:text>
           </xsl:for-each>
         </pz:metadata>
+        <xsl:if test="tmarc:st">
+          <pz:metadata type="journal-title">
+            <xsl:value-of select="tmarc:st"/>
+          </pz:metadata>
+        </xsl:if>
+        <xsl:if test="tmarc:sg">
+          <pz:metadata type="journal-subpart">
+            <xsl:value-of select="tmarc:sg"/> <xsl:value-of select="tmarc:sp"/>
+          </pz:metadata>
+        </xsl:if>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d852">
@@ -618,8 +672,55 @@
         </pz:metadata>
       </xsl:for-each>
 
+      <xsl:for-each select="tmarc:d900/tmarc:se">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="tmarc:d900/tmarc:sf">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="tmarc:d900/tmarc:si">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="tmarc:d900/tmarc:sk">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="tmarc:d900/tmarc:sq">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="tmarc:d900/tmarc:su">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+      <xsl:for-each select="tmarc:d900/tmarc:sy">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
+
       <!-- <xsl:if test="$fulltext_b"> <pz:metadata type="fulltext"> <xsl:value-of 
         select="$fulltext_b"/> </pz:metadata> </xsl:if> -->
+
+      <pz:metadata type="has-fulltext">
+        <xsl:value-of select="$has_fulltext"/>
+      </pz:metadata>
 
       <xsl:for-each select="tmarc:d907">
         <!-- or tmarc:d901"> -->
