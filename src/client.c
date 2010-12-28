@@ -731,27 +731,27 @@ void client_start_search(struct client *cl)
 
 struct client *client_create(void)
 {
-    struct client *r = xmalloc(sizeof(*r));
-    r->maxrecs = 100;
-    r->startrecs = 0;
-    r->pquery = 0;
-    r->cqlquery = 0;
-    r->database = 0;
-    r->connection = 0;
-    r->session = 0;
-    r->hits = 0;
-    r->record_offset = 0;
-    r->diagnostic = 0;
-    r->state = Client_Disconnected;
-    r->show_raw = 0;
-    r->resultset = 0;
-    r->mutex = 0;
-    pazpar2_mutex_create(&r->mutex, "client");
-    r->preferred = 0;
-    r->ref_count = 1;
+    struct client *cl = xmalloc(sizeof(*cl));
+    cl->maxrecs = 100;
+    cl->startrecs = 0;
+    cl->pquery = 0;
+    cl->cqlquery = 0;
+    cl->database = 0;
+    cl->connection = 0;
+    cl->session = 0;
+    cl->hits = 0;
+    cl->record_offset = 0;
+    cl->diagnostic = 0;
+    cl->state = Client_Disconnected;
+    cl->show_raw = 0;
+    cl->resultset = 0;
+    cl->mutex = 0;
+    pazpar2_mutex_create(&cl->mutex, "client");
+    cl->preferred = 0;
+    cl->ref_count = 1;
     client_use(1);
     
-    return r;
+    return cl;
 }
 
 void client_lock(struct client *c)
