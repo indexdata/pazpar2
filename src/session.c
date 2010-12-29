@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <signal.h>
 #include <ctype.h>
 #include <assert.h>
+#include <math.h>
 
 #include <yaz/marcdisp.h>
 #include <yaz/comstack.h>
@@ -78,6 +79,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define TERMLIST_HIGH_SCORE 25
 
 #define MAX_CHUNK 15
+
+inline int max(int a, int b)
+{
+    return (a > b) ? a : b;
+}
+
 
 // Note: Some things in this structure will eventually move to configuration
 struct parameters global_parameters = 
@@ -1263,6 +1270,18 @@ static int ingest_to_cluster(struct client *cl,
                                                     record,
                                                     mergekey_norm,
                                                     &se->total_merged);
+
+    int use_term_factor = session_setting_oneval(sdb, PZ_TERMLIST_TERM_FACTOR);
+    int term_factor = 1; 
+
+    if (use_term_factor) {
+        int maxrecs = client_get_maxrecs(cl);
+        int hits = (int) client_get_hits(cl);
+        term_factor = max(hits, maxrecs) /  max(1, maxrecs);
+        assert(term_factor >= 1);
+        yaz_log(YLOG_DEBUG, "Using term factor %d ", term_factor); 
+    }
+
     if (!cluster)
         return -1;
     if (global_parameters.dump_records)
@@ -1432,15 +1451,16 @@ static int ingest_to_cluster(struct client *cl,
                 {
                     char year[64];
                     sprintf(year, "%d", rec_md->data.number.max);
-                    add_facet(se, (char *) type, year, 1);
+
+                    add_facet(se, (char *) type, year, term_factor);
                     if (rec_md->data.number.max != rec_md->data.number.min)
                     {
                         sprintf(year, "%d", rec_md->data.number.min);
-                        add_facet(se, (char *) type, year, 1);
+                        add_facet(se, (char *) type, year, term_factor);
                     }
                 }
                 else
-                    add_facet(se, (char *) type, (char *) value, 1);
+                    add_facet(se, (char *) type, (char *) value, term_factor);
             }
 
             // cleaning up
