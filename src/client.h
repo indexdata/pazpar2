@@ -89,6 +89,7 @@ void client_set_database(struct client *cl, struct session_database *db);
 struct host *client_get_host(struct client *cl);
 const char *client_get_url(struct client *cl);
 void client_set_maxrecs(struct client *cl, int v);
+int  client_get_maxrecs(struct client *cl);
 void client_set_startrecs(struct client *cl, int v);
 void client_remove_from_session(struct client *c);
 void client_incref(struct client *c);

@@ -1064,6 +1064,11 @@ void client_set_maxrecs(struct client *cl, int v)
     cl->maxrecs = v;
 }
 
+int client_get_maxrecs(struct client *cl)
+{
+    return cl->maxrecs;
+}
+
 void client_set_startrecs(struct client *cl, int v)
 {
     cl->startrecs = v;
