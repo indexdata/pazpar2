@@ -80,11 +80,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define MAX_CHUNK 15
 
-inline int max(int a, int b)
-{
-    return (a > b) ? a : b;
-}
-
+#define MAX(a,b) ((a)>(b)?(a):(b))
 
 // Note: Some things in this structure will eventually move to configuration
 struct parameters global_parameters = 
@@ -1271,13 +1267,16 @@ static int ingest_to_cluster(struct client *cl,
                                                     mergekey_norm,
                                                     &se->total_merged);
 
-    int use_term_factor = session_setting_oneval(sdb, PZ_TERMLIST_TERM_FACTOR);
+    const char *use_term_factor_str = session_setting_oneval(sdb, PZ_TERMLIST_TERM_FACTOR);
+    int use_term_factor = 1;
     int term_factor = 1; 
+    if (use_term_factor_str)
+       use_term_factor =  atoi(use_term_factor_str);
 
     if (use_term_factor) {
         int maxrecs = client_get_maxrecs(cl);
         int hits = (int) client_get_hits(cl);
-        term_factor = max(hits, maxrecs) /  max(1, maxrecs);
+        term_factor = MAX(hits, maxrecs) /  MAX(1, maxrecs);
         assert(term_factor >= 1);
         yaz_log(YLOG_DEBUG, "Using term factor %d ", term_factor); 
     }
