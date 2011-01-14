@@ -53,7 +53,7 @@ if test "x${PREFIX}" = "x"; then
 fi
 
 CFG=${PREFIX}.cfg
-URLS=${PREFIX}_urls
+URLS=${PREFIX}.urls
 VALGRINDLOG=${PREFIX}_valgrind.log
 
 if test -n "$PAZPAR2_USE_VALGRIND"; then
