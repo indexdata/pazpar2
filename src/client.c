@@ -592,6 +592,7 @@ static int client_set_facets_request(struct client *cl, ZOOM_connection link)
     struct session_database *sdb = client_get_database(cl);
     const char *opt_facet_term_sort  = session_setting_oneval(sdb, PZ_TERMLIST_TERM_SORT);
     const char *opt_facet_term_count = session_setting_oneval(sdb, PZ_TERMLIST_TERM_COUNT);
+    const char *opt_facet_record_filter = session_setting_oneval(sdb, PZ_RECORDFILTER);
     /* Disable when no count is set */
     /* TODO Verify: Do we need to reset the  ZOOM facets if a ZOOM Connection is being reused??? */
     if (opt_facet_term_count && *opt_facet_term_count)
