@@ -1,5 +1,5 @@
 ; This file is part of Pazpar2.
-; Copyright (C) 2006-2010 Index Data
+; Copyright (C) 2006-2011 Index Data
 
 !include version.nsi
 
