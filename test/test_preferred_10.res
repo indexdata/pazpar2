@@ -6,4 +6,11 @@
 <diagnostic>114</diagnostic>
 <records>0</records>
 <state>Client_Error</state>
+</target>
+<target><id>ocs-loc.indexdata.com/solr/select</id>
+<name>LOC (SOLR)</name>
+<hits>1627</hits>
+<diagnostic>0</diagnostic>
+<records>100</records>
+<state>Client_Idle</state>
 </target></bytarget>
