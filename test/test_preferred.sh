@@ -17,6 +17,19 @@ srcdir=${srcdir:-"."}
 ${srcdir}/run_pazpar2.sh test_preferred
 E=$?
 
+grep "has preferred" pazpar2.log > test_preferred.log
+# 
+if [ -f test_preferred.res ] ; then 
+    diff test_preferred.res test_preferred.log > test_preferred.dif
+    E2=$?
+    if [ $E2 -ne 0 ] ; then 
+	E=$E2
+    fi
+else
+    echo "Making test_preferred.res for first time." 
+    mv test_preferred.log test_preferred.res
+fi
+
 #kill `cat ztest.pid`
 #rm ztest.pid
 exit $E
