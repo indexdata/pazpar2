@@ -6,11 +6,4 @@
 <diagnostic>0</diagnostic>
 <records>6</records>
 <state>Client_Idle</state>
-</target>
-<target><id>localhost:9999/db2</id>
-<name>db2</name>
-<hits>6</hits>
-<diagnostic>0</diagnostic>
-<records>6</records>
-<state>Client_Idle</state>
 </target></bytarget>
