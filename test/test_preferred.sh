@@ -17,12 +17,13 @@ srcdir=${srcdir:-"."}
 ${srcdir}/run_pazpar2.sh test_preferred
 E=$?
 
-grep "has preferred" pazpar2.log > test_preferred.log
+grep "has preferred" pazpar2.log | cut -f 4- -d ' ' > test_preferred.log
 # 
 if [ -f test_preferred.res ] ; then 
     diff test_preferred.res test_preferred.log > test_preferred.dif
     E2=$?
     if [ $E2 -ne 0 ] ; then 
+	echo "has preferred test failed!" 
 	E=$E2
     fi
 else
