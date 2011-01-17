@@ -73,6 +73,7 @@ static char *hard_settings[] = {
     "pz:reuse_connections",     /* PZ_REUSE_CONNECTION    */
     "pz:termlist_term_sort",    /* PZ_TERMLIST_TERM_SORT  */
     "pz:termlist_term_count",   /* PZ_TERMLIST_TERM_COUNT */
+    "pz:termlist_term_factor",  /* PZ_TERMLIST_TERM_FACTOR*/
     "pz:preferred",             /* PZ_PREFERRED           */
     0
 };
