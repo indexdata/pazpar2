@@ -1269,10 +1269,10 @@ static int ingest_to_cluster(struct client *cl,
 
     const char *use_term_factor_str = session_setting_oneval(sdb, PZ_TERMLIST_TERM_FACTOR);
     int use_term_factor = 1;
+    // HACK: default to use term factor.
     int term_factor = 1; 
-    if (use_term_factor_str)
+    if (use_term_factor_str && use_term_factor_str[0] != 0)
        use_term_factor =  atoi(use_term_factor_str);
-
     if (use_term_factor) {
         int maxrecs = client_get_maxrecs(cl);
         int hits = (int) client_get_hits(cl);
