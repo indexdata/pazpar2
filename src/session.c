@@ -844,22 +844,25 @@ struct record_cluster *show_single_start(struct session *se, const char *id,
                                          struct record_cluster **prev_r,
                                          struct record_cluster **next_r)
 {
-    struct record_cluster *r;
+    struct record_cluster *r = 0;
 
     session_enter(se);
-    reclist_enter(se->reclist);
     *prev_r = 0;
     *next_r = 0;
-    while ((r = reclist_read_record(se->reclist)))
+    if (se->reclist)
     {
-        if (!strcmp(r->recid, id))
+        reclist_enter(se->reclist);
+        while ((r = reclist_read_record(se->reclist)))
         {
-            *next_r = reclist_read_record(se->reclist);
-            break;
+            if (!strcmp(r->recid, id))
+            {
+                *next_r = reclist_read_record(se->reclist);
+                break;
+            }
+            *prev_r = r;
         }
-        *prev_r = r;
+        reclist_leave(se->reclist);
     }
-    reclist_leave(se->reclist);
     if (!r)
         session_leave(se);
     return r;
