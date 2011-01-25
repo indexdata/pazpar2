@@ -79,6 +79,18 @@
     </pz:metadata>
   </xsl:template>
 
+  <xsl:template match="isbn">
+    <pz:metadata type="isbn">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="issn">
+    <pz:metadata type="issn">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
   <xsl:template match="item">
     <pz:metadata type="locallocation">
       <xsl:choose>
