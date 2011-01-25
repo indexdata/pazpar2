@@ -1,3 +1,11 @@
+-- 1.5.2 2011/01/18
+Fixes: 
+- Missing pz:termlist_term_factor in settings.c messed up pz:preferred
+- Term factor is default enabled but can be diseabled by pz:termlist_term_factor=0
+
+-- 1.5.1 2011/01/06
+
+Add scaling of facet count. Currently always enabled, needs fixing.
 Allow user-defined info for target suffix. This has no meaning in
 Pazpar2 except to distinguish targets from each other. The suffix
 data begins with #. For example z3950.indexdata.com/gils#Mydata

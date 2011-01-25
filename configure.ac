@@ -1,10 +1,11 @@
 ## -*- Autoconf -*-
 ## This file is part of Pazpar2.
+## Copyright (C) 2006-2011 Index Data
 ## Process this file with autoconf to produce a configure script.
 
 # Autoconf and automake setup
 AC_PREREQ(2.60)
-AC_INIT([pazpar2],[1.5.0],[pazpar2-help@indexdata.dk])
+AC_INIT([pazpar2],[1.5.2],[pazpar2-help@indexdata.dk])
 
 AC_CONFIG_HEADERS(src/config.h)
 

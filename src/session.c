@@ -1,5 +1,5 @@
 /* This file is part of Pazpar2.
-   Copyright (C) 2006-2010 Index Data
+   Copyright (C) 2006-2011 Index Data
 
 Pazpar2 is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -844,22 +844,25 @@ struct record_cluster *show_single_start(struct session *se, const char *id,
                                          struct record_cluster **prev_r,
                                          struct record_cluster **next_r)
 {
-    struct record_cluster *r;
+    struct record_cluster *r = 0;
 
     session_enter(se);
-    reclist_enter(se->reclist);
     *prev_r = 0;
     *next_r = 0;
-    while ((r = reclist_read_record(se->reclist)))
+    if (se->reclist)
     {
-        if (!strcmp(r->recid, id))
+        reclist_enter(se->reclist);
+        while ((r = reclist_read_record(se->reclist)))
         {
-            *next_r = reclist_read_record(se->reclist);
-            break;
+            if (!strcmp(r->recid, id))
+            {
+                *next_r = reclist_read_record(se->reclist);
+                break;
+            }
+            *prev_r = r;
         }
-        *prev_r = r;
+        reclist_leave(se->reclist);
     }
-    reclist_leave(se->reclist);
     if (!r)
         session_leave(se);
     return r;
@@ -1269,10 +1272,10 @@ static int ingest_to_cluster(struct client *cl,
 
     const char *use_term_factor_str = session_setting_oneval(sdb, PZ_TERMLIST_TERM_FACTOR);
     int use_term_factor = 1;
+    // HACK: default to use term factor.
     int term_factor = 1; 
-    if (use_term_factor_str)
+    if (use_term_factor_str && use_term_factor_str[0] != 0)
        use_term_factor =  atoi(use_term_factor_str);
-
     if (use_term_factor) {
         int maxrecs = client_get_maxrecs(cl);
         int hits = (int) client_get_hits(cl);
