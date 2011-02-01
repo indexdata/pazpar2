@@ -707,6 +707,12 @@
         </pz:metadata>
       </xsl:for-each>
 
+      <xsl:for-each select="tmarc:d900/tmarc:ss">
+        <pz:metadata type="fulltext">
+          <xsl:value-of select="." />
+        </pz:metadata>
+      </xsl:for-each>
+
       <xsl:for-each select="tmarc:d900/tmarc:su">
         <pz:metadata type="fulltext">
           <xsl:value-of select="." />
