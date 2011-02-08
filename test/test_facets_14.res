@@ -30,4 +30,6 @@
 <term><name>date3</name><frequency>70</frequency></term>
 <term><name>date4</name><frequency>60</frequency></term>
 </list>
+<list name="medium">
+</list>
 </termlist>
