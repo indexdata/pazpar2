@@ -489,13 +489,9 @@ static void select_targets_callback(void *context, struct session_database *db)
     struct session *se = (struct session*) context;
     struct client *cl = client_create();
     struct client_list *l;
-    const char *maxrecs = session_setting_oneval(db, PZ_MAXRECS);
     client_set_database(cl, db);
 
     client_set_session(cl, se);
-
-    if (*maxrecs)
-        client_set_maxrecs(cl, atoi(maxrecs));
 
     l = xmalloc(sizeof(*l));
     l->client = cl;
