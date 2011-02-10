@@ -489,9 +489,14 @@ static void select_targets_callback(void *context, struct session_database *db)
     struct session *se = (struct session*) context;
     struct client *cl = client_create();
     struct client_list *l;
+    const char *maxrecs = session_setting_oneval(db, PZ_MAXRECS);
     client_set_database(cl, db);
 
     client_set_session(cl, se);
+
+    if (*maxrecs)
+        client_set_maxrecs(cl, atoi(maxrecs));
+
     l = xmalloc(sizeof(*l));
     l->client = cl;
     l->next = se->clients;
@@ -1271,8 +1276,8 @@ static int ingest_to_cluster(struct client *cl,
                                                     &se->total_merged);
 
     const char *use_term_factor_str = session_setting_oneval(sdb, PZ_TERMLIST_TERM_FACTOR);
+    // TODO: Work-around to default to use term factor, until other MK2 components supports it
     int use_term_factor = 1;
-    // HACK: default to use term factor.
     int term_factor = 1; 
     if (use_term_factor_str && use_term_factor_str[0] != 0)
        use_term_factor =  atoi(use_term_factor_str);
@@ -1281,7 +1286,7 @@ static int ingest_to_cluster(struct client *cl,
         int hits = (int) client_get_hits(cl);
         term_factor = MAX(hits, maxrecs) /  MAX(1, maxrecs);
         assert(term_factor >= 1);
-        yaz_log(YLOG_DEBUG, "Using term factor %d ", term_factor); 
+        yaz_log(YLOG_DEBUG, "Using term factor: %d (%d / %d)", term_factor, MAX(hits, maxrecs), MAX(1, maxrecs));
     }
 
     if (!cluster)
