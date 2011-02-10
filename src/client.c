@@ -103,6 +103,8 @@ struct client {
     ZOOM_resultset resultset;
     YAZ_MUTEX mutex;
     int ref_count;
+    /* copy of database->url */
+    char *url;
 };
 
 struct show_raw {
@@ -592,7 +594,10 @@ static int client_set_facets_request(struct client *cl, ZOOM_connection link)
     struct session_database *sdb = client_get_database(cl);
     const char *opt_facet_term_sort  = session_setting_oneval(sdb, PZ_TERMLIST_TERM_SORT);
     const char *opt_facet_term_count = session_setting_oneval(sdb, PZ_TERMLIST_TERM_COUNT);
-    const char *opt_facet_record_filter = session_setting_oneval(sdb, PZ_RECORDFILTER);
+
+    /* Future record filtering on target */
+    /* const char *opt_facet_record_filter = session_setting_oneval(sdb, PZ_RECORDFILTER); */
+
     /* Disable when no count is set */
     /* TODO Verify: Do we need to reset the  ZOOM facets if a ZOOM Connection is being reused??? */
     if (opt_facet_term_count && *opt_facet_term_count)
@@ -750,6 +755,7 @@ struct client *client_create(void)
     pazpar2_mutex_create(&cl->mutex, "client");
     cl->preferred = 0;
     cl->ref_count = 1;
+    cl->url = 0;
     client_use(1);
     
     return cl;
@@ -784,6 +790,7 @@ int client_destroy(struct client *c)
             c->pquery = 0;
             xfree(c->cqlquery);
             c->cqlquery = 0;
+            xfree(c->url);
             assert(!c->connection);
 
             if (c->resultset)
@@ -1045,6 +1052,10 @@ int client_get_diagnostic(struct client *cl)
 void client_set_database(struct client *cl, struct session_database *db)
 {
     cl->database = db;
+    /* Copy the URL for safe logging even after session is gone */
+    if (db) {
+        cl->url = xstrdup(db->database->url);
+    }
 }
 
 struct host *client_get_host(struct client *cl)
@@ -1054,9 +1065,10 @@ struct host *client_get_host(struct client *cl)
 
 const char *client_get_url(struct client *cl)
 {
-    if (cl->database)
-        return client_get_database(cl)->database->url;
+    if (cl->url)
+        return cl->url;
     else
+        /* This must not happen anymore, as the url is present until destruction of client  */
         return "NOURL";
 }
 
