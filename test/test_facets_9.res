@@ -2,10 +2,10 @@
 <show>
 <status>OK</status>
 <activeclients>0</activeclients>
-<merged>3</merged>
+<merged>1</merged>
 <total>4</total>
 <start>0</start>
-<num>3</num>
+<num>1</num>
 <hit>
 
 <md-title>How to program a computer</md-title>
@@ -18,28 +18,5 @@
 <count>2</count>
 <relevance>240000</relevance>
 <recid>title how to program a computer author jack collins</recid>
-</hit>
-<hit>
-
-<md-title>The Computer Bible</md-title>
-<md-date>1973-1980</md-date>
-<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="localhost:9999/db1" name="db1">
-<md-title>The Computer Bible</md-title>
-<md-date>1973-1980</md-date>
-<md-description>Hebrew and Greek; introductions in English</md-description>
-<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description></location>
-<relevance>200000</relevance>
-<recid>title the computer bible</recid>
-</hit>
-<hit>
-
-<md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
-<md-title-remainder>the proceedings of a workshop</md-title-remainder>
-<md-date>1974</md-date><location id="localhost:9999/db1" name="db1">
-<md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
-<md-title-remainder>the proceedings of a workshop</md-title-remainder>
-<md-date>1974</md-date></location>
-<relevance>60000</relevance>
-<recid>title computer processing of dynamic images from an anger scintillation camera</recid>
 </hit>
 </show>
