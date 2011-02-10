@@ -692,18 +692,19 @@ void client_start_search(struct client *cl)
     if (*opt_requestsyn)
         ZOOM_connection_option_set(link, "preferredRecordSyntax", opt_requestsyn);
 
-    if (!*opt_maxrecs)
+    if (opt_maxrecs && *opt_maxrecs)
     {
-        sprintf(maxrecs_str, "%d", cl->maxrecs);
-        opt_maxrecs = maxrecs_str;
+        cl->maxrecs = atoi(opt_maxrecs);
     }
-    ZOOM_connection_option_set(link, "count", opt_maxrecs);
 
+    /* convert back to string representation used in ZOOM API */
+    sprintf(maxrecs_str, "%d", cl->maxrecs);
+    ZOOM_connection_option_set(link, "count", maxrecs_str);
 
-    if (atoi(opt_maxrecs) > 20)
+    if (cl->maxrecs > 20)
         ZOOM_connection_option_set(link, "presentChunk", "20");
     else
-        ZOOM_connection_option_set(link, "presentChunk", opt_maxrecs);
+        ZOOM_connection_option_set(link, "presentChunk", maxrecs_str);
 
     sprintf(startrecs_str, "%d", cl->startrecs);
     ZOOM_connection_option_set(link, "start", startrecs_str);
