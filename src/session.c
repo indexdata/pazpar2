@@ -190,7 +190,7 @@ void add_facet(struct session *s, const char *type, const char *value, int count
             s->num_termlists = i + 1;
         }
         
-        session_log(s, YLOG_DEBUG, "Session: facets for %s: %s norm:%s (%d)",
+        session_log(s, YLOG_DEBUG, "Facets for %s: %s norm:%s (%d)",
                     type, value, wrbuf_cstr(facet_wrbuf), count);
         termlist_insert(s->termlists[i].termlist, wrbuf_cstr(facet_wrbuf),
                         count);
@@ -476,7 +476,7 @@ void session_alert_watch(struct session *s, int what)
 
         session_leave(s);
         session_log(s, YLOG_DEBUG,
-                    "session_alert_watch: %d calling function: %p", what, fun);
+                    "Alert Watch: %d calling function: %p", what, fun);
         fun(data);
     }
     else
@@ -549,7 +549,7 @@ int session_is_preferred_clients_ready(struct session *s)
     for (l = s->clients; l; l = l->next)
         if (client_is_active_preferred(l->client))
             res++;
-    session_log(s, YLOG_DEBUG, "Session has %d active preferred clients.", res);
+    session_log(s, YLOG_DEBUG, "Has %d active preferred clients.", res);
     return res == 0;
 }
 
@@ -727,7 +727,7 @@ void destroy_session(struct session *se)
 {
     struct session_database *sdb;
 
-    session_log(se, YLOG_DEBUG, "Pazpar2 session destroy");
+    session_log(se, YLOG_DEBUG, "Destroying");
     session_remove_clients(se);
 
     for (sdb = se->databases; sdb; sdb = sdb->next)
@@ -752,7 +752,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     sprintf(tmp_str, "session#%u", session_id);
 
     session->session_id = session_id;
-    session_log(session, YLOG_DEBUG, "New session");
+    session_log(session, YLOG_DEBUG, "New");
     session->service = service;
     session->relevance = 0;
     session->total_hits = 0;
@@ -1497,7 +1497,7 @@ void session_log(struct session *s, int level, const char *fmt, ...)
     va_start(ap, fmt);
 
     yaz_vsnprintf(buf, sizeof(buf)-30, fmt, ap);
-    yaz_log(level, "%u %s", s->session_id, buf);
+    yaz_log(level, "Session (%u): %s", s->session_id, buf);
 
     va_end(ap);
 }
