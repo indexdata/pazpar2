@@ -4,6 +4,6 @@
 <name>db1</name>
 <hits>6</hits>
 <diagnostic>0</diagnostic>
-<records>6</records>
+<records>2</records>
 <state>Client_Idle</state>
 </target></bytarget>
