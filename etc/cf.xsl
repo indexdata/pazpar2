@@ -91,6 +91,24 @@
     </pz:metadata>
   </xsl:template>
 
+  <xsl:template match="journaltitle">
+    <pz:metadata type="journal-title">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="volume">
+    <pz:metadata type="volume">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="issue">
+    <pz:metadata type="issue">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
   <xsl:template match="item">
     <pz:metadata type="locallocation">
       <xsl:choose>
