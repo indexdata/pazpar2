@@ -1165,6 +1165,8 @@ static void cmd_info(struct http_channel *c)
 
     wrbuf_puts(c->wrbuf, " </version>\n");
     
+    info_services(c->server, c->wrbuf);
+
     wrbuf_puts(c->wrbuf, "</info>");
     rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);

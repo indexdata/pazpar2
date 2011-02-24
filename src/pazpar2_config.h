@@ -164,6 +164,7 @@ struct conf_targetprofiles
 struct conf_config *config_create(const char *fname, int verbose);
 void config_destroy(struct conf_config *config);
 void config_process_events(struct conf_config *config);
+void info_services(struct conf_server *server, WRBUF w);
 
 struct conf_service *locate_service(struct conf_server *server,
                                     const char *service_id);
