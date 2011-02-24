@@ -94,6 +94,27 @@ struct client_list {
     struct client_list *next;
 };
 
+/* session counting (1) , disable client counting (0) */
+static YAZ_MUTEX g_session_mutex = 0;
+static int no_sessions = 0;
+
+static int session_use(int delta)
+{
+    int sessions;
+    if (!g_session_mutex)
+        yaz_mutex_create(&g_session_mutex);
+    yaz_mutex_enter(g_session_mutex);
+    no_sessions += delta;
+    sessions = no_sessions;
+    yaz_mutex_leave(g_session_mutex);
+    yaz_log(YLOG_DEBUG, "%s sesions=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), no_sessions);
+    return sessions;
+}
+
+int sessions_count(void) {
+    return session_use(0);
+}
+
 static void log_xml_doc(xmlDoc *doc)
 {
     FILE *lf = yaz_log_file();
@@ -726,8 +747,8 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
 void destroy_session(struct session *se)
 {
     struct session_database *sdb;
-
     session_log(se, YLOG_DEBUG, "Destroying");
+    session_use(-1);
     session_remove_clients(se);
 
     for (sdb = se->databases; sdb; sdb = sdb->next)
@@ -740,6 +761,17 @@ void destroy_session(struct session *se)
     yaz_mutex_destroy(&se->session_mutex);
     wrbuf_destroy(se->wrbuf);
 }
+
+size_t session_get_memory_status(struct session *session) {
+    size_t session_nmem;
+    if (session == 0)
+        return 0;
+    session_enter(session);
+    session_nmem = nmem_total(session->nmem);
+    session_leave(session);
+    return session_nmem;
+}
+
 
 struct session *new_session(NMEM nmem, struct conf_service *service,
                             unsigned session_id)
@@ -774,7 +806,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->normalize_cache = normalize_cache_create();
     session->session_mutex = 0;
     pazpar2_mutex_create(&session->session_mutex, tmp_str);
-
+    session_use(1);
     return session;
 }
 
