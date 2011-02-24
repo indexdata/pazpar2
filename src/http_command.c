@@ -587,22 +587,24 @@ static void cmd_termlist(struct http_channel *c)
 
 size_t session_get_memory_status(struct session *session);
 
-static void cmd_session_status(struct http_channel *c)
+static void session_status(struct http_channel *c, struct http_session *s)
 {
+    size_t session_nmem;
+    wrbuf_printf(c->wrbuf, "<http_count>%u</http_count>\n", s->activity_counter);
+    wrbuf_printf(c->wrbuf, "<http_nmem>%zu</http_nmem>\n", nmem_total(s->nmem) );
+    session_nmem = session_get_memory_status(s->psession);
+    wrbuf_printf(c->wrbuf, "<session_nmem>%zu</session_nmem>\n", session_nmem);
+}
+
+static void cmd_session_status(struct http_channel *c) {
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(c);
-    size_t session_nmem;
     if (!s)
         return;
 
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<sessionstatus><status>OK</status>\n");
-    wrbuf_printf(c->wrbuf, "<http_count>%u</http_count>\n", s->activity_counter);
-    wrbuf_printf(c->wrbuf, "<http_nmem>%zu</http_nmem>\n", nmem_total(s->nmem) );
-
-    session_nmem = session_get_memory_status(s->psession);
-    wrbuf_printf(c->wrbuf, "<session_nmem>%zu</session_nmem>\n", session_nmem);
-
+    session_status(c, s);
     wrbuf_puts(c->wrbuf, "</sessionstatus>\n");
     rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
@@ -621,12 +623,31 @@ int resultsets_count(void);
 static void cmd_server_status(struct http_channel *c)
 {
     struct http_response *rs = c->response;
+    http_sessions_t http_sessions = c->http_sessions;
+    struct http_session *p;
     int sessions   = sessions_count();
     int clients    = clients_count();
     int resultsets = resultsets_count();
     wrbuf_rewind(c->wrbuf);
-    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<server-status><status>OK</status>\n");
-    wrbuf_printf(c->wrbuf, "Sessions %u Clients: %u Resultsets: %u\n</server-status>\n", sessions, clients, resultsets);
+    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<server-status>\n");
+    wrbuf_printf(c->wrbuf, "  <sessions>%u</sessions>\n", sessions);
+    wrbuf_printf(c->wrbuf, "  <clients>%u</clients>\n",   clients);
+    wrbuf_printf(c->wrbuf, "  <resultsets>%u</resultsets>\n",resultsets);
+ /*
+    yaz_mutex_enter(http_sessions->mutex);
+    for (p = http_sessions->session_list; p; p = p->next) {
+        p->activity_counter++;
+        wrbuf_puts(c->wrbuf, "<session-status>\n");
+        wrbuf_printf(c->wrbuf, "<id>%s</id>\n", p->session_id);
+        yaz_mutex_leave(http_sessions->mutex);
+        session_status(c, p);
+        wrbuf_puts(c->wrbuf, "</session-status>\n");
+        yaz_mutex_enter(http_sessions->mutex);
+        p->activity_counter--;
+    }
+    yaz_mutex_leave(http_sessions->mutex);
+*/
+    wrbuf_puts(c->wrbuf, "</server-status>\n");
     rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
 }
@@ -1151,7 +1172,7 @@ static void cmd_info(struct http_channel *c)
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<info>\n");
     wrbuf_puts(c->wrbuf, " <version>\n");
-    wrbuf_puts(c->wrbuf, "<pazpar2");
+    wrbuf_puts(c->wrbuf, "  <pazpar2");
 #ifdef PAZPAR2_VERSION_SHA1
     wrbuf_printf(c->wrbuf, " sha1=\"%s\"", PAZPAR2_VERSION_SHA1);
 #endif
@@ -1188,8 +1209,8 @@ struct {
     { "search", cmd_search },
     { "termlist", cmd_termlist },
     { "exit", cmd_exit },
-    { "sessionstatus", cmd_session_status },
-    { "serverstatus", cmd_server_status },
+    { "session-status", cmd_session_status },
+    { "server-status", cmd_server_status },
     { "ping", cmd_ping },
     { "record", cmd_record },
     { "info", cmd_info },
