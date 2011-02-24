@@ -612,7 +612,11 @@ static void cmd_session_status(struct http_channel *c)
 
 int sessions_count(void);
 int clients_count(void);
+#ifdef HAVE_RESULTSETS_COUNT
 int resultsets_count(void);
+#else
+#define resultsets_count()      0
+#endif
 
 static void cmd_server_status(struct http_channel *c)
 {
