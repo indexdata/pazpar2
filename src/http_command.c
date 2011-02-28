@@ -64,6 +64,23 @@ struct http_sessions {
     int log_level;
 };
 
+static YAZ_MUTEX g_http_session_mutex = 0;
+static int g_http_sessions = 0;
+
+int http_session_use(int delta)
+{
+    int sessions;
+    if (!g_http_session_mutex)
+        yaz_mutex_create(&g_http_session_mutex);
+    yaz_mutex_enter(g_http_session_mutex);
+    g_http_sessions += delta;
+    sessions = g_http_sessions;
+    yaz_mutex_leave(g_http_session_mutex);
+    yaz_log(YLOG_DEBUG, "%s sesions=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), sessions);
+    return sessions;
+
+}
+
 http_sessions_t http_sessions_create(void)
 {
     http_sessions_t hs = xmalloc(sizeof(*hs));
@@ -127,6 +144,7 @@ struct http_session *http_session_create(struct conf_service *service,
     iochan_settimeout(r->timeout_iochan, service->session_timeout);
 
     iochan_add(service->server->iochan_man, r->timeout_iochan);
+    http_session_use(1);
     return r;
 }
 
@@ -136,7 +154,7 @@ void http_session_destroy(struct http_session *s)
 
     http_sessions_t http_sessions = s->http_sessions;
 
-    yaz_log(http_sessions->log_level, "%p Session %u destroyed", s, s->session_id);
+    yaz_log(http_sessions->log_level, "%p HTTP Session %u destroyed", s, s->session_id);
     yaz_mutex_enter(http_sessions->mutex);
     /* only if http_session has no active http sessions on it can be destroyed */
     if (s->destroy_counter == s->activity_counter) {
@@ -152,13 +170,14 @@ void http_session_destroy(struct http_session *s)
     yaz_mutex_leave(http_sessions->mutex);
     if (must_destroy)
     {   /* destroying for real */
-        yaz_log(http_sessions->log_level, "%p Session %u destroyed", s, s->session_id);
+        yaz_log(http_sessions->log_level, "%p HTTP Session %u destroyed", s, s->session_id);
         iochan_destroy(s->timeout_iochan);
         destroy_session(s->psession);
+        http_session_use(-1);
         nmem_destroy(s->nmem);
     }
     else {
-        yaz_log(http_sessions->log_level, "%p Session %u destroyed delayed. Active clients (%d-%d). Waiting for new timeout.", 
+        yaz_log(http_sessions->log_level, "%p HTTP Session %u destroyed delayed. Active clients (%d-%d). Waiting for new timeout.",
                 s, s->session_id, s->activity_counter, s->destroy_counter);
     }
 
@@ -565,6 +584,74 @@ static void cmd_termlist(struct http_channel *c)
     http_send_response(c);
     release_session(c,s);
 }
+
+size_t session_get_memory_status(struct session *session);
+
+static void session_status(struct http_channel *c, struct http_session *s)
+{
+    size_t session_nmem;
+    wrbuf_printf(c->wrbuf, "<http_count>%u</http_count>\n", s->activity_counter);
+    wrbuf_printf(c->wrbuf, "<http_nmem>%zu</http_nmem>\n", nmem_total(s->nmem) );
+    session_nmem = session_get_memory_status(s->psession);
+    wrbuf_printf(c->wrbuf, "<session_nmem>%zu</session_nmem>\n", session_nmem);
+}
+
+static void cmd_session_status(struct http_channel *c) {
+    struct http_response *rs = c->response;
+    struct http_session *s = locate_session(c);
+    if (!s)
+        return;
+
+    wrbuf_rewind(c->wrbuf);
+    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<sessionstatus><status>OK</status>\n");
+    session_status(c, s);
+    wrbuf_puts(c->wrbuf, "</sessionstatus>\n");
+    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
+    http_send_response(c);
+    release_session(c,s);
+
+}
+
+int sessions_count(void);
+int clients_count(void);
+#ifdef HAVE_RESULTSETS_COUNT
+int resultsets_count(void);
+#else
+#define resultsets_count()      0
+#endif
+
+static void cmd_server_status(struct http_channel *c)
+{
+    struct http_response *rs = c->response;
+    http_sessions_t http_sessions = c->http_sessions;
+    struct http_session *p;
+    int sessions   = sessions_count();
+    int clients    = clients_count();
+    int resultsets = resultsets_count();
+    wrbuf_rewind(c->wrbuf);
+    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<server-status>\n");
+    wrbuf_printf(c->wrbuf, "  <sessions>%u</sessions>\n", sessions);
+    wrbuf_printf(c->wrbuf, "  <clients>%u</clients>\n",   clients);
+    wrbuf_printf(c->wrbuf, "  <resultsets>%u</resultsets>\n",resultsets);
+ /*
+    yaz_mutex_enter(http_sessions->mutex);
+    for (p = http_sessions->session_list; p; p = p->next) {
+        p->activity_counter++;
+        wrbuf_puts(c->wrbuf, "<session-status>\n");
+        wrbuf_printf(c->wrbuf, "<id>%s</id>\n", p->session_id);
+        yaz_mutex_leave(http_sessions->mutex);
+        session_status(c, p);
+        wrbuf_puts(c->wrbuf, "</session-status>\n");
+        yaz_mutex_enter(http_sessions->mutex);
+        p->activity_counter--;
+    }
+    yaz_mutex_leave(http_sessions->mutex);
+*/
+    wrbuf_puts(c->wrbuf, "</server-status>\n");
+    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
+    http_send_response(c);
+}
+
 
 
 static void cmd_bytarget(struct http_channel *c)
@@ -1085,7 +1172,7 @@ static void cmd_info(struct http_channel *c)
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<info>\n");
     wrbuf_puts(c->wrbuf, " <version>\n");
-    wrbuf_puts(c->wrbuf, "<pazpar2");
+    wrbuf_puts(c->wrbuf, "  <pazpar2");
 #ifdef PAZPAR2_VERSION_SHA1
     wrbuf_printf(c->wrbuf, " sha1=\"%s\"", PAZPAR2_VERSION_SHA1);
 #endif
@@ -1122,6 +1209,8 @@ struct {
     { "search", cmd_search },
     { "termlist", cmd_termlist },
     { "exit", cmd_exit },
+    { "session-status", cmd_session_status },
+    { "server-status", cmd_server_status },
     { "ping", cmd_ping },
     { "record", cmd_record },
     { "info", cmd_info },
