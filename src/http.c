@@ -1115,7 +1115,9 @@ static void http_channel_destroy(IOCHAN i)
 
     yaz_mutex_enter(s->http_server->mutex);
     if (s->http_server->http_channel_freelist_max > 0 && s->http_server->http_channel_freelist_count > s->http_server->http_channel_freelist_max) {
-        while (s->next = s->http_server->http_channel_freelist) {
+        while ((s->next = s->http_server->http_channel_freelist)) {
+            nmem_destroy(s->next->nmem);
+            wrbuf_destroy(s->next->wrbuf);
             xfree(s->next);
             s->http_server->http_channel_freelist = s->http_server->http_channel_freelist->next;
         }
@@ -1123,6 +1125,7 @@ static void http_channel_destroy(IOCHAN i)
     else {
         s->next = s->http_server->http_channel_freelist;
         s->http_server->http_channel_freelist = s;
+        s->http_server->http_channel_freelist_count++;
     }
     yaz_mutex_leave(s->http_server->mutex);
 
@@ -1146,7 +1149,7 @@ static struct http_channel *http_channel_create(http_server_t hs,
     r = hs->http_channel_freelist;
     if (r) {
         hs->http_channel_freelist = r->next;
-        hs->http_channel_freelist_count++;
+        hs->http_channel_freelist_count--;
     }
     yaz_mutex_leave(hs->mutex);
 
