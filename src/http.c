@@ -149,17 +149,19 @@ static struct http_buf *http_buf_create(http_server_t hs)
 static void http_buf_destroy(http_server_t hs, struct http_buf *b)
 {
     yaz_mutex_enter(hs->mutex);
-    if (hs->http_buf_freelist_max > 0 && hs->http_buf_freelist_count > hs->http_buf_freelist_max) {
+    if (hs->http_buf_freelist_max > 0 && hs->http_buf_freelist_count >= hs->http_buf_freelist_max) {
         xfree(b);
-        while (b = hs->http_buf_freelist) {
+        while ((b = hs->http_buf_freelist)) {
             xfree(b);
             hs->http_buf_freelist = hs->http_buf_freelist->next;
         }
+        hs->http_buf_freelist_count = 0;
     }
     else {
         b->next = hs->http_buf_freelist;
         hs->http_buf_freelist = b;
         hs->http_buf_freelist_count++;
+        yaz_log(YLOG_DEBUG, "Free %d http buffers on server.", hs->http_buf_freelist_count);
     }
     yaz_mutex_leave(hs->mutex);
 }
@@ -1114,18 +1116,20 @@ static void http_channel_destroy(IOCHAN i)
     http_server = s->http_server; /* save it for destroy (decref) */
 
     yaz_mutex_enter(s->http_server->mutex);
-    if (s->http_server->http_channel_freelist_max > 0 && s->http_server->http_channel_freelist_count > s->http_server->http_channel_freelist_max) {
+    if (s->http_server->http_channel_freelist_max > 0 && s->http_server->http_channel_freelist_count >= s->http_server->http_channel_freelist_max) {
         while ((s->next = s->http_server->http_channel_freelist)) {
             nmem_destroy(s->next->nmem);
             wrbuf_destroy(s->next->wrbuf);
             xfree(s->next);
             s->http_server->http_channel_freelist = s->http_server->http_channel_freelist->next;
         }
+        s->http_server->http_channel_freelist_count = 0;
     }
     else {
         s->next = s->http_server->http_channel_freelist;
         s->http_server->http_channel_freelist = s;
         s->http_server->http_channel_freelist_count++;
+        yaz_log(YLOG_DEBUG, "Free %d channels on server.", s->http_server->http_channel_freelist_count);
     }
     yaz_mutex_leave(s->http_server->mutex);
 
@@ -1402,11 +1406,13 @@ http_server_t http_server_create(void)
 
     hs->http_channel_freelist = 0;
     hs->http_channel_freelist_count = 0;
-    hs->http_channel_freelist_max   = 10;
+    /* Disable max check */
+    hs->http_channel_freelist_max   = 0;
 
     hs->http_buf_freelist = 0;
     hs->http_buf_freelist_count = 0;
-    hs->http_buf_freelist_max = 10;
+    /* Disable max check */
+    hs->http_buf_freelist_max = 0;
     return hs;
 }
 
