@@ -623,8 +623,6 @@ int resultsets_count(void);
 static void cmd_server_status(struct http_channel *c)
 {
     struct http_response *rs = c->response;
-    http_sessions_t http_sessions = c->http_sessions;
-    struct http_session *p;
     int sessions   = sessions_count();
     int clients    = clients_count();
     int resultsets = resultsets_count();
@@ -632,8 +630,13 @@ static void cmd_server_status(struct http_channel *c)
     wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<server-status>\n");
     wrbuf_printf(c->wrbuf, "  <sessions>%u</sessions>\n", sessions);
     wrbuf_printf(c->wrbuf, "  <clients>%u</clients>\n",   clients);
+    /* Only works if yaz has been compiled with enabling of this */
     wrbuf_printf(c->wrbuf, "  <resultsets>%u</resultsets>\n",resultsets);
- /*
+
+/* TODO add all sessions status                         */
+/*    http_sessions_t http_sessions = c->http_sessions; */
+/*    struct http_session *p;                           */
+/*
     yaz_mutex_enter(http_sessions->mutex);
     for (p = http_sessions->session_list; p; p = p->next) {
         p->activity_counter++;
@@ -650,8 +653,8 @@ static void cmd_server_status(struct http_channel *c)
     wrbuf_puts(c->wrbuf, "</server-status>\n");
     rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
+    xmalloc_trav(0);
 }
-
 
 
 static void cmd_bytarget(struct http_channel *c)
