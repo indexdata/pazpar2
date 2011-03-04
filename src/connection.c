@@ -393,6 +393,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     const char *charset;
     const char *sru;
     const char *sru_version = 0;
+    const char *extra_args  = 0;
 
     struct session_database *sdb = client_get_database(con->client);
     const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
@@ -423,6 +424,8 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     if ((sru_version = session_setting_oneval(sdb, PZ_SRU_VERSION)) 
         && *sru_version)
         ZOOM_options_set(zoptions, "sru_version", sru_version);
+    if ((extra_args = session_setting_oneval(sdb, PZ_EXTRA_ARGS)) && *extra_args)
+        ZOOM_options_set(zoptions, "extraArgs", extra_args);
 
     if (!(link = ZOOM_connection_create(zoptions)))
     {
