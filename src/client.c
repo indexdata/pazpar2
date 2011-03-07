@@ -934,7 +934,7 @@ int client_parse_query(struct client *cl, const char *query)
     const char *sru = session_setting_oneval(sdb, PZ_SRU);
     const char *pqf_prefix = session_setting_oneval(sdb, PZ_PQF_PREFIX);
     const char *pqf_strftime = session_setting_oneval(sdb, PZ_PQF_STRFTIME);
-
+    const char *query_syntax = session_setting_oneval(sdb, PZ_QUERY_SYNTAX);
     if (!ccl_map)
         return -1;
 
@@ -978,7 +978,11 @@ int client_parse_query(struct client *cl, const char *query)
     cl->pquery = xstrdup(wrbuf_cstr(se->wrbuf));
 
     xfree(cl->cqlquery);
-    if (*sru)
+
+    /* Support for PQF on SRU targets.
+     * TODO Refactor */
+    yaz_log(YLOG_DEBUG, "Query syntax: %s", query_syntax);
+    if (strcmp(query_syntax, "pqf") != 0 && *sru)
     {
         if (!strcmp(sru, "solr")) {
             if (!(cl->cqlquery = make_solrquery(cl)))
