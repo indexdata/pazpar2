@@ -1,0 +1,26 @@
+<settings target="kb.dadsthirdnode.cvt.dk/sru-proxy">
+
+  <!-- Simple test against a local SRU server (could be yaz-ztest) -->
+
+  <set name="pz:sru" value="get"/> <!-- must be get, post or soap -->
+  <set name="pz:sru_version" value="1.1"/>
+  <set name="pz:name" value="sru-proxy"/>
+
+
+  <set name="pz:maxrecs" value="50"/>
+
+  <!-- mapping for unqualified search -->
+
+  <set name="pz:extra_args" value="&x-facet_def=dtic_test&x-noxsl=1" />
+  <set name="pz:query_syntax" value="pqf" />
+
+  <!-- Retrieval settings -->
+
+  <set name="pz:elements" value="dc"/>
+
+  <!-- Result normalization settings -->
+
+  <set name="pz:nativesyntax" value="xml"/>
+  <set name="pz:xslt" value="dc.xsl"/>
+
+</settings>
