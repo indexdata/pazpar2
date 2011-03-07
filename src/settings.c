@@ -76,6 +76,7 @@ static char *hard_settings[] = {
     "pz:termlist_term_factor",  /* PZ_TERMLIST_TERM_FACTOR*/
     "pz:preferred",             /* PZ_PREFERRED           */
     "pz:extra_args",            /* PZ_EXTRA_ARGS          */
+    "pz:query_syntax",          /* PZ_QUERY_SYNTAX        */
     0
 };
 
