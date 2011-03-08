@@ -1304,8 +1304,7 @@ static int ingest_to_cluster(struct client *cl,
                                                     &se->total_merged);
 
     const char *use_term_factor_str = session_setting_oneval(sdb, PZ_TERMLIST_TERM_FACTOR);
-    // TODO: Work-around to default to use term factor, until other MK2 components supports it
-    int use_term_factor = 1;
+    int use_term_factor = 0;
     int term_factor = 1; 
     if (use_term_factor_str && use_term_factor_str[0] != 0)
        use_term_factor =  atoi(use_term_factor_str);
