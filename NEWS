@@ -1,3 +1,10 @@
+-- 1.5.4 2011/03/08
+- Experiental support for DTIC DADS target  
+- adds dads-pz2.xsl
+- Support for query_syntax (overrides the default for SRU | Z39.50) 
+- Support for extraArgs (ZOOM "extraArgs" option) for targets
+- New commands: status-server and status-session
+
 -- 1.5.3 2011/02/18
 - Fix for threaded runs: 
 Client now have a copy of the database URL, 
