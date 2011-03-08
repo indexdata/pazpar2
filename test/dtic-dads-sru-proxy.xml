@@ -11,7 +11,7 @@
 
   <!-- mapping for unqualified search -->
 
-  <set name="pz:extra_args" value="&x-facet_def=dtic_test&x-noxsl=1" />
+  <set name="pz:extra_args" value="%26x-facet_def%3Ddtic_test%26x-noxsl%3D1" />
   <set name="pz:query_syntax" value="pqf" />
 
   <!-- Retrieval settings -->
