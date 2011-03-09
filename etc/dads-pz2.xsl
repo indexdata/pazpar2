@@ -86,7 +86,7 @@
         <pz:metadata type="journal-subpart">
             <xsl:text>Vol. </xsl:text><xsl:value-of select="vol" />
             <xsl:text> no. </xsl:text><xsl:value-of select="issue" />
-            <xsl:text> (<xsl:value-of select="month" /><xsl:text>-</xsl:text></xsl:text><xsl:value-of select="year" /><xsl:text>)</xsl:text>
+            <xsl:text>(</xsl:text><xsl:value-of select="month" /><xsl:text>-</xsl:text><xsl:value-of select="year" /><xsl:text>)</xsl:text>
             <xsl:text> p. </xsl:text><xsl:value-of select="page" />
         </pz:metadata>
     </xsl:for-each>      
