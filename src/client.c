@@ -667,6 +667,7 @@ void client_start_search(struct client *cl)
     const char *opt_sru         = session_setting_oneval(sdb, PZ_SRU);
     const char *opt_sort        = session_setting_oneval(sdb, PZ_SORT);
     const char *opt_preferred   = session_setting_oneval(sdb, PZ_PREFERRED);
+    const char *extra_args      = session_setting_oneval(sdb, PZ_EXTRA_ARGS);
     char maxrecs_str[24], startrecs_str[24];
 
     assert(link);
@@ -674,6 +675,9 @@ void client_start_search(struct client *cl)
     cl->hits = -1;
     cl->record_offset = 0;
     cl->diagnostic = 0;
+
+    if (extra_args && *extra_args)
+        ZOOM_connection_option_set(link, "extraArgs", extra_args);
 
     if (opt_preferred) {
         cl->preferred = atoi(opt_preferred);
