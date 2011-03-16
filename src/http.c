@@ -161,7 +161,9 @@ static void http_buf_destroy(http_server_t hs, struct http_buf *b)
         b->next = hs->http_buf_freelist;
         hs->http_buf_freelist = b;
         hs->http_buf_freelist_count++;
+#if 0 
         yaz_log(YLOG_DEBUG, "Free %d http buffers on server.", hs->http_buf_freelist_count);
+#endif
     }
     yaz_mutex_leave(hs->mutex);
 }
