@@ -639,15 +639,12 @@ static int client_set_facets_request(struct client *cl, ZOOM_connection link)
 int client_has_facet(struct client *cl, const char *name) {
     ZOOM_facet_field facet_field;
     if (!cl || !cl->resultset || !name) {
-        yaz_log(YLOG_DEBUG, "client has facet: Missing %p %p %s", cl, (cl ? cl->resultset: 0), name);
         return 0;
     }
     facet_field = ZOOM_resultset_get_facet_field(cl->resultset, name);
     if (facet_field) {
-        yaz_log(YLOG_DEBUG, "client: has facets for %s", name);
         return 1;
     }
-    yaz_log(YLOG_DEBUG, "client: No facets for %s", name);
     return 0;
 }
 
