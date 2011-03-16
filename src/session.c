@@ -211,7 +211,7 @@ void add_facet(struct session *s, const char *type, const char *value, int count
             s->num_termlists = i + 1;
         }
         
-#if
+#if 0
         session_log(s, YLOG_DEBUG, "Facets for %s: %s norm:%s (%d)", type, value, wrbuf_cstr(facet_wrbuf), count);
 #endif
         termlist_insert(s->termlists[i].termlist, wrbuf_cstr(facet_wrbuf),
