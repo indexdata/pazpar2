@@ -99,7 +99,9 @@ static void *sel_thread_handler(void *vp)
         assert(p->input_queue);
         work_this = queue_remove_last(&p->input_queue);
         input_queue_length--;
+#if 0
         yaz_log(YLOG_DEBUG, "input queue length after pop: %d", input_queue_length);
+#endif
         assert(work_this);
 
         yaz_mutex_leave(p->mutex);
@@ -218,7 +220,9 @@ void sel_thread_add(sel_thread_t p, void *data)
     work_p->next = p->input_queue;
     p->input_queue = work_p;
     input_queue_length++;
+#if 0
     yaz_log(YLOG_DEBUG, "sel_thread_add: Input queue length after push: %d", input_queue_length);
+#endif
     yaz_cond_signal(p->input_data);
     yaz_mutex_leave(p->mutex);
 }
