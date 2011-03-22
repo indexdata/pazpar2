@@ -419,7 +419,7 @@
     On a Debian based Apache 2 system, the relevant modules can
     be enabled with:
     <screen>
-     sudo a2enmod proxy_http
+     sudo a2enmod proxy_http proxy_balancer
     </screen>
    </para>
 
