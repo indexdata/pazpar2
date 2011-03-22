@@ -3,7 +3,7 @@
 <status>OK</status>
 <activeclients>0</activeclients>
 <merged>8</merged>
-<total>30</total>
+<total>31</total>
 <start>0</start>
 <num>8</num>
 <hit>

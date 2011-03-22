@@ -14,8 +14,13 @@
         version="1.0"
         encoding="UTF-8"/>
 
+  <xsl:param name="medium" />
+
   <xsl:template match="/record">
     <pz:record>
+      <pz:metadata type="medium">
+         <xsl:value-of select="$medium" />
+      </pz:metadata>
       <xsl:apply-templates/>
     </pz:record>
   </xsl:template>
@@ -45,6 +50,9 @@
     <pz:metadata type="title">
       <xsl:value-of select="."/>
     </pz:metadata>
+    <pz:metadata type="title-complete">
+      <xsl:value-of select="." />
+    </pz:metadata>
   </xsl:template>
 
   <xsl:template match="author">
@@ -67,6 +75,36 @@
 
   <xsl:template match="subject">
     <pz:metadata type="subject">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="isbn">
+    <pz:metadata type="isbn">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="issn">
+    <pz:metadata type="issn">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="journaltitle">
+    <pz:metadata type="journal-title">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="volume">
+    <pz:metadata type="volume">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="issue">
+    <pz:metadata type="issue">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>

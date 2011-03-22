@@ -1,10 +1,11 @@
 ## -*- Autoconf -*-
 ## This file is part of Pazpar2.
+## Copyright (C) 2006-2011 Index Data
 ## Process this file with autoconf to produce a configure script.
 
 # Autoconf and automake setup
 AC_PREREQ(2.60)
-AC_INIT([pazpar2],[1.3.0],[pazpar2-help@indexdata.dk])
+AC_INIT([pazpar2],[1.5.4],[pazpar2-help@indexdata.dk])
 
 AC_CONFIG_HEADERS(src/config.h)
 
@@ -21,7 +22,7 @@ AC_LANG(C)
 
 AC_C_INLINE
 
-YAZ_INIT([static icu server],[4.0.2])
+YAZ_INIT([static icu],[4.1.0])
 if test -z "$YAZLIB"; then
 	AC_MSG_ERROR([YAZ development libraries missing])
 fi

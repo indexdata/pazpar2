@@ -1,5 +1,5 @@
 /* This file is part of Pazpar2.
-   Copyright (C) 2006-2010 Index Data
+   Copyright (C) 2006-2011 Index Data
 
 Pazpar2 is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -70,6 +70,13 @@ static char *hard_settings[] = {
     "pz:pqf_strftime",
     "pz:negotiation_charset",
     "pz:max_connections",
+    "pz:reuse_connections",     /* PZ_REUSE_CONNECTION    */
+    "pz:termlist_term_sort",    /* PZ_TERMLIST_TERM_SORT  */
+    "pz:termlist_term_count",   /* PZ_TERMLIST_TERM_COUNT */
+    "pz:termlist_term_factor",  /* PZ_TERMLIST_TERM_FACTOR*/
+    "pz:preferred",             /* PZ_PREFERRED           */
+    "pz:extra_args",            /* PZ_EXTRA_ARGS          */
+    "pz:query_syntax",          /* PZ_QUERY_SYNTAX        */
     0
 };
 

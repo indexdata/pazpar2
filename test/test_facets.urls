@@ -1,0 +1,24 @@
+http://localhost:9763/search.pz2?command=init&clear=1
+http://localhost:9763/search.pz2?session=1&command=settings&pz:name%5Blocalhost:9999%2Fdb1%5D=db1&pz:requestsyntax%5Blocalhost:9999%2Fdb1%5D=usmarc&pz:nativesyntax%5Blocalhost:9999%2Fdb1%5D=txml&pz:xslt%5Blocalhost:9999%2Fdb1%5D=tmarc.xsl&pz:termlist_term_count%5Blocalhost:9999%2Fdb1%5D=0
+http://localhost:9763/search.pz2?session=1&command=search&query=7+and+computer
+http://localhost:9763/search.pz2?session=1&command=show&block=1
+http://localhost:9763/search.pz2?session=1&command=bytarget
+4 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
+http://localhost:9763/search.pz2?session=1&command=settings&pz:name%5Blocalhost:9999%2Fdb1%5D=db1&pz:requestsyntax%5Blocalhost:9999%2Fdb1%5D=usmarc&pz:nativesyntax%5Blocalhost:9999%2Fdb1%5D=txml&pz:xslt%5Blocalhost:9999%2Fdb1%5D=tmarc.xsl&pz:termlist_term_count%5Blocalhost:9999%2Fdb1%5D=5&pz:maxrecs%5Blocalhost:9999%2Fdb1%5D=2
+http://localhost:9763/search.pz2?session=1&command=search&query=4+and+computer
+http://localhost:9763/search.pz2?session=1&command=show&block=1
+http://localhost:9763/search.pz2?session=1&command=bytarget
+http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
+http://localhost:9763/search.pz2?session=1&command=search&query=8+and+computer
+http://localhost:9763/search.pz2?session=1&command=show&block=1
+http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
+http://localhost:9763/search.pz2?session=1&command=search&query=6+and+computer
+http://localhost:9763/search.pz2?session=1&command=show
+http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
+10 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
+http://localhost:9763/search.pz2?session=1&command=bytarget
+http://localhost:9763/search.pz2?command=init
+http://localhost:9763/search.pz2?session=2&command=settings&pz:name%5Blocalhost:9999%2Fdb1%5D=db1&pz:requestsyntax%5Blocalhost:9999%2Fdb1%5D=usmarc&pz:nativesyntax%5Blocalhost:9999%2Fdb1%5D=txml&pz:xslt%5Blocalhost:9999%2Fdb1%5D=tmarc.xsl&pz:apdulog%5Blocalhost:9999%2Fdb1%5D=1
+http://localhost:9763/search.pz2?session=2&command=search&query=9+and+computer
+2 http://localhost:9763/search.pz2?session=2&command=show&block=1
+http://localhost:9763/search.pz2?session=2&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium

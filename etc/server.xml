@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pazpar2 xmlns="http://www.indexdata.com/pazpar2/1.0">
+
+  <threads number="0"/> <!-- non-zero to enable threaded operation -->
+  <server>
+    <listen port="8004"/>
+
+    <!-- character set mapping.. This can be overriden in services -->
+    <relevance>
+      <icu_chain id="relevance" locale="en">
+	<transform rule="[:Control:] Any-Remove"/>
+	<tokenize rule="l"/>
+	<transform rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
+	<casemap rule="l"/>
+      </icu_chain>
+    </relevance>
+    
+    <sort>
+      <icu_chain id="sort" locale="en">
+	<transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
+	<casemap rule="l"/>
+      </icu_chain>
+    </sort>
+    
+    <mergekey>
+      <icu_chain id="mergekey" locale="en">
+	<tokenize rule="l"/>
+	<transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
+	<casemap rule="l"/>
+      </icu_chain>
+    </mergekey>
+
+    <include src="services-enabled/*.xml"/>
+
+  </server>
+  
+</pazpar2>
+<!-- Keep this comment at the end of the file
+     Local variables:
+     mode: nxml
+     End:
+-->
+

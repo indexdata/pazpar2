@@ -1,5 +1,5 @@
 /* This file is part of Pazpar2.
-   Copyright (C) 2006-2010 Index Data
+   Copyright (C) 2006-2011 Index Data
 
 Pazpar2 is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -24,7 +24,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if HAVE_CONFIG_H
 #include <config.h>
 #endif
-#include <pthread.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -52,6 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/diagbib1.h>
 #include <yaz/snprintf.h>
 #include <yaz/rpn2cql.h>
+#include <yaz/rpn2solr.h>
 
 #define USE_TIMING 0
 #if USE_TIMING
@@ -67,23 +67,26 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "relevance.h"
 #include "incref.h"
 
-/* client counting (1) , disable client counting (0) */
-#if 1
 static YAZ_MUTEX g_mutex = 0;
 static int no_clients = 0;
 
-static void client_use(int delta)
+static int client_use(int delta)
 {
+    int clients;
     if (!g_mutex)
         yaz_mutex_create(&g_mutex);
     yaz_mutex_enter(g_mutex);
     no_clients += delta;
+    clients = no_clients;
     yaz_mutex_leave(g_mutex);
-    yaz_log(YLOG_LOG, "%s clients=%d", delta > 0 ? "INC" : "DEC", no_clients);
+    yaz_log(YLOG_DEBUG, "%s clients=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), clients);
+    return clients;
 }
-#else
-#define client_use(x)
-#endif
+
+int  clients_count(void) {
+    return client_use(0);
+}
+
 
 /** \brief Represents client state for a connection to one search target */
 struct client {
@@ -97,11 +100,14 @@ struct client {
     int maxrecs;
     int startrecs;
     int diagnostic;
+    int preferred;
     enum client_state state;
     struct show_raw *show_raw;
     ZOOM_resultset resultset;
     YAZ_MUTEX mutex;
     int ref_count;
+    /* copy of database->url */
+    char *url;
 };
 
 struct show_raw {
@@ -137,17 +143,23 @@ enum client_state client_get_state(struct client *cl)
 
 void client_set_state(struct client *cl, enum client_state st)
 {
+    int was_active = 0;
+    if (client_is_active(cl))
+        was_active = 1;
     cl->state = st;
-    /* no need to check for all client being non-active if this one
-       already is. Note that session_active_clients also LOCKS session */
-#if 0
-    if (!client_is_active(cl) && cl->session)
+    /* If client is going from being active to inactive and all clients
+       are now idle we fire a watch for the session . The assumption is
+       that session is not mutex locked if client is already active */
+    if (was_active && !client_is_active(cl) && cl->session)
     {
+
         int no_active = session_active_clients(cl->session);
-        if (no_active == 0)
+        yaz_log(YLOG_DEBUG, "%s: releasing watches on zero active: %d", client_get_url(cl), no_active);
+        if (no_active == 0) {
             session_alert_watch(cl->session, SESSION_WATCH_SHOW);
+            session_alert_watch(cl->session, SESSION_WATCH_SHOW_PREF);
+        }
     }
-#endif
 }
 
 static void client_show_raw_error(struct client *cl, const char *addinfo);
@@ -394,6 +406,33 @@ static int nativesyntax_to_type(struct session_database *sdb, char *type,
     }
 }
 
+/**
+ * TODO Consider thread safety!!!
+ *
+ */
+int client_report_facets(struct client *cl, ZOOM_resultset rs) {
+    int facet_idx;
+    ZOOM_facet_field *facets = ZOOM_resultset_facets(rs);
+    int facet_num;
+    struct session *se = client_get_session(cl);
+    facet_num = ZOOM_resultset_facets_size(rs);
+    yaz_log(YLOG_DEBUG, "client_report_facets: %d", facet_num);
+
+    for (facet_idx = 0; facet_idx < facet_num; facet_idx++) {
+        const char *name = ZOOM_facet_field_name(facets[facet_idx]);
+        size_t term_idx;
+        size_t term_num = ZOOM_facet_field_term_count(facets[facet_idx]);
+        for (term_idx = 0; term_idx < term_num; term_idx++ ) {
+            int freq;
+            const char *term = ZOOM_facet_field_get_term(facets[facet_idx], term_idx, &freq);
+            if (term)
+                add_facet(se, name, term, freq);
+        }
+    }
+
+    return 0;
+}
+
 static void ingest_raw_record(struct client *cl, ZOOM_record rec)
 {
     const char *buf;
@@ -413,12 +452,33 @@ static void ingest_raw_record(struct client *cl, ZOOM_record rec)
     client_show_raw_dequeue(cl);
 }
 
+void client_check_preferred_watch(struct client *cl)
+{
+    struct session *se = cl->session;
+    yaz_log(YLOG_DEBUG, "client_check_preferred_watch: %s ", client_get_url(cl));
+    if (se)
+    {
+        client_unlock(cl);
+        if (session_is_preferred_clients_ready(se)) {
+            session_alert_watch(se, SESSION_WATCH_SHOW_PREF);
+        }
+        else
+            yaz_log(YLOG_DEBUG, "client_check_preferred_watch: Still locked on preferred targets.");
+
+        client_lock(cl);
+    }
+    else
+        yaz_log(YLOG_WARN, "client_check_preferred_watch: %s. No session!", client_get_url(cl));
+
+}
+
 void client_search_response(struct client *cl)
 {
     struct connection *co = cl->connection;
     struct session *se = cl->session;
     ZOOM_connection link = connection_get_link(co);
     ZOOM_resultset resultset = cl->resultset;
+
     const char *error, *addinfo = 0;
     
     if (ZOOM_connection_error(link, &error, &addinfo))
@@ -430,10 +490,16 @@ void client_search_response(struct client *cl)
     }
     else
     {
+        yaz_log(YLOG_DEBUG, "client_search_response: hits "
+                ODR_INT_PRINTF, cl->hits);
+        client_report_facets(cl, resultset);
         cl->record_offset = cl->startrecs;
         cl->hits = ZOOM_resultset_size(resultset);
-        if (se)
+        if (se) {
             se->total_hits += cl->hits;
+            yaz_log(YLOG_DEBUG, "client_search_response: total hits "
+                    ODR_INT_PRINTF, se->total_hits);
+        }
     }
 }
 
@@ -526,6 +592,63 @@ void client_record_response(struct client *cl)
     }
 }
 
+static int client_set_facets_request(struct client *cl, ZOOM_connection link)
+{
+    struct session_database *sdb = client_get_database(cl);
+    const char *opt_facet_term_sort  = session_setting_oneval(sdb, PZ_TERMLIST_TERM_SORT);
+    const char *opt_facet_term_count = session_setting_oneval(sdb, PZ_TERMLIST_TERM_COUNT);
+
+    /* Future record filtering on target */
+    /* const char *opt_facet_record_filter = session_setting_oneval(sdb, PZ_RECORDFILTER); */
+
+    /* Disable when no count is set */
+    /* TODO Verify: Do we need to reset the  ZOOM facets if a ZOOM Connection is being reused??? */
+    if (opt_facet_term_count && *opt_facet_term_count)
+    {
+        int index = 0;
+        struct session *session = client_get_session(cl);
+        struct conf_service *service = session->service;
+        int num = service->num_metadata;
+        WRBUF wrbuf = wrbuf_alloc();
+        yaz_log(YLOG_DEBUG, "Facet settings, sort: %s count: %s",
+                opt_facet_term_sort, opt_facet_term_count);
+        for (index = 0; index < num; index++)
+        {
+            struct conf_metadata *conf_meta = &service->metadata[index];
+            if (conf_meta->termlist)
+            {
+                if (wrbuf_len(wrbuf))
+                    wrbuf_puts(wrbuf, ", ");
+                wrbuf_printf(wrbuf, "@attr 1=%s", conf_meta->name);
+                
+                if (opt_facet_term_sort && *opt_facet_term_sort)
+                    wrbuf_printf(wrbuf, " @attr 2=%s", opt_facet_term_sort);
+                wrbuf_printf(wrbuf, " @attr 3=%s", opt_facet_term_count);
+            }
+        }
+        if (wrbuf_len(wrbuf))
+        {
+            yaz_log(YLOG_LOG, "Setting ZOOM facets option: %s", wrbuf_cstr(wrbuf));
+            ZOOM_connection_option_set(link, "facets", wrbuf_cstr(wrbuf));
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int client_has_facet(struct client *cl, const char *name) {
+    ZOOM_facet_field facet_field;
+    if (!cl || !cl->resultset || !name) {
+        return 0;
+    }
+    facet_field = ZOOM_resultset_get_facet_field(cl->resultset, name);
+    if (facet_field) {
+        return 1;
+    }
+    return 0;
+}
+
+
 void client_start_search(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
@@ -533,13 +656,15 @@ void client_start_search(struct client *cl)
     ZOOM_connection link = connection_get_link(co);
     ZOOM_resultset rs;
     char *databaseName = sdb->database->databases[0];
-    const char *opt_piggyback = session_setting_oneval(sdb, PZ_PIGGYBACK);
-    const char *opt_queryenc = session_setting_oneval(sdb, PZ_QUERYENCODING);
-    const char *opt_elements = session_setting_oneval(sdb, PZ_ELEMENTS);
-    const char *opt_requestsyn = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
-    const char *opt_maxrecs = session_setting_oneval(sdb, PZ_MAXRECS);
-    const char *opt_sru = session_setting_oneval(sdb, PZ_SRU);
-    const char *opt_sort = session_setting_oneval(sdb, PZ_SORT);
+    const char *opt_piggyback   = session_setting_oneval(sdb, PZ_PIGGYBACK);
+    const char *opt_queryenc    = session_setting_oneval(sdb, PZ_QUERYENCODING);
+    const char *opt_elements    = session_setting_oneval(sdb, PZ_ELEMENTS);
+    const char *opt_requestsyn  = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
+    const char *opt_maxrecs     = session_setting_oneval(sdb, PZ_MAXRECS);
+    const char *opt_sru         = session_setting_oneval(sdb, PZ_SRU);
+    const char *opt_sort        = session_setting_oneval(sdb, PZ_SORT);
+    const char *opt_preferred   = session_setting_oneval(sdb, PZ_PREFERRED);
+    const char *extra_args      = session_setting_oneval(sdb, PZ_EXTRA_ARGS);
     char maxrecs_str[24], startrecs_str[24];
 
     assert(link);
@@ -547,6 +672,15 @@ void client_start_search(struct client *cl)
     cl->hits = -1;
     cl->record_offset = 0;
     cl->diagnostic = 0;
+
+    if (extra_args && *extra_args)
+        ZOOM_connection_option_set(link, "extraArgs", extra_args);
+
+    if (opt_preferred) {
+        cl->preferred = atoi(opt_preferred);
+        if (cl->preferred)
+            yaz_log(YLOG_LOG, "Target %s has preferred status: %d", sdb->database->url, cl->preferred);
+    }
     client_set_state(cl, Client_Working);
 
     if (*opt_piggyback)
@@ -562,18 +696,19 @@ void client_start_search(struct client *cl)
     if (*opt_requestsyn)
         ZOOM_connection_option_set(link, "preferredRecordSyntax", opt_requestsyn);
 
-    if (!*opt_maxrecs)
+    if (opt_maxrecs && *opt_maxrecs)
     {
-        sprintf(maxrecs_str, "%d", cl->maxrecs);
-        opt_maxrecs = maxrecs_str;
+        cl->maxrecs = atoi(opt_maxrecs);
     }
-    ZOOM_connection_option_set(link, "count", opt_maxrecs);
 
+    /* convert back to string representation used in ZOOM API */
+    sprintf(maxrecs_str, "%d", cl->maxrecs);
+    ZOOM_connection_option_set(link, "count", maxrecs_str);
 
-    if (atoi(opt_maxrecs) > 20)
+    if (cl->maxrecs > 20)
         ZOOM_connection_option_set(link, "presentChunk", "20");
     else
-        ZOOM_connection_option_set(link, "presentChunk", opt_maxrecs);
+        ZOOM_connection_option_set(link, "presentChunk", maxrecs_str);
 
     sprintf(startrecs_str, "%d", cl->startrecs);
     ZOOM_connection_option_set(link, "start", startrecs_str);
@@ -581,13 +716,17 @@ void client_start_search(struct client *cl)
     if (databaseName)
         ZOOM_connection_option_set(link, "databaseName", databaseName);
 
+    /* TODO Verify does it break something for CQL targets(non-SOLR) ? */
+    /* facets definition is in PQF */
+    client_set_facets_request(cl, link);
+
     if (cl->cqlquery)
     {
         ZOOM_query q = ZOOM_query_create();
         yaz_log(YLOG_LOG, "Search %s CQL: %s", sdb->database->url, cl->cqlquery);
         ZOOM_query_cql(q, cl->cqlquery);
-	if (*opt_sort)
-	    ZOOM_query_sortby(q, opt_sort);
+        if (*opt_sort)
+            ZOOM_query_sortby(q, opt_sort);
         rs = ZOOM_connection_search(link, q);
         ZOOM_query_destroy(q);
     }
@@ -603,27 +742,28 @@ void client_start_search(struct client *cl)
 
 struct client *client_create(void)
 {
-    struct client *r = xmalloc(sizeof(*r));
-    r->maxrecs = 100;
-    r->startrecs = 0;
-    r->pquery = 0;
-    r->cqlquery = 0;
-    r->database = 0;
-    r->connection = 0;
-    r->session = 0;
-    r->hits = 0;
-    r->record_offset = 0;
-    r->diagnostic = 0;
-    r->state = Client_Disconnected;
-    r->show_raw = 0;
-    r->resultset = 0;
-    r->mutex = 0;
-    pazpar2_mutex_create(&r->mutex, "client");
-
-    r->ref_count = 1;
+    struct client *cl = xmalloc(sizeof(*cl));
+    cl->maxrecs = 100;
+    cl->startrecs = 0;
+    cl->pquery = 0;
+    cl->cqlquery = 0;
+    cl->database = 0;
+    cl->connection = 0;
+    cl->session = 0;
+    cl->hits = 0;
+    cl->record_offset = 0;
+    cl->diagnostic = 0;
+    cl->state = Client_Disconnected;
+    cl->show_raw = 0;
+    cl->resultset = 0;
+    cl->mutex = 0;
+    pazpar2_mutex_create(&cl->mutex, "client");
+    cl->preferred = 0;
+    cl->ref_count = 1;
+    cl->url = 0;
     client_use(1);
     
-    return r;
+    return cl;
 }
 
 void client_lock(struct client *c)
@@ -639,7 +779,7 @@ void client_unlock(struct client *c)
 void client_incref(struct client *c)
 {
     pazpar2_incref(&c->ref_count, c->mutex);
-    yaz_log(YLOG_LOG, "client_incref c=%p %s cnt=%d",
+    yaz_log(YLOG_DEBUG, "client_incref c=%p %s cnt=%d",
             c, client_get_url(c), c->ref_count);
 }
 
@@ -647,7 +787,7 @@ int client_destroy(struct client *c)
 {
     if (c)
     {
-        yaz_log(YLOG_LOG, "client_destroy c=%p %s cnt=%d",
+        yaz_log(YLOG_DEBUG, "client_destroy c=%p %s cnt=%d",
                 c, client_get_url(c), c->ref_count);
         if (!pazpar2_decref(&c->ref_count, c->mutex))
         {
@@ -655,9 +795,13 @@ int client_destroy(struct client *c)
             c->pquery = 0;
             xfree(c->cqlquery);
             c->cqlquery = 0;
+            xfree(c->url);
             assert(!c->connection);
-            assert(!c->resultset);
-            
+
+            if (c->resultset)
+            {
+                ZOOM_resultset_destroy(c->resultset);
+            }
             yaz_mutex_destroy(&c->mutex);
             xfree(c);
             client_use(-1);
@@ -670,10 +814,7 @@ int client_destroy(struct client *c)
 void client_set_connection(struct client *cl, struct connection *con)
 {
     if (cl->resultset)
-    {
-        ZOOM_resultset_destroy(cl->resultset);
-        cl->resultset = 0;
-    }
+        ZOOM_resultset_release(cl->resultset);
     if (con)
     {
         assert(cl->connection == 0);
@@ -755,6 +896,34 @@ static char *make_cqlquery(struct client *cl)
     return r;
 }
 
+// returns a xmalloced SOLR query corresponding to the pquery in client
+// TODO Could prob. be merge with the similar make_cqlquery
+static char *make_solrquery(struct client *cl)
+{
+    solr_transform_t sqlt = solr_transform_create();
+    Z_RPNQuery *zquery;
+    char *r;
+    WRBUF wrb = wrbuf_alloc();
+    int status;
+    ODR odr_out = odr_createmem(ODR_ENCODE);
+
+    zquery = p_query_rpn(odr_out, cl->pquery);
+    yaz_log(YLOG_LOG, "PQF: %s", cl->pquery);
+    if ((status = solr_transform_rpn2solr_wrbuf(sqlt, wrb, zquery)))
+    {
+        yaz_log(YLOG_WARN, "Failed to generate SOLR query, code=%d", status);
+        r = 0;
+    }
+    else
+    {
+        r = xstrdup(wrbuf_cstr(wrb));
+    }
+    wrbuf_destroy(wrb);
+    odr_destroy(odr_out);
+    solr_transform_close(sqlt);
+    return r;
+}
+
 // Parse the query given the settings specific to this client
 int client_parse_query(struct client *cl, const char *query)
 {
@@ -766,7 +935,7 @@ int client_parse_query(struct client *cl, const char *query)
     const char *sru = session_setting_oneval(sdb, PZ_SRU);
     const char *pqf_prefix = session_setting_oneval(sdb, PZ_PQF_PREFIX);
     const char *pqf_strftime = session_setting_oneval(sdb, PZ_PQF_STRFTIME);
-
+    const char *query_syntax = session_setting_oneval(sdb, PZ_QUERY_SYNTAX);
     if (!ccl_map)
         return -1;
 
@@ -775,7 +944,7 @@ int client_parse_query(struct client *cl, const char *query)
     if (!cn)
     {
         client_set_state(cl, Client_Error);
-        yaz_log(YLOG_WARN, "Failed to parse CCL query %s for %s",
+        session_log(se, YLOG_WARN, "Failed to parse CCL query '%s' for %s",
                 query,
                 client_get_database(cl)->database->url);
         return -1;
@@ -810,14 +979,25 @@ int client_parse_query(struct client *cl, const char *query)
     cl->pquery = xstrdup(wrbuf_cstr(se->wrbuf));
 
     xfree(cl->cqlquery);
-    if (*sru)
+
+    /* Support for PQF on SRU targets.
+     * TODO Refactor */
+    yaz_log(YLOG_DEBUG, "Query syntax: %s", query_syntax);
+    if (strcmp(query_syntax, "pqf") != 0 && *sru)
     {
-        if (!(cl->cqlquery = make_cqlquery(cl)))
-            return -1;
+        if (!strcmp(sru, "solr")) {
+            if (!(cl->cqlquery = make_solrquery(cl)))
+                return -1;
+        }
+        else {
+            if (!(cl->cqlquery = make_cqlquery(cl)))
+                return -1;
+        }
     }
     else
         cl->cqlquery = 0;
 
+    /* TODO FIX Not thread safe */
     if (!se->relevance)
     {
         // Initialize relevance structure with query terms
@@ -845,6 +1025,19 @@ int client_is_active(struct client *cl)
     return 0;
 }
 
+int client_is_active_preferred(struct client *cl)
+{
+    /* only count if this is a preferred target. */
+    if (!cl->preferred)
+        return 0;
+    /* TODO No sure this the condition that Seb wants */
+    if (cl->connection && (cl->state == Client_Connecting ||
+                           cl->state == Client_Working))
+        return 1;
+    return 0;
+}
+
+
 Odr_int client_get_hits(struct client *cl)
 {
     return cl->hits;
@@ -868,6 +1061,10 @@ int client_get_diagnostic(struct client *cl)
 void client_set_database(struct client *cl, struct session_database *db)
 {
     cl->database = db;
+    /* Copy the URL for safe logging even after session is gone */
+    if (db) {
+        cl->url = xstrdup(db->database->url);
+    }
 }
 
 struct host *client_get_host(struct client *cl)
@@ -877,9 +1074,10 @@ struct host *client_get_host(struct client *cl)
 
 const char *client_get_url(struct client *cl)
 {
-    if (cl->database)
-        return client_get_database(cl)->database->url;
+    if (cl->url)
+        return cl->url;
     else
+        /* This must not happen anymore, as the url is present until destruction of client  */
         return "NOURL";
 }
 
@@ -888,10 +1086,21 @@ void client_set_maxrecs(struct client *cl, int v)
     cl->maxrecs = v;
 }
 
+int client_get_maxrecs(struct client *cl)
+{
+    return cl->maxrecs;
+}
+
 void client_set_startrecs(struct client *cl, int v)
 {
     cl->startrecs = v;
 }
+
+void client_set_preferred(struct client *cl, int v)
+{
+    cl->preferred = v;
+}
+
 
 /*
  * Local variables:

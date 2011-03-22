@@ -78,10 +78,11 @@ binary-arch: build install
 	# pazpar2-doc package
 	mv $(CURDIR)/debian/pazpar2/usr/share/doc/pazpar2/* $(CURDIR)/debian/pazpar2-doc/usr/share/doc/pazpar2-doc
 	# pazpar2 package
-	cp $(CURDIR)/debian/server.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/server.xml
+	cp $(CURDIR)/etc/server.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/server.xml
 	cp $(CURDIR)/etc/default.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/services-available/
-	cp etc/settings/*.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/settings/
-	cp etc/*.xsl $(CURDIR)/debian/pazpar2/etc/pazpar2/
+	cp $(CURDIR)/etc/services/*.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/services-available
+	cp $(CURDIR)/etc/settings/*.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/settings/
+	cp $(CURDIR)/etc/*.xsl $(CURDIR)/debian/pazpar2/etc/pazpar2/
 	# pazpar2-apache2 package
 	cp $(CURDIR)/debian/ap2pazpar2.cfg $(CURDIR)/debian/pazpar2-apache2/etc/pazpar2
 	# pazpar2-test1 package
@@ -90,7 +91,7 @@ binary-arch: build install
 	# pazpar2-jsdemo package
 	cp www/jsdemo/*.html $(CURDIR)/debian/pazpar2-jsdemo/usr/share/pazpar2/jsdemo/
 	cp www/jsdemo/*.js $(CURDIR)/debian/pazpar2-jsdemo/usr/share/pazpar2/jsdemo/
-	cp www/jsdemo/*.gif $(CURDIR)/debian/pazpar2-jsdemo/usr/share/pazpar2/jsdemo/
+	cp www/jsdemo/*.png $(CURDIR)/debian/pazpar2-jsdemo/usr/share/pazpar2/jsdemo/
 	cp www/jsdemo/*.css $(CURDIR)/debian/pazpar2-jsdemo/usr/share/pazpar2/jsdemo/
 	# pazpar2-js package
 	cp $(CURDIR)/debian/ap2pazpar2-js.cfg $(CURDIR)/debian/pazpar2-js/etc/pazpar2

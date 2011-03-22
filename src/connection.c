@@ -1,5 +1,5 @@
 /* This file is part of Pazpar2.
-   Copyright (C) 2006-2010 Index Data
+   Copyright (C) 2006-2011 Index Data
 
 Pazpar2 is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -78,7 +78,8 @@ struct connection {
     enum {
         Conn_Resolving,
         Conn_Connecting,
-        Conn_Open
+        Conn_Open,
+        Conn_Dead
     } state;
     int operation_timeout;
     int session_timeout;
@@ -133,14 +134,13 @@ static void connection_destroy(struct connection *co)
         ZOOM_connection_destroy(co->link);
         iochan_destroy(co->iochan);
     }
-    yaz_log(YLOG_DEBUG, "Connection destroy %s", co->host->hostport);
+    yaz_log(YLOG_DEBUG, "%p Connection destroy %s", co, co->host->hostport);
 
     if (co->client)
     {
         client_disconnect(co->client);
     }
 
-    remove_connection_from_host(co);
     xfree(co->zproxy);
     xfree(co);
     connection_use(-1);
@@ -194,23 +194,27 @@ static void non_block_events(struct connection *co)
             continue;
         ev = ZOOM_connection_last_event(link);
         
-#if 0
-        yaz_log(YLOG_LOG, "ZOOM_EVENT_%s", ZOOM_get_event_str(ev));
+#if 1
+        yaz_log(YLOG_DEBUG, "%p Connection ZOOM_EVENT_%s", co, ZOOM_get_event_str(ev));
 #endif
         switch (ev) 
         {
         case ZOOM_EVENT_END:
             {
                 const char *error, *addinfo;
-		int err;
+                int err;
                 if ((err = ZOOM_connection_error(link, &error, &addinfo)))
                 {
                     yaz_log(YLOG_LOG, "Error %s from %s",
                             error, client_get_url(cl));
+                    client_set_diagnostic(cl, err);
+                    client_set_state(cl, Client_Error);
                 }
-                iochan_settimeout(iochan, co->session_timeout);
-		client_set_diagnostic(cl, err);
-                client_set_state(cl, Client_Idle);
+                else
+                {
+                    iochan_settimeout(iochan, co->session_timeout);
+                    client_set_state(cl, Client_Idle);
+                }
                 yaz_cond_broadcast(co->host->cond_ready);
             }
             break;
@@ -247,6 +251,7 @@ static void non_block_events(struct connection *co)
         struct client *cl = co->client;
         if (cl)
         {
+            client_check_preferred_watch(cl);
             client_got_records(cl);
         }
     }
@@ -275,28 +280,28 @@ static void connection_handler(IOCHAN iochan, int event)
            a closed connection from the target.. Or, perhaps, an unexpected
            package.. We will just close the connection */
         yaz_log(YLOG_LOG, "timeout connection %p event=%d", co, event);
-        connection_destroy(co);
+        remove_connection_from_host(co);
         yaz_mutex_leave(host->mutex);
+        connection_destroy(co);
     }
     else if (event & EVENT_TIMEOUT)
     {
         if (co->state == Conn_Connecting)
         {
-            yaz_log(YLOG_WARN,  "connect timeout %s", client_get_url(cl));
+            yaz_log(YLOG_WARN, "%p connect timeout %s", co, client_get_url(cl));
 
             client_set_state(cl, Client_Error);
-            connection_destroy(co);
-        }
-        else if (client_get_state(co->client) == Client_Idle)
-        {
-            yaz_log(YLOG_LOG,  "idle timeout %s", client_get_url(cl));
+            remove_connection_from_host(co);
+            yaz_mutex_leave(host->mutex);
             connection_destroy(co);
         }
         else
         {
-            yaz_log(YLOG_LOG,  "ignore timeout %s", client_get_url(cl));
+            yaz_log(YLOG_LOG,  "%p Connection idle timeout %s", co, client_get_url(cl));
+            remove_connection_from_host(co);
+            yaz_mutex_leave(host->mutex);
+            connection_destroy(co);
         }
-        yaz_mutex_leave(host->mutex);
     }
     else
     {
@@ -343,6 +348,7 @@ start:
         {
             if (!host->ipport) /* unresolved */
             {
+                remove_connection_from_host(con);
                 yaz_mutex_leave(host->mutex);
                 connection_destroy(con);
                 goto start;
@@ -350,6 +356,7 @@ start:
             }
             else if (!con->client)
             {
+                remove_connection_from_host(con);
                 yaz_mutex_leave(host->mutex);
                 connection_destroy(con);
                 /* start all over .. at some point it will be NULL */
@@ -416,7 +423,6 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     if ((sru_version = session_setting_oneval(sdb, PZ_SRU_VERSION)) 
         && *sru_version)
         ZOOM_options_set(zoptions, "sru_version", sru_version);
-
     if (!(link = ZOOM_connection_create(zoptions)))
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to create ZOOM Connection");
@@ -431,11 +437,13 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
         strcat(http_hostport, host->hostport);
         ZOOM_connection_connect(link, http_hostport, 0);
     }
+    else if (zproxy && *zproxy)
+        ZOOM_connection_connect(link, host->hostport, 0);        
     else
         ZOOM_connection_connect(link, host->ipport, 0);
     
     con->link = link;
-    con->iochan = iochan_create(0, connection_handler, 0, "connection_socket");
+    con->iochan = iochan_create(-1, connection_handler, 0, "connection_socket");
     con->state = Conn_Connecting;
     iochan_settimeout(con->iochan, con->operation_timeout);
     iochan_setdata(con->iochan, con);
@@ -451,7 +459,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
 int client_prep_connection(struct client *cl,
                            int operation_timeout, int session_timeout,
                            iochan_man_t iochan_man,
-                           const struct timespec *abstime)
+                           const struct timeval *abstime)
 {
     struct connection *co;
     struct host *host = client_get_host(cl);
@@ -470,12 +478,18 @@ int client_prep_connection(struct client *cl,
 
     if (!co)
     {
-        int max_connections = 30;
+        int max_connections = 0;
+        int reuse_connections = 1;
         const char *v = session_setting_oneval(client_get_database(cl),
                                                PZ_MAX_CONNECTIONS);
         if (v && *v)
             max_connections = atoi(v);
-        
+
+        v = session_setting_oneval(client_get_database(cl),
+                PZ_REUSE_CONNECTIONS);
+        if (v && *v)
+            reuse_connections = atoi(v);
+
         // See if someone else has an idle connection
         // We should look at timestamps here to select the longest-idle connection
         yaz_mutex_enter(host->mutex);
@@ -484,27 +498,28 @@ int client_prep_connection(struct client *cl,
             int num_connections = 0;
             for (co = host->connections; co; co = co->next)
                 num_connections++;
-            for (co = host->connections; co; co = co->next)
-            {
-                if (connection_is_idle(co) &&
-                    (!co->client || client_get_state(co->client) == Client_Idle) &&
-                    !strcmp(ZOOM_connection_option_get(co->link, "user"),
-                            session_setting_oneval(client_get_database(cl),
-                                                   PZ_AUTHENTICATION)))
+            if (reuse_connections) {
+                for (co = host->connections; co; co = co->next)
                 {
-                    if (zproxy == 0 && co->zproxy == 0)
-                        break;
-                    if (zproxy && co->zproxy && !strcmp(zproxy, co->zproxy))
-                        break;
+                    if (connection_is_idle(co) &&
+                        (!co->client || client_get_state(co->client) == Client_Idle) &&
+                        !strcmp(ZOOM_connection_option_get(co->link, "user"),
+                                session_setting_oneval(client_get_database(cl),
+                                                       PZ_AUTHENTICATION)))
+                    {
+                        if (zproxy == 0 && co->zproxy == 0)
+                            break;
+                        if (zproxy && co->zproxy && !strcmp(zproxy, co->zproxy))
+                            break;
+                    }
+                }
+                if (co)
+                {
+                    yaz_log(YLOG_LOG, "num_connections = %d (reusing)", num_connections);
+                    break;
                 }
             }
-            if (co)
-            {
-                yaz_log(YLOG_LOG, "num_connections = %d (reusing)",
-                        num_connections);
-                break;
-            }
-            if (num_connections < max_connections)
+            if (max_connections <= 0 || num_connections < max_connections)
             {
                 yaz_log(YLOG_LOG, "num_connections = %d (new); max = %d",
                         num_connections, max_connections);
@@ -522,6 +537,7 @@ int client_prep_connection(struct client *cl,
         }
         if (co)
         {
+            yaz_log(YLOG_LOG,  "%p Connection reuse. state: %d", co, co->state);
             connection_release(co);
             client_set_connection(cl, co);
             co->client = cl;

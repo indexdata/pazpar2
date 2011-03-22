@@ -9,6 +9,20 @@
 # srcdir might be set by make
 srcdir=${srcdir:-"."}
 
+# terminate pazpar2 if test takes more than this (in seconds)
+WAIT=120
+
+kill_pazpar2()
+{
+    if test -n "$PP2PID"; then
+	kill $PP2PID
+    fi
+    if test -n "$SLEEP_PID"; then
+	kill $SLEEP_PID
+	SLEEP_PID=""
+    fi
+}
+
 # look for curl in PATH
 oIFS=$IFS
 IFS=:
@@ -39,7 +53,7 @@ if test "x${PREFIX}" = "x"; then
 fi
 
 CFG=${PREFIX}.cfg
-URLS=${PREFIX}_urls
+URLS=${PREFIX}.urls
 VALGRINDLOG=${PREFIX}_valgrind.log
 
 if test -n "$PAZPAR2_USE_VALGRIND"; then
@@ -47,30 +61,28 @@ if test -n "$PAZPAR2_USE_VALGRIND"; then
 elif test -n "$SKIP_PAZPAR2"; then 
     echo "Skipping pazpar2. Must already be running with correct config!!! " 
 else
-    YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -d -X -l pazpar2.log -f ${srcdir}/${CFG} >extra_pazpar2.log 2>&1 &
+    YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -v all -d -X -l pazpar2.log -f ${srcdir}/${CFG} >extra_pazpar2.log 2>&1 &
 fi
-
 
 PP2PID=$!
 
-# Give it a chance to start properly..
-sleep 3
+if [ -z "$SKIP_PAZPAR2" ] ; then 
+    if ps -p $PP2PID >/dev/null 2>&1; then
+	(sleep $WAIT; kill_pazpar2 >/dev/null) &
+	SLEEP_PID=$!
+	trap kill_pazpar2 INT
+	trap kill_pazpar2 HUP
+	sleep 3
+    else
+	echo "pazpar2 failed to start"
+	exit 1
+    fi
+fi
 
 # Set to success by default.. Will be set to non-zero in case of failure
 code=0
 
-if [ -z "$SKIP_PAZPAR2" ] ; then 
-    if ps -p $PP2PID >/dev/null 2>&1; then
-	:
-    else
-	code=1
-	PP2PID=""
-	echo "pazpar2 failed to start"
-    fi
-fi
-
 # We can start test for real
-
 testno=1
 for f in `cat ${srcdir}/${URLS}`; do
     if echo $f | grep '^http' >/dev/null; then
@@ -78,6 +90,9 @@ for f in `cat ${srcdir}/${URLS}`; do
 	OUT2=${PREFIX}_${testno}.log
 	DIFF=${PREFIX}_${testno}.dif
 	rm -f $OUT2 $DIFF
+	if [ -n "$DEBUG" ] ; then 
+	    echo "test $testno: $f" 
+	fi
 	if test -n "${postfile}"; then
 	    eval $POST
 	else
@@ -102,10 +117,13 @@ for f in `cat ${srcdir}/${URLS}`; do
 	testno=`expr $testno + 1`
 	postfile=
     elif echo $f | grep '^[0-9]' >/dev/null; then
+	if [ -n "$DEBUG" ] ; then 
+	    echo "Sleeping $f"
+	fi
 	sleep $f
     else
-	if test -f $f; then
-	    postfile=$f
+	if test -f $srcdir/$f; then
+	    postfile=$srcdir/$f
 	else
 	    echo "File $f does not exist"
 	    code=1
@@ -116,7 +134,11 @@ for f in `cat ${srcdir}/${URLS}`; do
 	    :
 	else
 	    IFS="$oIFS"
-	    echo "Test $testno: pazpar2 died"
+	    if test -n "$SLEEP_PID"; then
+		echo "Test $testno: pazpar2 terminated (timeout, probably)"
+	    else
+		echo "Test $testno: pazpar2 died"
+	    fi
 	    exit 1
 	fi
     fi
@@ -125,10 +147,8 @@ done
 # Kill programs
 
 if [ -z "$SKIP_PAZPAR2" ] ; then 
-    if test -n "$PP2PID"; then
-	kill $PP2PID
-	sleep 2
-    fi
+    kill_pazpar2
+    sleep 2
 fi
 
 exit $code

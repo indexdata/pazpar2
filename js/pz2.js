@@ -69,6 +69,7 @@ var pz2 = function ( paramArray )
         this.keepAlive = paramArray.keepAlive;
 
     this.sessionID = null;
+    this.serviceId = paramArray.serviceId || null;
     this.initStatusOK = false;
     this.pingStatusOK = false;
     this.searchStatusOK = false;
@@ -121,7 +122,7 @@ var pz2 = function ( paramArray )
     }
     // else, auto init session or wait for a user init?
     if (this.useSessions && paramArray.autoInit !== false) {
-        this.init();
+        this.init(this.sessionId, this.serviceId);
     }
 };
 
@@ -165,12 +166,12 @@ pz2.prototype =
                 this.resetCallback();
     },
 
-    init: function ( sessionId ) 
+    init: function (sessionId, serviceId) 
     {
         this.reset();
         
         // session id as a param
-        if ( sessionId != undefined && this.useSessions ) {
+        if (sessionId && this.useSessions ) {
             this.initStatusOK = true;
             this.sessionID = sessionId;
             this.ping();
@@ -178,8 +179,10 @@ pz2.prototype =
         } else if (this.useSessions) {
             var context = this;
             var request = new pzHttpRequest(this.pz2String, this.errorHandler);
+            var opts = {'command' : 'init'};
+            if (serviceId) opts.service = serviceId;
             request.safeGet(
-                { "command": "init" },
+                opts,
                 function(data) {
                     if ( data.getElementsByTagName("status")[0]
                             .childNodes[0].nodeValue == "OK" ) {
@@ -634,6 +637,18 @@ pz2.prototype =
                                 bytarget[i][nodeName] = nodeText;
                             }
                         }
+                        if (bytarget[i]["state"]=="Client_Disconnected") {
+                          bytarget[i]["hits"] = "Error";
+                        } else if (bytarget[i]["state"]=="Client_Error") {
+                          bytarget[i]["hits"] = "Error";                          
+                        } else if (bytarget[i]["state"]=="Client_Working") {
+                          bytarget[i]["hits"] = "...";
+                        }
+                        if (bytarget[i].diagnostic == "1") {
+                          bytarget[i].diagnostic = "Permanent system error";
+                        } else if (bytarget[i].diagnostic == "2") {
+                          bytarget[i].diagnostic = "Temporary system error";
+                        } 
                     }
                     
                     context.bytargetCounter++;
@@ -703,6 +718,7 @@ var pzHttpRequest = function ( url, errorHandler ) {
             }
         }
 };
+
 
 pzHttpRequest.prototype = 
 {
@@ -802,8 +818,33 @@ pzHttpRequest.prototype =
                        this.request.responseXML == null) {
               if (this.request.responseText != null) {
                 //assume JSON
-                var json = eval("(" + this.request.responseText + ")");
-                this.callback(json, "json");
+		
+		var json = null; 
+		var text = this.request.responseText;
+		if (typeof window.JSON == "undefined") 
+		    json = eval("(" + text + ")");
+		else { 
+		    try	{
+		    	json = JSON.parse(text);
+		    }
+		    catch (e) {
+			// Safari: eval will fail as well. Considering trying JSON2 (non-native implementation) instead
+			/* DEBUG only works in mk2-mobile
+			if (document.getElementById("log")) 
+			    document.getElementById("log").innerHTML = "" + e + " " + length + ": " + text;
+			*/
+			try {
+			    json = eval("(" + text + ")");
+			}
+			catch (e) {
+			    /* DEBUG only works in mk2-mobile
+			    if (document.getElementById("log")) 
+				document.getElementById("log").innerHTML = "" + e + " " + length + ": " + text;
+			    */
+			}
+		    }
+		} 
+		this.callback(json, "json");
               } else {
                 var err = new Error("XML response is empty but no error " +
                                     "for " + savedUrlForErrorReporting);

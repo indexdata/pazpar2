@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN"
- "http://www.oasis-open.org/docbook/xml/4.1/docbookx.dtd"
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
 [
      <!ENTITY % local SYSTEM "local.ent">
      %local;
@@ -13,10 +13,12 @@
  <refentryinfo>
   <productname>Pazpar2</productname>
   <productnumber>&version;</productnumber>
+  <info><orgname>Index Data</orgname></info>
  </refentryinfo>
  <refmeta>
   <refentrytitle>Pazpar2 protocol</refentrytitle>
   <manvolnum>7</manvolnum>
+  <refmiscinfo class="manual">Conventions and miscellaneous</refmiscinfo>
  </refmeta>
 
  <refnamediv>
@@ -485,6 +487,14 @@ search.pz2?session=605047297&command=record&id=3
       <listitem>
        <para>
 	comma-separated list of termlist names (default "subject")
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>num</term>
+      <listitem>
+       <para>
+	maximum number of entries to return - default is 15.
        </para>
       </listitem>
      </varlistentry>

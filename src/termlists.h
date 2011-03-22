@@ -1,5 +1,5 @@
 /* This file is part of Pazpar2.
-   Copyright (C) 2006-2010 Index Data
+   Copyright (C) 2006-2011 Index Data
 
 Pazpar2 is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -31,7 +31,7 @@ struct termlist_score
 struct termlist;
 
 struct termlist *termlist_create(NMEM nmem, int highscore_size);
-void termlist_insert(struct termlist *tl, const char *term);
+void termlist_insert(struct termlist *tl, const char *term, int freq);
 struct termlist_score **termlist_highscore(struct termlist *tl, int *len);
 
 #endif

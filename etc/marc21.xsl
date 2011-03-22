@@ -42,8 +42,21 @@
       </xsl:choose>
     </xsl:variable>
 
+    <xsl:variable name="has_fulltext">
+      <xsl:choose>
+        <xsl:when test="marc:datafield[@tag='856']/marc:subfield[@code='q']">
+          <xsl:text>yes</xsl:text>
+        </xsl:when>
+        <xsl:when test="marc:datafield[@tag='856']/marc:subfield[@code='i']='TEXT*'">
+          <xsl:text>yes</xsl:text>
+        </xsl:when>
+        <xsl:otherwise>
+          <xsl:text>no</xsl:text>
+        </xsl:otherwise>
+      </xsl:choose>
+    </xsl:variable>
+
     <pz:record>
-      
       <xsl:for-each select="marc:controlfield[@tag='001']">
         <pz:metadata type="id">
           <xsl:value-of select="."/>
@@ -76,7 +89,14 @@
 
       <xsl:for-each select="marc:datafield[@tag='035']">
         <pz:metadata type="system-control-nr">
-	  <xsl:value-of select="marc:subfield[@code='a']"/>
+          <xsl:choose>
+            <xsl:when test="marc:subfield[@code='a']">
+              <xsl:value-of select="marc:subfield[@code='a']"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <xsl:value-of select="marc:subfield[@code='b']"/>
+            </xsl:otherwise>
+          </xsl:choose>
 	</pz:metadata>
       </xsl:for-each>
 
@@ -229,6 +249,10 @@
 	  <xsl:value-of select="marc:subfield[@code='q']"/>
 	</pz:metadata>
       </xsl:for-each>
+
+      <pz:metadata type="has-fulltext">
+        <xsl:value-of select="$has_fulltext"/> 
+      </pz:metadata>
 
       <xsl:for-each select="marc:datafield[@tag='773']">
     	<pz:metadata type="citation">

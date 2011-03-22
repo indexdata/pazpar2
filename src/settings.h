@@ -1,5 +1,5 @@
 /* This file is part of Pazpar2.
-   Copyright (C) 2006-2010 Index Data
+   Copyright (C) 2006-2011 Index Data
 
 Pazpar2 is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -38,12 +38,19 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PZ_SRU           15
 #define PZ_SRU_VERSION   16
 #define PZ_PQF_PREFIX    17
-#define PZ_SORT		 18
+#define PZ_SORT          18
 #define PZ_RECORDFILTER	 19
 #define PZ_PQF_STRFTIME  20
 #define PZ_NEGOTIATION_CHARSET  21
-#define PZ_MAX_CONNECTIONS 22
-#define PZ_MAX_EOF       23
+#define PZ_MAX_CONNECTIONS      22
+#define PZ_REUSE_CONNECTIONS    23
+#define PZ_TERMLIST_TERM_SORT   24
+#define PZ_TERMLIST_TERM_COUNT  25
+#define PZ_TERMLIST_TERM_FACTOR 26
+#define PZ_PREFERRED            27
+#define PZ_EXTRA_ARGS           28
+#define PZ_QUERY_SYNTAX         29
+#define PZ_MAX_EOF              30
 
 struct setting
 {

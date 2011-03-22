@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+ 
+ <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Mobile Masterkey</title>
+  <meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;"/>
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+<!-- 
+  <meta id="viewport" name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
+ -->  
+
+	<script type="text/javascript" src="/mk2-ui-core/js/ui_bootstrap.js"></script>
+	<script type="text/javascript" src="/mk2-ui-core/js/state.js"></script>
+	<script type="text/javascript" src="/mk2-ui-core/js/recipe.js"></script>
+	<script type="text/javascript" src="/mk2-ui-core/js/snippet.js"></script>
+	<script type="text/javascript" src="/mk2-ui-core/js/auth.js"></script>        
+ 	<script type="text/javascript" src="/mk2-ui-core/js/torus.js"></script>
+<!--
+        <script type="text/javascript" src="/mk2-ui-core/js/client.js"></script>
+-->
+
+ 
+    <script type="text/javascript" src="iphone.js" ></script>
+    <script type="text/javascript" src="/pazpar2/js/pz2.js"></script>
+    <script type="text/javascript" src="example_client.js"></script>
+    <link rel="stylesheet" href="UiUIKit/stylesheets/iphone.css" />
+    <link rel="apple-touch-icon" href="UiUIKit/stylesheets/images/apple-touch-icon.png" />
+ </head>
+ 
+ <body id="normal" onload="auth_check();">
+    <div id="log" name="log" style="display: none;"></div>
+  <div id="noscript">
+    <noscript>
+	<p>Your browser does not support or allow execution of scripts required by this site to work properly.</p>
+	<p>If you run Internet Explorer 6+ or FireFox 2.0+ and see this message ensure the JavaScript is enabled in your browser.</p>
+	<p>If you run Internet Explorer 7 add the site to the Trusted Sites group.</p>
+	<p>Finally, check your personal firewall settings.</p>
+    </noscript>
+  </div>
+  
+  <div id="switchmenu" style="display:none" >
+   <a href="#" onclick="switchView('recordview')">Record Browser</a>
+   <span> | </span>
+   <a href="#" onclick="switchView('targetview')">Target Info</a>
+  </div>
+ 
+  <div id="heading">
+   <table width="100%" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+<!--
+     <td style="visibility:hidden;" height="100" align="center"><b>Pazpar2</b></td>
+-->
+     <td width="100%">
+      <form id="searchForm" name="search" style="display: none">
+       <input id="query" type="text" />
+       <input id="button" type="submit" value="go" />
+      </form>
+     </td>
+    </tr>
+    <tr>
+     <td  width="100%">
+	 </td>
+     
+<!--
+     <td style="visibility:hidden;" >
+      <a href="http://www.indexdata.com"><img border="0" title="IndexData home page" src="indexdata_logo.png" height="98" align="right" alt="" /></a>
+     </td>
+-->
+    </tr>
+   </table>
+      <ul id="nav" style="display: none;" >
+            <!--   
+            <li><a href="javascript:showhide()"></a></li>
+            -->
+            <li><a href="javascript:showhide('recordview')">Results</a></li>
+            <li><a href="javascript:showhide('xtargets')">Sources</a></li>
+            <li><a href="javascript:showhide('subjects')">Subjects</a></li>
+            <li><a href="javascript:showhide('authors')">Authors</a></li>
+            <li><a href="#" onclick="logInOrOut(); return 0;" id="login">Login</a></li>
+      </ul>
+  </div>
+    
+  <div id="termlist" style="display: none" >
+      <div id="term_xtargets" style="display: none"></div>
+      <div id="term_subjects" style="display: none"></div>
+      <div id="term_authors" style="display: none"></div>
+  </div>
+
+  <div id="loginDiv" style="display:none;" >
+      <form name="loginForm" id="loginForm"
+            onsubmit="loginFormSubmit();return false;">
+       <table border="0">
+        <tbody>
+         <tr>
+           <td colspan="3">Please type in authentication credentials to login:</td>
+         </tr>
+         <tr>
+          <td class="inputFieldTag">Username</td>
+          <td>
+           <input name="username" size="30" type="text" value="">
+          </td>
+          <td>
+          </td>
+         </tr>
+         <tr>
+          <td class="inputFieldTag">Password</td>
+          <td>
+           <input name="password" size="30" type="password" value="">
+          </td>
+	 </tr><tr>
+          <td>
+            <div class="actionButtons">
+            <input name="search" value="Login" type="submit" id="submit">
+            </div>
+          </td>
+         </tr>
+        </tbody>
+       </table>
+      </form>
+  </div>
+  <div id="recordview">
+     <div id="ranking" style="display: none;">
+       <form name="select">
+        Sort by
+        <select name="sort" id="sort">
+         <option value="relevance" selected="selected">relevance</option>
+         <option value="title:1">title</option>
+         <option value="date:0">newest</option>
+         <option value="date:1">oldest</option>
+        </select>
+        and show 
+        <select name="perpage" id="perpage">
+         <option value="10">10</option>
+         <option value="20">20</option>
+         <option value="30">30</option>
+         <option value="50" selected="selected">50</option>
+        </select>
+        per page.
+       </form>
+      </div>
+      <div id="pager" style="display: none;"></div>
+      <h4>Results by MasterKey</h4>
+      <ul id="results"></ul>
+      <img id="logo" src="IndexData_MK_logo.png"/>
+  </div>
+  
+  <div id="targetview" style="display: none">
+   <div id="bytarget">
+       No information available yet.
+   </div>
+  </div>
+  
+  <div id="footer" style="display: none;" >
+      <div id="stat"></div>
+      <span>Copyright &copy; 1999-2010 by <a href="http://www.indexdata.com">Index Data</a></span> 
+  </div>
+ </body>
+</html>

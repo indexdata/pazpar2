@@ -1,8 +1,4 @@
 
-FILE=timed.$1.log
-TEMP=${FILE/timed./}
-USERS=${TEMP/.log/}
-#echo $USERS $FILE
 
 stat_word () {
     WORD=$1
@@ -18,7 +14,22 @@ stat_word () {
     echo "$AVG"
 }
 
-INIT=`stat_word "init" `
-SEARCH=`stat_word "search"`
-SHOW=`stat_word "show"`
-echo "$USERS $INIT $SEARCH $SHOW" 
+SERVICE=perf_t
+if [ "$2" != "" ] ; then 
+    SERVICE=$2
+fi
+FILE=timed.$SERVICE.$1.log
+USERS=$1
+if [ -f $FILE ] ; then
+    INIT=`stat_word "init" `
+    grep init $FILE   | sed -e "s/^.*,/$USERS /" >> init.stat
+    SEARCH=`stat_word "search"`
+    grep search $FILE | sed -e "s/^.*,/$USERS /" >> search.stat
+    SHOW=`stat_word "show"`
+    grep show $FILE   | sed -e "s/^.*,/$USERS /" >> show.stat
+
+    echo "$1 $INIT $SEARCH $SHOW" 
+else
+    echo "# no such file $FILE" 
+fi
+

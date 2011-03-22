@@ -1,3 +1,92 @@
+-- 1.5.4 2011/03/08
+- Experiental support for DTIC DADS target  
+- adds dads-pz2.xsl
+- Support for query_syntax (overrides the default for SRU | Z39.50) 
+- Support for extraArgs (ZOOM "extraArgs" option) for targets
+- New commands: status-server and status-session
+
+-- 1.5.3 2011/02/18
+- Fix for threaded runs: 
+Client now have a copy of the database URL, 
+which can used after the database has been release from the client. 
+This makes the logging in the connection idle timeout of the client nicer (no NOURL)
+and should be thread-safe. 
+- tmarc.xsl: 
+Add journal-title-abbrev and full text. 
+- cf.xsl
+New fields: isbn, issn, journaltitle, volume, issue
+- Fix for cmd=record before search.
+- Session Logging clean up
+- Fix: wrong termlist factor when maxrecs is different from 100.
+
+-- 1.5.2 2011/01/18
+Fixes: 
+- Missing pz:termlist_term_factor in settings.c messed up pz:preferred
+- Term factor is default enabled but can be diseabled by pz:termlist_term_factor=0
+
+-- 1.5.1 2011/01/06
+
+Add scaling of facet count. Currently always enabled, needs fixing.
+Allow user-defined info for target suffix. This has no meaning in
+Pazpar2 except to distinguish targets from each other. The suffix
+data begins with #. For example z3950.indexdata.com/gils#Mydata
+
+Added exact-match recordfilter; format name=value
+
+--- 1.5.0 2010/10/05
+
+SOLR support. Pazpar2 may operate as web service client for SOLR.
+
+--- 1.4.4 2010/08/17
+
+Fix for show command and block=1 (dead lock). Bug was introduced in
+1.4.0.
+
+--- 1.4.3 2010/07/02
+
+New RPM packages: pazpar2, pazpar2-js, pazpar2-doc. These have been
+tested on CentOS 5.5 only.
+
+--- 1.4.2 2010/06/18
+
+Fix problem with result sets being removed from a client session
+if the connection for it was resused by another session. Bug #3489.
+
+New iphone UI for Pazpar2 (www/iphone).
+
+--- 1.4.1 2010/05/21
+
+Fixes for threaded operation.
+
+New stylesheets for TurboMARC: tmarc.xsl and opac_turbomarc.xsl.
+
+New example services in etc/services in source. In the Debian packages
+these are located in /etc/pazpar2/services-available
+
+Threaded mode operational on Windows. Requires Windows 7 or Windows
+Server 2008.
+
+Default value of setting pz:max_connections is 0 which means that there
+is no limit on number of connections.
+
+--- 1.4.0 2010/03/29
+
+Pazpar2 may operate in threaded mode. Enabled by element threads in
+the configuration. See pazpar2_conf for details.
+
+New setting setting: pz:max_connections. Setting pz:max_connections is
+a limit of number of sockets to a host. When this limit is reached,
+Pazpar2 will wait up to 5 seconds for a connection to becomes available.
+The client will be marked Client_Error when it can not be searched
+(other clients in a session may work). If pz:max_connections is not set
+for a target, a value of 30 will be used. Note: the pz:max_connections
+will only work in threaded mode.
+
+pz2.js: JSON support for show.
+
+Debian package: Enable default service, default.xml, before starting
+Pazpar2 only if there is no service already in /etc/pazpar2/services-enabled.
+
 --- 1.3.0 2010/01/25
 
 Debian version depends on on libyaz4. Note that Pazpar2 will still

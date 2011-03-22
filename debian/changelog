@@ -1,3 +1,57 @@
+pazpar2 (1.5.3-1indexata) unstable; urgency=low
+
+  * Upstrem.
+
+ -- Dennis Schafroth <dennis@indexdata.com>  Fri, 18 Feb 2011 12:26:12 +0100
+
+pazpar2 (1.5.2-1indexdata) unstable; urgency=low
+
+  * Upstream
+
+ -- Dennis Schafroth <dennis@indexdata.dk>  Tue, 18 Jan 2011 10:51:26 +0100
+
+pazpar2 (1.5.1-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Dennis Schafroth <dennis@indexdata.dk>  Thu, 06 Jan 2011 17:30:59 +0200
+
+pazpar2 (1.5.0-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Tue, 05 Oct 2010 12:43:59 +0200
+
+pazpar2 (1.4.4-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Tue, 17 Aug 2010 13:22:40 +0200
+
+pazpar2 (1.4.3-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Thu, 01 Jul 2010 14:04:10 +0200
+
+pazpar2 (1.4.2-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Fri, 18 Jun 2010 11:32:46 +0200
+
+pazpar2 (1.4.1-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Fri, 21 May 2010 14:56:46 +0200
+
+pazpar2 (1.4.0-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Thu, 29 Apr 2010 13:07:13 +0200
+
 pazpar2 (1.3.0-1indexdata) unstable; urgency=low
 
   * Upstream.

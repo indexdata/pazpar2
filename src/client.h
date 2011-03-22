@@ -1,5 +1,5 @@
 /* This file is part of Pazpar2.
-   Copyright (C) 2006-2010 Index Data
+   Copyright (C) 2006-2011 Index Data
 
 Pazpar2 is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -73,10 +73,11 @@ void client_disconnect(struct client *cl);
 int client_prep_connection(struct client *cl,
                            int operation_timeout, int session_timeout,
                            iochan_man_t iochan,
-                           const struct timespec *abstime);
+                           const struct timeval *abstime);
 void client_start_search(struct client *cl);
 void client_set_session(struct client *cl, struct session *se);
 int client_is_active(struct client *cl);
+int client_is_active_preferred(struct client *cl);
 struct client *client_next_in_session(struct client *cl);
 
 int client_parse_query(struct client *cl, const char *query);
@@ -88,12 +89,17 @@ void client_set_database(struct client *cl, struct session_database *db);
 struct host *client_get_host(struct client *cl);
 const char *client_get_url(struct client *cl);
 void client_set_maxrecs(struct client *cl, int v);
+int  client_get_maxrecs(struct client *cl);
 void client_set_startrecs(struct client *cl, int v);
 void client_remove_from_session(struct client *c);
 void client_incref(struct client *c);
 void client_got_records(struct client *c);
 void client_lock(struct client *c);
 void client_unlock(struct client *c);
+
+int client_has_facet(struct client *cl, const char *name);
+void client_check_preferred_watch(struct client *cl);
+
 #endif
 
 /*

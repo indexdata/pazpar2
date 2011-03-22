@@ -1,5 +1,5 @@
 /* This file is part of Pazpar2.
-   Copyright (C) 2006-2010 Index Data
+   Copyright (C) 2006-2011 Index Data
 
 Pazpar2 is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -35,9 +35,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef WIN32
+#include <windows.h>
+#endif
 #include <signal.h>
 #include <ctype.h>
 #include <assert.h>
+#include <math.h>
 
 #include <yaz/marcdisp.h>
 #include <yaz/comstack.h>
@@ -52,6 +56,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/querytowrbuf.h>
 #include <yaz/oid_db.h>
 #include <yaz/snprintf.h>
+#include <yaz/gettimeofday.h>
 
 #define USE_TIMING 0
 #if USE_TIMING
@@ -75,6 +80,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define MAX_CHUNK 15
 
+#define MAX(a,b) ((a)>(b)?(a):(b))
+
 // Note: Some things in this structure will eventually move to configuration
 struct parameters global_parameters = 
 {
@@ -86,6 +93,27 @@ struct client_list {
     struct client *client;
     struct client_list *next;
 };
+
+/* session counting (1) , disable client counting (0) */
+static YAZ_MUTEX g_session_mutex = 0;
+static int no_sessions = 0;
+
+static int session_use(int delta)
+{
+    int sessions;
+    if (!g_session_mutex)
+        yaz_mutex_create(&g_session_mutex);
+    yaz_mutex_enter(g_session_mutex);
+    no_sessions += delta;
+    sessions = no_sessions;
+    yaz_mutex_leave(g_session_mutex);
+    yaz_log(YLOG_DEBUG, "%s sesions=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), no_sessions);
+    return sessions;
+}
+
+int sessions_count(void) {
+    return session_use(0);
+}
 
 static void log_xml_doc(xmlDoc *doc)
 {
@@ -142,32 +170,58 @@ void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
 }
 
 
-static void add_facet(struct session *s, const char *type, const char *value)
+void add_facet(struct session *s, const char *type, const char *value, int count)
 {
-    int i;
-
-    if (!*value)
-        return;
-    for (i = 0; i < s->num_termlists; i++)
-        if (!strcmp(s->termlists[i].name, type))
-            break;
-    if (i == s->num_termlists)
+    struct conf_service *service = s->service;
+    pp2_relevance_token_t prt;
+    const char *facet_component;
+    WRBUF facet_wrbuf = wrbuf_alloc();
+    prt = pp2_relevance_tokenize(service->facet_pct);
+    
+    pp2_relevance_first(prt, value, 0);
+    while ((facet_component = pp2_relevance_token_next(prt)))
     {
-        if (i == SESSION_MAX_TERMLISTS)
+        if (*facet_component)
         {
-            yaz_log(YLOG_FATAL, "Too many termlists");
-            return;
+            if (wrbuf_len(facet_wrbuf))
+                wrbuf_puts(facet_wrbuf, " ");
+            wrbuf_puts(facet_wrbuf, facet_component);
         }
-
-        s->termlists[i].name = nmem_strdup(s->nmem, type);
-        s->termlists[i].termlist 
-            = termlist_create(s->nmem, TERMLIST_HIGH_SCORE);
-        s->num_termlists = i + 1;
     }
-    termlist_insert(s->termlists[i].termlist, value);
+    pp2_relevance_token_destroy(prt);
+    
+    if (wrbuf_len(facet_wrbuf))
+    {
+        int i;
+        for (i = 0; i < s->num_termlists; i++)
+            if (!strcmp(s->termlists[i].name, type))
+                break;
+        if (i == s->num_termlists)
+        {
+            if (i == SESSION_MAX_TERMLISTS)
+            {
+                session_log(s, YLOG_FATAL, "Too many termlists");
+                wrbuf_destroy(facet_wrbuf);
+                return;
+            }
+            
+            s->termlists[i].name = nmem_strdup(s->nmem, type);
+            s->termlists[i].termlist 
+                = termlist_create(s->nmem, TERMLIST_HIGH_SCORE);
+            s->num_termlists = i + 1;
+        }
+        
+#if 0
+        session_log(s, YLOG_DEBUG, "Facets for %s: %s norm:%s (%d)", type, value, wrbuf_cstr(facet_wrbuf), count);
+#endif
+        termlist_insert(s->termlists[i].termlist, wrbuf_cstr(facet_wrbuf),
+                        count);
+    }
+    wrbuf_destroy(facet_wrbuf);
 }
 
-static xmlDoc *record_to_xml(struct session_database *sdb, const char *rec)
+static xmlDoc *record_to_xml(struct session *se,
+                             struct session_database *sdb, const char *rec)
 {
     struct database *db = sdb->database;
     xmlDoc *rdoc = 0;
@@ -176,14 +230,14 @@ static xmlDoc *record_to_xml(struct session_database *sdb, const char *rec)
 
     if (!rdoc)
     {
-        yaz_log(YLOG_FATAL, "Non-wellformed XML received from %s",
-                db->url);
+        session_log(se, YLOG_FATAL, "Non-wellformed XML received from %s",
+                    db->url);
         return 0;
     }
 
     if (global_parameters.dump_records)
     {
-        yaz_log(YLOG_LOG, "Un-normalized record from %s", db->url);
+        session_log(se, YLOG_LOG, "Un-normalized record from %s", db->url);
         log_xml_doc(rdoc);
     }
 
@@ -255,11 +309,12 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc,
     }
 }
 
-static xmlDoc *normalize_record(struct session_database *sdb,
+static xmlDoc *normalize_record(struct session *se,
+                                struct session_database *sdb,
                                 struct conf_service *service,
                                 const char *rec, NMEM nmem)
 {
-    xmlDoc *rdoc = record_to_xml(sdb, rec);
+    xmlDoc *rdoc = record_to_xml(se, sdb, rec);
 
     if (rdoc)
     {
@@ -269,7 +324,8 @@ static xmlDoc *normalize_record(struct session_database *sdb,
         
         if (normalize_record_transform(sdb->map, &rdoc, (const char **)parms))
         {
-            yaz_log(YLOG_WARN, "Normalize failed from %s", sdb->database->url);
+            session_log(se, YLOG_WARN, "Normalize failed from %s",
+                        sdb->database->url);
         }
         else
         {
@@ -277,8 +333,8 @@ static xmlDoc *normalize_record(struct session_database *sdb,
             
             if (global_parameters.dump_records)
             {
-                yaz_log(YLOG_LOG, "Normalized record from %s", 
-                        sdb->database->url);
+                session_log(se, YLOG_LOG, "Normalized record from %s", 
+                            sdb->database->url);
                 log_xml_doc(rdoc);
             }
         }
@@ -330,7 +386,7 @@ static int prepare_map(struct session *se, struct session_database *sdb)
 
     if (!sdb->settings)
     {
-        yaz_log(YLOG_WARN, "No settings on %s", sdb->database->url);
+        session_log(se, YLOG_WARN, "No settings on %s", sdb->database->url);
         return -1;
     }
     if ((s = session_setting_oneval(sdb, PZ_XSLT)))
@@ -356,7 +412,8 @@ static int prepare_map(struct session *se, struct session_database *sdb)
             }
             else
             {
-                yaz_log(YLOG_WARN, "No pz:requestsyntax for auto stylesheet");
+                session_log(se, YLOG_WARN,
+                            "No pz:requestsyntax for auto stylesheet");
             }
         }
         sdb->map = normalize_cache_get(se->normalize_cache,
@@ -374,7 +431,7 @@ static int prepare_session_database(struct session *se,
 {
     if (!sdb->settings)
     {
-        yaz_log(YLOG_WARN, 
+        session_log(se, YLOG_WARN, 
                 "No settings associated with %s", sdb->database->url);
         return -1;
     }
@@ -430,7 +487,7 @@ void session_alert_watch(struct session *s, int what)
         session_watchfun fun;
 
         http_remove_observer(s->watchlist[what].obs);
-        fun = s->watchlist[what].fun;
+        fun  = s->watchlist[what].fun;
         data = s->watchlist[what].data;
 
         /* reset watch before fun is invoked - in case fun wants to set
@@ -440,6 +497,8 @@ void session_alert_watch(struct session *s, int what)
         s->watchlist[what].obs = 0;
 
         session_leave(s);
+        session_log(s, YLOG_DEBUG,
+                    "Alert Watch: %d calling function: %p", what, fun);
         fun(data);
     }
     else
@@ -455,6 +514,7 @@ static void select_targets_callback(void *context, struct session_database *db)
     client_set_database(cl, db);
 
     client_set_session(cl, se);
+
     l = xmalloc(sizeof(*l));
     l->client = cl;
     l->next = se->clients;
@@ -503,6 +563,19 @@ int session_active_clients(struct session *s)
     return res;
 }
 
+int session_is_preferred_clients_ready(struct session *s)
+{
+    struct client_list *l;
+    int res = 0;
+
+    for (l = s->clients; l; l = l->next)
+        if (client_is_active_preferred(l->client))
+            res++;
+    session_log(s, YLOG_DEBUG, "Has %d active preferred clients.", res);
+    return res == 0;
+}
+
+
 
 enum pazpar2_error_code search(struct session *se,
                                const char *query,
@@ -514,10 +587,9 @@ enum pazpar2_error_code search(struct session *se,
     int no_working = 0;
     int no_failed = 0;
     struct client_list *l;
-    struct timespec abstime;
     struct timeval tval;
 
-    yaz_log(YLOG_DEBUG, "Search");
+    session_log(se, YLOG_DEBUG, "Search");
 
     *addinfo = 0;
 
@@ -538,10 +610,9 @@ enum pazpar2_error_code search(struct session *se,
     }
     se->reclist = reclist_create(se->nmem);
 
-    gettimeofday(&tval, 0);
+    yaz_gettimeofday(&tval);
     
-    abstime.tv_sec = tval.tv_sec + 5;
-    abstime.tv_nsec = tval.tv_usec * 1000;
+    tval.tv_sec += 5;
 
     for (l = se->clients; l; l = l->next)
     {
@@ -561,7 +632,7 @@ enum pazpar2_error_code search(struct session *se,
             if (client_prep_connection(cl, se->service->z3950_operation_timeout,
                                        se->service->z3950_session_timeout,
                                        se->service->server->iochan_man,
-                                       &abstime))
+                                       &tval))
                 client_start_search(cl);
         }
     }
@@ -674,31 +745,47 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     }
 }
 
-void destroy_session(struct session *s)
+void destroy_session(struct session *se)
 {
     struct session_database *sdb;
+    session_log(se, YLOG_DEBUG, "Destroying");
+    session_use(-1);
+    session_remove_clients(se);
 
-    session_remove_clients(s);
-
-    for (sdb = s->databases; sdb; sdb = sdb->next)
+    for (sdb = se->databases; sdb; sdb = sdb->next)
         session_database_destroy(sdb);
-    normalize_cache_destroy(s->normalize_cache);
-    relevance_destroy(&s->relevance);
-    reclist_destroy(s->reclist);
-    nmem_destroy(s->nmem);
-    service_destroy(s->service);
-    yaz_mutex_destroy(&s->session_mutex);
-    wrbuf_destroy(s->wrbuf);
+    normalize_cache_destroy(se->normalize_cache);
+    relevance_destroy(&se->relevance);
+    reclist_destroy(se->reclist);
+    nmem_destroy(se->nmem);
+    service_destroy(se->service);
+    yaz_mutex_destroy(&se->session_mutex);
+    wrbuf_destroy(se->wrbuf);
 }
 
+size_t session_get_memory_status(struct session *session) {
+    size_t session_nmem;
+    if (session == 0)
+        return 0;
+    session_enter(session);
+    session_nmem = nmem_total(session->nmem);
+    session_leave(session);
+    return session_nmem;
+}
+
+
 struct session *new_session(NMEM nmem, struct conf_service *service,
-                            const char *name)
+                            unsigned session_id)
 {
     int i;
     struct session *session = nmem_malloc(nmem, sizeof(*session));
 
-    yaz_log(YLOG_DEBUG, "New Pazpar2 session");
+    char tmp_str[50];
 
+    sprintf(tmp_str, "session#%u", session_id);
+
+    session->session_id = session_id;
+    session_log(session, YLOG_DEBUG, "New");
     session->service = service;
     session->relevance = 0;
     session->total_hits = 0;
@@ -719,8 +806,8 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     }
     session->normalize_cache = normalize_cache_create();
     session->session_mutex = 0;
-    pazpar2_mutex_create(&session->session_mutex, name);
-
+    pazpar2_mutex_create(&session->session_mutex, tmp_str);
+    session_use(1);
     return session;
 }
 
@@ -758,19 +845,19 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
     return res;
 }
 
-struct termlist_score **termlist(struct session *s, const char *name, int *num)
+struct termlist_score **termlist(struct session *se, const char *name, int *num)
 {
     int i;
     struct termlist_score **tl = 0;
 
-    session_enter(s);
-    for (i = 0; i < s->num_termlists; i++)
-        if (!strcmp((const char *) s->termlists[i].name, name))
+    session_enter(se);
+    for (i = 0; i < se->num_termlists; i++)
+        if (!strcmp((const char *) se->termlists[i].name, name))
         {
-            tl = termlist_highscore(s->termlists[i].termlist, num);
+            tl = termlist_highscore(se->termlists[i].termlist, num);
             break;
         }
-    session_leave(s);
+    session_leave(se);
     return tl;
 }
 
@@ -787,50 +874,52 @@ void report_nmem_stats(void)
 }
 #endif
 
-struct record_cluster *show_single_start(struct session *s, const char *id,
+struct record_cluster *show_single_start(struct session *se, const char *id,
                                          struct record_cluster **prev_r,
                                          struct record_cluster **next_r)
 {
-    struct record_cluster *r;
+    struct record_cluster *r = 0;
 
-    session_enter(s);
-    reclist_enter(s->reclist);
+    session_enter(se);
     *prev_r = 0;
     *next_r = 0;
-    while ((r = reclist_read_record(s->reclist)))
+    if (se->reclist)
     {
-        if (!strcmp(r->recid, id))
+        reclist_enter(se->reclist);
+        while ((r = reclist_read_record(se->reclist)))
         {
-            *next_r = reclist_read_record(s->reclist);
-            break;
+            if (!strcmp(r->recid, id))
+            {
+                *next_r = reclist_read_record(se->reclist);
+                break;
+            }
+            *prev_r = r;
         }
-        *prev_r = r;
+        reclist_leave(se->reclist);
     }
-    reclist_leave(s->reclist);
     if (!r)
-        session_leave(s);
+        session_leave(se);
     return r;
 }
 
-void show_single_stop(struct session *s, struct record_cluster *rec)
+void show_single_stop(struct session *se, struct record_cluster *rec)
 {
-    session_leave(s);
+    session_leave(se);
 }
 
-struct record_cluster **show_range_start(struct session *s,
+struct record_cluster **show_range_start(struct session *se,
                                          struct reclist_sortparms *sp, 
                                          int start, int *num, int *total, Odr_int *sumhits)
 {
-    struct record_cluster **recs = nmem_malloc(s->nmem, *num 
-                                               * sizeof(struct record_cluster *));
+    struct record_cluster **recs;
     struct reclist_sortparms *spp;
     int i;
 #if USE_TIMING    
     yaz_timing_t t = yaz_timing_create();
 #endif
-
-    session_enter(s);
-    if (!s->relevance)
+    session_enter(se);
+    recs = nmem_malloc(se->nmem, *num * sizeof(struct record_cluster *));
+    if (!se->relevance)
     {
         *num = 0;
         *total = 0;
@@ -842,17 +931,17 @@ struct record_cluster **show_range_start(struct session *s,
         for (spp = sp; spp; spp = spp->next)
             if (spp->type == Metadata_sortkey_relevance)
             {
-                relevance_prepare_read(s->relevance, s->reclist);
+                relevance_prepare_read(se->relevance, se->reclist);
                 break;
             }
-        reclist_sort(s->reclist, sp);
+        reclist_sort(se->reclist, sp);
         
-        reclist_enter(s->reclist);
-        *total = reclist_get_num_records(s->reclist);
-        *sumhits = s->total_hits;
+        reclist_enter(se->reclist);
+        *total = reclist_get_num_records(se->reclist);
+        *sumhits = se->total_hits;
         
         for (i = 0; i < start; i++)
-            if (!reclist_read_record(s->reclist))
+            if (!reclist_read_record(se->reclist))
             {
                 *num = 0;
                 recs = 0;
@@ -861,7 +950,7 @@ struct record_cluster **show_range_start(struct session *s,
         
         for (i = 0; i < *num; i++)
         {
-            struct record_cluster *r = reclist_read_record(s->reclist);
+            struct record_cluster *r = reclist_read_record(se->reclist);
             if (!r)
             {
                 *num = i;
@@ -869,7 +958,7 @@ struct record_cluster **show_range_start(struct session *s,
             }
             recs[i] = r;
         }
-        reclist_leave(s->reclist);
+        reclist_leave(se->reclist);
     }
 #if USE_TIMING
     yaz_timing_stop(t);
@@ -881,9 +970,9 @@ struct record_cluster **show_range_start(struct session *s,
     return recs;
 }
 
-void show_range_stop(struct session *s, struct record_cluster **recs)
+void show_range_stop(struct session *se, struct record_cluster **recs)
 {
-    session_leave(s);
+    session_leave(se);
 }
 
 void statistics(struct session *se, struct statistics *stat)
@@ -979,7 +1068,10 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
         if (!strcmp((const char *) n->name, "metadata"))
         {
             xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
-            if (!strcmp(name, (const char *) type))
+            if (type == NULL) {
+                yaz_log(YLOG_FATAL, "Missing type attribute on metadata element. Skipping!");
+            }
+            else if (!strcmp(name, (const char *) type))
             {
                 xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
                 if (value)
@@ -1104,9 +1196,15 @@ static int check_record_filter(xmlNode *root, struct session_database *sdb)
             if (type)
             {
                 size_t len;
-                const char *eq = strchr(s, '~');
-                if (eq)
-                    len = eq - s;
+		int substring;
+                const char *eq;
+
+                if ((eq = strchr(s, '=')))
+		    substring = 0;
+		else if ((eq = strchr(s, '~')))
+		    substring = 1;
+		if (eq)
+		    len = eq - s;
                 else
                     len = strlen(s);
                 if (len == strlen((const char *)type) &&
@@ -1115,7 +1213,9 @@ static int check_record_filter(xmlNode *root, struct session_database *sdb)
                     xmlChar *value = xmlNodeGetContent(n);
                     if (value && *value)
                     {
-                        if (!eq || strstr((const char *) value, eq+1))
+                        if (!eq ||
+			    (substring && strstr((const char *) value, eq+1)) ||
+			    (!substring && !strcmp((const char *) value, eq + 1)))
                             match = 1;
                     }
                     xmlFree(value);
@@ -1138,6 +1238,7 @@ static int ingest_to_cluster(struct client *cl,
     \param cl client holds the result set for record
     \param rec record buffer (0 terminated)
     \param record_no record position (1, 2, ..)
+    \param nmem working NMEM
     \retval 0 OK
     \retval -1 failure
 */
@@ -1148,7 +1249,7 @@ int ingest_record(struct client *cl, const char *rec,
     int ret = 0;
     struct session_database *sdb = client_get_database(cl);
     struct conf_service *service = se->service;
-    xmlDoc *xdoc = normalize_record(sdb, service, rec, nmem);
+    xmlDoc *xdoc = normalize_record(se, sdb, service, rec, nmem);
     xmlNode *root;
     const char *mergekey_norm;
     
@@ -1159,8 +1260,8 @@ int ingest_record(struct client *cl, const char *rec,
     
     if (!check_record_filter(root, sdb))
     {
-        yaz_log(YLOG_WARN, "Filtered out record no %d from %s", record_no,
-                sdb->database->url);
+        session_log(se, YLOG_WARN, "Filtered out record no %d from %s",
+                    record_no, sdb->database->url);
         xmlFreeDoc(xdoc);
         return -1;
     }
@@ -1168,18 +1269,14 @@ int ingest_record(struct client *cl, const char *rec,
     mergekey_norm = get_mergekey(xdoc, cl, record_no, service, nmem);
     if (!mergekey_norm)
     {
-        yaz_log(YLOG_WARN, "Got no mergekey");
+        session_log(se, YLOG_WARN, "Got no mergekey");
         xmlFreeDoc(xdoc);
         return -1;
     }
-    client_unlock(cl);
     session_enter(se);
-    client_lock(cl);
     if (client_get_session(cl) == se)
         ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
-    client_unlock(cl);
     session_leave(se);
-    client_lock(cl);
     
     xmlFreeDoc(xdoc);
     return ret;
@@ -1206,11 +1303,25 @@ static int ingest_to_cluster(struct client *cl,
                                                     record,
                                                     mergekey_norm,
                                                     &se->total_merged);
+
+    const char *use_term_factor_str = session_setting_oneval(sdb, PZ_TERMLIST_TERM_FACTOR);
+    int use_term_factor = 0;
+    int term_factor = 1; 
+    if (use_term_factor_str && use_term_factor_str[0] != 0)
+       use_term_factor =  atoi(use_term_factor_str);
+    if (use_term_factor) {
+        int maxrecs = client_get_maxrecs(cl);
+        int hits = (int) client_get_hits(cl);
+        term_factor = MAX(hits, maxrecs) /  MAX(1, maxrecs);
+        assert(term_factor >= 1);
+        yaz_log(YLOG_DEBUG, "Using term factor: %d (%d / %d)", term_factor, MAX(hits, maxrecs), MAX(1, maxrecs));
+    }
+
     if (!cluster)
         return -1;
     if (global_parameters.dump_records)
-        yaz_log(YLOG_LOG, "Cluster id %s from %s (#%d)", cluster->recid,
-                sdb->database->url, record_no);
+        session_log(se, YLOG_LOG, "Cluster id %s from %s (#%d)", cluster->recid,
+                    sdb->database->url, record_no);
     relevance_newrec(se->relevance, cluster);
     
     // now parsing XML record and adding data to cluster or record metadata
@@ -1246,7 +1357,7 @@ static int ingest_to_cluster(struct client *cl,
             {
                 if (se->number_of_warnings_unknown_metadata == 0)
                 {
-                    yaz_log(YLOG_WARN, 
+                    session_log(se, YLOG_WARN, 
                             "Ignoring unknown metadata element: %s", type);
                 }
                 se->number_of_warnings_unknown_metadata++;
@@ -1265,8 +1376,8 @@ static int ingest_to_cluster(struct client *cl,
                                           ser_md->type, n->properties);
             if (!rec_md)
             {
-                yaz_log(YLOG_WARN, "bad metadata data '%s' for element '%s'",
-                        value, type);
+                session_log(se, YLOG_WARN, "bad metadata data '%s' "
+                            "for element '%s'", value, type);
                 continue;
             }
             wheretoput = &record->metadata[md_field_id];
@@ -1326,17 +1437,11 @@ static int ingest_to_cluster(struct client *cl,
                         if (!sort_str)
                         {
                             sort_str = rec_md->data.text.disp;
-                            yaz_log(YLOG_WARN, 
+                            session_log(se, YLOG_WARN, 
                                     "Could not make sortkey. Bug #1858");
                         }
                         cluster->sortkeys[sk_field_id]->text.sort = 
                             nmem_strdup(se->nmem, sort_str);
-#if 0
-                        yaz_log(YLOG_LOG, "text disp=%s",
-                                cluster->sortkeys[sk_field_id]->text.disp);
-                        yaz_log(YLOG_LOG, "text sort=%s",
-                                cluster->sortkeys[sk_field_id]->text.sort);
-#endif
                         pp2_relevance_token_destroy(prt);
                     }
                 }
@@ -1373,22 +1478,24 @@ static int ingest_to_cluster(struct client *cl,
                                      (char *) value, ser_md->rank,
                                      ser_md->name);
 
-            // construct facets ... 
-            if (ser_md->termlist)
+            // construct facets ... unless the client already has reported them
+            if (ser_md->termlist && !client_has_facet(cl, (char *) type))
             {
+
                 if (ser_md->type == Metadata_type_year)
                 {
                     char year[64];
                     sprintf(year, "%d", rec_md->data.number.max);
-                    add_facet(se, (char *) type, year);
+
+                    add_facet(se, (char *) type, year, term_factor);
                     if (rec_md->data.number.max != rec_md->data.number.min)
                     {
                         sprintf(year, "%d", rec_md->data.number.min);
-                        add_facet(se, (char *) type, year);
+                        add_facet(se, (char *) type, year, term_factor);
                     }
                 }
                 else
-                    add_facet(se, (char *) type, (char *) value);
+                    add_facet(se, (char *) type, (char *) value, term_factor);
             }
 
             // cleaning up
@@ -1399,7 +1506,7 @@ static int ingest_to_cluster(struct client *cl,
         else
         {
             if (se->number_of_warnings_unknown_elements == 0)
-                yaz_log(YLOG_WARN,
+                session_log(se, YLOG_WARN,
                         "Unexpected element in internal record: %s", n->name);
             se->number_of_warnings_unknown_elements++;
         }
@@ -1413,6 +1520,18 @@ static int ingest_to_cluster(struct client *cl,
     se->total_records++;
 
     return 0;
+}
+
+void session_log(struct session *s, int level, const char *fmt, ...)
+{
+    char buf[1024];
+    va_list ap;
+    va_start(ap, fmt);
+
+    yaz_vsnprintf(buf, sizeof(buf)-30, fmt, ap);
+    yaz_log(level, "Session (%u): %s", s->session_id, buf);
+
+    va_end(ap);
 }
 
 /*

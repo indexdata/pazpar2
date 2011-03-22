@@ -1,5 +1,5 @@
 /* This file is part of Pazpar2.
-   Copyright (C) 2006-2010 Index Data
+   Copyright (C) 2006-2011 Index Data
 
 Pazpar2 is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -121,34 +121,35 @@ void normalize_record_destroy(normalize_record_t nt)
 }
 
 int normalize_record_transform(normalize_record_t nt, xmlDoc **doc,
-    const char **parms)
+                               const char **parms)
 {
-    struct normalize_step *m;
-    if (nt) {
+    if (nt)
+    {
+        struct normalize_step *m;
 	for (m = nt->steps; m; m = m->next)
 	{
 	    xmlNodePtr root = 0;
-	    xmlDoc *new;
+	    xmlDoc *ndoc;
 	    if (m->stylesheet)
-	    {
-		new = xsltApplyStylesheet(m->stylesheet, *doc, parms);
-	    }
+		ndoc = xsltApplyStylesheet(m->stylesheet, *doc, parms);
 	    else if (m->marcmap)
-	    {
-		new = marcmap_apply(m->marcmap, *doc);
-	    }
-
-	    root = xmlDocGetRootElement(new);
-	    
+		ndoc = marcmap_apply(m->marcmap, *doc);
+            else
+                ndoc = 0;
 	    xmlFreeDoc(*doc);
-	    if (!new || !root || !root->children)
+            *doc = 0;
+            
+            if (ndoc)
+                root = xmlDocGetRootElement(ndoc);
+
+            if (ndoc && root && root->children)
+                *doc = ndoc;
+            else
 	    {
-		if (new)
-		    xmlFreeDoc(new);
-                *doc = 0;
+		if (ndoc)
+		    xmlFreeDoc(ndoc);
 		return -1;
 	    }
-	    *doc = new;
 	}
     }
     return 0;

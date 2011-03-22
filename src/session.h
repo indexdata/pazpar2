@@ -1,5 +1,5 @@
 /* This file is part of Pazpar2.
-   Copyright (C) 2006-2010 Index Data
+   Copyright (C) 2006-2011 Index Data
 
 Pazpar2 is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -79,7 +79,8 @@ struct session_database
 
 #define SESSION_WATCH_SHOW      0
 #define SESSION_WATCH_RECORD    1
-#define SESSION_WATCH_MAX       1
+#define SESSION_WATCH_SHOW_PREF 2
+#define SESSION_WATCH_MAX       2
 
 #define SESSION_MAX_TERMLISTS 10
 
@@ -119,6 +120,7 @@ struct session {
     int number_of_warnings_unknown_metadata;
     normalize_cache_t normalize_cache;
     YAZ_MUTEX session_mutex;
+    unsigned session_id;
 };
 
 struct statistics {
@@ -146,7 +148,7 @@ struct hitsbytarget {
 
 struct hitsbytarget *hitsbytarget(struct session *s, int *count, NMEM nmem);
 struct session *new_session(NMEM nmem, struct conf_service *service,
-                            const char *name);
+                            unsigned session_id);
 void destroy_session(struct session *s);
 void session_init_databases(struct session *s);
 int load_targets(struct session *s, const char *fn);
@@ -167,6 +169,7 @@ void show_single_stop(struct session *s, struct record_cluster *rec);
 struct termlist_score **termlist(struct session *s, const char *name, int *num);
 int session_set_watch(struct session *s, int what, session_watchfun fun, void *data, struct http_channel *c);
 int session_active_clients(struct session *s);
+int session_is_preferred_clients_ready(struct session *s);
 void session_apply_setting(struct session *se, char *dbname, char *setting, char *value);
 const char *session_setting_oneval(struct session_database *db, int offset);
 
@@ -176,6 +179,12 @@ int ingest_record(struct client *cl, const char *rec, int record_no, NMEM nmem);
 void session_alert_watch(struct session *s, int what);
 void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num);
 
+void add_facet(struct session *s, const char *type, const char *value, int count);
+void session_log(struct session *s, int level, const char *fmt, ...)
+#ifdef __GNUC__
+    __attribute__ ((format (printf, 3, 4)))
+#endif
+    ;
 #endif
 
 /*

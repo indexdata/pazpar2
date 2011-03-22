@@ -1,5 +1,5 @@
 /* This file is part of Pazpar2.
-   Copyright (C) 2006-2010 Index Data
+   Copyright (C) 2006-2011 Index Data
 
 Pazpar2 is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -51,6 +51,7 @@ struct pp2_charset_s {
 #endif
 };
 
+static const char *pp2_relevance_token_null(pp2_relevance_token_t prt);
 static const char *pp2_relevance_token_a_to_z(pp2_relevance_token_t prt);
 static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt);
 
@@ -109,11 +110,18 @@ void pp2_charset_incref(pp2_charset_t pct)
     (pct->ref_count)++;
 }
 
-pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn)
+pp2_charset_t pp2_charset_create_a_to_z(void)
+{
+    pp2_charset_t pct = pp2_charset_create(0);
+    pct->token_next_handler = pp2_relevance_token_a_to_z;
+    return pct;
+}
+
+pp2_charset_t pp2_charset_create(struct icu_chain *icu_chn)
 {
     pp2_charset_t pct = xmalloc(sizeof(*pct));
 
-    pct->token_next_handler = pp2_relevance_token_a_to_z;
+    pct->token_next_handler = pp2_relevance_token_null;
     pct->get_sort_handler  = pp2_get_sort_ascii;
     pct->ref_count = 1;
 #if YAZ_HAVE_ICU
@@ -272,6 +280,16 @@ static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt)
     }
 }
 
+static const char *pp2_relevance_token_null(pp2_relevance_token_t prt)
+{
+    const char *cp = prt->cp;
+
+    prt->last_cp = *cp ? cp : 0;
+    while (*cp)
+        cp++;
+    prt->cp = cp;
+    return prt->last_cp;
+}
 
 #if YAZ_HAVE_ICU
 static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)

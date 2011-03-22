@@ -9,21 +9,39 @@ if test -z "$PORT"; then
 	PORT=9004
 fi
 
-QUERY=100
-SERVICE=perf_t
-
-H="http://localhost:${PORT}/search.pz2"
-
-/usr/bin/time --format "$OF, init, %e" wget -q -O $OF.init.xml "$H/?command=init&service=${SERVICE}&extra=$OF" 2> $OF.init.time
-S=`xsltproc get_session.xsl $OF.init.xml`
-/usr/bin/time --format "$OF, search, %e" wget -q -O $OF.search.xml "$H?command=search&query=${QUERY}&session=$S" 2> $OF.search.time
-sleep 1
-# First show
-/usr/bin/time --format "$OF, show, %e" wget -q -O $OF.show.xml "$H?command=show&session=$S" 2> $OF.show.time
-AC=`xsltproc get_activeclients.xsl ${OF}.show.xml`
-echo "Active clients: $AC " 
-if [ "${AC}" != "0" ] ; then
-    echo "Active clients: ${AC}" 
-    /usr/bin/time --format "$OF, show2, %e" wget -q -O $OF.show.xml "$H?command=show&session=$S" 2>> $OF.show.time
-    AC=`xsltproc get_session.xsl $OF.show.xml`
+SERVICE=$3
+if test -z "$SERVICE"; then
+	SERVICE=perf_t
 fi
+
+RECORDS=40
+QUERY=100
+NUM=20
+H="http://127.0.0.1:${PORT}/search.pz2"
+
+declare -i MAX_WAIT=2
+/usr/bin/time --format "$OF, init, %e" wget -q -O ${TMP_DIR}$OF.init.xml "$H/?command=init&service=${SERVICE}&extra=$OF" 2> ${TMP_DIR}$OF.init.time
+S=`xsltproc get_session.xsl ${TMP_DIR}$OF.init.xml`
+/usr/bin/time --format "$OF, search, %e" wget -q -O ${TMP_DIR}$OF.search.xml "$H?command=search&query=${QUERY}&session=$S" 2> ${TMP_DIR}$OF.search.time
+
+let r=0
+DO_DISPLAY=true
+while [ ${DO_DISPLAY} ] ; do
+    SLEEP=$[ ($RANDOM % $MAX_WAIT ) ]
+    echo "show in $SLEEP"
+    sleep $SLEEP
+    /usr/bin/time --format "$OF, show2, %e" wget -q -O ${TMP_DIR}$OF.show.$r.xml "$H?command=show&session=$S&start=$r&num=${NUM}&block=1" 2>> ${TMP_DIR}$OF.show.time
+    AC=`xsltproc get_activeclients.xsl ${TMP_DIR}${OF}.show.$r.xml`
+    if [ "$AC" != "0" ] ; then 
+	echo "Active clients: ${AC}" 
+#    else
+#	DO_DISPLAY=false
+#	break
+    fi
+    let r=$r+$NUM
+    if [ $r -ge $RECORDS ] ; then 
+	DO_DISPLAY=false
+	break;
+    fi
+done
+/usr/bin/time --format "$OF, termlist, %e" wget -q -O ${TMP_DIR}$OF.termlist.$r.xml "$H?command=termlist&session=$S&name=xtargets%2Csubject%2Cauthor" 2>> ${TMP_DIR}$OF.termlist.time

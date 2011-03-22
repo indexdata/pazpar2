@@ -1,0 +1,5 @@
+http://localhost:9763/search.pz2?command=init&clear=1
+http://localhost:9763/search.pz2?session=1&command=settings&pz:sru%5Bgso.gbv.de%2Fsru%2FDB%5D=get&pz%3Aname%5Bgso.gbv.de%2Fsru%2FDB%5D=SOLR+Test&pz%3Acclmap%3Ati%5Bgso.gbv.de%2Fsru%2FDB%5D=1%3Dtitle&pz%3Acclmap%3Asu%5Bgso.gbv.de%2Fsru%2FDB%5D=1%3Dsubject&pz%3Acclmap%3Aau%5Bgso.gbv.de%2Fsru%2FDB%5D=1%3Dauthor&pz%3Acclmap%3Aisbn%5Bgso.gbv.de%2Fsru%2FDB%5D=1%3Disbn&pz%3Acclmap%3Aterm%5Bgso.gbv.de%2Fsru%2FDB%5D=1%3Dtitle&pz%3Axslt%5Bgso.gbv.de%2Fsru%2FDB%5D=solr-pz2.xsl&pz%3Aqueryencoding%5Bgso.gbv.de%2Fsru%2FDB%5D=UTF-8&pz%3Aapdulog%5Bgso.gbv.de%2Fsru%2FDB%5D=1&pz%3Asru_version%5Bgso.gbv.de%2Fsru%2FDB%5D=1.1
+http://localhost:9763/search.pz2?session=1&command=search&query=cql:man
+4 http://localhost:9763/search.pz2?session=1&command=show&block=1
+

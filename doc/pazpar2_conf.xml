@@ -1,6 +1,6 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook V4.1//EN"
- "http://www.oasis-open.org/docbook/xml/4.1/docbookx.dtd"
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
 [
      <!ENTITY % local SYSTEM "local.ent">
      %local;
@@ -13,10 +13,13 @@
  <refentryinfo>
   <productname>Pazpar2</productname>
   <productnumber>&version;</productnumber>
+  <info><orgname>Index Data</orgname></info>
  </refentryinfo>
+
  <refmeta>
   <refentrytitle>Pazpar2 conf</refentrytitle>
   <manvolnum>5</manvolnum>
+  <refmiscinfo class="manual">File formats and conventions</refmiscinfo>
  </refmeta>
  
  <refnamediv>
@@ -118,11 +121,11 @@
     </varlistentry>
 
     <varlistentry>
-     <term>relevance / sort / mergekey</term>
+     <term>relevance / sort / mergekey / facet</term>
      <listitem>
       <para>
-       Specifies character set normalization for relevancy / sorting 
-       and the mergekey - for the server. These definitions serves as
+       Specifies character set normalization for relevancy / sorting /
+       mergekey and facets - for the server. These definitions serves as
        default for services that don't have these given. For the meaning
        of these settings refer to the "relevance" element inside service.
       </para>
@@ -406,6 +409,17 @@
 	 <para>
 	  Specifies ICU tokenization and transformation rules
 	  for tokens that are used in Pazpar2's mergekey. The contents
+	  is similar to that of <literal>relevance</literal>.
+	 </para>
+	</listitem>
+       </varlistentry>
+
+       <varlistentry>
+	<term>facet</term>
+	<listitem>
+	 <para>
+	  Specifies ICU tokenization and transformation rules
+	  for tokens that are used in Pazpar2's facets. The contents
 	  is similar to that of <literal>relevance</literal>.
 	 </para>
 	</listitem>
@@ -831,16 +845,27 @@
      <term>pz:nativesyntax</term>
      <listitem>
       <para>
-       The representation (syntax) of the retrieval records. Currently
-       recognized values are iso2709 and xml.
+       Specifies how Pazpar2 shoule map retrieved records to XML. Currently
+       supported values are <literal>xml</literal>,
+       <literal>iso2709</literal> and <literal>txml</literal>.
       </para>
       <para>
-       For iso2709, can also specify a native character set, e.g. "iso2709;latin-1".
-       If no character set is provided, MARC-8 is assumed.
+       The value <literal>iso2709</literal> makes Pazpar2 convert retrieved
+       MARC records to MARCXML. In order to convert to XML, the exact
+       chacater set of the MARC must be known (if not, the resulting
+       XML is probably not well-formed). The character set may be 
+       specified by adding:
+       <literal>;charset=</literal><replaceable>charset</replaceable> to
+       <literal>iso2709</literal>. If omitted, a charset of
+       MARC-8 is assumed. This is correct for most MARC21/USMARC records.
       </para>
       <para>
-        If pz:nativesyntax is not specified, pazpar2 will attempt to determine
-	the value based on the response from the server.
+       The value <literal>txml</literal> is like <literal>iso2709</literal>
+       except that records are converted to TurboMARC instead of MARCXML.
+      </para>
+      <para>
+       The value <literal>xml</literal> is used if Pazpar2 retrieves
+       records that are already XML (no conversion takes place).
       </para>
      </listitem>
     </varlistentry>
@@ -967,10 +992,18 @@
      <term>pz:sru</term>
      <listitem>
       <para>
-       This setting enables SRU/SRW support. It has three possible settings.
+       This setting enables
+       <ulink url="&url.sru;">SRU</ulink>/<ulink url="&url.solr;">SOLR</ulink>
+       support.
+       It has four possible settings.
        'get', enables SRU access through GET requests. 'post' enables SRU/POST
        support, less commonly supported, but useful if very large requests are
-       to be submitted. 'srw' enables the SRW variation of the protocol.
+       to be submitted. 'srw' enables the SRW (SRU over SOAP) variation of
+       the protocol.
+      </para>
+      <para>
+	   A value of 'solr' anables SOLR client support. This is supported
+	   for Pazpar version 1.5.0 and later.
       </para>
      </listitem>
     </varlistentry>
@@ -981,7 +1014,7 @@
       <para>
        This allows SRU version to be specified. If unset Pazpar2
        will the default of YAZ (currently 1.2). Should be set
-       to 1.1 or 1.2.
+       to 1.1 or 1.2. For SOLR, the current supported/tested version is 1.4
       </para>
      </listitem>
     </varlistentry>
@@ -1033,13 +1066,55 @@
       <para>
        Specifies a filter which allows Pazpar2 to only include
        records that meet a certain criteria in a result. Unmatched records
-       will be ignored. The filter takes the form name[~value] , which
+       will be ignored. The filter takes the form name, name~value, or name=value, which
        will include only records with metadata element (name) that has the
-       substring (value) given. If value is omitted all records with the
-       metadata present will be included.
+       substring (~value) given, or matches exactly (=value). If value is omitted all records
+	with the named
+       metadata element present will be included.
       </para>
      </listitem>
     </varlistentry>
+    
+    <varlistentry>
+     <term>pz:termlist_term_count</term>
+     <listitem>
+      <para>
+       Specifies that the target should return up to n terms for each facets (where termlist="yes"). This implies 
+       that the target can return facets on the search command. Requesting facets on targets that doesn't, 
+       will return unpredictable or error result.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:termlist_term_sort</term>
+     <listitem>
+      <para>
+       Specifies how the terms should be sorted. (Not yet implemented)
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:preferred</term>
+     <listitem>
+      <para>
+       Specifies that a target is preferred, e.g. possible local, faster target. Using block=pref on show command  
+       will wait for all these targets to return records before releasing the block. If no target is preferred, 
+       the block=pref will identical to block=1, which release when one target has returned records.     
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:block_timeout</term>
+     <listitem>
+      <para>
+       (Not yet implemented). Specifies the time for which a block should be released anyway.      
+      </para>
+     </listitem>
+    </varlistentry>
+    
    </variablelist>
 
   </refsect2>
