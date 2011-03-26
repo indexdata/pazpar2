@@ -175,7 +175,8 @@ void service_incref(struct conf_service *service);
 void service_destroy(struct conf_service *service);
 
 int config_start_listeners(struct conf_config *conf,
-                           const char *listener_override);
+                           const char *listener_override,
+                           const char *record_fname);
 
 void config_stop_listeners(struct conf_config *conf);
 

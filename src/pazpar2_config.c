@@ -1122,7 +1122,8 @@ void config_process_events(struct conf_config *conf)
 }
 
 int config_start_listeners(struct conf_config *conf,
-                           const char *listener_override)
+                           const char *listener_override,
+                           const char *record_fname)
 {
     struct conf_server *ser;
 
@@ -1149,7 +1150,7 @@ int config_start_listeners(struct conf_config *conf,
                 wrbuf_printf(w, "%d", ser->port);
             }
         }
-        r = http_init(wrbuf_cstr(w), ser);
+        r = http_init(wrbuf_cstr(w), ser, record_fname);
         wrbuf_destroy(w);
         if (r)
             return -1;
