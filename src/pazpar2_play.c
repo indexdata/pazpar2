@@ -21,7 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <config.h>
 #endif
 
+#include <time.h>
 #include <stdlib.h>
+#include <sys/select.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
@@ -41,9 +43,10 @@ struct con {
 
 static int run(FILE *inf, struct addrinfo *res)
 {
-    long long tv_sec0;
-    long long tv_usec0;
+    long long tv_sec0 = 0;
+    long long tv_usec0 = 0;
     struct con *cons = 0;
+
     while (1)
     {
         long long tv_sec1;
@@ -69,6 +72,23 @@ static int run(FILE *inf, struct addrinfo *res)
             fprintf(stderr, "bad line %s\n", req);
             return -1;
         }
+        if (tv_sec0)
+        {
+            struct timeval spec;
+
+            spec.tv_sec = tv_sec1 - tv_sec0;
+            if (tv_usec0 > tv_usec1)
+            {
+                spec.tv_usec = 1000000 + tv_usec1 - tv_usec0;
+                spec.tv_sec--;
+            }
+            else
+                spec.tv_usec = tv_usec1 - tv_usec0;
+            
+            select(0, 0, 0, 0, &spec);
+        }
+        tv_sec0 = tv_sec1;
+        tv_usec0 = tv_usec1;
         for (conp = &cons; *conp; conp = &(*conp)->next)
             if ((*conp)->id == id)
                 break;
