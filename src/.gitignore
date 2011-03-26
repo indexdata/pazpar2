@@ -1,5 +1,6 @@
 yaz
 pazpar2
+pazpar2_play
 Makefile
 Makefile.in
 config.h
