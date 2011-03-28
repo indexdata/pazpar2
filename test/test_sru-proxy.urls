@@ -1,4 +1,9 @@
-http://localhost:9763/search.pz2?command=init&clear=1&service=sru-proxy
-http://localhost:9763/search.pz2?session=1&command=settings&pz:sru%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=get&pz%3Aname%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=sru-proxy&pz%3Axslt%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=dads-pz2.xsl&pz%3Aqueryencoding%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=UTF-8&pz%3Aapdulog%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1&pz%3Asru_version%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1.1&pz%3Aextra_args%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=%26x-facet_def%3Ddtic_test%26x-noxsl%3D1&pz:query_syntax%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=pqf
+http://localhost:9763/search.pz2?command=init&service=sru-proxy
 http://localhost:9763/search.pz2?session=1&command=search&query=water
 4 http://localhost:9763/search.pz2?session=1&command=show&block=1
+http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium%2Cjournal-title
+http://localhost:9763/search.pz2?session=1&command=settings&pz:sru%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=get&pz%3Aname%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=sru-proxy&pz%3Axslt%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=dads-pz2.xsl&pz%3Aqueryencoding%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=UTF-8&pz%3Aapdulog%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1&pz%3Asru_version%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1.1&pz:query_syntax%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=pqf&pz%3Aextra_args%5Bkb.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=%26x-facet_def%3Ddtic_test%26x-noxsl%3D1
+http://localhost:9763/search.pz2?session=1&command=search&query=water
+4 http://localhost:9763/search.pz2?session=1&command=show&block=1
+http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
+http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium%2Cjournal-title
