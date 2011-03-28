@@ -35,6 +35,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/options.h>
 #include <yaz/sc.h>
 
+// #define MTRACE
+#ifdef MTRACE
+#include <mcheck.h>
+#endif
+
 static struct conf_config *sc_stop_config = 0;
 
 void child_handler(void *data)
@@ -222,10 +227,20 @@ int main(int argc, char **argv)
 {
     int ret;
     yaz_sc_t s = yaz_sc_create("pazpar2", "Pazpar2");
+    
+#ifdef MTRACE
+    mtrace();
+#endif
 
     ret = yaz_sc_program(s, argc, argv, sc_main, sc_stop);
 
     yaz_sc_destroy(&s);
+
+#ifdef MTRACE
+    muntrace();
+#endif
+
+
     exit(ret);
 }
 
