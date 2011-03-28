@@ -3,7 +3,7 @@
 <list name="xtargets">
 <term>
 <id>kb.dadsthirdnode.cvt.dk/sru-proxy</id>
-<name>DADS SRU-proxy</name>
+<name>sru-proxy</name>
 <frequency>2073000</frequency>
 <state>Client_Idle</state>
 <diagnostic>0</diagnostic>
@@ -46,22 +46,5 @@
 <list name="date">
 </list>
 <list name="medium">
-</list>
-<list name="journal-title">
-<term><name>Chemical and Engineering News</name><frequency>15</frequency></term>
-<term><name>Pollution Engineering</name><frequency>6</frequency></term>
-<term><name>Marine Biology</name><frequency>3</frequency></term>
-<term><name>Forbes</name><frequency>3</frequency></term>
-<term><name>Land Economics</name><frequency>3</frequency></term>
-<term><name>Journal of Financial and Quantitative Analysis</name><frequency>2</frequency></term>
-<term><name>American Economic Review</name><frequency>2</frequency></term>
-<term><name>Petroleum Economist - English Edition</name><frequency>2</frequency></term>
-<term><name>Government Executive</name><frequency>2</frequency></term>
-<term><name>Money - Easton</name><frequency>1</frequency></term>
-<term><name>Chemical Week</name><frequency>1</frequency></term>
-<term><name>Interfaces</name><frequency>1</frequency></term>
-<term><name>Interfaces - Baltimore</name><frequency>1</frequency></term>
-<term><name>Vital Speeches of the Day</name><frequency>1</frequency></term>
-<term><name>Marketing (00253650)</name><frequency>1</frequency></term>
 </list>
 </termlist>
