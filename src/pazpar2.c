@@ -100,6 +100,7 @@ static int sc_main(
     const char *uid = 0;
     const char *listener_override = 0;
     const char *config_fname = 0;
+    const char *record_fname = 0;
     struct conf_config *config = 0;
     int test_mode = 0;
 
@@ -113,7 +114,7 @@ static int sc_main(
     yaz_log_init_prefix("pazpar2");
     yaz_log_xml_errors(0, YLOG_WARN);
 
-    while ((ret = options("dDf:h:l:p:tu:v:VX", argv, argc, &arg)) != -2)
+    while ((ret = options("dDf:h:l:p:R:tu:v:VX", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -135,6 +136,9 @@ static int sc_main(
             break;
         case 'p':
             pidfile = arg;
+            break;
+        case 'R':
+            record_fname = arg;
             break;
         case 't':
             test_mode = 1;
@@ -158,6 +162,7 @@ static int sc_main(
                     "    -h [host:]port          Listener port\n"
                     "    -l file                 Log to file\n"
                     "    -p pidfile              PID file\n"
+                    "    -R recfile              HTTP recording file\n"
                     "    -t                      Test configuration\n"
                     "    -u uid                  Change user to uid\n"
                     "    -V                      Show version\n"
@@ -202,7 +207,7 @@ static int sc_main(
                     "mode");
             return 1;
         }
-        ret = config_start_listeners(config, listener_override);
+        ret = config_start_listeners(config, listener_override, record_fname);
         if (ret)
             return ret; /* error starting http listener */
         
