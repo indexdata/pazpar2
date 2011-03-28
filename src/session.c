@@ -86,7 +86,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 struct parameters global_parameters = 
 {
     0,   // dump_records
-    0    // debug_mode
+    0,   // debug_mode
+    0,   // predictable sessions
 };
 
 struct client_list {

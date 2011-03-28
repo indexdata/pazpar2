@@ -269,7 +269,7 @@ unsigned int make_sessionid(void)
     unsigned int res;
 
     seq++;
-    if (global_parameters.debug_mode)
+    if (global_parameters.predictable_sessions)
         res = seq;
     else
     {

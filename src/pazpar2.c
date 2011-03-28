@@ -139,6 +139,7 @@ static int sc_main(
             break;
         case 'R':
             record_fname = arg;
+            global_parameters.predictable_sessions = 1;
             break;
         case 't':
             test_mode = 1;
@@ -153,6 +154,7 @@ static int sc_main(
             show_version();
         case 'X':
             global_parameters.debug_mode++;
+            global_parameters.predictable_sessions = 1;
             break;
         default:
             fprintf(stderr, "Usage: pazpar2\n"
