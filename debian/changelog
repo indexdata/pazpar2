@@ -1,6 +1,12 @@
-pazpar2 (1.5.3-1indexata) unstable; urgency=low
+pazpar2 (1.5.5-1indexdata) unstable; urgency=low
 
-  * Upstrem.
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Mon, 28 Mar 2011 15:42:06 +0200
+
+pazpar2 (1.5.3-1indexdata) unstable; urgency=low
+
+  * Upstream.
 
  -- Dennis Schafroth <dennis@indexdata.com>  Fri, 18 Feb 2011 12:26:12 +0100
 

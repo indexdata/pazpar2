@@ -1,3 +1,9 @@
+--- 1.5.5 2011/03/28
+
+Fix memory leak that occurred for command=termlist&name=xtargets .
+
+Pazpar2 may save HTTP requests. Enabled by option -R.
+
 --- 1.5.4 2011/03/08
 
 Experimental support for DTIC DADS target. New dads-pz2.xsl.
