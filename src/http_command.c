@@ -339,7 +339,12 @@ static int process_settings(struct session *se, struct http_request *rq,
 
 static void cmd_exit(struct http_channel *c)
 {
+    char buf[1024];
+    struct http_response *rs = c->response;
     yaz_log(YLOG_WARN, "exit");
+    sprintf(buf, HTTP_COMMAND_RESPONSE_PREFIX "<exit><status>OK</status></exit>");
+    rs->payload = nmem_strdup(c->nmem, buf);
+    http_send_response(c);
     http_close_server(c->server);
 }
 
