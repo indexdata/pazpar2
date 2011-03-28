@@ -839,7 +839,8 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
         res[*count].state = client_get_state_str(cl);
         res[*count].connected  = client_get_connection(cl) ? 1 : 0;
         session_settings_dump(se, client_get_database(cl), w);
-        res[*count].settings_xml = w;
+        res[*count].settings_xml = nmem_strdup(nmem, wrbuf_cstr(w));
+        wrbuf_destroy(w);
         (*count)++;
     }
     session_leave(se);

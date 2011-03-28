@@ -721,11 +721,10 @@ static void cmd_bytarget(struct http_channel *c)
         if (settings && *settings == '1')
         {
             wrbuf_puts(c->wrbuf, "<settings>\n");
-            wrbuf_puts(c->wrbuf, wrbuf_cstr(ht[i].settings_xml));
+            wrbuf_puts(c->wrbuf, ht[i].settings_xml);
             wrbuf_puts(c->wrbuf, "</settings>\n");
         }
         wrbuf_puts(c->wrbuf, "</target>");
-        wrbuf_destroy(ht[i].settings_xml);
     }
 
     wrbuf_puts(c->wrbuf, "</bytarget>");
