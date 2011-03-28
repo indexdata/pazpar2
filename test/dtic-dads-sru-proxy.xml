@@ -1,26 +1,32 @@
-<settings target="kb.dadsthirdnode.cvt.dk/sru-proxy">
+<settings target="*">
 
   <!-- Simple test against a local SRU server (could be yaz-ztest) -->
+  <set target="kb.dadsthirdnode.cvt.dk/sru-proxy" name="pz:name" value="DADS SRU-proxy"/>
+  <!-- field-specific mappings -->
+  <set name="pz:cclmap:au" value="u=1004 s=al"/>
+  <set name="pz:cclmap:ti" value="u=4 s=al"/>
+  <set name="pz:cclmap:su" value="u=21 s=al"/>
+  <set name="pz:cclmap:jt" value="u=1033"/>
+  <set name="pz:cclmap:isbn" value="u=7"/>
+  <set name="pz:cclmap:issn" value="u=8"/>
+  <set name="pz:cclmap:date" value="u=30 r=r"/>
+  <set name="pz:cclmap:medium" value="u=medium"/>
 
   <set name="pz:sru" value="get"/> <!-- must be get, post or soap -->
   <set name="pz:sru_version" value="1.1"/>
   <set name="pz:name" value="sru-proxy"/>
 
-
   <set name="pz:maxrecs" value="50"/>
 
   <!-- mapping for unqualified search -->
 
-  <set name="pz:extra_args" value="%26x-facet_def%3Ddtic_test%26x-noxsl%3D1" />
+  <set name="pz:extra_args" value="&amp;x-facet_def=dtic_test&amp;x-noxsl=1" />
   <set name="pz:query_syntax" value="pqf" />
-
-  <!-- Retrieval settings -->
-
-  <set name="pz:elements" value="dc"/>
+  <set name="pz:option_recordfilter" value="remote"/>
 
   <!-- Result normalization settings -->
 
-  <set name="pz:nativesyntax" value="xml"/>
-  <set name="pz:xslt" value="dc.xsl"/>
+  <set name="pz:nativesyntax" value="txml"/>
+  <set name="pz:xslt" value="dads-pz2.xsl"/>
 
 </settings>
