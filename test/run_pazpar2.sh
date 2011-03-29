@@ -57,7 +57,7 @@ URLS=${PREFIX}.urls
 VALGRINDLOG=${PREFIX}_valgrind.log
 
 if test -n "$PAZPAR2_USE_VALGRIND"; then
-    valgrind --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -X -l pazpar2.log -f ${CFG} >extra_pazpar2.log 2>&1 &
+    valgrind --show-reachable=yes --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -X -l pazpar2.log -f ${CFG} >extra_pazpar2.log 2>&1 &
 elif test -n "$SKIP_PAZPAR2"; then 
     echo "Skipping pazpar2. Must already be running with correct config!!! " 
 else
