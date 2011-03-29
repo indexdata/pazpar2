@@ -98,13 +98,6 @@ static void http_server_incref(http_server_t hs);
 
 struct http_server
 {
-    struct http_buf *http_buf_freelist;
-    int http_buf_freelist_count;
-    int http_buf_freelist_max;
-
-    struct http_channel *http_channel_freelist;
-    int http_channel_freelist_count;
-    int http_channel_freelist_max;
     YAZ_MUTEX mutex;
     int listener_socket;
     int ref_count;
@@ -133,18 +126,7 @@ const char *http_lookup_header(struct http_header *header,
 
 static struct http_buf *http_buf_create(http_server_t hs)
 {
-    struct http_buf *r = 0;
-
-    yaz_mutex_enter(hs->mutex);
-    if (hs->http_buf_freelist)
-    {
-        r = hs->http_buf_freelist;
-        hs->http_buf_freelist = hs->http_buf_freelist->next;
-        hs->http_buf_freelist_count--;
-    }
-    yaz_mutex_leave(hs->mutex);
-    if (!r)
-        r = xmalloc(sizeof(struct http_buf));
+    struct http_buf *r = xmalloc(sizeof(*r));
     r->offset = 0;
     r->len = 0;
     r->next = 0;
@@ -153,24 +135,7 @@ static struct http_buf *http_buf_create(http_server_t hs)
 
 static void http_buf_destroy(http_server_t hs, struct http_buf *b)
 {
-    yaz_mutex_enter(hs->mutex);
-    if (hs->http_buf_freelist_max > 0 && hs->http_buf_freelist_count >= hs->http_buf_freelist_max) {
-        xfree(b);
-        while ((b = hs->http_buf_freelist)) {
-            xfree(b);
-            hs->http_buf_freelist = hs->http_buf_freelist->next;
-        }
-        hs->http_buf_freelist_count = 0;
-    }
-    else {
-        b->next = hs->http_buf_freelist;
-        hs->http_buf_freelist = b;
-        hs->http_buf_freelist_count++;
-#if 0 
-        yaz_log(YLOG_DEBUG, "Free %d http buffers on server.", hs->http_buf_freelist_count);
-#endif
-    }
-    yaz_mutex_leave(hs->mutex);
+    xfree(b);
 }
 
 static void http_buf_destroy_queue(http_server_t hs, struct http_buf *b)
@@ -1149,24 +1114,6 @@ static void http_channel_destroy(IOCHAN i)
 
     http_server = s->http_server; /* save it for destroy (decref) */
 
-    yaz_mutex_enter(s->http_server->mutex);
-    if (s->http_server->http_channel_freelist_max > 0 && s->http_server->http_channel_freelist_count >= s->http_server->http_channel_freelist_max) {
-        while ((s->next = s->http_server->http_channel_freelist)) {
-            nmem_destroy(s->next->nmem);
-            wrbuf_destroy(s->next->wrbuf);
-            xfree(s->next);
-            s->http_server->http_channel_freelist = s->http_server->http_channel_freelist->next;
-        }
-        s->http_server->http_channel_freelist_count = 0;
-    }
-    else {
-        s->next = s->http_server->http_channel_freelist;
-        s->http_server->http_channel_freelist = s;
-        s->http_server->http_channel_freelist_count++;
-        yaz_log(YLOG_DEBUG, "Free %d channels on server.", s->http_server->http_channel_freelist_count);
-    }
-    yaz_mutex_leave(s->http_server->mutex);
-
     http_server_destroy(http_server);
 
 #ifdef WIN32
@@ -1175,6 +1122,9 @@ static void http_channel_destroy(IOCHAN i)
     close(iochan_getfd(i));
 #endif
     iochan_destroy(i);
+    nmem_destroy(s->nmem);
+    wrbuf_destroy(s->wrbuf);
+    xfree(s);
 }
 
 static struct http_channel *http_channel_create(http_server_t hs,
@@ -1183,25 +1133,10 @@ static struct http_channel *http_channel_create(http_server_t hs,
 {
     struct http_channel *r;
 
-    yaz_mutex_enter(hs->mutex);
-    r = hs->http_channel_freelist;
-    if (r) {
-        hs->http_channel_freelist = r->next;
-        hs->http_channel_freelist_count--;
-    }
-    yaz_mutex_leave(hs->mutex);
+    r = xmalloc(sizeof(struct http_channel));
+    r->nmem = nmem_create();
+    r->wrbuf = wrbuf_alloc();
 
-    if (r)
-    {
-        nmem_reset(r->nmem);
-        wrbuf_rewind(r->wrbuf);
-    }
-    else
-    {
-        r = xmalloc(sizeof(struct http_channel));
-        r->nmem = nmem_create();
-        r->wrbuf = wrbuf_alloc();
-    }
     http_server_incref(hs);
     r->http_server = hs;
     r->http_sessions = hs->http_sessions;
@@ -1452,15 +1387,6 @@ http_server_t http_server_create(void)
     hs->ref_count = 1;
     hs->http_sessions = 0;
 
-    hs->http_channel_freelist = 0;
-    hs->http_channel_freelist_count = 0;
-    /* Disable max check */
-    hs->http_channel_freelist_max   = 0;
-
-    hs->http_buf_freelist = 0;
-    hs->http_buf_freelist_count = 0;
-    /* Disable max check */
-    hs->http_buf_freelist_max = 0;
     hs->record_file = 0;
     return hs;
 }
@@ -1477,22 +1403,6 @@ void http_server_destroy(http_server_t hs)
 
         if (r == 0)
         {
-            struct http_buf *b = hs->http_buf_freelist;
-            struct http_channel *c = hs->http_channel_freelist;
-            while (b)
-            {
-                struct http_buf *b_next = b->next;
-                xfree(b);
-                b = b_next;
-            }
-            while (c)
-            {
-                struct http_channel *c_next = c->next;
-                nmem_destroy(c->nmem);
-                wrbuf_destroy(c->wrbuf);
-                xfree(c);
-                c = c_next;
-            }
             http_sessions_destroy(hs->http_sessions);
             xfree(hs->proxy_addr);
             yaz_mutex_destroy(&hs->mutex);
