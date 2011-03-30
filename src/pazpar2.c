@@ -35,6 +35,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/options.h>
 #include <yaz/sc.h>
 
+// #define MTRACE
+#ifdef MTRACE
+#include <mcheck.h>
+#endif
+
 static struct conf_config *sc_stop_config = 0;
 
 void child_handler(void *data)
@@ -95,6 +100,7 @@ static int sc_main(
     const char *uid = 0;
     const char *listener_override = 0;
     const char *config_fname = 0;
+    const char *record_fname = 0;
     struct conf_config *config = 0;
     int test_mode = 0;
 
@@ -108,7 +114,7 @@ static int sc_main(
     yaz_log_init_prefix("pazpar2");
     yaz_log_xml_errors(0, YLOG_WARN);
 
-    while ((ret = options("dDf:h:l:p:tu:v:VX", argv, argc, &arg)) != -2)
+    while ((ret = options("dDf:h:l:p:R:tu:v:VX", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -131,6 +137,10 @@ static int sc_main(
         case 'p':
             pidfile = arg;
             break;
+        case 'R':
+            record_fname = arg;
+            global_parameters.predictable_sessions = 1;
+            break;
         case 't':
             test_mode = 1;
             break;
@@ -144,6 +154,7 @@ static int sc_main(
             show_version();
         case 'X':
             global_parameters.debug_mode++;
+            global_parameters.predictable_sessions = 1;
             break;
         default:
             fprintf(stderr, "Usage: pazpar2\n"
@@ -153,6 +164,7 @@ static int sc_main(
                     "    -h [host:]port          Listener port\n"
                     "    -l file                 Log to file\n"
                     "    -p pidfile              PID file\n"
+                    "    -R recfile              HTTP recording file\n"
                     "    -t                      Test configuration\n"
                     "    -u uid                  Change user to uid\n"
                     "    -V                      Show version\n"
@@ -197,7 +209,7 @@ static int sc_main(
                     "mode");
             return 1;
         }
-        ret = config_start_listeners(config, listener_override);
+        ret = config_start_listeners(config, listener_override, record_fname);
         if (ret)
             return ret; /* error starting http listener */
         
@@ -222,10 +234,20 @@ int main(int argc, char **argv)
 {
     int ret;
     yaz_sc_t s = yaz_sc_create("pazpar2", "Pazpar2");
+    
+#ifdef MTRACE
+    mtrace();
+#endif
 
     ret = yaz_sc_program(s, argc, argv, sc_main, sc_stop);
 
     yaz_sc_destroy(&s);
+
+#ifdef MTRACE
+    muntrace();
+#endif
+
+
     exit(ret);
 }
 

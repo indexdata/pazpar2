@@ -143,7 +143,7 @@ struct hitsbytarget {
     int records;
     const char *state;
     int connected;
-    WRBUF settings_xml;
+    char *settings_xml;
 };
 
 struct hitsbytarget *hitsbytarget(struct session *s, int *count, NMEM nmem);

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<service id="perf_t" xmlns="http://www.indexdata.com/pazpar2/1.0">
+<service id="long" xmlns="http://www.indexdata.com/pazpar2/1.0">
   <timeout session="600" z3950_operation="30" z3950_session="900"/>  
   <settings target="*">
     <set target="localhost:9999/db01" name="pz:name" value="db01"/>

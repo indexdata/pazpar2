@@ -8,6 +8,10 @@
       <xsl:apply-templates />
   </xsl:template>
 
+  <xsl:template match="memory">
+      <xsl:apply-templates />
+  </xsl:template>
+
   <xsl:template match="sessions">
     <xsl:text>export SESSIONS=</xsl:text><xsl:value-of select="." />
   </xsl:template>
@@ -20,7 +24,42 @@
     <xsl:text>export RESULTSETS=</xsl:text><xsl:value-of select="." />
   </xsl:template>
 
-  <xsl:template match="*">
+  <xsl:template match="arena">
+    <xsl:text>AREA=</xsl:text><xsl:value-of select="." />
   </xsl:template>
+
+  <xsl:template match="ordblks">
+    <xsl:text>ORDBLKS=</xsl:text><xsl:value-of select="." />
+  </xsl:template>
+
+  <xsl:template match="uordblks">
+    <xsl:text>UORDBLKS=</xsl:text><xsl:value-of select="." />
+  </xsl:template>
+
+  <xsl:template match="fordblks">
+    <xsl:text>FORDBLKS=</xsl:text><xsl:value-of select="." />
+  </xsl:template>
+
+  <xsl:template match="keepcost">
+    <xsl:text>KEEPCOST=</xsl:text><xsl:value-of select="." />
+  </xsl:template>
+
+  <xsl:template match="hblks">
+    <xsl:text>HBLKS=</xsl:text><xsl:value-of select="." />
+  </xsl:template>
+
+  <xsl:template match="hblkhd">
+    <xsl:text>HBLKHD=</xsl:text><xsl:value-of select="." />
+  </xsl:template>
+
+  <xsl:template match="virt">
+    <xsl:text>VIRT=</xsl:text><xsl:value-of select="." />
+  </xsl:template>
+
+  <xsl:template match="virtuse">
+    <xsl:text>VIRTUSE=</xsl:text><xsl:value-of select="." />
+  </xsl:template>
+
+  <xsl:template match="*" />
 
 </xsl:stylesheet>

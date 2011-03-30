@@ -41,6 +41,29 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "settings.h"
 #include "client.h"
 
+#include <malloc.h>
+
+void print_meminfo(WRBUF wrbuf) {
+#ifdef __GNUC__
+    struct mallinfo minfo;
+    minfo = mallinfo();
+    wrbuf_printf(wrbuf, "  <memory>\n"
+                        "   <arena>%d</arena>\n" 
+                        "   <uordblks>%d</uordblks>\n"
+                        "   <fordblks>%d</fordblks>\n"
+                        "   <ordblks>%d</ordblks>\n"
+                        "   <keepcost>%d</keepcost>\n"
+                        "   <hblks>%d</hblks>\n" 
+                        "   <hblkhd>%d</hblkhd>\n"
+                        "   <virt>%d</virt>\n"
+                        "   <virtuse>%d</virtuse>\n"
+                        "  </memory>\n", 
+                 minfo.arena, minfo.uordblks, minfo.fordblks,minfo.ordblks, minfo.keepcost, minfo.hblks, minfo.hblkhd, minfo.arena + minfo.hblkhd, minfo.uordblks + minfo.hblkhd);
+
+#endif
+}
+
+
 // Update this when the protocol changes
 #define PAZPAR2_PROTOCOL_VERSION "1"
 
@@ -246,7 +269,7 @@ unsigned int make_sessionid(void)
     unsigned int res;
 
     seq++;
-    if (global_parameters.debug_mode)
+    if (global_parameters.predictable_sessions)
         res = seq;
     else
     {
@@ -637,6 +660,7 @@ static void cmd_server_status(struct http_channel *c)
     wrbuf_printf(c->wrbuf, "  <clients>%u</clients>\n",   clients);
     /* Only works if yaz has been compiled with enabling of this */
     wrbuf_printf(c->wrbuf, "  <resultsets>%u</resultsets>\n",resultsets);
+    print_meminfo(c->wrbuf);
 
 /* TODO add all sessions status                         */
 /*    http_sessions_t http_sessions = c->http_sessions; */
@@ -702,11 +726,10 @@ static void cmd_bytarget(struct http_channel *c)
         if (settings && *settings == '1')
         {
             wrbuf_puts(c->wrbuf, "<settings>\n");
-            wrbuf_puts(c->wrbuf, wrbuf_cstr(ht[i].settings_xml));
+            wrbuf_puts(c->wrbuf, ht[i].settings_xml);
             wrbuf_puts(c->wrbuf, "</settings>\n");
         }
         wrbuf_puts(c->wrbuf, "</target>");
-        wrbuf_destroy(ht[i].settings_xml);
     }
 
     wrbuf_puts(c->wrbuf, "</bytarget>");

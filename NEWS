@@ -1,30 +1,42 @@
--- 1.5.4 2011/03/08
-- Experiental support for DTIC DADS target  
-- adds dads-pz2.xsl
-- Support for query_syntax (overrides the default for SRU | Z39.50) 
-- Support for extraArgs (ZOOM "extraArgs" option) for targets
-- New commands: status-server and status-session
+--- 1.5.5 2011/03/28
 
--- 1.5.3 2011/02/18
-- Fix for threaded runs: 
-Client now have a copy of the database URL, 
+Fix memory leak that occurred for command=termlist&name=xtargets .
+
+Pazpar2 may save HTTP requests. Enabled by option -R.
+
+--- 1.5.4 2011/03/08
+
+Experimental support for DTIC DADS target. New dads-pz2.xsl.
+
+Support for query_syntax (overrides the default for SRU | Z39.50) 
+
+Support for extraArgs (ZOOM "extraArgs" option) for targets
+
+New commands: status-server and status-session
+
+--- 1.5.3 2011/02/18
+
+Fix for threaded runs: Client now have a copy of the database URL, 
 which can used after the database has been release from the client. 
-This makes the logging in the connection idle timeout of the client nicer (no NOURL)
-and should be thread-safe. 
-- tmarc.xsl: 
-Add journal-title-abbrev and full text. 
-- cf.xsl
-New fields: isbn, issn, journaltitle, volume, issue
-- Fix for cmd=record before search.
-- Session Logging clean up
-- Fix: wrong termlist factor when maxrecs is different from 100.
+This makes the logging in the connection idle timeout of the client nicer (no NOURL) and should be thread-safe.  
 
--- 1.5.2 2011/01/18
-Fixes: 
-- Missing pz:termlist_term_factor in settings.c messed up pz:preferred
-- Term factor is default enabled but can be diseabled by pz:termlist_term_factor=0
+tmarc.xsl: Add journal-title-abbrev and full text. 
 
--- 1.5.1 2011/01/06
+cf.xsl: new fields: isbn, issn, journaltitle, volume, issue
+
+Fix for cmd=record before search.
+
+Session Logging clean up.
+
+Fix wrong termlist factor when maxrecs is different from 100.
+
+--- 1.5.2 2011/01/18
+
+Fix missing pz:termlist_term_factor in settings.c messed up pz:preferred.
+Term factor is default enabled but can be diseabled by
+pz:termlist_term_factor=0
+
+--- 1.5.1 2011/01/06
 
 Add scaling of facet count. Currently always enabled, needs fixing.
 Allow user-defined info for target suffix. This has no meaning in

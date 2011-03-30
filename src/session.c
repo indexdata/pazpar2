@@ -86,7 +86,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 struct parameters global_parameters = 
 {
     0,   // dump_records
-    0    // debug_mode
+    0,   // debug_mode
+    0,   // predictable sessions
 };
 
 struct client_list {
@@ -859,7 +860,8 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
         res[*count].state = client_get_state_str(cl);
         res[*count].connected  = client_get_connection(cl) ? 1 : 0;
         session_settings_dump(se, client_get_database(cl), w);
-        res[*count].settings_xml = w;
+        res[*count].settings_xml = nmem_strdup(nmem, wrbuf_cstr(w));
+        wrbuf_destroy(w);
         (*count)++;
     }
     session_leave(se);
