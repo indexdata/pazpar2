@@ -41,9 +41,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "settings.h"
 #include "client.h"
 
-#ifdef __LINUX__
+#ifdef HAVE_MALLINFO
 #include <malloc.h>
+
 void print_meminfo(WRBUF wrbuf) {
+
     struct mallinfo minfo;
     minfo = mallinfo();
     wrbuf_printf(wrbuf, "  <memory>\n"
