@@ -3,14 +3,13 @@
   <!-- Simple test against a local SRU server (could be yaz-ztest) -->
   <set target="kb.dadsthirdnode.cvt.dk/sru-proxy" name="pz:name" value="DADS SRU-proxy"/>
   <!-- field-specific mappings -->
-  <set name="pz:cclmap:au" value="u=1004 s=al"/>
+  <set name="pz:cclmap:au" value="u=1003 s=al"/>
   <set name="pz:cclmap:ti" value="u=4 s=al"/>
-  <set name="pz:cclmap:su" value="u=21 s=al"/>
-  <set name="pz:cclmap:jt" value="u=1033"/>
+  <set name="pz:cclmap:su" value="u=1016"/>
+  <set name="pz:cclmap:jt" value="u=1016"/>
   <set name="pz:cclmap:isbn" value="u=7"/>
   <set name="pz:cclmap:issn" value="u=8"/>
   <set name="pz:cclmap:date" value="u=30 r=r"/>
-  <set name="pz:cclmap:medium" value="u=medium"/>
 
   <set name="pz:sru" value="get"/> <!-- must be get, post or soap -->
   <set name="pz:sru_version" value="1.1"/>
