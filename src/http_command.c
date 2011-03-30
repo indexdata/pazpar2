@@ -41,10 +41,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "settings.h"
 #include "client.h"
 
+#ifdef __LINUX__
 #include <malloc.h>
-
 void print_meminfo(WRBUF wrbuf) {
-#ifdef __GNUC__
     struct mallinfo minfo;
     minfo = mallinfo();
     wrbuf_printf(wrbuf, "  <memory>\n"
@@ -60,8 +59,10 @@ void print_meminfo(WRBUF wrbuf) {
                         "  </memory>\n", 
                  minfo.arena, minfo.uordblks, minfo.fordblks,minfo.ordblks, minfo.keepcost, minfo.hblks, minfo.hblkhd, minfo.arena + minfo.hblkhd, minfo.uordblks + minfo.hblkhd);
 
-#endif
 }
+#else
+#define print_meminfo(x)
+#endif
 
 
 // Update this when the protocol changes

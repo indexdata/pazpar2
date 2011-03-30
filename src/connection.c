@@ -52,14 +52,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 static YAZ_MUTEX g_mutex = 0;
 static int no_connections = 0;
 static int total_no_connections = 0;
-static void connection_use(int delta)
+
+static int connection_use(int delta)
 {
     int result;
     if (!g_mutex)
         yaz_mutex_create(&g_mutex);
     yaz_mutex_enter(g_mutex);
     no_connections += delta;
-    result = no_connection;
+    result = no_connections;
     if (delta > 0)
         total_no_connections += delta;
     yaz_mutex_leave(g_mutex);

@@ -72,7 +72,7 @@ static int iochan_use(int delta)
     no_iochans += delta;
     if (delta > 0)
         no_iochans_total += delta;
-    iochans = no_clients;
+    iochans = no_iochans;
     yaz_mutex_leave(g_mutex);
     yaz_log(YLOG_DEBUG, "%s iochans=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), iochans);
     return iochans;
@@ -336,7 +336,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         for (nextp = iochans; *nextp;) {
             IOCHAN p = *nextp;
             if (p->destroyed && p->thread_users == 0) {
-                *nextp = iochan_destroy_real(iochan);
+                *nextp = iochan_destroy_real(nextp);
             } else
                 nextp = &p->next;
         }
