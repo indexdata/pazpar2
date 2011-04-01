@@ -58,6 +58,45 @@
 #include "eventl.h"
 #include "sel_thread.h"
 
+#if 1
+static YAZ_MUTEX g_mutex = 0;
+static int no_iochans = 0;
+static int no_iochans_total = 0;
+
+static int iochan_use(int delta)
+{
+    int iochans;
+    if (!g_mutex)
+        yaz_mutex_create(&g_mutex);
+    yaz_mutex_enter(g_mutex);
+    no_iochans += delta;
+    if (delta > 0)
+        no_iochans_total += delta;
+    iochans = no_iochans;
+    yaz_mutex_leave(g_mutex);
+    yaz_log(YLOG_DEBUG, "%s iochans=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), iochans);
+    return iochans;
+}
+
+int  iochans_count(void) {
+    return iochan_use(0);
+}
+
+int  iochans_count_total(void) {
+    int total = 0;
+    if (!g_mutex)
+        return 0;
+    yaz_mutex_enter(g_mutex);
+    total = no_iochans_total;
+    yaz_mutex_leave(g_mutex);
+    return total;
+}
+#else
+#define iochan_use(x)
+#define iochans_count(x) 0
+#define iochans_count_total(x) 0
+#endif
+
 struct iochan_man_s {
     IOCHAN channel_list;
     sel_thread_t sel_thread;
@@ -79,6 +118,16 @@ iochan_man_t iochan_man_create(int no_threads) {
     return man;
 }
 
+IOCHAN iochan_destroy_real(IOCHAN chan)
+{
+    IOCHAN next = chan->next;
+    if (chan->name)
+        xfree(chan->name);
+    xfree(chan);
+    iochan_use(-1);
+    return next;
+}
+
 void iochan_man_destroy(iochan_man_t *mp) {
     if (*mp) {
         IOCHAN c;
@@ -90,10 +139,7 @@ void iochan_man_destroy(iochan_man_t *mp) {
         (*mp)->channel_list = NULL;
         yaz_mutex_leave((*mp)->iochan_mutex);
         while (c) {
-            IOCHAN c_next = c->next;
-            xfree(c->name);
-            xfree(c);
-            c = c_next;
+            c = iochan_destroy_real(c);
         }
         yaz_mutex_destroy(&(*mp)->iochan_mutex);
         xfree(*mp);
@@ -116,6 +162,7 @@ IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags, const char *name) {
 
     if (!(new_iochan = (IOCHAN) xmalloc(sizeof(*new_iochan))))
         return 0;
+    iochan_use(1);
     new_iochan->destroyed = 0;
     new_iochan->fd = fd;
     new_iochan->flags = flags;
@@ -289,9 +336,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         for (nextp = iochans; *nextp;) {
             IOCHAN p = *nextp;
             if (p->destroyed && p->thread_users == 0) {
-                *nextp = p->next;
-                xfree(p->name);
-                xfree(p);
+                *nextp = iochan_destroy_real(p);
             } else
                 nextp = &p->next;
         }

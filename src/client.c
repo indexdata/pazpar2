@@ -69,6 +69,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static YAZ_MUTEX g_mutex = 0;
 static int no_clients = 0;
+static int no_clients_total = 0;
 
 static int client_use(int delta)
 {
@@ -77,6 +78,8 @@ static int client_use(int delta)
         yaz_mutex_create(&g_mutex);
     yaz_mutex_enter(g_mutex);
     no_clients += delta;
+    if (delta > 0)
+        no_clients_total += delta;
     clients = no_clients;
     yaz_mutex_leave(g_mutex);
     yaz_log(YLOG_DEBUG, "%s clients=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), clients);
@@ -85,6 +88,16 @@ static int client_use(int delta)
 
 int  clients_count(void) {
     return client_use(0);
+}
+
+int  clients_count_total(void) {
+    int total = 0;
+    if (!g_mutex)
+        return 0;
+    yaz_mutex_enter(g_mutex);
+    total = no_clients_total;
+    yaz_mutex_leave(g_mutex);
+    return total;
 }
 
 
@@ -576,9 +589,9 @@ void client_record_response(struct client *cl)
                                 client_get_url(cl));
                     else
                     {
-                        if (ingest_record(cl, xmlrec, cl->record_offset, nmem))
-                            yaz_log(YLOG_WARN, "Failed to ingest from %s",
-                                    client_get_url(cl));
+                        /* OK = 0, -1 = failure, -2 = Filtered */
+                        if (ingest_record(cl, xmlrec, cl->record_offset, nmem) == -1)
+                            yaz_log(YLOG_WARN, "Failed to ingest from %s", client_get_url(cl));
                     }
                     nmem_destroy(nmem);
                 }
@@ -930,16 +943,29 @@ int client_parse_query(struct client *cl, const char *query)
     struct session *se = client_get_session(cl);
     struct session_database *sdb = client_get_database(cl);
     struct ccl_rpn_node *cn;
+    struct ccl_rpn_node *cn_recordfilter = 0;
     int cerror, cpos;
     CCL_bibset ccl_map = prepare_cclmap(cl);
     const char *sru = session_setting_oneval(sdb, PZ_SRU);
     const char *pqf_prefix = session_setting_oneval(sdb, PZ_PQF_PREFIX);
     const char *pqf_strftime = session_setting_oneval(sdb, PZ_PQF_STRFTIME);
     const char *query_syntax = session_setting_oneval(sdb, PZ_QUERY_SYNTAX);
+    /* Collected, Mixed, Remote */
+    const char *option_recordfilter = session_setting_oneval(sdb, PZ_OPTION_RECORDFILTER);
+    const char *record_filter = session_setting_oneval(sdb, PZ_RECORDFILTER);
     if (!ccl_map)
         return -1;
 
+    yaz_log(YLOG_DEBUG, "query: %s", query);
     cn = ccl_find_str(ccl_map, query, &cerror, &cpos);
+    if (strcmp("remote", option_recordfilter) == 0 && record_filter != 0 && record_filter[0] != 0) {
+        int cerror, cpos;
+        yaz_log(YLOG_DEBUG, "record_filter: %s", record_filter);
+        cn_recordfilter = ccl_find_str(ccl_map, record_filter, &cerror, &cpos);
+        if (!cn_recordfilter)
+            session_log(se, YLOG_WARN, "Failed to parse CCL record filter '%s' for %s",
+                    record_filter, client_get_database(cl)->database->url);
+    }
     ccl_qual_rm(&ccl_map);
     if (!cn)
     {
@@ -955,6 +981,13 @@ int client_parse_query(struct client *cl, const char *query)
         wrbuf_puts(se->wrbuf, pqf_prefix);
         wrbuf_puts(se->wrbuf, " ");
     }
+
+    if (cn_recordfilter) {
+        wrbuf_puts(se->wrbuf, "@and ");
+        ccl_pquery(se->wrbuf, cn_recordfilter);
+        wrbuf_puts(se->wrbuf, " ");
+    }
+
     if (!pqf_strftime || !*pqf_strftime)
         ccl_pquery(se->wrbuf, cn);
     else
@@ -978,10 +1011,12 @@ int client_parse_query(struct client *cl, const char *query)
     xfree(cl->pquery);
     cl->pquery = xstrdup(wrbuf_cstr(se->wrbuf));
 
+    yaz_log(YLOG_DEBUG, "PQF query: %s", cl->pquery);
+
     xfree(cl->cqlquery);
 
-    /* Support for PQF on SRU targets.
-     * TODO Refactor */
+    /* Support for PQF on SRU targets. */
+    /* TODO Refactor */
     yaz_log(YLOG_DEBUG, "Query syntax: %s", query_syntax);
     if (strcmp(query_syntax, "pqf") != 0 && *sru)
     {

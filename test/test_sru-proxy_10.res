@@ -3,7 +3,7 @@
 <list name="xtargets">
 <term>
 <id>kb.dadsthirdnode.cvt.dk/sru-proxy</id>
-<name>DADS SRU-proxy</name>
+<name>sru-proxy</name>
 <frequency>2073000</frequency>
 <state>Client_Idle</state>
 <diagnostic>0</diagnostic>
@@ -43,7 +43,7 @@
 <term><name>JACKSON, Lisa P</name><frequency>1</frequency></term>
 <term><name>MEMBRANES (Biology)</name><frequency>1</frequency></term>
 </list>
-<list name="medium">
+<list name="Cmedium">
 </list>
 <list name="journal-title">
 <term><name>Chemical and Engineering News</name><frequency>16</frequency></term>

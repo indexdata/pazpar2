@@ -98,6 +98,7 @@ struct client_list {
 /* session counting (1) , disable client counting (0) */
 static YAZ_MUTEX g_session_mutex = 0;
 static int no_sessions = 0;
+static int no_session_total = 0;
 
 static int session_use(int delta)
 {
@@ -106,6 +107,8 @@ static int session_use(int delta)
         yaz_mutex_create(&g_session_mutex);
     yaz_mutex_enter(g_session_mutex);
     no_sessions += delta;
+    if (delta > 0)
+        no_session_total += delta;
     sessions = no_sessions;
     yaz_mutex_leave(g_session_mutex);
     yaz_log(YLOG_DEBUG, "%s sesions=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), no_sessions);
@@ -115,6 +118,17 @@ static int session_use(int delta)
 int sessions_count(void) {
     return session_use(0);
 }
+
+int  session_count_total(void) {
+    int total = 0;
+    if (!g_session_mutex)
+        return 0;
+    yaz_mutex_enter(g_session_mutex);
+    total = no_session_total;
+    yaz_mutex_leave(g_session_mutex);
+    return total;
+}
+
 
 static void log_xml_doc(xmlDoc *doc)
 {
@@ -746,8 +760,7 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     }
 }
 
-void destroy_session(struct session *se)
-{
+void session_destroy(struct session *se) {
     struct session_database *sdb;
     session_log(se, YLOG_DEBUG, "Destroying");
     session_use(-1);
@@ -762,6 +775,12 @@ void destroy_session(struct session *se)
     service_destroy(se->service);
     yaz_mutex_destroy(&se->session_mutex);
     wrbuf_destroy(se->wrbuf);
+}
+
+/* Depreciated: use session_destroy */
+void destroy_session(struct session *se)
+{
+    session_destroy(se);
 }
 
 size_t session_get_memory_status(struct session *session) {
@@ -1243,6 +1262,7 @@ static int ingest_to_cluster(struct client *cl,
     \param nmem working NMEM
     \retval 0 OK
     \retval -1 failure
+    \retval -2 Filtered
 */
 int ingest_record(struct client *cl, const char *rec,
                   int record_no, NMEM nmem)
@@ -1262,10 +1282,10 @@ int ingest_record(struct client *cl, const char *rec,
     
     if (!check_record_filter(root, sdb))
     {
-        session_log(se, YLOG_WARN, "Filtered out record no %d from %s",
+        session_log(se, YLOG_LOG, "Filtered out record no %d from %s",
                     record_no, sdb->database->url);
         xmlFreeDoc(xdoc);
-        return -1;
+        return -2;
     }
     
     mergekey_norm = get_mergekey(xdoc, cl, record_no, service, nmem);

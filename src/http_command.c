@@ -41,10 +41,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "settings.h"
 #include "client.h"
 
+#ifdef HAVE_MALLINFO
 #include <malloc.h>
 
 void print_meminfo(WRBUF wrbuf) {
-#ifdef __GNUC__
+
     struct mallinfo minfo;
     minfo = mallinfo();
     wrbuf_printf(wrbuf, "  <memory>\n"
@@ -60,8 +61,10 @@ void print_meminfo(WRBUF wrbuf) {
                         "  </memory>\n", 
                  minfo.arena, minfo.uordblks, minfo.fordblks,minfo.ordblks, minfo.keepcost, minfo.hblks, minfo.hblkhd, minfo.arena + minfo.hblkhd, minfo.uordblks + minfo.hblkhd);
 
-#endif
 }
+#else
+#define print_meminfo(x)
+#endif
 
 
 // Update this when the protocol changes
@@ -362,7 +365,12 @@ static int process_settings(struct session *se, struct http_request *rq,
 
 static void cmd_exit(struct http_channel *c)
 {
+    char buf[1024];
+    struct http_response *rs = c->response;
     yaz_log(YLOG_WARN, "exit");
+    sprintf(buf, HTTP_COMMAND_RESPONSE_PREFIX "<exit><status>OK</status></exit>");
+    rs->payload = nmem_strdup(c->nmem, buf);
+    http_send_response(c);
     http_close_server(c->server);
 }
 
