@@ -46,6 +46,7 @@
     <xsl:variable name="journal_title" select="journal/title" />
     <xsl:variable name="journal_issn" select="journal/issn" />
     <xsl:variable name="date" select="journal/year" />
+    <xsl:variable name="month" select="journal/month" />
     <xsl:variable name="description" select="abstract/abstract" />
 
     <xsl:variable name="has_fulltext" select="article/fulltext"/>
@@ -111,52 +112,62 @@
 
       <xsl:for-each select="journal"> 
         <pz:metadata type="journal-subpart">
-          <xsl:text>Vol. </xsl:text><xsl:value-of select="vol" /><xsl:text>,</xsl:text>
+	  <xsl:if test="vol">
+	    <xsl:text>Vol. </xsl:text><xsl:value-of select="vol" /><xsl:text>,</xsl:text>
+	  </xsl:if>
           <xsl:if test="issue">
-	    <xsl:text> no. </xsl:text><xsl:value-of select="issue" />
+	    <xsl:if test="vol">
+	      <xsl:text> no. </xsl:text>
+	    </xsl:if>
+	    <xsl:if test="not(vol)">
+	      <xsl:text>No. </xsl:text>
+	    </xsl:if>
+	    <xsl:value-of select="issue" />
 	  </xsl:if>
 	  <xsl:text> (</xsl:text>
-	  <xsl:choose>
-	    <xsl:when test="month='01'">
-	      <xsl:text>Jan. </xsl:text>
-	    </xsl:when>
-	    <xsl:when test="month='02'">
-	      <xsl:text>Feb. </xsl:text>
-	    </xsl:when>
-	    <xsl:when test="month='03'">
-	      <xsl:text>Mar. </xsl:text>
-	    </xsl:when>
-	    <xsl:when test="month='04'">
-	      <xsl:text>Apr. </xsl:text>
-	    </xsl:when>
-	    <xsl:when test="month='05'">
-	      <xsl:text>May </xsl:text>
-	    </xsl:when>
-	    <xsl:when test="month='06'">
-	      <xsl:text>June </xsl:text>
-	    </xsl:when>
-	    <xsl:when test="month='07'">
-	      <xsl:text>July </xsl:text>
-	    </xsl:when>
-	    <xsl:when test="month='08'">
-	      <xsl:text>Aug. </xsl:text>
-	    </xsl:when>
-	    <xsl:when test="month='09'">
-	      <xsl:text>Sept. </xsl:text>
-	    </xsl:when>
-	    <xsl:when test="month='10'">
-	      <xsl:text>Oct. </xsl:text>
-	    </xsl:when>
-	    <xsl:when test="month='11'">
-	      <xsl:text>Nov. </xsl:text>
-	    </xsl:when>
-	    <xsl:when test="month='12'">
-	      <xsl:text>Dec. </xsl:text>
-	    </xsl:when>
-	    <xsl:otherwise>
-	      <xsl:value-of select="month"/><xsl:text> </xsl:text>
-	    </xsl:otherwise>
-	  </xsl:choose>
+	  <xsl:if test="month">
+	    <xsl:choose>
+	      <xsl:when test="$month='01'">
+		<xsl:text>Jan. </xsl:text>
+	      </xsl:when>
+	      <xsl:when test="$month='02'">
+		<xsl:text>Feb. </xsl:text>
+	      </xsl:when>
+	      <xsl:when test="$month='03'">
+		<xsl:text>Mar. </xsl:text>
+	      </xsl:when>
+	      <xsl:when test="$month='04'">
+		<xsl:text>Apr. </xsl:text>
+	      </xsl:when>
+	      <xsl:when test="$month='05'">
+		<xsl:text>May </xsl:text>
+	      </xsl:when>
+	      <xsl:when test="$month='06'">
+		<xsl:text>June </xsl:text>
+	      </xsl:when>
+	      <xsl:when test="$month='07'">
+		<xsl:text>July </xsl:text>
+	      </xsl:when>
+	      <xsl:when test="$month='08'">
+		<xsl:text>Aug. </xsl:text>
+	      </xsl:when>
+	      <xsl:when test="$month='09'">
+		<xsl:text>Sept. </xsl:text>
+	      </xsl:when>
+	      <xsl:when test="$month='10'">
+		<xsl:text>Oct. </xsl:text>
+	      </xsl:when>
+	      <xsl:when test="$month='11'">
+		<xsl:text>Nov. </xsl:text>
+	      </xsl:when>
+	      <xsl:when test="$month='12'">
+		<xsl:text>Dec. </xsl:text>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<xsl:value-of select="$month"/><xsl:text> </xsl:text>
+	      </xsl:otherwise>
+	    </xsl:choose>
+	  </xsl:if>
 	  <xsl:value-of select="year" /><xsl:text>)</xsl:text>
 	  <xsl:if test="page"> 
             <xsl:text>, p. </xsl:text><xsl:value-of select="page" />
