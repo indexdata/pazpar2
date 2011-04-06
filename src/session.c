@@ -760,12 +760,6 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     }
 }
 
-/* Depreciated: use session_destroy */
-void destroy_session(struct session *se)
-{
-    session_destroy(se);
-}
-
 void session_destroy(struct session *se) {
     struct session_database *sdb;
     session_log(se, YLOG_DEBUG, "Destroying");
@@ -781,9 +775,13 @@ void session_destroy(struct session *se) {
     service_destroy(se->service);
     yaz_mutex_destroy(&se->session_mutex);
     wrbuf_destroy(se->wrbuf);
-
 }
 
+/* Depreciated: use session_destroy */
+void destroy_session(struct session *se)
+{
+    session_destroy(se);
+}
 
 size_t session_get_memory_status(struct session *session) {
     size_t session_nmem;

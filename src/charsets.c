@@ -184,8 +184,6 @@ void pp2_relevance_first(pp2_relevance_token_t prt,
         char *pout = firstword;
         char articles[] = "the den der die des an a "; // must end in space
         
-        while (*p && !isalnum(*(unsigned char *)p))
-            p++;
         for (; *p && *p != ' ' && pout - firstword < (sizeof(firstword)-2); p++)
             *pout++ = tolower(*(unsigned char *)p);
         *pout++ = ' ';

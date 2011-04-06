@@ -123,7 +123,7 @@ IOCHAN iochan_destroy_real(IOCHAN chan)
     IOCHAN next = chan->next;
     if (chan->name)
         xfree(chan->name);
-    xfree(free);
+    xfree(chan);
     iochan_use(-1);
     return next;
 }
@@ -336,7 +336,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         for (nextp = iochans; *nextp;) {
             IOCHAN p = *nextp;
             if (p->destroyed && p->thread_users == 0) {
-                *nextp = iochan_destroy_real(*nextp);
+                *nextp = iochan_destroy_real(p);
             } else
                 nextp = &p->next;
         }
