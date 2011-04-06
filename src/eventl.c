@@ -336,7 +336,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         for (nextp = iochans; *nextp;) {
             IOCHAN p = *nextp;
             if (p->destroyed && p->thread_users == 0) {
-                *nextp = iochan_destroy_real(nextp);
+                *nextp = iochan_destroy_real(*nextp);
             } else
                 nextp = &p->next;
         }
