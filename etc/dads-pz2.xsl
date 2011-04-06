@@ -73,6 +73,17 @@
         </pz:metadata>
       </xsl:for-each>
 
+      <!-- IDs for url recipe -->
+      <xsl:for-each select="recordID/DOI"> 
+	<pz:metadata type="doi"><xsl:value-of select="."/></pz:metadata>
+      </xsl:for-each>
+      <xsl:for-each select="recordID/artId"> 
+	<pz:metadata type="artid"><xsl:value-of select="."/></pz:metadata>
+      </xsl:for-each>
+      <xsl:for-each select="recordID/accessNr"> 
+	<pz:metadata type="accessnr"><xsl:value-of select="."/></pz:metadata>
+      </xsl:for-each>
+
       <xsl:for-each select="author/name">
         <pz:metadata type="author">
           <xsl:value-of select="." />
