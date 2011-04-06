@@ -211,6 +211,9 @@
 -->
       </pz:metadata>
 
+      <xsl:for-each select="recordID/DOI"> 
+	<pz:metadata type="url-doi"><xsl:text>http://dx.doi.org/</xsl:text><xsl:value-of select="."/></pz:metadata>
+      </xsl:for-each>
 
       <!-- passthrough id data -->
       <xsl:for-each select="pz:metadata">
