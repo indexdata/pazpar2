@@ -787,7 +787,9 @@ void client_lock(struct client *c)
 void client_unlock(struct client *c)
 {
     yaz_mutex_leave(c->mutex);
+    /* TODO possible threading issue
     sleep(1);
+    */
 }
 
 void client_incref(struct client *c)
