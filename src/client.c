@@ -472,6 +472,7 @@ void client_check_preferred_watch(struct client *cl)
     if (se)
     {
         client_unlock(cl);
+        /* TODO possible threading issue. Session can have been destroyed */
         if (session_is_preferred_clients_ready(se)) {
             session_alert_watch(se, SESSION_WATCH_SHOW_PREF);
         }
@@ -787,9 +788,6 @@ void client_lock(struct client *c)
 void client_unlock(struct client *c)
 {
     yaz_mutex_leave(c->mutex);
-    /* TODO possible threading issue
-    sleep(1);
-    */
 }
 
 void client_incref(struct client *c)
