@@ -1,3 +1,11 @@
+--- 1.5.6 2011/04/15
+
+Fix a problem with skiparticle sortkey that could be completely
+ignored (and reduced to "").
+
+Fix dependency problem in pazpar2 RPM package (did not require
+libyaz4 as it should).
+
 --- 1.5.5 2011/03/28
 
 Fix memory leak that occurred for command=termlist&name=xtargets .
