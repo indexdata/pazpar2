@@ -10,14 +10,13 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libyaz4-devel
 Packager: Adam Dickmeiss <adam@indexdata.dk>
 URL: http://www.indexdata.com/pazpar2
+Summary: pazpar2 daemon
+Requires: libyaz4
 
 %description
 Pazpar2 is a high-performance, user interface-independent, data
 model-independent metasearching middleware featuring merging, relevance
 ranking, record sorting, and faceted results.
-
-Summary: pazpar2 daemon
-Requires: libyaz4
 
 %package -n pazpar2-js
 Summary: pazpar2 JS
