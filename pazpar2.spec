@@ -82,10 +82,10 @@ cp etc/services/*.xml ${RPM_BUILD_ROOT}/etc/pazpar2/services-available/
 cp etc/settings/*.xml ${RPM_BUILD_ROOT}/etc/pazpar2/settings/
 cp etc/*.xsl ${RPM_BUILD_ROOT}/etc/pazpar2/
 mkdir -p ${RPM_BUILD_ROOT}/etc/rc.d/init.d
-install -m755 src/pazpar2.rpm.init ${RPM_BUILD_ROOT}/etc/rc.d/init.d/pazpar2
+install -m755 rpm/pazpar2.init ${RPM_BUILD_ROOT}/etc/rc.d/init.d/pazpar2
 echo "Alias /pazpar2 /usr/share/pazpar2" >${RPM_BUILD_ROOT}/etc/pazpar2/ap2pazpar2-js.cfg
 mkdir -p ${RPM_BUILD_ROOT}/etc/logrotate.d
-install -m644 src/pazpar2.rpm.logrotate ${RPM_BUILD_ROOT}/etc/logrotate.d/pazpar2
+install -m644 rpm/pazpar2.logrotate ${RPM_BUILD_ROOT}/etc/logrotate.d/pazpar2
 
 %clean
 rm -fr ${RPM_BUILD_ROOT}
