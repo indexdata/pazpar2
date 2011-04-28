@@ -3,8 +3,6 @@
 sbin_PROGRAMS = pazpar2
 noinst_PROGRAMS = pazpar2_play
 
-EXTRA_DIST = pazpar2.rpm.init pazpar2.rpm.logrotate
-
 check_PROGRAMS = \
       test_sel_thread \
       test_normalize
