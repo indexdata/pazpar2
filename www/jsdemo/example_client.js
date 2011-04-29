@@ -13,7 +13,7 @@ if (document.location.hash == '#useproxy') {
     showResponseType = 'json';
 }
 
-my_paz = new pz2( { "onshow": my_onshow,
+var my_paz = new pz2( { "onshow": my_onshow,
                     "showtime": 500,            //each timer (show, stat, term, bytarget) can be specified this way
                     "pazpar2path": pazpar2path,
                     "oninit": my_oninit,
@@ -245,7 +245,7 @@ function drawPager (pagerDiv)
 
     var prev = '<span id="prev">&#60;&#60; Prev</span><b> | </b>';
     if (curPage > 1)
-        var prev = '<a href="#" id="prev" onclick="pagerPrev();">'
+        prev = '<a href="#" id="prev" onclick="pagerPrev();">'
         +'&#60;&#60; Prev</a><b> | </b>';
 
     var middle = '';
@@ -260,14 +260,14 @@ function drawPager (pagerDiv)
     
     var next = '<b> | </b><span id="next">Next &#62;&#62;</span>';
     if (pages - curPage > 0)
-    var next = '<b> | </b><a href="#" id="next" onclick="pagerNext()">'
+        next = '<b> | </b><a href="#" id="next" onclick="pagerNext()">'
         +'Next &#62;&#62;</a>';
 
-    predots = '';
+    var predots = '';
     if (firstClkbl > 1)
         predots = '...';
 
-    postdots = '';
+    var postdots = '';
     if (lastClkbl < pages)
         postdots = '...';
 
