@@ -17,7 +17,7 @@ fi
 RECORDS=40
 QUERY=100
 NUM=20
-H="http://localhost:${PORT}/search.pz2"
+H="http://127.0.0.1:${PORT}/search.pz2"
 
 declare -i MAX_WAIT=2
 /usr/bin/time --format "$OF, init, %e" wget -q -O ${TMP_DIR}$OF.init.xml "$H/?command=init&service=${SERVICE}&extra=$OF" 2> ${TMP_DIR}$OF.init.time

@@ -67,23 +67,39 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "relevance.h"
 #include "incref.h"
 
-/* client counting (1) , disable client counting (0) */
-#if 1
 static YAZ_MUTEX g_mutex = 0;
 static int no_clients = 0;
+static int no_clients_total = 0;
 
-static void client_use(int delta)
+static int client_use(int delta)
 {
+    int clients;
     if (!g_mutex)
         yaz_mutex_create(&g_mutex);
     yaz_mutex_enter(g_mutex);
     no_clients += delta;
+    if (delta > 0)
+        no_clients_total += delta;
+    clients = no_clients;
     yaz_mutex_leave(g_mutex);
-    yaz_log(YLOG_DEBUG, "%s clients=%d", delta > 0 ? "INC" : "DEC", no_clients);
+    yaz_log(YLOG_DEBUG, "%s clients=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), clients);
+    return clients;
 }
-#else
-#define client_use(x)
-#endif
+
+int  clients_count(void) {
+    return client_use(0);
+}
+
+int  clients_count_total(void) {
+    int total = 0;
+    if (!g_mutex)
+        return 0;
+    yaz_mutex_enter(g_mutex);
+    total = no_clients_total;
+    yaz_mutex_leave(g_mutex);
+    return total;
+}
+
 
 /** \brief Represents client state for a connection to one search target */
 struct client {
@@ -456,6 +472,7 @@ void client_check_preferred_watch(struct client *cl)
     if (se)
     {
         client_unlock(cl);
+        /* TODO possible threading issue. Session can have been destroyed */
         if (session_is_preferred_clients_ready(se)) {
             session_alert_watch(se, SESSION_WATCH_SHOW_PREF);
         }
@@ -573,9 +590,9 @@ void client_record_response(struct client *cl)
                                 client_get_url(cl));
                     else
                     {
-                        if (ingest_record(cl, xmlrec, cl->record_offset, nmem))
-                            yaz_log(YLOG_WARN, "Failed to ingest from %s",
-                                    client_get_url(cl));
+                        /* OK = 0, -1 = failure, -2 = Filtered */
+                        if (ingest_record(cl, xmlrec, cl->record_offset, nmem) == -1)
+                            yaz_log(YLOG_WARN, "Failed to ingest from %s", client_get_url(cl));
                     }
                     nmem_destroy(nmem);
                 }
@@ -636,15 +653,12 @@ static int client_set_facets_request(struct client *cl, ZOOM_connection link)
 int client_has_facet(struct client *cl, const char *name) {
     ZOOM_facet_field facet_field;
     if (!cl || !cl->resultset || !name) {
-        yaz_log(YLOG_DEBUG, "client has facet: Missing %p %p %s", cl, (cl ? cl->resultset: 0), name);
         return 0;
     }
     facet_field = ZOOM_resultset_get_facet_field(cl->resultset, name);
     if (facet_field) {
-        yaz_log(YLOG_DEBUG, "client: has facets for %s", name);
         return 1;
     }
-    yaz_log(YLOG_DEBUG, "client: No facets for %s", name);
     return 0;
 }
 
@@ -664,6 +678,7 @@ void client_start_search(struct client *cl)
     const char *opt_sru         = session_setting_oneval(sdb, PZ_SRU);
     const char *opt_sort        = session_setting_oneval(sdb, PZ_SORT);
     const char *opt_preferred   = session_setting_oneval(sdb, PZ_PREFERRED);
+    const char *extra_args      = session_setting_oneval(sdb, PZ_EXTRA_ARGS);
     char maxrecs_str[24], startrecs_str[24];
 
     assert(link);
@@ -671,6 +686,9 @@ void client_start_search(struct client *cl)
     cl->hits = -1;
     cl->record_offset = 0;
     cl->diagnostic = 0;
+
+    if (extra_args && *extra_args)
+        ZOOM_connection_option_set(link, "extraArgs", extra_args);
 
     if (opt_preferred) {
         cl->preferred = atoi(opt_preferred);
@@ -926,16 +944,29 @@ int client_parse_query(struct client *cl, const char *query)
     struct session *se = client_get_session(cl);
     struct session_database *sdb = client_get_database(cl);
     struct ccl_rpn_node *cn;
+    struct ccl_rpn_node *cn_recordfilter = 0;
     int cerror, cpos;
     CCL_bibset ccl_map = prepare_cclmap(cl);
     const char *sru = session_setting_oneval(sdb, PZ_SRU);
     const char *pqf_prefix = session_setting_oneval(sdb, PZ_PQF_PREFIX);
     const char *pqf_strftime = session_setting_oneval(sdb, PZ_PQF_STRFTIME);
-
+    const char *query_syntax = session_setting_oneval(sdb, PZ_QUERY_SYNTAX);
+    /* Collected, Mixed, Remote */
+    const char *option_recordfilter = session_setting_oneval(sdb, PZ_OPTION_RECORDFILTER);
+    const char *record_filter = session_setting_oneval(sdb, PZ_RECORDFILTER);
     if (!ccl_map)
         return -1;
 
+    yaz_log(YLOG_DEBUG, "query: %s", query);
     cn = ccl_find_str(ccl_map, query, &cerror, &cpos);
+    if (strcmp("remote", option_recordfilter) == 0 && record_filter != 0 && record_filter[0] != 0) {
+        int cerror, cpos;
+        yaz_log(YLOG_DEBUG, "record_filter: %s", record_filter);
+        cn_recordfilter = ccl_find_str(ccl_map, record_filter, &cerror, &cpos);
+        if (!cn_recordfilter)
+            session_log(se, YLOG_WARN, "Failed to parse CCL record filter '%s' for %s",
+                    record_filter, client_get_database(cl)->database->url);
+    }
     ccl_qual_rm(&ccl_map);
     if (!cn)
     {
@@ -951,6 +982,13 @@ int client_parse_query(struct client *cl, const char *query)
         wrbuf_puts(se->wrbuf, pqf_prefix);
         wrbuf_puts(se->wrbuf, " ");
     }
+
+    if (cn_recordfilter) {
+        wrbuf_puts(se->wrbuf, "@and ");
+        ccl_pquery(se->wrbuf, cn_recordfilter);
+        wrbuf_puts(se->wrbuf, " ");
+    }
+
     if (!pqf_strftime || !*pqf_strftime)
         ccl_pquery(se->wrbuf, cn);
     else
@@ -974,8 +1012,14 @@ int client_parse_query(struct client *cl, const char *query)
     xfree(cl->pquery);
     cl->pquery = xstrdup(wrbuf_cstr(se->wrbuf));
 
+    yaz_log(YLOG_DEBUG, "PQF query: %s", cl->pquery);
+
     xfree(cl->cqlquery);
-    if (*sru)
+
+    /* Support for PQF on SRU targets. */
+    /* TODO Refactor */
+    yaz_log(YLOG_DEBUG, "Query syntax: %s", query_syntax);
+    if (strcmp(query_syntax, "pqf") != 0 && *sru)
     {
         if (!strcmp(sru, "solr")) {
             if (!(cl->cqlquery = make_solrquery(cl)))

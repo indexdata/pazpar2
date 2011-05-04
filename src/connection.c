@@ -48,22 +48,38 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "settings.h"
 
 /* connection counting (1) , disable connection counting (0) */
-#if 0
+#if 1
 static YAZ_MUTEX g_mutex = 0;
 static int no_connections = 0;
+static int total_no_connections = 0;
 
-static void connection_use(int delta)
+static int connection_use(int delta)
 {
+    int result;
     if (!g_mutex)
         yaz_mutex_create(&g_mutex);
     yaz_mutex_enter(g_mutex);
     no_connections += delta;
+    result = no_connections;
+    if (delta > 0)
+        total_no_connections += delta;
     yaz_mutex_leave(g_mutex);
+    if (delta == 0)
+            return result;
     yaz_log(YLOG_LOG, "%s connections=%d", delta > 0 ? "INC" : "DEC",
             no_connections);
+    return result;
 }
+
+int connections_count() {
+    return connection_use(0);
+}
+
+
 #else
 #define connection_use(x)
+#define connections_count(x) 0
+#define connections_count_total(x) 0
 #endif
 
 
@@ -423,7 +439,6 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     if ((sru_version = session_setting_oneval(sdb, PZ_SRU_VERSION)) 
         && *sru_version)
         ZOOM_options_set(zoptions, "sru_version", sru_version);
-
     if (!(link = ZOOM_connection_create(zoptions)))
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to create ZOOM Connection");

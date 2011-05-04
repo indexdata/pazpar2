@@ -2,7 +2,7 @@
 #
 # pazpar2      Startup script for Pazpar2
 #
-# chkconfig: - 85 15
+# chkconfig: 2345 85 15
 # description: Pazpar2 Metasearcher
 # processname: pazpar2
 # config: /etc/pazpar2/server.xml

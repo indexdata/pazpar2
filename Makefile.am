@@ -13,6 +13,8 @@ dist-hook:
 	for d in etc etc/settings etc/services www/test1 www/jsdemo www/iphone; do \
 		mkdir -p $(distdir)/$$d; cp -r $$d/* $(distdir)/$$d; \
 	done; rm -f $(distdir)/etc/pazpar2.cfg; exit 0
+	mkdir $(distdir)/rpm
+	-cp $(srcdir)/rpm/* $(distdir)/rpm
 
 .PHONY:debian
 debian:

@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<init><status>OK</status><session>2</session><protocol>1</protocol></init>
+<show>
+<status>OK</status>
+<activeclients>0</activeclients>
+<merged>0</merged>
+<total>0</total>
+<start>0</start>
+<num>0</num>
+</show>

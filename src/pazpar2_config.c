@@ -933,6 +933,25 @@ struct conf_service *locate_service(struct conf_server *server,
     return s;
 }
 
+void info_services(struct conf_server *server, WRBUF w)
+{
+    struct conf_service *s = server->service;
+    wrbuf_puts(w, " <services>\n");
+    for (; s; s = s->next)
+    {
+        wrbuf_puts(w, "  <service");
+        if (s->id)
+        {
+            wrbuf_puts(w, " id=\"");
+            wrbuf_xmlputs(w, s->id);
+            wrbuf_puts(w, "\"");
+        }
+        wrbuf_puts(w, "/>");
+
+        wrbuf_puts(w, "\n");
+    }
+    wrbuf_puts(w, " </services>\n");
+}
 
 static int parse_config(struct conf_config *config, xmlNode *root)
 {
@@ -1103,7 +1122,8 @@ void config_process_events(struct conf_config *conf)
 }
 
 int config_start_listeners(struct conf_config *conf,
-                           const char *listener_override)
+                           const char *listener_override,
+                           const char *record_fname)
 {
     struct conf_server *ser;
 
@@ -1130,7 +1150,7 @@ int config_start_listeners(struct conf_config *conf,
                 wrbuf_printf(w, "%d", ser->port);
             }
         }
-        r = http_init(wrbuf_cstr(w), ser);
+        r = http_init(wrbuf_cstr(w), ser, record_fname);
         wrbuf_destroy(w);
         if (r)
             return -1;

@@ -1,8 +1,7 @@
 # This file is part of Pazpar2.
 
 sbin_PROGRAMS = pazpar2
-
-EXTRA_DIST = pazpar2.rpm.init pazpar2.rpm.logrotate
+noinst_PROGRAMS = pazpar2_play
 
 check_PROGRAMS = \
       test_sel_thread \
@@ -33,6 +32,9 @@ libpazpar2_a_SOURCES = pazpar2_config.c pazpar2_config.h eventl.c eventl.h \
 
 pazpar2_SOURCES = pazpar2.c
 pazpar2_LDADD = libpazpar2.a $(YAZLIB)
+
+pazpar2_play_SOURCES = pazpar2_play.c
+pazpar2_play_LDADD = $(YAZLIB)
 
 test_sel_thread_SOURCES = test_sel_thread.c
 test_sel_thread_LDADD = libpazpar2.a $(YAZLIB)

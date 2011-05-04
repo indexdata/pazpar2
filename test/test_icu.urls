@@ -7,3 +7,4 @@ http://localhost:9763/search.pz2?session=1&command=show&start=0&number=1&sort=da
 http://localhost:9763/search.pz2?session=1&command=show&start=0&number=1&sort=date:1
 http://localhost:9763/search.pz2?session=1&command=termlist&name=author%2Csubject
 http://localhost:9763/search.pz2?session=1&command=show&start=0&number=1
+http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets

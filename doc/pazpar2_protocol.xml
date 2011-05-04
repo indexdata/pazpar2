@@ -490,6 +490,14 @@ search.pz2?session=605047297&command=record&id=3
        </para>
       </listitem>
      </varlistentry>
+     <varlistentry>
+      <term>num</term>
+      <listitem>
+       <para>
+	maximum number of entries to return - default is 15.
+       </para>
+      </listitem>
+     </varlistentry>
     </variablelist>
    </para>
    <para>
