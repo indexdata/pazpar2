@@ -133,6 +133,22 @@
       </xsl:choose>
     </xsl:variable>
 
+    <xsl:variable name="date_008">
+      <xsl:choose>
+        <xsl:when test="contains('cestpudikmr', substring(tmarc:c008, 7, 1))">
+          <xsl:value-of select="substring(tmarc:c008, 8, 4)" />
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+
+    <xsl:variable name="date_end_008">
+      <xsl:choose>
+        <xsl:when test="contains('dikmr', substring(tmarc:c008, 7, 1))">
+          <xsl:value-of select="substring(tmarc:c008, 12, 4)" />
+        </xsl:when>
+      </xsl:choose>
+    </xsl:variable>
+
     <pz:record>
 <!--
       <xsl:attribute name="mergekey">
@@ -233,6 +249,20 @@
           <xsl:value-of select="translate(tmarc:sc, 'cp[].', '')" />
         </pz:metadata>
       </xsl:for-each>
+
+      <xsl:if test="$date_008 and not(tmarc:d260)">
+        <pz:metadata type="date">
+          <xsl:choose>
+            <xsl:when test="$date_end_008">
+              <xsl:value-of select="concat($date_008,'-',$date_end_008)" />
+            </xsl:when>
+            <xsl:otherwise> 
+              <xsl:value-of select="$date_008" />
+            </xsl:otherwise>
+          </xsl:choose>
+        </pz:metadata>
+      </xsl:if>
+
 
       <xsl:for-each select="tmarc:d130">
         <pz:metadata type="title-uniform">
