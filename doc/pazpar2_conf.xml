@@ -1076,26 +1076,6 @@
     </varlistentry>
     
     <varlistentry>
-     <term>pz:termlist_term_count</term>
-     <listitem>
-      <para>
-       Specifies that the target should return up to n terms for each facets (where termlist="yes"). This implies 
-       that the target can return facets on the search command. Requesting facets on targets that doesn't, 
-       will return unpredictable or error result.
-      </para>
-     </listitem>
-    </varlistentry>
-
-    <varlistentry>
-     <term>pz:termlist_term_sort</term>
-     <listitem>
-      <para>
-       Specifies how the terms should be sorted. (Not yet implemented)
-      </para>
-     </listitem>
-    </varlistentry>
-
-    <varlistentry>
      <term>pz:preferred</term>
      <listitem>
       <para>
@@ -1112,6 +1092,23 @@
       <para>
        (Not yet implemented). Specifies the time for which a block should be released anyway.      
       </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:facetmap:<replaceable>name</replaceable></term>
+     <listitem>
+      <para>
+       Specifies that for field <replaceable>name</replaceable>, the target
+       supports (native) facets. The value is the name of the
+       field on the target.
+      </para>
+      <note>
+	<para>
+         At this point only SOLR targets have been tested with this
+         facility.
+	</para>
+      </note>
      </listitem>
     </varlistentry>
     

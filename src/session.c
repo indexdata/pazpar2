@@ -590,8 +590,6 @@ int session_is_preferred_clients_ready(struct session *s)
     return res == 0;
 }
 
-
-
 enum pazpar2_error_code search(struct session *se,
                                const char *query,
                                const char *startrecs, const char *maxrecs,
@@ -1503,7 +1501,6 @@ static int ingest_to_cluster(struct client *cl,
             // construct facets ... unless the client already has reported them
             if (ser_md->termlist && !client_has_facet(cl, (char *) type))
             {
-
                 if (ser_md->type == Metadata_type_year)
                 {
                     char year[64];
