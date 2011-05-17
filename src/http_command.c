@@ -1096,31 +1096,6 @@ static void cmd_ping(struct http_channel *c)
     release_session(c, s);
 }
 
-static int utf_8_valid(const char *str)
-{
-    yaz_iconv_t cd = yaz_iconv_open("utf-8", "utf-8");
-    if (cd)
-    {
-        /* check that query is UTF-8 encoded */
-        char *inbuf = (char *) str; /* we know iconv does not alter this */
-        size_t inbytesleft = strlen(inbuf);
-
-        size_t outbytesleft = strlen(inbuf) + 10;
-        char *out = xmalloc(outbytesleft);
-        char *outbuf = out;
-        size_t r = yaz_iconv(cd, &inbuf, &inbytesleft, &outbuf, &outbytesleft);
-
-        /* if OK, try flushing the rest  */
-        if (r != (size_t) (-1))
-            r = yaz_iconv(cd, 0, 0, &outbuf, &outbytesleft);
-        yaz_iconv_close(cd);
-        xfree(out);
-        if (r == (size_t) (-1))
-            return 0;
-    }
-    return 1;
-}
-
 static void cmd_search(struct http_channel *c)
 {
     struct http_request *rq = c->request;
@@ -1141,7 +1116,7 @@ static void cmd_search(struct http_channel *c)
         release_session(c,s);
         return;
     }
-    if (!utf_8_valid(query))
+    if (!yaz_utf8_check(query))
     {
         error(rs, PAZPAR2_MALFORMED_PARAMETER_ENCODING, "query");
         release_session(c,s);
