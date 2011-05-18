@@ -44,8 +44,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifdef HAVE_MALLINFO
 #include <malloc.h>
 
-void print_meminfo(WRBUF wrbuf) {
-
+void print_meminfo(WRBUF wrbuf)
+{
     struct mallinfo minfo;
     minfo = mallinfo();
     wrbuf_printf(wrbuf, "  <memory>\n"
@@ -102,7 +102,7 @@ int http_session_use(int delta)
     g_http_sessions += delta;
     sessions = g_http_sessions;
     yaz_mutex_leave(g_http_session_mutex);
-    yaz_log(YLOG_DEBUG, "%s sesions=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), sessions);
+    yaz_log(YLOG_DEBUG, "%s sessions=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), sessions);
     return sessions;
 
 }
@@ -183,7 +183,8 @@ void http_session_destroy(struct http_session *s)
     yaz_log(http_sessions->log_level, "%p HTTP Session %u destroyed", s, s->session_id);
     yaz_mutex_enter(http_sessions->mutex);
     /* only if http_session has no active http sessions on it can be destroyed */
-    if (s->destroy_counter == s->activity_counter) {
+    if (s->destroy_counter == s->activity_counter)
+    {
         struct http_session **p = 0;
         must_destroy = 1;
         for (p = &http_sessions->session_list; *p; p = &(*p)->next)
@@ -325,7 +326,9 @@ static struct http_session *locate_session(struct http_channel *c)
 }
 
 // Call after use of locate_session, in order to increment the destroy_counter
-static void release_session(struct http_channel *c, struct http_session *session) {
+static void release_session(struct http_channel *c,
+                            struct http_session *session)
+{
     http_sessions_t http_sessions = c->http_sessions;
     yaz_mutex_enter(http_sessions->mutex);
     if (session)
@@ -476,13 +479,14 @@ static void cmd_settings(struct http_channel *c)
 
         xmlFreeDoc(doc);
     }
-    if (process_settings(s->psession, rq, rs) < 0) {
-        release_session(c,s);
+    if (process_settings(s->psession, rq, rs) < 0)
+    {
+        release_session(c, s);
         return;
     }
     rs->payload = HTTP_COMMAND_RESPONSE_PREFIX "<settings><status>OK</status></settings>";
     http_send_response(c);
-    release_session(c,s);
+    release_session(c, s);
 }
 
 // Compares two hitsbytarget nodes by hitcount
@@ -575,7 +579,8 @@ static void cmd_termlist(struct http_channel *c)
         wrbuf_puts(c->wrbuf, "<list name=\"");
         wrbuf_xmlputs(c->wrbuf, tname);
         wrbuf_puts(c->wrbuf, "\">\n");
-        if (!strcmp(tname, "xtargets")) {
+        if (!strcmp(tname, "xtargets"))
+        {
             int targets = targets_termlist(c->wrbuf, s->psession, num, c->nmem);
             wrbuf_printf(debug_log, " xtargets: %d", targets);
         }
@@ -586,9 +591,11 @@ static void cmd_termlist(struct http_channel *c)
                 get_termlist_score(s->psession, tname, &len);
             if (p && len)
                 wrbuf_printf(debug_log, " %s: %d", tname, len);
-            if (p) {
+            if (p)
+            {
                 int i;
-                for (i = 0; i < len && i < num; i++){
+                for (i = 0; i < len && i < num; i++)
+                {
                     // prevnt sending empty term elements
                     if (!p[i]->term || !p[i]->term[0])
                         continue;
@@ -602,7 +609,7 @@ static void cmd_termlist(struct http_channel *c)
                                  "<frequency>%d</frequency>", 
                                  p[i]->frequency);
                     wrbuf_puts(c->wrbuf, "</term>\n");
-               }
+                }
             }
         }
         wrbuf_puts(c->wrbuf, "</list>\n");
@@ -615,7 +622,7 @@ static void cmd_termlist(struct http_channel *c)
     wrbuf_destroy(debug_log);
     rs->payload = nmem_strdup(rq->channel->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
-    release_session(c,s);
+    release_session(c, s);
 }
 
 size_t session_get_memory_status(struct session *session);
@@ -629,7 +636,8 @@ static void session_status(struct http_channel *c, struct http_session *s)
     wrbuf_printf(c->wrbuf, "<session_nmem>%zu</session_nmem>\n", session_nmem);
 }
 
-static void cmd_session_status(struct http_channel *c) {
+static void cmd_session_status(struct http_channel *c)
+{
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(c);
     if (!s)
@@ -641,7 +649,7 @@ static void cmd_session_status(struct http_channel *c) {
     wrbuf_puts(c->wrbuf, "</sessionstatus>\n");
     rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
-    release_session(c,s);
+    release_session(c, s);
 
 }
 
@@ -672,7 +680,8 @@ static void cmd_server_status(struct http_channel *c)
 /*    struct http_session *p;                           */
 /*
     yaz_mutex_enter(http_sessions->mutex);
-    for (p = http_sessions->session_list; p; p = p->next) {
+    for (p = http_sessions->session_list; p; p = p->next)
+    {
         p->activity_counter++;
         wrbuf_puts(c->wrbuf, "<session-status>\n");
         wrbuf_printf(c->wrbuf, "<id>%s</id>\n", p->session_id);
@@ -740,7 +749,7 @@ static void cmd_bytarget(struct http_channel *c)
     wrbuf_puts(c->wrbuf, "</bytarget>");
     rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
-    release_session(c,s);
+    release_session(c, s);
 }
 
 static void write_metadata(WRBUF w, struct conf_service *service,
@@ -1059,7 +1068,8 @@ static void cmd_show(struct http_channel *c)
 
     if (block)
     {
-        if (!strcmp(block, "preferred") && !session_is_preferred_clients_ready(s->psession) && reclist_get_num_records(s->psession->reclist) == 0) {
+        if (!strcmp(block, "preferred") && !session_is_preferred_clients_ready(s->psession) && reclist_get_num_records(s->psession->reclist) == 0)
+        {
             // if there is already a watch/block. we do not block this one
             if (session_set_watch(s->psession, SESSION_WATCH_SHOW_PREF,
                                   show_records_ready, c, c) != 0)
@@ -1067,7 +1077,7 @@ static void cmd_show(struct http_channel *c)
                 yaz_log(c->http_sessions->log_level,
                         "%p Session %u: Blocking on cmd_show. Waiting for preferred targets", s, s->session_id);
             }
-            release_session(c,s);
+            release_session(c, s);
             return;
 
         }
@@ -1079,12 +1089,12 @@ static void cmd_show(struct http_channel *c)
             {
                 yaz_log(c->http_sessions->log_level, "%p Session %u: Blocking on cmd_show", s, s->session_id);
             }
-            release_session(c,s);
+            release_session(c, s);
             return;
         }
     }
     show_records(c, status);
-    release_session(c,s);
+    release_session(c, s);
 }
 
 static void cmd_ping(struct http_channel *c)
@@ -1115,25 +1125,25 @@ static void cmd_search(struct http_channel *c)
     if (!query)
     {
         error(rs, PAZPAR2_MISSING_PARAMETER, "query");
-        release_session(c,s);
+        release_session(c, s);
         return;
     }
     if (!yaz_utf8_check(query))
     {
         error(rs, PAZPAR2_MALFORMED_PARAMETER_ENCODING, "query");
-        release_session(c,s);
+        release_session(c, s);
         return;
     }
     code = search(s->psession, query, startrecs, maxrecs, filter, &addinfo);
     if (code)
     {
         error(rs, code, addinfo);
-        release_session(c,s);
+        release_session(c, s);
         return;
     }
     rs->payload = HTTP_COMMAND_RESPONSE_PREFIX "<search><status>OK</status></search>";
     http_send_response(c);
-    release_session(c,s);
+    release_session(c, s);
 }
 
 
@@ -1152,7 +1162,8 @@ static void cmd_stat(struct http_channel *c)
     clients = session_active_clients(s->psession);
     statistics(s->psession, &stat);
 
-    if (stat.num_clients > 0) {
+    if (stat.num_clients > 0)
+    {
     	progress = (stat.num_clients  - clients) / (float)stat.num_clients;
     }
 
@@ -1172,7 +1183,7 @@ static void cmd_stat(struct http_channel *c)
     wrbuf_puts(c->wrbuf, "</stat>");
     rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
-    release_session(c,s);
+    release_session(c, s);
 }
 
 static void cmd_info(struct http_channel *c)
