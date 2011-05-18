@@ -864,7 +864,8 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
     return res;
 }
 
-struct termlist_score **termlist(struct session *se, const char *name, int *num)
+struct termlist_score **get_termlist_score(struct session *se,
+                                           const char *name, int *num)
 {
     int i;
     struct termlist_score **tl = 0;

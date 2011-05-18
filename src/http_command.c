@@ -582,7 +582,7 @@ static void cmd_termlist(struct http_channel *c)
         }
         else
         {
-            p = termlist(s->psession, tname, &len);
+            p = get_termlist_score(s->psession, tname, &len);
             if (p && len)
                 wrbuf_printf(debug_log, " %s: %d", tname, len);
             if (p) {
