@@ -425,40 +425,42 @@ static int nativesyntax_to_type(struct session_database *sdb, char *type,
  */
 void client_report_facets(struct client *cl, ZOOM_resultset rs)
 {
-    int facet_idx;
     struct session_database *sdb = client_get_database(cl);
     ZOOM_facet_field *facets = ZOOM_resultset_facets(rs);
-    int facet_num;
-    struct session *se = client_get_session(cl);
-    struct setting *s;
-    facet_num = ZOOM_resultset_facets_size(rs);
-    yaz_log(YLOG_DEBUG, "client_report_facets: %d", facet_num);
 
-    for (s = sdb->settings[PZ_FACETMAP]; s; s = s->next)
+    if (sdb && facets)
     {
-        const char *p = strchr(s->name + 3, ':');
-        if (p && p[1] && s->value && s->value[0])
+        struct session *se = client_get_session(cl);
+        int facet_num = ZOOM_resultset_facets_size(rs);
+        struct setting *s;
+
+        for (s = sdb->settings[PZ_FACETMAP]; s; s = s->next)
         {
-            p++; /* p now holds logical facet name */
-            for (facet_idx = 0; facet_idx < facet_num; facet_idx++)
+            const char *p = strchr(s->name + 3, ':');
+            if (p && p[1] && s->value && s->value[0])
             {
-                const char *native_name =
-                    ZOOM_facet_field_name(facets[facet_idx]);
-                if (native_name && !strcmp(s->value, native_name))
+                int facet_idx;
+                p++; /* p now holds logical facet name */
+                for (facet_idx = 0; facet_idx < facet_num; facet_idx++)
                 {
-                    size_t term_idx;
-                    size_t term_num =
-                        ZOOM_facet_field_term_count(facets[facet_idx]);
-                    for (term_idx = 0; term_idx < term_num; term_idx++ )
+                    const char *native_name =
+                        ZOOM_facet_field_name(facets[facet_idx]);
+                    if (native_name && !strcmp(s->value, native_name))
                     {
-                        int freq;
-                        const char *term =
-                            ZOOM_facet_field_get_term(facets[facet_idx],
-                                                      term_idx, &freq);
-                        if (term)
-                            add_facet(se, p, term, freq);
+                        size_t term_idx;
+                        size_t term_num =
+                            ZOOM_facet_field_term_count(facets[facet_idx]);
+                        for (term_idx = 0; term_idx < term_num; term_idx++ )
+                        {
+                            int freq;
+                            const char *term =
+                                ZOOM_facet_field_get_term(facets[facet_idx],
+                                                          term_idx, &freq);
+                            if (term)
+                                add_facet(se, p, term, freq);
+                        }
+                        break;
                     }
-                    break;
                 }
             }
         }
