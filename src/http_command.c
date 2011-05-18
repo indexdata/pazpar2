@@ -539,9 +539,6 @@ static void cmd_termlist(struct http_channel *c)
     struct http_response *rs = c->response;
     struct http_request *rq = c->request;
     struct http_session *s = locate_session(c);
-    struct termlist_score **p;
-    int len;
-    int i;
     const char *name = http_argbyname(rq, "name");
     const char *nums = http_argbyname(rq, "num");
     int num = 15;
@@ -582,10 +579,13 @@ static void cmd_termlist(struct http_channel *c)
         }
         else
         {
-            p = get_termlist_score(s->psession, tname, &len);
+            int len;
+            struct termlist_score **p = 
+                get_termlist_score(s->psession, tname, &len);
             if (p && len)
                 wrbuf_printf(debug_log, " %s: %d", tname, len);
             if (p) {
+                int i;
                 for (i = 0; i < len && i < num; i++){
                     // prevnt sending empty term elements
                     if (!p[i]->term || !p[i]->term[0])
@@ -595,7 +595,7 @@ static void cmd_termlist(struct http_channel *c)
                     wrbuf_puts(c->wrbuf, "<name>");
                     wrbuf_xmlputs(c->wrbuf, p[i]->term);
                     wrbuf_puts(c->wrbuf, "</name>");
-                        
+                    
                     wrbuf_printf(c->wrbuf, 
                                  "<frequency>%d</frequency>", 
                                  p[i]->frequency);
