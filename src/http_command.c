@@ -543,7 +543,7 @@ static void cmd_termlist(struct http_channel *c)
     const char *nums = http_argbyname(rq, "num");
     int num = 15;
     int status;
-    WRBUF debug_log = wrbuf_alloc();
+    WRBUF debug_log = 0;
 
     if (!s)
         return;
@@ -556,6 +556,8 @@ static void cmd_termlist(struct http_channel *c)
         return;
     if (nums)
         num = atoi(nums);
+
+    debug_log = wrbuf_alloc();
 
     wrbuf_rewind(c->wrbuf);
 
