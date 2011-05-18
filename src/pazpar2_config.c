@@ -60,9 +60,6 @@ struct conf_config
 static char *parse_settings(struct conf_config *config,
                             NMEM nmem, xmlNode *node);
 
-static struct conf_targetprofiles *parse_targetprofiles(NMEM nmem,
-                                                        xmlNode *node);
-
 static void conf_metadata_assign(NMEM nmem, 
                                  struct conf_metadata * metadata,
                                  const char *name,
@@ -122,7 +119,6 @@ static struct conf_service *service_init(struct conf_server *server,
     service->next = 0;
     service->settings = 0;
     service->databases = 0;
-    service->targetprofiles = 0;
     service->server = server;
     service->session_timeout = 60; /* default session timeout */
     service->z3950_session_timeout = 180;
@@ -515,17 +511,6 @@ static struct conf_service *service_create_static(struct conf_server *server,
         }
         else if (!strcmp((const char *) n->name, "settings"))
             got_settings++;
-        else if (!strcmp((const char *) n->name, (const char *) "targetprofiles"))
-        {
-            if (service->targetprofiles)
-            {
-                yaz_log(YLOG_FATAL, "Can't repeat targetprofiles");
-                return 0;
-            }
-            if (!(service->targetprofiles = 
-                  parse_targetprofiles(service->nmem, n)))
-                return 0;
-        }
         else if (!strcmp((const char *) n->name, "relevance"))
         {
             if (service->relevance_pct)
@@ -880,43 +865,6 @@ WRBUF conf_get_fname(struct conf_config *config, const char *fname)
 
     conf_dir_path(config, w, fname);
     return w;
-}
-
-static struct conf_targetprofiles *parse_targetprofiles(NMEM nmem,
-                                                        xmlNode *node)
-{
-    struct conf_targetprofiles *r = nmem_malloc(nmem, sizeof(*r));
-    xmlChar *type = xmlGetProp(node, (xmlChar *) "type");
-    xmlChar *src = xmlGetProp(node, (xmlChar *) "src");
-
-    memset(r, 0, sizeof(*r));
-
-    if (type)
-    {
-        if (!strcmp((const char *) type, "local"))
-            r->type = Targetprofiles_local;
-        else
-        {
-            yaz_log(YLOG_FATAL, "Unknown targetprofile type");
-            return 0;
-        }
-    }
-    else
-    {
-        yaz_log(YLOG_FATAL, "Must specify type for targetprofile");
-        return 0;
-    }
-
-    if (src)
-        r->src = nmem_strdup(nmem, (const char *) src);
-    else
-    {
-        yaz_log(YLOG_FATAL, "Must specify src in targetprofile");
-        return 0;
-    }
-    xmlFree(type);
-    xmlFree(src);
-    return r;
 }
 
 struct conf_service *locate_service(struct conf_server *server,
