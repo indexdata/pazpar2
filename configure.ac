@@ -40,9 +40,7 @@ if test "$checkBoth" = "1"; then
     AC_CHECK_FUNC([accept], , [LIBS=$oldLibs])
 fi
 AC_CHECK_FUNC([gethostbyname], ,[AC_CHECK_LIB(nsl, main, [LIBS="$LIBS -lnsl"])])
-AC_CHECK_FUNCS([getaddrinfo])
-
-AC_CHECK_FUNCS([mallinfo])
+AC_CHECK_FUNCS([getaddrinfo mallinfo])
 
 if test -d ${srcdir}/.git; then
 	sha=`git show --pretty=format:%H|head -1`
