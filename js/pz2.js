@@ -226,7 +226,7 @@ pz2.prototype =
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.safeGet(
-            { "command": "ping", "session": this.sessionID, "windowid" : self.window.name },
+            { "command": "ping", "session": this.sessionID, "windowid" : window.name },
             function(data) {
                 if ( data.getElementsByTagName("status")[0]
                         .childNodes[0].nodeValue == "OK" ) {
@@ -275,7 +275,7 @@ pz2.prototype =
           "command": "search",
           "query": this.currQuery, 
           "session": this.sessionID,
-          "windowid" : self.window.name
+          "windowid" : window.name
         };
 	
         if (filter !== undefined)
@@ -323,7 +323,7 @@ pz2.prototype =
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.safeGet(
-            { "command": "stat", "session": this.sessionID, "windowid" : self.window.name },
+            { "command": "stat", "session": this.sessionID, "windowid" : window.name },
             function(data) {
                 if ( data.getElementsByTagName("stat") ) {
                     var activeClients = 
@@ -381,7 +381,7 @@ pz2.prototype =
             "sort": this.currentSort, 
             "block": 1,
             "type": this.showResponseType,
-            "windowid" : self.window.name
+            "windowid" : window.name
           },
           function(data, type) {
             var show = null;
@@ -456,7 +456,7 @@ pz2.prototype =
             "command": "record", 
             "session": this.sessionID,
             "id": this.currRecID,
-            "windowid" : self.window.name
+            "windowid" : window.name
         };
 	
 	this.currRecOffset = null;
@@ -545,7 +545,7 @@ pz2.prototype =
                 "command": "termlist", 
                 "session": this.sessionID, 
                 "name": this.termKeys,
-                "windowid" : self.window.name
+                "windowid" : window.name
             },
             function(data) {
                 if ( data.getElementsByTagName("termlist") ) {
@@ -622,7 +622,7 @@ pz2.prototype =
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.safeGet(
-            { "command": "bytarget", "session": this.sessionID, "windowid" : self.window.name},
+            { "command": "bytarget", "session": this.sessionID, "windowid" : window.name},
             function(data) {
                 if ( data.getElementsByTagName("status")[0]
                         .childNodes[0].nodeValue == "OK" ) {
