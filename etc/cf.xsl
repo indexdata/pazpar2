@@ -109,6 +109,18 @@
     </pz:metadata>
   </xsl:template>
 
+  <xsl:template match="page">
+    <pz:metadata type="page">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="endpage">
+    <pz:metadata type="endpage">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
   <xsl:template match="item">
     <pz:metadata type="locallocation">
       <xsl:choose>
