@@ -685,6 +685,14 @@
         </xsl:if>
       </xsl:for-each>
 
+      <xsl:for-each select="tmarc:d876">
+        <xsl:if test="tmarc:sf">
+          <pz:metadata type="loan-period">
+            <xsl:value-of select="tmarc:sf" />
+          </pz:metadata>
+        </xsl:if>
+      </xsl:for-each>
+
       <pz:metadata type="medium">
         <xsl:value-of select="$vmedium" />
 	<xsl:if test="string-length($electronic) and $vmedium != 'electronic'">
