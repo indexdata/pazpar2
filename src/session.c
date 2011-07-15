@@ -590,8 +590,6 @@ int session_is_preferred_clients_ready(struct session *s)
     return res == 0;
 }
 
-
-
 enum pazpar2_error_code search(struct session *se,
                                const char *query,
                                const char *startrecs, const char *maxrecs,
@@ -866,7 +864,8 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
     return res;
 }
 
-struct termlist_score **termlist(struct session *se, const char *name, int *num)
+struct termlist_score **get_termlist_score(struct session *se,
+                                           const char *name, int *num)
 {
     int i;
     struct termlist_score **tl = 0;
@@ -1503,7 +1502,6 @@ static int ingest_to_cluster(struct client *cl,
             // construct facets ... unless the client already has reported them
             if (ser_md->termlist && !client_has_facet(cl, (char *) type))
             {
-
                 if (ser_md->type == Metadata_type_year)
                 {
                     char year[64];

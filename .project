@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>pazpar2.master</name>
+	<name>pazpar2</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -28,10 +28,6 @@
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.buildCommand</key>
 					<value>make</value>
-				</dictionary>
-				<dictionary>
-					<key>org.eclipse.cdt.make.core.buildLocation</key>
-					<value>${workspace_loc:/pazpar2.master/Debug}</value>
 				</dictionary>
 				<dictionary>
 					<key>org.eclipse.cdt.make.core.cleanBuildTarget</key>

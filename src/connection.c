@@ -71,7 +71,8 @@ static int connection_use(int delta)
     return result;
 }
 
-int connections_count() {
+int connections_count(void)
+{
     return connection_use(0);
 }
 

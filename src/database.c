@@ -35,7 +35,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "pazpar2_config.h"
 #include "settings.h"
 #include "http.h"
-#include "zeerex.h"
 #include "database.h"
 
 #include <sys/types.h>
@@ -71,27 +70,6 @@ struct database_hosts {
     struct host *hosts;
     YAZ_MUTEX mutex;
 };
-
-static xmlDoc *get_explain_xml(struct conf_targetprofiles *targetprofiles,
-                               const char *id)
-{
-    struct stat st;
-    char *dir;
-    char path[256];
-    char ide[256];
-    if (targetprofiles->type != Targetprofiles_local)
-    {
-        yaz_log(YLOG_FATAL, "Only supports local type");
-        return 0;
-    }
-    dir = targetprofiles->src;
-    urlencode(id, ide);
-    sprintf(path, "%s/%s", dir, ide);
-    if (!stat(path, &st))
-        return xmlParseFile(path);
-    else
-        return 0;
-}
 
 // Create a new host structure for hostport
 static struct host *create_host(const char *hostport, iochan_man_t iochan_man)
@@ -211,15 +189,7 @@ static struct database *load_database(const char *id,
 {
     struct database *db;
     struct zr_explain *explain = 0;
-    xmlDoc *doc = 0;
 
-    if (service->targetprofiles 
-        && (doc = get_explain_xml(service->targetprofiles, id)))
-    {
-        explain = zr_read_xml(service->nmem, xmlDocGetRootElement(doc));
-        if (!explain)
-            return 0;
-    }
     db = new_database(id, service->nmem);
     db->explain = explain;
     db->next = service->databases;

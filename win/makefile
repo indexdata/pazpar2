@@ -4,7 +4,7 @@
 DEBUG=0   # 0 for release, 1 for debug
 USE_MANIFEST = 1 # Can be enabled Visual Studio 2005/2008
 PACKAGE_NAME=pazpar2
-PACKAGE_VERSION=1.5.5
+PACKAGE_VERSION=1.5.6
 
 # YAZ
 YAZ_DIR=..\..\yaz
@@ -189,7 +189,6 @@ PAZPAR2_OBJS = \
    "$(OBJDIR)\relevance.obj" \
    "$(OBJDIR)\termlists.obj" \
    "$(OBJDIR)\normalize7bit.obj" \
-   "$(OBJDIR)\zeerex.obj" \
    "$(OBJDIR)\database.obj" \
    "$(OBJDIR)\settings.obj" \
    "$(OBJDIR)\getaddrinfo.obj" \

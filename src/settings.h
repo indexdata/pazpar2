@@ -44,14 +44,13 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PZ_NEGOTIATION_CHARSET  21
 #define PZ_MAX_CONNECTIONS      22
 #define PZ_REUSE_CONNECTIONS    23
-#define PZ_TERMLIST_TERM_SORT   24
-#define PZ_TERMLIST_TERM_COUNT  25
-#define PZ_TERMLIST_TERM_FACTOR 26
-#define PZ_PREFERRED            27
-#define PZ_EXTRA_ARGS           28
-#define PZ_QUERY_SYNTAX         29
-#define PZ_OPTION_RECORDFILTER  30
-#define PZ_MAX_EOF              31
+#define PZ_TERMLIST_TERM_FACTOR 24
+#define PZ_PREFERRED            25
+#define PZ_EXTRA_ARGS           26
+#define PZ_QUERY_SYNTAX         27
+#define PZ_OPTION_RECORDFILTER  28
+#define PZ_FACETMAP             29
+#define PZ_MAX_EOF              30
 
 struct setting
 {

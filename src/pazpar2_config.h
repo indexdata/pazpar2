@@ -122,7 +122,6 @@ struct conf_service
     pp2_charset_t facet_pct;
 
     struct database *databases;
-    struct conf_targetprofiles *targetprofiles;
     struct conf_server *server;
 };
 
@@ -151,14 +150,6 @@ struct conf_server
     http_server_t http_server;
     iochan_man_t iochan_man;
     database_hosts_t database_hosts;
-};
-
-struct conf_targetprofiles
-{
-    enum {
-        Targetprofiles_local
-    } type;
-    char *src;
 };
 
 struct conf_config *config_create(const char *fname, int verbose);

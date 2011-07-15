@@ -166,7 +166,8 @@ struct record_cluster *show_single_start(struct session *s, const char *id,
                                          struct record_cluster **prev_r,
                                          struct record_cluster **next_r);
 void show_single_stop(struct session *s, struct record_cluster *rec);
-struct termlist_score **termlist(struct session *s, const char *name, int *num);
+struct termlist_score **get_termlist_score(struct session *s,
+                                           const char *name, int *num);
 int session_set_watch(struct session *s, int what, session_watchfun fun, void *data, struct http_channel *c);
 int session_active_clients(struct session *s);
 int session_is_preferred_clients_ready(struct session *s);

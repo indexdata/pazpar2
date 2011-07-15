@@ -423,27 +423,48 @@ static int nativesyntax_to_type(struct session_database *sdb, char *type,
  * TODO Consider thread safety!!!
  *
  */
-int client_report_facets(struct client *cl, ZOOM_resultset rs) {
-    int facet_idx;
+void client_report_facets(struct client *cl, ZOOM_resultset rs)
+{
+    struct session_database *sdb = client_get_database(cl);
     ZOOM_facet_field *facets = ZOOM_resultset_facets(rs);
-    int facet_num;
-    struct session *se = client_get_session(cl);
-    facet_num = ZOOM_resultset_facets_size(rs);
-    yaz_log(YLOG_DEBUG, "client_report_facets: %d", facet_num);
 
-    for (facet_idx = 0; facet_idx < facet_num; facet_idx++) {
-        const char *name = ZOOM_facet_field_name(facets[facet_idx]);
-        size_t term_idx;
-        size_t term_num = ZOOM_facet_field_term_count(facets[facet_idx]);
-        for (term_idx = 0; term_idx < term_num; term_idx++ ) {
-            int freq;
-            const char *term = ZOOM_facet_field_get_term(facets[facet_idx], term_idx, &freq);
-            if (term)
-                add_facet(se, name, term, freq);
+    if (sdb && facets)
+    {
+        struct session *se = client_get_session(cl);
+        int facet_num = ZOOM_resultset_facets_size(rs);
+        struct setting *s;
+
+        for (s = sdb->settings[PZ_FACETMAP]; s; s = s->next)
+        {
+            const char *p = strchr(s->name + 3, ':');
+            if (p && p[1] && s->value && s->value[0])
+            {
+                int facet_idx;
+                p++; /* p now holds logical facet name */
+                for (facet_idx = 0; facet_idx < facet_num; facet_idx++)
+                {
+                    const char *native_name =
+                        ZOOM_facet_field_name(facets[facet_idx]);
+                    if (native_name && !strcmp(s->value, native_name))
+                    {
+                        size_t term_idx;
+                        size_t term_num =
+                            ZOOM_facet_field_term_count(facets[facet_idx]);
+                        for (term_idx = 0; term_idx < term_num; term_idx++ )
+                        {
+                            int freq;
+                            const char *term =
+                                ZOOM_facet_field_get_term(facets[facet_idx],
+                                                          term_idx, &freq);
+                            if (term)
+                                add_facet(se, p, term, freq);
+                        }
+                        break;
+                    }
+                }
+            }
         }
     }
-
-    return 0;
 }
 
 static void ingest_raw_record(struct client *cl, ZOOM_record rec)
@@ -606,62 +627,48 @@ void client_record_response(struct client *cl)
     }
 }
 
-static int client_set_facets_request(struct client *cl, ZOOM_connection link)
+static void client_set_facets_request(struct client *cl, ZOOM_connection link)
 {
     struct session_database *sdb = client_get_database(cl);
-    const char *opt_facet_term_sort  = session_setting_oneval(sdb, PZ_TERMLIST_TERM_SORT);
-    const char *opt_facet_term_count = session_setting_oneval(sdb, PZ_TERMLIST_TERM_COUNT);
 
-    /* Future record filtering on target */
-    /* const char *opt_facet_record_filter = session_setting_oneval(sdb, PZ_RECORDFILTER); */
+    WRBUF w = wrbuf_alloc();
+    
+    struct setting *s;
 
-    /* Disable when no count is set */
-    /* TODO Verify: Do we need to reset the  ZOOM facets if a ZOOM Connection is being reused??? */
-    if (opt_facet_term_count && *opt_facet_term_count)
+    for (s = sdb->settings[PZ_FACETMAP]; s; s = s->next)
     {
-        int index = 0;
-        struct session *session = client_get_session(cl);
-        struct conf_service *service = session->service;
-        int num = service->num_metadata;
-        WRBUF wrbuf = wrbuf_alloc();
-        yaz_log(YLOG_DEBUG, "Facet settings, sort: %s count: %s",
-                opt_facet_term_sort, opt_facet_term_count);
-        for (index = 0; index < num; index++)
+        const char *p = strchr(s->name + 3, ':');
+        if (!p)
         {
-            struct conf_metadata *conf_meta = &service->metadata[index];
-            if (conf_meta->termlist)
-            {
-                if (wrbuf_len(wrbuf))
-                    wrbuf_puts(wrbuf, ", ");
-                wrbuf_printf(wrbuf, "@attr 1=%s", conf_meta->name);
-                
-                if (opt_facet_term_sort && *opt_facet_term_sort)
-                    wrbuf_printf(wrbuf, " @attr 2=%s", opt_facet_term_sort);
-                wrbuf_printf(wrbuf, " @attr 3=%s", opt_facet_term_count);
-            }
+            yaz_log(YLOG_WARN, "Malformed facetmap name: %s", s->name);
         }
-        if (wrbuf_len(wrbuf))
+        else if (s->value && s->value[0])
         {
-            yaz_log(YLOG_LOG, "Setting ZOOM facets option: %s", wrbuf_cstr(wrbuf));
-            ZOOM_connection_option_set(link, "facets", wrbuf_cstr(wrbuf));
+            wrbuf_puts(w, "@attr 1=");
+            yaz_encode_pqf_term(w, s->value, strlen(s->value));
+            if (s->next)
+                wrbuf_puts(w, ",");
+        }
+    }
+    yaz_log(YLOG_LOG, "using facets str: %s", wrbuf_cstr(w));
+    ZOOM_connection_option_set(link, "facets",
+                               wrbuf_len(w) ? wrbuf_cstr(w) : 0);
+    wrbuf_destroy(w);
+}
+
+int client_has_facet(struct client *cl, const char *name)
+{
+    struct session_database *sdb = client_get_database(cl);
+    struct setting *s;
+
+    for (s = sdb->settings[PZ_FACETMAP]; s; s = s->next)
+    {
+        const char *p = strchr(s->name + 3, ':');
+        if (p && !strcmp(name, p + 1))
             return 1;
-        }
     }
     return 0;
 }
-
-int client_has_facet(struct client *cl, const char *name) {
-    ZOOM_facet_field facet_field;
-    if (!cl || !cl->resultset || !name) {
-        return 0;
-    }
-    facet_field = ZOOM_resultset_get_facet_field(cl->resultset, name);
-    if (facet_field) {
-        return 1;
-    }
-    return 0;
-}
-
 
 void client_start_search(struct client *cl)
 {
