@@ -13,11 +13,13 @@
     </doc>
   </xsl:template>
   <xsl:template match="pz:metadata">
-    <field>
-      <xsl:attribute  name="name">
-	<xsl:value-of select="@type"/>
-      </xsl:attribute>
+    <xsl:if test="@type">
+      <field>
+	<xsl:attribute  name="name">
+	  <xsl:value-of select="@type"/>
+	</xsl:attribute>
 	<xsl:value-of select="."/>
-    </field>
+      </field>
+    </xsl:if>
   </xsl:template>
 </xsl:stylesheet>
