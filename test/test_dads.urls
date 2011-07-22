@@ -1,0 +1,15 @@
+http://localhost:9763/search.pz2?command=init&clear=1
+http://localhost:9763/search.pz2?session=1&command=settings&pz:sru%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=GET&pz%3Aname%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=SOLR+Test&pz%3Acclmap%3Ati%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1%3Dtitle&pz%3Acclmap%3Asu%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1%3Dsubject&pz%3Acclmap%3Aau%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1%3Dauthor&pz%3Acclmap%3Aisbn%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1%3Disbn&pz%3Acclmap%3Aterm%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1%3Dtitle&pz%3Axslt%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=dads-pz2.xsl&pz%3Aqueryencoding%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=UTF-8&pz%3Aapdulog%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1&pz:facetmap:author%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=creator&pz:facetmap:subject%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=subject&pz:facetmap:date%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=creationdate&pz:extra_args%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=%26x-facet_def%3Ddbc_test_production%26x-noxsl%3D1&pz:query_syntax%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=pqf
+http://localhost:9763/search.pz2?session=1&command=search&query=water
+4 http://localhost:9763/search.pz2?session=1&command=show&block=1
+http://localhost:9763/search.pz2?session=1&command=bytarget
+http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Csubject%2Cauthor%2Cdate%2Cmedium
+http://localhost:9763/search.pz2?command=init&clear=1
+http://localhost:9763/search.pz2?session=2&command=settings&pz:sru%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=solr&pz%3Aname%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=SOLR+Test&pz%3Acclmap%3Ati%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1%3Dtitle&pz%3Acclmap%3Asu%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1%3Dsubject&pz%3Acclmap%3Aau%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1%3Dauthor&pz%3Acclmap%3Aisbn%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1%3Disbn&pz%3Acclmap%3Aterm%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1%3Dtitle&pz%3Axslt%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=solr-pz2.xsl&pz%3Aqueryencoding%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=UTF-8&pz%3Aapdulog%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1&pz:termlist_term_count%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=5&pz:preferred%5Bdbc-test.dadsthirdnode.cvt.dk%2Fsru-proxy%5D=1
+http://localhost:9763/search.pz2?session=2&command=search&query=su%3D%22computer%22
+http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Csubject%2Cauthor%2Cdate%2Cmedium
+http://localhost:9763/search.pz2?session=2&command=show&block=preferred
+http://localhost:9763/search.pz2?session=2&command=search&query=su%3D%22xyzy%22
+http://localhost:9763/search.pz2?session=2&command=show&block=preferred
+http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Csubject%2Cauthor%2Cdate%2Cmedium
+http://localhost:9763/search.pz2?session=2&command=termlist&name=xtargets%2Csubject%2Cauthor%2Cdate%2Cmedium
