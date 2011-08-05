@@ -594,6 +594,7 @@ enum pazpar2_error_code search(struct session *se,
                                const char *query,
                                const char *startrecs, const char *maxrecs,
                                const char *filter,
+                               const char *limit,
                                const char **addinfo)
 {
     int live_channels = 0;
@@ -601,6 +602,7 @@ enum pazpar2_error_code search(struct session *se,
     int no_failed = 0;
     struct client_list *l;
     struct timeval tval;
+    facet_limits_t facet_limits;
 
     session_log(se, YLOG_DEBUG, "Search");
 
@@ -627,6 +629,12 @@ enum pazpar2_error_code search(struct session *se,
     
     tval.tv_sec += 5;
 
+    facet_limits = facet_limits_create(limit);
+    if (!facet_limits)
+    {
+        *addinfo = "limit";
+        return PAZPAR2_MALFORMED_PARAMETER_VALUE;
+    }
     for (l = se->clients; l; l = l->next)
     {
         struct client *cl = l->client;
@@ -637,7 +645,7 @@ enum pazpar2_error_code search(struct session *se,
             client_set_startrecs(cl, atoi(startrecs));
         if (prepare_session_database(se, client_get_database(cl)) < 0)
             ;
-        else if (client_parse_query(cl, query) < 0)
+        else if (client_parse_query(cl, query, facet_limits) < 0)
             no_failed++;
         else
         {
@@ -649,6 +657,7 @@ enum pazpar2_error_code search(struct session *se,
                 client_start_search(cl);
         }
     }
+    facet_limits_destroy(facet_limits);
     session_leave(se);
     if (no_working == 0)
     {

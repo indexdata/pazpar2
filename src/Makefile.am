@@ -21,6 +21,7 @@ libpazpar2_a_SOURCES = \
 	connection.c connection.h \
 	database.c database.h \
 	eventl.c eventl.h \
+	facet_limit.c facet_limit.h \
 	getaddrinfo.c \
 	host.h \
 	http.c http.h http_command.c \
