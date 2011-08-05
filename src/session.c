@@ -488,7 +488,7 @@ int session_set_watch(struct session *s, int what,
         ret = 0;
     }
     session_leave(s);
-    return 0;
+    return ret;
 }
 
 void session_alert_watch(struct session *s, int what)
