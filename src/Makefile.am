@@ -15,20 +15,32 @@ CONFIG_CLEAN_FILES=*.log
 
 AM_CFLAGS = $(YAZINC)
         
-libpazpar2_a_SOURCES = pazpar2_config.c pazpar2_config.h eventl.c eventl.h \
-	http.c http_command.c http.h \
-	session.c session.h \
-	record.h record.c reclists.c reclists.h \
-	relevance.c relevance.h termlists.c termlists.h \
-        normalize7bit.h normalize7bit.c \
-	database.c database.h \
-	settings.h settings.c sel_thread.c sel_thread.h getaddrinfo.c \
+libpazpar2_a_SOURCES = \
 	charsets.c charsets.h \
-	client.c client.h connection.c connection.h host.h parameters.h \
-	marcmap.c marcmap.h marchash.c marchash.h \
-	jenkins_hash.c jenkins_hash.h normalize_record.c normalize_record.h \
-	normalize_cache.c normalize_cache.h incref.c incref.h \
-	ppmutex.c ppmutex.h
+	client.c client.h \
+	connection.c connection.h \
+	database.c database.h \
+	eventl.c eventl.h \
+	getaddrinfo.c \
+	host.h \
+	http.c http.h http_command.c \
+	incref.c incref.h \
+	jenkins_hash.c jenkins_hash.h \
+	marchash.c marchash.h \
+	marcmap.c marcmap.h \
+        normalize7bit.c normalize7bit.h \
+	normalize_cache.c normalize_cache.h \
+	normalize_record.c normalize_record.h \
+	parameters.h \
+	pazpar2_config.c pazpar2_config.h \
+	ppmutex.c ppmutex.h \
+	reclists.c reclists.h \
+	record.c record.h \
+	relevance.c relevance.h \
+	sel_thread.c sel_thread.h \
+	session.c session.h \
+	settings.c settings.h \
+	termlists.c termlists.h
 
 pazpar2_SOURCES = pazpar2.c
 pazpar2_LDADD = libpazpar2.a $(YAZLIB)
