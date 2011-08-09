@@ -771,8 +771,7 @@
         <xsl:value-of select="$has_fulltext"/>
       </pz:metadata>
 
-      <xsl:for-each select="tmarc:d907">
-        <!-- or tmarc:d901"> -->
+      <xsl:for-each select="tmarc:d901 ! tmarc:d907">
         <pz:metadata type="iii-id">
           <xsl:value-of select="tmarc:sa" />
         </pz:metadata>
