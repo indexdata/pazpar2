@@ -91,6 +91,7 @@ var pz2 = function ( paramArray )
     this.currRecOffset = null;
 
     //timers
+    this.pingTimer = null;
     this.statTime = paramArray.stattime || 1000;
     this.statTimer = null;
     this.termTime = paramArray.termtime || 1000;
@@ -158,6 +159,7 @@ pz2.prototype =
             this.sessionID = null;
             this.initStatusOK = false;
             this.pingStatusOK = false;
+            clearTimeout(this.pingTimer);
         }
         this.searchStatusOK = false;
         this.stop();
@@ -196,12 +198,13 @@ pz2.prototype =
                         context.sessionID = 
                             data.getElementsByTagName("session")[0]
                                 .childNodes[0].nodeValue;
-                        setTimeout(
-                            function () {
-                                context.ping();
-                            },
-                            context.keepAlive
-                        );
+                        context.pingTimer =
+                            setTimeout(
+                                function () {
+                                    context.ping();
+                                },
+                                context.keepAlive
+                            );
                         if ( context.initCallback )
                             context.initCallback();
                     }
@@ -224,6 +227,9 @@ pz2.prototype =
             'Pz2.js: Ping not allowed (proxy mode) or session not initialized.'
             );
         var context = this;
+
+        clearTimeout(context.pingTimer);
+
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.safeGet(
             { "command": "ping", "session": this.sessionID, "windowid" : window.name },
@@ -231,12 +237,13 @@ pz2.prototype =
                 if ( data.getElementsByTagName("status")[0]
                         .childNodes[0].nodeValue == "OK" ) {
                     context.pingStatusOK = true;
-                    setTimeout(
-                        function () {
-                            context.ping();
-                        }, 
-                        context.keepAlive
-                    );
+                    context.pingTimer =
+                        setTimeout(
+                            function () {
+                                context.ping();
+                            },
+                            context.keepAlive
+                        );
                 }
                 else
                     context.throwError('Ping failed. Malformed WS resonse.',

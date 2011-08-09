@@ -555,15 +555,15 @@ static struct conf_service *service_create_static(struct conf_server *server,
         }
         else if (!strcmp((const char *) n->name, "facet"))
         {
-            if (service->mergekey_pct)
+            if (service->facet_pct)
             {
-                yaz_log(YLOG_LOG, "facety may not repeat in service");
+                yaz_log(YLOG_LOG, "facet may not repeat in service");
                 return 0;
             }
             else
             {
                 service->facet_pct = pp2_charset_create_xml(n);
-                if (!service->mergekey_pct)
+                if (!service->facet_pct)
                     return 0;
             }
         }

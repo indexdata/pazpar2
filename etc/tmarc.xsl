@@ -801,6 +801,48 @@
 	</pz:metadata>
       </xsl:for-each>
 
+      <!-- OhioLINK holdings -->
+      <xsl:for-each select="tmarc:d945">
+	<pz:metadata type="locallocation">
+          <xsl:choose>
+            <xsl:when test="tmarc:sa">
+              <xsl:value-of select="tmarc:sa"/>
+            </xsl:when>
+            <xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
+          </xsl:choose>
+	</pz:metadata>
+	<pz:metadata type="callnumber">
+          <xsl:choose>
+	    <xsl:when test="tmarc:sb">
+              <xsl:value-of select="tmarc:sb"/>
+            </xsl:when>
+            <xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
+          </xsl:choose>
+	</pz:metadata>
+	<pz:metadata type="publicnote">
+          <xsl:choose>
+            <xsl:when test="tmarc:sc">
+              <xsl:value-of select="tmarc:sc"/>
+            </xsl:when>
+            <xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
+          </xsl:choose>
+	</pz:metadata>
+	<pz:metadata type="available">
+          <xsl:choose>
+            <xsl:when test="tmarc:ss = 'N'">Available</xsl:when>
+            <xsl:when test="tmarc:ss != 'N'">
+              <xsl:choose>
+		<xsl:when test="tmarc:sd">
+                  <xsl:value-of select="tmarc:sd"/>
+		</xsl:when>
+		<xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
+              </xsl:choose>
+            </xsl:when>
+            <xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
+          </xsl:choose>
+	</pz:metadata>      
+      </xsl:for-each>
+
       <xsl:for-each select="tmarc:d948">
         <pz:metadata type="holding">
           <xsl:for-each select="tmarc:s">

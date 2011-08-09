@@ -945,8 +945,41 @@ static char *make_solrquery(struct client *cl)
     return r;
 }
 
+static void apply_limit(struct session_database *sdb,
+                        facet_limits_t facet_limits,
+                        WRBUF w)
+{
+    int i = 0;
+    const char *name;
+    const char *value;
+    for (i = 0; (name = facet_limits_get(facet_limits, i, &value)); i++)
+    {
+        struct setting *s = 0;
+        
+        for (s = sdb->settings[PZ_FACETMAP]; s; s = s->next)
+        {
+            const char *p = strchr(s->name + 3, ':');
+            if (p && !strcmp(p + 1, name) && s->value && s->value[0])
+            {
+                wrbuf_insert(w, 0, "@and ", 5);
+                wrbuf_puts(w, " @attr 1=");
+                yaz_encode_pqf_term(w, s->value, strlen(s->value));
+                wrbuf_puts(w, " ");
+                yaz_encode_pqf_term(w, value, strlen(value));
+                break;
+            }
+        }
+        if (!s)
+        {
+            yaz_log(YLOG_WARN, "facet %s used, but no facetmap defined",
+                    name);
+        }
+    }
+}
+                        
 // Parse the query given the settings specific to this client
-int client_parse_query(struct client *cl, const char *query)
+int client_parse_query(struct client *cl, const char *query,
+                       facet_limits_t facet_limits)
 {
     struct session *se = client_get_session(cl);
     struct session_database *sdb = client_get_database(cl);
@@ -995,6 +1028,8 @@ int client_parse_query(struct client *cl, const char *query)
         ccl_pquery(se->wrbuf, cn_recordfilter);
         wrbuf_puts(se->wrbuf, " ");
     }
+
+    apply_limit(sdb, facet_limits, se->wrbuf);
 
     if (!pqf_strftime || !*pqf_strftime)
         ccl_pquery(se->wrbuf, cn);
