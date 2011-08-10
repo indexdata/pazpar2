@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service id="sru-proxy" xmlns="http://www.indexdata.com/pazpar2/1.0">
+<!--
+  <settings src="settings/dads.xml"/>  
+-->
+    <relevance>
+      <icu_chain id="relevance" locale="en">
+	<transform rule="[:Control:] Any-Remove"/>
+	<tokenize rule="l"/>
+	<transform rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
+	<casemap rule="l"/>
+      </icu_chain>
+    </relevance>
+
+    <sort>
+      <icu_chain id="sort" locale="en">
+	<transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
+	<casemap rule="l"/>
+      </icu_chain>
+    </sort>
+    
+    <mergekey>
+      <icu_chain id="mergekey" locale="en">
+	<tokenize rule="l"/>
+	<transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
+	<casemap rule="l"/>
+      </icu_chain>
+    </mergekey>
+    
+    <timeout session="60" z3950_operation="30" z3950_session="180"/>
+
+    <!-- we try to keep same order as in marc21.xsl -->
+    <metadata name="id" brief="yes"/>
+    <metadata name="lccn" merge="unique"/>
+    <metadata name="isbn"/>
+    <metadata name="issn"/>
+    <metadata name="tech-rep-nr"/>
+    <metadata name="system-control-nr" brief="yes"/>
+    <metadata name="author" brief="yes" termlist="yes" merge="unique" 
+    rank="2" mergekey="optional" />
+    <metadata name="author-title"/>
+    <metadata name="author-date"/>
+    <metadata name="corporate-name"/>
+    <metadata name="corporate-location"/>
+    <metadata name="corporate-date"/>
+    <metadata name="meeting-name"/>
+    <metadata name="meeting-location"/>
+    <metadata name="meeting-date"/>
+    <metadata name="date" brief="yes" sortkey="numeric" type="year"
+    merge="range" termlist="yes"/>
+    <metadata name="title" brief="yes" sortkey="skiparticle"
+    merge="longest" rank="6" mergekey="required" />
+    <metadata name="title-remainder" brief="yes" merge="longest" rank="5"/>
+    <metadata name="title-responsibility" brief="yes" merge="longest"/>
+    <metadata name="title-dates" brief="yes" merge="longest"/>
+    <metadata name="title-medium" brief="yes" merge="longest"/>
+    <metadata name="title-number-section" brief="yes" merge="longest"/>
+    <metadata name="medium" brief="yes" merge="no"/>
+    <metadata name="iii-id" brief="yes" merge="no"/>
+    <metadata name="edition"/>
+    <metadata name="publication-place"/>
+    <metadata name="publication-name"/>
+    <metadata name="publication-date"/>
+    <metadata name="physical-extent"/>	
+    <metadata name="physical-format"/>	
+    <metadata name="physical-dimensions"/>	
+    <metadata name="physical-accomp"/>	
+    <metadata name="physical-unittype"/>	
+    <metadata name="physical-unitsize"/>	
+    <metadata name="physical-specified"/>	
+
+    <metadata name="series-title"/>	
+
+    <metadata name="description" brief="yes" merge="unique" rank="3"/>
+    <metadata name="subject-long" rank="3"/>
+    <metadata name="subject" termlist="yes" rank="0"/>
+    <metadata name="snippet" brief="yes" merge="unique"/>
+    <metadata name="electronic-url" brief="yes" merge="no" rank="0"/>
+    <metadata name="electronic-format-type" />
+    <metadata name="electronic-format-instruction" />
+    <metadata name="electronic-text" brief="yes" merge="no"/>
+    <metadata name="electronic-note"/>
+    <metadata name="citation" merge="longest" brief="yes"/>
+    <metadata name="holding"/>
+    <metadata name="fulltext"/>
+    <metadata name="locallocation" brief="yes"/>
+    <metadata name="callnumber" brief="yes"/>
+    <metadata name="publicnote" brief="yes"/>
+
+    <!-- journals -->
+    <metadata name="journal-title" brief="yes" termlist="yes" merge="all"/>
+    <metadata name="journal-subpart"/>
+    <metadata name="volume-number"/>
+    <metadata name="issue-date"/>
+    <metadata name="issue-number"/>
+
+    <metadata name="url_recipe" setting="postproc" brief="yes" merge="no"/>
+    <metadata name="open_url_resolver" setting="parameter" merge="no"/>
+    <metadata name="open-url" merge="longest"/>
+    <metadata name="use_url_proxy" setting="postproc" brief="yes" merge="no"/>
+</service>
+<!-- Keep this comment at the end of the file
+     Local variables:
+     mode: nxml
+     End:
+-->
+
