@@ -951,29 +951,18 @@ int client_parse_query(struct client *cl, const char *query)
     struct session *se = client_get_session(cl);
     struct session_database *sdb = client_get_database(cl);
     struct ccl_rpn_node *cn;
-    struct ccl_rpn_node *cn_recordfilter = 0;
     int cerror, cpos;
     CCL_bibset ccl_map = prepare_cclmap(cl);
     const char *sru = session_setting_oneval(sdb, PZ_SRU);
     const char *pqf_prefix = session_setting_oneval(sdb, PZ_PQF_PREFIX);
     const char *pqf_strftime = session_setting_oneval(sdb, PZ_PQF_STRFTIME);
     const char *query_syntax = session_setting_oneval(sdb, PZ_QUERY_SYNTAX);
-    /* Collected, Mixed, Remote */
-    const char *option_recordfilter = session_setting_oneval(sdb, PZ_OPTION_RECORDFILTER);
     const char *record_filter = session_setting_oneval(sdb, PZ_RECORDFILTER);
     if (!ccl_map)
         return -1;
 
     yaz_log(YLOG_DEBUG, "query: %s", query);
     cn = ccl_find_str(ccl_map, query, &cerror, &cpos);
-    if (strcmp("remote", option_recordfilter) == 0 && record_filter != 0 && record_filter[0] != 0) {
-        int cerror, cpos;
-        yaz_log(YLOG_DEBUG, "record_filter: %s", record_filter);
-        cn_recordfilter = ccl_find_str(ccl_map, record_filter, &cerror, &cpos);
-        if (!cn_recordfilter)
-            session_log(se, YLOG_WARN, "Failed to parse CCL record filter '%s' for %s",
-                    record_filter, client_get_database(cl)->database->url);
-    }
     ccl_qual_rm(&ccl_map);
     if (!cn)
     {
@@ -987,12 +976,6 @@ int client_parse_query(struct client *cl, const char *query)
     if (*pqf_prefix)
     {
         wrbuf_puts(se->wrbuf, pqf_prefix);
-        wrbuf_puts(se->wrbuf, " ");
-    }
-
-    if (cn_recordfilter) {
-        wrbuf_puts(se->wrbuf, "@and ");
-        ccl_pquery(se->wrbuf, cn_recordfilter);
         wrbuf_puts(se->wrbuf, " ");
     }
 
