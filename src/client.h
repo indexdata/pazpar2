@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef CLIENT_H
 #define CLIENT_H
 
+#include "facet_limit.h"
+
 struct client;
 struct connection;
 
@@ -80,7 +82,8 @@ int client_is_active(struct client *cl);
 int client_is_active_preferred(struct client *cl);
 struct client *client_next_in_session(struct client *cl);
 
-int client_parse_query(struct client *cl, const char *query);
+int client_parse_query(struct client *cl, const char *query,
+                       facet_limits_t facet_limits);
 Odr_int client_get_hits(struct client *cl);
 int client_get_num_records(struct client *cl);
 int client_get_diagnostic(struct client *cl);

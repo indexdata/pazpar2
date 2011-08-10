@@ -1117,6 +1117,7 @@ static void cmd_search(struct http_channel *c)
     const char *filter = http_argbyname(rq, "filter");
     const char *maxrecs = http_argbyname(rq, "maxrecs");
     const char *startrecs = http_argbyname(rq, "startrecs");
+    const char *limit = http_argbyname(rq, "limit");
     enum pazpar2_error_code code;
     const char *addinfo = 0;
 
@@ -1134,7 +1135,8 @@ static void cmd_search(struct http_channel *c)
         release_session(c, s);
         return;
     }
-    code = search(s->psession, query, startrecs, maxrecs, filter, &addinfo);
+    code = search(s->psession, query, startrecs, maxrecs, filter, limit,
+                  &addinfo);
     if (code)
     {
         error(rs, code, addinfo);
