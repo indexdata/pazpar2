@@ -10,14 +10,14 @@
       <icu_chain id="relevance" locale="en">
 	<transform rule="[:Control:] Any-Remove"/>
 	<tokenize rule="l"/>
-	<transform rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
+	<transform rule="[[:WhiteSpace:][:Punctuation:]`] Remove"/>
 	<casemap rule="l"/>
       </icu_chain>
     </relevance>
     
     <sort>
       <icu_chain id="sort" locale="en">
-	<transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
+	<transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]`] Remove"/>
 	<casemap rule="l"/>
       </icu_chain>
     </sort>
@@ -25,7 +25,7 @@
     <mergekey>
       <icu_chain id="mergekey" locale="en">
 	<tokenize rule="l"/>
-	<transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
+	<transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]`] Remove"/>
 	<casemap rule="l"/>
       </icu_chain>
     </mergekey>
