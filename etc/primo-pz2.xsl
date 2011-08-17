@@ -46,55 +46,56 @@
     <xsl:apply-templates />
   </xsl:template>
   
-  <xsl:template match="prim:control"> 
-    <xsl:if test="@prim:recordid">
+  <xsl:template match="prim:record[@name='control']"> 
+    <xsl:if test="@recordid">
       <pz:metadata type="id">
-	<xsl:value-of select="@prim:recordid"/>
+	<xsl:value-of select="@recordid"/>
       </pz:metadata>
     </xsl:if>
     <xsl:apply-templates />
   </xsl:template>
 
-  <xsl:template match="prim:addata">
-    <!--    <xsl:variable name="yearmonthday" select="@date" /> -->
-
-    <xsl:if test="@prim:date">
+  <xsl:template match="prim:record[@name='addata']">
+    <xsl:if test="@date">
       <pz:metadata type="date">
 	<xsl:value-of select="substring(@date,1,4)" />
       </pz:metadata>
+      <pz:metadata type="fulldate">
+	<xsl:value-of select="@date" />
+      </pz:metadata>
       <pz:metadata type="journal-month">
-	<xsl:value-of select="substring(@date,4,1)" />
+	<xsl:value-of select="substring(@date,5,2)" />
       </pz:metadata>
     </xsl:if>
 
-    <xsl:if test="@prim:volume">
+    <xsl:if test="@volume">
       <pz:metadata type="journal-number">
-	<xsl:value-of select="@prim:volume" />
+	<xsl:value-of select="@volume" />
       </pz:metadata>
     </xsl:if>
 
-    <xsl:if test="@prim:issue">
+    <xsl:if test="@issue">
       <pz:metadata type="issue-number">
-	<xsl:value-of select="@prim:issue" />
+	<xsl:value-of select="@issue" />
       </pz:metadata>
     </xsl:if>
 
-    <xsl:if test="@prim:issn">
+    <xsl:if test="@issn">
       <pz:metadata type="issn">
-        <xsl:value-of select="@prim:issn" />
+        <xsl:value-of select="@issn" />
       </pz:metadata>
     </xsl:if>
 
-    <xsl:if test="@prim:jtitle">
+    <xsl:if test="@jtitle">
       <pz:metadata type="journal-title">
-	<xsl:value-of select="@prim:jtitle" />
+	<xsl:value-of select="@jtitle" />
       </pz:metadata>
     </xsl:if>
     
     <xsl:apply-templates />
   </xsl:template>
 
-  <xsl:template match="prim:delivery">  
+  <xsl:template match="prim:record[@name='delivery']">  
     <xsl:if test="$has_fulltext">
       <pz:metadata type="has-fulltext">
         <xsl:value-of select="$has_fulltext" />
@@ -104,16 +105,16 @@
     <xsl:apply-templates />
   </xsl:template>
 
-  <xsl:template match="prim:display" name="display" >
-    <xsl:if test="@prim:creator">
+  <xsl:template match="prim:record[@tag='display']">
+
+    <xsl:if test="@creator">
       <pz:metadata type="author">
-        <xsl:value-of select="@prim:creator" />
+        <xsl:value-of select="@creator" />
       </pz:metadata>
     </xsl:if>  
 
-
-    <xsl:if test="@prim:type">
-      <xsl:variable name="type" select="@prim:type"/>
+    <xsl:if test="@type">
+      <xsl:variable name="type" select="@type"/>
       <pz:metadata type="medium">
 	<xsl:choose>
           <xsl:when test="$type ='article' and $has_fulltext = 'yes'">
@@ -131,41 +132,31 @@
       <pz:metadata type="debug_isarticle"><xsl:value-of select="$is_article"/></pz:metadata>
     </xsl:if>  
 
-
-    <xsl:if test="@prim:title">
+    <xsl:if test="@title">
       <pz:metadata type="title">
-	<xsl:value-of select="@prim:title" />
+	<xsl:value-of select="@title" />
       </pz:metadata>
     </xsl:if>  
 
-    <xsl:if test="@prim:ispartof">
+    <xsl:if test="@ispartof">
       <pz:metadata type="journal-subpart">
-	<xsl:value-of select="@prim:ispartof" />
+	<xsl:value-of select="@ispartof" />
       </pz:metadata>
     </xsl:if>
     <xsl:apply-templates />
+
   </xsl:template>
 
-  <xsl:template match="sear:LINKS" >
-    <xsl:if test="@sear:openurl"> 
-      <pz:metadata type="electronic-url">
-	<xsl:value-of select="@sear:openurl"/>
-      </pz:metadata>
-    </xsl:if>
-    <xsl:apply-templates/>
-  </xsl:template>
-
-  <xsl:template match="prim:search">
-    <xsl:if test="@prim:description">
+  <xsl:template match="prim:record[@name='search']">
+    <xsl:if test="@description">
       <pz:metadata type="description">
-	<xsl:value-of select="@prim:description" />
+	<xsl:value-of select="@description" />
       </pz:metadata>
     </xsl:if>
 
-
-    <xsl:if test="@prim:sub">
+    <xsl:if test="@sub">
       <pz:metadata type="subject">
-        <xsl:value-of select="@prim:sub" />
+        <xsl:value-of select="@sub" />
       </pz:metadata>
     </xsl:if>
 
@@ -178,6 +169,16 @@
     <xsl:call-template name="record-hook" />
 	
   </xsl:template>
+
+  <xsl:template match="sear:LINKS" >
+    <xsl:if test="@sear:openurl"> 
+      <pz:metadata type="electronic-url">
+	<xsl:value-of select="@sear:openurl"/>
+      </pz:metadata>
+    </xsl:if>
+    <xsl:apply-templates/>
+  </xsl:template>
+
 
   <xsl:template match="text()" />
 
