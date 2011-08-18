@@ -5,15 +5,16 @@
   xmlns:tmarc="http://www.indexdata.com/turbomarc"
   xmlns:prim="http://www.exlibrisgroup.com/xsd/primo/primo_nm_bib" 
   xmlns:sear="http://www.exlibrisgroup.com/xsd/jaguar/search"
-
 >
 
   <xsl:output indent="yes" method="xml" version="1.0"
     encoding="UTF-8" />
 
-  <xsl:variable name="type" select="/opt/prim:PrimoNMBib/prim:display/@prim:type"/>
+  <xsl:template name="record-hook" />
+
+  <xsl:variable name="type" select="/opt/prim:PrimoNMBib/prim:display/prim:type"/>
   <xsl:variable name="is_article" select="$type = 'article'" />
-  <xsl:variable name="fulltext" select="/opt/prim:PrimoNMBib/prim:delivery/@prim:fulltext"/>
+  <xsl:variable name="fulltext" select="/opt/prim:PrimoNMBib/prim:delivery/prim:fulltext"/>
   <xsl:variable name="has_fulltext">
     <xsl:choose>
       <xsl:when test="$fulltext = 'no_fulltext' ">
@@ -28,15 +29,17 @@
     </xsl:choose>
   </xsl:variable>
 
-    
-
-  <xsl:template name="record-hook" />
-
   <xsl:template match="/">
     <xsl:apply-templates />
   </xsl:template>
 
-  <xsl:template match="opt">
+  <xsl:template match="sear:RESULT">
+    <pz:records>
+      <xsl:apply-templates />
+    </pz:records>
+  </xsl:template>
+
+  <xsl:template match="sear:DOC">
     <pz:record>
       <xsl:apply-templates />
     </pz:record>
@@ -46,75 +49,69 @@
     <xsl:apply-templates />
   </xsl:template>
   
-  <xsl:template match="prim:record[@name='control']"> 
-    <xsl:if test="@recordid">
+  <xsl:template match="prim:control"> 
+    <xsl:for-each select="prim:recordid">
       <pz:metadata type="id">
-	<xsl:value-of select="@recordid"/>
+	<xsl:value-of select="."/>
       </pz:metadata>
-    </xsl:if>
-    <xsl:apply-templates />
+    </xsl:for-each>
   </xsl:template>
 
-  <xsl:template match="prim:record[@name='addata']">
-    <xsl:if test="@date">
+  <xsl:template match="prim:addata">
+    <!--    <xsl:variable name="yearmonthday" select="@date" /> -->
+
+    <xsl:for-each select="prim:date">
       <pz:metadata type="date">
-	<xsl:value-of select="substring(@date,1,4)" />
-      </pz:metadata>
-      <pz:metadata type="fulldate">
-	<xsl:value-of select="@date" />
+	<xsl:value-of select="substring(.,1,4)" />
       </pz:metadata>
       <pz:metadata type="journal-month">
-	<xsl:value-of select="substring(@date,5,2)" />
+	<xsl:value-of select="substring(.,4,1)" />
       </pz:metadata>
-    </xsl:if>
+    </xsl:for-each>
 
-    <xsl:if test="@volume">
+    <xsl:for-each select="prim:volume">
       <pz:metadata type="journal-number">
-	<xsl:value-of select="@volume" />
+	<xsl:value-of select="." />
       </pz:metadata>
-    </xsl:if>
+    </xsl:for-each>
 
-    <xsl:if test="@issue">
+    <xsl:for-each select="prim:issue">
       <pz:metadata type="issue-number">
-	<xsl:value-of select="@issue" />
+	<xsl:value-of select="." />
       </pz:metadata>
-    </xsl:if>
+    </xsl:for-each>
 
-    <xsl:if test="@issn">
+    <xsl:for-each select="prim:issn">
       <pz:metadata type="issn">
-        <xsl:value-of select="@issn" />
+        <xsl:value-of select="." />
       </pz:metadata>
-    </xsl:if>
+    </xsl:for-each>
 
-    <xsl:if test="@jtitle">
+    <xsl:for-each select="prim:jtitle">
       <pz:metadata type="journal-title">
-	<xsl:value-of select="@jtitle" />
+	<xsl:value-of select="." />
       </pz:metadata>
-    </xsl:if>
-    
-    <xsl:apply-templates />
+    </xsl:for-each>
   </xsl:template>
 
-  <xsl:template match="prim:record[@name='delivery']">  
+  <xsl:template match="prim:delivery">  
+
     <xsl:if test="$has_fulltext">
       <pz:metadata type="has-fulltext">
         <xsl:value-of select="$has_fulltext" />
       </pz:metadata>
     </xsl:if>
 
-    <xsl:apply-templates />
   </xsl:template>
 
-  <xsl:template match="prim:record[@tag='display']">
-
-    <xsl:if test="@creator">
-      <pz:metadata type="author">
-        <xsl:value-of select="@creator" />
+  <xsl:template match="prim:display">
+    <xsl:for-each select="prim:creator">
+       <pz:metadata type="author">
+        <xsl:value-of select="." />
       </pz:metadata>
-    </xsl:if>  
-
-    <xsl:if test="@type">
-      <xsl:variable name="type" select="@type"/>
+    </xsl:for-each>  
+    <xsl:for-each select="prim:type">
+      <xsl:variable name="type" select="."/>
       <pz:metadata type="medium">
 	<xsl:choose>
           <xsl:when test="$type ='article' and $has_fulltext = 'yes'">
@@ -130,35 +127,53 @@
 <!--        <xsl:value-of select="$type" /> -->
       </pz:metadata>
       <pz:metadata type="debug_isarticle"><xsl:value-of select="$is_article"/></pz:metadata>
-    </xsl:if>  
+    </xsl:for-each>  
 
-    <xsl:if test="@title">
+    <xsl:for-each select="prim:title">
       <pz:metadata type="title">
-	<xsl:value-of select="@title" />
+	<xsl:value-of select="." />
       </pz:metadata>
-    </xsl:if>  
+    </xsl:for-each>  
 
-    <xsl:if test="@ispartof">
+    <xsl:for-each select="prim:ispartof">
       <pz:metadata type="journal-subpart">
-	<xsl:value-of select="@ispartof" />
+	<xsl:value-of select="." />
       </pz:metadata>
-    </xsl:if>
+    </xsl:for-each>
+<!--
     <xsl:apply-templates />
-
+-->
   </xsl:template>
 
-  <xsl:template match="prim:record[@name='search']">
-    <xsl:if test="@description">
-      <pz:metadata type="description">
-	<xsl:value-of select="@description" />
+  <xsl:template match="prim:facets">
+    <xsl:for-each select="prim:topic">
+       <pz:metadata type="subject">
+        <xsl:value-of select="." />
       </pz:metadata>
-    </xsl:if>
+    </xsl:for-each>  
+  </xsl:template>
 
-    <xsl:if test="@sub">
-      <pz:metadata type="subject">
-        <xsl:value-of select="@sub" />
+  <xsl:template match="sear:LINKS" >
+    <xsl:for-each select="sear:openurl"> 
+      <pz:metadata type="electronic-url">
+	<xsl:value-of select="."/>
       </pz:metadata>
-    </xsl:if>
+    </xsl:for-each>
+  </xsl:template>
+
+  <xsl:template match="prim:search">
+    <xsl:for-each select="prim:description">
+      <pz:metadata type="description">
+	<xsl:value-of select="." />
+      </pz:metadata>
+    </xsl:for-each>
+
+
+    <xsl:for-each select="prim:sub">
+      <pz:metadata type="subject">
+        <xsl:value-of select="." />
+      </pz:metadata>
+    </xsl:for-each>
 
     <!-- passthrough id data -->
     <xsl:for-each select="pz:metadata">
@@ -166,19 +181,8 @@
     </xsl:for-each>
     <!-- other stylesheets importing this might want to define this -->
 
-    <xsl:call-template name="record-hook" />
-	
+    <xsl:call-template name="record-hook" />	
   </xsl:template>
-
-  <xsl:template match="sear:LINKS" >
-    <xsl:if test="@sear:openurl"> 
-      <pz:metadata type="electronic-url">
-	<xsl:value-of select="@sear:openurl"/>
-      </pz:metadata>
-    </xsl:if>
-    <xsl:apply-templates/>
-  </xsl:template>
-
 
   <xsl:template match="text()" />
 
