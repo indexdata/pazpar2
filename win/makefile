@@ -202,7 +202,8 @@ PAZPAR2_OBJS = \
    "$(OBJDIR)\ppmutex.obj" \
    "$(OBJDIR)\incref.obj" \
    "$(OBJDIR)\sel_thread.obj" \
-   "$(OBJDIR)\connection.obj" 
+   "$(OBJDIR)\connection.obj"  \
+   "$(OBJDIR)\facet_limit.obj" 
 
 
 {$(SRCDIR)}.c{$(OBJDIR)}.obj:
