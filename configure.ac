@@ -80,12 +80,8 @@ echo \
   Linked libs:                ${LIBS}
   Host System Type:           ${host}
   Install path:               ${prefix}
-  Automake:                   ${AUTOMAKE}
-  Archiver:                   ${AR}
-  Ranlib:                     ${RANLIB}
   YAZ Version:                ${YAZVERSION}
   YAZ Include:                ${YAZINC}
-  YAZ La Lib:                 ${YAZLALIB}
   YAZ Lib:                    ${YAZLIB}
   Bugreport:                  ${PACKAGE_BUGREPORT}
 
