@@ -1,3 +1,13 @@
+--- 1.5.7 2011/08/19
+
+ICU default maps remove backquote (`).
+
+Command 'search' takes limit parameter (optional).  The limit parameter
+allows a search to be limited one or more facets and the corresponding
+values. This is for server side filtering.
+
+Configure tweak: Use -lm for log(3) if needed
+
 --- 1.5.6 2011/04/15
 
 Fix a problem with skiparticle sortkey that could be completely

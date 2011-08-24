@@ -194,6 +194,16 @@
       </listitem>
      </varlistentry>
      <varlistentry>
+      <term>limit</term>
+      <listitem>
+       <para>
+	Narrows the search by one or more facet fields. The limit is
+	sequence of one or more field=value pairs separate by comma.
+	A value that contains a comma should be escaped by backslash (\).
+       </para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
       <term>startrecs</term>
       <listitem>
        <para>
