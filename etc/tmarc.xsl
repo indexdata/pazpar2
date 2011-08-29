@@ -688,7 +688,7 @@
       <xsl:for-each select="tmarc:d876">
         <xsl:if test="tmarc:sf">
           <pz:metadata type="loan-period">
-            <xsl:value-of select="tmarc:sf" />
+            <xsl:value-of select="concat(tmarc:s5,':',tmarc:sf)" />
           </pz:metadata>
         </xsl:if>
       </xsl:for-each>
