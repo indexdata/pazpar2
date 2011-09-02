@@ -633,6 +633,7 @@ enum pazpar2_error_code search(struct session *se,
     if (!facet_limits)
     {
         *addinfo = "limit";
+        session_leave(se);
         return PAZPAR2_MALFORMED_PARAMETER_VALUE;
     }
     for (l = se->clients; l; l = l->next)
