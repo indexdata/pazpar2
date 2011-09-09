@@ -782,7 +782,6 @@ void session_destroy(struct session *se) {
     nmem_destroy(se->nmem);
     service_destroy(se->service);
     yaz_mutex_destroy(&se->session_mutex);
-    wrbuf_destroy(se->wrbuf);
 }
 
 /* Depreciated: use session_destroy */
@@ -825,7 +824,6 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->clients = 0;
     session->session_nmem = nmem;
     session->nmem = nmem_create();
-    session->wrbuf = wrbuf_alloc();
     session->databases = 0;
     for (i = 0; i <= SESSION_WATCH_MAX; i++)
     {

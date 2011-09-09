@@ -10,6 +10,7 @@
   <set name="pz:cclmap:isbn" value="u=7"/>
   <set name="pz:cclmap:issn" value="u=8"/>
   <set name="pz:cclmap:date" value="u=30 r=r"/>
+  <set name="pz:cclmap:author_phrase" value="u=1003 6=3"/>
 
   <!-- Retrieval settings -->
 

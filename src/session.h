@@ -107,7 +107,6 @@ struct session {
     struct client_list *clients;   // Clients connected for current search
     NMEM session_nmem;  // Nmem for session-permanent storage
     NMEM nmem;          // Nmem for each operation (i.e. search, result set, etc)
-    WRBUF wrbuf;        // Wrbuf for scratch(i.e. search)
     int num_termlists;
     struct named_termlist termlists[SESSION_MAX_TERMLISTS];
     struct relevance *relevance;
