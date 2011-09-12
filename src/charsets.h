@@ -49,15 +49,6 @@ const char *pp2_relevance_token_next(pp2_relevance_token_t prt);
 const char *pp2_get_sort(pp2_relevance_token_t prt);
 const char *pp2_get_display(pp2_relevance_token_t prt);
 
-#if 0
-typedef int pp2_charset_normalize_t(pp2_charset_t pct,
-                                    const char *buf,
-                                    WRBUF norm_str, WRBUF sort_str,
-                                    int skip_article);
-
-pp2_charset_normalize_t pp2_charset_metadata_norm;
-#endif
-
 #endif
 
 /*
