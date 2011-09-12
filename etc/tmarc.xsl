@@ -671,9 +671,66 @@
           </pz:metadata>
         </xsl:if>
         <xsl:if test="tmarc:sg">
+	  <xsl:variable name="value">
+	    <xsl:for-each select="*">
+	      <xsl:value-of select="."/>
+	    </xsl:for-each>
+	  </xsl:variable>
           <pz:metadata type="journal-subpart">
-            <xsl:value-of select="tmarc:sg"/>
-          </pz:metadata>
+            <xsl:value-of select="$value"/>
+	  </pz:metadata>
+	  <xsl:variable name="l">
+	    <xsl:value-of select="translate($value,
+				  'ABCDEFGHIJKLMNOPQRSTUVWXYZ.',
+				  'abcdefghijklmnopqrstuvwxyz ') "/>
+	  </xsl:variable>
+	  <xsl:variable name="volume">
+	    <xsl:choose>
+	      <xsl:when test="string-length(substring-after($l,'vol ')) &gt; 0">
+		<xsl:value-of select="substring-before(normalize-space(substring-after($l,'vol ')),' ')"/>
+	      </xsl:when>
+	      <xsl:when test="string-length(substring-after($l,'v ')) &gt; 0">
+		<xsl:value-of select="substring-before(normalize-space(substring-after($l,'v ')),' ')"/>
+	      </xsl:when>
+	    </xsl:choose>
+	  </xsl:variable>
+	  <xsl:variable name="issue">
+	    <xsl:value-of select="substring-before(translate(normalize-space(substring-after($l,'issue')), ',', ' '),' ')"/>
+	  </xsl:variable>
+	  <xsl:variable name="pages">
+	    <xsl:choose>
+	      <xsl:when test="string-length(substring-after($l,' p ')) &gt; 0">
+		<xsl:value-of select="normalize-space(substring-after($l,' p '))"/>
+	      </xsl:when>
+	      <xsl:when test="string-length(substring-after($l,',p')) &gt; 0">
+		<xsl:value-of select="normalize-space(substring-after($l,',p'))"/>
+	      </xsl:when>
+	      <xsl:when test="string-length(substring-after($l,' p')) &gt; 0">
+		<xsl:value-of select="normalize-space(substring-after($l,' p'))"/>
+	      </xsl:when>
+	    </xsl:choose>
+	  </xsl:variable>
+
+	  <!-- volume -->
+	  <xsl:if test="string-length($volume) &gt; 0">
+	    <pz:metadata type="volume-number">
+	      <xsl:value-of select="$volume"/>
+	    </pz:metadata>
+	  </xsl:if>
+	  <!-- issue -->
+	  <xsl:if test="string-length($issue) &gt; 0">
+	    <pz:metadata type="issue-number">
+	      <xsl:value-of select="$issue"/>
+	    </pz:metadata>
+	  </xsl:if>
+	  <!-- pages -->
+	  <xsl:if test="string-length($pages) &gt; 0">
+	    <pz:metadata type="pages-number">
+	      <xsl:value-of select="$pages"/>
+	    </pz:metadata>
+	  </xsl:if>
+	  
+	  <!-- season -->
         </xsl:if>
         <xsl:if test="tmarc:sp">
           <pz:metadata type="journal-title-abbrev">
