@@ -737,6 +737,9 @@
   <set name="pz:cclmap:isbn" value="u=7"/>
   <set name="pz:cclmap:issn" value="u=8"/>
   <set name="pz:cclmap:date" value="u=30 r=r"/>
+q
+  <set name="pz:limitmap:title" value="rpn:@attr 1=4 @attr 6=3"/>
+  <set name="pz:limitmap:date" value="ccl:date"/>
 
   <!-- Retrieval settings -->
 
@@ -1107,6 +1110,30 @@
 	<para>
          At this point only SOLR targets have been tested with this
          facility.
+	</para>
+      </note>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:limitmap:<replaceable>name</replaceable></term>
+     <listitem>
+      <para>
+	Specifies attributes for limiting a search to a field - using
+	the limit parameter for search. In some cases the mapping of 
+	a field to a value is identical to an existing cclmap field; in
+	other cases the field must be specified in a different way - for
+	example to match a complete field (rather than parts of a subfield).
+      </para>
+      <para>
+	The value of limitmap may have one of two forms: referral to
+	an exisiting CCL field or a raw PQF string. Leading string
+	determines type; either <literal>ccl:</literal> for CCL field or
+	<literal>rpn:</literal> for PQF/RPN.
+      </para>
+	<note>
+	<para>
+	  The limitmap facility is supported for Pazpar2 version 1.6.0.
 	</para>
       </note>
      </listitem>
