@@ -192,6 +192,14 @@ void add_facet(struct session *s, const char *type, const char *value, int count
     const char *facet_component;
     WRBUF facet_wrbuf = wrbuf_alloc();
     WRBUF display_wrbuf = wrbuf_alloc();
+    int i;
+    const char *icu_chain_id = 0;
+
+    for (i = 0; i < service->num_metadata; i++)
+        if (!strcmp((service->metadata + i)->name, type))
+            icu_chain_id = (service->metadata + i)->icu_chain;
+    yaz_log(YLOG_LOG, "icu_chain id=%s", icu_chain_id ? icu_chain_id : "null");
+
     prt = pp2_relevance_tokenize(service->facet_pct);
     
     pp2_relevance_first(prt, value, 0);
