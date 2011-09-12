@@ -412,8 +412,18 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
+	    <xsl:variable name='value'>
+	      <xsl:value-of select='normalize-space(.)'/>
+	    </xsl:variable>
+	    <xsl:choose>
+	      <xsl:when test="substring($value,string-length($value)) = ','">
+		<xsl:value-of select="substring($value,0,string-length($value)-1)"/>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<xsl:value-of select="$value"/>
+	      </xsl:otherwise>
+	    </xsl:choose> 
+         </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
 
