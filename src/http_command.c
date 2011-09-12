@@ -597,12 +597,12 @@ static void cmd_termlist(struct http_channel *c)
                 for (i = 0; i < len && i < num; i++)
                 {
                     // prevnt sending empty term elements
-                    if (!p[i]->term || !p[i]->term[0])
+                    if (!p[i]->display_term || !p[i]->display_term[0])
                         continue;
 
                     wrbuf_puts(c->wrbuf, "<term>");
                     wrbuf_puts(c->wrbuf, "<name>");
-                    wrbuf_xmlputs(c->wrbuf, p[i]->term);
+                    wrbuf_xmlputs(c->wrbuf, p[i]->display_term);
                     wrbuf_puts(c->wrbuf, "</name>");
                     
                     wrbuf_printf(c->wrbuf, 

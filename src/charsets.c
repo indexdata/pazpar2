@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 struct pp2_charset_s {
     const char *(*token_next_handler)(pp2_relevance_token_t prt);
     const char *(*get_sort_handler)(pp2_relevance_token_t prt);
+    const char *(*get_display_handler)(pp2_relevance_token_t prt);
     int ref_count;
 #if YAZ_HAVE_ICU
     struct icu_chain * icu_chn;
@@ -54,10 +55,12 @@ struct pp2_charset_s {
 static const char *pp2_relevance_token_null(pp2_relevance_token_t prt);
 static const char *pp2_relevance_token_a_to_z(pp2_relevance_token_t prt);
 static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt);
+static const char *pp2_get_display_ascii(pp2_relevance_token_t prt);
 
 #if YAZ_HAVE_ICU
 static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt);
 static const char *pp2_get_sort_icu(pp2_relevance_token_t prt);
+static const char *pp2_get_display_icu(pp2_relevance_token_t prt);
 #endif
 
 /* tokenzier handle */
@@ -123,6 +126,7 @@ pp2_charset_t pp2_charset_create(struct icu_chain *icu_chn)
 
     pct->token_next_handler = pp2_relevance_token_null;
     pct->get_sort_handler  = pp2_get_sort_ascii;
+    pct->get_display_handler  = pp2_get_display_ascii;
     pct->ref_count = 1;
 #if YAZ_HAVE_ICU
     pct->icu_chn = 0;
@@ -132,6 +136,7 @@ pp2_charset_t pp2_charset_create(struct icu_chain *icu_chn)
         pct->icu_sts = U_ZERO_ERROR;
         pct->token_next_handler = pp2_relevance_token_icu;
         pct->get_sort_handler = pp2_get_sort_icu;
+        pct->get_display_handler = pp2_get_display_icu;
     }
 #endif // YAZ_HAVE_ICU
     return pct;
@@ -230,6 +235,11 @@ const char *pp2_get_sort(pp2_relevance_token_t prt)
     return prt->pct->get_sort_handler(prt);
 }
 
+const char *pp2_get_display(pp2_relevance_token_t prt)
+{
+    return prt->pct->get_display_handler(prt);
+}
+
 #define raw_char(c) (((c) >= 'a' && (c) <= 'z') ? (c) : -1)
 /* original tokenizer with our tokenize interface, but we
    add +1 to ensure no '\0' are in our string (except for EOF)
@@ -278,6 +288,16 @@ static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt)
     }
 }
 
+static const char *pp2_get_display_ascii(pp2_relevance_token_t prt)
+{
+    if (prt->last_cp == 0)
+        return 0;
+    else
+    {
+        return wrbuf_cstr(prt->norm_str);
+    }
+}
+
 static const char *pp2_relevance_token_null(pp2_relevance_token_t prt)
 {
     const char *cp = prt->cp;
@@ -302,6 +322,11 @@ static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)
 static const char *pp2_get_sort_icu(pp2_relevance_token_t prt)
 {
     return icu_iter_get_sortkey(prt->iter);
+}
+
+static const char *pp2_get_display_icu(pp2_relevance_token_t prt)
+{
+    return icu_iter_get_display(prt->iter);
 }
 
 #endif // YAZ_HAVE_ICU

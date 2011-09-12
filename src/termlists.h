@@ -24,14 +24,16 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 struct termlist_score
 {
-    char *term;
+    char *norm_term;
+    char *display_term;
     int frequency;
 };
 
 struct termlist;
 
 struct termlist *termlist_create(NMEM nmem, int highscore_size);
-void termlist_insert(struct termlist *tl, const char *term, int freq);
+void termlist_insert(struct termlist *tl, const char *display_term,
+                     const char *norm_term, int freq);
 struct termlist_score **termlist_highscore(struct termlist *tl, int *len);
 
 #endif

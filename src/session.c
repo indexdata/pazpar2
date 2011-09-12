@@ -191,20 +191,31 @@ void add_facet(struct session *s, const char *type, const char *value, int count
     pp2_relevance_token_t prt;
     const char *facet_component;
     WRBUF facet_wrbuf = wrbuf_alloc();
+    WRBUF display_wrbuf = wrbuf_alloc();
     prt = pp2_relevance_tokenize(service->facet_pct);
     
     pp2_relevance_first(prt, value, 0);
     while ((facet_component = pp2_relevance_token_next(prt)))
     {
+        const char *display_component;
         if (*facet_component)
         {
             if (wrbuf_len(facet_wrbuf))
                 wrbuf_puts(facet_wrbuf, " ");
             wrbuf_puts(facet_wrbuf, facet_component);
         }
+        display_component = pp2_get_display(prt);
+        if (display_component)
+        {
+            if (wrbuf_len(display_wrbuf))
+                wrbuf_puts(display_wrbuf, " ");
+            wrbuf_puts(display_wrbuf, display_component);
+        }
     }
     pp2_relevance_token_destroy(prt);
-    
+ 
+    yaz_log(YLOG_LOG, "facet norm=%s", wrbuf_cstr(facet_wrbuf));
+    yaz_log(YLOG_LOG, "facet display=%s", wrbuf_cstr(display_wrbuf));
     if (wrbuf_len(facet_wrbuf))
     {
         int i;
@@ -229,10 +240,11 @@ void add_facet(struct session *s, const char *type, const char *value, int count
 #if 0
         session_log(s, YLOG_DEBUG, "Facets for %s: %s norm:%s (%d)", type, value, wrbuf_cstr(facet_wrbuf), count);
 #endif
-        termlist_insert(s->termlists[i].termlist, wrbuf_cstr(facet_wrbuf),
-                        count);
+        termlist_insert(s->termlists[i].termlist, wrbuf_cstr(display_wrbuf),
+                        wrbuf_cstr(facet_wrbuf), count);
     }
     wrbuf_destroy(facet_wrbuf);
+    wrbuf_destroy(display_wrbuf);
 }
 
 static xmlDoc *record_to_xml(struct session *se,

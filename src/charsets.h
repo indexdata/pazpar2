@@ -47,6 +47,7 @@ void pp2_relevance_first(pp2_relevance_token_t prt,
 void pp2_relevance_token_destroy(pp2_relevance_token_t prt);
 const char *pp2_relevance_token_next(pp2_relevance_token_t prt);
 const char *pp2_get_sort(pp2_relevance_token_t prt);
+const char *pp2_get_display(pp2_relevance_token_t prt);
 
 #if 0
 typedef int pp2_charset_normalize_t(pp2_charset_t pct,
