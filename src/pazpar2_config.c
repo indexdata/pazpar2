@@ -263,16 +263,6 @@ void service_incref(struct conf_service *service)
 static int parse_metadata(struct conf_service *service, xmlNode *n,
                           int *md_node, int *sk_node)
 {
-    xmlChar *xml_name = xmlGetProp(n, (xmlChar *) "name");
-    xmlChar *xml_brief = xmlGetProp(n, (xmlChar *) "brief");
-    xmlChar *xml_sortkey = xmlGetProp(n, (xmlChar *) "sortkey");
-    xmlChar *xml_merge = xmlGetProp(n, (xmlChar *) "merge");
-    xmlChar *xml_type = xmlGetProp(n, (xmlChar *) "type");
-    xmlChar *xml_termlist = xmlGetProp(n, (xmlChar *) "termlist");
-    xmlChar *xml_rank = xmlGetProp(n, (xmlChar *) "rank");
-    xmlChar *xml_setting = xmlGetProp(n, (xmlChar *) "setting");
-    xmlChar *xml_mergekey = xmlGetProp(n, (xmlChar *) "mergekey");
-    
     enum conf_metadata_type type = Metadata_type_generic;
     enum conf_metadata_merge merge = Metadata_merge_no;
     enum conf_setting_type setting = Metadata_setting_no;
@@ -282,6 +272,51 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     int termlist = 0;
     int rank = 0;
     int sortkey_offset = 0;
+    xmlChar *xml_name = 0;
+    xmlChar *xml_brief = 0;
+    xmlChar *xml_sortkey = 0;
+    xmlChar *xml_merge = 0;
+    xmlChar *xml_type = 0;
+    xmlChar *xml_termlist = 0;
+    xmlChar *xml_rank = 0;
+    xmlChar *xml_setting = 0;
+    xmlChar *xml_mergekey = 0;
+    struct _xmlAttr *attr;
+    for (attr = n->properties; attr; attr = attr->next)
+    {
+        if (!xmlStrcmp(attr->name, BAD_CAST "name") &&
+            attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_name = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "brief") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_brief = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "sortkey") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_sortkey = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "merge") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_merge = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "type") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_type = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "termlist") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_termlist = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "rank") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_rank = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "setting") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_setting = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "mergekey") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_mergekey = attr->children->content;
+        else
+        {
+            yaz_log(YLOG_FATAL, "Unknown metadata attribute '%s'", attr->name);
+            return -1;
+        }
+    }
     
     // now do the parsing logic
     if (!xml_name)
@@ -299,8 +334,6 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    else
-        brief = 0;
     
     if (xml_termlist)
     {
@@ -312,14 +345,10 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    else
-        termlist = 0;
     
     if (xml_rank)
         rank = atoi((const char *) xml_rank);
-    else
-        rank = 0;
-    
+
     if (xml_type)
     {
         if (!strcmp((const char *) xml_type, "generic"))
@@ -335,8 +364,6 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    else
-        type = Metadata_type_generic;
     
     if (xml_merge)
     {
@@ -357,8 +384,6 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    else
-        merge = Metadata_merge_no;
     
     if (xml_setting)
     {
@@ -399,8 +424,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
         sortkey_offset = *sk_node;
         
         conf_service_add_sortkey(service, *sk_node,
-                                 (const char *) xml_name, sk_type);
-        
+                                 (const char *) xml_name, sk_type);        
         (*sk_node)++;
     }
     else
@@ -420,24 +444,13 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    
-    
+
     // metadata known, assign values
     conf_service_add_metadata(service, *md_node,
                               (const char *) xml_name,
                               type, merge, setting,
                               brief, termlist, rank, sortkey_offset,
                               mergekey_type);
-    
-    xmlFree(xml_name);
-    xmlFree(xml_brief);
-    xmlFree(xml_sortkey);
-    xmlFree(xml_merge);
-    xmlFree(xml_type);
-    xmlFree(xml_termlist);
-    xmlFree(xml_rank);
-    xmlFree(xml_setting);
-    xmlFree(xml_mergekey);
     (*md_node)++;
     return 0;
 }
