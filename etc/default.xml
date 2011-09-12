@@ -90,6 +90,7 @@
   <metadata name="volume-number"/>
   <metadata name="issue-date"/>
   <metadata name="issue-number"/>
+  <metadata name="pages-number"/>
   
   <metadata name="url_recipe" setting="postproc" brief="yes" merge="no"/>
   <metadata name="open_url_resolver" setting="parameter" merge="no"/>
