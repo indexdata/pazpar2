@@ -1,3 +1,11 @@
+--- 1.6.0 2011/09/12
+
+Modify the behavior for the limit parameter (first defined in 1.5.7).
+Mapping of limit searches are now defined by the new configuration item
+pz:limitmap. Fix a dead-lock problem with the limit parameter.
+
+Extend tmarc.xsl to extract 773$g data (OpenURL).
+
 --- 1.5.7 2011/08/19
 
 ICU default maps remove backquote (`).
