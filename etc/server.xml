@@ -6,30 +6,29 @@
     <listen port="8004"/>
 
     <!-- character set mapping.. This can be overriden in services -->
-    <relevance>
-      <icu_chain id="relevance" locale="en">
-	<transform rule="[:Control:] Any-Remove"/>
-	<tokenize rule="l"/>
-	<transform rule="[[:WhiteSpace:][:Punctuation:]`] Remove"/>
-	<casemap rule="l"/>
-      </icu_chain>
-    </relevance>
+    <icu_chain id="relevance" locale="en">
+      <transform rule="[:Control:] Any-Remove"/>
+      <tokenize rule="l"/>
+      <transform rule="[[:WhiteSpace:][:Punctuation:]`] Remove"/>
+      <casemap rule="l"/>
+    </icu_chain>
     
-    <sort>
-      <icu_chain id="sort" locale="en">
-	<transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]`] Remove"/>
-	<casemap rule="l"/>
-      </icu_chain>
-    </sort>
+    <icu_chain id="sort" locale="en">
+      <transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]`] Remove"/>
+      <casemap rule="l"/>
+    </icu_chain>
     
-    <mergekey>
-      <icu_chain id="mergekey" locale="en">
-	<tokenize rule="l"/>
-	<transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]`] Remove"/>
-	<casemap rule="l"/>
-      </icu_chain>
-    </mergekey>
+    <icu_chain id="mergekey" locale="en">
+      <tokenize rule="l"/>
+      <transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]`] Remove"/>
+      <casemap rule="l"/>
+    </icu_chain>
 
+    <icu_chain id="facet" locale="en">
+      <display/>
+      <transform rule="Title"/>
+    </icu_chain>
+    
     <include src="services-enabled/*.xml"/>
 
   </server>
