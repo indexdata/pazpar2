@@ -6,8 +6,8 @@
 
 <md-title>How to program a computer</md-title>
 <md-author>Jack Collins</md-author>
-<md-lccn>11224467</md-lccn>
-<md-lccn>11224466</md-lccn><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-lccn>11224466</md-lccn>
+<md-lccn>11224467</md-lccn><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
 <md-title>How to program a computer</md-title>
 <md-author>Jack Collins</md-author>
 <md-id>11224467</md-id>

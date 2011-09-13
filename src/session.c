@@ -1453,16 +1453,15 @@ static int ingest_to_cluster(struct client *cl,
             // assign cluster or record based on merge action
             if (ser_md->merge == Metadata_merge_unique)
             {
-                struct record_metadata *mnode;
-                for (mnode = *wheretoput; mnode; mnode = mnode->next)
-                    if (!strcmp((const char *) mnode->data.text.disp, 
+                while (*wheretoput)
+                {
+                    if (!strcmp((const char *) (*wheretoput)->data.text.disp, 
                                 rec_md->data.text.disp))
                         break;
-                if (!mnode)
-                {
-                    rec_md->next = *wheretoput;
-                    *wheretoput = rec_md;
+                    wheretoput = &(*wheretoput)->next;
                 }
+                if (!*wheretoput)
+                    *wheretoput = rec_md;
             }
             else if (ser_md->merge == Metadata_merge_longest)
             {
@@ -1507,7 +1506,8 @@ static int ingest_to_cluster(struct client *cl,
             }
             else if (ser_md->merge == Metadata_merge_all)
             {
-                rec_md->next = *wheretoput;
+                while (*wheretoput)
+                    wheretoput = &(*wheretoput)->next;
                 *wheretoput = rec_md;
             }
             else if (ser_md->merge == Metadata_merge_range)
