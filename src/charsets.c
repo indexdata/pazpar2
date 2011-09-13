@@ -171,6 +171,7 @@ int pp2_charset_fact_define(pp2_charset_fact_t pft,
         default_id = (const char *) id;
     if (!default_id)
     {
+        yaz_log(YLOG_WARN, "Missing id for icu_chain");
         pp2_charset_destroy(pct);
         return -1;
     }
