@@ -912,6 +912,7 @@ struct conf_config *config_create(const char *fname, int verbose)
     config->servers = 0;
     config->no_threads = 0;
     config->iochan_man = 0;
+    config->database_hosts = 0;
 
     config->confdir = wrbuf_alloc();
     if ((p = strrchr(fname, 
