@@ -126,10 +126,7 @@ static struct conf_service *service_init(struct conf_server *server,
     service->z3950_session_timeout = 180;
     service->z3950_operation_timeout = 30;
 
-    service->relevance_pct = 0;
-    service->sort_pct = 0;
-    service->mergekey_pct = 0;
-    service->facet_pct = 0;
+    service->charsets = 0;
 
     service->id = service_id ? nmem_strdup(nmem, service_id) : 0;
     service->num_metadata = num_metadata;
@@ -246,10 +243,7 @@ void service_destroy(struct conf_service *service)
     {
         if (!pazpar2_decref(&service->ref_count, service->mutex))
         {
-            pp2_charset_destroy(service->relevance_pct);
-            pp2_charset_destroy(service->sort_pct);
-            pp2_charset_destroy(service->mergekey_pct);
-            pp2_charset_destroy(service->facet_pct);
+            pp2_charset_fact_destroy(service->charsets);
             yaz_mutex_destroy(&service->mutex);
             nmem_destroy(service->nmem);
         }
@@ -531,60 +525,29 @@ static struct conf_service *service_create_static(struct conf_server *server,
         }
         else if (!strcmp((const char *) n->name, "settings"))
             got_settings++;
-        else if (!strcmp((const char *) n->name, "relevance"))
+        else if (!strcmp((const char *) n->name, "icu_chain"))
         {
-            if (service->relevance_pct)
+            if (!service->charsets)
+                service->charsets = pp2_charset_fact_create();
+            if (pp2_charset_fact_define(service->charsets, n, 0))
             {
-                yaz_log(YLOG_LOG, "relevance may not repeat in service");
+                yaz_log(YLOG_FATAL, "ICU chain definition error");
                 return 0;
-            }
-            else
-            {
-                service->relevance_pct = pp2_charset_create_xml(n);
-                if (!service->relevance_pct)
-                    return 0;
             }
         }
-        else if (!strcmp((const char *) n->name, "sort"))
+        else if (!strcmp((const char *) n->name, "relevance")
+                 || !strcmp((const char *) n->name, "sort")
+                 || !strcmp((const char *) n->name, "mergekey")
+                 || !strcmp((const char *) n->name, "facet"))
+
         {
-            if (service->sort_pct)
+            if (!service->charsets)
+                service->charsets = pp2_charset_fact_create();
+            if (pp2_charset_fact_define(service->charsets,
+                                        n->children, (const char *) n->name))
             {
-                yaz_log(YLOG_LOG, "sort may not repeat in service");
+                yaz_log(YLOG_FATAL, "ICU chain definition error");
                 return 0;
-            }
-            else
-            {
-                service->sort_pct = pp2_charset_create_xml(n);
-                if (!service->sort_pct)
-                    return 0;
-            }
-        }
-        else if (!strcmp((const char *) n->name, "mergekey"))
-        {
-            if (service->mergekey_pct)
-            {
-                yaz_log(YLOG_LOG, "mergekey may not repeat in service");
-                return 0;
-            }
-            else
-            {
-                service->mergekey_pct = pp2_charset_create_xml(n);
-                if (!service->mergekey_pct)
-                    return 0;
-            }
-        }
-        else if (!strcmp((const char *) n->name, "facet"))
-        {
-            if (service->facet_pct)
-            {
-                yaz_log(YLOG_LOG, "facet may not repeat in service");
-                return 0;
-            }
-            else
-            {
-                service->facet_pct = pp2_charset_create_xml(n);
-                if (!service->facet_pct)
-                    return 0;
             }
         }
         else if (!strcmp((const char *) n->name, (const char *) "metadata"))
@@ -675,48 +638,17 @@ static void inherit_server_settings(struct conf_service *s)
     
     /* use relevance/sort/mergekey/facet from server if not defined
        for this service.. */
-    if (!s->relevance_pct)
+    if (!s->charsets)
     {
-        if (server->relevance_pct)
+        if (server->charsets)
         {
-            s->relevance_pct = server->relevance_pct;
-            pp2_charset_incref(s->relevance_pct);
+            s->charsets = server->charsets;
+            pp2_charset_fact_incref(s->charsets);
         }
         else
-            s->relevance_pct = pp2_charset_create_a_to_z();
-    }
-    
-    if (!s->sort_pct)
-    {
-        if (server->sort_pct)
         {
-            s->sort_pct = server->sort_pct;
-            pp2_charset_incref(s->sort_pct);
+            s->charsets = pp2_charset_fact_create();
         }
-        else
-            s->sort_pct = pp2_charset_create_a_to_z();
-    }
-    
-    if (!s->mergekey_pct)
-    {
-        if (server->mergekey_pct)
-        {
-            s->mergekey_pct = server->mergekey_pct;
-            pp2_charset_incref(s->mergekey_pct);
-        }
-        else
-            s->mergekey_pct = pp2_charset_create_a_to_z();
-    }
-
-    if (!s->facet_pct)
-    {
-        if (server->facet_pct)
-        {
-            s->facet_pct = server->facet_pct;
-            pp2_charset_incref(s->facet_pct);
-        }
-        else
-            s->facet_pct = pp2_charset_create(0);
     }
 }
 
@@ -750,10 +682,7 @@ static struct conf_server *server_create(struct conf_config *config,
     server->service = 0;
     server->config = config;
     server->next = 0;
-    server->relevance_pct = 0;
-    server->sort_pct = 0;
-    server->mergekey_pct = 0;
-    server->facet_pct = 0;
+    server->charsets = 0;
     server->server_settings = 0;
     server->http_server = 0;
     server->iochan_man = 0;
@@ -806,30 +735,30 @@ static struct conf_server *server_create(struct conf_config *config,
             if (!(server->server_settings = parse_settings(config, nmem, n)))
                 return 0;
         }
-        else if (!strcmp((const char *) n->name, "relevance"))
+        else if (!strcmp((const char *) n->name, "icu_chain"))
         {
-            server->relevance_pct = pp2_charset_create_xml(n);
-            if (!server->relevance_pct)
+            if (!server->charsets)
+                server->charsets = pp2_charset_fact_create();
+            if (pp2_charset_fact_define(server->charsets, n, 0))
+            {
+                yaz_log(YLOG_FATAL, "ICU chain definition error");
                 return 0;
+            }
         }
-        else if (!strcmp((const char *) n->name, "sort"))
+        else if (!strcmp((const char *) n->name, "relevance")
+                 || !strcmp((const char *) n->name, "sort")
+                 || !strcmp((const char *) n->name, "mergekey")
+                 || !strcmp((const char *) n->name, "facet"))
         {
-            server->sort_pct = pp2_charset_create_xml(n);
-            if (!server->sort_pct)
+            if (!server->charsets)
+                server->charsets = pp2_charset_fact_create();
+            if (pp2_charset_fact_define(server->charsets,
+                                        n->children, (const char *) n->name))
+            {
+                yaz_log(YLOG_FATAL, "ICU chain definition error");
                 return 0;
-        }
-        else if (!strcmp((const char *) n->name, "mergekey"))
-        {
-            server->mergekey_pct = pp2_charset_create_xml(n);
-            if (!server->mergekey_pct)
-                return 0;
-        }
-        else if (!strcmp((const char *) n->name, "facet"))
-        {
-            server->facet_pct = pp2_charset_create_xml(n);
-            if (!server->facet_pct)
-                return 0;
-        }
+            }            
+        }            
         else if (!strcmp((const char *) n->name, "service"))
         {
             char *service_id = (char *)
@@ -1033,10 +962,7 @@ void server_destroy(struct conf_server *server)
         service_destroy(s);
         s = s_next;
     }
-    pp2_charset_destroy(server->relevance_pct);
-    pp2_charset_destroy(server->sort_pct);
-    pp2_charset_destroy(server->mergekey_pct);
-    pp2_charset_destroy(server->facet_pct);
+    pp2_charset_fact_destroy(server->charsets);
     yaz_log(YLOG_LOG, "server_destroy server=%p", server);
     http_server_destroy(server->http_server);
 }

@@ -40,12 +40,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/icu.h>
 #endif
 
+typedef struct pp2_charset_s *pp2_charset_t;
+static pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node);
+static pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn);
+static pp2_charset_t pp2_charset_create_a_to_z(void);
+static void pp2_charset_destroy(pp2_charset_t pct);
+static pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct);
+
 /* charset handle */
 struct pp2_charset_s {
     const char *(*token_next_handler)(pp2_relevance_token_t prt);
     const char *(*get_sort_handler)(pp2_relevance_token_t prt);
     const char *(*get_display_handler)(pp2_relevance_token_t prt);
-    int ref_count;
 #if YAZ_HAVE_ICU
     struct icu_chain * icu_chn;
     UErrorCode icu_sts;
@@ -75,14 +81,114 @@ struct pp2_relevance_token_s {
 #endif
 };
 
+struct pp2_charset_fact_s {
+    struct pp2_charset_entry *list;
+    int ref_count;
+};
+
+struct pp2_charset_entry {
+    struct pp2_charset_entry *next;
+    pp2_charset_t pct;
+    char *name;
+};
+
+
+static int pp2_charset_fact_add(pp2_charset_fact_t pft,
+                                pp2_charset_t pct, const char *default_id);
+
+pp2_charset_fact_t pp2_charset_fact_create(void)
+{
+    pp2_charset_fact_t pft = xmalloc(sizeof(*pft));
+    pft->list = 0;
+    pft->ref_count = 1;
+
+    pp2_charset_fact_add(pft, pp2_charset_create_a_to_z(), "relevance");
+    pp2_charset_fact_add(pft, pp2_charset_create_a_to_z(), "sort");
+    pp2_charset_fact_add(pft, pp2_charset_create_a_to_z(), "mergekey");
+    pp2_charset_fact_add(pft, pp2_charset_create(0), "facet");
+    return pft;
+}
+
+void pp2_charset_fact_destroy(pp2_charset_fact_t pft)
+{
+    if (pft)
+    {
+        assert(pft->ref_count >= 1);
+        --(pft->ref_count);
+        if (pft->ref_count == 0)
+        {
+            struct pp2_charset_entry *pce = pft->list;
+            while (pce)
+            {
+                struct pp2_charset_entry *next = pce->next;
+                pp2_charset_destroy(pce->pct);
+                xfree(pce->name);
+                xfree(pce);
+                pce = next;
+            }
+            xfree(pft);
+        }
+    }
+}
+
+int pp2_charset_fact_add(pp2_charset_fact_t pft,
+                         pp2_charset_t pct, const char *default_id)
+{
+    struct pp2_charset_entry *pce;
+
+    for (pce = pft->list; pce; pce = pce->next)
+        if (!strcmp(default_id, pce->name))
+            break;
+
+    if (!pce)
+    {
+        pce = xmalloc(sizeof(*pce));
+        pce->name = xstrdup(default_id);
+        pce->next = pft->list;
+        pft->list = pce;
+    }
+    else
+    {
+        pp2_charset_destroy(pce->pct);
+    }
+    pce->pct = pct;
+    return 0;
+}
+
+int pp2_charset_fact_define(pp2_charset_fact_t pft,
+                            xmlNode *xml_node, const char *default_id)
+{
+    int r;
+    pp2_charset_t pct;
+    xmlChar *id;
+
+    assert(xml_node);
+    pct = pp2_charset_create_xml(xml_node);
+    if (!pct)
+        return -1;
+    id = xmlGetProp(xml_node, (xmlChar*) "id");
+    if (id)
+        default_id = (const char *) id;
+    if (!default_id)
+    {
+        pp2_charset_destroy(pct);
+        return -1;
+    }
+    r = pp2_charset_fact_add(pft, pct, default_id);
+    xmlFree(id);
+    return r;
+}
+
+void pp2_charset_fact_incref(pp2_charset_fact_t pft)
+{
+    (pft->ref_count)++;
+}
 
 pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
 {
 #if YAZ_HAVE_ICU
     UErrorCode status = U_ZERO_ERROR;
     struct icu_chain *chain = 0;
-    if (xml_node)
-        xml_node = xml_node->children;
     while (xml_node && xml_node->type != XML_ELEMENT_NODE)
         xml_node = xml_node->next;
     chain = icu_chain_xml_config(xml_node, 1, &status);
@@ -108,11 +214,6 @@ pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
 #endif // YAZ_HAVE_ICU
 }
 
-void pp2_charset_incref(pp2_charset_t pct)
-{
-    (pct->ref_count)++;
-}
-
 pp2_charset_t pp2_charset_create_a_to_z(void)
 {
     pp2_charset_t pct = pp2_charset_create(0);
@@ -127,7 +228,6 @@ pp2_charset_t pp2_charset_create(struct icu_chain *icu_chn)
     pct->token_next_handler = pp2_relevance_token_null;
     pct->get_sort_handler  = pp2_get_sort_ascii;
     pct->get_display_handler  = pp2_get_display_ascii;
-    pct->ref_count = 1;
 #if YAZ_HAVE_ICU
     pct->icu_chn = 0;
     if (icu_chn)
@@ -144,18 +244,20 @@ pp2_charset_t pp2_charset_create(struct icu_chain *icu_chn)
 
 void pp2_charset_destroy(pp2_charset_t pct)
 {
-    if (pct)
-    {
-        assert(pct->ref_count >= 1);
-        --(pct->ref_count);
-        if (pct->ref_count == 0)
-        {
 #if YAZ_HAVE_ICU
-            icu_chain_destroy(pct->icu_chn);
+    icu_chain_destroy(pct->icu_chn);
 #endif
-            xfree(pct);
-        }
-    }
+    xfree(pct);
+}
+
+pp2_relevance_token_t pp2_relevance_create(pp2_charset_fact_t pft,
+                                           const char *id)
+{
+    struct pp2_charset_entry *pce;
+    for (pce = pft->list; pce; pce = pce->next)
+        if (!strcmp(id, pce->name))
+            return pp2_relevance_tokenize(pce->pct);
+    return 0;
 }
 
 pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct)

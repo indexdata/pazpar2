@@ -117,10 +117,7 @@ struct conf_service
 
     int ref_count;
     /* duplicated from conf_server */
-    pp2_charset_t relevance_pct;
-    pp2_charset_t sort_pct;
-    pp2_charset_t mergekey_pct;
-    pp2_charset_t facet_pct;
+    pp2_charset_fact_t charsets;
 
     struct database *databases;
     struct conf_server *server;
@@ -140,10 +137,7 @@ struct conf_server
     char *server_settings;
     char *server_id;
 
-    pp2_charset_t relevance_pct;
-    pp2_charset_t sort_pct;
-    pp2_charset_t mergekey_pct;
-    pp2_charset_t facet_pct;
+    pp2_charset_fact_t charsets;
 
     struct conf_service *service;
     struct conf_server *next;

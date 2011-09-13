@@ -200,8 +200,17 @@ void add_facet(struct session *s, const char *type, const char *value, int count
             icu_chain_id = (service->metadata + i)->icu_chain;
     yaz_log(YLOG_LOG, "icu_chain id=%s", icu_chain_id ? icu_chain_id : "null");
 
-    prt = pp2_relevance_tokenize(service->facet_pct);
-    
+    if (!icu_chain_id)
+        icu_chain_id = "facet";
+    prt = pp2_relevance_create(service->charsets, icu_chain_id);
+    if (!prt)
+    {
+        yaz_log(YLOG_FATAL, "Unknown ICU chain '%s' for facet of type '%s'",
+                icu_chain_id, type);
+        wrbuf_destroy(facet_wrbuf);
+        wrbuf_destroy(display_wrbuf);
+        return;
+    }
     pp2_relevance_first(prt, value, 0);
     while ((facet_component = pp2_relevance_token_next(prt)))
     {
@@ -236,6 +245,7 @@ void add_facet(struct session *s, const char *type, const char *value, int count
             {
                 session_log(s, YLOG_FATAL, "Too many termlists");
                 wrbuf_destroy(facet_wrbuf);
+                wrbuf_destroy(display_wrbuf);
                 return;
             }
             
@@ -1126,7 +1136,7 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
                 {
                     const char *norm_str;
                     pp2_relevance_token_t prt =
-                        pp2_relevance_tokenize(service->mergekey_pct);
+                        pp2_relevance_create(service->charsets, "mergekey");
                     
                     pp2_relevance_first(prt, (const char *) value, 0);
                     if (wrbuf_len(norm_wr) > 0)
@@ -1165,7 +1175,7 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     {
         const char *norm_str;
         pp2_relevance_token_t prt =
-            pp2_relevance_tokenize(service->mergekey_pct);
+            pp2_relevance_create(service->charsets, "mergekey");
 
         pp2_relevance_first(prt, (const char *) mergekey, 0);
         while ((norm_str = pp2_relevance_token_next(prt)))
@@ -1472,7 +1482,7 @@ static int ingest_to_cluster(struct client *cl,
                                 nmem_malloc(se->nmem, 
                                             sizeof(union data_types));
                          
-                        prt = pp2_relevance_tokenize(service->sort_pct);
+                        prt = pp2_relevance_create(service->charsets, "sort");
 
                         pp2_relevance_first(prt, rec_md->data.text.disp,
                                             skip_article);

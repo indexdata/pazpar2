@@ -120,7 +120,7 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
     cluster->term_frequency_vec[0] += length;
 }
 
-struct relevance *relevance_create(pp2_charset_t pct,
+struct relevance *relevance_create(pp2_charset_fact_t pft,
                                    NMEM nmem, const char **terms)
 {
     struct relevance *res = nmem_malloc(nmem, sizeof(struct relevance));
@@ -133,7 +133,7 @@ struct relevance *relevance_create(pp2_charset_t pct,
     res->doc_frequency_vec = nmem_malloc(nmem, res->vec_len * sizeof(int));
     memset(res->doc_frequency_vec, 0, res->vec_len * sizeof(int));
     res->nmem = nmem;
-    res->prt = pp2_relevance_tokenize(pct);
+    res->prt = pp2_relevance_create(pft, "relevance");
     res->entries = build_word_entries(res->prt, nmem, terms);
     return res;
 }

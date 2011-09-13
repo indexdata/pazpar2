@@ -1085,7 +1085,7 @@ int client_parse_query(struct client *cl, const char *query,
         char *p[512];
         extract_terms(se->nmem, cn, p);
         se->relevance = relevance_create(
-            se->service->relevance_pct,
+            se->service->charsets,
             se->nmem, (const char **) p);
     }
 

@@ -27,7 +27,7 @@ struct relevance;
 struct record_cluster;
 struct reclist;
 
-struct relevance *relevance_create(pp2_charset_t pct,
+struct relevance *relevance_create(pp2_charset_fact_t pft,
                                    NMEM nmem, const char **terms);
 void relevance_destroy(struct relevance **rp);
 void relevance_newrec(struct relevance *r, struct record_cluster *cluster);
