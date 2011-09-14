@@ -33,7 +33,7 @@ struct relevance
     int *doc_frequency_vec;
     int vec_len;
     struct word_entry *entries;
-    pp2_relevance_token_t prt;
+    pp2_charset_token_t prt;
     NMEM nmem;
 };
 
@@ -68,7 +68,7 @@ int word_entry_match(struct word_entry *entries, const char *norm_str)
     return 0;
 }
 
-static struct word_entry *build_word_entries(pp2_relevance_token_t prt,
+static struct word_entry *build_word_entries(pp2_charset_token_t prt,
                                              NMEM nmem,
                                              const char **terms)
 {
@@ -80,8 +80,8 @@ static struct word_entry *build_word_entries(pp2_relevance_token_t prt,
     {
         const char *norm_str;
 
-        pp2_relevance_first(prt, *p, 0);
-        while ((norm_str = pp2_relevance_token_next(prt)))
+        pp2_charset_token_first(prt, *p, 0);
+        while ((norm_str = pp2_charset_token_next(prt)))
             add_word_entry(nmem, &entries, norm_str, termno);
         termno++;
     }
@@ -95,11 +95,11 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
     const char *norm_str;
     int i, length = 0;
 
-    pp2_relevance_first(r->prt, words, 0);
+    pp2_charset_token_first(r->prt, words, 0);
     for (i = 1; i < r->vec_len; i++)
         mult[i] = 0;
 
-    while ((norm_str = pp2_relevance_token_next(r->prt)))
+    while ((norm_str = pp2_charset_token_next(r->prt)))
     {
         int res = word_entry_match(r->entries, norm_str);
         if (res)
@@ -133,7 +133,7 @@ struct relevance *relevance_create(pp2_charset_fact_t pft,
     res->doc_frequency_vec = nmem_malloc(nmem, res->vec_len * sizeof(int));
     memset(res->doc_frequency_vec, 0, res->vec_len * sizeof(int));
     res->nmem = nmem;
-    res->prt = pp2_relevance_create(pft, "relevance");
+    res->prt = pp2_charset_token_create(pft, "relevance");
     res->entries = build_word_entries(res->prt, nmem, terms);
     return res;
 }
@@ -142,7 +142,7 @@ void relevance_destroy(struct relevance **rp)
 {
     if (*rp)
     {
-        pp2_relevance_token_destroy((*rp)->prt);
+        pp2_charset_token_destroy((*rp)->prt);
         *rp = 0;
     }
 }

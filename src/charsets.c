@@ -45,32 +45,32 @@ static pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node);
 static pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn);
 static pp2_charset_t pp2_charset_create_a_to_z(void);
 static void pp2_charset_destroy(pp2_charset_t pct);
-static pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct);
+static pp2_charset_token_t pp2_charset_tokenize(pp2_charset_t pct);
 
 /* charset handle */
 struct pp2_charset_s {
-    const char *(*token_next_handler)(pp2_relevance_token_t prt);
-    const char *(*get_sort_handler)(pp2_relevance_token_t prt);
-    const char *(*get_display_handler)(pp2_relevance_token_t prt);
+    const char *(*token_next_handler)(pp2_charset_token_t prt);
+    const char *(*get_sort_handler)(pp2_charset_token_t prt);
+    const char *(*get_display_handler)(pp2_charset_token_t prt);
 #if YAZ_HAVE_ICU
     struct icu_chain * icu_chn;
     UErrorCode icu_sts;
 #endif
 };
 
-static const char *pp2_relevance_token_null(pp2_relevance_token_t prt);
-static const char *pp2_relevance_token_a_to_z(pp2_relevance_token_t prt);
-static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt);
-static const char *pp2_get_display_ascii(pp2_relevance_token_t prt);
+static const char *pp2_charset_token_null(pp2_charset_token_t prt);
+static const char *pp2_charset_token_a_to_z(pp2_charset_token_t prt);
+static const char *pp2_get_sort_ascii(pp2_charset_token_t prt);
+static const char *pp2_get_display_ascii(pp2_charset_token_t prt);
 
 #if YAZ_HAVE_ICU
-static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt);
-static const char *pp2_get_sort_icu(pp2_relevance_token_t prt);
-static const char *pp2_get_display_icu(pp2_relevance_token_t prt);
+static const char *pp2_charset_token_icu(pp2_charset_token_t prt);
+static const char *pp2_get_sort_icu(pp2_charset_token_t prt);
+static const char *pp2_get_display_icu(pp2_charset_token_t prt);
 #endif
 
 /* tokenzier handle */
-struct pp2_relevance_token_s {
+struct pp2_charset_token_s {
     const char *cp;     /* unnormalized buffer we're tokenizing */
     const char *last_cp;  /* pointer to last token we're dealing with */
     pp2_charset_t pct;  /* our main charset handle (type+config) */
@@ -218,7 +218,7 @@ pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
 pp2_charset_t pp2_charset_create_a_to_z(void)
 {
     pp2_charset_t pct = pp2_charset_create(0);
-    pct->token_next_handler = pp2_relevance_token_a_to_z;
+    pct->token_next_handler = pp2_charset_token_a_to_z;
     return pct;
 }
 
@@ -226,7 +226,7 @@ pp2_charset_t pp2_charset_create(struct icu_chain *icu_chn)
 {
     pp2_charset_t pct = xmalloc(sizeof(*pct));
 
-    pct->token_next_handler = pp2_relevance_token_null;
+    pct->token_next_handler = pp2_charset_token_null;
     pct->get_sort_handler  = pp2_get_sort_ascii;
     pct->get_display_handler  = pp2_get_display_ascii;
 #if YAZ_HAVE_ICU
@@ -235,7 +235,7 @@ pp2_charset_t pp2_charset_create(struct icu_chain *icu_chn)
     {
         pct->icu_chn = icu_chn;
         pct->icu_sts = U_ZERO_ERROR;
-        pct->token_next_handler = pp2_relevance_token_icu;
+        pct->token_next_handler = pp2_charset_token_icu;
         pct->get_sort_handler = pp2_get_sort_icu;
         pct->get_display_handler = pp2_get_display_icu;
     }
@@ -251,19 +251,19 @@ void pp2_charset_destroy(pp2_charset_t pct)
     xfree(pct);
 }
 
-pp2_relevance_token_t pp2_relevance_create(pp2_charset_fact_t pft,
-                                           const char *id)
+pp2_charset_token_t pp2_charset_token_create(pp2_charset_fact_t pft,
+                                               const char *id)
 {
     struct pp2_charset_entry *pce;
     for (pce = pft->list; pce; pce = pce->next)
         if (!strcmp(id, pce->name))
-            return pp2_relevance_tokenize(pce->pct);
+            return pp2_charset_tokenize(pce->pct);
     return 0;
 }
 
-pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct)
+pp2_charset_token_t pp2_charset_tokenize(pp2_charset_t pct)
 {
-    pp2_relevance_token_t prt = xmalloc(sizeof(*prt));
+    pp2_charset_token_t prt = xmalloc(sizeof(*prt));
 
     assert(pct);
 
@@ -281,9 +281,8 @@ pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct)
     return prt;
 }
 
-void pp2_relevance_first(pp2_relevance_token_t prt,
-                         const char *buf,
-                         int skip_article)
+void pp2_charset_token_first(pp2_charset_token_t prt,
+                             const char *buf, int skip_article)
 { 
     if (skip_article)
     {
@@ -313,7 +312,7 @@ void pp2_relevance_first(pp2_relevance_token_t prt,
 #endif // YAZ_HAVE_ICU
 }
 
-void pp2_relevance_token_destroy(pp2_relevance_token_t prt)
+void pp2_charset_token_destroy(pp2_charset_token_t prt)
 {
     assert(prt);
 #if YAZ_HAVE_ICU
@@ -327,18 +326,18 @@ void pp2_relevance_token_destroy(pp2_relevance_token_t prt)
     xfree(prt);
 }
 
-const char *pp2_relevance_token_next(pp2_relevance_token_t prt)
+const char *pp2_charset_token_next(pp2_charset_token_t prt)
 {
     assert(prt);
     return (prt->pct->token_next_handler)(prt);
 }
 
-const char *pp2_get_sort(pp2_relevance_token_t prt)
+const char *pp2_get_sort(pp2_charset_token_t prt)
 {
     return prt->pct->get_sort_handler(prt);
 }
 
-const char *pp2_get_display(pp2_relevance_token_t prt)
+const char *pp2_get_display(pp2_charset_token_t prt)
 {
     return prt->pct->get_display_handler(prt);
 }
@@ -347,7 +346,7 @@ const char *pp2_get_display(pp2_relevance_token_t prt)
 /* original tokenizer with our tokenize interface, but we
    add +1 to ensure no '\0' are in our string (except for EOF)
 */
-static const char *pp2_relevance_token_a_to_z(pp2_relevance_token_t prt)
+static const char *pp2_charset_token_a_to_z(pp2_charset_token_t prt)
 {
     const char *cp = prt->cp;
     int c;
@@ -374,7 +373,7 @@ static const char *pp2_relevance_token_a_to_z(pp2_relevance_token_t prt)
     return wrbuf_cstr(prt->norm_str);
 }
 
-static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt)
+static const char *pp2_get_sort_ascii(pp2_charset_token_t prt)
 {
     if (prt->last_cp == 0)
         return 0;
@@ -391,7 +390,7 @@ static const char *pp2_get_sort_ascii(pp2_relevance_token_t prt)
     }
 }
 
-static const char *pp2_get_display_ascii(pp2_relevance_token_t prt)
+static const char *pp2_get_display_ascii(pp2_charset_token_t prt)
 {
     if (prt->last_cp == 0)
         return 0;
@@ -401,7 +400,7 @@ static const char *pp2_get_display_ascii(pp2_relevance_token_t prt)
     }
 }
 
-static const char *pp2_relevance_token_null(pp2_relevance_token_t prt)
+static const char *pp2_charset_token_null(pp2_charset_token_t prt)
 {
     const char *cp = prt->cp;
 
@@ -413,7 +412,7 @@ static const char *pp2_relevance_token_null(pp2_relevance_token_t prt)
 }
 
 #if YAZ_HAVE_ICU
-static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)
+static const char *pp2_charset_token_icu(pp2_charset_token_t prt)
 {
     if (icu_iter_next(prt->iter))
     {
@@ -422,12 +421,12 @@ static const char *pp2_relevance_token_icu(pp2_relevance_token_t prt)
     return 0;
 }
 
-static const char *pp2_get_sort_icu(pp2_relevance_token_t prt)
+static const char *pp2_get_sort_icu(pp2_charset_token_t prt)
 {
     return icu_iter_get_sortkey(prt->iter);
 }
 
-static const char *pp2_get_display_icu(pp2_relevance_token_t prt)
+static const char *pp2_get_display_icu(pp2_charset_token_t prt)
 {
     return icu_iter_get_display(prt->iter);
 }

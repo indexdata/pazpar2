@@ -27,25 +27,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/wrbuf.h>
 #include <yaz/xmltypes.h>
 
-typedef struct pp2_relevance_token_s *pp2_relevance_token_t;
+typedef struct pp2_charset_token_s *pp2_charset_token_t;
 typedef struct pp2_charset_fact_s *pp2_charset_fact_t;
-
-void pp2_relevance_first(pp2_relevance_token_t prt,
-                         const char *buf,
-                         int skip_article);
-
-void pp2_relevance_token_destroy(pp2_relevance_token_t prt);
-const char *pp2_relevance_token_next(pp2_relevance_token_t prt);
-const char *pp2_get_sort(pp2_relevance_token_t prt);
-const char *pp2_get_display(pp2_relevance_token_t prt);
 
 pp2_charset_fact_t pp2_charset_fact_create(void);
 void pp2_charset_fact_destroy(pp2_charset_fact_t pft);
 int pp2_charset_fact_define(pp2_charset_fact_t pft,
                             xmlNode *xml_node, const char *default_id);
-pp2_relevance_token_t pp2_relevance_create(pp2_charset_fact_t pft,
-                                           const char *id);
 void pp2_charset_fact_incref(pp2_charset_fact_t pft);
+pp2_charset_token_t pp2_charset_token_create(pp2_charset_fact_t pft,
+                                             const char *id);
+
+void pp2_charset_token_first(pp2_charset_token_t prt,
+                             const char *buf,
+                             int skip_article);
+void pp2_charset_token_destroy(pp2_charset_token_t prt);
+const char *pp2_charset_token_next(pp2_charset_token_t prt);
+const char *pp2_get_sort(pp2_charset_token_t prt);
+const char *pp2_get_display(pp2_charset_token_t prt);
+
 #endif
 
 /*
