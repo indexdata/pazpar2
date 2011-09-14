@@ -326,6 +326,17 @@
 	    </para>
 	   </listitem>
 	  </varlistentry>
+
+	  <varlistentry>
+	   <term id="facetrule">facetrule</term>
+	   <listitem>
+	    <para>
+	     Specifies the ICU rule set to be used for normalizing
+	     facets. If facetrule is omitted from metadata, the
+	     rule set 'facet' is used.
+	    </para>
+	   </listitem>
+	  </varlistentry>
 	  
 	  <varlistentry>
 	   <term>setting</term>
@@ -368,8 +379,10 @@
 	  Rule set 'relevance' is used to normalize
 	  terms for relevance ranking. Rule set 'sort' is used to 
 	  normalize terms for sorting. Rule set 'mergekey' is used to
-	  normalize terms for making a mergekey and, finally, 'facet'
-	  is used to normalize facet terms (AKA termlists).
+	  normalize terms for making a mergekey and, finally. Rule set 'facet'
+	  is normally used to normalize facet terms, unless
+	  <xref linkend="facetrule">facetrule</xref> is given for a
+	  metadata field.
 	 </para>
 	 <para>
 	  The icu_chain element must also include a 'locale'
