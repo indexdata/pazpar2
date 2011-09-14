@@ -672,7 +672,9 @@
         </xsl:if>
         <xsl:if test="tmarc:sg">
 	  <xsl:variable name="value">
-	    <xsl:value-of select="*"/>
+            <xsl:for-each select="tmarc:sg">
+              <xsl:value-of select="."/>
+            </xsl:for-each>
 	  </xsl:variable>
           <pz:metadata type="journal-subpart">
             <xsl:value-of select="$value"/>
