@@ -71,7 +71,7 @@ static void conf_metadata_assign(NMEM nmem,
                                  int rank,
                                  int sortkey_offset,
                                  enum conf_metadata_mergekey mt,
-                                 const char *icu_chain)
+                                 const char *facetrule)
 {
     assert(nmem && metadata && name);
     
@@ -91,7 +91,7 @@ static void conf_metadata_assign(NMEM nmem,
     metadata->rank = rank;    
     metadata->sortkey_offset = sortkey_offset;
     metadata->mergekey = mt;
-    metadata->icu_chain = nmem_strdup_null(nmem, icu_chain);
+    metadata->facetrule = nmem_strdup_null(nmem, facetrule);
 }
 
 
@@ -157,7 +157,7 @@ static struct conf_metadata* conf_service_add_metadata(
     int rank,
     int sortkey_offset,
     enum conf_metadata_mergekey mt,
-    const char *icu_chain)
+    const char *facetrule)
 {
     struct conf_metadata * md = 0;
 
@@ -168,7 +168,7 @@ static struct conf_metadata* conf_service_add_metadata(
     md = service->metadata + field_id;
     conf_metadata_assign(service->nmem, md, name, type, merge, setting,
                          brief, termlist, rank, sortkey_offset,
-                         mt, icu_chain);
+                         mt, facetrule);
     return md;
 }
 
@@ -309,7 +309,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
         else if (!xmlStrcmp(attr->name, BAD_CAST "mergekey") &&
                  attr->children && attr->children->type == XML_TEXT_NODE)
             xml_mergekey = attr->children->content;
-        else if (!xmlStrcmp(attr->name, BAD_CAST "icu_chain") &&
+        else if (!xmlStrcmp(attr->name, BAD_CAST "facetrule") &&
                  attr->children && attr->children->type == XML_TEXT_NODE)
             xml_icu_chain = attr->children->content;
         else

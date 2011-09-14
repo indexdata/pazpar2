@@ -81,7 +81,7 @@ struct conf_metadata
     enum conf_metadata_merge merge;
     enum conf_setting_type setting; // Value is to be taken from session/db settings?
     enum conf_metadata_mergekey mergekey;
-    char *icu_chain;
+    char *facetrule;
 };
 
 

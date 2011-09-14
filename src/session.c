@@ -197,7 +197,7 @@ void add_facet(struct session *s, const char *type, const char *value, int count
 
     for (i = 0; i < service->num_metadata; i++)
         if (!strcmp((service->metadata + i)->name, type))
-            icu_chain_id = (service->metadata + i)->icu_chain;
+            icu_chain_id = (service->metadata + i)->facetrule;
     yaz_log(YLOG_LOG, "icu_chain id=%s", icu_chain_id ? icu_chain_id : "null");
 
     if (!icu_chain_id)
