@@ -124,15 +124,25 @@
       </para>
      </listitem>
     </varlistentry>
-    
+
     <varlistentry>
-     <term>relevance / sort / mergekey / facet</term>
+     <term>icu_chain</term>
      <listitem>
       <para>
        Specifies character set normalization for relevancy / sorting /
        mergekey and facets - for the server. These definitions serves as
        default for services that don't have these given. For the meaning
-       of these settings refer to the "relevance" element inside service.
+       of these settings refer to the
+       <xref linkend="icu_chain">"icu_chain"</xref> element inside service.
+      </para>
+     </listitem>
+    </varlistentry>
+    
+    <varlistentry>
+     <term>relevance / sort / mergekey / facet</term>
+     <listitem>
+      <para>
+       Obsolete. Use element icu_chain instead.
       </para>
      </listitem>
     </varlistentry>
@@ -346,15 +356,24 @@
 	 
 	</listitem>
        </varlistentry>
-       
+
        <varlistentry>
-	<term>relevance</term>
+	<term id="icu_chain">icu_chain</term>
 	<listitem>
 	 <para>
-	  Specifies ICU tokenization and transformation rules
-	  for tokens that are used in Pazpar2's relevance ranking.
-	  The 'id' attribute is currently not used, and the 'locale'
-	  attribute must be set to one of the locale strings
+	  Specifies a named ICU rule set. The icu_chain element must include
+	  attribute 'id' which specifies the identifier (name) for the ICU
+	  rule set.
+	  Pazpar2 uses the particular rule sets for particular purposes.
+	  Rule set 'relevance' is used to normalize
+	  terms for relevance ranking. Rule set 'sort' is used to 
+	  normalize terms for sorting. Rule set 'mergekey' is used to
+	  normalize terms for making a mergekey and, finally, 'facet'
+	  is used to normalize facet terms (AKA termlists).
+	 </para>
+	 <para>
+	  The icu_chain element must also include a 'locale'
+	  attribute which must be set to one of the locale strings
 	  defined in ICU. The child elements listed below can be
 	  in any order, except the 'index' element which logically
 	  belongs to the end of the list. The stated tokenization,
@@ -411,12 +430,33 @@
        </varlistentry>
        
        <varlistentry>
+	<term>relevance</term>
+	<listitem>
+	 <para>
+	  Specifies the ICU rule set used for relevance ranking.
+	  The child element of 'relevance' must be 'icu_chain' and the
+	  'id' attribute of the icu_chain is ignored. This
+	  definition is obsolete and should be replaced by the equivalent
+	  construct:
+	  <screen>
+	   &lt;icu_chain id="relevance" locale="en">..&lt;icu_chain>
+	  </screen>
+	 </para>
+	</listitem>
+       </varlistentry>
+       
+       <varlistentry>
 	<term>sort</term>
 	<listitem>
 	 <para>
-	  Specifies ICU tokenization and transformation rules
-	  for tokens that are used in Pazpar2's sorting. The contents
-	  is similar to that of <literal>relevance</literal>.
+	  Specifies the ICU rule set used for sorting.
+	  The child element of 'sort' must be 'icu_chain' and the
+	  'id' attribute of the icu_chain is ignored. This
+	  definition is obsolete and should be replaced by the equivalent
+	  construct:
+	  <screen>
+	   &lt;icu_chain id="sort" locale="en">..&lt;icu_chain>
+	  </screen>
 	 </para>
 	</listitem>
        </varlistentry>
@@ -426,8 +466,14 @@
 	<listitem>
 	 <para>
 	  Specifies ICU tokenization and transformation rules
-	  for tokens that are used in Pazpar2's mergekey. The contents
-	  is similar to that of <literal>relevance</literal>.
+	  for tokens that are used in Pazpar2's mergekey. 
+	  The child element of 'mergekey' must be 'icu_chain' and the
+	  'id' attribute of the icu_chain is ignored. This
+	  definition is obsolete and should be replaced by the equivalent
+	  construct:
+	  <screen>
+	   &lt;icu_chain id="mergekey" locale="en">..&lt;icu_chain>
+	  </screen>
 	 </para>
 	</listitem>
        </varlistentry>
@@ -437,8 +483,14 @@
 	<listitem>
 	 <para>
 	  Specifies ICU tokenization and transformation rules
-	  for tokens that are used in Pazpar2's facets. The contents
-	  is similar to that of <literal>relevance</literal>.
+	  for tokens that are used in Pazpar2's facets.
+	  The child element of 'facet' must be 'icu_chain' and the
+	  'id' attribute of the icu_chain is ignored. This
+	  definition is obsolete and should be replaced by the equivalent
+	  construct:
+	  <screen>
+	   &lt;icu_chain id="facet" locale="en">..&lt;icu_chain>
+	  </screen>
 	 </para>
 	</listitem>
        </varlistentry>
@@ -506,14 +558,12 @@
              merge="longest" rank="2"/>
    <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
    <metadata name="url" merge="unique"/>
-   <relevance>
-    <icu_chain id="relevance" locale="el">
-     <transform rule="[:Control:] Any-Remove"/>
-     <tokenize rule="l"/>
-     <transform rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
-     <casemap rule="l"/>
-    </icu_chain>
-   </relevance>
+   <icu_chain id="relevance" locale="el">
+    <transform rule="[:Control:] Any-Remove"/>
+    <tokenize rule="l"/>
+    <transform rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
+    <casemap rule="l"/>
+   </icu_chain>
    <settings src="mysettings"/>
    <timeout session="60"/>
   <service>
