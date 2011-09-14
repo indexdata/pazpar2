@@ -160,23 +160,26 @@ int pp2_charset_fact_define(pp2_charset_fact_t pft,
 {
     int r;
     pp2_charset_t pct;
-    xmlChar *id;
+    xmlChar *id = 0;
 
     assert(xml_node);
     pct = pp2_charset_create_xml(xml_node);
     if (!pct)
         return -1;
-    id = xmlGetProp(xml_node, (xmlChar*) "id");
-    if (id)
-        default_id = (const char *) id;
     if (!default_id)
     {
-        yaz_log(YLOG_WARN, "Missing id for icu_chain");
-        pp2_charset_destroy(pct);
-        return -1;
+        id = xmlGetProp(xml_node, (xmlChar*) "id");
+        if (!id)
+        {
+            yaz_log(YLOG_WARN, "Missing id for icu_chain");
+            pp2_charset_destroy(pct);
+            return -1;
+        }
+        default_id = (const char *) id;
     }
     r = pp2_charset_fact_add(pft, pct, default_id);
-    xmlFree(id);
+    if (id)
+        xmlFree(id);
     return r;
 }
 
