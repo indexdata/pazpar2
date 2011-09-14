@@ -652,29 +652,31 @@
 
   <note>
    <para>
-    The following discussion of practical issues related to session and settings
-    management are cast in terms of a user interface based on Ajax/Javascript
-    technology. It would apply equally well to many other kinds of browser-based logic.
+    The following discussion of practical issues related to session
+    and settings management are cast in terms of a user interface based on
+    Ajax/Javascript technology. It would apply equally well to many other
+    kinds of browser-based logic.
    </para>
   </note>
 
   <para>
-   Typically, a Javascript client is not allowed to  directly alter the parameters
-   of a session. There are two reasons for this. One has to do with access
-   to information; typically, information about a user will be stored in a
-   system on the server side, or it will be accessible in some way from the server.
-   However, since the Javascript client cannot be entirely trusted (some hostile
-   agent might in fact 'pretend' to be a regular ws client), it is more robust
-   to control session settings from scripting that you run as part of your
-   webserver. Typically, this can be handled during the session initialization,
-   as follows:
+   Typically, a Javascript client is not allowed to directly alter the
+   parameters of a session. There are two reasons for this. One has to do
+   with access to information; typically, information about a user will
+   be stored in a system on the server side, or it will be accessible in
+   some way from the server.  However, since the Javascript client cannot
+   be entirely trusted (some hostile agent might in fact 'pretend' to be
+   a regular ws client), it is more robust to control session settings
+   from scripting that you run as part of your webserver. Typically, this
+   can be handled during the session initialization, as follows:
   </para>
 
   <para>
-   Step 1: The Javascript client loads, and asks the webserver for a new Pazpar2
-   session ID. This can be done using a Javascript call, for instance. Note that
-   it is possible to submit Ajax HTTPXmlRequest calls either to Pazpar2 or to the
-   webserver that Pazpar2 is proxying for. See (XXX Insert link to Pazpar2 protocol).
+   Step 1: The Javascript client loads, and asks the webserver for a
+   new Pazpar2 session ID. This can be done using a Javascript call, for
+   instance. Note that it is possible to submit Ajax HTTPXmlRequest calls
+   either to Pazpar2 or to the webserver that Pazpar2 is proxying
+   for. See (XXX Insert link to Pazpar2 protocol).
   </para>
 
   <para>
@@ -684,19 +686,20 @@
   </para>
 
   <para>
-   Step 3: The webserver initializes a new Pazpar2 settings, and sets user-specific
-   parameters as necessary, using the init webservice command. A new session ID is
-   returned.
+   Step 3: The webserver initializes a new Pazpar2 settings, and sets
+   user-specific parameters as necessary, using the init webservice
+   command. A new session ID is returned.
   </para>
 
   <para>
-   Step 4: The webserver returns this session ID to the Javascript client, which then
-   uses the session ID to submit searches, show results, etc.
+   Step 4: The webserver returns this session ID to the Javascript
+   client, which then uses the session ID to submit searches, show
+   results, etc.
   </para>
 
   <para>
-   Step 5: When the Javascript client ceases to use the session, Pazpar2 destroys
-   any session-specific information.
+   Step 5: When the Javascript client ceases to use the session,
+   Pazpar2 destroys any session-specific information.
   </para>
 
   <refsect2>
@@ -704,8 +707,8 @@
    <para>
     Each file contains a root element named &lt;settings&gt;. It may
     contain one or more &lt;set&gt; elements. The settings and set
-    elements may contain the following attributes. Attributes in the set node
-    overrides those in the setting root element. Each set node must
+    elements may contain the following attributes. Attributes in the set
+    node overrides those in the setting root element. Each set node must
     specify (directly, or inherited from the parent node) at least a
     target, name, and value.
    </para>
@@ -1143,12 +1146,13 @@
      <listitem>
       <para>
        Specifies a filter which allows Pazpar2 to only include
-       records that meet a certain criteria in a result. Unmatched records
-       will be ignored. The filter takes the form name, name~value, or name=value, which
+       records that meet a certain criteria in a result.
+       Unmatched records  will be ignored.
+       The filter takes the form name, name~value, or name=value, which
        will include only records with metadata element (name) that has the
-       substring (~value) given, or matches exactly (=value). If value is omitted all records
-       with the named
-       metadata element present will be included.
+       substring (~value) given, or matches exactly (=value).
+       If value is omitted all records with the named metadata element
+       present will be included.
       </para>
      </listitem>
     </varlistentry>
@@ -1157,9 +1161,11 @@
      <term>pz:preferred</term>
      <listitem>
       <para>
-       Specifies that a target is preferred, e.g. possible local, faster target. Using block=pref on show command  
-       will wait for all these targets to return records before releasing the block. If no target is preferred, 
-       the block=pref will identical to block=1, which release when one target has returned records.     
+       Specifies that a target is preferred, e.g. possible local, faster
+       target. Using block=pref on show command will wait for all these
+       targets to return records before releasing the block.
+       If no target is preferred, the block=pref will identical to block=1,
+       which release when one target has returned records.     
       </para>
      </listitem>
     </varlistentry>
@@ -1168,7 +1174,8 @@
      <term>pz:block_timeout</term>
      <listitem>
       <para>
-       (Not yet implemented). Specifies the time for which a block should be released anyway.      
+       (Not yet implemented).
+       Specifies the time for which a block should be released anyway.      
       </para>
      </listitem>
     </varlistentry>
