@@ -198,8 +198,6 @@ void add_facet(struct session *s, const char *type, const char *value, int count
     for (i = 0; i < service->num_metadata; i++)
         if (!strcmp((service->metadata + i)->name, type))
             icu_chain_id = (service->metadata + i)->facetrule;
-    yaz_log(YLOG_LOG, "icu_chain id=%s", icu_chain_id ? icu_chain_id : "null");
-
     if (!icu_chain_id)
         icu_chain_id = "facet";
     prt = pp2_charset_token_create(service->charsets, icu_chain_id);
@@ -231,8 +229,6 @@ void add_facet(struct session *s, const char *type, const char *value, int count
     }
     pp2_charset_token_destroy(prt);
  
-    yaz_log(YLOG_LOG, "facet norm=%s", wrbuf_cstr(facet_wrbuf));
-    yaz_log(YLOG_LOG, "facet display=%s", wrbuf_cstr(display_wrbuf));
     if (wrbuf_len(facet_wrbuf))
     {
         int i;
