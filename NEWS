@@ -1,3 +1,12 @@
+--- 1.6.2 2011/09/15
+
+tmarc.xsl: yet another 773$g fix. Was broken in 1.6.1 as well.
+
+Facility to change working directory for pazpar2 daemon. Option -wdir
+sets working directory to dir. This facility is useful if core dumps
+must be saved. In this case, the current working directory must be
+writable by the running user, such as "nobody".
+
 --- 1.6.1 2011/09/14
 
 New configuration element <icu_chain> for <server>/<service> which
