@@ -152,6 +152,14 @@ static int sc_main(
             break;
         case 'V':
             show_version();
+            break;
+        case 'w':
+            if (chdir(arg))
+            {
+                yaz_log(YLOG_FATAL|YLOG_ERRNO, "chdir %s", arg);
+                return 1;
+            }
+            break;
         case 'X':
             global_parameters.debug_mode++;
             global_parameters.predictable_sessions = 1;
@@ -169,6 +177,7 @@ static int sc_main(
                     "    -u uid                  Change user to uid\n"
                     "    -V                      Show version\n"
                     "    -v level                Set log level\n"
+                    "    -w dir                  Working directory\n"
                     "    -X                      Debug mode\n"
 #ifdef WIN32
                     "    -install                Install windows service\n"

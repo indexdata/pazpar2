@@ -38,8 +38,9 @@
    <arg choice="opt"><option>-R <replaceable>recfile</replaceable></option></arg>
    <arg choice="opt"><option>-t</option></arg>
    <arg choice="opt"><option>-u <replaceable>uid</replaceable></option></arg>
-   <arg choice="opt"><option>-V</option></arg>
    <arg choice="opt"><option>-v <replaceable>level</replaceable></option></arg>
+   <arg choice="opt"><option>-V</option></arg>
+   <arg choice="opt"><option>-w <replaceable>dir</replaceable></option></arg>
    <arg choice="opt"><option>-X</option></arg>
    <arg choice="opt"><option>-install</option></arg>
    <arg choice="opt"><option>-remove</option></arg>
@@ -167,6 +168,15 @@
    </varlistentry>
 
    <varlistentry>
+    <term><option>-v <replaceable>level</replaceable></option></term>
+    <listitem>
+     <para>
+      Sets log level (YAZ log level system).
+     </para>
+    </listitem>
+   </varlistentry>
+
+   <varlistentry>
     <term><option>-V</option></term>
     <listitem>
      <para>
@@ -178,10 +188,10 @@
    </varlistentry>
 
    <varlistentry>
-    <term><option>-v <replaceable>level</replaceable></option></term>
+    <term><option>-w <replaceable>dir</replaceable></option></term>
     <listitem>
      <para>
-      Sets log level (YAZ log level system).
+      Changes working directory to <replaceable>dir</replaceable>.
      </para>
     </listitem>
    </varlistentry>
