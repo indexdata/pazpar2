@@ -133,7 +133,7 @@
        mergekey and facets - for the server. These definitions serves as
        default for services that don't have these given. For the meaning
        of these settings refer to the
-       <xref linkend="icu_chain">"icu_chain"</xref> element inside service.
+       <xref linkend="icuchain"/> element inside service.
       </para>
      </listitem>
     </varlistentry>
@@ -369,7 +369,7 @@
        </varlistentry>
 
        <varlistentry>
-	<term id="icu_chain">icu_chain</term>
+	<term id="icuchain" xreflabel="icu_chain">icu_chain</term>
 	<listitem>
 	 <para>
 	  Specifies a named ICU rule set. The icu_chain element must include
