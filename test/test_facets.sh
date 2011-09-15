@@ -8,8 +8,8 @@ oIFS=$IFS
 IFS=:
 F=''
 for p in $PATH; do
-    if test -x $p/yaz-ztest -a -x $p/yaz-config; then
-	VERSION=`$p/yaz-config -V|awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
+    if test -x $p/yaz-ztest -a -x $p/yaz-client; then
+	VERSION=`$p/yaz-client -V|awk '{print $3;}'|awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
 	if test $VERSION -ge 4002000; then
 	    F=$p/yaz-ztest
             break
