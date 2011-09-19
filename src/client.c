@@ -403,11 +403,6 @@ static int nativesyntax_to_type(struct session_database *sdb, char *type,
                 strcpy(type, "xml");
                 return 0;
             }
-            else if (!strcmp(syntax, "TXML"))
-                {
-                    strcpy(type, "txml");
-                    return 0;
-                }
             else if (!strcmp(syntax, "USmarc") || !strcmp(syntax, "MARC21"))
             {
                 strcpy(type, "xml; charset=marc8-s");
