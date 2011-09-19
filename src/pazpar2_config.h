@@ -47,7 +47,8 @@ enum conf_sortkey_type {
     Metadata_sortkey_relevance,
     Metadata_sortkey_numeric,       // Standard numerical sorting
     Metadata_sortkey_skiparticle,   // Skip leading article when sorting
-    Metadata_sortkey_string         // Flat string
+    Metadata_sortkey_string,        // Flat string
+    Metadata_sortkey_position       // Position
 };
 
 // This controls the ability to insert 'static' values from settings into retrieval recs

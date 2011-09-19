@@ -344,7 +344,8 @@ search.pz2?session=2044502273&command=stat
 	increasing or decreasing order according to that field. 0==Decreasing is
 	the default.
 	Sort field names can be any field name designated as a sort field
-        in the pazpar2.cfg file, or the special name 'relevance'.
+        in the pazpar2.cfg file, or the special names 'relevance' and
+	'position'.
        </para>
       </listitem>
      </varlistentry>

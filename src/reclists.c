@@ -85,6 +85,10 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
         if (!strcmp(parm, "relevance"))
         {
             type = Metadata_sortkey_relevance;
+        } 
+        else if (!strcmp(parm, "position"))
+        {
+            type = Metadata_sortkey_position;
         }
         else
         {
@@ -162,6 +166,23 @@ static int reclist_cmp(const void *p1, const void *p2)
                 res = 1;
             else
                 res = 0;
+            break;
+        case Metadata_sortkey_position:
+            if (r1->records && r2->records)
+            {
+                int pos1 = 0, pos2 = 0;
+                struct record *rec;
+                for (rec = r1->records; rec; rec = rec->next)
+                    if (pos1 == 0 || rec->position < pos1)
+                        pos1 = rec->position;
+                for (rec = r2->records; rec; rec = rec->next)
+                    if (pos2 == 0 || rec->position < pos2)
+                        pos2 = rec->position;
+                if (s->increasing)
+                    res = pos1 - pos2;
+                else
+                    res = pos2 - pos1;
+            }
             break;
         default:
             yaz_log(YLOG_WARN, "Bad sort type: %d", s->type);
