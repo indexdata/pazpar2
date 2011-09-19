@@ -111,15 +111,17 @@ static int session_use(int delta)
         no_session_total += delta;
     sessions = no_sessions;
     yaz_mutex_leave(g_session_mutex);
-    yaz_log(YLOG_DEBUG, "%s sesions=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), no_sessions);
+    yaz_log(YLOG_DEBUG, "%s sessions=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), no_sessions);
     return sessions;
 }
 
-int sessions_count(void) {
+int sessions_count(void)
+{
     return session_use(0);
 }
 
-int  session_count_total(void) {
+int session_count_total(void)
+{
     int total = 0;
     if (!g_session_mutex)
         return 0;
@@ -128,7 +130,6 @@ int  session_count_total(void) {
     yaz_mutex_leave(g_session_mutex);
     return total;
 }
-
 
 static void log_xml_doc(xmlDoc *doc)
 {
@@ -157,33 +158,6 @@ static void session_leave(struct session *s)
 {
     yaz_mutex_leave(s->session_mutex);
 }
-
-// Recursively traverse query structure to extract terms.
-void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
-{
-    char **words;
-    int numwords;
-    int i;
-
-    switch (n->kind)
-    {
-    case CCL_RPN_AND:
-    case CCL_RPN_OR:
-    case CCL_RPN_NOT:
-    case CCL_RPN_PROX:
-        pull_terms(nmem, n->u.p[0], termlist, num);
-        pull_terms(nmem, n->u.p[1], termlist, num);
-        break;
-    case CCL_RPN_TERM:
-        nmem_strsplit(nmem, " ", n->u.t.term, &words, &numwords);
-        for (i = 0; i < numwords; i++)
-            termlist[(*num)++] = words[i];
-        break;
-    default: // NOOP
-        break;
-    }
-}
-
 
 void add_facet(struct session *s, const char *type, const char *value, int count)
 {

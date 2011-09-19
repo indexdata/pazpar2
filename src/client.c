@@ -851,14 +851,6 @@ void client_disconnect(struct client *cl)
     client_set_connection(cl, 0);
 }
 
-// Extract terms from query into null-terminated termlist
-static void extract_terms(NMEM nmem, struct ccl_rpn_node *query, char **termlist)
-{
-    int num = 0;
-
-    pull_terms(nmem, query, termlist, &num);
-    termlist[num] = 0;
-}
 
 // Initialize CCL map for a target
 static CCL_bibset prepare_cclmap(struct client *cl)
@@ -1077,11 +1069,8 @@ int client_parse_query(struct client *cl, const char *query,
     if (!se->relevance)
     {
         // Initialize relevance structure with query terms
-        char *p[512];
-        extract_terms(se->nmem, cn, p);
-        se->relevance = relevance_create(
-            se->service->charsets,
-            se->nmem, (const char **) p);
+        se->relevance = relevance_create_ccl(
+            se->service->charsets, se->nmem, cn);
     }
 
     ccl_rpn_delete(cn);

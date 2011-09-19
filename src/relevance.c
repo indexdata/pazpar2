@@ -120,8 +120,8 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
     cluster->term_frequency_vec[0] += length;
 }
 
-struct relevance *relevance_create(pp2_charset_fact_t pft,
-                                   NMEM nmem, const char **terms)
+static struct relevance *relevance_create(pp2_charset_fact_t pft,
+                                          NMEM nmem, const char **terms)
 {
     struct relevance *res = nmem_malloc(nmem, sizeof(struct relevance));
     const char **p;
@@ -136,6 +136,47 @@ struct relevance *relevance_create(pp2_charset_fact_t pft,
     res->prt = pp2_charset_token_create(pft, "relevance");
     res->entries = build_word_entries(res->prt, nmem, terms);
     return res;
+}
+
+// Recursively traverse query structure to extract terms.
+static void pull_terms(NMEM nmem, struct ccl_rpn_node *n,
+                       char **termlist, int *num, int max_terms)
+{
+    char **words;
+    int numwords;
+    int i;
+
+    switch (n->kind)
+    {
+    case CCL_RPN_AND:
+    case CCL_RPN_OR:
+    case CCL_RPN_NOT:
+    case CCL_RPN_PROX:
+        pull_terms(nmem, n->u.p[0], termlist, num, max_terms);
+        pull_terms(nmem, n->u.p[1], termlist, num, max_terms);
+        break;
+    case CCL_RPN_TERM:
+        nmem_strsplit(nmem, " ", n->u.t.term, &words, &numwords);
+        for (i = 0; i < numwords; i++)
+        {
+            if (*num < max_terms)
+                termlist[(*num)++] = words[i];
+        }
+        break;
+    default: // NOOP
+        break;
+    }
+}
+
+struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
+                                       NMEM nmem, struct ccl_rpn_node *query)
+{
+    char *termlist[512];
+    int num = 0;
+
+    pull_terms(nmem, query, termlist, &num, sizeof(termlist)/sizeof(*termlist));
+    termlist[num] = 0;
+    return relevance_create(pft, nmem, (const char **) termlist);
 }
 
 void relevance_destroy(struct relevance **rp)

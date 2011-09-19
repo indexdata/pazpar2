@@ -21,14 +21,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define RELEVANCE_H
 
 #include <yaz/yaz-util.h>
+#include <yaz/ccl.h>
 #include "charsets.h"
 
 struct relevance;
 struct record_cluster;
 struct reclist;
 
-struct relevance *relevance_create(pp2_charset_fact_t pft,
-                                   NMEM nmem, const char **terms);
+struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
+                                       NMEM nmem, struct ccl_rpn_node *query);
 void relevance_destroy(struct relevance **rp);
 void relevance_newrec(struct relevance *r, struct record_cluster *cluster);
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
