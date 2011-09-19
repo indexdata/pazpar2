@@ -263,7 +263,6 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     enum conf_metadata_type type = Metadata_type_generic;
     enum conf_metadata_merge merge = Metadata_merge_no;
     enum conf_setting_type setting = Metadata_setting_no;
-    enum conf_sortkey_type sk_type = Metadata_sortkey_relevance;
     enum conf_metadata_mergekey mergekey_type = Metadata_mergekey_no;
     int brief = 0;
     int termlist = 0;
@@ -405,6 +404,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     // add a sortkey if so specified
     if (xml_sortkey && strcmp((const char *) xml_sortkey, "no"))
     {
+        enum conf_sortkey_type sk_type;
         if (merge == Metadata_merge_no)
         {
             yaz_log(YLOG_FATAL, 
