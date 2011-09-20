@@ -2,7 +2,7 @@
 <activeclients>0</activeclients>
 <list name="xtargets">
 <term>
-<id>opencontent-solr:8989/solr/select</id>
+<id>ocs-test.indexdata.com/solr/select</id>
 <name>ocs_test</name>
 <frequency>1995</frequency>
 <state>Client_Idle</state>
