@@ -970,8 +970,8 @@ static void apply_limit(struct session_database *sdb,
         }
         if (!s)
         {
-            yaz_log(YLOG_WARN, "limit %s used, but no limitmap defined",
-                    name);
+            yaz_log(YLOG_WARN, "Target %s: limit %s used, but no limitmap defined",
+                    (sdb->database ? sdb->database->url : "<no url>"), name);
         }
     }
 }
