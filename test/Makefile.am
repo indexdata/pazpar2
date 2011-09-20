@@ -1,6 +1,7 @@
 # This file is part of Pazpar2.
-check_SCRIPTS = test_http.sh test_icu.sh test_post.sh test_settings.sh test_turbomarcxml.sh test_facets.sh 
-# Need newer yaz: test_solr.sh
+check_SCRIPTS = test_http.sh test_icu.sh test_post.sh \
+ test_settings.sh test_turbomarcxml.sh test_facets.sh \
+ test_solr.sh
 
 EXTRA_DIST = run_pazpar2.sh marc21_test.xsl tmarc.xsl \
 	z3950_indexdata_com_marc.xml \
