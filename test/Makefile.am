@@ -19,6 +19,9 @@ MAINTAINERCLEANFILES = Makefile.in
 
 CONFIG_CLEAN_FILES=*.log *.dif
 
+clean-local:
+	rm -f *.log *.dif
+
 dist-hook:
 	cp ${srcdir}/test_*.res $(distdir)
 	mkdir $(distdir)/set2
