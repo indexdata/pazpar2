@@ -412,8 +412,18 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
+	    <xsl:variable name='value'>
+	      <xsl:value-of select='normalize-space(.)'/>
+	    </xsl:variable>
+	    <xsl:choose>
+	      <xsl:when test="substring($value,string-length($value)) = ','">
+		<xsl:value-of select="substring($value,0,string-length($value)-1)"/>
+	      </xsl:when>
+	      <xsl:otherwise>
+		<xsl:value-of select="$value"/>
+	      </xsl:otherwise>
+	    </xsl:choose> 
+         </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
 
@@ -661,9 +671,66 @@
           </pz:metadata>
         </xsl:if>
         <xsl:if test="tmarc:sg">
+	  <xsl:variable name="value">
+            <xsl:for-each select="tmarc:sg">
+              <xsl:value-of select="."/>
+            </xsl:for-each>
+	  </xsl:variable>
           <pz:metadata type="journal-subpart">
-            <xsl:value-of select="tmarc:sg"/>
-          </pz:metadata>
+            <xsl:value-of select="$value"/>
+	  </pz:metadata>
+	  <xsl:variable name="l">
+	    <xsl:value-of select="translate($value,
+				  'ABCDEFGHIJKLMNOPQRSTUVWXYZ.',
+				  'abcdefghijklmnopqrstuvwxyz ') "/>
+	  </xsl:variable>
+	  <xsl:variable name="volume">
+	    <xsl:choose>
+	      <xsl:when test="string-length(substring-after($l,'vol ')) &gt; 0">
+		<xsl:value-of select="substring-before(normalize-space(substring-after($l,'vol ')),' ')"/>
+	      </xsl:when>
+	      <xsl:when test="string-length(substring-after($l,'v ')) &gt; 0">
+		<xsl:value-of select="substring-before(normalize-space(substring-after($l,'v ')),' ')"/>
+	      </xsl:when>
+	    </xsl:choose>
+	  </xsl:variable>
+	  <xsl:variable name="issue">
+	    <xsl:value-of select="substring-before(translate(normalize-space(substring-after($l,'issue')), ',', ' '),' ')"/>
+	  </xsl:variable>
+	  <xsl:variable name="pages">
+	    <xsl:choose>
+	      <xsl:when test="string-length(substring-after($l,' p ')) &gt; 0">
+		<xsl:value-of select="normalize-space(substring-after($l,' p '))"/>
+	      </xsl:when>
+	      <xsl:when test="string-length(substring-after($l,',p')) &gt; 0">
+		<xsl:value-of select="normalize-space(substring-after($l,',p'))"/>
+	      </xsl:when>
+	      <xsl:when test="string-length(substring-after($l,' p')) &gt; 0">
+		<xsl:value-of select="normalize-space(substring-after($l,' p'))"/>
+	      </xsl:when>
+	    </xsl:choose>
+	  </xsl:variable>
+
+	  <!-- volume -->
+	  <xsl:if test="string-length($volume) &gt; 0">
+	    <pz:metadata type="volume-number">
+	      <xsl:value-of select="$volume"/>
+	    </pz:metadata>
+	  </xsl:if>
+	  <!-- issue -->
+	  <xsl:if test="string-length($issue) &gt; 0">
+	    <pz:metadata type="issue-number">
+	      <xsl:value-of select="$issue"/>
+	    </pz:metadata>
+	  </xsl:if>
+	  <!-- pages -->
+	  <xsl:if test="string-length($pages) &gt; 0">
+	    <pz:metadata type="pages-number">
+	      <xsl:value-of select="$pages"/>
+	    </pz:metadata>
+	  </xsl:if>
+	  
+	  <!-- season -->
         </xsl:if>
         <xsl:if test="tmarc:sp">
           <pz:metadata type="journal-title-abbrev">
@@ -894,54 +961,5 @@
   </xsl:template>
 
   <xsl:template match="text()" />
-
-  <!-- TODO Does not work anymore -->
-  <xsl:template name="shortTitle">
-    <xsl:param name="tag" />
-    <xsl:for-each select="tmarc:d">
-      <xsl:value-of select="tmarc:sa" />
-      <xsl:value-of select="tmarc:sm" />
-      <xsl:value-of select="tmarc:sn" />
-      <xsl:value-of select="tmarc:sp" />
-      <xsl:value-of select="tmarc:sr" />
-    </xsl:for-each>
-  </xsl:template>
-
-  <!-- No working as expected -->
-  <xsl:template name="description">
-    <xsl:param name="element" />
-    <xsl:for-each select="$element">
-      <pz:metadata type="description">
-        <xsl:for-each select="node()">
-          <xsl:value-of select="text()" />
-        </xsl:for-each>
-      </pz:metadata>
-    </xsl:for-each>
-    <xsl:apply-templates />
-  </xsl:template>
-
-  <!-- <xsl:for-each select="tmarc:d500"> <pz:metadata type="description"> 
-    <xsl:for-each select="node()"> <xsl:value-of select="text()"/> </xsl:for-each> 
-    </pz:metadata> </xsl:for-each> -->
-
-
-
-  <xsl:template name="subject">
-    <xsl:param name="element" />
-    <xsl:for-each select="$element">
-      <pz:metadata type="subject">
-        <xsl:value-of select="tmarc:sa" />
-      </pz:metadata>
-      <pz:metadata type="subject-long">
-        <xsl:for-each select="node()/text()">
-          <xsl:if test="position() > 1">
-            <xsl:text>, </xsl:text>
-          </xsl:if>
-          <xsl:value-of select="." />
-        </xsl:for-each>
-      </pz:metadata>
-    </xsl:for-each>
-  </xsl:template>
-
 
 </xsl:stylesheet>

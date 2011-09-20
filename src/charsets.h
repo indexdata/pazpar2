@@ -27,35 +27,24 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/wrbuf.h>
 #include <yaz/xmltypes.h>
 
-struct icu_chain;
+typedef struct pp2_charset_token_s *pp2_charset_token_t;
+typedef struct pp2_charset_fact_s *pp2_charset_fact_t;
 
-typedef struct pp2_charset_s *pp2_charset_t;
-typedef struct pp2_relevance_token_s *pp2_relevance_token_t;
+pp2_charset_fact_t pp2_charset_fact_create(void);
+void pp2_charset_fact_destroy(pp2_charset_fact_t pft);
+int pp2_charset_fact_define(pp2_charset_fact_t pft,
+                            xmlNode *xml_node, const char *default_id);
+void pp2_charset_fact_incref(pp2_charset_fact_t pft);
+pp2_charset_token_t pp2_charset_token_create(pp2_charset_fact_t pft,
+                                             const char *id);
 
-pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node);
-pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn);
-pp2_charset_t pp2_charset_create_a_to_z(void);
-
-void pp2_charset_destroy(pp2_charset_t pct);
-void pp2_charset_incref(pp2_charset_t pct);
-
-pp2_relevance_token_t pp2_relevance_tokenize(pp2_charset_t pct);
-void pp2_relevance_first(pp2_relevance_token_t prt,
-                         const char *buf,
-                         int skip_article);
-
-void pp2_relevance_token_destroy(pp2_relevance_token_t prt);
-const char *pp2_relevance_token_next(pp2_relevance_token_t prt);
-const char *pp2_get_sort(pp2_relevance_token_t prt);
-
-#if 0
-typedef int pp2_charset_normalize_t(pp2_charset_t pct,
-                                    const char *buf,
-                                    WRBUF norm_str, WRBUF sort_str,
-                                    int skip_article);
-
-pp2_charset_normalize_t pp2_charset_metadata_norm;
-#endif
+void pp2_charset_token_first(pp2_charset_token_t prt,
+                             const char *buf,
+                             int skip_article);
+void pp2_charset_token_destroy(pp2_charset_token_t prt);
+const char *pp2_charset_token_next(pp2_charset_token_t prt);
+const char *pp2_get_sort(pp2_charset_token_t prt);
+const char *pp2_get_display(pp2_charset_token_t prt);
 
 #endif
 

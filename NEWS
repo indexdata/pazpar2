@@ -1,3 +1,41 @@
+--- 1.6.2 2011/09/15
+
+tmarc.xsl: yet another 773$g fix. Was broken in 1.6.1 as well.
+
+Facility to change working directory for pazpar2 daemon. Option -wdir
+sets working directory to dir. This facility is useful if core dumps
+must be saved. In this case, the current working directory must be
+writable by the running user, such as "nobody".
+
+--- 1.6.1 2011/09/14
+
+New configuration element <icu_chain> for <server>/<service> which
+allows a named ICU rule (chain) to be defined. The names relevance,
+sort, mergekey and facet are used for those operations. The definition
+  <icu_chain id="sort" locale="en"> ..  </icu_chain>
+is identical to
+  <sort> <icu_chain locale="en> ... </icu_chain> </sort>
+And so on.. for relevance, mergekey and facet as well. The latter
+style is deprecated. The facet terms are normalized by the facet
+rule by default. This may be changed on a metadata field basis by
+defining the new attribute 'facetrule' for the metadata element.
+For example:
+  <icu_chain id="myrule" locale="en"> ... </icu_chain>
+  <metadata name="author" termlist="yes" facetrule="myrule"/>
+
+Preserve rorder for merged metadata. Fixes issue as reported by Sven
+Porst: http://lists.indexdata.dk/pipermail/yazlist/2011-July/003230.html
+
+tmarc.xsl: set journal-subpart to 773$ only.
+
+--- 1.6.0 2011/09/12
+
+Modify the behavior for the limit parameter (first defined in 1.5.7).
+Mapping of limit searches are now defined by the new configuration item
+pz:limitmap. Fix a dead-lock problem with the limit parameter.
+
+Extend tmarc.xsl to extract 773$g data (OpenURL).
+
 --- 1.5.7 2011/08/19
 
 ICU default maps remove backquote (`).

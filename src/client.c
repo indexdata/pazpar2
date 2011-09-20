@@ -403,11 +403,6 @@ static int nativesyntax_to_type(struct session_database *sdb, char *type,
                 strcpy(type, "xml");
                 return 0;
             }
-            else if (!strcmp(syntax, "TXML"))
-                {
-                    strcpy(type, "txml");
-                    return 0;
-                }
             else if (!strcmp(syntax, "USmarc") || !strcmp(syntax, "MARC21"))
             {
                 strcpy(type, "xml; charset=marc8-s");
@@ -856,14 +851,6 @@ void client_disconnect(struct client *cl)
     client_set_connection(cl, 0);
 }
 
-// Extract terms from query into null-terminated termlist
-static void extract_terms(NMEM nmem, struct ccl_rpn_node *query, char **termlist)
-{
-    int num = 0;
-
-    pull_terms(nmem, query, termlist, &num);
-    termlist[num] = 0;
-}
 
 // Initialize CCL map for a target
 static CCL_bibset prepare_cclmap(struct client *cl)
@@ -947,7 +934,7 @@ static char *make_solrquery(struct client *cl)
 
 static void apply_limit(struct session_database *sdb,
                         facet_limits_t facet_limits,
-                        WRBUF w)
+                        WRBUF w_pqf, WRBUF w_ccl)
 {
     int i = 0;
     const char *name;
@@ -956,22 +943,34 @@ static void apply_limit(struct session_database *sdb,
     {
         struct setting *s = 0;
         
-        for (s = sdb->settings[PZ_FACETMAP]; s; s = s->next)
+        for (s = sdb->settings[PZ_LIMITMAP]; s; s = s->next)
         {
             const char *p = strchr(s->name + 3, ':');
-            if (p && !strcmp(p + 1, name) && s->value && s->value[0])
+            if (p && !strcmp(p + 1, name) && s->value)
             {
-                wrbuf_insert(w, 0, "@and ", 5);
-                wrbuf_puts(w, " @attr 1=");
-                yaz_encode_pqf_term(w, s->value, strlen(s->value));
-                wrbuf_puts(w, " ");
-                yaz_encode_pqf_term(w, value, strlen(value));
+                if (!strncmp(s->value, "rpn:", 4))
+                {
+                    const char *pqf = s->value + 4;
+                    wrbuf_puts(w_pqf, "@and ");
+                    wrbuf_puts(w_pqf, pqf);
+                    wrbuf_puts(w_pqf, " ");
+                    yaz_encode_pqf_term(w_pqf, value, strlen(value));
+                }
+                else if (!strncmp(s->value, "ccl:", 4))
+                {
+                    const char *ccl = s->value + 4;
+                    wrbuf_puts(w_ccl, " and ");
+                    wrbuf_puts(w_ccl, ccl);
+                    wrbuf_puts(w_ccl, "=\"");
+                    wrbuf_puts(w_ccl, value);
+                    wrbuf_puts(w_ccl, "\"");
+                }
                 break;
             }
         }
         if (!s)
         {
-            yaz_log(YLOG_WARN, "facet %s used, but no facetmap defined",
+            yaz_log(YLOG_WARN, "limit %s used, but no limitmap defined",
                     name);
         }
     }
@@ -990,32 +989,39 @@ int client_parse_query(struct client *cl, const char *query,
     const char *pqf_prefix = session_setting_oneval(sdb, PZ_PQF_PREFIX);
     const char *pqf_strftime = session_setting_oneval(sdb, PZ_PQF_STRFTIME);
     const char *query_syntax = session_setting_oneval(sdb, PZ_QUERY_SYNTAX);
-    const char *record_filter = session_setting_oneval(sdb, PZ_RECORDFILTER);
+    WRBUF w_ccl, w_pqf;
     if (!ccl_map)
         return -1;
 
-    yaz_log(YLOG_DEBUG, "query: %s", query);
-    cn = ccl_find_str(ccl_map, query, &cerror, &cpos);
+    w_ccl = wrbuf_alloc();
+    wrbuf_puts(w_ccl, query);
+
+    w_pqf = wrbuf_alloc();
+    if (*pqf_prefix)
+    {
+        wrbuf_puts(w_pqf, pqf_prefix);
+        wrbuf_puts(w_pqf, " ");
+    }
+
+    apply_limit(sdb, facet_limits, w_pqf, w_ccl);
+
+    yaz_log(YLOG_LOG, "CCL query: %s", wrbuf_cstr(w_ccl));
+    cn = ccl_find_str(ccl_map, wrbuf_cstr(w_ccl), &cerror, &cpos);
     ccl_qual_rm(&ccl_map);
     if (!cn)
     {
         client_set_state(cl, Client_Error);
         session_log(se, YLOG_WARN, "Failed to parse CCL query '%s' for %s",
-                query,
-                client_get_database(cl)->database->url);
+                    wrbuf_cstr(w_ccl),
+                    client_get_database(cl)->database->url);
+        wrbuf_destroy(w_ccl);
+        wrbuf_destroy(w_pqf);
         return -1;
     }
-    wrbuf_rewind(se->wrbuf);
-    if (*pqf_prefix)
-    {
-        wrbuf_puts(se->wrbuf, pqf_prefix);
-        wrbuf_puts(se->wrbuf, " ");
-    }
-
-    apply_limit(sdb, facet_limits, se->wrbuf);
+    wrbuf_destroy(w_ccl);
 
     if (!pqf_strftime || !*pqf_strftime)
-        ccl_pquery(se->wrbuf, cn);
+        ccl_pquery(w_pqf, cn);
     else
     {
         time_t cur_time = time(0);
@@ -1029,15 +1035,16 @@ int client_parse_query(struct client *cl, const char *query,
         for (; *cp; cp++)
         {
             if (cp[0] == '%')
-                ccl_pquery(se->wrbuf, cn);
+                ccl_pquery(w_pqf, cn);
             else
-                wrbuf_putc(se->wrbuf, cp[0]);
+                wrbuf_putc(w_pqf, cp[0]);
         }
     }
     xfree(cl->pquery);
-    cl->pquery = xstrdup(wrbuf_cstr(se->wrbuf));
+    cl->pquery = xstrdup(wrbuf_cstr(w_pqf));
+    wrbuf_destroy(w_pqf);
 
-    yaz_log(YLOG_DEBUG, "PQF query: %s", cl->pquery);
+    yaz_log(YLOG_LOG, "PQF query: %s", cl->pquery);
 
     xfree(cl->cqlquery);
 
@@ -1062,11 +1069,8 @@ int client_parse_query(struct client *cl, const char *query,
     if (!se->relevance)
     {
         // Initialize relevance structure with query terms
-        char *p[512];
-        extract_terms(se->nmem, cn, p);
-        se->relevance = relevance_create(
-            se->service->relevance_pct,
-            se->nmem, (const char **) p);
+        se->relevance = relevance_create_ccl(
+            se->service->charsets, se->nmem, cn);
     }
 
     ccl_rpn_delete(cn);

@@ -107,15 +107,16 @@ static void update_highscore(struct termlist *tl, struct termlist_score *t)
     }
 }
 
-void termlist_insert(struct termlist *tl, const char *term, int freq)
+void termlist_insert(struct termlist *tl, const char *display_term,
+                     const char *norm_term, int freq)
 {
     unsigned int bucket;
     struct termlist_bucket **p;
     char buf[256], *cp;
 
-    if (strlen(term) > 255)
+    if (strlen(norm_term) > 255)
         return;
-    strcpy(buf, term);
+    strcpy(buf, norm_term);
     /* chop right */
     for (cp = buf + strlen(buf); cp != buf && strchr(",. -", cp[-1]); cp--)
         cp[-1] = '\0';
@@ -123,7 +124,7 @@ void termlist_insert(struct termlist *tl, const char *term, int freq)
     bucket = jenkins_hash((unsigned char *)buf) % tl->hash_size;
     for (p = &tl->hashtable[bucket]; *p; p = &(*p)->next)
     {
-        if (!strcmp(buf, (*p)->term.term))
+        if (!strcmp(buf, (*p)->term.norm_term))
         {
             (*p)->term.frequency += freq;
             update_highscore(tl, &((*p)->term));
@@ -134,7 +135,9 @@ void termlist_insert(struct termlist *tl, const char *term, int freq)
     {
         struct termlist_bucket *new = nmem_malloc(tl->nmem,
                 sizeof(struct termlist_bucket));
-        new->term.term = nmem_strdup(tl->nmem, buf);
+        new->term.norm_term = nmem_strdup(tl->nmem, buf);
+        new->term.display_term = *display_term ?
+            nmem_strdup(tl->nmem, display_term) : new->term.norm_term;
         new->term.frequency = freq;
         new->next = 0;
         *p = new;

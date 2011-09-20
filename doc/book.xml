@@ -51,121 +51,121 @@
     <inlinemediaobject>
      <imageobject>
       <imagedata fileref="common/id.png" format="PNG"/>
-   </imageobject>
-    <imageobject>
-     <imagedata fileref="common/id.eps" format="EPS"/>
-   </imageobject>
-   </inlinemediaobject>
+     </imageobject>
+     <imageobject>
+      <imagedata fileref="common/id.eps" format="EPS"/>
+     </imageobject>
+    </inlinemediaobject>
    </simpara>
   </abstract>
  </bookinfo>
  
  <chapter id="introduction">
   <title>Introduction</title>
-
+  
   <section id="what.pazpar2.is">
-  <title>What Pazpar2 is</title>
-  <para>
-   Pazpar2 is a stand-alone metasearch engine with a web-service API, designed
-   to be used either from a browser-based client (JavaScript, Flash,
-   Java applet,
-   etc.), from server-side code, or any combination of the two.
-   Pazpar2 is a highly optimized client designed to
-   search many resources in parallel. It implements record merging,
-   relevance-ranking and sorting by arbitrary data content, and facet
-   analysis for browsing purposes. It is designed to be data-model
-   independent, and is capable of working with MARC, DublinCore, or any
-   other <ulink url="&url.xml;">XML</ulink>-structured response format
-   -- <ulink url="&url.xslt;">XSLT</ulink> is used to normalize and extract
-   data from retrieval records for display and analysis. It can be used
-   against any server which supports the 
-   <ulink url="&url.z39.50;">Z39.50</ulink>, <ulink url="&url.sru;">SRU/SRW</ulink> 
-   or <ulink url="&url.solr;">SOLR</ulink> protocol. Proprietary
-   backend modules can function as connectors between these standard
-   protocols and any non-standard API, including web-site scraping, to
-   support a large number of other protocols.
-  </para>
-  <para>
-   Additional functionality such as
-   user management and attractive displays are expected to be implemented by
-   applications that use Pazpar2. Pazpar2 itself is user-interface independent.
-   Its functionality is exposed through a simple XML-based web-service API,
-   designed to be easy to use from an Ajax-enabled browser, Flash
-   animation, Java applet, etc., or from a higher-level server-side language
-   like PHP, Perl or Java. Because session information can be shared between
-   browser-based logic and server-side scripting, there is tremendous
-   flexibility in how you implement application-specific logic on top
-   of Pazpar2.
-  </para>
-  <para>
-   Once you launch a search in Pazpar2, the operation continues behind the
-   scenes. Pazpar2 connects to servers, carries out searches, and
-   retrieves, deduplicates, and stores results internally. Your application
-   code may periodically inquire about the status of an ongoing operation,
-   and ask to see records or result set facets. Results become
-   available immediately, and it is easy to build end-user interfaces than
-   feel extremely responsive, even when searching more than 100 servers
-   concurrently.
-  </para>
-  <para>
-   Pazpar2 is designed to be highly configurable. Incoming records are
-   normalized to XML/UTF-8, and then further normalized using XSLT to a
-   simple internal representation that is suitable for analysis. By
-   providing XSLT stylesheets for different kinds of result records, you
-   can configure Pazpar2 to work against different kinds of information
-   retrieval servers. Finally, metadata is extracted in a configurable
-   way from this internal record, to support display, merging, ranking,
-   result set facets, and sorting. Pazpar2 is not bound to a specific model
-   of metadata, such as DublinCore or MARC: by providing the right
-   configuration, it can work with any combination of different kinds of data in
-   support of many different applications.
-  </para>
-  <para>
-   Pazpar2 is designed to be efficient and scalable. You can set it up to
-   search several hundred targets in parallel, or you can use it to support
-   hundreds of concurrent users. It is implemented with the same attention
-   to performance and economy that we use in our indexing engines, so that
-   you can focus on building your application without worrying about the
-   details of metasearch logic. You can devote all of your attention to
-   usability and let Pazpar2 do what it does best -- metasearch.
-  </para>
-  <para>
-   Pazpar2 is our attempt to re-think the traditional paradigms for
-   implementing and deploying metasearch logic, with an uncompromising
-   approach to performance, and attempting to make maximum use of the
-   capabilities of modern browsers. The demo user interface that
-   accompanies the distribution is but one example. If you think of new
-   ways of using Pazpar2, we hope you'll share them with us, and if we
-   can provide assistance with regards to training, design, programming,
-   integration with different backends, hosting, or support, please don't
-   hesitate to contact us. If you'd like to see functionality in Pazpar2
-   that is not there today, please don't hesitate to contact us. It may
-   already be in our development pipeline, or there might be a
-   possibility for you to help out by sponsoring development time or
-   code. Either way, get in touch and we will give you straight answers.
-  </para>
-  <para>
-   Enjoy!
-  </para>
-  <para>
-   Pazpar2 is covered by the GNU General Public License (GPL) version 2.
-   See <xref linkend="license"/> for further information.
-  </para>
+   <title>What Pazpar2 is</title>
+   <para>
+    Pazpar2 is a stand-alone metasearch engine with a web-service API, designed
+    to be used either from a browser-based client (JavaScript, Flash,
+    Java applet,
+    etc.), from server-side code, or any combination of the two.
+    Pazpar2 is a highly optimized client designed to
+    search many resources in parallel. It implements record merging,
+    relevance-ranking and sorting by arbitrary data content, and facet
+    analysis for browsing purposes. It is designed to be data-model
+    independent, and is capable of working with MARC, DublinCore, or any
+    other <ulink url="&url.xml;">XML</ulink>-structured response format
+    -- <ulink url="&url.xslt;">XSLT</ulink> is used to normalize and extract
+    data from retrieval records for display and analysis. It can be used
+    against any server which supports the 
+    <ulink url="&url.z39.50;">Z39.50</ulink>, <ulink url="&url.sru;">SRU/SRW</ulink> 
+    or <ulink url="&url.solr;">SOLR</ulink> protocol. Proprietary
+    backend modules can function as connectors between these standard
+    protocols and any non-standard API, including web-site scraping, to
+    support a large number of other protocols.
+   </para>
+   <para>
+    Additional functionality such as
+    user management and attractive displays are expected to be implemented by
+    applications that use Pazpar2. Pazpar2 itself is user-interface independent.
+    Its functionality is exposed through a simple XML-based web-service API,
+    designed to be easy to use from an Ajax-enabled browser, Flash
+    animation, Java applet, etc., or from a higher-level server-side language
+    like PHP, Perl or Java. Because session information can be shared between
+    browser-based logic and server-side scripting, there is tremendous
+    flexibility in how you implement application-specific logic on top
+    of Pazpar2.
+   </para>
+   <para>
+    Once you launch a search in Pazpar2, the operation continues behind the
+    scenes. Pazpar2 connects to servers, carries out searches, and
+    retrieves, deduplicates, and stores results internally. Your application
+    code may periodically inquire about the status of an ongoing operation,
+    and ask to see records or result set facets. Results become
+    available immediately, and it is easy to build end-user interfaces than
+    feel extremely responsive, even when searching more than 100 servers
+    concurrently.
+   </para>
+   <para>
+    Pazpar2 is designed to be highly configurable. Incoming records are
+    normalized to XML/UTF-8, and then further normalized using XSLT to a
+    simple internal representation that is suitable for analysis. By
+    providing XSLT stylesheets for different kinds of result records, you
+    can configure Pazpar2 to work against different kinds of information
+    retrieval servers. Finally, metadata is extracted in a configurable
+    way from this internal record, to support display, merging, ranking,
+    result set facets, and sorting. Pazpar2 is not bound to a specific model
+    of metadata, such as DublinCore or MARC: by providing the right
+    configuration, it can work with any combination of different kinds of data
+    in support of many different applications.
+   </para>
+   <para>
+    Pazpar2 is designed to be efficient and scalable. You can set it up to
+    search several hundred targets in parallel, or you can use it to support
+    hundreds of concurrent users. It is implemented with the same attention
+    to performance and economy that we use in our indexing engines, so that
+    you can focus on building your application without worrying about the
+    details of metasearch logic. You can devote all of your attention to
+    usability and let Pazpar2 do what it does best -- metasearch.
+   </para>
+   <para>
+    Pazpar2 is our attempt to re-think the traditional paradigms for
+    implementing and deploying metasearch logic, with an uncompromising
+    approach to performance, and attempting to make maximum use of the
+    capabilities of modern browsers. The demo user interface that
+    accompanies the distribution is but one example. If you think of new
+    ways of using Pazpar2, we hope you'll share them with us, and if we
+    can provide assistance with regards to training, design, programming,
+    integration with different backends, hosting, or support, please don't
+    hesitate to contact us. If you'd like to see functionality in Pazpar2
+    that is not there today, please don't hesitate to contact us. It may
+    already be in our development pipeline, or there might be a
+    possibility for you to help out by sponsoring development time or
+    code. Either way, get in touch and we will give you straight answers.
+   </para>
+   <para>
+    Enjoy!
+   </para>
+   <para>
+    Pazpar2 is covered by the GNU General Public License (GPL) version 2.
+    See <xref linkend="license"/> for further information.
+   </para>
   </section>
 
   <section id="connectors">
-  <title>Connectors to non-standard databases</title>
-  <para>
-   If you wish to connect to commercial or other databases which do not
-   support open standards, please contact Index Data on
-   <email>info@indexdata.com</email>. We have a
-   proprietary framework for building connectors that enable Pazpar2
-   to access
-   thousands of online databases, in addition to the vast number of catalogs
-   and online services that support the Z39.50/SRU/SRW/SOLR protocols.
-  </para>
+   <title>Connectors to non-standard databases</title>
+   <para>
+    If you wish to connect to commercial or other databases which do not
+    support open standards, please contact Index Data on
+    <email>info@indexdata.com</email>. We have a
+    proprietary framework for building connectors that enable Pazpar2
+    to access
+    thousands of online databases, in addition to the vast number of catalogs
+    and online services that support the Z39.50/SRU/SRW/SOLR protocols.
+   </para>
   </section>
-
+  
   <section id="name">
    <title>A note on the name Pazpar2</title>
    <para>
@@ -193,30 +193,30 @@
    Pazpar2 depends on the following tools/libraries:
    <variablelist>
     <varlistentry><term><ulink url="&url.yaz;">YAZ</ulink></term>
-     <listitem>
-      <para>
-       The popular Z39.50 toolkit for the C language.
-       YAZ <emphasis>must</emphasis> be compiled with Libxml2/Libxslt support.
-      </para>
-     </listitem>
+    <listitem>
+     <para>
+      The popular Z39.50 toolkit for the C language.
+      YAZ <emphasis>must</emphasis> be compiled with Libxml2/Libxslt support.
+     </para>
+    </listitem>
     </varlistentry>
     <varlistentry><term><ulink url="&url.icu;">International
-       Components for Unicode (ICU)</ulink></term>
-     <listitem>
-      <para>
-       ICU provides Unicode support for non-English languages with
-       character sets outside the range of 7bit ASCII, like
-       Greek, Russian, German and French. Pazpar2 uses the ICU
-       Unicode character conversions, Unicode normalization, case
-       folding and other fundamental operations needed in
-       tokenization, normalization and ranking of records. 
-      </para>
-      <para>
-       Compiling, linking, and usage of the ICU libraries is optional,
-       but strongly recommended for usage in an international
-       environment.  
-      </para>
-     </listitem>
+    Components for Unicode (ICU)</ulink></term>
+    <listitem>
+     <para>
+      ICU provides Unicode support for non-English languages with
+      character sets outside the range of 7bit ASCII, like
+      Greek, Russian, German and French. Pazpar2 uses the ICU
+      Unicode character conversions, Unicode normalization, case
+      folding and other fundamental operations needed in
+      tokenization, normalization and ranking of records. 
+     </para>
+     <para>
+      Compiling, linking, and usage of the ICU libraries is optional,
+      but strongly recommended for usage in an international
+      environment.  
+     </para>
+    </listitem>
     </varlistentry>
    </variablelist>
   </para>
@@ -261,59 +261,59 @@
     changed with configure option <option>--prefix</option>.
    </para>
   </section>
-
+  
   <section id="installation.win32">
-    <title>Installation from source on Windows</title>
-    <para>
-      Pazpar2 can be built for Windows using
-      <ulink url="&url.vstudio;">Microsoft Visual Studio</ulink>.
-      The support files for building YAZ on Windows are located in the
-      <filename>win</filename> directory. The compilation is performed
-      using the <filename>win/makefile</filename> which is to be
-      processed by the NMAKE utility part of Visual Studio.
-    </para>
-    <para>
-      Ensure that the development libraries and header files are
-      available on your system before compiling Pazpar2. For installation
-      of YAZ, refer to
-      the Installation chapter of the YAZ manual at
-      <ulink url="&url.yaz.install;"/>.
-      It is easiest if YAZ and Pazpar2 are unpacked in the same
-      directory (side-by-side).
-    </para>
-    <para>
-      The compilation is tuned by editing the makefile of Pazpar2.
-      The process is similar to YAZ. Adjust the various directories
-      <literal>YAZ_DIR</literal>, <literal>ZLIB_DIR</literal>, etc.,
-      as required.
-    </para>
-    <para>
-      Compile Pazpar2 by invoking <application>nmake</application> in
-      the <filename>win</filename> directory.
-      The resulting binaries of the build process are located in the
-      <filename>bin</filename> of the Pazpar2 source
-      tree - including the <filename>pazpar2.exe</filename> and necessary DLLs.
-    </para>
-    <para>
-      The Windows version of Pazpar2 is a console application. It may
-      be installed as a Windows Service by adding option 
-      <literal>-install</literal> for the pazpar2 program. This will
-      register Pazpar2 as a service and use the other options provided
-      in the same invocation. For example:
-      <screen>
-	cd \MyPazpar2\etc
-	..\bin\pazpar2 -install -f pazpar2.cfg -l pazpar2.log
-      </screen>
-      The Pazpar2 service may now be controlled via the Service Control
-      Panel. It may be unregistered by passing the <literal>-remove</literal>
-      option. Example:
-      <screen>
-	cd \MyPazpar2\etc
-	..\bin\pazpar2 -remove
-      </screen>
-    </para>
+   <title>Installation from source on Windows</title>
+   <para>
+    Pazpar2 can be built for Windows using
+    <ulink url="&url.vstudio;">Microsoft Visual Studio</ulink>.
+    The support files for building YAZ on Windows are located in the
+    <filename>win</filename> directory. The compilation is performed
+    using the <filename>win/makefile</filename> which is to be
+    processed by the NMAKE utility part of Visual Studio.
+   </para>
+   <para>
+    Ensure that the development libraries and header files are
+    available on your system before compiling Pazpar2. For installation
+    of YAZ, refer to
+    the Installation chapter of the YAZ manual at
+    <ulink url="&url.yaz.install;"/>.
+    It is easiest if YAZ and Pazpar2 are unpacked in the same
+    directory (side-by-side).
+   </para>
+   <para>
+    The compilation is tuned by editing the makefile of Pazpar2.
+    The process is similar to YAZ. Adjust the various directories
+    <literal>YAZ_DIR</literal>, <literal>ZLIB_DIR</literal>, etc.,
+    as required.
+   </para>
+   <para>
+    Compile Pazpar2 by invoking <application>nmake</application> in
+    the <filename>win</filename> directory.
+    The resulting binaries of the build process are located in the
+    <filename>bin</filename> of the Pazpar2 source
+    tree - including the <filename>pazpar2.exe</filename> and necessary DLLs.
+   </para>
+   <para>
+    The Windows version of Pazpar2 is a console application. It may
+    be installed as a Windows Service by adding option 
+    <literal>-install</literal> for the pazpar2 program. This will
+    register Pazpar2 as a service and use the other options provided
+    in the same invocation. For example:
+    <screen>
+     cd \MyPazpar2\etc
+     ..\bin\pazpar2 -install -f pazpar2.cfg -l pazpar2.log
+    </screen>
+    The Pazpar2 service may now be controlled via the Service Control
+    Panel. It may be unregistered by passing the <literal>-remove</literal>
+    option. Example:
+    <screen>
+     cd \MyPazpar2\etc
+     ..\bin\pazpar2 -remove
+    </screen>
+   </para>
   </section>
-
+  
   <section id="installation.test1">
    <title>Installation of test interfaces</title>
    <para>
@@ -395,7 +395,7 @@
   </section>
 
   <section id="installation.debian">
-   <title>Installation on Debian or Ubuntu GNU/Linux</title>
+   <title>Installation on Debian GNU/Linux and Ubuntu</title>
    <para>
     Index Data provides Debian and Ubuntu packages for Pazpar2.
     As of February 2010, these
@@ -406,14 +406,16 @@
     <ulink url="&url.pazpar2.download.ubuntu;"/>.
    </para>
   </section>
-
+  
   <section id="installation.apache2proxy">
    <title>Apache 2 Proxy</title>
    <para>
     Apache 2 has a 
-    <ulink url="http://httpd.apache.org/docs/2.2/mod/mod_proxy.html">
+    <ulink
+	url="http://httpd.apache.org/docs/2.2/mod/mod_proxy.html">
      proxy module
-    </ulink> which allows Pazpar2 to become a backend to an Apache 2
+    </ulink>
+    which allows Pazpar2 to become a backend to an Apache 2
     based web service. The Apache 2 proxy must operate in the
     <emphasis>Reverse</emphasis> Proxy mode.
    </para>
@@ -425,14 +427,16 @@
      sudo a2enmod proxy_http proxy_balancer
     </screen>
    </para>
-
+   
    <para>
     Traditionally Pazpar2 interprets URL paths with suffix 
     <literal>/search.pz2</literal>.
     The 
-    <ulink 
-     url="http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypass"
-     >ProxyPass</ulink> directive of Apache must be used to map a URL path
+    <ulink
+	url="http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypass">
+    ProxyPass
+    </ulink>
+    directive of Apache must be used to map a URL path
     the the Pazpar2 server (listening port).
    </para>
 
@@ -469,16 +473,16 @@
     </para>
    </example>
   </section>
-
+  
  </chapter>
-
+ 
  <chapter id="using">
   <title>Using Pazpar2</title>
   <para>
    This chapter provides a general introduction to the use and
    deployment of Pazpar2. 
   </para>
-
+  
   <section id="architecture">
    <title>Pazpar2 and your systems architecture</title>
    <para>
@@ -509,7 +513,7 @@
     with the server from which the enclosing HTML page or object
     originated, Pazpar2 is designed so that it can act as a transparent
     proxy in front of an existing webserver (see <xref
-     linkend="pazpar2_conf"/> for details). 
+    linkend="pazpar2_conf"/> for details). 
     In this mode, all regular
     HTTP requests are transparently passed through to your webserver,
     while Pazpar2 only intercepts search-related webservice requests.
@@ -584,11 +588,11 @@
      <!-- ... and so on -->
     </record>
      ]]></screen>
-
+    
     As you can see, there isn't much to it. There are really only a few
     important elements to this file.
    </para>
-
+   
    <para>
     Elements should belong to the namespace
     <literal>http://www.indexdata.com/pazpar2/1.0</literal>.
@@ -630,7 +634,7 @@
     The webservice API of Pazpar2 is described in detail in <xref
      linkend="pazpar2_protocol"/>.
    </para>
-
+   
    <para>
     In brief, you use the 'init' command to create a session, a
     temporary workspace which carries information about the current
@@ -664,11 +668,12 @@
     no effort. Resources that use non-standard record formats will
     require a bit of XSLT work, but that's all.
    </para>
-
+   
    <para>
-    But what about resources that don't support Z39.50 at all? Some resources might
-    support OpenSearch, private, XML/HTTP-based protocols, or something
-    else entirely. Some databases exist only as web user interfaces and
+    But what about resources that don't support Z39.50 at all?
+    Some resources might support OpenSearch, private, XML/HTTP-based
+    protocols, or something else entirely.
+    Some databases exist only as web user interfaces and
     will require screen-scraping. Still others exist only as static
     files, or perhaps as databases supporting the OAI-PMH protocol.
     There is hope! Read on.
@@ -679,12 +684,12 @@
     work with database vendors to support standards, so you don't have
     to worry about programming against non-standard services. We also
     provide tools (see <ulink
-     url="http://www.indexdata.com/simpleserver">SimpleServer</ulink>)
+    url="http://www.indexdata.com/simpleserver">SimpleServer</ulink>)
     which make it comparatively easy to build gateways against servers
     with non-standard behavior. Again, we encourage you to share any
     work you do in this direction.
    </para>
-
+   
    <para>
     But the bottom line is that working with non-standard resources in
     metasearching is really, really hard. If you want to build a
@@ -741,9 +746,17 @@
   <section id="load_balancing">
    <title>Load balancing</title>
    <para>
-     Just like any web server, Pazpar2, can be load balanced by a standard hardware or software load balancer as long as the session stickiness is ensured. If you are already running the Apache2 web server in front of Pazpar2 and use the apache mod_proxy module to 'relay' client requests to Pazpar2, this set up can be easily extended to include load balancing capabilites. To do so you need to enable the <ulink url="http://httpd.apache.org/docs/2.2/mod/mod_proxy_balancer.html">
-     mod_proxy_balancer
-    </ulink> module in your Apache2 installation.
+     Just like any web server, Pazpar2, can be load balanced by a standard
+     hardware or software load balancer as long as the session stickiness
+     is ensured. If you are already running the Apache2 web server in front
+     of Pazpar2 and use the apache mod_proxy module to 'relay' client
+     requests to Pazpar2, this set up can be easily extended to include
+     load balancing capabilites.
+     To do so you need to enable the
+     <ulink url="http://httpd.apache.org/docs/2.2/mod/mod_proxy_balancer.html">
+      mod_proxy_balance
+     </ulink>
+     module in your Apache2 installation.
    </para>
    
    <para>
@@ -755,14 +768,28 @@
    </para>
 
    <para>
-     The mod_proxy_balancer can pass all 'sessionsticky' requests to the same backend worker as long as the requests are marked with the originating worker's ID (called 'route'). If the Pazpar2 serverID is configured (by setting an 'id' attribute on the 'server' element in the Pazpar2 configuration file) Pazpar2 will append it to the 'session' element returned during the 'init' in a mod_proxy_balancer compatible manner. Since the 'session' is then re-sent by the client (for all pazpar2 request besides 'init'), the balancer can use the marker to pass the request to the right route. To do so the balancer needs to be configured to inspect the 'session' parameter.
+    The mod_proxy_balancer can pass all 'sessionsticky' requests to the
+    same backend worker as long as the requests are marked with the
+    originating worker's ID (called 'route'). If the Pazpar2 serverID is
+    configured (by setting an 'id' attribute on the 'server' element in
+    the Pazpar2 configuration file) Pazpar2 will append it to the
+    'session' element returned during the 'init' in a mod_proxy_balancer
+    compatible manner.
+    Since the 'session' is then re-sent by the client (for all pazpar2
+    request besides 'init'), the balancer can use the marker to pass
+    the request to the right route. To do so the balancer needs to be
+    configured to inspect the 'session' parameter.
    </para>
 
    <example id="load_balancing.example">
     <title>Apache 2 load balancing configuration</title>
     <para>
-     Having 4 Pazpar2 instances running on the same host, port range of 8004-8007 and serverIDs of: pz1, pz2, pz3 and pz4 respectively we could use the following Apache 2 configuration to expose a single pazpar2 'endpoint' on a standard (<filename>/pazpar2/search.pz2</filename>) location:
-
+     Having 4 Pazpar2 instances running on the same host, port range of
+     8004-8007 and serverIDs of: pz1, pz2, pz3 and pz4 respectively we
+     could use the following Apache 2 configuration to expose a single
+     pazpar2 'endpoint' on a standard
+     (<filename>/pazpar2/search.pz2</filename>) location:
+     
      <screen><![CDATA[
        <Proxy *>
          AddDefaultCharset off
@@ -782,15 +809,21 @@
        # route is resent in the 'session' param which has the form: 
        # 'sessid.serverid', understandable by the mod_proxy_load_balancer
        # this is not going to work if the client tampers with the 'session' param
-       ProxyPass /pazpar2/search.pz2 balancer://pz2cluster lbmethod=byrequests stickysession=session nofailover=On]]></screen>
-
-     The 'ProxyPass' line sets up a reverse proxy for request ‘/pazpar2/search.pz2’ and delegates all requests to the load balancer (virtual worker) with name ‘pz2cluster’. Sticky sessions are enabled and implemented using the ‘session’ parameter. The ‘Proxy’ section lists all the servers (real workers) which the load balancer can use.
-   </para>
-
-  </example>
-
+       ProxyPass /pazpar2/search.pz2 balancer://pz2cluster lbmethod=byrequests stickysession=session nofailover=On
+     ]]></screen>
+     
+     The 'ProxyPass' line sets up a reverse proxy for request
+     ‘/pazpar2/search.pz2’ and delegates all requests to the load balancer
+     (virtual worker) with name ‘pz2cluster’.
+     Sticky sessions are enabled and implemented using the ‘session’ parameter.
+     The ‘Proxy’ section lists all the servers (real workers) which the
+     load balancer can use.
+    </para>
+    
+   </example>
+   
   </section>
-
+  
 
  </chapter> <!-- Using Pazpar2 -->
 
@@ -805,51 +838,44 @@
   &manref;
  </reference>
 
- <appendix id="license"><title>License</title>
-  
-   <para>
-    Pazpar2,
-    Copyright &copy; &copyright-year; Index Data.
-   </para>
-   
-   <para>
-    Pazpar2 is free software; you can redistribute it and/or modify it under
-    the terms of the GNU General Public License as published by the Free
-    Software Foundation; either version 2, or (at your option) any later
-    version.
-   </para>
-   
-   <para>
-    Pazpar2 is distributed in the hope that it will be useful, but WITHOUT ANY
-    WARRANTY; without even the implied warranty of MERCHANTABILITY or
-    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-    for more details.
-   </para>
-   
-   <para>
-    You should have received a copy of the GNU General Public License
-    along with Pazpar2; see the file LICENSE.  If not, write to the
-    Free Software Foundation, 
-    51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-   </para>
-
+ <appendix id="license">
+  <title>License</title>
+ 
+ <para>
+  Pazpar2,
+  Copyright &#xa9; &copyright-year; Index Data.
+ </para>
+ 
+ <para>
+  Pazpar2 is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2, or (at your option) any later
+  version.
+ </para>
+ 
+ <para>
+  Pazpar2 is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+  for more details.
+ </para>
+ 
+ <para>
+  You should have received a copy of the GNU General Public License
+  along with Pazpar2; see the file LICENSE.  If not, write to the
+  Free Software Foundation, 
+  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ </para>
+ 
  </appendix>
 
  &gpl2;
  
 </book>
 
- <!-- Keep this comment at the end of the file
- Local variables:
- mode: sgml
- sgml-omittag:t
- sgml-shorttag:t
- sgml-minimize-attributes:nil
- sgml-always-quote-attributes:t
- sgml-indent-step:1
- sgml-indent-data:t
- sgml-parent-document: nil
- sgml-local-catalogs: nil
- sgml-namecase-general:t
- End:
- -->
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: nxml
+nxml-child-indent: 1
+End:
+-->

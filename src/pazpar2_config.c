@@ -70,7 +70,8 @@ static void conf_metadata_assign(NMEM nmem,
                                  int termlist,
                                  int rank,
                                  int sortkey_offset,
-                                 enum conf_metadata_mergekey mt)
+                                 enum conf_metadata_mergekey mt,
+                                 const char *facetrule)
 {
     assert(nmem && metadata && name);
     
@@ -90,6 +91,7 @@ static void conf_metadata_assign(NMEM nmem,
     metadata->rank = rank;    
     metadata->sortkey_offset = sortkey_offset;
     metadata->mergekey = mt;
+    metadata->facetrule = nmem_strdup_null(nmem, facetrule);
 }
 
 
@@ -124,10 +126,7 @@ static struct conf_service *service_init(struct conf_server *server,
     service->z3950_session_timeout = 180;
     service->z3950_operation_timeout = 30;
 
-    service->relevance_pct = 0;
-    service->sort_pct = 0;
-    service->mergekey_pct = 0;
-    service->facet_pct = 0;
+    service->charsets = 0;
 
     service->id = service_id ? nmem_strdup(nmem, service_id) : 0;
     service->num_metadata = num_metadata;
@@ -157,7 +156,8 @@ static struct conf_metadata* conf_service_add_metadata(
     int termlist,
     int rank,
     int sortkey_offset,
-    enum conf_metadata_mergekey mt)
+    enum conf_metadata_mergekey mt,
+    const char *facetrule)
 {
     struct conf_metadata * md = 0;
 
@@ -168,7 +168,7 @@ static struct conf_metadata* conf_service_add_metadata(
     md = service->metadata + field_id;
     conf_metadata_assign(service->nmem, md, name, type, merge, setting,
                          brief, termlist, rank, sortkey_offset,
-                         mt);
+                         mt, facetrule);
     return md;
 }
 
@@ -243,10 +243,7 @@ void service_destroy(struct conf_service *service)
     {
         if (!pazpar2_decref(&service->ref_count, service->mutex))
         {
-            pp2_charset_destroy(service->relevance_pct);
-            pp2_charset_destroy(service->sort_pct);
-            pp2_charset_destroy(service->mergekey_pct);
-            pp2_charset_destroy(service->facet_pct);
+            pp2_charset_fact_destroy(service->charsets);
             yaz_mutex_destroy(&service->mutex);
             nmem_destroy(service->nmem);
         }
@@ -263,25 +260,63 @@ void service_incref(struct conf_service *service)
 static int parse_metadata(struct conf_service *service, xmlNode *n,
                           int *md_node, int *sk_node)
 {
-    xmlChar *xml_name = xmlGetProp(n, (xmlChar *) "name");
-    xmlChar *xml_brief = xmlGetProp(n, (xmlChar *) "brief");
-    xmlChar *xml_sortkey = xmlGetProp(n, (xmlChar *) "sortkey");
-    xmlChar *xml_merge = xmlGetProp(n, (xmlChar *) "merge");
-    xmlChar *xml_type = xmlGetProp(n, (xmlChar *) "type");
-    xmlChar *xml_termlist = xmlGetProp(n, (xmlChar *) "termlist");
-    xmlChar *xml_rank = xmlGetProp(n, (xmlChar *) "rank");
-    xmlChar *xml_setting = xmlGetProp(n, (xmlChar *) "setting");
-    xmlChar *xml_mergekey = xmlGetProp(n, (xmlChar *) "mergekey");
-    
     enum conf_metadata_type type = Metadata_type_generic;
     enum conf_metadata_merge merge = Metadata_merge_no;
     enum conf_setting_type setting = Metadata_setting_no;
-    enum conf_sortkey_type sk_type = Metadata_sortkey_relevance;
     enum conf_metadata_mergekey mergekey_type = Metadata_mergekey_no;
     int brief = 0;
     int termlist = 0;
     int rank = 0;
     int sortkey_offset = 0;
+    xmlChar *xml_name = 0;
+    xmlChar *xml_brief = 0;
+    xmlChar *xml_sortkey = 0;
+    xmlChar *xml_merge = 0;
+    xmlChar *xml_type = 0;
+    xmlChar *xml_termlist = 0;
+    xmlChar *xml_rank = 0;
+    xmlChar *xml_setting = 0;
+    xmlChar *xml_mergekey = 0;
+    xmlChar *xml_icu_chain = 0;
+    struct _xmlAttr *attr;
+    for (attr = n->properties; attr; attr = attr->next)
+    {
+        if (!xmlStrcmp(attr->name, BAD_CAST "name") &&
+            attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_name = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "brief") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_brief = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "sortkey") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_sortkey = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "merge") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_merge = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "type") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_type = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "termlist") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_termlist = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "rank") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_rank = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "setting") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_setting = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "mergekey") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_mergekey = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "facetrule") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_icu_chain = attr->children->content;
+        else
+        {
+            yaz_log(YLOG_FATAL, "Unknown metadata attribute '%s'", attr->name);
+            return -1;
+        }
+    }
     
     // now do the parsing logic
     if (!xml_name)
@@ -299,8 +334,6 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    else
-        brief = 0;
     
     if (xml_termlist)
     {
@@ -312,14 +345,10 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    else
-        termlist = 0;
     
     if (xml_rank)
         rank = atoi((const char *) xml_rank);
-    else
-        rank = 0;
-    
+
     if (xml_type)
     {
         if (!strcmp((const char *) xml_type, "generic"))
@@ -335,8 +364,6 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    else
-        type = Metadata_type_generic;
     
     if (xml_merge)
     {
@@ -357,8 +384,6 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    else
-        merge = Metadata_merge_no;
     
     if (xml_setting)
     {
@@ -379,6 +404,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     // add a sortkey if so specified
     if (xml_sortkey && strcmp((const char *) xml_sortkey, "no"))
     {
+        enum conf_sortkey_type sk_type;
         if (merge == Metadata_merge_no)
         {
             yaz_log(YLOG_FATAL, 
@@ -399,8 +425,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
         sortkey_offset = *sk_node;
         
         conf_service_add_sortkey(service, *sk_node,
-                                 (const char *) xml_name, sk_type);
-        
+                                 (const char *) xml_name, sk_type);        
         (*sk_node)++;
     }
     else
@@ -420,24 +445,13 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    
-    
+
     // metadata known, assign values
     conf_service_add_metadata(service, *md_node,
                               (const char *) xml_name,
                               type, merge, setting,
                               brief, termlist, rank, sortkey_offset,
-                              mergekey_type);
-    
-    xmlFree(xml_name);
-    xmlFree(xml_brief);
-    xmlFree(xml_sortkey);
-    xmlFree(xml_merge);
-    xmlFree(xml_type);
-    xmlFree(xml_termlist);
-    xmlFree(xml_rank);
-    xmlFree(xml_setting);
-    xmlFree(xml_mergekey);
+                              mergekey_type, (const char *) xml_icu_chain);
     (*md_node)++;
     return 0;
 }
@@ -511,60 +525,29 @@ static struct conf_service *service_create_static(struct conf_server *server,
         }
         else if (!strcmp((const char *) n->name, "settings"))
             got_settings++;
-        else if (!strcmp((const char *) n->name, "relevance"))
+        else if (!strcmp((const char *) n->name, "icu_chain"))
         {
-            if (service->relevance_pct)
+            if (!service->charsets)
+                service->charsets = pp2_charset_fact_create();
+            if (pp2_charset_fact_define(service->charsets, n, 0))
             {
-                yaz_log(YLOG_LOG, "relevance may not repeat in service");
+                yaz_log(YLOG_FATAL, "ICU chain definition error");
                 return 0;
-            }
-            else
-            {
-                service->relevance_pct = pp2_charset_create_xml(n);
-                if (!service->relevance_pct)
-                    return 0;
             }
         }
-        else if (!strcmp((const char *) n->name, "sort"))
+        else if (!strcmp((const char *) n->name, "relevance")
+                 || !strcmp((const char *) n->name, "sort")
+                 || !strcmp((const char *) n->name, "mergekey")
+                 || !strcmp((const char *) n->name, "facet"))
+
         {
-            if (service->sort_pct)
+            if (!service->charsets)
+                service->charsets = pp2_charset_fact_create();
+            if (pp2_charset_fact_define(service->charsets,
+                                        n->children, (const char *) n->name))
             {
-                yaz_log(YLOG_LOG, "sort may not repeat in service");
+                yaz_log(YLOG_FATAL, "ICU chain definition error");
                 return 0;
-            }
-            else
-            {
-                service->sort_pct = pp2_charset_create_xml(n);
-                if (!service->sort_pct)
-                    return 0;
-            }
-        }
-        else if (!strcmp((const char *) n->name, "mergekey"))
-        {
-            if (service->mergekey_pct)
-            {
-                yaz_log(YLOG_LOG, "mergekey may not repeat in service");
-                return 0;
-            }
-            else
-            {
-                service->mergekey_pct = pp2_charset_create_xml(n);
-                if (!service->mergekey_pct)
-                    return 0;
-            }
-        }
-        else if (!strcmp((const char *) n->name, "facet"))
-        {
-            if (service->facet_pct)
-            {
-                yaz_log(YLOG_LOG, "facet may not repeat in service");
-                return 0;
-            }
-            else
-            {
-                service->facet_pct = pp2_charset_create_xml(n);
-                if (!service->facet_pct)
-                    return 0;
             }
         }
         else if (!strcmp((const char *) n->name, (const char *) "metadata"))
@@ -655,48 +638,17 @@ static void inherit_server_settings(struct conf_service *s)
     
     /* use relevance/sort/mergekey/facet from server if not defined
        for this service.. */
-    if (!s->relevance_pct)
+    if (!s->charsets)
     {
-        if (server->relevance_pct)
+        if (server->charsets)
         {
-            s->relevance_pct = server->relevance_pct;
-            pp2_charset_incref(s->relevance_pct);
+            s->charsets = server->charsets;
+            pp2_charset_fact_incref(s->charsets);
         }
         else
-            s->relevance_pct = pp2_charset_create_a_to_z();
-    }
-    
-    if (!s->sort_pct)
-    {
-        if (server->sort_pct)
         {
-            s->sort_pct = server->sort_pct;
-            pp2_charset_incref(s->sort_pct);
+            s->charsets = pp2_charset_fact_create();
         }
-        else
-            s->sort_pct = pp2_charset_create_a_to_z();
-    }
-    
-    if (!s->mergekey_pct)
-    {
-        if (server->mergekey_pct)
-        {
-            s->mergekey_pct = server->mergekey_pct;
-            pp2_charset_incref(s->mergekey_pct);
-        }
-        else
-            s->mergekey_pct = pp2_charset_create_a_to_z();
-    }
-
-    if (!s->facet_pct)
-    {
-        if (server->facet_pct)
-        {
-            s->facet_pct = server->facet_pct;
-            pp2_charset_incref(s->facet_pct);
-        }
-        else
-            s->facet_pct = pp2_charset_create(0);
     }
 }
 
@@ -730,10 +682,7 @@ static struct conf_server *server_create(struct conf_config *config,
     server->service = 0;
     server->config = config;
     server->next = 0;
-    server->relevance_pct = 0;
-    server->sort_pct = 0;
-    server->mergekey_pct = 0;
-    server->facet_pct = 0;
+    server->charsets = 0;
     server->server_settings = 0;
     server->http_server = 0;
     server->iochan_man = 0;
@@ -786,30 +735,30 @@ static struct conf_server *server_create(struct conf_config *config,
             if (!(server->server_settings = parse_settings(config, nmem, n)))
                 return 0;
         }
-        else if (!strcmp((const char *) n->name, "relevance"))
+        else if (!strcmp((const char *) n->name, "icu_chain"))
         {
-            server->relevance_pct = pp2_charset_create_xml(n);
-            if (!server->relevance_pct)
+            if (!server->charsets)
+                server->charsets = pp2_charset_fact_create();
+            if (pp2_charset_fact_define(server->charsets, n, 0))
+            {
+                yaz_log(YLOG_FATAL, "ICU chain definition error");
                 return 0;
+            }
         }
-        else if (!strcmp((const char *) n->name, "sort"))
+        else if (!strcmp((const char *) n->name, "relevance")
+                 || !strcmp((const char *) n->name, "sort")
+                 || !strcmp((const char *) n->name, "mergekey")
+                 || !strcmp((const char *) n->name, "facet"))
         {
-            server->sort_pct = pp2_charset_create_xml(n);
-            if (!server->sort_pct)
+            if (!server->charsets)
+                server->charsets = pp2_charset_fact_create();
+            if (pp2_charset_fact_define(server->charsets,
+                                        n->children, (const char *) n->name))
+            {
+                yaz_log(YLOG_FATAL, "ICU chain definition error");
                 return 0;
-        }
-        else if (!strcmp((const char *) n->name, "mergekey"))
-        {
-            server->mergekey_pct = pp2_charset_create_xml(n);
-            if (!server->mergekey_pct)
-                return 0;
-        }
-        else if (!strcmp((const char *) n->name, "facet"))
-        {
-            server->facet_pct = pp2_charset_create_xml(n);
-            if (!server->facet_pct)
-                return 0;
-        }
+            }            
+        }            
         else if (!strcmp((const char *) n->name, "service"))
         {
             char *service_id = (char *)
@@ -963,6 +912,7 @@ struct conf_config *config_create(const char *fname, int verbose)
     config->servers = 0;
     config->no_threads = 0;
     config->iochan_man = 0;
+    config->database_hosts = 0;
 
     config->confdir = wrbuf_alloc();
     if ((p = strrchr(fname, 
@@ -1013,10 +963,7 @@ void server_destroy(struct conf_server *server)
         service_destroy(s);
         s = s_next;
     }
-    pp2_charset_destroy(server->relevance_pct);
-    pp2_charset_destroy(server->sort_pct);
-    pp2_charset_destroy(server->mergekey_pct);
-    pp2_charset_destroy(server->facet_pct);
+    pp2_charset_fact_destroy(server->charsets);
     yaz_log(YLOG_LOG, "server_destroy server=%p", server);
     http_server_destroy(server->http_server);
 }

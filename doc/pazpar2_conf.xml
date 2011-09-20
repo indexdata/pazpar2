@@ -15,7 +15,7 @@
   <productnumber>&version;</productnumber>
   <info><orgname>Index Data</orgname></info>
  </refentryinfo>
-
+ 
  <refmeta>
   <refentrytitle>Pazpar2 conf</refentrytitle>
   <manvolnum>5</manvolnum>
@@ -33,7 +33,8 @@
   </cmdsynopsis>
  </refsynopsisdiv>
  
- <refsect1><title>DESCRIPTION</title>
+ <refsect1>
+  <title>DESCRIPTION</title>
   <para>
    The Pazpar2 configuration file, together with any referenced XSLT files,
    govern Pazpar2's behavior as a client, and control the normalization and
@@ -49,7 +50,8 @@
   </para>
  </refsect1>
  
- <refsect1><title>FORMAT</title>
+ <refsect1>
+  <title>FORMAT</title>
   <para>
    The configuration file is XML-structured. It must be well-formed XML. All
    elements specific to Pazpar2 should belong to the namespace
@@ -60,24 +62,27 @@
    information. The categories are described below.
   </para>
   
-  <refsect2 id="config-threads"><title>threads</title>
-    <para>
-      This section is optional and is supported for Pazpar2 version 1.3.1 and
-      later . It is identified by element "<literal>threads</literal>" which
-      may include one attribute "<literal>number</literal>" which specifies
-      the number of worker-threads that the Pazpar2 instance is to use.
-      A value of 0 (zero) disables worker-threads (all work is carried out
-      in main thread).
-    </para>
+  <refsect2 id="config-threads">
+   <title>threads</title>
+   <para>
+    This section is optional and is supported for Pazpar2 version 1.3.1 and
+    later . It is identified by element "<literal>threads</literal>" which
+    may include one attribute "<literal>number</literal>" which specifies
+    the number of worker-threads that the Pazpar2 instance is to use.
+    A value of 0 (zero) disables worker-threads (all work is carried out
+    in main thread).
+   </para>
   </refsect2>
-  <refsect2 id="config-server"><title>server</title>
+  <refsect2 id="config-server">
+   <title>server</title>
    <para>
     This section governs overall behavior of a server endpoint. It is identified
     by the element "server" which takes an optional attribute, "id", which
     identifies this particular Pazpar2 server. Any string value for "id"
     may be given.
    </para>
-   <para>The data
+   <para>
+    The data
     elements are described below. From Pazpar2 version 1.2 this is
     a repeatable element.
    </para>
@@ -121,13 +126,23 @@
     </varlistentry>
 
     <varlistentry>
-     <term>relevance / sort / mergekey / facet</term>
+     <term>icu_chain</term>
      <listitem>
       <para>
        Specifies character set normalization for relevancy / sorting /
        mergekey and facets - for the server. These definitions serves as
        default for services that don't have these given. For the meaning
-       of these settings refer to the "relevance" element inside service.
+       of these settings refer to the
+       <xref linkend="icuchain"/> element inside service.
+      </para>
+     </listitem>
+    </varlistentry>
+    
+    <varlistentry>
+     <term>relevance / sort / mergekey / facet</term>
+     <listitem>
+      <para>
+       Obsolete. Use element icu_chain instead.
       </para>
      </listitem>
     </varlistentry>
@@ -169,19 +184,21 @@
       </para>
 
       <variablelist> <!-- Level 2 -->
-       <varlistentry><term>metadata</term>
+       <varlistentry>
+	<term>metadata</term>
 	<listitem>
 	 <para>
 	  One of these elements is required for every data element in
 	  the internal representation of the record (see
 	  <xref linkend="data_model"/>. It governs
-	   subsequent processing as pertains to sorting, relevance
-	   ranking, merging, and display of data elements. It supports
-	   the following attributes:
+	  subsequent processing as pertains to sorting, relevance
+	  ranking, merging, and display of data elements. It supports
+	  the following attributes:
 	 </para>
 	 
 	 <variablelist> <!-- level 3 -->
-	  <varlistentry><term>name</term>
+	  <varlistentry>
+	   <term>name</term>
 	   <listitem>
 	    <para>
 	     This is the name of the data element. It is matched
@@ -199,7 +216,8 @@
 	   </listitem>
 	  </varlistentry>
 	  
-	  <varlistentry><term>type</term>
+	  <varlistentry>
+	   <term>type</term>
 	   <listitem>
 	    <para>
 	     The type of data element. This value governs any
@@ -212,7 +230,8 @@
 	   </listitem>
 	  </varlistentry>
 	  
-	  <varlistentry><term>brief</term>
+	  <varlistentry>
+	   <term>brief</term>
 	   <listitem>
 	    <para>
 	     If this is set to 'yes', then the data element is
@@ -223,7 +242,8 @@
 	   </listitem>
 	  </varlistentry>
 	  
-	  <varlistentry><term>sortkey</term>
+	  <varlistentry>
+	   <term>sortkey</term>
 	   <listitem>
 	    <para>
 	     Specifies that this data element is to be used for
@@ -235,7 +255,8 @@
 	   </listitem>
 	  </varlistentry>
 	  
-	  <varlistentry><term>rank</term>
+	  <varlistentry>
+	   <term>rank</term>
 	   <listitem>
 	    <para>
 	     Specifies that this element is to be used to
@@ -251,7 +272,8 @@
 	   </listitem>
 	  </varlistentry>
 	  
-	  <varlistentry><term>termlist</term>
+	  <varlistentry>
+	   <term>termlist</term>
 	   <listitem>
 	    <para>
 	     Specifies that this element is to be used as a
@@ -265,7 +287,8 @@
 	   </listitem>
 	  </varlistentry>
 	  
-	  <varlistentry><term>merge</term>
+	  <varlistentry>
+	   <term>merge</term>
 	   <listitem>
 	    <para>
 	     This governs whether, and how elements are extracted
@@ -279,8 +302,9 @@
 	    </para>
 	   </listitem>
 	  </varlistentry>
-
-	  <varlistentry><term>mergekey</term>
+	  
+	  <varlistentry>
+	   <term>mergekey</term>
 	   <listitem>
 	    <para>
 	     If set to '<literal>required</literal>', the value of this
@@ -303,7 +327,19 @@
 	   </listitem>
 	  </varlistentry>
 
-	  <varlistentry><term>setting</term>
+	  <varlistentry>
+	   <term id="facetrule">facetrule</term>
+	   <listitem>
+	    <para>
+	     Specifies the ICU rule set to be used for normalizing
+	     facets. If facetrule is omitted from metadata, the
+	     rule set 'facet' is used.
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	  
+	  <varlistentry>
+	   <term>setting</term>
 	   <listitem>
 	    <para>
 	     This attribute allows you to make use of static database
@@ -331,15 +367,26 @@
 	 
 	</listitem>
        </varlistentry>
-       
+
        <varlistentry>
-	<term>relevance</term>
+	<term id="icuchain" xreflabel="icu_chain">icu_chain</term>
 	<listitem>
 	 <para>
-	  Specifies ICU tokenization and transformation rules
-	  for tokens that are used in Pazpar2's relevance ranking.
-	  The 'id' attribute is currently not used, and the 'locale'
-	  attribute must be set to one of the locale strings
+	  Specifies a named ICU rule set. The icu_chain element must include
+	  attribute 'id' which specifies the identifier (name) for the ICU
+	  rule set.
+	  Pazpar2 uses the particular rule sets for particular purposes.
+	  Rule set 'relevance' is used to normalize
+	  terms for relevance ranking. Rule set 'sort' is used to 
+	  normalize terms for sorting. Rule set 'mergekey' is used to
+	  normalize terms for making a mergekey and, finally. Rule set 'facet'
+	  is normally used to normalize facet terms, unless
+	  <xref linkend="facetrule">facetrule</xref> is given for a
+	  metadata field.
+	 </para>
+	 <para>
+	  The icu_chain element must also include a 'locale'
+	  attribute which must be set to one of the locale strings
 	  defined in ICU. The child elements listed below can be
 	  in any order, except the 'index' element which logically
 	  belongs to the end of the list. The stated tokenization,
@@ -347,7 +394,8 @@
 	  in order from top to bottom. 
 	 </para>
 	 <variablelist> <!-- Level 2 -->
-	  <varlistentry><term>casemap</term>
+	  <varlistentry>
+	   <term>casemap</term>
 	   <listitem>
 	    <para>
 	     The attribute 'rule' defines the direction of the
@@ -356,7 +404,8 @@
 	    </para>
 	   </listitem>
 	  </varlistentry>
-	  <varlistentry><term>transform</term>
+	  <varlistentry>
+	   <term>transform</term>
 	   <listitem>
 	    <para>
 	     Normalization and transformation of tokens follows
@@ -364,14 +413,15 @@
 	     possible values we refer to the extensive ICU
 	     documentation found at the 
 	     <ulink url="&url.icu.transform;">ICU
-	      transformation</ulink> home page. Set filtering
+	     transformation</ulink> home page. Set filtering
 	     principles are explained at the 
 	     <ulink url="&url.icu.unicode.set;">ICU set and
-	      filtering</ulink> page.
+	     filtering</ulink> page.
 	    </para>
 	   </listitem>
 	  </varlistentry>
-	  <varlistentry><term>tokenize</term>
+	  <varlistentry>
+	   <term>tokenize</term>
 	   <listitem>
 	    <para>
 	     Tokenization is the only rule in the ICU chain
@@ -393,12 +443,33 @@
        </varlistentry>
        
        <varlistentry>
+	<term>relevance</term>
+	<listitem>
+	 <para>
+	  Specifies the ICU rule set used for relevance ranking.
+	  The child element of 'relevance' must be 'icu_chain' and the
+	  'id' attribute of the icu_chain is ignored. This
+	  definition is obsolete and should be replaced by the equivalent
+	  construct:
+	  <screen>
+	   &lt;icu_chain id="relevance" locale="en">..&lt;icu_chain>
+	  </screen>
+	 </para>
+	</listitem>
+       </varlistentry>
+       
+       <varlistentry>
 	<term>sort</term>
 	<listitem>
 	 <para>
-	  Specifies ICU tokenization and transformation rules
-	  for tokens that are used in Pazpar2's sorting. The contents
-	  is similar to that of <literal>relevance</literal>.
+	  Specifies the ICU rule set used for sorting.
+	  The child element of 'sort' must be 'icu_chain' and the
+	  'id' attribute of the icu_chain is ignored. This
+	  definition is obsolete and should be replaced by the equivalent
+	  construct:
+	  <screen>
+	   &lt;icu_chain id="sort" locale="en">..&lt;icu_chain>
+	  </screen>
 	 </para>
 	</listitem>
        </varlistentry>
@@ -408,8 +479,14 @@
 	<listitem>
 	 <para>
 	  Specifies ICU tokenization and transformation rules
-	  for tokens that are used in Pazpar2's mergekey. The contents
-	  is similar to that of <literal>relevance</literal>.
+	  for tokens that are used in Pazpar2's mergekey. 
+	  The child element of 'mergekey' must be 'icu_chain' and the
+	  'id' attribute of the icu_chain is ignored. This
+	  definition is obsolete and should be replaced by the equivalent
+	  construct:
+	  <screen>
+	   &lt;icu_chain id="mergekey" locale="en">..&lt;icu_chain>
+	  </screen>
 	 </para>
 	</listitem>
        </varlistentry>
@@ -419,12 +496,18 @@
 	<listitem>
 	 <para>
 	  Specifies ICU tokenization and transformation rules
-	  for tokens that are used in Pazpar2's facets. The contents
-	  is similar to that of <literal>relevance</literal>.
+	  for tokens that are used in Pazpar2's facets.
+	  The child element of 'facet' must be 'icu_chain' and the
+	  'id' attribute of the icu_chain is ignored. This
+	  definition is obsolete and should be replaced by the equivalent
+	  construct:
+	  <screen>
+	   &lt;icu_chain id="facet" locale="en">..&lt;icu_chain>
+	  </screen>
 	 </para>
 	</listitem>
        </varlistentry>
-
+       
        <varlistentry>
 	<term>settings</term>
 	<listitem>
@@ -458,68 +541,69 @@
 	 </para>
 	</listitem>
        </varlistentry>
-
       </variablelist>     <!-- Data elements in service directive -->
      </listitem>
     </varlistentry>
-    
    </variablelist>           <!-- Data elements in server directive -->
   </refsect2>
-
  </refsect1>
- 
- <refsect1><title>EXAMPLE</title>
-  <para>Below is a working example configuration:
-   <screen><![CDATA[
-    <?xml version="1.0" encoding="UTF-8"?>
-    <pazpar2 xmlns="http://www.indexdata.com/pazpar2/1.0">
-    
-      <threads number="10"/>
-      <server>
-        <listen port="9004"/>
-        <service>
-          <metadata name="title" brief="yes" sortkey="skiparticle"
-             merge="longest" rank="6"/>
-          <metadata name="isbn" merge="unique"/>
-          <metadata name="date" brief="yes" sortkey="numeric"
-             type="year" merge="range" termlist="yes"/>
-          <metadata name="author" brief="yes" termlist="yes"
-             merge="longest" rank="2"/>
-          <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
-          <metadata name="url" merge="unique"/>
-          <relevance>
-            <icu_chain id="relevance" locale="el">
-              <transform rule="[:Control:] Any-Remove"/>
-              <tokenize rule="l"/>
-              <transform rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
-              <casemap rule="l"/>
-             </icu_chain>
-           </relevance>
-           <settings src="mysettings"/>
-           <timeout session="60"/>
-        <service>
-     </server>
-   </pazpar2>
-    ]]></screen>
+
+ <refsect1>
+  <title>EXAMPLE</title>
+  <para>
+   Below is a working example configuration:
   </para>
+  <screen>
+   <![CDATA[
+<?xml version="1.0" encoding="UTF-8"?>
+<pazpar2 xmlns="http://www.indexdata.com/pazpar2/1.0">
+
+ <threads number="10"/>
+ <server>
+  <listen port="9004"/>
+  <service>
+   <metadata name="title" brief="yes" sortkey="skiparticle"
+             merge="longest" rank="6"/>
+   <metadata name="isbn" merge="unique"/>
+   <metadata name="date" brief="yes" sortkey="numeric"
+             type="year" merge="range" termlist="yes"/>
+   <metadata name="author" brief="yes" termlist="yes"
+             merge="longest" rank="2"/>
+   <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
+   <metadata name="url" merge="unique"/>
+   <icu_chain id="relevance" locale="el">
+    <transform rule="[:Control:] Any-Remove"/>
+    <tokenize rule="l"/>
+    <transform rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
+    <casemap rule="l"/>
+   </icu_chain>
+   <settings src="mysettings"/>
+   <timeout session="60"/>
+  <service>
+ </server>
+</pazpar2>
+   ]]>
+  </screen>
  </refsect1> 
 
- <refsect1 id="config-include"><title>INCLUDE FACILITY</title>
+ <refsect1 id="config-include">
+  <title>INCLUDE FACILITY</title>
   <para>
    The XML configuration may be partitioned into multiple files by using
    the <literal>include</literal> element which takes a single attribute,
    <literal>src</literal>. The of the <literal>src</literal> attribute is
    regular Shell like glob-pattern. For example,
    <screen><![CDATA[
-    <include src="/etc/pazpar2/conf.d/*.xml"/>
-    ]]></screen>
+   <include src="/etc/pazpar2/conf.d/*.xml"/>
+   ]]></screen>
   </para>
   <para>
    The include facility requires Pazpar2 version 1.2.
   </para>
  </refsect1>
 
- <refsect1 id="target_settings"><title>TARGET SETTINGS</title>
+ <refsect1 id="target_settings">
+  <title>TARGET SETTINGS</title>
   <para>
    Pazpar2 features a cunning scheme by which you can associate various
    kinds of attributes, or settings with search targets. This can be done
@@ -566,7 +650,7 @@
    on a per-session basis. This allows the client to override specific CCL fields
    for searching, etc., to meet the needs of a session or user.
   </para>
-  
+
   <para>
    Finally, as an extreme case of this, the webservice client can
    introduce entirely new targets, on the fly, as part of the
@@ -578,66 +662,70 @@
    long as the webservice client is prepared to supply the necessary
    information at the beginning of every session.
   </para>
-  
+
   <note>
    <para>
-    The following discussion of practical issues related to session and settings
-    management are cast in terms of a user interface based on Ajax/Javascript
-    technology. It would apply equally well to many other kinds of browser-based logic.
+    The following discussion of practical issues related to session
+    and settings management are cast in terms of a user interface based on
+    Ajax/Javascript technology. It would apply equally well to many other
+    kinds of browser-based logic.
    </para>
   </note>
-  
+
   <para>
-   Typically, a Javascript client is not allowed to  directly alter the parameters
-   of a session. There are two reasons for this. One has to do with access
-   to information; typically, information about a user will be stored in a
-   system on the server side, or it will be accessible in some way from the server.
-   However, since the Javascript client cannot be entirely trusted (some hostile
-   agent might in fact 'pretend' to be a regular ws client), it is more robust
-   to control session settings from scripting that you run as part of your
-   webserver. Typically, this can be handled during the session initialization,
-   as follows:
+   Typically, a Javascript client is not allowed to directly alter the
+   parameters of a session. There are two reasons for this. One has to do
+   with access to information; typically, information about a user will
+   be stored in a system on the server side, or it will be accessible in
+   some way from the server.  However, since the Javascript client cannot
+   be entirely trusted (some hostile agent might in fact 'pretend' to be
+   a regular ws client), it is more robust to control session settings
+   from scripting that you run as part of your webserver. Typically, this
+   can be handled during the session initialization, as follows:
   </para>
-  
+
   <para>
-   Step 1: The Javascript client loads, and asks the webserver for a new Pazpar2
-   session ID. This can be done using a Javascript call, for instance. Note that
-   it is possible to submit Ajax HTTPXmlRequest calls either to Pazpar2 or to the
-   webserver that Pazpar2 is proxying for. See (XXX Insert link to Pazpar2 protocol).
-    </para>
-  
+   Step 1: The Javascript client loads, and asks the webserver for a
+   new Pazpar2 session ID. This can be done using a Javascript call, for
+   instance. Note that it is possible to submit Ajax HTTPXmlRequest calls
+   either to Pazpar2 or to the webserver that Pazpar2 is proxying
+   for. See (XXX Insert link to Pazpar2 protocol).
+  </para>
+
   <para>
    Step 2: Code on the webserver authenticates the user, by database lookup,
    LDAP access, NCIP, etc. Determines which resources the user has access to,
    and any user-specific parameters that are to be applied during this session.
   </para>
-  
+
   <para>
-   Step 3: The webserver initializes a new Pazpar2 settings, and sets user-specific
-   parameters as necessary, using the init webservice command. A new session ID is
-   returned.
-  </para>
-  
-  <para>
-   Step 4: The webserver returns this session ID to the Javascript client, which then
-   uses the session ID to submit searches, show results, etc.
-  </para>
-  
-  <para>
-   Step 5: When the Javascript client ceases to use the session, Pazpar2 destroys
-   any session-specific information.
+   Step 3: The webserver initializes a new Pazpar2 settings, and sets
+   user-specific parameters as necessary, using the init webservice
+   command. A new session ID is returned.
   </para>
 
-  <refsect2><title>SETTINGS FILE FORMAT</title>
+  <para>
+   Step 4: The webserver returns this session ID to the Javascript
+   client, which then uses the session ID to submit searches, show
+   results, etc.
+  </para>
+
+  <para>
+   Step 5: When the Javascript client ceases to use the session,
+   Pazpar2 destroys any session-specific information.
+  </para>
+
+  <refsect2>
+   <title>SETTINGS FILE FORMAT</title>
    <para>
     Each file contains a root element named &lt;settings&gt;. It may
     contain one or more &lt;set&gt; elements. The settings and set
-    elements may contain the following attributes. Attributes in the set node
-    overrides those in the setting root element. Each set node must
+    elements may contain the following attributes. Attributes in the set
+    node overrides those in the setting root element. Each set node must
     specify (directly, or inherited from the parent node) at least a
     target, name, and value.
    </para>
-   
+
    <variablelist> 
     <varlistentry>
      <term>target</term>
@@ -700,7 +788,7 @@
      </listitem>
     </varlistentry>
    </variablelist>
-   
+
    <para>
     By setting defaults for target, name, or value in the root
     settings node, you can use the settings files in many different
@@ -712,80 +800,84 @@
     many databases with a given category or class that makes sense
     within your application.
    </para>
-   
+
    <para>
     The following examples illustrate uses of the settings system to
     associate settings with targets to meet different requirements.
    </para>
-   
+
    <para>
     The example below associates a set of default values that can be
     used across many targets. Note the wildcard for targets.
     This associates the given settings with all targets for which no
     other information is provided.
     <screen><![CDATA[
-<settings target="*">
+    <settings target="*">
 
-  <!-- This file introduces default settings for pazpar2 -->
+    <!-- This file introduces default settings for pazpar2 -->
 
-  <!-- mapping for unqualified search -->
-  <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
+    <!-- mapping for unqualified search -->
+    <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
 
-  <!-- field-specific mappings -->
-  <set name="pz:cclmap:ti" value="u=4 s=al"/>
-  <set name="pz:cclmap:su" value="u=21 s=al"/>
-  <set name="pz:cclmap:isbn" value="u=7"/>
-  <set name="pz:cclmap:issn" value="u=8"/>
-  <set name="pz:cclmap:date" value="u=30 r=r"/>
+    <!-- field-specific mappings -->
+    <set name="pz:cclmap:ti" value="u=4 s=al"/>
+    <set name="pz:cclmap:su" value="u=21 s=al"/>
+    <set name="pz:cclmap:isbn" value="u=7"/>
+    <set name="pz:cclmap:issn" value="u=8"/>
+    <set name="pz:cclmap:date" value="u=30 r=r"/>
+    
+    <set name="pz:limitmap:title" value="rpn:@attr 1=4 @attr 6=3"/>
+    <set name="pz:limitmap:date" value="ccl:date"/>
 
-  <!-- Retrieval settings -->
+    <!-- Retrieval settings -->
 
-  <set name="pz:requestsyntax" value="marc21"/>
-  <set name="pz:elements" value="F"/>
+    <set name="pz:requestsyntax" value="marc21"/>
+    <set name="pz:elements" value="F"/>
 
-  <!-- Query encoding -->
-  <set name="pz:queryencoding" value="iso-8859-1"/>
+    <!-- Query encoding -->
+    <set name="pz:queryencoding" value="iso-8859-1"/>
 
-  <!-- Result normalization settings -->
+    <!-- Result normalization settings -->
 
-  <set name="pz:nativesyntax" value="iso2709"/>
-  <set name="pz:xslt" value="../etc/marc21.xsl"/>
+    <set name="pz:nativesyntax" value="iso2709"/>
+    <set name="pz:xslt" value="../etc/marc21.xsl"/>
 
-</settings>
+    </settings>
 
-	]]></screen>
+    ]]></screen>
    </para>
-   
+
    <para>
     The next example shows certain settings overridden for one target,
     one which returns XML records containing DublinCore elements, and
     which furthermore requires a username/password.
     <screen><![CDATA[
-<settings target="funkytarget.com:210/db1">
-  <set name="pz:requestsyntax" value="xml"/>
-  <set name="pz:nativesyntax" value="xml"/>
-  <set name="pz:xslt" value="../etc/dublincore.xsl"/>
+    <settings target="funkytarget.com:210/db1">
+    <set name="pz:requestsyntax" value="xml"/>
+    <set name="pz:nativesyntax" value="xml"/>
+    <set name="pz:xslt" value="../etc/dublincore.xsl"/>
 
-  <set name="pz:authentication" value="myuser/password"/>
-</settings>
-	]]></screen>
+    <set name="pz:authentication" value="myuser/password"/>
+    </settings>
+    ]]></screen>
    </para>
-   
+
    <para>
     The following example associates a specific name/value combination
     with a number of targets. The targets below are access-restricted,
     and can only be used by users with special credentials.
     <screen><![CDATA[
-<settings name="pz:allow" value="0">
-  <set target="funkytarget.com:210/*"/>
-  <set target="commercial.com:2100/expensiveDb"/>
-</settings>
-	]]></screen>
+    <settings name="pz:allow" value="0">
+    <set target="funkytarget.com:210/*"/>
+    <set target="commercial.com:2100/expensiveDb"/>
+    </settings>
+    ]]></screen>
    </para>
-   
+
   </refsect2>
-  
-  <refsect2><title>RESERVED SETTING NAMES</title>
+
+  <refsect2>
+   <title>RESERVED SETTING NAMES</title>
    <para>
     The following setting names are reserved by Pazpar2 to control the
     behavior of the client function.
@@ -874,9 +966,9 @@
      <term>pz:queryencoding</term>
      <listitem>
       <para>
-        The encoding of the search terms that a target accepts. Most
-        targets do not honor UTF-8 in which case this needs to be specified.
-        Each term in a query will be converted if this setting is given.
+       The encoding of the search terms that a target accepts. Most
+       targets do not honor UTF-8 in which case this needs to be specified.
+       Each term in a query will be converted if this setting is given.
       </para>
      </listitem>
     </varlistentry>
@@ -916,12 +1008,13 @@
        performance with the alternate "MARC map" format.  Provide the
        path of a file with extension ".mmap" containing on each line:
        <programlisting>
-        &lt;field&gt; &lt;subfield&gt; &lt;metadata element&gt;</programlisting>
+       &lt;field&gt; &lt;subfield&gt; &lt;metadata element&gt;</programlisting>
        For example:
        <programlisting>
-        245 a title
-        500 $ description
-        773 * citation</programlisting>
+	245 a title
+	500 $ description
+        773 * citation
+       </programlisting>
        To map the field value specify a subfield of '$'.  To store a 
        concatenation of all subfields, specify a subfield of '*'.
       </para>
@@ -941,9 +1034,10 @@
      <listitem>
       <para>
        Allows or denies access to the resources it is applied to. Possible
-       values are '0' and '1'. The default is '1' (allow access to this resource).
-       See the manual section on authorization and authentication for discussion
-       about how to use this setting.
+       values are '0' and '1'.
+       The default is '1' (allow access to this resource).
+       See the manual section on authorization and authentication for
+       discussion about how to use this setting.
       </para>
      </listitem>
     </varlistentry>
@@ -1002,8 +1096,8 @@
        the protocol.
       </para>
       <para>
-	   A value of 'solr' anables SOLR client support. This is supported
-	   for Pazpar version 1.5.0 and later.
+       A value of 'solr' anables SOLR client support. This is supported
+       for Pazpar version 1.5.0 and later.
       </para>
      </listitem>
     </varlistentry>
@@ -1065,12 +1159,13 @@
      <listitem>
       <para>
        Specifies a filter which allows Pazpar2 to only include
-       records that meet a certain criteria in a result. Unmatched records
-       will be ignored. The filter takes the form name, name~value, or name=value, which
+       records that meet a certain criteria in a result.
+       Unmatched records  will be ignored.
+       The filter takes the form name, name~value, or name=value, which
        will include only records with metadata element (name) that has the
-       substring (~value) given, or matches exactly (=value). If value is omitted all records
-	with the named
-       metadata element present will be included.
+       substring (~value) given, or matches exactly (=value).
+       If value is omitted all records with the named metadata element
+       present will be included.
       </para>
      </listitem>
     </varlistentry>
@@ -1079,9 +1174,11 @@
      <term>pz:preferred</term>
      <listitem>
       <para>
-       Specifies that a target is preferred, e.g. possible local, faster target. Using block=pref on show command  
-       will wait for all these targets to return records before releasing the block. If no target is preferred, 
-       the block=pref will identical to block=1, which release when one target has returned records.     
+       Specifies that a target is preferred, e.g. possible local, faster
+       target. Using block=pref on show command will wait for all these
+       targets to return records before releasing the block.
+       If no target is preferred, the block=pref will identical to block=1,
+       which release when one target has returned records.     
       </para>
      </listitem>
     </varlistentry>
@@ -1090,7 +1187,8 @@
      <term>pz:block_timeout</term>
      <listitem>
       <para>
-       (Not yet implemented). Specifies the time for which a block should be released anyway.      
+       (Not yet implemented).
+       Specifies the time for which a block should be released anyway.      
       </para>
      </listitem>
     </varlistentry>
@@ -1104,10 +1202,34 @@
        field on the target.
       </para>
       <note>
-	<para>
-         At this point only SOLR targets have been tested with this
-         facility.
-	</para>
+       <para>
+	At this point only SOLR targets have been tested with this
+	facility.
+       </para>
+      </note>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:limitmap:<replaceable>name</replaceable></term>
+     <listitem>
+      <para>
+       Specifies attributes for limiting a search to a field - using
+       the limit parameter for search. In some cases the mapping of 
+       a field to a value is identical to an existing cclmap field; in
+       other cases the field must be specified in a different way - for
+       example to match a complete field (rather than parts of a subfield).
+      </para>
+      <para>
+       The value of limitmap may have one of two forms: referral to
+       an exisiting CCL field or a raw PQF string. Leading string
+       determines type; either <literal>ccl:</literal> for CCL field or
+       <literal>rpn:</literal> for PQF/RPN.
+      </para>
+      <note>
+       <para>
+	The limitmap facility is supported for Pazpar2 version 1.6.0.
+       </para>
       </note>
      </listitem>
     </varlistentry>
@@ -1115,9 +1237,10 @@
    </variablelist>
 
   </refsect2>
-  
+
  </refsect1>
- <refsect1><title>SEE ALSO</title>
+ <refsect1>
+  <title>SEE ALSO</title>
   <para>
    <citerefentry>
     <refentrytitle>pazpar2</refentrytitle>
@@ -1136,15 +1259,7 @@
 </refentry>
 <!-- Keep this comment at the end of the file
 Local variables:
-mode: sgml
-sgml-omittag:t
-sgml-shorttag:t
-sgml-minimize-attributes:nil
-sgml-always-quote-attributes:t
-sgml-indent-step:1
-sgml-indent-data:t
-sgml-parent-document:nil
-sgml-local-catalogs: nil
-sgml-namecase-general:t
+mode: nxml
+nxml-child-indent: 1
 End:
 -->

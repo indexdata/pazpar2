@@ -111,15 +111,17 @@ static int session_use(int delta)
         no_session_total += delta;
     sessions = no_sessions;
     yaz_mutex_leave(g_session_mutex);
-    yaz_log(YLOG_DEBUG, "%s sesions=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), no_sessions);
+    yaz_log(YLOG_DEBUG, "%s sessions=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), no_sessions);
     return sessions;
 }
 
-int sessions_count(void) {
+int sessions_count(void)
+{
     return session_use(0);
 }
 
-int  session_count_total(void) {
+int session_count_total(void)
+{
     int total = 0;
     if (!g_session_mutex)
         return 0;
@@ -128,7 +130,6 @@ int  session_count_total(void) {
     yaz_mutex_leave(g_session_mutex);
     return total;
 }
-
 
 static void log_xml_doc(xmlDoc *doc)
 {
@@ -158,53 +159,50 @@ static void session_leave(struct session *s)
     yaz_mutex_leave(s->session_mutex);
 }
 
-// Recursively traverse query structure to extract terms.
-void pull_terms(NMEM nmem, struct ccl_rpn_node *n, char **termlist, int *num)
-{
-    char **words;
-    int numwords;
-    int i;
-
-    switch (n->kind)
-    {
-    case CCL_RPN_AND:
-    case CCL_RPN_OR:
-    case CCL_RPN_NOT:
-    case CCL_RPN_PROX:
-        pull_terms(nmem, n->u.p[0], termlist, num);
-        pull_terms(nmem, n->u.p[1], termlist, num);
-        break;
-    case CCL_RPN_TERM:
-        nmem_strsplit(nmem, " ", n->u.t.term, &words, &numwords);
-        for (i = 0; i < numwords; i++)
-            termlist[(*num)++] = words[i];
-        break;
-    default: // NOOP
-        break;
-    }
-}
-
-
 void add_facet(struct session *s, const char *type, const char *value, int count)
 {
     struct conf_service *service = s->service;
-    pp2_relevance_token_t prt;
+    pp2_charset_token_t prt;
     const char *facet_component;
     WRBUF facet_wrbuf = wrbuf_alloc();
-    prt = pp2_relevance_tokenize(service->facet_pct);
-    
-    pp2_relevance_first(prt, value, 0);
-    while ((facet_component = pp2_relevance_token_next(prt)))
+    WRBUF display_wrbuf = wrbuf_alloc();
+    int i;
+    const char *icu_chain_id = 0;
+
+    for (i = 0; i < service->num_metadata; i++)
+        if (!strcmp((service->metadata + i)->name, type))
+            icu_chain_id = (service->metadata + i)->facetrule;
+    if (!icu_chain_id)
+        icu_chain_id = "facet";
+    prt = pp2_charset_token_create(service->charsets, icu_chain_id);
+    if (!prt)
     {
+        yaz_log(YLOG_FATAL, "Unknown ICU chain '%s' for facet of type '%s'",
+                icu_chain_id, type);
+        wrbuf_destroy(facet_wrbuf);
+        wrbuf_destroy(display_wrbuf);
+        return;
+    }
+    pp2_charset_token_first(prt, value, 0);
+    while ((facet_component = pp2_charset_token_next(prt)))
+    {
+        const char *display_component;
         if (*facet_component)
         {
             if (wrbuf_len(facet_wrbuf))
                 wrbuf_puts(facet_wrbuf, " ");
             wrbuf_puts(facet_wrbuf, facet_component);
         }
+        display_component = pp2_get_display(prt);
+        if (display_component)
+        {
+            if (wrbuf_len(display_wrbuf))
+                wrbuf_puts(display_wrbuf, " ");
+            wrbuf_puts(display_wrbuf, display_component);
+        }
     }
-    pp2_relevance_token_destroy(prt);
-    
+    pp2_charset_token_destroy(prt);
+ 
     if (wrbuf_len(facet_wrbuf))
     {
         int i;
@@ -217,6 +215,7 @@ void add_facet(struct session *s, const char *type, const char *value, int count
             {
                 session_log(s, YLOG_FATAL, "Too many termlists");
                 wrbuf_destroy(facet_wrbuf);
+                wrbuf_destroy(display_wrbuf);
                 return;
             }
             
@@ -229,10 +228,11 @@ void add_facet(struct session *s, const char *type, const char *value, int count
 #if 0
         session_log(s, YLOG_DEBUG, "Facets for %s: %s norm:%s (%d)", type, value, wrbuf_cstr(facet_wrbuf), count);
 #endif
-        termlist_insert(s->termlists[i].termlist, wrbuf_cstr(facet_wrbuf),
-                        count);
+        termlist_insert(s->termlists[i].termlist, wrbuf_cstr(display_wrbuf),
+                        wrbuf_cstr(facet_wrbuf), count);
     }
     wrbuf_destroy(facet_wrbuf);
+    wrbuf_destroy(display_wrbuf);
 }
 
 static xmlDoc *record_to_xml(struct session *se,
@@ -782,7 +782,6 @@ void session_destroy(struct session *se) {
     nmem_destroy(se->nmem);
     service_destroy(se->service);
     yaz_mutex_destroy(&se->session_mutex);
-    wrbuf_destroy(se->wrbuf);
 }
 
 /* Depreciated: use session_destroy */
@@ -825,7 +824,6 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->clients = 0;
     session->session_nmem = nmem;
     session->nmem = nmem_create();
-    session->wrbuf = wrbuf_alloc();
     session->databases = 0;
     for (i = 0; i <= SESSION_WATCH_MAX; i++)
     {
@@ -1107,15 +1105,15 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
                 if (value)
                 {
                     const char *norm_str;
-                    pp2_relevance_token_t prt =
-                        pp2_relevance_tokenize(service->mergekey_pct);
+                    pp2_charset_token_t prt =
+                        pp2_charset_token_create(service->charsets, "mergekey");
                     
-                    pp2_relevance_first(prt, (const char *) value, 0);
+                    pp2_charset_token_first(prt, (const char *) value, 0);
                     if (wrbuf_len(norm_wr) > 0)
                         wrbuf_puts(norm_wr, " ");
                     wrbuf_puts(norm_wr, name);
                     while ((norm_str =
-                            pp2_relevance_token_next(prt)))
+                            pp2_charset_token_next(prt)))
                     {
                         if (*norm_str)
                         {
@@ -1124,7 +1122,7 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
                         }
                     }
                     xmlFree(value);
-                    pp2_relevance_token_destroy(prt);
+                    pp2_charset_token_destroy(prt);
                     no_found++;
                 }
             }
@@ -1146,11 +1144,11 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     if (mergekey)
     {
         const char *norm_str;
-        pp2_relevance_token_t prt =
-            pp2_relevance_tokenize(service->mergekey_pct);
+        pp2_charset_token_t prt =
+            pp2_charset_token_create(service->charsets, "mergekey");
 
-        pp2_relevance_first(prt, (const char *) mergekey, 0);
-        while ((norm_str = pp2_relevance_token_next(prt)))
+        pp2_charset_token_first(prt, (const char *) mergekey, 0);
+        while ((norm_str = pp2_charset_token_next(prt)))
         {
             if (*norm_str)
             {
@@ -1159,7 +1157,7 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
                 wrbuf_puts(norm_wr, norm_str);
             }
         }
-        pp2_relevance_token_destroy(prt);
+        pp2_charset_token_destroy(prt);
         xmlFree(mergekey);
     }
     else
@@ -1358,7 +1356,7 @@ static int ingest_to_cluster(struct client *cl,
     // now parsing XML record and adding data to cluster or record metadata
     for (n = root->children; n; n = n->next)
     {
-        pp2_relevance_token_t prt;
+        pp2_charset_token_t prt;
         if (type)
             xmlFree(type);
         if (value)
@@ -1425,16 +1423,15 @@ static int ingest_to_cluster(struct client *cl,
             // assign cluster or record based on merge action
             if (ser_md->merge == Metadata_merge_unique)
             {
-                struct record_metadata *mnode;
-                for (mnode = *wheretoput; mnode; mnode = mnode->next)
-                    if (!strcmp((const char *) mnode->data.text.disp, 
+                while (*wheretoput)
+                {
+                    if (!strcmp((const char *) (*wheretoput)->data.text.disp, 
                                 rec_md->data.text.disp))
                         break;
-                if (!mnode)
-                {
-                    rec_md->next = *wheretoput;
-                    *wheretoput = rec_md;
+                    wheretoput = &(*wheretoput)->next;
                 }
+                if (!*wheretoput)
+                    *wheretoput = rec_md;
             }
             else if (ser_md->merge == Metadata_merge_longest)
             {
@@ -1454,12 +1451,13 @@ static int ingest_to_cluster(struct client *cl,
                                 nmem_malloc(se->nmem, 
                                             sizeof(union data_types));
                          
-                        prt = pp2_relevance_tokenize(service->sort_pct);
+                        prt =
+                            pp2_charset_token_create(service->charsets, "sort");
 
-                        pp2_relevance_first(prt, rec_md->data.text.disp,
-                                            skip_article);
+                        pp2_charset_token_first(prt, rec_md->data.text.disp,
+                                                skip_article);
 
-                        pp2_relevance_token_next(prt);
+                        pp2_charset_token_next(prt);
                          
                         sort_str = pp2_get_sort(prt);
                          
@@ -1473,13 +1471,14 @@ static int ingest_to_cluster(struct client *cl,
                         }
                         cluster->sortkeys[sk_field_id]->text.sort = 
                             nmem_strdup(se->nmem, sort_str);
-                        pp2_relevance_token_destroy(prt);
+                        pp2_charset_token_destroy(prt);
                     }
                 }
             }
             else if (ser_md->merge == Metadata_merge_all)
             {
-                rec_md->next = *wheretoput;
+                while (*wheretoput)
+                    wheretoput = &(*wheretoput)->next;
                 *wheretoput = rec_md;
             }
             else if (ser_md->merge == Metadata_merge_range)
