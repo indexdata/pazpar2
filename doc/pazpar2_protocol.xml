@@ -206,7 +206,7 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
 	The limit is sequence of one or more field=value pairs separate
 	by comma.
 	A value that contains a comma should be escaped by backslash (\).
-	The pz:fazetmap configuration item defines how the searches are 
+	The pz:limitmap configuration item defines how the searches are 
 	mapped to a database.
        </para>
       </listitem>
