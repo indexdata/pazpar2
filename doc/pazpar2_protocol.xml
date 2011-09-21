@@ -202,12 +202,12 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
       <term>limit</term>
       <listitem>
        <para>
-	Narrows the search by one or more fields (typicall facets).
-	The limit is sequence of one or more field=value pairs separate
+	Narrows the search by one or more fields (typically facets).
+	The limit is sequence of one or more name=value pairs separated
 	by comma.
 	A value that contains a comma should be escaped by backslash (\).
-	The pz:limitmap configuration item defines how the searches are 
-	mapped to a database.
+	The <link linkend="limitmap">pz:limitmap</link> configuration
+	item defines how the searches are mapped to a database.
        </para>
       </listitem>
      </varlistentry>
