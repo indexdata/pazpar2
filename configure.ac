@@ -5,7 +5,7 @@
 
 # Autoconf and automake setup
 AC_PREREQ(2.60)
-AC_INIT([pazpar2],[1.6.2],[pazpar2-help@indexdata.dk])
+AC_INIT([pazpar2],[1.6.3],[pazpar2-help@indexdata.dk])
 
 AC_CONFIG_HEADERS(src/config.h)
 

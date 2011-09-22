@@ -1,4 +1,4 @@
---- 1.6.3 IN PROGRESS
+--- 1.6.3 2011/09/22
 
 Make termlist sorting stable. Terms with same frequency are now sorted by
 their display name. This makes a pretty display and improves our
