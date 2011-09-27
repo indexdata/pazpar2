@@ -939,6 +939,7 @@ static void apply_limit(struct session_database *sdb,
     int i = 0;
     const char *name;
     const char *value;
+    NMEM nmem_tmp = nmem_create();
     for (i = 0; (name = facet_limits_get(facet_limits, i, &value)); i++)
     {
         struct setting *s = 0;
@@ -948,32 +949,55 @@ static void apply_limit(struct session_database *sdb,
             const char *p = strchr(s->name + 3, ':');
             if (p && !strcmp(p + 1, name) && s->value)
             {
+                char **values = 0;
+                int i, num = 0;
+                nmem_strsplit_escape2(nmem_tmp, "|", value, &values,
+                                      &num, 1, '\\', 1);
+
                 if (!strncmp(s->value, "rpn:", 4))
                 {
                     const char *pqf = s->value + 4;
+
                     wrbuf_puts(w_pqf, "@and ");
                     wrbuf_puts(w_pqf, pqf);
                     wrbuf_puts(w_pqf, " ");
-                    yaz_encode_pqf_term(w_pqf, value, strlen(value));
+                    for (i = 0; i < num; i++)
+                    {
+                        if (i < num - 1)
+                            wrbuf_puts(w_pqf, "@or ");
+                        yaz_encode_pqf_term(w_pqf, values[i],
+                                            strlen(values[i]));
+                    }
                 }
                 else if (!strncmp(s->value, "ccl:", 4))
                 {
                     const char *ccl = s->value + 4;
-                    wrbuf_puts(w_ccl, " and ");
-                    wrbuf_puts(w_ccl, ccl);
-                    wrbuf_puts(w_ccl, "=\"");
-                    wrbuf_puts(w_ccl, value);
-                    wrbuf_puts(w_ccl, "\"");
+
+                    wrbuf_puts(w_ccl, " and (");
+
+                    for (i = 0; i < num; i++)
+                    {
+                        if (i)
+                            wrbuf_puts(w_ccl, " or ");
+                        wrbuf_puts(w_ccl, ccl);
+                        wrbuf_puts(w_ccl, "=\"");
+                        wrbuf_puts(w_ccl, values[i]);
+                        wrbuf_puts(w_ccl, "\"");
+                    }
+                    wrbuf_puts(w_ccl, ")");
+
                 }
                 break;
             }
         }
+        nmem_reset(nmem_tmp);
         if (!s)
         {
             yaz_log(YLOG_WARN, "Target %s: limit %s used, but no limitmap defined",
                     (sdb->database ? sdb->database->url : "<no url>"), name);
         }
     }
+    nmem_destroy(nmem_tmp);
 }
                         
 // Parse the query given the settings specific to this client
