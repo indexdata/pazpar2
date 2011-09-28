@@ -7,11 +7,11 @@ Group: Applications/Internet
 Vendor: Index Data ApS <info@indexdata.dk>
 Source: pazpar2-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildRequires: libyaz4-devel >= 4.2.0
+BuildRequires: libyaz4-devel >= 4.2.17
 Packager: Adam Dickmeiss <adam@indexdata.dk>
 URL: http://www.indexdata.com/pazpar2
 Summary: pazpar2 daemon
-Requires: libyaz4
+Requires: libyaz4 >= 4.2.17
 
 %description
 Pazpar2 is a high-performance, user interface-independent, data
