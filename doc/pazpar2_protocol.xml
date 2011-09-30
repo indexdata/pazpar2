@@ -514,7 +514,8 @@ search.pz2?session=605047297&command=record&id=3
       <term>name</term>
       <listitem>
        <para>
-	comma-separated list of termlist names (default "subject")
+	comma-separated list of termlist names. If omitted,
+	all termlists are returned.
        </para>
       </listitem>
      </varlistentry>

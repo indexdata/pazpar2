@@ -837,13 +837,13 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     return session;
 }
 
-struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
+static struct hitsbytarget *hitsbytarget_nb(struct session *se,
+                                            int *count, NMEM nmem)
 {
     struct hitsbytarget *res = 0;
     struct client_list *l;
     size_t sz = 0;
 
-    session_enter(se);
     for (l = se->clients; l; l = l->next)
         sz++;
 
@@ -868,10 +868,18 @@ struct hitsbytarget *hitsbytarget(struct session *se, int *count, NMEM nmem)
         wrbuf_destroy(w);
         (*count)++;
     }
-    session_leave(se);
     return res;
 }
 
+struct hitsbytarget *get_hitsbytarget(struct session *se, int *count, NMEM nmem)
+{
+    struct hitsbytarget *p;
+    session_enter(se);
+    p = hitsbytarget_nb(se, count, nmem);
+    session_leave(se);
+    return p;
+}
+    
 struct termlist_score **get_termlist_score(struct session *se,
                                            const char *name, int *num)
 {
@@ -887,6 +895,118 @@ struct termlist_score **get_termlist_score(struct session *se,
         }
     session_leave(se);
     return tl;
+}
+
+// Compares two hitsbytarget nodes by hitcount
+static int cmp_ht(const void *p1, const void *p2)
+{
+    const struct hitsbytarget *h1 = p1;
+    const struct hitsbytarget *h2 = p2;
+    return h2->hits - h1->hits;
+}
+
+static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
+                               NMEM nmem)
+{
+    struct hitsbytarget *ht;
+    int count, i;
+
+    ht = hitsbytarget_nb(se, &count, nmem);
+    qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht);
+    for (i = 0; i < count && i < num && ht[i].hits > 0; i++)
+    {
+
+        // do only print terms which have display names
+    
+        wrbuf_puts(wrbuf, "<term>\n");
+
+        wrbuf_puts(wrbuf, "<id>");
+        wrbuf_xmlputs(wrbuf, ht[i].id);
+        wrbuf_puts(wrbuf, "</id>\n");
+        
+        wrbuf_puts(wrbuf, "<name>");
+        if (!ht[i].name || !ht[i].name[0])
+            wrbuf_xmlputs(wrbuf, "NO TARGET NAME");
+        else
+            wrbuf_xmlputs(wrbuf, ht[i].name);
+        wrbuf_puts(wrbuf, "</name>\n");
+        
+        wrbuf_printf(wrbuf, "<frequency>" ODR_INT_PRINTF "</frequency>\n",
+                     ht[i].hits);
+        
+        wrbuf_puts(wrbuf, "<state>");
+        wrbuf_xmlputs(wrbuf, ht[i].state);
+        wrbuf_puts(wrbuf, "</state>\n");
+        
+        wrbuf_printf(wrbuf, "<diagnostic>%d</diagnostic>\n", 
+                     ht[i].diagnostic);
+        wrbuf_puts(wrbuf, "</term>\n");
+    }
+    return count;
+}
+
+void perform_termlist(struct http_channel *c, struct session *se,
+                      const char *name, int num)
+{
+    int i, j;
+    NMEM nmem_tmp = nmem_create();
+    char **names;
+    int num_names = 0;
+
+    if (name)
+        nmem_strsplit(nmem_tmp, ",", name, &names, &num_names);
+
+    session_enter(se);
+
+    for (j = 0; j < num_names; j++)
+    {
+        const char *tname;
+        for (i = 0; i < se->num_termlists; i++)
+        {
+            tname = se->termlists[i].name;
+            if (num_names > 0 && !strcmp(names[j], tname))
+            {
+                struct termlist_score **p = 0;
+                int len;
+                p = termlist_highscore(se->termlists[i].termlist, &len);
+                if (p)
+                {
+                    int i;
+                    wrbuf_puts(c->wrbuf, "<list name=\"");
+                    wrbuf_xmlputs(c->wrbuf, tname);
+                    wrbuf_puts(c->wrbuf, "\">\n");
+                    for (i = 0; i < len && i < num; i++)
+                    {
+                        // prevent sending empty term elements
+                        if (!p[i]->display_term || !p[i]->display_term[0])
+                            continue;
+                        
+                        wrbuf_puts(c->wrbuf, "<term>");
+                        wrbuf_puts(c->wrbuf, "<name>");
+                        wrbuf_xmlputs(c->wrbuf, p[i]->display_term);
+                        wrbuf_puts(c->wrbuf, "</name>");
+                        
+                        wrbuf_printf(c->wrbuf, 
+                                     "<frequency>%d</frequency>", 
+                                     p[i]->frequency);
+                        wrbuf_puts(c->wrbuf, "</term>\n");
+                    }
+                    wrbuf_puts(c->wrbuf, "</list>\n");
+                }
+            }
+        }
+        tname = "xtargets";
+        if (num_names > 0 && !strcmp(names[j], tname))
+        {
+            wrbuf_puts(c->wrbuf, "<list name=\"");
+            wrbuf_xmlputs(c->wrbuf, tname);
+            wrbuf_puts(c->wrbuf, "\">\n");
+            targets_termlist_nb(c->wrbuf, se, num, c->nmem);
+            wrbuf_puts(c->wrbuf, "</list>\n");
+        }
+    }
+    session_leave(se);
+    nmem_destroy(nmem_tmp);
 }
 
 #ifdef MISSING_HEADERS
