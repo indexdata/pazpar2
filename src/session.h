@@ -145,7 +145,7 @@ struct hitsbytarget {
     char *settings_xml;
 };
 
-struct hitsbytarget *hitsbytarget(struct session *s, int *count, NMEM nmem);
+struct hitsbytarget *get_hitsbytarget(struct session *s, int *count, NMEM nmem);
 struct session *new_session(NMEM nmem, struct conf_service *service,
                             unsigned session_id);
 void destroy_session(struct session *s);
@@ -179,6 +179,9 @@ int host_getaddrinfo(struct host *host, iochan_man_t iochan_man);
 int ingest_record(struct client *cl, const char *rec, int record_no, NMEM nmem);
 void session_alert_watch(struct session *s, int what);
 void add_facet(struct session *s, const char *type, const char *value, int count);
+
+void perform_termlist(struct http_channel *c, struct session *se,
+                      const char *name, int num);
 void session_log(struct session *s, int level, const char *fmt, ...)
 #ifdef __GNUC__
     __attribute__ ((format (printf, 3, 4)))

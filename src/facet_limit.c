@@ -48,8 +48,8 @@ facet_limits_t facet_limits_create(const char *param)
     fl->num = 0;
     fl->darray = 0;
     if (param)
-        nmem_strsplit_escape(fl->nmem, ",", param, &fl->darray,
-                             &fl->num, 1, '\\');
+        nmem_strsplit_escape2(fl->nmem, ",", param, &fl->darray,
+                              &fl->num, 1, '\\', 0);
     /* replace = with \0 .. for each item */
     for (i = 0; i < fl->num; i++)
     {

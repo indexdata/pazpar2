@@ -489,55 +489,6 @@ static void cmd_settings(struct http_channel *c)
     release_session(c, s);
 }
 
-// Compares two hitsbytarget nodes by hitcount
-static int cmp_ht(const void *p1, const void *p2)
-{
-    const struct hitsbytarget *h1 = p1;
-    const struct hitsbytarget *h2 = p2;
-    return h2->hits - h1->hits;
-}
-
-// This implements functionality somewhat similar to 'bytarget', but in a termlist form
-static int targets_termlist(WRBUF wrbuf, struct session *se, int num,
-                             NMEM nmem)
-{
-    struct hitsbytarget *ht;
-    int count, i;
-
-    ht = hitsbytarget(se, &count, nmem);
-    qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht);
-    for (i = 0; i < count && i < num && ht[i].hits > 0; i++)
-    {
-
-        // do only print terms which have display names
-    
-        wrbuf_puts(wrbuf, "<term>\n");
-
-        wrbuf_puts(wrbuf, "<id>");
-        wrbuf_xmlputs(wrbuf, ht[i].id);
-        wrbuf_puts(wrbuf, "</id>\n");
-        
-        wrbuf_puts(wrbuf, "<name>");
-        if (!ht[i].name || !ht[i].name[0])
-            wrbuf_xmlputs(wrbuf, "NO TARGET NAME");
-        else
-            wrbuf_xmlputs(wrbuf, ht[i].name);
-        wrbuf_puts(wrbuf, "</name>\n");
-        
-        wrbuf_printf(wrbuf, "<frequency>" ODR_INT_PRINTF "</frequency>\n",
-                     ht[i].hits);
-        
-        wrbuf_puts(wrbuf, "<state>");
-        wrbuf_xmlputs(wrbuf, ht[i].state);
-        wrbuf_puts(wrbuf, "</state>\n");
-        
-        wrbuf_printf(wrbuf, "<diagnostic>%d</diagnostic>\n", 
-                     ht[i].diagnostic);
-        wrbuf_puts(wrbuf, "</term>\n");
-    }
-    return count;
-}
-
 static void cmd_termlist(struct http_channel *c)
 {
     struct http_response *rs = c->response;
@@ -547,79 +498,23 @@ static void cmd_termlist(struct http_channel *c)
     const char *nums = http_argbyname(rq, "num");
     int num = 15;
     int status;
-    WRBUF debug_log = 0;
 
     if (!s)
         return;
 
     status = session_active_clients(s->psession);
 
-    if (!name)
-        name = "subject";
-    if (strlen(name) > 255)
-        return;
     if (nums)
         num = atoi(nums);
-
-    debug_log = wrbuf_alloc();
 
     wrbuf_rewind(c->wrbuf);
 
     wrbuf_puts(c->wrbuf, "<termlist>\n");
     wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", status);
-    while (*name)
-    {
-        char tname[256];
-        const char *tp;
 
-        if (!(tp = strchr(name, ',')))
-            tp = name + strlen(name);
-        strncpy(tname, name, tp - name);
-        tname[tp - name] = '\0';
-        wrbuf_puts(c->wrbuf, "<list name=\"");
-        wrbuf_xmlputs(c->wrbuf, tname);
-        wrbuf_puts(c->wrbuf, "\">\n");
-        if (!strcmp(tname, "xtargets"))
-        {
-            int targets = targets_termlist(c->wrbuf, s->psession, num, c->nmem);
-            wrbuf_printf(debug_log, " xtargets: %d", targets);
-        }
-        else
-        {
-            int len;
-            struct termlist_score **p = 
-                get_termlist_score(s->psession, tname, &len);
-            if (p && len)
-                wrbuf_printf(debug_log, " %s: %d", tname, len);
-            if (p)
-            {
-                int i;
-                for (i = 0; i < len && i < num; i++)
-                {
-                    // prevnt sending empty term elements
-                    if (!p[i]->display_term || !p[i]->display_term[0])
-                        continue;
+    perform_termlist(c, s->psession, name, num);
 
-                    wrbuf_puts(c->wrbuf, "<term>");
-                    wrbuf_puts(c->wrbuf, "<name>");
-                    wrbuf_xmlputs(c->wrbuf, p[i]->display_term);
-                    wrbuf_puts(c->wrbuf, "</name>");
-                    
-                    wrbuf_printf(c->wrbuf, 
-                                 "<frequency>%d</frequency>", 
-                                 p[i]->frequency);
-                    wrbuf_puts(c->wrbuf, "</term>\n");
-                }
-            }
-        }
-        wrbuf_puts(c->wrbuf, "</list>\n");
-        name = tp;
-        if (*name == ',')
-            name++;
-    }
     wrbuf_puts(c->wrbuf, "</termlist>\n");
-    yaz_log(YLOG_DEBUG, "termlist response: %s ", wrbuf_cstr(debug_log));
-    wrbuf_destroy(debug_log);
     rs->payload = nmem_strdup(rq->channel->nmem, wrbuf_cstr(c->wrbuf));
     http_send_response(c);
     release_session(c, s);
@@ -711,7 +606,7 @@ static void cmd_bytarget(struct http_channel *c)
 
     if (!s)
         return;
-    ht = hitsbytarget(s->psession, &count, c->nmem);
+    ht = get_hitsbytarget(s->psession, &count, c->nmem);
     wrbuf_rewind(c->wrbuf);
     wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<bytarget><status>OK</status>");
 

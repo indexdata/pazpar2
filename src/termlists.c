@@ -147,8 +147,12 @@ void termlist_insert(struct termlist *tl, const char *display_term,
 
 static int compare(const void *s1, const void *s2)
 {
-    struct termlist_score **p1 = (struct termlist_score**) s1, **p2 = (struct termlist_score **) s2;
-    return (*p2)->frequency - (*p1)->frequency;
+    struct termlist_score **p1 = (struct termlist_score **) s1;
+    struct termlist_score **p2 = (struct termlist_score **) s2;
+    int d = (*p2)->frequency - (*p1)->frequency;
+    if (d)
+        return d;
+    return strcmp((*p1)->display_term, (*p2)->display_term);
 }
 
 struct termlist_score **termlist_highscore(struct termlist *tl, int *len)

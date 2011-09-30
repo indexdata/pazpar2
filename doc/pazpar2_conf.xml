@@ -1210,7 +1210,7 @@
      </listitem>
     </varlistentry>
 
-    <varlistentry>
+    <varlistentry id="limitmap">
      <term>pz:limitmap:<replaceable>name</replaceable></term>
      <listitem>
       <para>
