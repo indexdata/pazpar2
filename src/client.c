@@ -916,10 +916,14 @@ static char *make_solrquery(struct client *cl)
     ODR odr_out = odr_createmem(ODR_ENCODE);
 
     zquery = p_query_rpn(odr_out, cl->pquery);
+    if (zquery == 0) {
+        yaz_log(YLOG_WARN, "Failed to generate RPN from PQF: %s", cl->pquery);
+        return 0;
+    }
     yaz_log(YLOG_LOG, "PQF: %s", cl->pquery);
     if ((status = solr_transform_rpn2solr_wrbuf(sqlt, wrb, zquery)))
     {
-        yaz_log(YLOG_WARN, "Failed to generate SOLR query, code=%d", status);
+        yaz_log(YLOG_WARN, "Failed to generate SOLR query from PQF %s, code=%d", cl->pquery, status);
         r = 0;
     }
     else
