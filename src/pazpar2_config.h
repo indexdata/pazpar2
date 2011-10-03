@@ -110,7 +110,6 @@ struct conf_service
     struct setting_dictionary *dictionary;
     struct conf_service *next;
     char *id;
-    char *settings;
     NMEM nmem;
     int session_timeout;
     int z3950_session_timeout;

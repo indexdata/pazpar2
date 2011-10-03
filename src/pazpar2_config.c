@@ -119,7 +119,6 @@ static struct conf_service *service_init(struct conf_server *server,
     service->ref_count = 1;
     service->nmem = nmem;
     service->next = 0;
-    service->settings = 0;
     service->databases = 0;
     service->server = server;
     service->session_timeout = 60; /* default session timeout */
