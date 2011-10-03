@@ -134,7 +134,7 @@ struct conf_server
     char *proxy_host;
     int proxy_port;
     char *myurl;
-    char *server_settings;
+    char *settings_fname;
     char *server_id;
 
     pp2_charset_fact_t charsets;

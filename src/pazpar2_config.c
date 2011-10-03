@@ -57,9 +57,6 @@ struct conf_config
 };
 
 
-static char *parse_settings(struct conf_config *config,
-                            NMEM nmem, xmlNode *node);
-
 static void conf_metadata_assign(NMEM nmem, 
                                  struct conf_metadata * metadata,
                                  const char *name,
@@ -593,39 +590,17 @@ static struct conf_service *service_create_static(struct conf_server *server,
     return service;
 }
 
-static char *parse_settings(struct conf_config *config,
-                            NMEM nmem, xmlNode *node)
-{
-    xmlChar *src = xmlGetProp(node, (xmlChar *) "src");
-    char *r;
-
-    if (src)
-    {
-        WRBUF w = wrbuf_alloc();
-        conf_dir_path(config, w, (const char *) src);
-        r = nmem_strdup(nmem, wrbuf_cstr(w));
-        wrbuf_destroy(w);
-    }
-    else
-    {
-        yaz_log(YLOG_FATAL, "Must specify src in targetprofile");
-        return 0;
-    }
-    xmlFree(src);
-    return r;
-}
-
 static void inherit_server_settings(struct conf_service *s)
 {
     struct conf_server *server = s->server;
     if (!s->dictionary) /* service has no config settings ? */
     {
-        if (server->server_settings)
+        if (server->settings_fname)
         {
             /* inherit settings from server */
             init_settings(s);
-            settings_read_file(s, server->server_settings, 1);
-            settings_read_file(s, server->server_settings, 2);
+            settings_read_file(s, server->settings_fname, 1);
+            settings_read_file(s, server->settings_fname, 2);
         }
         else
         {
@@ -682,10 +657,10 @@ static struct conf_server *server_create(struct conf_config *config,
     server->config = config;
     server->next = 0;
     server->charsets = 0;
-    server->server_settings = 0;
     server->http_server = 0;
     server->iochan_man = 0;
     server->database_hosts = 0;
+    server->settings_fname = 0;
 
     if (server_id)
     {
@@ -726,13 +701,24 @@ static struct conf_server *server_create(struct conf_config *config,
         }
         else if (!strcmp((const char *) n->name, "settings"))
         {
-            if (server->server_settings)
+            xmlChar *src = xmlGetProp(n, (xmlChar *) "src");
+            WRBUF w;
+            if (!src)
             {
+                yaz_log(YLOG_FATAL, "Missing src attribute for settings");
+                return 0;
+            }
+            if (server->settings_fname)
+            {
+                xmlFree(src);
                 yaz_log(YLOG_FATAL, "Can't repeat 'settings'");
                 return 0;
             }
-            if (!(server->server_settings = parse_settings(config, nmem, n)))
-                return 0;
+            w = wrbuf_alloc();
+            conf_dir_path(config, w, (const char *) src);
+            server->settings_fname = nmem_strdup(nmem, wrbuf_cstr(w));
+            wrbuf_destroy(w);
+            xmlFree(src);
         }
         else if (!strcmp((const char *) n->name, "icu_chain"))
         {
