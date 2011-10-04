@@ -57,9 +57,7 @@ struct host;
 struct database {
     struct host *host;
     char *url;
-    char **databases;
     int errors;
-    struct zr_explain *explain;
     int num_settings;
     struct setting **settings;
     struct database *next;

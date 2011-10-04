@@ -521,9 +521,9 @@ void session_alert_watch(struct session *s, int what)
 }
 
 //callback for grep_databases
-static void select_targets_callback(void *context, struct session_database *db)
+static void select_targets_callback(struct session *se,
+                                    struct session_database *db)
 {
-    struct session *se = (struct session*) context;
     struct client *cl = client_create();
     struct client_list *l;
     client_set_database(cl, db);

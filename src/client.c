@@ -671,7 +671,6 @@ void client_start_search(struct client *cl)
     struct connection *co = client_get_connection(cl);
     ZOOM_connection link = connection_get_link(co);
     ZOOM_resultset rs;
-    char *databaseName = sdb->database->databases[0];
     const char *opt_piggyback   = session_setting_oneval(sdb, PZ_PIGGYBACK);
     const char *opt_queryenc    = session_setting_oneval(sdb, PZ_QUERYENCODING);
     const char *opt_elements    = session_setting_oneval(sdb, PZ_ELEMENTS);
@@ -728,9 +727,6 @@ void client_start_search(struct client *cl)
 
     sprintf(startrecs_str, "%d", cl->startrecs);
     ZOOM_connection_option_set(link, "start", startrecs_str);
-
-    if (databaseName)
-        ZOOM_connection_option_set(link, "databaseName", databaseName);
 
     /* TODO Verify does it break something for CQL targets(non-SOLR) ? */
     /* facets definition is in PQF */

@@ -183,8 +183,8 @@ static struct connection *connection_create(struct client *cl,
     co->state = Conn_Resolving;
     co->operation_timeout = operation_timeout;
     co->session_timeout = session_timeout;
-    if (host->ipport)
-        connection_connect(co, iochan_man);
+    
+    connection_connect(co, iochan_man);
 
     yaz_mutex_enter(host->mutex);
     co->next = co->host->connections;
@@ -352,50 +352,6 @@ static void connection_release(struct connection *co)
     co->client = 0;
 }
 
-void connect_resolver_host(struct host *host, iochan_man_t iochan_man)
-{
-    struct connection *con;
-
-start:
-    yaz_mutex_enter(host->mutex);
-    con = host->connections;
-    while (con)
-    {
-        if (con->state == Conn_Resolving)
-        {
-            if (!host->ipport) /* unresolved */
-            {
-                remove_connection_from_host(con);
-                yaz_mutex_leave(host->mutex);
-                connection_destroy(con);
-                goto start;
-                /* start all over .. at some point it will be NULL */
-            }
-            else if (!con->client)
-            {
-                remove_connection_from_host(con);
-                yaz_mutex_leave(host->mutex);
-                connection_destroy(con);
-                /* start all over .. at some point it will be NULL */
-                goto start;
-            }
-            else
-            {
-                yaz_mutex_leave(host->mutex);
-                connection_connect(con, iochan_man);
-                client_start_search(con->client);
-                goto start;
-            }
-        }
-        else
-        {
-            yaz_log(YLOG_LOG, "connect_resolver_host: state=%d", con->state);
-            con = con->next;
-        }
-    }
-    yaz_mutex_leave(host->mutex);
-}
-
 static struct host *connection_get_host(struct connection *con)
 {
     return con->host;
@@ -415,7 +371,6 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
     const char *apdulog = session_setting_oneval(sdb, PZ_APDULOG);
 
-    assert(host->ipport);
     assert(con);
 
     ZOOM_options_set(zoptions, "async", "1");
@@ -454,10 +409,10 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
         strcat(http_hostport, host->hostport);
         ZOOM_connection_connect(link, http_hostport, 0);
     }
-    else if (zproxy && *zproxy)
-        ZOOM_connection_connect(link, host->hostport, 0);        
     else
-        ZOOM_connection_connect(link, host->ipport, 0);
+    {
+        ZOOM_connection_connect(link, host->hostport, 0);
+    }
     
     con->link = link;
     con->iochan = iochan_create(-1, connection_handler, 0, "connection_socket");
