@@ -56,7 +56,6 @@ struct conf_config
     database_hosts_t database_hosts;
 };
 
-
 static void conf_metadata_assign(NMEM nmem, 
                                  struct conf_metadata * metadata,
                                  const char *name,
@@ -103,7 +102,6 @@ static void conf_sortkey_assign(NMEM nmem,
     sortkey->type = type;
 }
 
-
 static struct conf_service *service_init(struct conf_server *server,
                                          int num_metadata, int num_sortkeys,
                                          const char *service_id)
@@ -128,9 +126,9 @@ static struct conf_service *service_init(struct conf_server *server,
     service->num_metadata = num_metadata;
     service->metadata = 0;
     if (service->num_metadata)
-      service->metadata 
-          = nmem_malloc(nmem, 
-                        sizeof(struct conf_metadata) * service->num_metadata);
+        service->metadata 
+            = nmem_malloc(nmem, 
+                          sizeof(struct conf_metadata) * service->num_metadata);
     service->num_sortkeys = num_sortkeys;
     service->sortkeys = 0;
     if (service->num_sortkeys)
@@ -168,7 +166,6 @@ static struct conf_metadata* conf_service_add_metadata(
     return md;
 }
 
-
 static struct conf_sortkey * conf_service_add_sortkey(
     struct conf_service *service,
     int field_id,
@@ -178,7 +175,7 @@ static struct conf_sortkey * conf_service_add_sortkey(
     struct conf_sortkey * sk = 0;
 
     if (!service || !service->sortkeys || !service->num_sortkeys
-        || field_id < 0  || !(field_id < service->num_sortkeys))
+        || field_id < 0 || !(field_id < service->num_sortkeys))
         return 0;
 
     //sk = &((service->sortkeys)[field_id]);
@@ -188,7 +185,6 @@ static struct conf_sortkey * conf_service_add_sortkey(
     return sk;
 }
 
-
 int conf_service_metadata_field_id(struct conf_service *service,
                                    const char * name)
 {
@@ -196,15 +192,12 @@ int conf_service_metadata_field_id(struct conf_service *service,
 
     if (!service || !service->metadata || !service->num_metadata)
         return -1;
-
-    for(i = 0; i < service->num_metadata; i++) {
+    
+    for (i = 0; i < service->num_metadata; i++)
         if (!strcmp(name, (service->metadata[i]).name))
             return i;
-    }
-   
     return -1;
 }
-
 
 int conf_service_sortkey_field_id(struct conf_service *service,
                                   const char * name)
@@ -214,11 +207,9 @@ int conf_service_sortkey_field_id(struct conf_service *service,
     if (!service || !service->sortkeys || !service->num_sortkeys)
         return -1;
 
-    for(i = 0; i < service->num_sortkeys; i++) {
+    for (i = 0; i < service->num_sortkeys; i++)
         if (!strcmp(name, (service->sortkeys[i]).name))
             return i;
-    }
-   
     return -1;
 }
 
