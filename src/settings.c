@@ -75,7 +75,6 @@ static char *hard_settings[] = {
     "pz:preferred",             /* PZ_PREFERRED           */
     "pz:extra_args",            /* PZ_EXTRA_ARGS          */
     "pz:query_syntax",          /* PZ_QUERY_SYNTAX        */
-    "pz:option_recordfilter",   /* PZ_OPTION_RECORDFILTER */
     "pz:facetmap:",             /* PZ_FACETMAP */
     "pz:limitmap:",             /* PZ_LIMITMAP */
     0
