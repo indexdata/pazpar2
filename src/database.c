@@ -21,8 +21,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <config.h>
 #endif
 
-#include <libxml/parser.h>
-#include <libxml/tree.h>
 #include <assert.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -38,15 +36,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "database.h"
 
 #include <sys/types.h>
-#if HAVE_SYS_SOCKET_H
-#include <sys/socket.h>
-#endif
-#if HAVE_NETDB_H
-#include <netdb.h>
-#endif
-#if HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
 
 enum pazpar2_database_criterion_type {
     PAZPAR2_STRING_MATCH,
