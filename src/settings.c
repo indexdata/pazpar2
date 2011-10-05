@@ -69,13 +69,13 @@ static char *hard_settings[] = {
     "pz:pqf_strftime",
     "pz:negotiation_charset",
     "pz:max_connections",
-    "pz:reuse_connections",     /* PZ_REUSE_CONNECTION    */
-    "pz:termlist_term_factor",  /* PZ_TERMLIST_TERM_FACTOR*/
-    "pz:preferred",             /* PZ_PREFERRED           */
-    "pz:extra_args",            /* PZ_EXTRA_ARGS          */
-    "pz:query_syntax",          /* PZ_QUERY_SYNTAX        */
-    "pz:facetmap:",             /* PZ_FACETMAP */
-    "pz:limitmap:",             /* PZ_LIMITMAP */
+    "pz:reuse_connections",
+    "pz:termlist_term_factor",
+    "pz:preferred",
+    "pz:extra_args",
+    "pz:query_syntax",
+    "pz:facetmap:",
+    "pz:limitmap:",
     0
 };
 
