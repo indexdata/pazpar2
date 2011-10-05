@@ -625,7 +625,6 @@ struct conf_service *service_create(struct conf_server *server,
     if (service)
     {
         inherit_server_settings(service);
-        resolve_databases(service);
         assert(service->mutex == 0);
         pazpar2_mutex_create(&service->mutex, "conf");
     }
@@ -979,7 +978,6 @@ void config_process_events(struct conf_config *conf)
 
         for (;s ; s = s->next)
         {
-            resolve_databases(s);
             assert(s->mutex == 0);
             pazpar2_mutex_create(&s->mutex, "service");
         }

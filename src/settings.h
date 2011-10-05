@@ -70,7 +70,6 @@ int settings_num(struct conf_service *service);
 int settings_create_offset(struct conf_service *service, const char *name);
 int settings_lookup_offset(struct conf_service *service, const char *name);
 void init_settings(struct conf_service *service);
-void resolve_databases(struct conf_service *service);
 void settings_read_node_x(xmlNode *n,
                           void *client_data,
                           void (*fun)(void *client_data,

@@ -526,6 +526,9 @@ static void select_targets_callback(struct session *se,
 {
     struct client *cl = client_create();
     struct client_list *l;
+
+    resolve_database(se->service, db->database);
+
     client_set_database(cl, db);
 
     client_set_session(cl, se);
@@ -716,8 +719,6 @@ static struct session_database *load_session_database(struct session *se,
                                                       char *id)
 {
     struct database *db = new_database(id, se->session_nmem);
-
-    resolve_database(se->service, db);
 
     session_init_databases_fun((void*) se, db);
 

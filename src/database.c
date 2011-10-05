@@ -124,13 +124,6 @@ int resolve_database(struct conf_service *service, struct database *db)
     return 0;
 }
 
-void resolve_databases(struct conf_service *service)
-{
-    struct database *db = service->databases;
-    for (; db; db = db->next)
-        resolve_database(service, db);
-}
-
 struct database *new_database(const char *id, NMEM nmem)
 {
     struct database *db;
