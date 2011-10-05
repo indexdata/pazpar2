@@ -76,6 +76,7 @@ static char *hard_settings[] = {
     "pz:query_syntax",
     "pz:facetmap:",
     "pz:limitmap:",
+    "pz:url",
     0
 };
 

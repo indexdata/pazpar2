@@ -750,6 +750,11 @@
        multiple overlapping settings with the same name and target
        value, the 'precedence' attribute determines what happens.
       </para>
+      <para>
+       For Pazpar2 1.6.4 or later, the target ID may be user-defined, in
+       which case, the actual host, port, etc is given by setting
+       <xref linkend="pzurl"/>.
+      </para>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -1229,6 +1234,21 @@
       <note>
        <para>
 	The limitmap facility is supported for Pazpar2 version 1.6.0.
+       </para>
+      </note>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry id="pzurl">
+     <term>pz:url</term>
+     <listitem>
+      <para>
+       Specifies URL for the target and overrides the target ID.
+      </para>
+      <note>
+       <para>
+	<literal>pz:url</literal> is only recognized for
+	Pazpar2 1.6.4 and later.
        </para>
       </note>
      </listitem>

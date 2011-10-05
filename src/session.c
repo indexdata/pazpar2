@@ -526,8 +526,12 @@ static void select_targets_callback(struct session *se,
 {
     struct client *cl = client_create();
     struct client_list *l;
+    const char *url = session_setting_oneval(db, PZ_URL);
+    
+    if (!url || !*url)
+        url = db->database->url;
 
-    resolve_database(se->service, db->database);
+    resolve_database(se->service, db->database, url);
 
     client_set_database(cl, db);
 

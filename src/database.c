@@ -101,12 +101,13 @@ static struct host *find_host(database_hosts_t hosts,
     return p;
 }
 
-int resolve_database(struct conf_service *service, struct database *db)
+int resolve_database(struct conf_service *service, struct database *db,
+                     const char *hostport)
 {
     if (db->host == 0)
     {
         struct host *host;
-        if (!(host = find_host(service->server->database_hosts, db->url)))
+        if (!(host = find_host(service->server->database_hosts, hostport)))
             return -1;
         db->host = host;
     }
