@@ -59,7 +59,6 @@ static char *hard_settings[] = {
     "pz:id",
     "pz:name",
     "pz:queryencoding",
-    "pz:ip",
     "pz:zproxy",
     "pz:apdulog",
     "pz:sru",
