@@ -80,8 +80,7 @@ static struct host *create_host(const char *hostport)
     return host;
 }
 
-static struct host *find_host(database_hosts_t hosts,
-                              const char *hostport)
+struct host *find_host(database_hosts_t hosts, const char *hostport)
 {
     struct host *p;
     yaz_mutex_enter(hosts->mutex);
@@ -101,19 +100,6 @@ static struct host *find_host(database_hosts_t hosts,
     return p;
 }
 
-int resolve_database(struct conf_service *service, struct database *db,
-                     const char *hostport)
-{
-    if (db->host == 0)
-    {
-        struct host *host;
-        if (!(host = find_host(service->server->database_hosts, hostport)))
-            return -1;
-        db->host = host;
-    }
-    return 0;
-}
-
 struct database *new_database(const char *id, NMEM nmem)
 {
     struct database *db;
@@ -123,8 +109,6 @@ struct database *new_database(const char *id, NMEM nmem)
     memset(db, 0, sizeof(*db));
 
     db->url = nmem_strdup(nmem, id);
-    db->errors = 0;
-    db->host = 0;
 
     db->num_settings = PZ_MAX_EOF;
     db->settings = nmem_malloc(nmem, sizeof(struct settings*) * 

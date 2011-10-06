@@ -524,14 +524,12 @@ void session_alert_watch(struct session *s, int what)
 static void select_targets_callback(struct session *se,
                                     struct session_database *db)
 {
-    struct client *cl = client_create();
+    struct client *cl = client_create(db->database->url);
     struct client_list *l;
     const char *url = session_setting_oneval(db, PZ_URL);
     
     if (!url || !*url)
         url = db->database->url;
-
-    resolve_database(se->service, db->database, url);
 
     client_set_database(cl, db);
 

@@ -166,12 +166,12 @@ static void connection_destroy(struct connection *co)
 // Creates a new connection for client, associated with the host of 
 // client's database
 static struct connection *connection_create(struct client *cl,
+                                            struct host *host,
                                             int operation_timeout,
                                             int session_timeout,
                                             iochan_man_t iochan_man)
 {
     struct connection *co;
-    struct host *host = client_get_host(cl);
 
     co = xmalloc(sizeof(*co));
     co->host = host;
@@ -434,20 +434,37 @@ int client_prep_connection(struct client *cl,
                            const struct timeval *abstime)
 {
     struct connection *co;
-    struct host *host = client_get_host(cl);
     struct session_database *sdb = client_get_database(cl);
     const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
+    const char *url = session_setting_oneval(sdb, PZ_URL);
+    struct host *host = 0;
 
     if (zproxy && zproxy[0] == '\0')
         zproxy = 0;
 
-    if (!host)
-        return 0;
+    if (!url || !*url)
+        url = sdb->database->url;
+
+    host = find_host(client_get_session(cl)->service->server->database_hosts,
+                     url);
+
+    yaz_log(YLOG_DEBUG, "client_prep_connection: target=%s url=%s",
+            client_get_url(cl), url);
 
     co = client_get_connection(cl);
 
-    yaz_log(YLOG_DEBUG, "Client prep %s", client_get_url(cl));
-
+    if (co)
+    {
+        assert(co->host);
+        if (co->host == host)
+            ;  /* reusing connection. It's ours! */
+        else 
+        {
+            client_incref(cl);
+            connection_release(co);
+            co = 0;
+        }
+    }
     if (!co)
     {
         int max_connections = 0;
@@ -456,7 +473,7 @@ int client_prep_connection(struct client *cl,
                                                PZ_MAX_CONNECTIONS);
         if (v && *v)
             max_connections = atoi(v);
-
+        
         v = session_setting_oneval(client_get_database(cl),
                 PZ_REUSE_CONNECTIONS);
         if (v && *v)
@@ -470,7 +487,8 @@ int client_prep_connection(struct client *cl,
             int num_connections = 0;
             for (co = host->connections; co; co = co->next)
                 num_connections++;
-            if (reuse_connections) {
+            if (reuse_connections)
+            {
                 for (co = host->connections; co; co = co->next)
                 {
                     if (connection_is_idle(co) &&
@@ -526,9 +544,10 @@ int client_prep_connection(struct client *cl,
         else
         {
             yaz_mutex_leave(host->mutex);
-            co = connection_create(cl, operation_timeout, session_timeout,
+            co = connection_create(cl, host, operation_timeout, session_timeout,
                                    iochan_man);
         }
+        assert(co->host);
     }
 
     if (co && co->link)

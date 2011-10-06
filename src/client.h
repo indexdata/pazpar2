@@ -67,7 +67,7 @@ int client_is_our_response(struct client *cl);
 
 void client_continue(struct client *cl);
 
-struct client *client_create(void);
+struct client *client_create(const char *url);
 int client_destroy(struct client *c);
 
 void client_set_connection(struct client *cl, struct connection *con);
@@ -89,7 +89,6 @@ int client_get_num_records(struct client *cl);
 int client_get_diagnostic(struct client *cl);
 void client_set_diagnostic(struct client *cl, int diagnostic);
 void client_set_database(struct client *cl, struct session_database *db);
-struct host *client_get_host(struct client *cl);
 const char *client_get_url(struct client *cl);
 void client_set_maxrecs(struct client *cl, int v);
 int  client_get_maxrecs(struct client *cl);

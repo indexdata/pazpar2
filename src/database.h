@@ -30,11 +30,11 @@ int session_grep_databases(struct session *se, const char *filter,
 int predef_grep_databases(void *context, struct conf_service *service,
 			  void (*fun)(void *context, struct database *db));
 int match_zurl(const char *zurl, const char *pattern);
-int resolve_database(struct conf_service *service, struct database *db,
-		     const char *hostport);
 struct database *new_database(const char *id, NMEM nmem);
 
 database_hosts_t database_hosts_create(void);
 void database_hosts_destroy(database_hosts_t *);
+
+struct host *find_host(database_hosts_t hosts, const char *hostport);
 
 #endif

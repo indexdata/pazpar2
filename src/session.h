@@ -52,12 +52,9 @@ enum pazpar2_error_code {
     PAZPAR2_LAST_ERROR
 };
 
-struct host;
-// Represents a (virtual) database on a host
+// Represents a database
 struct database {
-    struct host *host;
     char *url;
-    int errors;
     int num_settings;
     struct setting **settings;
     struct database *next;
@@ -171,8 +168,6 @@ int session_active_clients(struct session *s);
 int session_is_preferred_clients_ready(struct session *s);
 void session_apply_setting(struct session *se, char *dbname, char *setting, char *value);
 const char *session_setting_oneval(struct session_database *db, int offset);
-
-int host_getaddrinfo(struct host *host, iochan_man_t iochan_man);
 
 int ingest_record(struct client *cl, const char *rec, int record_no, NMEM nmem);
 void session_alert_watch(struct session *s, int what);

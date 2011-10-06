@@ -119,7 +119,6 @@ struct client {
     ZOOM_resultset resultset;
     YAZ_MUTEX mutex;
     int ref_count;
-    /* copy of database->url */
     char *url;
 };
 
@@ -752,7 +751,7 @@ void client_start_search(struct client *cl)
     connection_continue(co);
 }
 
-struct client *client_create(void)
+struct client *client_create(const char *url)
 {
     struct client *cl = xmalloc(sizeof(*cl));
     cl->maxrecs = 100;
@@ -772,7 +771,8 @@ struct client *client_create(void)
     pazpar2_mutex_create(&cl->mutex, "client");
     cl->preferred = 0;
     cl->ref_count = 1;
-    cl->url = 0;
+    assert(url);
+    cl->url = xstrdup(url);
     client_use(1);
     
     return cl;
@@ -1126,7 +1126,6 @@ int client_is_active_preferred(struct client *cl)
     return 0;
 }
 
-
 Odr_int client_get_hits(struct client *cl)
 {
     return cl->hits;
@@ -1150,24 +1149,11 @@ int client_get_diagnostic(struct client *cl)
 void client_set_database(struct client *cl, struct session_database *db)
 {
     cl->database = db;
-    /* Copy the URL for safe logging even after session is gone */
-    if (db) {
-        cl->url = xstrdup(db->database->url);
-    }
-}
-
-struct host *client_get_host(struct client *cl)
-{
-    return client_get_database(cl)->database->host;
 }
 
 const char *client_get_url(struct client *cl)
 {
-    if (cl->url)
-        return cl->url;
-    else
-        /* This must not happen anymore, as the url is present until destruction of client  */
-        return "NOURL";
+    return cl->url;
 }
 
 void client_set_maxrecs(struct client *cl, int v)
