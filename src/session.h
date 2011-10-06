@@ -145,7 +145,6 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
                             unsigned session_id);
 void destroy_session(struct session *s);
 void session_init_databases(struct session *s);
-int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
 enum pazpar2_error_code search(struct session *s, const char *query,
                                const char *startrecs, const char *maxrecs,
