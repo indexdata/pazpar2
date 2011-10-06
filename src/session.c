@@ -855,7 +855,7 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
         const char *name = session_setting_oneval(client_get_database(cl),
                                                   PZ_NAME);
 
-        res[*count].id = client_get_url(cl);
+        res[*count].id = client_get_id(cl);
         res[*count].name = *name ? name : "Unknown";
         res[*count].hits = client_get_hits(cl);
         res[*count].records = client_get_num_records(cl);
@@ -1305,7 +1305,7 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     if (wrbuf_len(norm_wr) == 0)
     {
         wrbuf_printf(norm_wr, "%s-%d",
-                     client_get_url(cl), record_no);
+                     client_get_id(cl), record_no);
     }
     if (wrbuf_len(norm_wr) > 0)
         mergekey_norm = nmem_strdup(nmem, wrbuf_cstr(norm_wr));

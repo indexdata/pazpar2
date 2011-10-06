@@ -223,7 +223,7 @@ static void non_block_events(struct connection *co)
                 if ((err = ZOOM_connection_error(link, &error, &addinfo)))
                 {
                     yaz_log(YLOG_LOG, "Error %s from %s",
-                            error, client_get_url(cl));
+                            error, client_get_id(cl));
                     client_set_diagnostic(cl, err);
                     client_set_state(cl, Client_Error);
                 }
@@ -248,7 +248,7 @@ static void non_block_events(struct connection *co)
         case ZOOM_EVENT_RECV_APDU:
             break;
         case ZOOM_EVENT_CONNECT:
-            yaz_log(YLOG_LOG, "Connected to %s", client_get_url(cl));
+            yaz_log(YLOG_LOG, "Connected to %s", client_get_id(cl));
             co->state = Conn_Open;
             break;
         case ZOOM_EVENT_RECV_SEARCH:
@@ -260,7 +260,7 @@ static void non_block_events(struct connection *co)
             break;
         default:
             yaz_log(YLOG_LOG, "Unhandled event (%d) from %s",
-                    ev, client_get_url(cl));
+                    ev, client_get_id(cl));
         }
     }
     if (got_records)
@@ -305,7 +305,7 @@ static void connection_handler(IOCHAN iochan, int event)
     {
         if (co->state == Conn_Connecting)
         {
-            yaz_log(YLOG_WARN, "%p connect timeout %s", co, client_get_url(cl));
+            yaz_log(YLOG_WARN, "%p connect timeout %s", co, client_get_id(cl));
 
             client_set_state(cl, Client_Error);
             remove_connection_from_host(co);
@@ -314,7 +314,7 @@ static void connection_handler(IOCHAN iochan, int event)
         }
         else
         {
-            yaz_log(YLOG_LOG,  "%p Connection idle timeout %s", co, client_get_url(cl));
+            yaz_log(YLOG_LOG,  "%p Connection idle timeout %s", co, client_get_id(cl));
             remove_connection_from_host(co);
             yaz_mutex_leave(host->mutex);
             connection_destroy(co);
@@ -449,7 +449,7 @@ int client_prep_connection(struct client *cl,
                      url);
 
     yaz_log(YLOG_DEBUG, "client_prep_connection: target=%s url=%s",
-            client_get_url(cl), url);
+            client_get_id(cl), url);
 
     co = client_get_connection(cl);
 
@@ -519,7 +519,7 @@ int client_prep_connection(struct client *cl,
                     num_connections, max_connections);
             if (yaz_cond_wait(host->cond_ready, host->mutex, abstime))
             {
-                yaz_log(YLOG_LOG, "out of connections %s", client_get_url(cl));
+                yaz_log(YLOG_LOG, "out of connections %s", client_get_id(cl));
                 client_set_state(cl, Client_Error);
                 yaz_mutex_leave(host->mutex);
                 return 0;

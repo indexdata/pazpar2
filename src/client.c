@@ -119,7 +119,7 @@ struct client {
     ZOOM_resultset resultset;
     YAZ_MUTEX mutex;
     int ref_count;
-    char *url;
+    char *id;
 };
 
 struct show_raw {
@@ -166,7 +166,8 @@ void client_set_state(struct client *cl, enum client_state st)
     {
 
         int no_active = session_active_clients(cl->session);
-        yaz_log(YLOG_DEBUG, "%s: releasing watches on zero active: %d", client_get_url(cl), no_active);
+        yaz_log(YLOG_DEBUG, "%s: releasing watches on zero active: %d",
+                client_get_id(cl), no_active);
         if (no_active == 0) {
             session_alert_watch(cl->session, SESSION_WATCH_SHOW);
             session_alert_watch(cl->session, SESSION_WATCH_SHOW_PREF);
@@ -346,7 +347,7 @@ static void client_send_raw_present(struct client *cl)
     assert(set);
 
     yaz_log(YLOG_DEBUG, "%s: trying to present %d record(s) from %d",
-            client_get_url(cl), 1, offset);
+            client_get_id(cl), 1, offset);
 
     if (cl->show_raw->syntax)
         syntax = cl->show_raw->syntax;
@@ -483,7 +484,7 @@ static void ingest_raw_record(struct client *cl, ZOOM_record rec)
 void client_check_preferred_watch(struct client *cl)
 {
     struct session *se = cl->session;
-    yaz_log(YLOG_DEBUG, "client_check_preferred_watch: %s ", client_get_url(cl));
+    yaz_log(YLOG_DEBUG, "client_check_preferred_watch: %s ", client_get_id(cl));
     if (se)
     {
         client_unlock(cl);
@@ -497,7 +498,7 @@ void client_check_preferred_watch(struct client *cl)
         client_lock(cl);
     }
     else
-        yaz_log(YLOG_WARN, "client_check_preferred_watch: %s. No session!", client_get_url(cl));
+        yaz_log(YLOG_WARN, "client_check_preferred_watch: %s. No session!", client_get_id(cl));
 
 }
 
@@ -515,7 +516,7 @@ void client_search_response(struct client *cl)
         cl->hits = 0;
         client_set_state(cl, Client_Error);
         yaz_log(YLOG_WARN, "Search error %s (%s): %s",
-                error, addinfo, client_get_url(cl));
+                error, addinfo, client_get_id(cl));
     }
     else
     {
@@ -555,7 +556,7 @@ void client_record_response(struct client *cl)
     {
         client_set_state(cl, Client_Error);
         yaz_log(YLOG_WARN, "Search error %s (%s): %s",
-            error, addinfo, client_get_url(cl));
+            error, addinfo, client_get_id(cl));
     }
     else
     {
@@ -587,7 +588,7 @@ void client_record_response(struct client *cl)
                 else if (ZOOM_record_error(rec, &msg, &addinfo, 0))
                 {
                     yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
-                            msg, addinfo, client_get_url(cl),
+                            msg, addinfo, client_get_id(cl),
                             cl->record_offset);
                 }
                 else
@@ -602,12 +603,12 @@ void client_record_response(struct client *cl)
                     xmlrec = ZOOM_record_get(rec, type, NULL);
                     if (!xmlrec)
                         yaz_log(YLOG_WARN, "ZOOM_record_get failed from %s",
-                                client_get_url(cl));
+                                client_get_id(cl));
                     else
                     {
                         /* OK = 0, -1 = failure, -2 = Filtered */
                         if (ingest_record(cl, xmlrec, cl->record_offset, nmem) == -1)
-                            yaz_log(YLOG_WARN, "Failed to ingest from %s", client_get_url(cl));
+                            yaz_log(YLOG_WARN, "Failed to ingest from %s", client_get_id(cl));
                     }
                     nmem_destroy(nmem);
                 }
@@ -694,7 +695,7 @@ void client_start_search(struct client *cl)
         cl->preferred = atoi(opt_preferred);
         if (cl->preferred)
             yaz_log(YLOG_LOG, "Target %s has preferred status: %d",
-                    client_get_url(cl), cl->preferred);
+                    client_get_id(cl), cl->preferred);
     }
     client_set_state(cl, Client_Working);
 
@@ -735,7 +736,7 @@ void client_start_search(struct client *cl)
     if (cl->cqlquery)
     {
         ZOOM_query q = ZOOM_query_create();
-        yaz_log(YLOG_LOG, "Search %s CQL: %s", client_get_url(cl),
+        yaz_log(YLOG_LOG, "Search %s CQL: %s", client_get_id(cl),
                 cl->cqlquery);
         ZOOM_query_cql(q, cl->cqlquery);
         if (*opt_sort)
@@ -745,7 +746,7 @@ void client_start_search(struct client *cl)
     }
     else
     {
-        yaz_log(YLOG_LOG, "Search %s PQF: %s", client_get_url(cl), cl->pquery);
+        yaz_log(YLOG_LOG, "Search %s PQF: %s", client_get_id(cl), cl->pquery);
         rs = ZOOM_connection_search_pqf(link, cl->pquery);
     }
     ZOOM_resultset_destroy(cl->resultset);
@@ -753,7 +754,7 @@ void client_start_search(struct client *cl)
     connection_continue(co);
 }
 
-struct client *client_create(const char *url)
+struct client *client_create(const char *id)
 {
     struct client *cl = xmalloc(sizeof(*cl));
     cl->maxrecs = 100;
@@ -773,8 +774,8 @@ struct client *client_create(const char *url)
     pazpar2_mutex_create(&cl->mutex, "client");
     cl->preferred = 0;
     cl->ref_count = 1;
-    assert(url);
-    cl->url = xstrdup(url);
+    assert(id);
+    cl->id = xstrdup(id);
     client_use(1);
     
     return cl;
@@ -794,7 +795,7 @@ void client_incref(struct client *c)
 {
     pazpar2_incref(&c->ref_count, c->mutex);
     yaz_log(YLOG_DEBUG, "client_incref c=%p %s cnt=%d",
-            c, client_get_url(c), c->ref_count);
+            c, client_get_id(c), c->ref_count);
 }
 
 int client_destroy(struct client *c)
@@ -802,14 +803,14 @@ int client_destroy(struct client *c)
     if (c)
     {
         yaz_log(YLOG_DEBUG, "client_destroy c=%p %s cnt=%d",
-                c, client_get_url(c), c->ref_count);
+                c, client_get_id(c), c->ref_count);
         if (!pazpar2_decref(&c->ref_count, c->mutex))
         {
             xfree(c->pquery);
             c->pquery = 0;
             xfree(c->cqlquery);
             c->cqlquery = 0;
-            xfree(c->url);
+            xfree(c->id);
             assert(!c->connection);
 
             if (c->resultset)
@@ -1039,7 +1040,7 @@ int client_parse_query(struct client *cl, const char *query,
         client_set_state(cl, Client_Error);
         session_log(se, YLOG_WARN, "Failed to parse CCL query '%s' for %s",
                     wrbuf_cstr(w_ccl),
-                    client_get_url(cl));
+                    client_get_id(cl));
         wrbuf_destroy(w_ccl);
         wrbuf_destroy(w_pqf);
         return -1;
@@ -1153,9 +1154,9 @@ void client_set_database(struct client *cl, struct session_database *db)
     cl->database = db;
 }
 
-const char *client_get_url(struct client *cl)
+const char *client_get_id(struct client *cl)
 {
-    return cl->url;
+    return cl->id;
 }
 
 void client_set_maxrecs(struct client *cl, int v)

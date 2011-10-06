@@ -696,7 +696,7 @@ static void write_subrecord(struct record *r, WRBUF w,
         client_get_database(r->client), PZ_NAME);
 
     wrbuf_puts(w, "<location id=\"");
-    wrbuf_xmlputs(w, client_get_url(r->client));
+    wrbuf_xmlputs(w, client_get_id(r->client));
     wrbuf_puts(w, "\" ");
 
     wrbuf_puts(w, "name=\"");
