@@ -693,7 +693,8 @@ void client_start_search(struct client *cl)
     if (opt_preferred) {
         cl->preferred = atoi(opt_preferred);
         if (cl->preferred)
-            yaz_log(YLOG_LOG, "Target %s has preferred status: %d", sdb->database->url, cl->preferred);
+            yaz_log(YLOG_LOG, "Target %s has preferred status: %d",
+                    client_get_url(cl), cl->preferred);
     }
     client_set_state(cl, Client_Working);
 
@@ -734,7 +735,8 @@ void client_start_search(struct client *cl)
     if (cl->cqlquery)
     {
         ZOOM_query q = ZOOM_query_create();
-        yaz_log(YLOG_LOG, "Search %s CQL: %s", sdb->database->url, cl->cqlquery);
+        yaz_log(YLOG_LOG, "Search %s CQL: %s", client_get_url(cl),
+                cl->cqlquery);
         ZOOM_query_cql(q, cl->cqlquery);
         if (*opt_sort)
             ZOOM_query_sortby(q, opt_sort);
@@ -743,7 +745,7 @@ void client_start_search(struct client *cl)
     }
     else
     {
-        yaz_log(YLOG_LOG, "Search %s PQF: %s", sdb->database->url, cl->pquery);
+        yaz_log(YLOG_LOG, "Search %s PQF: %s", client_get_url(cl), cl->pquery);
         rs = ZOOM_connection_search_pqf(link, cl->pquery);
     }
     ZOOM_resultset_destroy(cl->resultset);
@@ -1037,7 +1039,7 @@ int client_parse_query(struct client *cl, const char *query,
         client_set_state(cl, Client_Error);
         session_log(se, YLOG_WARN, "Failed to parse CCL query '%s' for %s",
                     wrbuf_cstr(w_ccl),
-                    client_get_database(cl)->database->url);
+                    client_get_url(cl));
         wrbuf_destroy(w_ccl);
         wrbuf_destroy(w_pqf);
         return -1;
