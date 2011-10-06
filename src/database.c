@@ -122,28 +122,22 @@ struct database *new_database(const char *id, NMEM nmem)
     return db;
 }
 
-static struct database *load_database(const char *id,
-                                      struct conf_service *service)
-{
-    struct database *db;
-
-    db = new_database(id, service->nmem);
-    
-    db->next = service->databases;
-    service->databases = db;
-
-    return db;
-}
-
 // Return a database structure by ID. Load and add to list if necessary
 // new==1 just means we know it's not in the list
-struct database *find_database(const char *id, struct conf_service *service)
+struct database *create_database_for_service(const char *id,
+                                             struct conf_service *service)
 {
     struct database *p;
     for (p = service->databases; p; p = p->next)
         if (!strcmp(p->url, id))
             return p;
-    return load_database(id, service);
+    
+    p = new_database(id, service->nmem);
+    
+    p->next = service->databases;
+    service->databases = p;
+
+    return p;
 }
 
 // This whole session_grep database thing should be moved elsewhere

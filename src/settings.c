@@ -334,7 +334,7 @@ void expand_settings_array(struct setting ***set_ar, int *num, int offset,
 
 // This is called from grep_databases -- adds/overrides setting for a target
 // This is also where the rules for precedence of settings are implemented
-static void update_database(void *context, struct database *db)
+static void update_database_fun(void *context, struct database *db)
 {
     struct setting *set = ((struct update_database_context *)
                            context)->set;
@@ -402,7 +402,7 @@ static void update_databases(void *client_data, struct setting *set)
     struct update_database_context context;
     context.set = set;
     context.service = service;
-    predef_grep_databases(&context, service, update_database);
+    predef_grep_databases(&context, service, update_database_fun);
 }
 
 // This simply copies the 'hard' (application-specific) settings
@@ -443,7 +443,7 @@ static void prepare_target_dictionary(void *client_data, struct setting *set)
 
     // If target address is not wildcard, add the database
     if (*set->target && !zurl_wildcard(set->target))
-        find_database(set->target, service);
+        create_database_for_service(set->target, service);
 
     // Determine if we already have a dictionary entry
     if (!strncmp(set->name, "pz:", 3) && (p = strchr(set->name + 3, ':')))

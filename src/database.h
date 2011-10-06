@@ -24,7 +24,8 @@ typedef struct database_hosts *database_hosts_t;
 struct session_database;
 struct session;
 struct conf_service;
-struct database *find_database(const char *id, struct conf_service *service);
+struct database *create_database_for_service(const char *id,
+					     struct conf_service *service);
 int session_grep_databases(struct session *se, const char *filter,
         void (*fun)(struct session *se, struct session_database *db));
 int predef_grep_databases(void *context, struct conf_service *service,
