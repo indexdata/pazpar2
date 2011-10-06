@@ -106,7 +106,7 @@ struct database *new_database(const char *id, NMEM nmem)
     struct setting *idset;
 
     db = nmem_malloc(nmem, sizeof(*db));
-    db->url = nmem_strdup(nmem, id);
+    db->id = nmem_strdup(nmem, id);
     db->num_settings = PZ_MAX_EOF;
     db->settings = nmem_malloc(nmem, sizeof(struct settings*) * 
                                db->num_settings);
@@ -115,7 +115,7 @@ struct database *new_database(const char *id, NMEM nmem)
     idset = nmem_malloc(nmem, sizeof(*idset));
     idset->precedence = 0;
     idset->name = "pz:id";
-    idset->target = idset->value = db->url;
+    idset->target = idset->value = db->id;
     idset->next = 0;
     db->settings[PZ_ID] = idset;
 
@@ -129,7 +129,7 @@ struct database *create_database_for_service(const char *id,
 {
     struct database *p;
     for (p = service->databases; p; p = p->next)
-        if (!strcmp(p->url, id))
+        if (!strcmp(p->id, id))
             return p;
     
     p = new_database(id, service->nmem);

@@ -246,13 +246,13 @@ static xmlDoc *record_to_xml(struct session *se,
     if (!rdoc)
     {
         session_log(se, YLOG_FATAL, "Non-wellformed XML received from %s",
-                    db->url);
+                    db->id);
         return 0;
     }
 
     if (global_parameters.dump_records)
     {
-        session_log(se, YLOG_LOG, "Un-normalized record from %s", db->url);
+        session_log(se, YLOG_LOG, "Un-normalized record from %s", db->id);
         log_xml_doc(rdoc);
     }
 
@@ -340,7 +340,7 @@ static xmlDoc *normalize_record(struct session *se,
         if (normalize_record_transform(sdb->map, &rdoc, (const char **)parms))
         {
             session_log(se, YLOG_WARN, "Normalize failed from %s",
-                        sdb->database->url);
+                        sdb->database->id);
         }
         else
         {
@@ -349,7 +349,7 @@ static xmlDoc *normalize_record(struct session *se,
             if (global_parameters.dump_records)
             {
                 session_log(se, YLOG_LOG, "Normalized record from %s", 
-                            sdb->database->url);
+                            sdb->database->id);
                 log_xml_doc(rdoc);
             }
         }
@@ -401,7 +401,7 @@ static int prepare_map(struct session *se, struct session_database *sdb)
 
     if (!sdb->settings)
     {
-        session_log(se, YLOG_WARN, "No settings on %s", sdb->database->url);
+        session_log(se, YLOG_WARN, "No settings on %s", sdb->database->id);
         return -1;
     }
     if ((s = session_setting_oneval(sdb, PZ_XSLT)))
@@ -447,7 +447,7 @@ static int prepare_session_database(struct session *se,
     if (!sdb->settings)
     {
         session_log(se, YLOG_WARN, 
-                "No settings associated with %s", sdb->database->url);
+                "No settings associated with %s", sdb->database->id);
         return -1;
     }
     if (sdb->settings[PZ_XSLT] && !sdb->map)
@@ -524,12 +524,8 @@ void session_alert_watch(struct session *s, int what)
 static void select_targets_callback(struct session *se,
                                     struct session_database *db)
 {
-    struct client *cl = client_create(db->database->url);
+    struct client *cl = client_create(db->database->id);
     struct client_list *l;
-    const char *url = session_setting_oneval(db, PZ_URL);
-    
-    if (!url || !*url)
-        url = db->database->url;
 
     client_set_database(cl, db);
 
@@ -735,7 +731,7 @@ static struct session_database *find_session_database(struct session *se,
     struct session_database *sdb;
 
     for (sdb = se->databases; sdb; sdb = sdb->next)
-        if (!strcmp(sdb->database->url, id))
+        if (!strcmp(sdb->database->id, id))
             return sdb;
     return load_session_database(se, id);
 }
@@ -859,7 +855,7 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
         const char *name = session_setting_oneval(client_get_database(cl),
                                                   PZ_NAME);
 
-        res[*count].id = client_get_database(cl)->database->url;
+        res[*count].id = client_get_url(cl);
         res[*count].name = *name ? name : "Unknown";
         res[*count].hits = client_get_hits(cl);
         res[*count].records = client_get_num_records(cl);
@@ -1309,7 +1305,7 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     if (wrbuf_len(norm_wr) == 0)
     {
         wrbuf_printf(norm_wr, "%s-%d",
-                     client_get_database(cl)->database->url, record_no);
+                     client_get_url(cl), record_no);
     }
     if (wrbuf_len(norm_wr) > 0)
         mergekey_norm = nmem_strdup(nmem, wrbuf_cstr(norm_wr));
@@ -1413,7 +1409,7 @@ int ingest_record(struct client *cl, const char *rec,
     if (!check_record_filter(root, sdb))
     {
         session_log(se, YLOG_LOG, "Filtered out record no %d from %s",
-                    record_no, sdb->database->url);
+                    record_no, sdb->database->id);
         xmlFreeDoc(xdoc);
         return -2;
     }
@@ -1473,7 +1469,7 @@ static int ingest_to_cluster(struct client *cl,
         return -1;
     if (global_parameters.dump_records)
         session_log(se, YLOG_LOG, "Cluster id %s from %s (#%d)", cluster->recid,
-                    sdb->database->url, record_no);
+                    sdb->database->id, record_no);
     relevance_newrec(se->relevance, cluster);
     
     // now parsing XML record and adding data to cluster or record metadata

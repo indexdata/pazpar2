@@ -443,7 +443,7 @@ int client_prep_connection(struct client *cl,
         zproxy = 0;
 
     if (!url || !*url)
-        url = sdb->database->url;
+        url = sdb->database->id;
 
     host = find_host(client_get_session(cl)->service->server->database_hosts,
                      url);

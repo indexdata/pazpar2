@@ -54,7 +54,7 @@ enum pazpar2_error_code {
 
 // Represents a database
 struct database {
-    char *url;
+    char *id;
     int num_settings;
     struct setting **settings;
     struct database *next;
@@ -130,7 +130,7 @@ struct statistics {
 };
 
 struct hitsbytarget {
-    char *id;
+    const char *id;
     const char *name;
     Odr_int hits;
     int diagnostic;

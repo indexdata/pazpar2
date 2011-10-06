@@ -344,7 +344,7 @@ static void update_database_fun(void *context, struct database *db)
     int offset;
 
     // Is this the right database?
-    if (!match_zurl(db->url, set->target))
+    if (!match_zurl(db->id, set->target))
         return;
 
     offset = settings_create_offset(service, set->name);
