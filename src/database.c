@@ -106,13 +106,11 @@ struct database *new_database(const char *id, NMEM nmem)
     struct setting *idset;
 
     db = nmem_malloc(nmem, sizeof(*db));
-    memset(db, 0, sizeof(*db));
-
     db->url = nmem_strdup(nmem, id);
-
     db->num_settings = PZ_MAX_EOF;
     db->settings = nmem_malloc(nmem, sizeof(struct settings*) * 
                                db->num_settings);
+    db->next = 0;
     memset(db->settings, 0, sizeof(struct settings*) * db->num_settings);
     idset = nmem_malloc(nmem, sizeof(*idset));
     idset->precedence = 0;
@@ -120,7 +118,6 @@ struct database *new_database(const char *id, NMEM nmem)
     idset->target = idset->value = db->url;
     idset->next = 0;
     db->settings[PZ_ID] = idset;
-    db->next = 0;
 
     return db;
 }
