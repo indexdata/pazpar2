@@ -116,6 +116,7 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
         new->offset = offset;
         new->type = type;
         new->increasing = increasing;
+        new->name = nmem_strdup(nmem, parm);
         rp = &new->next;
         if (*(parms = cpp))
             parms++;

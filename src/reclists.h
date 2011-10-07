@@ -31,6 +31,7 @@ struct reclist_sortparms
     int offset;
     enum conf_sortkey_type type;
     int increasing;
+    char *name;
     struct reclist_sortparms *next;
 };
 

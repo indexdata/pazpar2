@@ -77,6 +77,7 @@ static char *hard_settings[] = {
     "pz:facetmap:",
     "pz:limitmap:",
     "pz:url",
+    "pz:sortmap:",
     0
 };
 

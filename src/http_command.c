@@ -898,6 +898,7 @@ static void show_records(struct http_channel *c, int active)
         error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
         release_session(c, s);
         return;
+
     }
 
     
@@ -950,12 +951,25 @@ static void cmd_show(struct http_channel *c)
     struct http_request *rq = c->request;
     struct http_session *s = locate_session(c);
     const char *block = http_argbyname(rq, "block");
+    const char *sort = http_argbyname(rq, "sort");
+    struct reclist_sortparms *sp;
     int status;
 
     if (!s)
         return;
 
+    if (!sort)
+        sort = "relevance";
+    
     status = session_active_clients(s->psession);
+
+    if (!(sp = reclist_parse_sortparms(c->nmem, sort, s->psession->service)))
+    {
+        error(c->response, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
+        release_session(c, s);
+        return;
+    }
+    search_sort(s->psession, sp->name, sp->increasing);
 
     if (block)
     {

@@ -591,6 +591,59 @@ int session_is_preferred_clients_ready(struct session *s)
     return res == 0;
 }
 
+void search_sort(struct session *se, const char *field, int increasing)
+{
+    struct client_list *l;
+    struct timeval tval;
+
+    session_enter(se);
+    for (l = se->clients; l; l = l->next)
+    {
+        struct client *cl = l->client;
+        struct session_database *sdb = client_get_database(cl);
+        struct setting *s;
+        const char *strategy_plus_sort = 0;
+        
+        for (s = sdb->settings[PZ_SORTMAP]; s; s = s->next)
+        {
+            char *p = strchr(s->name + 3, ':');
+            if (!p)
+            {
+                yaz_log(YLOG_WARN, "Malformed sortmap name: %s", s->name);
+                continue;
+            }
+            p++;
+            if (!strcmp(p, field))
+            {
+                strategy_plus_sort = s->value;
+                break;
+            }
+        }
+
+        if (strategy_plus_sort)
+        {
+            if (client_prep_connection(cl, se->service->z3950_operation_timeout,
+                                       se->service->z3950_session_timeout,
+                                       se->service->server->iochan_man,
+                                       &tval))
+            {
+                char **array;
+                int num;
+                nmem_strsplit(se->nmem, ":", strategy_plus_sort, &array, &num);
+
+                if (num == 2)
+                {
+                    const char *sort_spec = array[1];
+                    while (*sort_spec == ' ')
+                        sort_spec++;
+                    client_start_search(cl, array[0], sort_spec);
+                }
+            }
+        }
+    }
+    session_leave(se);
+}
+
 enum pazpar2_error_code search(struct session *se,
                                const char *query,
                                const char *startrecs, const char *maxrecs,
@@ -656,7 +709,7 @@ enum pazpar2_error_code search(struct session *se,
                                        se->service->z3950_session_timeout,
                                        se->service->server->iochan_man,
                                        &tval))
-                client_start_search(cl);
+                client_start_search(cl, 0, 0);
         }
     }
     facet_limits_destroy(facet_limits);
