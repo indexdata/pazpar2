@@ -107,7 +107,6 @@ struct session {
     struct relevance *relevance;
     struct reclist *reclist;
     struct session_watchentry watchlist[SESSION_WATCH_MAX + 1];
-    Odr_int total_hits;
     int total_records;
     int total_merged;
     int number_of_warnings_unknown_elements;

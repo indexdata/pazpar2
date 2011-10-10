@@ -669,7 +669,7 @@ enum pazpar2_error_code search(struct session *se,
     se->reclist = 0;
     relevance_destroy(&se->relevance);
     nmem_reset(se->nmem);
-    se->total_records = se->total_hits = se->total_merged = 0;
+    se->total_records = se->total_merged = 0;
     se->num_termlists = 0;
     live_channels = select_targets(se, filter);
     if (!live_channels)
@@ -867,7 +867,6 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session_log(session, YLOG_DEBUG, "New");
     session->service = service;
     session->relevance = 0;
-    session->total_hits = 0;
     session->total_records = 0;
     session->number_of_warnings_unknown_elements = 0;
     session->number_of_warnings_unknown_metadata = 0;
@@ -1128,6 +1127,8 @@ struct record_cluster **show_range_start(struct session *se,
     }
     else
     {
+        struct client_list *l;
+        
         for (spp = sp; spp; spp = spp->next)
             if (spp->type == Metadata_sortkey_relevance)
             {
@@ -1138,7 +1139,10 @@ struct record_cluster **show_range_start(struct session *se,
         
         reclist_enter(se->reclist);
         *total = reclist_get_num_records(se->reclist);
-        *sumhits = se->total_hits;
+
+        *sumhits = 0;
+        for (l = se->clients; l; l = l->next)
+            *sumhits += client_get_hits(l->client);
         
         for (i = 0; i < start; i++)
             if (!reclist_read_record(se->reclist))
@@ -1181,11 +1185,13 @@ void statistics(struct session *se, struct statistics *stat)
     int count = 0;
 
     memset(stat, 0, sizeof(*stat));
+    stat->num_hits = 0;
     for (l = se->clients; l; l = l->next)
     {
         struct client *cl = l->client;
         if (!client_get_connection(cl))
             stat->num_no_connection++;
+        stat->num_hits += client_get_hits(cl);
         switch (client_get_state(cl))
         {
         case Client_Connecting: stat->num_connecting++; break;
@@ -1197,7 +1203,6 @@ void statistics(struct session *se, struct statistics *stat)
         }
         count++;
     }
-    stat->num_hits = se->total_hits;
     stat->num_records = se->total_records;
 
     stat->num_clients = count;

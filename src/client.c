@@ -505,7 +505,6 @@ void client_check_preferred_watch(struct client *cl)
 void client_search_response(struct client *cl)
 {
     struct connection *co = cl->connection;
-    struct session *se = cl->session;
     ZOOM_connection link = connection_get_link(co);
     ZOOM_resultset resultset = cl->resultset;
 
@@ -525,11 +524,6 @@ void client_search_response(struct client *cl)
         client_report_facets(cl, resultset);
         cl->record_offset = cl->startrecs;
         cl->hits = ZOOM_resultset_size(resultset);
-        if (se) {
-            se->total_hits += cl->hits;
-            yaz_log(YLOG_DEBUG, "client_search_response: total hits "
-                    ODR_INT_PRINTF, se->total_hits);
-        }
     }
 }
 
@@ -685,7 +679,6 @@ void client_start_search(struct client *cl, const char *sort_strategy,
 
     assert(link);
 
-    cl->hits = -1;
     cl->record_offset = 0;
     cl->diagnostic = 0;
 
@@ -1037,6 +1030,7 @@ int client_parse_query(struct client *cl, const char *query,
     if (!ccl_map)
         return -1;
 
+    cl->hits = -1;
     w_ccl = wrbuf_alloc();
     wrbuf_puts(w_ccl, query);
 
