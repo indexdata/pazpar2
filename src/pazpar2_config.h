@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 enum conf_metadata_type {
     Metadata_type_generic,    // Generic text field
-    Metadata_type_number,     // A number
     Metadata_type_year,        // A number
     Metadata_type_date        // A number
 };

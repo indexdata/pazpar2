@@ -5,3 +5,4 @@ http://localhost:9763/search.pz2?session=1&command=settings&pz:url%5Bmy%5D=z3950
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
 2 http://localhost:9763/search.pz2?session=1&command=show&block=1
 2 http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=title:1
+1 http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=title:0

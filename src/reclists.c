@@ -314,6 +314,16 @@ struct record_cluster *reclist_insert(struct reclist *l,
         if (!strcmp(merge_key, (*p)->record->merge_key))
         {
             struct record_cluster *existing = (*p)->record;
+            struct record *re = existing->records;
+
+            for (; re; re = re->next)
+            {
+                if (record_compare(record, re, service))
+                { 
+                    yaz_mutex_leave(l->mutex);
+                    return 0;
+                }
+            }
             record->next = existing->records;
             existing->records = record;
             cluster = existing;

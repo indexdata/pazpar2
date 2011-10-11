@@ -72,38 +72,7 @@ struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys,
 
 struct record_metadata * record_metadata_create(NMEM nmem);
 
-struct record_metadata * record_metadata_insert(NMEM nmem, 
-                                                struct record_metadata ** rmd,
-                                                union data_types data);
-
-
-struct record_metadata * record_add_metadata_field_id(NMEM nmem, 
-                                                      struct record * record,
-                                                      int field_id, 
-                                                      union data_types data);
-
-
-struct record_metadata * record_add_metadata(NMEM nmem, 
-                                             struct record * record,
-                                             struct conf_service * service,
-                                             const char * name,
-                                             union data_types data);
-
-
-union data_types * record_assign_sortkey_field_id(NMEM nmem, 
-                                               struct record * record,
-                                               int field_id, 
-                                               union data_types data);
-
-
-union data_types * record_assign_sortkey(NMEM nmem, 
-                                      struct record * record,
-                                      struct conf_service * service,
-                                      const char * name,
-                                      union data_types data);
-
-
-
+int record_compare(struct record *r1, struct record *r2, struct conf_service *service);
 
 struct record_cluster
 {
@@ -119,9 +88,6 @@ struct record_cluster
     char *recid;
     struct record *records;
 };
-
-
-
 
 #endif // RECORD_H
 

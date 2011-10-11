@@ -95,6 +95,12 @@ struct client_list {
     struct client_list *next;
 };
 
+struct session_sorted_results {
+    const char *field;
+    int increasing;
+    struct session_sorted_results *next;
+};
+
 /* session counting (1) , disable client counting (0) */
 static YAZ_MUTEX g_session_mutex = 0;
 static int no_sessions = 0;
@@ -593,10 +599,32 @@ int session_is_preferred_clients_ready(struct session *s)
 
 void search_sort(struct session *se, const char *field, int increasing)
 {
+    struct session_sorted_results *sr;
     struct client_list *l;
-    struct timeval tval;
 
     session_enter(se);
+
+    /* see if we already have sorted for this critieria */
+    for (sr = se->sorted_results; sr; sr = sr->next)
+    {
+        if (!strcmp(field, sr->field) && increasing == sr->increasing)
+            break;
+    }
+    if (sr)
+    {
+        yaz_log(YLOG_LOG, "search_sort: field=%s increasing=%d already fetched",
+                field, increasing);
+        session_leave(se);
+        return;
+    }
+    yaz_log(YLOG_LOG, "search_sort: field=%s increasing=%d must fetch",
+            field, increasing);
+    sr = nmem_malloc(se->nmem, sizeof(*sr));
+    sr->field = nmem_strdup(se->nmem, field);
+    sr->increasing = increasing;
+    sr->next = se->sorted_results;
+    se->sorted_results = sr;
+    
     for (l = se->clients; l; l = l->next)
     {
         struct client *cl = l->client;
@@ -619,9 +647,10 @@ void search_sort(struct session *se, const char *field, int increasing)
                 break;
             }
         }
-
+        
         if (strategy_plus_sort)
         {
+            struct timeval tval;
             if (client_prep_connection(cl, se->service->z3950_operation_timeout,
                                        se->service->z3950_session_timeout,
                                        se->service->server->iochan_man,
@@ -630,7 +659,7 @@ void search_sort(struct session *se, const char *field, int increasing)
                 char **array;
                 int num;
                 nmem_strsplit(se->nmem, ":", strategy_plus_sort, &array, &num);
-
+                
                 if (num == 2)
                 {
                     const char *sort_spec = array[1];
@@ -671,6 +700,13 @@ enum pazpar2_error_code search(struct session *se,
     nmem_reset(se->nmem);
     se->total_records = se->total_merged = 0;
     se->num_termlists = 0;
+
+    /* reset list of sorted results and clear to relevance search */
+    se->sorted_results = nmem_malloc(se->nmem, sizeof(*se->sorted_results));
+    se->sorted_results->field = nmem_strdup(se->nmem, "relevance");
+    se->sorted_results->increasing = 0;
+    se->sorted_results->next = 0;
+    
     live_channels = select_targets(se, filter);
     if (!live_channels)
     {
@@ -1481,7 +1517,7 @@ int ingest_record(struct client *cl, const char *rec,
     }
     session_enter(se);
     if (client_get_session(cl) == se)
-        ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
+        ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
     session_leave(se);
     
     xmlFreeDoc(xdoc);
@@ -1497,25 +1533,81 @@ static int ingest_to_cluster(struct client *cl,
     xmlNode *n;
     xmlChar *type = 0;
     xmlChar *value = 0;
-    struct session_database *sdb = client_get_database(cl);
     struct session *se = client_get_session(cl);
     struct conf_service *service = se->service;
     struct record *record = record_create(se->nmem, 
                                           service->num_metadata,
                                           service->num_sortkeys, cl,
                                           record_no);
+
+    for (n = root->children; n; n = n->next)
+    {
+        if (type)
+            xmlFree(type);
+        if (value)
+            xmlFree(value);
+        type = value = 0;
+        
+        if (n->type != XML_ELEMENT_NODE)
+            continue;
+        if (!strcmp((const char *) n->name, "metadata"))
+        {
+            struct conf_metadata *ser_md = 0;
+            struct record_metadata **wheretoput = 0;
+            struct record_metadata *rec_md = 0;
+            int md_field_id = -1;
+            
+            type = xmlGetProp(n, (xmlChar *) "type");
+            value = xmlNodeListGetString(xdoc, n->children, 1);
+            
+            if (!type || !value || !*value)
+                continue;
+            
+            md_field_id 
+                = conf_service_metadata_field_id(service, (const char *) type);
+            if (md_field_id < 0)
+            {
+                if (se->number_of_warnings_unknown_metadata == 0)
+                {
+                    session_log(se, YLOG_WARN, 
+                            "Ignoring unknown metadata element: %s", type);
+                }
+                se->number_of_warnings_unknown_metadata++;
+                continue;
+            }
+           
+            ser_md = &service->metadata[md_field_id];
+
+            // non-merged metadata
+            rec_md = record_metadata_init(se->nmem, (const char *) value,
+                                          ser_md->type, n->properties);
+            if (!rec_md)
+            {
+                session_log(se, YLOG_WARN, "bad metadata data '%s' "
+                            "for element '%s'", value, type);
+                continue;
+            }
+            wheretoput = &record->metadata[md_field_id];
+            while (*wheretoput)
+                wheretoput = &(*wheretoput)->next;
+            *wheretoput = rec_md;
+        }
+    }
+
     struct record_cluster *cluster = reclist_insert(se->reclist,
                                                     service, 
                                                     record,
                                                     mergekey_norm,
                                                     &se->total_merged);
+    if (!cluster)
+        return -1;
 
-    const char *use_term_factor_str = session_setting_oneval(sdb, PZ_TERMLIST_TERM_FACTOR);
-    int use_term_factor = 0;
-    int term_factor = 1; 
-    if (use_term_factor_str && use_term_factor_str[0] != 0)
-       use_term_factor =  atoi(use_term_factor_str);
-    if (use_term_factor) {
+    struct session_database *sdb = client_get_database(cl);
+    int term_factor = 1;
+    const char *use_term_factor_str =
+        session_setting_oneval(sdb, PZ_TERMLIST_TERM_FACTOR);
+    if (use_term_factor_str && use_term_factor_str[0] == '1')
+    {
         int maxrecs = client_get_maxrecs(cl);
         int hits = (int) client_get_hits(cl);
         term_factor = MAX(hits, maxrecs) /  MAX(1, maxrecs);
@@ -1523,11 +1615,11 @@ static int ingest_to_cluster(struct client *cl,
         yaz_log(YLOG_DEBUG, "Using term factor: %d (%d / %d)", term_factor, MAX(hits, maxrecs), MAX(1, maxrecs));
     }
 
-    if (!cluster)
-        return -1;
     if (global_parameters.dump_records)
         session_log(se, YLOG_LOG, "Cluster id %s from %s (#%d)", cluster->recid,
                     sdb->database->id, record_no);
+
+
     relevance_newrec(se->relevance, cluster);
     
     // now parsing XML record and adding data to cluster or record metadata
@@ -1560,36 +1652,15 @@ static int ingest_to_cluster(struct client *cl,
             md_field_id 
                 = conf_service_metadata_field_id(service, (const char *) type);
             if (md_field_id < 0)
-            {
-                if (se->number_of_warnings_unknown_metadata == 0)
-                {
-                    session_log(se, YLOG_WARN, 
-                            "Ignoring unknown metadata element: %s", type);
-                }
-                se->number_of_warnings_unknown_metadata++;
                 continue;
-            }
             
             ser_md = &service->metadata[md_field_id];
             
-            if (ser_md->sortkey_offset >= 0){
+            if (ser_md->sortkey_offset >= 0)
+            {
                 sk_field_id = ser_md->sortkey_offset;
                 ser_sk = &service->sortkeys[sk_field_id];
             }
-
-            // non-merged metadata
-            rec_md = record_metadata_init(se->nmem, (const char *) value,
-                                          ser_md->type, n->properties);
-            if (!rec_md)
-            {
-                session_log(se, YLOG_WARN, "bad metadata data '%s' "
-                            "for element '%s'", value, type);
-                continue;
-            }
-            wheretoput = &record->metadata[md_field_id];
-            while (*wheretoput)
-                wheretoput = &(*wheretoput)->next;
-            *wheretoput = rec_md;
 
             // merged metadata
             rec_md = record_metadata_init(se->nmem, (const char *) value,

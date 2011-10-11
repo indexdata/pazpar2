@@ -114,6 +114,7 @@ struct session {
     normalize_cache_t normalize_cache;
     YAZ_MUTEX session_mutex;
     unsigned session_id;
+    struct session_sorted_results *sorted_results;
 };
 
 struct statistics {
