@@ -2,34 +2,34 @@
 <show><status>OK</status>
 <activeclients>0</activeclients>
 <merged>3</merged>
-<total>3</total>
+<total>31</total>
 <start>0</start>
 <num>3</num>
 <hit>
 
-<md-title>BIBLIOGRAPHY OF MAINE GEOLOGY</md-title>
-<md-description>This data base is a computer based bibliography of marine geology.  It allows searching by topic and geographic location, similar to GEOREF.  It is currently under development to replace the printed Bibliography of Marine Geology</md-description><location id="my" name="marcserver">
-<md-title>BIBLIOGRAPHY OF MAINE GEOLOGY</md-title>
-<md-description tag="520">This data base is a computer based bibliography of marine geology.  It allows searching by topic and geographic location, similar to GEOREF.  It is currently under development to replace the printed Bibliography of Marine Geology</md-description>
-<md-description tag="513">1692-PRESENT</md-description></location>
-<recid>title bibliography of maine geology author medium book</recid>
+<md-title>APPLIED GEOLOGY FILE</md-title>
+<md-description>Reports and memorandums completed by the Site Investigation Section comprise this data set.  Subjects include geotechnical appraisal of public facility sites before and during construction and evaluations of hazardous waste problems</md-description><location id="my" name="marcserver">
+<md-title>APPLIED GEOLOGY FILE</md-title>
+<md-description tag="520">Reports and memorandums completed by the Site Investigation Section comprise this data set.  Subjects include geotechnical appraisal of public facility sites before and during construction and evaluations of hazardous waste problems</md-description>
+<md-description tag="513">1970-PRESENT</md-description></location>
+<recid>title applied geology file author medium book</recid>
 </hit>
 <hit>
 
-<md-title>GROUNDWATER RESOURCE MAPS - COUNTY SERIES</md-title>
-<md-description>A series of 1:250,000 scale maps showing well yield, well depth, and depth to bedrock for a large number of bedrock wells inventoried by the Maine Geological Survey in the mid-to late 1970&apos;s comprises this data set.  Some series also show bedrock topography and potentiometric surface.  Geographic coverage is restricted to Southern Maine</md-description><location id="my" name="marcserver">
-<md-title>GROUNDWATER RESOURCE MAPS - COUNTY SERIES</md-title>
-<md-description tag="520">A series of 1:250,000 scale maps showing well yield, well depth, and depth to bedrock for a large number of bedrock wells inventoried by the Maine Geological Survey in the mid-to late 1970&apos;s comprises this data set.  Some series also show bedrock topography and potentiometric surface.  Geographic coverage is restricted to Southern Maine</md-description>
-<md-description tag="513">1972-1978</md-description></location>
-<recid>title groundwater resource maps county series author medium book</recid>
+<md-title>UTAH EARTHQUAKE EPICENTERS</md-title>
+<md-description>Five files of epicenter data arranged by date comprise this data set.  These files are searchable by magnitude and longitude/latitude.  Hardcopy of listing and plot of requested area available.  Epicenter location and date, magnitude, and focal depth available</md-description><location id="my" name="marcserver">
+<md-title>UTAH EARTHQUAKE EPICENTERS</md-title>
+<md-description tag="520">Five files of epicenter data arranged by date comprise this data set.  These files are searchable by magnitude and longitude/latitude.  Hardcopy of listing and plot of requested area available.  Epicenter location and date, magnitude, and focal depth available</md-description>
+<md-description tag="513">-PRESENT</md-description></location>
+<recid>title utah earthquake epicenters author medium book</recid>
 </hit>
 <hit>
 
-<md-title>OIL/GAS DRILLING</md-title>
-<md-description>This database contains information on oil and gas drilling such as well name, operator, driller, location, depth, copies of logs run, permits, samples (cuttings, core), completion records</md-description><location id="my" name="marcserver">
-<md-title>OIL/GAS DRILLING</md-title>
-<md-description tag="520">This database contains information on oil and gas drilling such as well name, operator, driller, location, depth, copies of logs run, permits, samples (cuttings, core), completion records</md-description>
-<md-description tag="513">1907-PRESENT</md-description></location>
-<recid>title oil gas drilling author medium book</recid>
+<md-title>UTAH GEOLOGICAL AND MINERAL SURVEY PUBLICATIONS</md-title>
+<md-description>Publications of the Utah Geological and Mineral Survey include reports of investigation, special studies, bulletins, open-file reports, geologic map of Utah, publications of geological societies, geologic and oil and mineral maps, coal monographs, circulars, water resource bulletins, and reprints of articles</md-description><location id="my" name="marcserver">
+<md-title>UTAH GEOLOGICAL AND MINERAL SURVEY PUBLICATIONS</md-title>
+<md-description tag="520">Publications of the Utah Geological and Mineral Survey include reports of investigation, special studies, bulletins, open-file reports, geologic map of Utah, publications of geological societies, geologic and oil and mineral maps, coal monographs, circulars, water resource bulletins, and reprints of articles</md-description>
+<md-description tag="513">-PRESENT</md-description></location>
+<recid>title utah geological and mineral survey publications author medium book</recid>
 </hit>
 </show>
