@@ -1,4 +1,12 @@
 
+New pz:sortmap:field setting for specifying hints on how to make
+a target natively sort on a field. This is used for command=show in
+conjunction with sort.
+
+New pz:url setting for specifying the actual URL for a target. When
+this is used the target ID is not used as URL anymore and the target ID
+may be almost any string (not including []).
+
 command=termlist without name parameter returns all termlists/facets.
 Previously if name parameter was omitted, only "subject" was returned.
 
