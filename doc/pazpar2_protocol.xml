@@ -355,6 +355,11 @@ search.pz2?session=2044502273&command=stat
         in the pazpar2.cfg file, or the special names 'relevance' and
 	'position'.
        </para>
+       <para>
+	For targets where If <link linkend="pz:sortmap">pz:sortmap</link>
+	is defined, a sort operation will be executed (possibly including
+	extending the search).
+       </para>
       </listitem>
      </varlistentry>
      

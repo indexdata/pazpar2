@@ -1253,9 +1253,30 @@
       </note>
      </listitem>
     </varlistentry>
+
+    <varlistentry id="pzsortmap">
+     <term>pz:sortmap:<replaceable>field</replaceable></term>
+     <listitem>
+      <para>
+       Specifies native sorting for a target where
+       <replaceable>field</replaceable> is a sort criteria (see command
+       show). The value has to components separated by colon: strategy and
+       native-field. Strategy is one of <literal>z3950</literal>,
+       <literal>type7</literal>, <literal>cql</literal>,
+       <literal>sru11</literal>, or <literal>embed</literal>.
+       The second component, native-field, is the field that is recognized
+       by the target.
+      </para>
+      <note>
+       <para>
+ 	Only supported for Pazpar2 1.6.4 and later.
+       </para>
+      </note>
+     </listitem>
+    </varlistentry>
     
    </variablelist>
-
+   
   </refsect2>
 
  </refsect1>
