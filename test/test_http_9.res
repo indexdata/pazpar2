@@ -17,7 +17,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<recid>title the computer bible author medium book</recid>
+<recid>content: title the computer bible author medium book</recid>
 </hit>
 <hit>
 
@@ -32,7 +32,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<recid>title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
+<recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 <hit>
 
@@ -45,7 +45,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<recid>title computer science technology author medium book</recid>
+<recid>content: title computer science technology author medium book</recid>
 </hit>
 <hit>
 
@@ -63,7 +63,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <count>2</count>
-<recid>title how to program a computer author jack collins medium book</recid>
+<recid>content: title how to program a computer author jack collins medium book</recid>
 </hit>
 <hit>
 
@@ -76,7 +76,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<recid>title a plan for community college computer development author medium book</recid>
+<recid>content: title a plan for community college computer development author medium book</recid>
 </hit>
 <hit>
 
@@ -94,7 +94,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<recid>title the puget sound region author mairs john w medium book</recid>
+<recid>content: title the puget sound region author mairs john w medium book</recid>
 </hit>
 <hit>
 
@@ -109,7 +109,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<recid>title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
+<recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 <hit>
 
@@ -122,7 +122,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<recid>title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
+<recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>
 
@@ -139,6 +139,6 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<recid>title washington metropolitan area rail computer feasibility study author englund carl r medium book</recid>
+<recid>content: title washington metropolitan area rail computer feasibility study author englund carl r medium book</recid>
 </hit>
 </show>

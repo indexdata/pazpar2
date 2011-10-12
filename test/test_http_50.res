@@ -19,6 +19,6 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>0</relevance>
-<recid>title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
+<recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 </show>

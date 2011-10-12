@@ -16,7 +16,7 @@
 <md-author>De Villiers, Marq</md-author>
 <md-medium>book</md-medium></location>
 <relevance>23233</relevance>
-<recid>title water author de villiers marq medium book</recid>
+<recid>content: title water author de villiers marq medium book</recid>
 </hit>
 <hit>
 
@@ -35,7 +35,7 @@
 <md-medium>book</md-medium></location>
 <count>2</count>
 <relevance>21645</relevance>
-<recid>title potable water and methods of detecting impurities author baker m n medium book</recid>
+<recid>content: title potable water and methods of detecting impurities author baker m n medium book</recid>
 </hit>
 <hit>
 
@@ -50,7 +50,7 @@
 <md-description>&quot;Balochistan conservation strategy background paper&quot;--T.p</md-description>
 <md-medium>book</md-medium></location>
 <relevance>20202</relevance>
-<recid>title water author majeed abdul medium book</recid>
+<recid>content: title water author majeed abdul medium book</recid>
 </hit>
 <hit>
 
@@ -66,7 +66,7 @@
 <md-description>Examines major environmental issues surrounding water, giving examples of attempts to solve global problems and sources for more information</md-description>
 <md-medium>book</md-medium></location>
 <relevance>18501</relevance>
-<recid>title water author grant pamela medium book</recid>
+<recid>content: title water author grant pamela medium book</recid>
 </hit>
 <hit>
 
@@ -81,7 +81,7 @@
 <md-description>Includes index</md-description>
 <md-medium>book</md-medium></location>
 <relevance>18182</relevance>
-<recid>title water law author fisher d e medium book</recid>
+<recid>content: title water law author fisher d e medium book</recid>
 </hit>
 <hit>
 
@@ -97,7 +97,7 @@
 <md-description>Includes index</md-description>
 <md-medium>book</md-medium></location>
 <relevance>17576</relevance>
-<recid>title a primer on fresh water medium book</recid>
+<recid>content: title a primer on fresh water medium book</recid>
 </hit>
 <hit>
 
@@ -110,7 +110,7 @@
 <md-author>Thresh, John Clough</md-author>
 <md-medium>book</md-medium></location>
 <relevance>15152</relevance>
-<recid>title water and water supplies author thresh john clough medium book</recid>
+<recid>content: title water and water supplies author thresh john clough medium book</recid>
 </hit>
 <hit>
 
@@ -131,7 +131,7 @@
 <md-medium>book</md-medium></location>
 <count>2</count>
 <relevance>15152</relevance>
-<recid>title water quality assessment of the state water project medium book</recid>
+<recid>content: title water quality assessment of the state water project medium book</recid>
 </hit>
 <hit>
 
@@ -146,7 +146,7 @@
 <md-author>Mason, William Pitt</md-author>
 <md-medium>book</md-medium></location>
 <relevance>15152</relevance>
-<recid>title water supply author mason william pitt medium book</recid>
+<recid>content: title water supply author mason william pitt medium book</recid>
 </hit>
 <hit>
 
@@ -161,7 +161,7 @@
 <md-author>Farnham, Henry P</md-author>
 <md-medium>book</md-medium></location>
 <relevance>14630</relevance>
-<recid>title the law of waters and water rights author farnham henry p medium book</recid>
+<recid>content: title the law of waters and water rights author farnham henry p medium book</recid>
 </hit>
 <hit>
 
@@ -184,7 +184,7 @@
 <md-medium>book</md-medium></location>
 <count>2</count>
 <relevance>13675</relevance>
-<recid>title water in press medium book</recid>
+<recid>content: title water in press medium book</recid>
 </hit>
 <hit>
 
@@ -199,7 +199,7 @@
 <md-description>&quot;EPA Contract 68-C7-0011, work assignment 0-38.&quot;</md-description>
 <md-medium>book</md-medium></location>
 <relevance>13636</relevance>
-<recid>title regulations on the disposal of arsenic residuals from drinking water treatment plants medium book</recid>
+<recid>content: title regulations on the disposal of arsenic residuals from drinking water treatment plants medium book</recid>
 </hit>
 <hit>
 
@@ -214,7 +214,7 @@
 <md-description>&quot;A joint publication of Legislative Environmental Policy Office, Environmental Quality Council [and] Montana University System, Water Center&quot;</md-description>
 <md-medium>book</md-medium></location>
 <relevance>13199</relevance>
-<recid>title a guide to montana water quality regulation author bryan michelle medium book</recid>
+<recid>content: title a guide to montana water quality regulation author bryan michelle medium book</recid>
 </hit>
 <hit>
 
@@ -227,7 +227,7 @@
 <md-description>Collection of articles with reference to India</md-description>
 <md-medium>book</md-medium></location>
 <relevance>13131</relevance>
-<recid>title water technology management medium book</recid>
+<recid>content: title water technology management medium book</recid>
 </hit>
 <hit>
 
@@ -240,7 +240,7 @@
 <md-date>2000</md-date>
 <md-medium>book</md-medium></location>
 <relevance>13054</relevance>
-<recid>title methods of analysis by the u s geological survey national water quality laboratory medium book</recid>
+<recid>content: title methods of analysis by the u s geological survey national water quality laboratory medium book</recid>
 </hit>
 <hit>
 
@@ -255,7 +255,7 @@
 <md-description>&quot;This document was developed for US Environmental Protection Agency, Region 10, Seattle Washington, with the Idaho Water Resources Institute, University of Idaho.&quot;</md-description>
 <md-medium>book</md-medium></location>
 <relevance>13016</relevance>
-<recid>title aquatic habitat indicators and their application to water quality objectives within the clean water act author bauer steve medium book</recid>
+<recid>content: title aquatic habitat indicators and their application to water quality objectives within the clean water act author bauer steve medium book</recid>
 </hit>
 <hit>
 
@@ -270,7 +270,7 @@
 <md-description>&quot;March 1997.&quot;</md-description>
 <md-medium>book</md-medium></location>
 <relevance>12929</relevance>
-<recid>title an empirical analysis of water temperature and dissolved oxygen conditions in the red deer river author saffran karen anita medium book</recid>
+<recid>content: title an empirical analysis of water temperature and dissolved oxygen conditions in the red deer river author saffran karen anita medium book</recid>
 </hit>
 <hit>
 
@@ -284,7 +284,7 @@
 <md-description>&quot;GI-252&quot;--Cover</md-description>
 <md-medium>book</md-medium></location>
 <relevance>12626</relevance>
-<recid>title surface water quality monitoring procedures manual medium book</recid>
+<recid>content: title surface water quality monitoring procedures manual medium book</recid>
 </hit>
 <hit>
 
@@ -297,7 +297,7 @@
 <md-date>1997</md-date>
 <md-medium>book</md-medium></location>
 <relevance>12323</relevance>
-<recid>title international conference on management of drinking water resources chennai december medium book</recid>
+<recid>content: title international conference on management of drinking water resources chennai december medium book</recid>
 </hit>
 <hit>
 
@@ -308,6 +308,6 @@
 <md-date>1998</md-date>
 <md-medium>book</md-medium></location>
 <relevance>12121</relevance>
-<recid>title mercados e instituciones de aguas en bolivia medium book</recid>
+<recid>content: title mercados e instituciones de aguas en bolivia medium book</recid>
 </hit>
 </show>

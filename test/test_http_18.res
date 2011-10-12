@@ -15,7 +15,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
 </md-test-usersetting-2></location>
 <relevance>9416</relevance>
-<recid>title bibliography of maine geology author medium book</recid>
+<recid>content: title bibliography of maine geology author medium book</recid>
 </hit>
 <hit>
 
@@ -27,7 +27,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
 </md-test-usersetting-2></location>
 <relevance>0</relevance>
-<recid>title groundwater resource maps county series author medium book</recid>
+<recid>content: title groundwater resource maps county series author medium book</recid>
 </hit>
 <hit>
 
@@ -39,6 +39,6 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
 </md-test-usersetting-2></location>
 <relevance>0</relevance>
-<recid>title oil gas drilling author medium book</recid>
+<recid>content: title oil gas drilling author medium book</recid>
 </hit>
 </show>

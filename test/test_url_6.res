@@ -13,7 +13,7 @@
 <md-description tag="520">Reports and memorandums completed by the Site Investigation Section comprise this data set.  Subjects include geotechnical appraisal of public facility sites before and during construction and evaluations of hazardous waste problems</md-description>
 <md-description tag="513">1970-PRESENT</md-description></location>
 <relevance>3923</relevance>
-<recid>title applied geology file author medium book</recid>
+<recid>content: title applied geology file author medium book</recid>
 </hit>
 <hit>
 
@@ -23,7 +23,7 @@
 <md-description tag="520">Publications of the Utah Geological and Mineral Survey include reports of investigation, special studies, bulletins, open-file reports, geologic map of Utah, publications of geological societies, geologic and oil and mineral maps, coal monographs, circulars, water resource bulletins, and reprints of articles</md-description>
 <md-description tag="513">-PRESENT</md-description></location>
 <relevance>2896</relevance>
-<recid>title utah geological and mineral survey publications author medium book</recid>
+<recid>content: title utah geological and mineral survey publications author medium book</recid>
 </hit>
 <hit>
 
@@ -33,6 +33,6 @@
 <md-description tag="520">Five files of epicenter data arranged by date comprise this data set.  These files are searchable by magnitude and longitude/latitude.  Hardcopy of listing and plot of requested area available.  Epicenter location and date, magnitude, and focal depth available</md-description>
 <md-description tag="513">-PRESENT</md-description></location>
 <relevance>0</relevance>
-<recid>title utah earthquake epicenters author medium book</recid>
+<recid>content: title utah earthquake epicenters author medium book</recid>
 </hit>
 </show>

@@ -22,7 +22,7 @@
         YYYYYYYYY</md-test-usersetting-2></location>
 <count>2</count>
 <relevance>25286</relevance>
-<recid>title how to program a computer author jack collins medium book</recid>
+<recid>content: title how to program a computer author jack collins medium book</recid>
 </hit>
 <hit>
 
@@ -36,7 +36,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>21072</relevance>
-<recid>title computer science technology author medium book</recid>
+<recid>content: title computer science technology author medium book</recid>
 </hit>
 <hit>
 
@@ -51,7 +51,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>21072</relevance>
-<recid>title the computer bible author medium book</recid>
+<recid>content: title the computer bible author medium book</recid>
 </hit>
 <hit>
 
@@ -65,7 +65,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>9030</relevance>
-<recid>title a plan for community college computer development author medium book</recid>
+<recid>content: title a plan for community college computer development author medium book</recid>
 </hit>
 <hit>
 
@@ -83,7 +83,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>9030</relevance>
-<recid>title washington metropolitan area rail computer feasibility study author englund carl r medium book</recid>
+<recid>content: title washington metropolitan area rail computer feasibility study author englund carl r medium book</recid>
 </hit>
 <hit>
 
@@ -102,7 +102,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>8780</relevance>
-<recid>title the puget sound region author mairs john w medium book</recid>
+<recid>content: title the puget sound region author mairs john w medium book</recid>
 </hit>
 <hit>
 
@@ -118,7 +118,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>6321</relevance>
-<recid>title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
+<recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 <hit>
 
@@ -132,7 +132,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>6321</relevance>
-<recid>title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
+<recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>
 
@@ -148,6 +148,6 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>0</relevance>
-<recid>title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
+<recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 </show>

@@ -1395,8 +1395,13 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     /* generate unique key if none is not generated already or is empty */
     if (wrbuf_len(norm_wr) == 0)
     {
-        wrbuf_printf(norm_wr, "%s-%d",
+        wrbuf_printf(norm_wr, "position: %s-%d",
                      client_get_id(cl), record_no);
+    }
+    else
+    {
+        const char *lead = "content: ";
+        wrbuf_insert(norm_wr, 0, lead, strlen(lead));
     }
     if (wrbuf_len(norm_wr) > 0)
         mergekey_norm = nmem_strdup(nmem, wrbuf_cstr(norm_wr));
