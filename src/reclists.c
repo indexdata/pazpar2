@@ -318,7 +318,8 @@ struct record_cluster *reclist_insert(struct reclist *l,
 
             for (; re; re = re->next)
             {
-                if (record_compare(record, re, service))
+                if (re->client == record->client &&
+                    record_compare(record, re, service))
                 { 
                     yaz_mutex_leave(l->mutex);
                     return 0;
