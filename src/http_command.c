@@ -961,8 +961,6 @@ static void cmd_show(struct http_channel *c)
     if (!sort)
         sort = "relevance";
     
-    status = session_active_clients(s->psession);
-
     if (!(sp = reclist_parse_sortparms(c->nmem, sort, s->psession->service)))
     {
         error(c->response, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
@@ -970,6 +968,8 @@ static void cmd_show(struct http_channel *c)
         return;
     }
     session_sort(s->psession, sp->name, sp->increasing);
+
+    status = session_active_clients(s->psession);
 
     if (block)
     {
@@ -986,7 +986,7 @@ static void cmd_show(struct http_channel *c)
             return;
 
         }
-        else if (status && reclist_get_num_records(s->psession->reclist) == 0)
+        else if (status)
         {
             // if there is already a watch/block. we do not block this one
             if (session_set_watch(s->psession, SESSION_WATCH_SHOW,

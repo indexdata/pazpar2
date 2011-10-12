@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <show><status>OK</status>
 <activeclients>0</activeclients>
-<merged>5</merged>
+<merged>7</merged>
 <total>31</total>
 <start>0</start>
-<num>5</num>
+<num>7</num>
+<hit>
+
+<md-title>WATER WELL DATA</md-title>
+<md-description>This database contains the following information on water wells in Nevada: driller&apos;s name, owner&apos;s name, location, formations encountered, lithologic descriptions, water level, and water quality</md-description><location id="my" name="marcserver">
+<md-title>WATER WELL DATA</md-title>
+<md-description tag="520">This database contains the following information on water wells in Nevada: driller&apos;s name, owner&apos;s name, location, formations encountered, lithologic descriptions, water level, and water quality</md-description>
+<md-description tag="513">1930-PRESENT</md-description></location>
+<recid>title water well data author medium book</recid>
+</hit>
+<hit>
+
+<md-title>UTAH GEOLOGIC MAP BIBLIOGRAPHY</md-title>
+<md-description>This collection consists of theses, dissertations, and other unpublished maps as well as published maps of the geology of Utah.  Some maps of the collection are xeroxed from limited collections.  Cross-sections are included in set.  Data file consists of map bibliography</md-description><location id="my" name="marcserver">
+<md-title>UTAH GEOLOGIC MAP BIBLIOGRAPHY</md-title>
+<md-description tag="520">This collection consists of theses, dissertations, and other unpublished maps as well as published maps of the geology of Utah.  Some maps of the collection are xeroxed from limited collections.  Cross-sections are included in set.  Data file consists of map bibliography</md-description>
+<md-description tag="513">-PRESENT</md-description></location>
+<recid>title utah geologic map bibliography author medium book</recid>
+</hit>
 <hit>
 
 <md-title>UTAH GEOLOGICAL AND MINERAL SURVEY PUBLICATIONS</md-title>
