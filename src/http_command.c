@@ -969,7 +969,7 @@ static void cmd_show(struct http_channel *c)
         release_session(c, s);
         return;
     }
-    search_sort(s->psession, sp->name, sp->increasing);
+    session_sort(s->psession, sp->name, sp->increasing);
 
     if (block)
     {
@@ -1039,8 +1039,8 @@ static void cmd_search(struct http_channel *c)
         release_session(c, s);
         return;
     }
-    code = search(s->psession, query, startrecs, maxrecs, filter, limit,
-                  &addinfo);
+    code = session_search(s->psession, query, startrecs, maxrecs, filter, limit,
+                          &addinfo, "relevance", 0);
     if (code)
     {
         error(rs, code, addinfo);

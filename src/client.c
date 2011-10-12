@@ -659,8 +659,8 @@ int client_has_facet(struct client *cl, const char *name)
     return 0;
 }
 
-void client_start_search(struct client *cl, const char *sort_strategy,
-                         const char *sort_spec)
+void client_start_search(struct client *cl, const char *sort_strategy_and_spec,
+                         int increasing)
 {
     struct session_database *sdb = client_get_database(cl);
     struct connection *co = client_get_connection(cl);
@@ -676,6 +676,7 @@ void client_start_search(struct client *cl, const char *sort_strategy,
     const char *opt_preferred   = session_setting_oneval(sdb, PZ_PREFERRED);
     const char *extra_args      = session_setting_oneval(sdb, PZ_EXTRA_ARGS);
     char maxrecs_str[24], startrecs_str[24];
+    ZOOM_query q;
 
     assert(link);
 
@@ -727,38 +728,42 @@ void client_start_search(struct client *cl, const char *sort_strategy,
     /* facets definition is in PQF */
     client_set_facets_request(cl, link);
 
+    q = ZOOM_query_create();
     if (cl->cqlquery)
     {
-        ZOOM_query q = ZOOM_query_create();
         yaz_log(YLOG_LOG, "Search %s CQL: %s", client_get_id(cl),
                 cl->cqlquery);
         ZOOM_query_cql(q, cl->cqlquery);
         if (*opt_sort)
             ZOOM_query_sortby(q, opt_sort);
-        if (sort_strategy && sort_spec)
-        {
-            yaz_log(YLOG_LOG, "applying %s %s", sort_strategy, sort_spec);
-            ZOOM_query_sortby2(q, sort_strategy, sort_spec);
-        }
-        rs = ZOOM_connection_search(link, q);
-        ZOOM_query_destroy(q);
     }
     else
     {
-        ZOOM_query q = ZOOM_query_create();
-
         yaz_log(YLOG_LOG, "Search %s PQF: %s", client_get_id(cl), cl->pquery);
-
+        
         ZOOM_query_prefix(q, cl->pquery);
-
-        if (sort_strategy && sort_spec)
-        {
-            yaz_log(YLOG_LOG, "applying %s %s", sort_strategy, sort_spec);
-            ZOOM_query_sortby2(q, sort_strategy, sort_spec);
-        }
-        rs = ZOOM_connection_search(link, q);
-        ZOOM_query_destroy(q);
     }
+    if (sort_strategy_and_spec &&
+        strlen(sort_strategy_and_spec) < 40 /* spec below */)
+    {
+        char spec[50], *p;
+        strcpy(spec, sort_strategy_and_spec);
+        p = strchr(spec, ':');
+        if (p)
+        {
+            *p++ = '\0'; /* cut the string in two */
+            while (*p == ' ')
+                p++;
+            if (increasing)
+                strcat(p, " <");
+            else
+                strcat(p, " >");
+            yaz_log(YLOG_LOG, "applying %s %s", spec, p);
+            ZOOM_query_sortby2(q, spec, p);
+        }
+    }
+    rs = ZOOM_connection_search(link, q);
+    ZOOM_query_destroy(q);
     ZOOM_resultset_destroy(cl->resultset);
     cl->resultset = rs;
     connection_continue(co);

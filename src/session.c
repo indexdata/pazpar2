@@ -597,7 +597,32 @@ int session_is_preferred_clients_ready(struct session *s)
     return res == 0;
 }
 
-void search_sort(struct session *se, const char *field, int increasing)
+static const char *get_strategy_plus_sort(struct client *l, const char *field)
+{
+    struct session_database *sdb = client_get_database(l);
+    struct setting *s;
+
+    const char *strategy_plus_sort = 0;
+    
+    for (s = sdb->settings[PZ_SORTMAP]; s; s = s->next)
+    {
+        char *p = strchr(s->name + 3, ':');
+        if (!p)
+        {
+            yaz_log(YLOG_WARN, "Malformed sortmap name: %s", s->name);
+            continue;
+        }
+        p++;
+        if (!strcmp(p, field))
+        {
+            strategy_plus_sort = s->value;
+            break;
+        }
+    }
+    return strategy_plus_sort;
+}
+
+void session_sort(struct session *se, const char *field, int increasing)
 {
     struct session_sorted_results *sr;
     struct client_list *l;
@@ -628,26 +653,7 @@ void search_sort(struct session *se, const char *field, int increasing)
     for (l = se->clients; l; l = l->next)
     {
         struct client *cl = l->client;
-        struct session_database *sdb = client_get_database(cl);
-        struct setting *s;
-        const char *strategy_plus_sort = 0;
-        
-        for (s = sdb->settings[PZ_SORTMAP]; s; s = s->next)
-        {
-            char *p = strchr(s->name + 3, ':');
-            if (!p)
-            {
-                yaz_log(YLOG_WARN, "Malformed sortmap name: %s", s->name);
-                continue;
-            }
-            p++;
-            if (!strcmp(p, field))
-            {
-                strategy_plus_sort = s->value;
-                break;
-            }
-        }
-        
+        const char *strategy_plus_sort = get_strategy_plus_sort(cl, field);
         if (strategy_plus_sort)
         {
             struct timeval tval;
@@ -655,30 +661,20 @@ void search_sort(struct session *se, const char *field, int increasing)
                                        se->service->z3950_session_timeout,
                                        se->service->server->iochan_man,
                                        &tval))
-            {
-                char **array;
-                int num;
-                nmem_strsplit(se->nmem, ":", strategy_plus_sort, &array, &num);
-                
-                if (num == 2)
-                {
-                    const char *sort_spec = array[1];
-                    while (*sort_spec == ' ')
-                        sort_spec++;
-                    client_start_search(cl, array[0], sort_spec);
-                }
-            }
+                client_start_search(cl, strategy_plus_sort, increasing);
         }
     }
     session_leave(se);
 }
 
-enum pazpar2_error_code search(struct session *se,
-                               const char *query,
-                               const char *startrecs, const char *maxrecs,
-                               const char *filter,
-                               const char *limit,
-                               const char **addinfo)
+enum pazpar2_error_code session_search(struct session *se,
+                                       const char *query,
+                                       const char *startrecs,
+                                       const char *maxrecs,
+                                       const char *filter,
+                                       const char *limit,
+                                       const char **addinfo,
+                                       const char *sort_field, int increasing)
 {
     int live_channels = 0;
     int no_working = 0;
@@ -703,8 +699,8 @@ enum pazpar2_error_code search(struct session *se,
 
     /* reset list of sorted results and clear to relevance search */
     se->sorted_results = nmem_malloc(se->nmem, sizeof(*se->sorted_results));
-    se->sorted_results->field = nmem_strdup(se->nmem, "relevance");
-    se->sorted_results->increasing = 0;
+    se->sorted_results->field = nmem_strdup(se->nmem, sort_field);
+    se->sorted_results->increasing = increasing;
     se->sorted_results->next = 0;
     
     live_channels = select_targets(se, filter);
@@ -729,6 +725,7 @@ enum pazpar2_error_code search(struct session *se,
     for (l = se->clients; l; l = l->next)
     {
         struct client *cl = l->client;
+        const char *strategy_plus_sort = get_strategy_plus_sort(cl, sort_field);
 
         if (maxrecs)
             client_set_maxrecs(cl, atoi(maxrecs));
@@ -745,7 +742,7 @@ enum pazpar2_error_code search(struct session *se,
                                        se->service->z3950_session_timeout,
                                        se->service->server->iochan_man,
                                        &tval))
-                client_start_search(cl, 0, 0);
+                client_start_search(cl, strategy_plus_sort, increasing);
         }
     }
     facet_limits_destroy(facet_limits);
@@ -1535,6 +1532,9 @@ static int ingest_to_cluster(struct client *cl,
     xmlChar *value = 0;
     struct session *se = client_get_session(cl);
     struct conf_service *service = se->service;
+    int term_factor = 1;
+    struct record_cluster *cluster;
+    struct session_database *sdb = client_get_database(cl);
     struct record *record = record_create(se->nmem, 
                                           service->num_metadata,
                                           service->num_sortkeys, cl,
@@ -1594,25 +1594,22 @@ static int ingest_to_cluster(struct client *cl,
         }
     }
 
-    struct record_cluster *cluster = reclist_insert(se->reclist,
-                                                    service, 
-                                                    record,
-                                                    mergekey_norm,
-                                                    &se->total_merged);
+    cluster = reclist_insert(se->reclist, service, record,
+                             mergekey_norm, &se->total_merged);
     if (!cluster)
         return -1;
 
-    struct session_database *sdb = client_get_database(cl);
-    int term_factor = 1;
-    const char *use_term_factor_str =
-        session_setting_oneval(sdb, PZ_TERMLIST_TERM_FACTOR);
-    if (use_term_factor_str && use_term_factor_str[0] == '1')
     {
-        int maxrecs = client_get_maxrecs(cl);
-        int hits = (int) client_get_hits(cl);
-        term_factor = MAX(hits, maxrecs) /  MAX(1, maxrecs);
-        assert(term_factor >= 1);
-        yaz_log(YLOG_DEBUG, "Using term factor: %d (%d / %d)", term_factor, MAX(hits, maxrecs), MAX(1, maxrecs));
+        const char *use_term_factor_str =
+            session_setting_oneval(sdb, PZ_TERMLIST_TERM_FACTOR);
+        if (use_term_factor_str && use_term_factor_str[0] == '1')
+        {
+            int maxrecs = client_get_maxrecs(cl);
+            int hits = (int) client_get_hits(cl);
+            term_factor = MAX(hits, maxrecs) /  MAX(1, maxrecs);
+            assert(term_factor >= 1);
+            yaz_log(YLOG_DEBUG, "Using term factor: %d (%d / %d)", term_factor, MAX(hits, maxrecs), MAX(1, maxrecs));
+        }
     }
 
     if (global_parameters.dump_records)
