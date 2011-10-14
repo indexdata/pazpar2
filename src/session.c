@@ -1667,6 +1667,9 @@ static int ingest_to_cluster(struct client *cl,
             // merged metadata
             rec_md = record_metadata_init(se->nmem, (const char *) value,
                                           ser_md->type, 0);
+            if (!rec_md)
+                continue;
+
             wheretoput = &cluster->metadata[md_field_id];
 
             // and polulate with data:
