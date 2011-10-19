@@ -889,7 +889,7 @@ static void http_io(IOCHAN i, int event)
                 {
                     struct timeval tv;
                     gettimeofday(&tv, 0);
-                    fprintf(hc->http_server->record_file, "%lld %lld %lld 0\n",
+                    fprintf(hc->http_server->record_file, "r %lld %lld %lld 0\n",
                             (long long) tv.tv_sec, (long long) tv.tv_usec,
                             (long long) iochan_getfd(i));
                 }
@@ -921,7 +921,7 @@ static void http_io(IOCHAN i, int event)
                     for (hb = hc->iqueue; hb; hb = hb->next)
                         sz += hb->len;
                     gettimeofday(&tv, 0);
-                    fprintf(hc->http_server->record_file, "%lld %lld %lld %d\n",
+                    fprintf(hc->http_server->record_file, "r %lld %lld %lld %d\n",
                             (long long) tv.tv_sec, (long long) tv.tv_usec,
                             (long long) iochan_getfd(i), sz);
                     for (hb = hc->iqueue; hb; hb = hb->next)
@@ -968,6 +968,19 @@ static void http_io(IOCHAN i, int event)
                 }
                 if (res == wb->len)
                 {
+#if HAVE_SYS_TIME_H
+                    if (hc->http_server->record_file)
+                    {
+                        struct timeval tv;
+                        int sz = wb->offset + wb->len;
+                        gettimeofday(&tv, 0);
+                        fprintf(hc->http_server->record_file, "w %lld %lld %lld %d\n",
+                                (long long) tv.tv_sec, (long long) tv.tv_usec,
+                                (long long) iochan_getfd(i), sz);
+                        fwrite(wb->buf, 1, wb->offset + wb->len,
+                               hc->http_server->record_file);
+                    }
+ #endif
                     hc->oqueue = hc->oqueue->next;
                     http_buf_destroy(hc->http_server, wb);
                 }
