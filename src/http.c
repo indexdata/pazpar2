@@ -926,6 +926,7 @@ static void http_io(IOCHAN i, int event)
                             (long long) iochan_getfd(i), sz);
                     for (hb = hc->iqueue; hb; hb = hb->next)
                         fwrite(hb->buf, 1, hb->len, hc->http_server->record_file);
+                    fflush(hc->http_server->record_file);
                 }
  #endif
                 if (!(hc->request = http_parse_request(hc, &hc->iqueue, reqlen)))
@@ -979,6 +980,8 @@ static void http_io(IOCHAN i, int event)
                                 (long long) iochan_getfd(i), sz);
                         fwrite(wb->buf, 1, wb->offset + wb->len,
                                hc->http_server->record_file);
+                        fputc('\n', hc->http_server->record_file);
+                        fflush(hc->http_server->record_file);
                     }
  #endif
                     hc->oqueue = hc->oqueue->next;
