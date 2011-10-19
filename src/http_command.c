@@ -1049,7 +1049,6 @@ static void cmd_search(struct http_channel *c)
     }
     response_open(c, "search");
     response_close(c, "search");
-    http_send_response(c);
     release_session(c, s);
 }
 
