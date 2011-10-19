@@ -1045,6 +1045,11 @@ void perform_termlist(struct http_channel *c, struct session *se,
     for (j = 0; j < num_names; j++)
     {
         const char *tname;
+        
+        wrbuf_puts(c->wrbuf, "<list name=\"");
+        wrbuf_xmlputs(c->wrbuf, names[j]);
+        wrbuf_puts(c->wrbuf, "\">\n");
+
         for (i = 0; i < se->num_termlists; i++)
         {
             tname = se->termlists[i].name;
@@ -1056,9 +1061,6 @@ void perform_termlist(struct http_channel *c, struct session *se,
                 if (p)
                 {
                     int i;
-                    wrbuf_puts(c->wrbuf, "<list name=\"");
-                    wrbuf_xmlputs(c->wrbuf, tname);
-                    wrbuf_puts(c->wrbuf, "\">\n");
                     for (i = 0; i < len && i < num; i++)
                     {
                         // prevent sending empty term elements
@@ -1075,19 +1077,15 @@ void perform_termlist(struct http_channel *c, struct session *se,
                                      p[i]->frequency);
                         wrbuf_puts(c->wrbuf, "</term>\n");
                     }
-                    wrbuf_puts(c->wrbuf, "</list>\n");
                 }
             }
         }
         tname = "xtargets";
         if (num_names > 0 && !strcmp(names[j], tname))
         {
-            wrbuf_puts(c->wrbuf, "<list name=\"");
-            wrbuf_xmlputs(c->wrbuf, tname);
-            wrbuf_puts(c->wrbuf, "\">\n");
             targets_termlist_nb(c->wrbuf, se, num, c->nmem);
-            wrbuf_puts(c->wrbuf, "</list>\n");
         }
+        wrbuf_puts(c->wrbuf, "</list>\n");
     }
     session_leave(se);
     nmem_destroy(nmem_tmp);
