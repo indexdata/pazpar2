@@ -5,14 +5,14 @@
 // then register the form submit event with the pz2.search function
 // autoInit is set to true on default
 var usesessions = true;
-var pazpar2path = '/pazpar2/search.pz2';
+var pazpar2path = '/service-proxy/';
 var showResponseType = '';
 var querys = {'su': '', 'au': '', 'xt': ''};
-
-if (document.location.hash == '#useproxy' || document.location.search.match("useproxy=true")) {
+var showResponseType = 'json';
+if (document.location.hash == '#pazpar2' || document.location.search.match("useproxy=false")) {
     usesessions = false;
-    pazpar2path = '/service-proxy/';
-    showResponseType = 'json';
+    pazpar2path = '/pazpar2/search.pz2';
+    showResponseType = 'xml';
 }
 
 
@@ -98,7 +98,7 @@ function loggedIn() {
 }
 
 function auth_check() {
-    auth.check(loggedIn, login, true);
+    auth.check(loggedIn, login);
     domReady();
 }
 
@@ -124,6 +124,8 @@ function my_onshow(data) {
     var results = document.getElementById("results");
   
     var html = [];
+    if (data.hits == undefined) 
+	return ; 
     for (var i = 0; i < data.hits.length; i++) {
         var hit = data.hits[i];
 	      html.push('<li id="recdiv_'+hit.recid+'" >'
@@ -335,19 +337,22 @@ function domReady ()
  
 function applicationMode(newmode) 
 {
-	var searchdiv = document.getElementById("searchForm");
-	if (newmode)
-		inApp = newmode;
-	if (inApp) {
+    var searchdiv = document.getElementById("searchForm");
+    if (newmode)
+	inApp = newmode;
+    if (inApp) {
     	document.getElementById("heading").style.display="none";
        	searchdiv.style.display = 'none';
-	}
-	else { 
-	    document.getElementById("nav").style.display="";
-		searchdiv.style.display = '';
-		document.search.onsubmit = onFormSubmit;
-	}
-	callback.init();
+    }
+    else { 
+	
+	document.getElementById("nav").style.display="";
+	document.getElementById("normal").style.display="inline";
+	document.getElementById("normal").style.visibility="";
+	searchdiv.style.display = '';
+	document.search.onsubmit = onFormSubmit;
+    }
+    callback.init();
 }
 // when search button pressed
 function onFormSubmitEventHandler() 
@@ -396,14 +401,14 @@ function limitQuery(field, value)
     showhide("recordview");
 }
 
-//limit the query after clicking the facet
+// limit the query after clicking the facet
 function removeQuery (field, value) {
 	document.search.query.value.replace(' and ' + field + '="' + value + '"', '');
     onFormSubmitEventHandler();
     showhide("recordview");
 }
 
-//limit the query after clicking the facet
+// limit the query after clicking the facet
 function limitOrResetQuery (field, value, selected) {
 	if (field == 'reset_su' || field == 'reset_au') {
 		var reset_field = field.substring(6);
