@@ -188,13 +188,16 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
        <para>
 	Limits the search to a given set of targets specified by the
 	filter. The filter consists a comma separated list of
-	setting+operator+args pairs. The setting is a Pazpar2 setting
+	<emphasis>setting</emphasis>+<emphasis>operator</emphasis>+<emphasis>args</emphasis>
+	pairs. The <emphasis>setting</emphasis> is a Pazpar2 setting
 	(such as <literal>pz:id</literal>).
-	The operator is either = (string match)
-	or ~ (substring match). The args is a list of values separated
-	by | (or , one of the values). The idea is that only targets
-	with a setting matching one of the values given will be included
-	in the search.
+	The <emphasis>operator</emphasis> is either
+	<literal>=</literal> (string match)
+	or <literal>~</literal> (substring match).
+	The <emphasis>args</emphasis> is a list of values separated
+	by <literal>|</literal> (or , one of the values).
+	The idea is that only targets with a setting matching one of
+	the values given will be included in the search.
        </para>
       </listitem>
      </varlistentry>
@@ -203,9 +206,14 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
       <listitem>
        <para>
 	Narrows the search by one or more fields (typically facets).
-	The limit is sequence of one or more name=value pairs separated
-	by comma.
-	A value that contains a comma should be escaped by backslash (\).
+	The limit is sequence of one or more
+	<emphasis>name</emphasis>=<emphasis>args</emphasis> pairs separated
+	by comma. The <emphasis>args</emphasis> is a list of values
+	separated by vertical bar (<literal>|</literal>).
+	The meaning of <literal>|</literal> is alternative, ie OR .
+	A value that contains a comma (<literal>,</literal>),
+	a vertical bar (<literal>|</literal>) or
+	backslash itself must be preceded by backslash (<literal>\</literal>).
 	The <link linkend="limitmap">pz:limitmap</link> configuration
 	item defines how the searches are mapped to a database.
        </para>
@@ -346,6 +354,11 @@ search.pz2?session=2044502273&command=stat
 	Sort field names can be any field name designated as a sort field
         in the pazpar2.cfg file, or the special names 'relevance' and
 	'position'.
+       </para>
+       <para>
+	For targets where If <link linkend="pz:sortmap">pz:sortmap</link>
+	is defined, a sort operation will be executed (possibly including
+	extending the search).
        </para>
       </listitem>
      </varlistentry>
@@ -506,7 +519,8 @@ search.pz2?session=605047297&command=record&id=3
       <term>name</term>
       <listitem>
        <para>
-	comma-separated list of termlist names (default "subject")
+	comma-separated list of termlist names. If omitted,
+	all termlists are returned.
        </para>
       </listitem>
      </varlistentry>

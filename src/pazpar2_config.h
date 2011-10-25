@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 enum conf_metadata_type {
     Metadata_type_generic,    // Generic text field
-    Metadata_type_number,     // A number
     Metadata_type_year,        // A number
     Metadata_type_date        // A number
 };
@@ -110,7 +109,6 @@ struct conf_service
     struct setting_dictionary *dictionary;
     struct conf_service *next;
     char *id;
-    char *settings;
     NMEM nmem;
     int session_timeout;
     int z3950_session_timeout;
@@ -135,7 +133,7 @@ struct conf_server
     char *proxy_host;
     int proxy_port;
     char *myurl;
-    char *server_settings;
+    char *settings_fname;
     char *server_id;
 
     pp2_charset_fact_t charsets;

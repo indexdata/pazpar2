@@ -267,6 +267,28 @@ static void error(struct http_response *rs,
     http_send_response(c);
 }
 
+static void response_open_no_status(struct http_channel *c, const char *command)
+{
+    wrbuf_rewind(c->wrbuf);
+    wrbuf_printf(c->wrbuf, "%s<%s>",
+                 HTTP_COMMAND_RESPONSE_PREFIX, command);
+}
+
+static void response_open(struct http_channel *c, const char *command)
+{
+    response_open_no_status(c, command);
+    wrbuf_puts(c->wrbuf, "<status>OK</status>");
+}
+
+static void response_close(struct http_channel *c, const char *command)
+{
+    struct http_response *rs = c->response;
+
+    wrbuf_printf(c->wrbuf, "</%s>", command);
+    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
+    http_send_response(c);
+}
+
 unsigned int make_sessionid(void)
 {
     static int seq = 0; /* thread pr */
@@ -368,18 +390,15 @@ static int process_settings(struct session *se, struct http_request *rq,
 
 static void cmd_exit(struct http_channel *c)
 {
-    char buf[1024];
-    struct http_response *rs = c->response;
     yaz_log(YLOG_WARN, "exit");
-    sprintf(buf, HTTP_COMMAND_RESPONSE_PREFIX "<exit><status>OK</status></exit>");
-    rs->payload = nmem_strdup(c->nmem, buf);
-    http_send_response(c);
+
+    response_open(c, "exit");
+    response_close(c, "exit");
     http_close_server(c->server);
 }
 
 static void cmd_init(struct http_channel *c)
 {
-    char buf[1024];
     struct http_request *r = c->request;
     const char *clear = http_argbyname(r, "clear");
     const char *content_type = http_lookup_header(r->headers, "Content-Type");
@@ -429,18 +448,18 @@ static void cmd_init(struct http_channel *c)
     
     if (process_settings(s->psession, c->request, c->response) < 0)
         return;
-    
-    sprintf(buf, HTTP_COMMAND_RESPONSE_PREFIX 
-            "<init><status>OK</status><session>%d", sesid);
+
+    response_open(c, "init");
+    wrbuf_printf(c->wrbuf, "<session>%d", sesid);
     if (c->server->server_id)
     {
-        strcat(buf, ".");
-        strcat(buf, c->server->server_id);
+        wrbuf_puts(c->wrbuf, ".");
+        wrbuf_puts(c->wrbuf, c->server->server_id);
     }
-    strcat(buf, "</session>"
-           "<protocol>" PAZPAR2_PROTOCOL_VERSION "</protocol></init>");
-    rs->payload = nmem_strdup(c->nmem, buf);
-    http_send_response(c);
+    wrbuf_puts(c->wrbuf, "</session>"
+               "<protocol>" PAZPAR2_PROTOCOL_VERSION "</protocol>");
+    
+    response_close(c, "init");
 }
 
 static void apply_local_setting(void *client_data,
@@ -484,144 +503,34 @@ static void cmd_settings(struct http_channel *c)
         release_session(c, s);
         return;
     }
-    rs->payload = HTTP_COMMAND_RESPONSE_PREFIX "<settings><status>OK</status></settings>";
-    http_send_response(c);
+    response_open(c, "settings");
+    response_close(c, "settings");
     release_session(c, s);
-}
-
-// Compares two hitsbytarget nodes by hitcount
-static int cmp_ht(const void *p1, const void *p2)
-{
-    const struct hitsbytarget *h1 = p1;
-    const struct hitsbytarget *h2 = p2;
-    return h2->hits - h1->hits;
-}
-
-// This implements functionality somewhat similar to 'bytarget', but in a termlist form
-static int targets_termlist(WRBUF wrbuf, struct session *se, int num,
-                             NMEM nmem)
-{
-    struct hitsbytarget *ht;
-    int count, i;
-
-    ht = hitsbytarget(se, &count, nmem);
-    qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht);
-    for (i = 0; i < count && i < num && ht[i].hits > 0; i++)
-    {
-
-        // do only print terms which have display names
-    
-        wrbuf_puts(wrbuf, "<term>\n");
-
-        wrbuf_puts(wrbuf, "<id>");
-        wrbuf_xmlputs(wrbuf, ht[i].id);
-        wrbuf_puts(wrbuf, "</id>\n");
-        
-        wrbuf_puts(wrbuf, "<name>");
-        if (!ht[i].name || !ht[i].name[0])
-            wrbuf_xmlputs(wrbuf, "NO TARGET NAME");
-        else
-            wrbuf_xmlputs(wrbuf, ht[i].name);
-        wrbuf_puts(wrbuf, "</name>\n");
-        
-        wrbuf_printf(wrbuf, "<frequency>" ODR_INT_PRINTF "</frequency>\n",
-                     ht[i].hits);
-        
-        wrbuf_puts(wrbuf, "<state>");
-        wrbuf_xmlputs(wrbuf, ht[i].state);
-        wrbuf_puts(wrbuf, "</state>\n");
-        
-        wrbuf_printf(wrbuf, "<diagnostic>%d</diagnostic>\n", 
-                     ht[i].diagnostic);
-        wrbuf_puts(wrbuf, "</term>\n");
-    }
-    return count;
 }
 
 static void cmd_termlist(struct http_channel *c)
 {
-    struct http_response *rs = c->response;
     struct http_request *rq = c->request;
     struct http_session *s = locate_session(c);
     const char *name = http_argbyname(rq, "name");
     const char *nums = http_argbyname(rq, "num");
     int num = 15;
     int status;
-    WRBUF debug_log = 0;
 
     if (!s)
         return;
 
     status = session_active_clients(s->psession);
 
-    if (!name)
-        name = "subject";
-    if (strlen(name) > 255)
-        return;
     if (nums)
         num = atoi(nums);
 
-    debug_log = wrbuf_alloc();
-
-    wrbuf_rewind(c->wrbuf);
-
-    wrbuf_puts(c->wrbuf, "<termlist>\n");
+    response_open_no_status(c, "termlist");
     wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", status);
-    while (*name)
-    {
-        char tname[256];
-        const char *tp;
 
-        if (!(tp = strchr(name, ',')))
-            tp = name + strlen(name);
-        strncpy(tname, name, tp - name);
-        tname[tp - name] = '\0';
-        wrbuf_puts(c->wrbuf, "<list name=\"");
-        wrbuf_xmlputs(c->wrbuf, tname);
-        wrbuf_puts(c->wrbuf, "\">\n");
-        if (!strcmp(tname, "xtargets"))
-        {
-            int targets = targets_termlist(c->wrbuf, s->psession, num, c->nmem);
-            wrbuf_printf(debug_log, " xtargets: %d", targets);
-        }
-        else
-        {
-            int len;
-            struct termlist_score **p = 
-                get_termlist_score(s->psession, tname, &len);
-            if (p && len)
-                wrbuf_printf(debug_log, " %s: %d", tname, len);
-            if (p)
-            {
-                int i;
-                for (i = 0; i < len && i < num; i++)
-                {
-                    // prevnt sending empty term elements
-                    if (!p[i]->display_term || !p[i]->display_term[0])
-                        continue;
+    perform_termlist(c, s->psession, name, num);
 
-                    wrbuf_puts(c->wrbuf, "<term>");
-                    wrbuf_puts(c->wrbuf, "<name>");
-                    wrbuf_xmlputs(c->wrbuf, p[i]->display_term);
-                    wrbuf_puts(c->wrbuf, "</name>");
-                    
-                    wrbuf_printf(c->wrbuf, 
-                                 "<frequency>%d</frequency>", 
-                                 p[i]->frequency);
-                    wrbuf_puts(c->wrbuf, "</term>\n");
-                }
-            }
-        }
-        wrbuf_puts(c->wrbuf, "</list>\n");
-        name = tp;
-        if (*name == ',')
-            name++;
-    }
-    wrbuf_puts(c->wrbuf, "</termlist>\n");
-    yaz_log(YLOG_DEBUG, "termlist response: %s ", wrbuf_cstr(debug_log));
-    wrbuf_destroy(debug_log);
-    rs->payload = nmem_strdup(rq->channel->nmem, wrbuf_cstr(c->wrbuf));
-    http_send_response(c);
+    response_close(c, "termlist");
     release_session(c, s);
 }
 
@@ -638,19 +547,14 @@ static void session_status(struct http_channel *c, struct http_session *s)
 
 static void cmd_session_status(struct http_channel *c)
 {
-    struct http_response *rs = c->response;
     struct http_session *s = locate_session(c);
     if (!s)
         return;
 
-    wrbuf_rewind(c->wrbuf);
-    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<sessionstatus><status>OK</status>\n");
+    response_open(c, "session-status");
     session_status(c, s);
-    wrbuf_puts(c->wrbuf, "</sessionstatus>\n");
-    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
-    http_send_response(c);
+    response_close(c, "session-status");
     release_session(c, s);
-
 }
 
 int sessions_count(void);
@@ -663,13 +567,12 @@ int resultsets_count(void);
 
 static void cmd_server_status(struct http_channel *c)
 {
-    struct http_response *rs = c->response;
     int sessions   = sessions_count();
     int clients    = clients_count();
     int resultsets = resultsets_count();
-    wrbuf_rewind(c->wrbuf);
-    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<server-status>\n");
-    wrbuf_printf(c->wrbuf, "  <sessions>%u</sessions>\n", sessions);
+
+    response_open(c, "server-status");
+    wrbuf_printf(c->wrbuf, "\n  <sessions>%u</sessions>\n", sessions);
     wrbuf_printf(c->wrbuf, "  <clients>%u</clients>\n",   clients);
     /* Only works if yaz has been compiled with enabling of this */
     wrbuf_printf(c->wrbuf, "  <resultsets>%u</resultsets>\n",resultsets);
@@ -693,16 +596,13 @@ static void cmd_server_status(struct http_channel *c)
     }
     yaz_mutex_leave(http_sessions->mutex);
 */
-    wrbuf_puts(c->wrbuf, "</server-status>\n");
-    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
-    http_send_response(c);
+    response_close(c, "server-status");
     xmalloc_trav(0);
 }
 
 
 static void cmd_bytarget(struct http_channel *c)
 {
-    struct http_response *rs = c->response;
     struct http_request *rq = c->request;
     struct http_session *s = locate_session(c);
     struct hitsbytarget *ht;
@@ -711,9 +611,8 @@ static void cmd_bytarget(struct http_channel *c)
 
     if (!s)
         return;
-    ht = hitsbytarget(s->psession, &count, c->nmem);
-    wrbuf_rewind(c->wrbuf);
-    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<bytarget><status>OK</status>");
+    ht = get_hitsbytarget(s->psession, &count, c->nmem);
+    response_open(c, "bytarget");
 
     for (i = 0; i < count; i++)
     {
@@ -745,10 +644,7 @@ static void cmd_bytarget(struct http_channel *c)
         }
         wrbuf_puts(c->wrbuf, "</target>");
     }
-
-    wrbuf_puts(c->wrbuf, "</bytarget>");
-    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
-    http_send_response(c);
+    response_close(c, "bytarget");
     release_session(c, s);
 }
 
@@ -800,7 +696,7 @@ static void write_subrecord(struct record *r, WRBUF w,
         client_get_database(r->client), PZ_NAME);
 
     wrbuf_puts(w, "<location id=\"");
-    wrbuf_xmlputs(w, client_get_database(r->client)->database->url);
+    wrbuf_xmlputs(w, client_get_id(r->client));
     wrbuf_puts(w, "\" ");
 
     wrbuf_puts(w, "name=\"");
@@ -934,8 +830,8 @@ static void cmd_record(struct http_channel *c)
     }
     else
     {
-        wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<record>\n");
-        wrbuf_puts(c->wrbuf, "<recid>");
+        response_open_no_status(c, "record");
+        wrbuf_puts(c->wrbuf, "\n<recid>");
         wrbuf_xmlputs(c->wrbuf, rec->recid);
         wrbuf_puts(c->wrbuf, "</recid>\n");
         if (prev_r)
@@ -955,9 +851,7 @@ static void cmd_record(struct http_channel *c)
         write_metadata(c->wrbuf, service, rec->metadata, 1);
         for (r = rec->records; r; r = r->next)
             write_subrecord(r, c->wrbuf, service, 1);
-        wrbuf_puts(c->wrbuf, "</record>\n");
-        rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
-        http_send_response(c);
+        response_close(c, "record");
     }
     show_single_stop(s->psession, rec);
     release_session(c, s);
@@ -1004,14 +898,14 @@ static void show_records(struct http_channel *c, int active)
         error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
         release_session(c, s);
         return;
+
     }
 
     
     rl = show_range_start(s->psession, sp, startn, &numn, &total, &total_hits);
 
-    wrbuf_rewind(c->wrbuf);
-    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<show>\n<status>OK</status>\n");
-    wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", active);
+    response_open(c, "show");
+    wrbuf_printf(c->wrbuf, "\n<activeclients>%d</activeclients>\n", active);
     wrbuf_printf(c->wrbuf, "<merged>%d</merged>\n", total);
     wrbuf_printf(c->wrbuf, "<total>" ODR_INT_PRINTF "</total>\n", total_hits);
     wrbuf_printf(c->wrbuf, "<start>%d</start>\n", startn);
@@ -1041,9 +935,7 @@ static void show_records(struct http_channel *c, int active)
 
     show_range_stop(s->psession, rl);
 
-    wrbuf_puts(c->wrbuf, "</show>\n");
-    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
-    http_send_response(c);
+    response_close(c, "show");
     release_session(c, s);
 }
 
@@ -1059,10 +951,23 @@ static void cmd_show(struct http_channel *c)
     struct http_request *rq = c->request;
     struct http_session *s = locate_session(c);
     const char *block = http_argbyname(rq, "block");
+    const char *sort = http_argbyname(rq, "sort");
+    struct reclist_sortparms *sp;
     int status;
 
     if (!s)
         return;
+
+    if (!sort)
+        sort = "relevance";
+    
+    if (!(sp = reclist_parse_sortparms(c->nmem, sort, s->psession->service)))
+    {
+        error(c->response, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
+        release_session(c, s);
+        return;
+    }
+    session_sort(s->psession, sp->name, sp->increasing);
 
     status = session_active_clients(s->psession);
 
@@ -1081,7 +986,7 @@ static void cmd_show(struct http_channel *c)
             return;
 
         }
-        else if (status && reclist_get_num_records(s->psession->reclist) == 0)
+        else if (status)
         {
             // if there is already a watch/block. we do not block this one
             if (session_set_watch(s->psession, SESSION_WATCH_SHOW,
@@ -1099,12 +1004,11 @@ static void cmd_show(struct http_channel *c)
 
 static void cmd_ping(struct http_channel *c)
 {
-    struct http_response *rs = c->response;
     struct http_session *s = locate_session(c);
     if (!s)
         return;
-    rs->payload = HTTP_COMMAND_RESPONSE_PREFIX "<ping><status>OK</status></ping>";
-    http_send_response(c);
+    response_open(c, "ping");
+    response_close(c, "ping");
     release_session(c, s);
 }
 
@@ -1135,23 +1039,22 @@ static void cmd_search(struct http_channel *c)
         release_session(c, s);
         return;
     }
-    code = search(s->psession, query, startrecs, maxrecs, filter, limit,
-                  &addinfo);
+    code = session_search(s->psession, query, startrecs, maxrecs, filter, limit,
+                          &addinfo, "relevance", 0);
     if (code)
     {
         error(rs, code, addinfo);
         release_session(c, s);
         return;
     }
-    rs->payload = HTTP_COMMAND_RESPONSE_PREFIX "<search><status>OK</status></search>";
-    http_send_response(c);
+    response_open(c, "search");
+    response_close(c, "search");
     release_session(c, s);
 }
 
 
 static void cmd_stat(struct http_channel *c)
 {
-    struct http_response *rs = c->response;
     struct http_session *s = locate_session(c);
     struct statistics stat;
     int clients;
@@ -1169,8 +1072,7 @@ static void cmd_stat(struct http_channel *c)
     	progress = (stat.num_clients  - clients) / (float)stat.num_clients;
     }
 
-    wrbuf_rewind(c->wrbuf);
-    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<stat>");
+    response_open_no_status(c, "stat");
     wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", clients);
     wrbuf_printf(c->wrbuf, "<hits>" ODR_INT_PRINTF "</hits>\n", stat.num_hits);
     wrbuf_printf(c->wrbuf, "<records>%d</records>\n", stat.num_records);
@@ -1182,19 +1084,15 @@ static void cmd_stat(struct http_channel *c)
     wrbuf_printf(c->wrbuf, "<failed>%d</failed>\n", stat.num_failed);
     wrbuf_printf(c->wrbuf, "<error>%d</error>\n", stat.num_error);
     wrbuf_printf(c->wrbuf, "<progress>%.2f</progress>\n", progress);
-    wrbuf_puts(c->wrbuf, "</stat>");
-    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
-    http_send_response(c);
+    response_close(c, "stat");
     release_session(c, s);
 }
 
 static void cmd_info(struct http_channel *c)
 {
     char yaz_version_str[20];
-    struct http_response *rs = c->response;
 
-    wrbuf_rewind(c->wrbuf);
-    wrbuf_puts(c->wrbuf, HTTP_COMMAND_RESPONSE_PREFIX "<info>\n");
+    response_open_no_status(c, "info");
     wrbuf_puts(c->wrbuf, " <version>\n");
     wrbuf_puts(c->wrbuf, "  <pazpar2");
 #ifdef PAZPAR2_VERSION_SHA1
@@ -1203,7 +1101,6 @@ static void cmd_info(struct http_channel *c)
     wrbuf_puts(c->wrbuf, ">");
     wrbuf_xmlputs(c->wrbuf, VERSION);
     wrbuf_puts(c->wrbuf, "</pazpar2>");
-
 
     yaz_version(yaz_version_str, 0);
     wrbuf_puts(c->wrbuf, "  <yaz compiled=\"");
@@ -1216,9 +1113,7 @@ static void cmd_info(struct http_channel *c)
     
     info_services(c->server, c->wrbuf);
 
-    wrbuf_puts(c->wrbuf, "</info>");
-    rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(c->wrbuf));
-    http_send_response(c);
+    response_close(c, "info");
 }
 
 struct {

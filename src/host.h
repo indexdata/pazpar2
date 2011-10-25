@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /** \brief Represents a host (irrespective of databases) */
 struct host {
     char *hostport;
-    char *ipport;
     struct connection *connections; // All connections to this
     struct host *next;
     YAZ_MUTEX mutex;

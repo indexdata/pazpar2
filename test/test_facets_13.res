@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<show>
-<status>OK</status>
+<show><status>OK</status>
 <activeclients>0</activeclients>
 <merged>1</merged>
 <total>8</total>
@@ -17,6 +16,6 @@
 <md-author>Jack Collins</md-author></location>
 <count>2</count>
 <relevance>240000</relevance>
-<recid>title how to program a computer author jack collins</recid>
+<recid>content: title how to program a computer author jack collins</recid>
 </hit>
 </show>

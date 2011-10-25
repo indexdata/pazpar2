@@ -67,7 +67,7 @@ int client_is_our_response(struct client *cl);
 
 void client_continue(struct client *cl);
 
-struct client *client_create(void);
+struct client *client_create(const char *url);
 int client_destroy(struct client *c);
 
 void client_set_connection(struct client *cl, struct connection *con);
@@ -76,7 +76,8 @@ int client_prep_connection(struct client *cl,
                            int operation_timeout, int session_timeout,
                            iochan_man_t iochan,
                            const struct timeval *abstime);
-void client_start_search(struct client *cl);
+void client_start_search(struct client *cl, const char *sort_strategy_and_spec,
+                         int increasing);
 void client_set_session(struct client *cl, struct session *se);
 int client_is_active(struct client *cl);
 int client_is_active_preferred(struct client *cl);
@@ -89,8 +90,7 @@ int client_get_num_records(struct client *cl);
 int client_get_diagnostic(struct client *cl);
 void client_set_diagnostic(struct client *cl, int diagnostic);
 void client_set_database(struct client *cl, struct session_database *db);
-struct host *client_get_host(struct client *cl);
-const char *client_get_url(struct client *cl);
+const char *client_get_id(struct client *cl);
 void client_set_maxrecs(struct client *cl, int v);
 int  client_get_maxrecs(struct client *cl);
 void client_set_startrecs(struct client *cl, int v);

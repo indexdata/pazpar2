@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<show>
-<status>OK</status>
+<show><status>OK</status>
 <activeclients>0</activeclients>
 <merged>8</merged>
 <total>9</total>
@@ -17,7 +16,7 @@
 <md-author>Jack Collins</md-author></location>
 <count>2</count>
 <relevance>28267</relevance>
-<recid>title how to program a computer author jack collins</recid>
+<recid>content: title how to program a computer author jack collins</recid>
 </hit>
 <hit>
 
@@ -28,7 +27,7 @@
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
 <md-date>1977</md-date></location>
 <relevance>23556</relevance>
-<recid>title computer science technology</recid>
+<recid>content: title computer science technology</recid>
 </hit>
 <hit>
 
@@ -40,7 +39,7 @@
 <md-description>Hebrew and Greek; introductions in English</md-description>
 <md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description></location>
 <relevance>23556</relevance>
-<recid>title the computer bible</recid>
+<recid>content: title the computer bible</recid>
 </hit>
 <hit>
 
@@ -55,7 +54,7 @@
 <md-author>Englund, Carl R</md-author>
 <md-description>&quot;Contract DOT-UT-10003.&quot;</md-description></location>
 <relevance>10095</relevance>
-<recid>title washington metropolitan area rail computer feasibility study author englund carl r</recid>
+<recid>content: title washington metropolitan area rail computer feasibility study author englund carl r</recid>
 </hit>
 <hit>
 
@@ -70,7 +69,7 @@
 <md-author>Mairs, John W</md-author>
 <md-description>Scale of maps ca. 1:1,000,000</md-description></location>
 <relevance>9815</relevance>
-<recid>title the puget sound region author mairs john w</recid>
+<recid>content: title the puget sound region author mairs john w</recid>
 </hit>
 <hit>
 
@@ -81,7 +80,7 @@
 <md-title-remainder>the proceedings of a workshop</md-title-remainder>
 <md-date>1974</md-date></location>
 <relevance>7067</relevance>
-<recid>title computer processing of dynamic images from an anger scintillation camera</recid>
+<recid>content: title computer processing of dynamic images from an anger scintillation camera</recid>
 </hit>
 <hit>
 
@@ -92,7 +91,7 @@
 <md-date>1977</md-date>
 <md-author>Wood, Helen M</md-author></location>
 <relevance>7067</relevance>
-<recid>title the use of passwords for controlled access to computer resources author wood helen m</recid>
+<recid>content: title the use of passwords for controlled access to computer resources author wood helen m</recid>
 </hit>
 <hit>
 
@@ -103,6 +102,6 @@
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
 <md-date>1977</md-date></location>
 <relevance>0</relevance>
-<recid>title reconstruction tomography in diagnostic radiology and nuclear medicine</recid>
+<recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine</recid>
 </hit>
 </show>

@@ -116,6 +116,7 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
         new->offset = offset;
         new->type = type;
         new->increasing = increasing;
+        new->name = nmem_strdup(nmem, parm);
         rp = &new->next;
         if (*(parms = cpp))
             parms++;
@@ -313,6 +314,17 @@ struct record_cluster *reclist_insert(struct reclist *l,
         if (!strcmp(merge_key, (*p)->record->merge_key))
         {
             struct record_cluster *existing = (*p)->record;
+            struct record *re = existing->records;
+
+            for (; re; re = re->next)
+            {
+                if (re->client == record->client &&
+                    record_compare(record, re, service))
+                { 
+                    yaz_mutex_leave(l->mutex);
+                    return 0;
+                }
+            }
             record->next = existing->records;
             existing->records = record;
             cluster = existing;

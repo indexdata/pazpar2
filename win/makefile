@@ -191,7 +191,6 @@ PAZPAR2_OBJS = \
    "$(OBJDIR)\normalize7bit.obj" \
    "$(OBJDIR)\database.obj" \
    "$(OBJDIR)\settings.obj" \
-   "$(OBJDIR)\getaddrinfo.obj" \
    "$(OBJDIR)\charsets.obj" \
    "$(OBJDIR)\client.obj" \
    "$(OBJDIR)\jenkins_hash.obj" \

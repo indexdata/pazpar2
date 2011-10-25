@@ -32,25 +32,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PZ_ID             9
 #define PZ_NAME          10
 #define PZ_QUERYENCODING 11
-#define PZ_IP            12
-#define PZ_ZPROXY        13
-#define PZ_APDULOG       14
-#define PZ_SRU           15
-#define PZ_SRU_VERSION   16
-#define PZ_PQF_PREFIX    17
-#define PZ_SORT          18
-#define PZ_RECORDFILTER	 19
-#define PZ_PQF_STRFTIME  20
-#define PZ_NEGOTIATION_CHARSET  21
-#define PZ_MAX_CONNECTIONS      22
-#define PZ_REUSE_CONNECTIONS    23
-#define PZ_TERMLIST_TERM_FACTOR 24
-#define PZ_PREFERRED            25
-#define PZ_EXTRA_ARGS           26
-#define PZ_QUERY_SYNTAX         27
-#define PZ_OPTION_RECORDFILTER  28
-#define PZ_FACETMAP             29
-#define PZ_LIMITMAP             30
+#define PZ_ZPROXY        12
+#define PZ_APDULOG       13
+#define PZ_SRU           14
+#define PZ_SRU_VERSION   15
+#define PZ_PQF_PREFIX    16
+#define PZ_SORT          17
+#define PZ_RECORDFILTER	 18
+#define PZ_PQF_STRFTIME  19
+#define PZ_NEGOTIATION_CHARSET  20
+#define PZ_MAX_CONNECTIONS      21
+#define PZ_REUSE_CONNECTIONS    22
+#define PZ_TERMLIST_TERM_FACTOR 23
+#define PZ_PREFERRED            24
+#define PZ_EXTRA_ARGS           25
+#define PZ_QUERY_SYNTAX         26
+#define PZ_FACETMAP             27
+#define PZ_LIMITMAP             28
+#define PZ_URL                  29
+#define PZ_SORTMAP              30
 #define PZ_MAX_EOF              31
 
 struct setting
@@ -70,7 +70,6 @@ int settings_num(struct conf_service *service);
 int settings_create_offset(struct conf_service *service, const char *name);
 int settings_lookup_offset(struct conf_service *service, const char *name);
 void init_settings(struct conf_service *service);
-void resolve_databases(struct conf_service *service);
 void settings_read_node_x(xmlNode *n,
                           void *client_data,
                           void (*fun)(void *client_data,

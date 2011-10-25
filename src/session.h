@@ -52,14 +52,9 @@ enum pazpar2_error_code {
     PAZPAR2_LAST_ERROR
 };
 
-struct host;
-// Represents a (virtual) database on a host
+// Represents a database
 struct database {
-    struct host *host;
-    char *url;
-    char **databases;
-    int errors;
-    struct zr_explain *explain;
+    char *id;
     int num_settings;
     struct setting **settings;
     struct database *next;
@@ -112,7 +107,6 @@ struct session {
     struct relevance *relevance;
     struct reclist *reclist;
     struct session_watchentry watchlist[SESSION_WATCH_MAX + 1];
-    Odr_int total_hits;
     int total_records;
     int total_merged;
     int number_of_warnings_unknown_elements;
@@ -120,6 +114,7 @@ struct session {
     normalize_cache_t normalize_cache;
     YAZ_MUTEX session_mutex;
     unsigned session_id;
+    struct session_sorted_results *sorted_results;
 };
 
 struct statistics {
@@ -135,7 +130,7 @@ struct statistics {
 };
 
 struct hitsbytarget {
-    char *id;
+    const char *id;
     const char *name;
     Odr_int hits;
     int diagnostic;
@@ -145,17 +140,21 @@ struct hitsbytarget {
     char *settings_xml;
 };
 
-struct hitsbytarget *hitsbytarget(struct session *s, int *count, NMEM nmem);
+struct hitsbytarget *get_hitsbytarget(struct session *s, int *count, NMEM nmem);
 struct session *new_session(NMEM nmem, struct conf_service *service,
                             unsigned session_id);
 void destroy_session(struct session *s);
 void session_init_databases(struct session *s);
-int load_targets(struct session *s, const char *fn);
 void statistics(struct session *s, struct statistics *stat);
-enum pazpar2_error_code search(struct session *s, const char *query,
-                               const char *startrecs, const char *maxrecs,
-                               const char *filter, const char *limit,
-                               const char **addinfo);
+
+void session_sort(struct session *se, const char *field, int increasing);
+
+enum pazpar2_error_code session_search(struct session *s, const char *query,
+                                       const char *startrecs,
+                                       const char *maxrecs,
+                                       const char *filter, const char *limit,
+                                       const char **addinfo,
+                                       const char *sort_field, int increasing);
 struct record_cluster **show_range_start(struct session *s,
                                          struct reclist_sortparms *sp,
                                          int start,
@@ -174,11 +173,12 @@ int session_is_preferred_clients_ready(struct session *s);
 void session_apply_setting(struct session *se, char *dbname, char *setting, char *value);
 const char *session_setting_oneval(struct session_database *db, int offset);
 
-int host_getaddrinfo(struct host *host, iochan_man_t iochan_man);
-
 int ingest_record(struct client *cl, const char *rec, int record_no, NMEM nmem);
 void session_alert_watch(struct session *s, int what);
 void add_facet(struct session *s, const char *type, const char *value, int count);
+
+void perform_termlist(struct http_channel *c, struct session *se,
+                      const char *name, int num);
 void session_log(struct session *s, int level, const char *fmt, ...)
 #ifdef __GNUC__
     __attribute__ ((format (printf, 3, 4)))

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<show>
-<status>OK</status>
+<show><status>OK</status>
 <activeclients>0</activeclients>
 <merged>1</merged>
 <total>1</total>
@@ -20,6 +19,6 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>0</relevance>
-<recid>title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
+<recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 </show>

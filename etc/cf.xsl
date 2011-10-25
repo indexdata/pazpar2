@@ -186,6 +186,12 @@
     </pz:metadata>
   </xsl:template>
 
+  <xsl:template match="id">
+    <pz:metadata type="id">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
   <xsl:template match="text()"/>
 
 </xsl:stylesheet>

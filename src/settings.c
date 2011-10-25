@@ -59,7 +59,6 @@ static char *hard_settings[] = {
     "pz:id",
     "pz:name",
     "pz:queryencoding",
-    "pz:ip",
     "pz:zproxy",
     "pz:apdulog",
     "pz:sru",
@@ -70,14 +69,15 @@ static char *hard_settings[] = {
     "pz:pqf_strftime",
     "pz:negotiation_charset",
     "pz:max_connections",
-    "pz:reuse_connections",     /* PZ_REUSE_CONNECTION    */
-    "pz:termlist_term_factor",  /* PZ_TERMLIST_TERM_FACTOR*/
-    "pz:preferred",             /* PZ_PREFERRED           */
-    "pz:extra_args",            /* PZ_EXTRA_ARGS          */
-    "pz:query_syntax",          /* PZ_QUERY_SYNTAX        */
-    "pz:option_recordfilter",   /* PZ_OPTION_RECORDFILTER */
-    "pz:facetmap:",             /* PZ_FACETMAP */
-    "pz:limitmap:",             /* PZ_LIMITMAP */
+    "pz:reuse_connections",
+    "pz:termlist_term_factor",
+    "pz:preferred",
+    "pz:extra_args",
+    "pz:query_syntax",
+    "pz:facetmap:",
+    "pz:limitmap:",
+    "pz:url",
+    "pz:sortmap:",
     0
 };
 
@@ -335,7 +335,7 @@ void expand_settings_array(struct setting ***set_ar, int *num, int offset,
 
 // This is called from grep_databases -- adds/overrides setting for a target
 // This is also where the rules for precedence of settings are implemented
-static void update_database(void *context, struct database *db)
+static void update_database_fun(void *context, struct database *db)
 {
     struct setting *set = ((struct update_database_context *)
                            context)->set;
@@ -345,7 +345,7 @@ static void update_database(void *context, struct database *db)
     int offset;
 
     // Is this the right database?
-    if (!match_zurl(db->url, set->target))
+    if (!match_zurl(db->id, set->target))
         return;
 
     offset = settings_create_offset(service, set->name);
@@ -403,7 +403,7 @@ static void update_databases(void *client_data, struct setting *set)
     struct update_database_context context;
     context.set = set;
     context.service = service;
-    predef_grep_databases(&context, service, update_database);
+    predef_grep_databases(&context, service, update_database_fun);
 }
 
 // This simply copies the 'hard' (application-specific) settings
@@ -444,7 +444,7 @@ static void prepare_target_dictionary(void *client_data, struct setting *set)
 
     // If target address is not wildcard, add the database
     if (*set->target && !zurl_wildcard(set->target))
-        find_database(set->target, service);
+        create_database_for_service(set->target, service);
 
     // Determine if we already have a dictionary entry
     if (!strncmp(set->name, "pz:", 3) && (p = strchr(set->name + 3, ':')))

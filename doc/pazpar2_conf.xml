@@ -750,6 +750,11 @@
        multiple overlapping settings with the same name and target
        value, the 'precedence' attribute determines what happens.
       </para>
+      <para>
+       For Pazpar2 1.6.4 or later, the target ID may be user-defined, in
+       which case, the actual host, port, etc is given by setting
+       <xref linkend="pzurl"/>.
+      </para>
      </listitem>
     </varlistentry>
     <varlistentry>
@@ -1233,9 +1238,45 @@
       </note>
      </listitem>
     </varlistentry>
+
+    <varlistentry id="pzurl">
+     <term>pz:url</term>
+     <listitem>
+      <para>
+       Specifies URL for the target and overrides the target ID.
+      </para>
+      <note>
+       <para>
+	<literal>pz:url</literal> is only recognized for
+	Pazpar2 1.6.4 and later.
+       </para>
+      </note>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry id="pzsortmap">
+     <term>pz:sortmap:<replaceable>field</replaceable></term>
+     <listitem>
+      <para>
+       Specifies native sorting for a target where
+       <replaceable>field</replaceable> is a sort criteria (see command
+       show). The value has to components separated by colon: strategy and
+       native-field. Strategy is one of <literal>z3950</literal>,
+       <literal>type7</literal>, <literal>cql</literal>,
+       <literal>sru11</literal>, or <literal>embed</literal>.
+       The second component, native-field, is the field that is recognized
+       by the target.
+      </para>
+      <note>
+       <para>
+ 	Only supported for Pazpar2 1.6.4 and later.
+       </para>
+      </note>
+     </listitem>
+    </varlistentry>
     
    </variablelist>
-
+   
   </refsect2>
 
  </refsect1>

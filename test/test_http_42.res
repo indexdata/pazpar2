@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<show>
-<status>OK</status>
+<show><status>OK</status>
 <activeclients>0</activeclients>
 <merged>5</merged>
 <total>12</total>
@@ -21,7 +20,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>174545</relevance>
-<recid>title the religious teachers of greece author adam james medium book</recid>
+<recid>content: title the religious teachers of greece author adam james medium book</recid>
 </hit>
 <hit>
 
@@ -40,7 +39,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>150000</relevance>
-<recid>title the puget sound region author mairs john w medium book</recid>
+<recid>content: title the puget sound region author mairs john w medium book</recid>
 </hit>
 <hit>
 
@@ -56,7 +55,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>125000</relevance>
-<recid>title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
+<recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 <hit>
 
@@ -70,7 +69,7 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>60000</relevance>
-<recid>title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
+<recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>
 
@@ -84,6 +83,6 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>35714</relevance>
-<recid>title computer science technology author medium book</recid>
+<recid>content: title computer science technology author medium book</recid>
 </hit>
 </show>

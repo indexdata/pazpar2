@@ -90,97 +90,40 @@ struct record_metadata * record_metadata_create(NMEM nmem)
 }
 
 
-struct record_metadata * record_metadata_insert(NMEM nmem, 
-                                                struct record_metadata ** rmd,
-                                                union data_types data)
+int record_compare(struct record *r1, struct record *r2,
+                   struct conf_service *service)
 {
-    struct record_metadata * tmp_rmd = 0;
-    // assert(nmem);
-
-    if(!rmd)
-        return 0;
-
-    // construct new record_metadata
-    tmp_rmd  = nmem_malloc(nmem, sizeof(struct record_metadata));
-    tmp_rmd->data = data;
-
-
-    // insert in *rmd's place, moving *rmd one down the list
-    tmp_rmd->next = *rmd;
-    *rmd = tmp_rmd;
-
-    return *rmd;
+    int i;
+    for (i = 0; i < service->num_metadata; i++)
+    {
+        struct conf_metadata *ser_md = &service->metadata[i];
+        enum conf_metadata_type type = ser_md->type;
+            
+        struct record_metadata *m1 = r1->metadata[i];
+        struct record_metadata *m2 = r2->metadata[i];
+        while (m1 && m2)
+        {
+            switch (type)
+            {
+            case Metadata_type_generic:
+                if (strcmp(m1->data.text.disp, m2->data.text.disp))
+                    return 0;
+                break;
+            case Metadata_type_date:
+            case Metadata_type_year:
+                if (m1->data.number.min != m2->data.number.min ||
+                    m1->data.number.max != m2->data.number.max)
+                    return 0;
+                break;
+            }
+            m1 = m1->next;
+            m2 = m2->next;
+        }
+        if (m1 || m2)
+            return 0;
+    }
+    return 1;
 }
-
-struct record_metadata * record_add_metadata_field_id(NMEM nmem, 
-                                                     struct record * record,
-                                                     int field_id, 
-                                                     union data_types data)
-{
-    if (field_id < 0 || !record || !record->metadata)
-        return 0;
-
-    return record_metadata_insert(nmem, &(record->metadata[field_id]), data);
-}
-
-
-struct record_metadata * record_add_metadata(NMEM nmem, 
-                                             struct record * record,
-                                             struct conf_service * service,
-                                             const char * name,
-                                             union data_types data)
-{
-    int field_id = 0;
-
-    if (!record || !record->metadata || !service || !name)  
-        return 0;
-    
-    field_id = conf_service_metadata_field_id(service, name);
-
-    if (-1 == field_id)
-        return 0;
-    
-    return record_metadata_insert(nmem, &(record->metadata[field_id]), data);
-}
-
-
-
-
-
-
-union data_types * record_assign_sortkey_field_id(NMEM nmem, 
-                                               struct record * record,
-                                               int field_id, 
-                                               union data_types data)
-{
-    if (field_id < 0 || !record || !record->sortkeys)
-        return 0;
-
-    return data_types_assign(nmem, &(record->sortkeys[field_id]), data);
-}
-
-
-
-union data_types * record_assign_sortkey(NMEM nmem, 
-                                      struct record * record,
-                                      struct conf_service * service,
-                                      const char * name,
-                                      union data_types data)
-{
-    int field_id = 0;
-
-    if (!record || !service || !name)  
-        return 0;
-    
-    field_id = conf_service_sortkey_field_id(service, name);
-
-    if (!(-1 < field_id) || !(field_id < service->num_sortkeys))
-        return 0;
-
-    return record_assign_sortkey_field_id(nmem, record, field_id, data);
-}
-
-
 
 /*
  * Local variables:
