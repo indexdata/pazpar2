@@ -949,6 +949,8 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
         res[*count].connected  = client_get_connection(cl) ? 1 : 0;
         session_settings_dump(se, client_get_database(cl), w);
         res[*count].settings_xml = nmem_strdup(nmem, wrbuf_cstr(w));
+        wrbuf_rewind(w);
+        res[*count].suggestions_xml = nmem_strdup(nmem, client_get_suggestions_xml(cl, w));
         wrbuf_destroy(w);
         (*count)++;
     }
