@@ -118,6 +118,8 @@ struct conf_service
     /* duplicated from conf_server */
     pp2_charset_fact_t charsets;
 
+    struct service_xslt *xslt_list;
+
     struct database *databases;
     struct conf_server *server;
 };

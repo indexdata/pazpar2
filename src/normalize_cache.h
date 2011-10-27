@@ -26,7 +26,7 @@ typedef struct normalize_cache_s *normalize_cache_t;
 normalize_cache_t normalize_cache_create(void);
 
 normalize_record_t normalize_cache_get(normalize_cache_t nc,
-                                       struct conf_config *conf,
+                                       struct conf_service *service,
                                        const char *spec);
 void normalize_cache_destroy(normalize_cache_t nc);
 

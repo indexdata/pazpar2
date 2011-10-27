@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ppmutex.h"
 #include "incref.h"
 #include "pazpar2_config.h"
+#include "service_xslt.h"
 #include "settings.h"
 #include "eventl.h"
 #include "http.h"
@@ -56,6 +57,13 @@ struct conf_config
     database_hosts_t database_hosts;
 };
 
+struct service_xslt
+{
+    char *id;
+    xsltStylesheetPtr xsp;
+    struct service_xslt *next;
+};
+    
 static void conf_metadata_assign(NMEM nmem, 
                                  struct conf_metadata * metadata,
                                  const char *name,
@@ -115,6 +123,7 @@ static struct conf_service *service_init(struct conf_server *server,
     service->nmem = nmem;
     service->next = 0;
     service->databases = 0;
+    service->xslt_list = 0;
     service->server = server;
     service->session_timeout = 60; /* default session timeout */
     service->z3950_session_timeout = 180;
@@ -230,6 +239,7 @@ void service_destroy(struct conf_service *service)
     {
         if (!pazpar2_decref(&service->ref_count, service->mutex))
         {
+            service_xslt_destroy(service);
             pp2_charset_fact_destroy(service->charsets);
             yaz_mutex_destroy(&service->mutex);
             nmem_destroy(service->nmem);
@@ -540,6 +550,11 @@ static struct conf_service *service_create_static(struct conf_server *server,
         else if (!strcmp((const char *) n->name, (const char *) "metadata"))
         {
             if (parse_metadata(service, n, &md_node, &sk_node))
+                return 0;
+        }
+        else if (!strcmp((const char *) n->name, (const char *) "xslt"))
+        {
+            if (service_xslt_config(service, n))
                 return 0;
         }
         else

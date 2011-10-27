@@ -438,7 +438,7 @@ static int prepare_map(struct session *se, struct session_database *sdb)
             }
         }
         sdb->map = normalize_cache_get(se->normalize_cache,
-                                       se->service->server->config, s);
+                                       se->service, s);
         if (!sdb->map)
             return -1;
     }
