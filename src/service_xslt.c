@@ -79,7 +79,7 @@ int service_xslt_config(struct conf_service *service, xmlNode *n)
     if (!id)
     {
         yaz_log(YLOG_FATAL, "Missing attribute id for xslt element");
-        return 0;
+        return -1;
     }
     while (root && root->type != XML_ELEMENT_NODE)
         root = root->next;
