@@ -1,6 +1,6 @@
 Summary: Metasearcher
 Name: pazpar2
-Version: 1.6.3
+Version: 1.6.4
 Release: 1indexdata
 License: GPL
 Group: Applications/Internet
