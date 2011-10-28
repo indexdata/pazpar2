@@ -128,6 +128,7 @@ struct suggestions {
     int num;
     char **misspelled;
     char **suggest;
+    char *passthrough;
 };
 
 struct show_raw {
@@ -1182,11 +1183,21 @@ int client_get_diagnostic(struct client *cl)
 
 const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
 {
-    int idx;
+    /* int idx; */
     struct suggestions *suggestions = cl->suggestions;
-    if (!suggestions || suggestions->num == 0) {
+
+    if (!suggestions) {
+        yaz_log(YLOG_DEBUG, "No suggestions found");
         return "";
     }
+    if (suggestions->passthrough) {
+        yaz_log(YLOG_DEBUG, "Passthrough Suggestions: \n%s\n", suggestions->passthrough);
+        return suggestions->passthrough;
+    }
+    if (suggestions->num == 0) {
+        return "";
+    }
+    /*
     for (idx = 0; idx < suggestions->num; idx++) {
         wrbuf_printf(wrbuf, "<suggest term=\"%s\"", suggestions->suggest[idx]);
         if (suggestions->misspelled[idx] && suggestions->misspelled[idx]) {
@@ -1196,6 +1207,7 @@ const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
         else
             wrbuf_puts(wrbuf, "/>\n");
     }
+    */
     return wrbuf_cstr(wrbuf);
 }
 
@@ -1231,16 +1243,23 @@ void client_set_preferred(struct client *cl, int v)
 }
 
 
-struct suggestions* client_suggestions_create(const char* suggestions_string) {
+struct suggestions* client_suggestions_create(const char* suggestions_string)
+{
+    int i;
+    NMEM nmem;
+    struct suggestions *suggestions;
     if (suggestions_string == 0)
         return 0;
-    int i;
-    NMEM nmem = nmem_create();
-    struct suggestions *suggestions = nmem_malloc(nmem, sizeof(*suggestions));
+    nmem = nmem_create();
+    suggestions = nmem_malloc(nmem, sizeof(*suggestions));
+    yaz_log(YLOG_DEBUG, "client target suggestions: %s", suggestions_string);
+
     suggestions->nmem = nmem;
     suggestions->num = 0;
     suggestions->misspelled = 0;
     suggestions->suggest = 0;
+    suggestions->passthrough = nmem_strdup_null(nmem, suggestions_string);
+
     if (suggestions_string)
         nmem_strsplit_escape2(suggestions->nmem, "\n", suggestions_string, &suggestions->suggest,
                               &suggestions->num, 1, '\\', 0);
@@ -1260,8 +1279,9 @@ struct suggestions* client_suggestions_create(const char* suggestions_string) {
 
 static void client_suggestions_destroy(struct client *cl)
 {
-    nmem_destroy(cl->suggestions->nmem);
+    NMEM nmem = cl->suggestions->nmem;
     cl->suggestions = 0;
+    nmem_destroy(nmem);
 }
 
 /*
