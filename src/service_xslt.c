@@ -73,7 +73,7 @@ int service_xslt_config(struct conf_service *service, xmlNode *n)
         else
         {
             yaz_log(YLOG_FATAL, "Invalid attribute %s for xslt element",
-                    (const char *) n->name);
+                    (const char *) attr->name);
             return -1;
         }
     if (!id)
