@@ -1,4 +1,4 @@
---- 1.6.4 2011/10/22
+--- 1.6.4 2011/10/28
 
 New service definition element, xslt, that allows an embedded stylesheet
 to be defined. This can be referred to from pz:xslt as an alternative to
