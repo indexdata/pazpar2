@@ -29,14 +29,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "normalize_record.h"
 
 #include "pazpar2_config.h"
-
+#include "service_xslt.h"
 #include "marcmap.h"
 #include <libxslt/xslt.h>
 #include <libxslt/transform.h>
 
 struct normalize_step {
     struct normalize_step *next;
-    xsltStylesheet *stylesheet;
+    xsltStylesheet *stylesheet;  /* created by normalize_record */
+    xsltStylesheet *stylesheet2; /* external stylesheet (service) */
     struct marcmap *marcmap;
 };
 
@@ -45,7 +46,7 @@ struct normalize_record_s {
     NMEM nmem;
 };
 
-normalize_record_t normalize_record_create(struct conf_config *conf,
+normalize_record_t normalize_record_create(struct conf_service *service,
                                            const char *spec)
 {
     NMEM nmem = nmem_create();
@@ -54,6 +55,7 @@ normalize_record_t normalize_record_create(struct conf_config *conf,
     int i, num;
     int no_errors = 0;
     char **stylesheets;
+    struct conf_config *conf = service->server->config;
 
     nt->nmem = nmem;
 
@@ -65,9 +67,11 @@ normalize_record_t normalize_record_create(struct conf_config *conf,
         *m = nmem_malloc(nt->nmem, sizeof(**m));
         (*m)->marcmap = NULL;
         (*m)->stylesheet = NULL;
-        
-        // XSLT
-        if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl")) 
+
+        (*m)->stylesheet2 = service_xslt_get(service, stylesheets[i]);
+        if ((*m)->stylesheet2)
+            ;
+        else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl")) 
         {    
             if (!((*m)->stylesheet =
                   xsltParseStylesheetFile((xmlChar *) wrbuf_cstr(fname))))
@@ -77,7 +81,6 @@ normalize_record_t normalize_record_create(struct conf_config *conf,
                 no_errors++;
             }
         }
-        // marcmap
         else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-5], ".mmap"))
         {
             if (!((*m)->marcmap = marcmap_load(wrbuf_cstr(fname), nt->nmem)))
@@ -132,6 +135,8 @@ int normalize_record_transform(normalize_record_t nt, xmlDoc **doc,
 	    xmlDoc *ndoc;
 	    if (m->stylesheet)
 		ndoc = xsltApplyStylesheet(m->stylesheet, *doc, parms);
+	    else if (m->stylesheet2)
+		ndoc = xsltApplyStylesheet(m->stylesheet2, *doc, parms);
 	    else if (m->marcmap)
 		ndoc = marcmap_apply(m->marcmap, *doc);
             else

@@ -17,19 +17,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-#ifndef NORMALIZE_RECORD_H
-#define NORMALIZE_RECORD_H
-typedef struct normalize_record_s *normalize_record_t;
+#ifndef SERVICE_XSLT_H
+#define SERVICE_XSLT_H
+
+#include <libxslt/xsltutils.h>
+#include <libxslt/transform.h>
 
 struct conf_service;
 
-normalize_record_t normalize_record_create(struct conf_service *service,
-                                           const char *spec);
+xsltStylesheetPtr service_xslt_get(struct conf_service *service,
+                                   const char *id);
 
-void normalize_record_destroy(normalize_record_t nt);
+void service_xslt_destroy(struct conf_service *service);
 
-int normalize_record_transform(normalize_record_t nt, xmlDoc **doc,
-                               const char **parms);
+int service_xslt_config(struct conf_service *service, xmlNode *n);
 
 #endif
 

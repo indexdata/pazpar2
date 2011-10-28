@@ -38,6 +38,7 @@ libpazpar2_a_SOURCES = \
 	record.c record.h \
 	relevance.c relevance.h \
 	sel_thread.c sel_thread.h \
+	service_xslt.c service_xslt.h \
 	session.c session.h \
 	settings.c settings.h \
 	termlists.c termlists.h

@@ -1,3 +1,8 @@
+--- 1.6.4 2011/10/28
+
+New service definition element, xslt, that allows an embedded stylesheet
+to be defined. This can be referred to from pz:xslt as an alternative to
+external files.
 
 New pz:sortmap:field setting for specifying hints on how to make
 a target natively sort on a field. This is used for command=show in

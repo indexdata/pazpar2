@@ -219,7 +219,7 @@
 		
 			ul li {
 				color: #666;
-				border-top: 1px solid #B4B4B4;
+				border-top: 0px;
 				list-style-type: none;	
 				padding: 10px 10px 10px 10px;
 				}
@@ -229,7 +229,7 @@
 				/* when you have a first LI item on any list */
 				
 				li:first-child {	
-					border-top: 0;
+					border-top: 0px;
 					-webkit-border-top-left-radius: 8px;
 					-webkit-border-top-right-radius: 8px;
 					}
