@@ -660,6 +660,11 @@ pz2.prototype =
                         } else if (bytarget[i].diagnostic == "2") {
                           bytarget[i].diagnostic = "Temporary system error";
                         } 
+                        var targetsSuggestions = targetNodes[i].getElementsByTagName("suggestions");
+                        if (targetsSuggestions != undefined && targetsSuggestions.length>0) {
+                          var suggestions = targetsSuggestions[0];
+                          bytarget[i]["suggestions"] = Element_parseChildNodes(suggestions);
+                        }
                     }
                     
                     context.bytargetCounter++;
