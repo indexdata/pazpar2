@@ -138,6 +138,7 @@ struct hitsbytarget {
     const char *state;
     int connected;
     char *settings_xml;
+    char *suggestions_xml;
 };
 
 struct hitsbytarget *get_hitsbytarget(struct session *s, int *count, NMEM nmem);

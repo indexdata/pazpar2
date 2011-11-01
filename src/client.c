@@ -114,12 +114,21 @@ struct client {
     int startrecs;
     int diagnostic;
     int preferred;
+    struct suggestions *suggestions;
     enum client_state state;
     struct show_raw *show_raw;
     ZOOM_resultset resultset;
     YAZ_MUTEX mutex;
     int ref_count;
     char *id;
+};
+
+struct suggestions {
+    NMEM nmem;
+    int num;
+    char **misspelled;
+    char **suggest;
+    char *passthrough;
 };
 
 struct show_raw {
@@ -502,6 +511,9 @@ void client_check_preferred_watch(struct client *cl)
 
 }
 
+struct suggestions* client_suggestions_create(const char* suggestions_string);
+static void client_suggestions_destroy(struct client *cl);
+
 void client_search_response(struct client *cl)
 {
     struct connection *co = cl->connection;
@@ -524,6 +536,9 @@ void client_search_response(struct client *cl)
         client_report_facets(cl, resultset);
         cl->record_offset = cl->startrecs;
         cl->hits = ZOOM_resultset_size(resultset);
+        if (cl->suggestions)
+            client_suggestions_destroy(cl);
+        cl->suggestions = client_suggestions_create(ZOOM_resultset_option_get(resultset, "suggestions"));
     }
 }
 
@@ -785,6 +800,7 @@ struct client *client_create(const char *id)
     cl->state = Client_Disconnected;
     cl->show_raw = 0;
     cl->resultset = 0;
+    cl->suggestions = 0;
     cl->mutex = 0;
     pazpar2_mutex_create(&cl->mutex, "client");
     cl->preferred = 0;
@@ -1165,6 +1181,37 @@ int client_get_diagnostic(struct client *cl)
     return cl->diagnostic;
 }
 
+const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
+{
+    /* int idx; */
+    struct suggestions *suggestions = cl->suggestions;
+
+    if (!suggestions) {
+        yaz_log(YLOG_DEBUG, "No suggestions found");
+        return "";
+    }
+    if (suggestions->passthrough) {
+        yaz_log(YLOG_DEBUG, "Passthrough Suggestions: \n%s\n", suggestions->passthrough);
+        return suggestions->passthrough;
+    }
+    if (suggestions->num == 0) {
+        return "";
+    }
+    /*
+    for (idx = 0; idx < suggestions->num; idx++) {
+        wrbuf_printf(wrbuf, "<suggest term=\"%s\"", suggestions->suggest[idx]);
+        if (suggestions->misspelled[idx] && suggestions->misspelled[idx]) {
+            wrbuf_puts(wrbuf, suggestions->misspelled[idx]);
+            wrbuf_puts(wrbuf, "</suggest>\n");
+        }
+        else
+            wrbuf_puts(wrbuf, "/>\n");
+    }
+    */
+    return wrbuf_cstr(wrbuf);
+}
+
+
 void client_set_database(struct client *cl, struct session_database *db)
 {
     cl->database = db;
@@ -1195,6 +1242,47 @@ void client_set_preferred(struct client *cl, int v)
     cl->preferred = v;
 }
 
+
+struct suggestions* client_suggestions_create(const char* suggestions_string)
+{
+    int i;
+    NMEM nmem;
+    struct suggestions *suggestions;
+    if (suggestions_string == 0)
+        return 0;
+    nmem = nmem_create();
+    suggestions = nmem_malloc(nmem, sizeof(*suggestions));
+    yaz_log(YLOG_DEBUG, "client target suggestions: %s", suggestions_string);
+
+    suggestions->nmem = nmem;
+    suggestions->num = 0;
+    suggestions->misspelled = 0;
+    suggestions->suggest = 0;
+    suggestions->passthrough = nmem_strdup_null(nmem, suggestions_string);
+
+    if (suggestions_string)
+        nmem_strsplit_escape2(suggestions->nmem, "\n", suggestions_string, &suggestions->suggest,
+                              &suggestions->num, 1, '\\', 0);
+    /* Set up misspelled array */
+    suggestions->misspelled = (char **) nmem_malloc(nmem, suggestions->num * sizeof(**suggestions->misspelled));
+    /* replace = with \0 .. for each item */
+    for (i = 0; i < suggestions->num; i++)
+    {
+        char *cp = strchr(suggestions->suggest[i], '=');
+        if (cp) {
+            *cp = '\0';
+            suggestions->misspelled[i] = cp+1;
+        }
+    }
+    return suggestions;
+}
+
+static void client_suggestions_destroy(struct client *cl)
+{
+    NMEM nmem = cl->suggestions->nmem;
+    cl->suggestions = 0;
+    nmem_destroy(nmem);
+}
 
 /*
  * Local variables:

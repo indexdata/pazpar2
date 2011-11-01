@@ -921,6 +921,8 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     return session;
 }
 
+const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf);
+
 static struct hitsbytarget *hitsbytarget_nb(struct session *se,
                                             int *count, NMEM nmem)
 {
@@ -949,6 +951,9 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
         res[*count].connected  = client_get_connection(cl) ? 1 : 0;
         session_settings_dump(se, client_get_database(cl), w);
         res[*count].settings_xml = nmem_strdup(nmem, wrbuf_cstr(w));
+        wrbuf_rewind(w);
+        wrbuf_puts(w, "");
+        res[*count].suggestions_xml = nmem_strdup(nmem, client_get_suggestions_xml(cl, w));
         wrbuf_destroy(w);
         (*count)++;
     }
