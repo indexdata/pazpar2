@@ -1,3 +1,9 @@
+--- 1.6.5 2011/11/01
+Updated bytarget command to contain a suggestions element with misspelled
+words and suggestions to these. pz2.js has been updated to deliver this 
+onwards as well. Only target that currently delivers this is the solr 
+client in YAZ 4.2.18. 
+
 --- 1.6.4 2011/10/28
 
 New service definition element, xslt, that allows an embedded stylesheet

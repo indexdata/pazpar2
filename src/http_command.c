@@ -642,8 +642,11 @@ static void cmd_bytarget(struct http_channel *c)
             wrbuf_puts(c->wrbuf, ht[i].settings_xml);
             wrbuf_puts(c->wrbuf, "</settings>\n");
         }
-        if (ht[i].suggestions_xml)
+        if (ht[i].suggestions_xml && ht[i].suggestions_xml[0]) {
+            wrbuf_puts(c->wrbuf, "<suggestions>");
             wrbuf_puts(c->wrbuf, ht[i].suggestions_xml);
+            wrbuf_puts(c->wrbuf, "</suggestions>");
+        }
         wrbuf_puts(c->wrbuf, "</target>");
     }
     response_close(c, "bytarget");
