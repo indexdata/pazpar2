@@ -405,12 +405,8 @@ static int prepare_map(struct session *se, struct session_database *sdb)
 {
     const char *s;
 
-    if (!sdb->settings)
-    {
-        session_log(se, YLOG_WARN, "No settings on %s", sdb->database->id);
-        return -1;
-    }
-    if ((s = session_setting_oneval(sdb, PZ_XSLT)))
+    if (sdb->settings && sdb->settings[PZ_XSLT] && !sdb->map &&
+        (s = session_setting_oneval(sdb, PZ_XSLT)))        
     {
         char auto_stylesheet[256];
 
@@ -440,25 +436,6 @@ static int prepare_map(struct session *se, struct session_database *sdb)
         sdb->map = normalize_cache_get(se->normalize_cache,
                                        se->service, s);
         if (!sdb->map)
-            return -1;
-    }
-    return 0;
-}
-
-// This analyzes settings and recomputes any supporting data structures
-// if necessary.
-static int prepare_session_database(struct session *se, 
-                                    struct session_database *sdb)
-{
-    if (!sdb->settings)
-    {
-        session_log(se, YLOG_WARN, 
-                "No settings associated with %s", sdb->database->id);
-        return -1;
-    }
-    if (sdb->settings[PZ_XSLT] && !sdb->map)
-    {
-        if (prepare_map(se, sdb) < 0)
             return -1;
     }
     return 0;
@@ -530,12 +507,26 @@ void session_alert_watch(struct session *s, int what)
 static void select_targets_callback(struct session *se,
                                     struct session_database *db)
 {
-    struct client *cl = client_create(db->database->id);
+    struct client *cl;
     struct client_list *l;
 
-    client_set_database(cl, db);
+    for (l = se->clients_cached; l; l = l->next)
+        if (client_get_database(l->client) == db)
+            break;
 
-    client_set_session(cl, se);
+    if (l)
+        cl = l->client;
+    else
+    {
+        cl = client_create(db->database->id);
+        client_set_database(cl, db);
+        client_set_session(cl, se);
+
+        l = xmalloc(sizeof(*l));
+        l->client = cl;
+        l->next = se->clients_cached;
+        se->clients_cached = l;
+    }
 
     l = xmalloc(sizeof(*l));
     l->client = cl;
@@ -550,6 +541,25 @@ static void session_remove_clients(struct session *se)
     session_enter(se);
     l = se->clients;
     se->clients = 0;
+    session_leave(se);
+
+    while (l)
+    {
+        struct client_list *l_next = l->next;
+        xfree(l);
+        l = l_next;
+    }
+}
+
+static void session_remove_cached_clients(struct session *se)
+{
+    struct client_list *l;
+
+    session_remove_clients(se);
+
+    session_enter(se);
+    l = se->clients_cached;
+    se->clients_cached = 0;
     session_leave(se);
 
     while (l)
@@ -687,11 +697,15 @@ enum pazpar2_error_code session_search(struct session *se,
 
     *addinfo = 0;
 
-    session_remove_clients(se);
+    if (se->settings_modified)
+        session_remove_cached_clients(se);
+    else
+        session_remove_clients(se);
     
     session_enter(se);
     reclist_destroy(se->reclist);
     se->reclist = 0;
+    se->settings_modified = 0;
     relevance_destroy(&se->relevance);
     nmem_reset(se->nmem);
     se->total_records = se->total_merged = 0;
@@ -724,25 +738,40 @@ enum pazpar2_error_code session_search(struct session *se,
     }
     for (l = se->clients; l; l = l->next)
     {
+        int parse_ret;
         struct client *cl = l->client;
         const char *strategy_plus_sort = get_strategy_plus_sort(cl, sort_field);
 
-        if (maxrecs)
-            client_set_maxrecs(cl, atoi(maxrecs));
-        if (startrecs)
-            client_set_startrecs(cl, atoi(startrecs));
-        if (prepare_session_database(se, client_get_database(cl)) < 0)
-            ;
-        else if (client_parse_query(cl, query, facet_limits) < 0)
+        if (prepare_map(se, client_get_database(cl)) < 0)
+            continue;
+
+        parse_ret = client_parse_query(cl, query, facet_limits, startrecs,
+            maxrecs);
+        if (parse_ret < 0)
             no_failed++;
-        else
+        else if (parse_ret == 0)
         {
+            yaz_log(YLOG_LOG, "client NEW %s", client_get_id(cl));
             no_working++;
             if (client_prep_connection(cl, se->service->z3950_operation_timeout,
                                        se->service->z3950_session_timeout,
                                        se->service->server->iochan_man,
                                        &tval))
                 client_start_search(cl, strategy_plus_sort, increasing);
+        }
+        else
+        {
+            yaz_log(YLOG_LOG, "client REUSE %s", client_get_id(cl));
+            no_working++;
+            if (client_prep_connection(cl, se->service->z3950_operation_timeout,
+                                       se->service->z3950_session_timeout,
+                                       se->service->server->iochan_man,
+                                       &tval))
+            {
+                session_leave(se);
+                client_reingest(cl);
+                session_enter(se);
+            }
         }
     }
     facet_limits_destroy(facet_limits);
@@ -757,6 +786,7 @@ enum pazpar2_error_code session_search(struct session *se,
         else
             return PAZPAR2_NO_TARGETS;
     }
+    yaz_log(YLOG_LOG, "session_start_search done");
     return PAZPAR2_NO_ERROR;
 }
 
@@ -840,6 +870,8 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     new->next = sdb->settings[offset];
     sdb->settings[offset] = new;
 
+    se->settings_modified = 1;
+
     // Force later recompute of settings-driven data structures
     // (happens when a search starts and client connections are prepared)
     switch (offset)
@@ -853,11 +885,12 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     }
 }
 
-void session_destroy(struct session *se) {
+void session_destroy(struct session *se)
+{
     struct session_database *sdb;
     session_log(se, YLOG_DEBUG, "Destroying");
     session_use(-1);
-    session_remove_clients(se);
+    session_remove_cached_clients(se);
 
     for (sdb = se->databases; sdb; sdb = sdb->next)
         session_database_destroy(sdb);
@@ -906,6 +939,8 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->num_termlists = 0;
     session->reclist = 0;
     session->clients = 0;
+    session->clients_cached = 0;
+    session->settings_modified = 0;
     session->session_nmem = nmem;
     session->nmem = nmem_create();
     session->databases = 0;

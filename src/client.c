@@ -554,6 +554,52 @@ void client_got_records(struct client *cl)
     }
 }
 
+static void client_record_ingest(struct client *cl)
+{
+    const char *msg, *addinfo;
+    ZOOM_record rec = 0;
+    ZOOM_resultset resultset = cl->resultset;
+    int offset = cl->record_offset;
+    if ((rec = ZOOM_resultset_record(resultset, offset)))
+    {
+        cl->record_offset++;
+        if (cl->session == 0)
+            ;
+        else if (ZOOM_record_error(rec, &msg, &addinfo, 0))
+        {
+            yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
+                    msg, addinfo, client_get_id(cl),
+                    cl->record_offset);
+        }
+        else
+        {
+            struct session_database *sdb = client_get_database(cl);
+            NMEM nmem = nmem_create();
+            const char *xmlrec;
+            char type[80];
+            
+            if (nativesyntax_to_type(sdb, type, rec))
+                yaz_log(YLOG_WARN, "Failed to determine record type");
+            xmlrec = ZOOM_record_get(rec, type, NULL);
+            if (!xmlrec)
+                yaz_log(YLOG_WARN, "ZOOM_record_get failed from %s",
+                        client_get_id(cl));
+            else
+            {
+                /* OK = 0, -1 = failure, -2 = Filtered */
+                if (ingest_record(cl, xmlrec, cl->record_offset, nmem) == -1)
+                    yaz_log(YLOG_WARN, "Failed to ingest from %s", client_get_id(cl));
+            }
+            nmem_destroy(nmem);
+        }
+    }
+    else
+    {
+        yaz_log(YLOG_WARN, "Expected record, but got NULL, offset=%d",
+                offset);
+    }
+}
+
 void client_record_response(struct client *cl)
 {
     struct connection *co = cl->connection;
@@ -569,11 +615,9 @@ void client_record_response(struct client *cl)
     }
     else
     {
-        ZOOM_record rec = 0;
-        const char *msg, *addinfo;
-        
         if (cl->show_raw && cl->show_raw->active)
         {
+            ZOOM_record rec = 0;
             if ((rec = ZOOM_resultset_record(resultset,
                                              cl->show_raw->position-1)))
             {
@@ -588,47 +632,19 @@ void client_record_response(struct client *cl)
         }
         else
         {
-            int offset = cl->record_offset;
-            if ((rec = ZOOM_resultset_record(resultset, offset)))
-            {
-                cl->record_offset++;
-                if (cl->session == 0)
-                    ;
-                else if (ZOOM_record_error(rec, &msg, &addinfo, 0))
-                {
-                    yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
-                            msg, addinfo, client_get_id(cl),
-                            cl->record_offset);
-                }
-                else
-                {
-                    struct session_database *sdb = client_get_database(cl);
-                    NMEM nmem = nmem_create();
-                    const char *xmlrec;
-                    char type[80];
-
-                    if (nativesyntax_to_type(sdb, type, rec))
-                        yaz_log(YLOG_WARN, "Failed to determine record type");
-                    xmlrec = ZOOM_record_get(rec, type, NULL);
-                    if (!xmlrec)
-                        yaz_log(YLOG_WARN, "ZOOM_record_get failed from %s",
-                                client_get_id(cl));
-                    else
-                    {
-                        /* OK = 0, -1 = failure, -2 = Filtered */
-                        if (ingest_record(cl, xmlrec, cl->record_offset, nmem) == -1)
-                            yaz_log(YLOG_WARN, "Failed to ingest from %s", client_get_id(cl));
-                    }
-                    nmem_destroy(nmem);
-                }
-            }
-            else
-            {
-                yaz_log(YLOG_WARN, "Expected record, but got NULL, offset=%d",
-                        offset);
-            }
+            client_record_ingest(cl);
         }
     }
+}
+
+void client_reingest(struct client *cl)
+{
+    int i = cl->startrecs;
+    int to = cl->record_offset;
+
+    cl->record_offset = i;
+    for (; i < to; i++)
+        client_record_ingest(cl);
 }
 
 static void client_set_facets_request(struct client *cl, ZOOM_connection link)
@@ -695,6 +711,7 @@ void client_start_search(struct client *cl, const char *sort_strategy_and_spec,
 
     assert(link);
 
+    cl->hits = 0;
     cl->record_offset = 0;
     cl->diagnostic = 0;
 
@@ -1036,7 +1053,8 @@ static void apply_limit(struct session_database *sdb,
                         
 // Parse the query given the settings specific to this client
 int client_parse_query(struct client *cl, const char *query,
-                       facet_limits_t facet_limits)
+                       facet_limits_t facet_limits,
+                       const char *startrecs, const char *maxrecs)
 {
     struct session *se = client_get_session(cl);
     struct session_database *sdb = client_get_database(cl);
@@ -1048,10 +1066,24 @@ int client_parse_query(struct client *cl, const char *query,
     const char *pqf_strftime = session_setting_oneval(sdb, PZ_PQF_STRFTIME);
     const char *query_syntax = session_setting_oneval(sdb, PZ_QUERY_SYNTAX);
     WRBUF w_ccl, w_pqf;
+    int ret_value = 1;
+
     if (!ccl_map)
         return -1;
 
-    cl->hits = -1;
+
+    if (maxrecs && atoi(maxrecs) != cl->maxrecs)
+    {
+        ret_value = 0;
+        cl->maxrecs = atoi(maxrecs);
+    }
+
+    if (startrecs && atoi(startrecs) != cl->startrecs)
+    {
+        ret_value = 0;
+        cl->startrecs = atoi(startrecs);
+    }
+
     w_ccl = wrbuf_alloc();
     wrbuf_puts(w_ccl, query);
 
@@ -1099,8 +1131,12 @@ int client_parse_query(struct client *cl, const char *query,
                 wrbuf_putc(w_pqf, cp[0]);
         }
     }
-    xfree(cl->pquery);
-    cl->pquery = xstrdup(wrbuf_cstr(w_pqf));
+    if (!cl->pquery || strcmp(cl->pquery, wrbuf_cstr(w_pqf)))
+    {
+        xfree(cl->pquery);
+        cl->pquery = xstrdup(wrbuf_cstr(w_pqf));
+        ret_value = 0;
+    }
     wrbuf_destroy(w_pqf);
 
     yaz_log(YLOG_LOG, "PQF query: %s", cl->pquery);
@@ -1133,7 +1169,7 @@ int client_parse_query(struct client *cl, const char *query,
     }
 
     ccl_rpn_delete(cn);
-    return 0;
+    return ret_value;
 }
 
 void client_set_session(struct client *cl, struct session *se)
@@ -1222,19 +1258,9 @@ const char *client_get_id(struct client *cl)
     return cl->id;
 }
 
-void client_set_maxrecs(struct client *cl, int v)
-{
-    cl->maxrecs = v;
-}
-
 int client_get_maxrecs(struct client *cl)
 {
     return cl->maxrecs;
-}
-
-void client_set_startrecs(struct client *cl, int v)
-{
-    cl->startrecs = v;
 }
 
 void client_set_preferred(struct client *cl, int v)
