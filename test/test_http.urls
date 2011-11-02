@@ -61,3 +61,6 @@ http://localhost:9763/search.pz2?command=init&pz:limitmap:author%5Bz3950.indexda
 http://localhost:9763/search.pz2?session=9&command=settings&pz:limitmap:author%5Bz3950.indexdata.com%2Fmarc%5D=rpn:%40attr+1%3d1003+%40attr+6%3d3
 1 http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3dadam\,+james%7Cother_author
 1 http://localhost:9763/search.pz2?session=9&command=show&block=1
+http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3dadam\,+james%7Cother_author&filter=pz%3Aid%3Dz3950.indexdata.com%2Fmarc
+http://localhost:9763/search.pz2?session=9&command=bytarget
+http://localhost:9763/search.pz2?session=9&command=show
