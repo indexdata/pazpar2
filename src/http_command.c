@@ -229,7 +229,7 @@ static const char *get_msg(enum pazpar2_error_code code)
         { PAZPAR2_RECORD_FAIL, "Record command failed"},
         { PAZPAR2_NOT_IMPLEMENTED, "Not implemented"},
         { PAZPAR2_NO_SERVICE, "No service"},
-        { PAZPAR2_ALREADY_BLOCKED, "Already blocked on command in session."},
+        { PAZPAR2_ALREADY_BLOCKED, "Already blocked in session on: "},
         { PAZPAR2_LAST_ERROR, "Last error"},
         { 0, 0 }
     };
@@ -610,7 +610,8 @@ static void bytarget_response(struct http_channel *c) {
 
     ht = get_hitsbytarget(s->psession, &count, c->nmem);
     response_open(c, "bytarget");
-
+    if (count == 0)
+        yaz_log(YLOG_WARN, "Empty bytarget Response. No targets found!");
     for (i = 0; i < count; i++)
     {
         wrbuf_puts(c->wrbuf, "\n<target>");
@@ -674,6 +675,7 @@ static void cmd_bytarget(struct http_channel *c)
         if (session_set_watch(s->psession, SESSION_WATCH_BYTARGET,
                               bytarget_result_ready, c, c) != 0)
         {
+            yaz_log(YLOG_WARN, "Attempt to block multiple times on bytarget block. Not supported!");
             error(rs, PAZPAR2_ALREADY_BLOCKED, "bytarget"); 
         }
         else
@@ -1024,6 +1026,7 @@ static void cmd_show(struct http_channel *c)
             }
             else
             {
+                yaz_log(YLOG_WARN, "Attempt to block multiple times on show (preferred targets) block. Not supported!");
                 error(rs, PAZPAR2_ALREADY_BLOCKED, "show (preferred targets)"); 
             }
             release_session(c, s);
@@ -1036,6 +1039,7 @@ static void cmd_show(struct http_channel *c)
             if (session_set_watch(s->psession, SESSION_WATCH_SHOW,
                                   show_records_ready, c, c) != 0)
             {
+                yaz_log(YLOG_WARN, "Attempt to block multiple times on show block. Not supported!");
                 error(rs, PAZPAR2_ALREADY_BLOCKED, "show"); 
             }
             else
