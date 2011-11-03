@@ -437,22 +437,10 @@ static void initialize_soft_settings(struct conf_service *service)
 static void prepare_target_dictionary(void *client_data, struct setting *set)
 {
     struct conf_service *service = (struct conf_service *) client_data;
-    struct setting_dictionary *dictionary = service->dictionary;
-
-    int i;
-    char *p;
 
     // If target address is not wildcard, add the database
     if (*set->target && !zurl_wildcard(set->target))
         create_database_for_service(set->target, service);
-
-    // Determine if we already have a dictionary entry
-    if (!strncmp(set->name, "pz:", 3) && (p = strchr(set->name + 3, ':')))
-        *(p + 1) = '\0';
-    for (i = 0; i < dictionary->num; i++)
-        if (!strcmp(dictionary->dict[i], set->name))
-            return;
-    yaz_log(YLOG_WARN, "Setting '%s' not configured as metadata", set->name);
 }
 
 void init_settings(struct conf_service *service)
