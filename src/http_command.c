@@ -668,7 +668,7 @@ static void cmd_bytarget(struct http_channel *c)
     if (!s)
         return;
 
-    if (block && strcmp("1",block) == 0)
+    if (block && !strcmp("1",block))
     {
         // if there is already a watch/block. we do not block this one
         if (session_set_watch(s->psession, SESSION_WATCH_BYTARGET,
