@@ -690,7 +690,7 @@ static void bytarget_response(struct http_channel *c) {
 static void bytarget_result_ready(void *data)
 {
     struct http_channel *c = (struct http_channel *) data;
-    yaz_log(YLOG_DEBUG, "bytarget watch released");
+    yaz_log(c->http_sessions->log_level, "bytarget watch released");
     bytarget_response(c);
 }
 
