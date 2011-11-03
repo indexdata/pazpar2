@@ -1189,7 +1189,7 @@ const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
     struct suggestions *suggestions = cl->suggestions;
 
     if (!suggestions) {
-        yaz_log(YLOG_DEBUG, "No suggestions found");
+        //yaz_log(YLOG_DEBUG, "No suggestions found");
         return "";
     }
     if (suggestions->passthrough) {
