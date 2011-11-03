@@ -179,6 +179,7 @@ void client_set_state(struct client *cl, enum client_state st)
                 client_get_id(cl), no_active);
         if (no_active == 0) {
             session_alert_watch(cl->session, SESSION_WATCH_SHOW);
+            session_alert_watch(cl->session, SESSION_WATCH_BYTARGET);
             session_alert_watch(cl->session, SESSION_WATCH_SHOW_PREF);
         }
     }
@@ -549,6 +550,7 @@ void client_got_records(struct client *cl)
     {
         client_unlock(cl);
         session_alert_watch(se, SESSION_WATCH_SHOW);
+        session_alert_watch(se, SESSION_WATCH_BYTARGET);
         session_alert_watch(se, SESSION_WATCH_RECORD);
         client_lock(cl);
     }
