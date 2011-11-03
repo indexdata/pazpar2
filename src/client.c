@@ -162,6 +162,11 @@ enum client_state client_get_state(struct client *cl)
     return cl->state;
 }
 
+void client_set_state_nb(struct client *cl, enum client_state st)
+{
+    cl->state = st;
+}
+
 void client_set_state(struct client *cl, enum client_state st)
 {
     int was_active = 0;
