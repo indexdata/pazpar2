@@ -509,7 +509,7 @@ static void cmd_settings(struct http_channel *c)
     release_session(c, s);
 }
 
-static void cmd_termlist(struct http_channel *c)
+static void termlist_response(struct http_channel *c)
 {
     struct http_request *rq = c->request;
     struct http_session *s = locate_session(c);
@@ -518,13 +518,10 @@ static void cmd_termlist(struct http_channel *c)
     int num = 15;
     int status;
 
-    if (!s)
-        return;
-
-    status = session_active_clients(s->psession);
-
     if (nums)
         num = atoi(nums);
+
+    status = session_active_clients(s->psession);
 
     response_open_no_status(c, "termlist");
     wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", status);
@@ -532,6 +529,45 @@ static void cmd_termlist(struct http_channel *c)
     perform_termlist(c, s->psession, name, num);
 
     response_close(c, "termlist");
+    release_session(c, s);
+}
+
+static void termlist_result_ready(void *data)
+{
+    struct http_channel *c = (struct http_channel) data;
+    termlist_response(c);
+}
+
+static void cmd_termlist(struct http_channel *c)
+{
+    struct http_request *rq = c->request;
+    struct http_response *rs = c->response;
+    struct http_session *s = locate_session(c);
+    const char *block = http_argbyname(rq, "block");
+    int active_clients;
+    if (!s)
+        return;
+
+    active_clients = session_active_clients(s->psession);
+
+    if (block && !strcmp("1", block) && active_clients)
+    {
+        // if there is already a watch/block. we do not block this one
+        if (session_set_watch(s->psession, SESSION_WATCH_TERMLIST,
+                              termlist_result_ready, c, c) != 0)
+        {
+            yaz_log(YLOG_WARN, "Attempt to block multiple times on termlist block. Not supported!");
+            error(rs, PAZPAR2_ALREADY_BLOCKED, "termlist");
+        }
+        else
+        {
+            yaz_log(c->http_sessions->log_level, "%p Session %u: Blocking on command termlist", s, s->session_id);
+        }
+        release_session(c, s);
+        return;
+    }
+
+    termlist_response(c);
     release_session(c, s);
 }
 
@@ -654,7 +690,7 @@ static void bytarget_response(struct http_channel *c) {
 static void bytarget_result_ready(void *data)
 {
     struct http_channel *c = (struct http_channel *) data;
-
+    yaz_log(YLOG_DEBUG, "bytarget watch released");
     bytarget_response(c);
 }
 
@@ -665,11 +701,14 @@ static void cmd_bytarget(struct http_channel *c)
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(c);
     const char *block = http_argbyname(rq, "block");
+    int no_active;
 
     if (!s)
         return;
 
-    if (block && strcmp("1",block) == 0)
+    no_active = session_active_clients(s->psession);
+
+    if (block && !strcmp("1",block) && no_active)
     {
         // if there is already a watch/block. we do not block this one
         if (session_set_watch(s->psession, SESSION_WATCH_BYTARGET,
