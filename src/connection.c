@@ -421,7 +421,6 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     iochan_setdata(con->iochan, con);
     iochan_add(iochan_man, con->iochan);
 
-    /* this fragment is bad DRY: from client_prep_connection */
     client_set_state(con->client, Client_Connecting);
     ZOOM_options_destroy(zoptions);
     return 0;
