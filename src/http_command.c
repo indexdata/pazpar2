@@ -600,17 +600,13 @@ static void cmd_server_status(struct http_channel *c)
     xmalloc_trav(0);
 }
 
-
-static void cmd_bytarget(struct http_channel *c)
-{
-    struct http_request *rq = c->request;
-    struct http_session *s = locate_session(c);
-    struct hitsbytarget *ht;
-    const char *settings = http_argbyname(rq, "settings");
+static void bytarget_response(struct http_channel *c) {
     int count, i;
+    struct hitsbytarget *ht;
+    struct http_request *rq = c->request;
+    const char *settings = http_argbyname(rq, "settings");
+    struct http_session *s = locate_session(c);
 
-    if (!s)
-        return;
     ht = get_hitsbytarget(s->psession, &count, c->nmem);
     response_open(c, "bytarget");
 
@@ -650,6 +646,39 @@ static void cmd_bytarget(struct http_channel *c)
         wrbuf_puts(c->wrbuf, "</target>");
     }
     response_close(c, "bytarget");
+    release_session(c, s);
+}
+
+static void bytarget_result_ready(void *data)
+{
+    struct http_channel *c = (struct http_channel *) data;
+
+    bytarget_response(c);
+}
+
+
+static void cmd_bytarget(struct http_channel *c)
+{
+    struct http_request *rq = c->request;
+    struct http_session *s = locate_session(c);
+    const char *block = http_argbyname(rq, "block");
+    struct hitsbytarget *ht;
+
+    if (!s)
+        return;
+
+    if (block && strcmp("1",*block) == 0)
+    {
+        // if there is already a watch/block. we do not block this one
+        if (session_set_watch(s->psession, SESSION_WATCH_BYTARGET,
+                              bytarget_result_ready, c, c) != 0)
+        {
+            yaz_log(c->http_sessions->log_level, "%p Session %u: Blocking on cmd_bytarget", s, s->session_id);
+        }
+        release_session(c, s);
+        return;
+    }
+    bytarget_response(c);
     release_session(c, s);
 }
 
