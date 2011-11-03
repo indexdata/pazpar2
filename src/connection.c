@@ -93,10 +93,9 @@ struct connection {
     struct client *client;
     char *zproxy;
     enum {
-        Conn_Resolving,
+        Conn_Closed,
         Conn_Connecting,
-        Conn_Open,
-        Conn_Dead
+        Conn_Open
     } state;
     int operation_timeout;
     int session_timeout;
@@ -180,7 +179,7 @@ static struct connection *connection_create(struct client *cl,
     co->zproxy = 0;
     client_set_connection(cl, co);
     co->link = 0;
-    co->state = Conn_Resolving;
+    co->state = Conn_Closed;
     co->operation_timeout = operation_timeout;
     co->session_timeout = session_timeout;
     
@@ -278,9 +277,25 @@ void connection_continue(struct connection *co)
 {
     int r = ZOOM_connection_exec_task(co->link);
     if (!r)
-        yaz_log(YLOG_WARN, "No task was executed for connection");
-    iochan_setflags(co->iochan, ZOOM_connection_get_mask(co->link));
-    iochan_setfd(co->iochan, ZOOM_connection_get_socket(co->link));
+    {
+        const char *error, *addinfo;
+        int err;
+        if ((err = ZOOM_connection_error(co->link, &error, &addinfo)))
+        {
+            if (co->client)
+            {
+                yaz_log(YLOG_LOG, "Error %s from %s",
+                        error, client_get_id(co->client));
+                client_set_diagnostic(co->client, err);
+                client_set_state_nb(co->client, Client_Error);
+            }
+        }
+    }
+    else
+    {
+        iochan_setflags(co->iochan, ZOOM_connection_get_mask(co->link));
+        iochan_setfd(co->iochan, ZOOM_connection_get_socket(co->link));
+    }
 }
 
 static void connection_handler(IOCHAN iochan, int event)
@@ -359,7 +374,6 @@ static struct host *connection_get_host(struct connection *con)
 
 static int connection_connect(struct connection *con, iochan_man_t iochan_man)
 {
-    ZOOM_connection link = 0;
     struct host *host = connection_get_host(con);
     ZOOM_options zoptions = ZOOM_options_create();
     const char *auth;
@@ -395,7 +409,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     if ((sru_version = session_setting_oneval(sdb, PZ_SRU_VERSION)) 
         && *sru_version)
         ZOOM_options_set(zoptions, "sru_version", sru_version);
-    if (!(link = ZOOM_connection_create(zoptions)))
+    if (!(con->link = ZOOM_connection_create(zoptions)))
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to create ZOOM Connection");
         ZOOM_options_destroy(zoptions);
@@ -407,14 +421,13 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
         char http_hostport[512];
         strcpy(http_hostport, "http://");
         strcat(http_hostport, host->hostport);
-        ZOOM_connection_connect(link, http_hostport, 0);
+        ZOOM_connection_connect(con->link, http_hostport, 0);
     }
     else
     {
-        ZOOM_connection_connect(link, host->hostport, 0);
+        ZOOM_connection_connect(con->link, host->hostport, 0);
     }
     
-    con->link = link;
     con->iochan = iochan_create(-1, connection_handler, 0, "connection_socket");
     con->state = Conn_Connecting;
     iochan_settimeout(con->iochan, con->operation_timeout);
