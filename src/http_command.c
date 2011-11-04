@@ -534,7 +534,8 @@ static void termlist_response(struct http_channel *c)
 
 static void termlist_result_ready(void *data)
 {
-    struct http_channel *c = (struct http_channel *) data;
+    struct http_channel *c = (struct http_channel) data;
+    yaz_log(c->http_sessions->log_level, "termlist watch released");
     termlist_response(c);
 }
 
@@ -573,7 +574,7 @@ static void cmd_termlist(struct http_channel *c)
 
 size_t session_get_memory_status(struct session *session);
 
-static void session_status(struct http_channel *c, struct http_session *s)
+static void         (struct http_channel *c, struct http_session *s)
 {
     size_t session_nmem;
     wrbuf_printf(c->wrbuf, "<http_count>%u</http_count>\n", s->activity_counter);
@@ -940,7 +941,7 @@ static void cmd_record(struct http_channel *c)
 static void cmd_record_ready(void *data)
 {
     struct http_channel *c = (struct http_channel *) data;
-
+    yaz_log(c->http_sessions->log_level, "record watch released");
     cmd_record(c);
 }
 
@@ -1022,7 +1023,7 @@ static void show_records(struct http_channel *c, int active)
 static void show_records_ready(void *data)
 {
     struct http_channel *c = (struct http_channel *) data;
-
+    yaz_log(c->http_sessions->log_level, "show watch released");
     show_records(c, -1);
 }
 
