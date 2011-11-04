@@ -574,7 +574,7 @@ static void cmd_termlist(struct http_channel *c)
 
 size_t session_get_memory_status(struct session *session);
 
-static void         (struct http_channel *c, struct http_session *s)
+static void session_status(struct http_channel *c, struct http_session *s)
 {
     size_t session_nmem;
     wrbuf_printf(c->wrbuf, "<http_count>%u</http_count>\n", s->activity_counter);
