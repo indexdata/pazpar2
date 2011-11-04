@@ -99,7 +99,7 @@ struct client_list;
 struct session {
     struct conf_service *service; /* service in use for this session */
     struct session_database *databases;  // All databases, settings overriden
-    struct client_list *clients;   // Clients connected for current search
+    struct client_list *clients_active; // Clients connected for current search
     struct client_list *clients_cached; // Clients in cache
     NMEM session_nmem;  // Nmem for session-permanent storage
     NMEM nmem;          // Nmem for each operation (i.e. search, result set, etc)

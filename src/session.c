@@ -530,17 +530,18 @@ static void select_targets_callback(struct session *se,
 
     l = xmalloc(sizeof(*l));
     l->client = cl;
-    l->next = se->clients;
-    se->clients = l;
+    l->next = se->clients_active;
+    se->clients_active = l;
 }
 
-static void session_remove_clients(struct session *se)
+static void session_reset_active_clients(struct session *se,
+                                         struct client_list *new_list)
 {
     struct client_list *l;
 
     session_enter(se);
-    l = se->clients;
-    se->clients = 0;
+    l = se->clients_active;
+    se->clients_active = new_list;
     session_leave(se);
 
     while (l)
@@ -555,7 +556,7 @@ static void session_remove_cached_clients(struct session *se)
 {
     struct client_list *l;
 
-    session_remove_clients(se);
+    session_reset_active_clients(se, 0);
 
     session_enter(se);
     l = se->clients_cached;
@@ -588,7 +589,7 @@ int session_active_clients(struct session *s)
     struct client_list *l;
     int res = 0;
 
-    for (l = s->clients; l; l = l->next)
+    for (l = s->clients_active; l; l = l->next)
         if (client_is_active(l->client))
             res++;
 
@@ -600,7 +601,7 @@ int session_is_preferred_clients_ready(struct session *s)
     struct client_list *l;
     int res = 0;
 
-    for (l = s->clients; l; l = l->next)
+    for (l = s->clients_active; l; l = l->next)
         if (client_is_active_preferred(l->client))
             res++;
     session_log(s, YLOG_DEBUG, "Has %d active preferred clients.", res);
@@ -660,7 +661,7 @@ void session_sort(struct session *se, const char *field, int increasing)
     sr->next = se->sorted_results;
     se->sorted_results = sr;
     
-    for (l = se->clients; l; l = l->next)
+    for (l = se->clients_active; l; l = l->next)
     {
         struct client *cl = l->client;
         const char *strategy_plus_sort = get_strategy_plus_sort(cl, field);
@@ -689,7 +690,7 @@ enum pazpar2_error_code session_search(struct session *se,
     int live_channels = 0;
     int no_working = 0;
     int no_failed = 0;
-    struct client_list *l;
+    struct client_list *l, *l0;
     struct timeval tval;
     facet_limits_t facet_limits;
 
@@ -700,7 +701,7 @@ enum pazpar2_error_code session_search(struct session *se,
     if (se->settings_modified)
         session_remove_cached_clients(se);
     else
-        session_remove_clients(se);
+        session_reset_active_clients(se, 0);
     
     session_enter(se);
     reclist_destroy(se->reclist);
@@ -736,7 +737,12 @@ enum pazpar2_error_code session_search(struct session *se,
         session_leave(se);
         return PAZPAR2_MALFORMED_PARAMETER_VALUE;
     }
-    for (l = se->clients; l; l = l->next)
+
+    l0 = se->clients_active;
+    se->clients_active = 0;
+    session_leave(se);
+
+    for (l = l0; l; l = l->next)
     {
         int parse_ret;
         struct client *cl = l->client;
@@ -768,14 +774,13 @@ enum pazpar2_error_code session_search(struct session *se,
                                        se->service->server->iochan_man,
                                        &tval))
             {
-                session_leave(se);
                 client_reingest(cl);
-                session_enter(se);
             }
         }
     }
     facet_limits_destroy(facet_limits);
-    session_leave(se);
+    session_reset_active_clients(se, l0);
+
     if (no_working == 0)
     {
         if (no_failed > 0)
@@ -932,7 +937,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->number_of_warnings_unknown_metadata = 0;
     session->num_termlists = 0;
     session->reclist = 0;
-    session->clients = 0;
+    session->clients_active = 0;
     session->clients_cached = 0;
     session->settings_modified = 0;
     session->session_nmem = nmem;
@@ -959,12 +964,12 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
     struct client_list *l;
     size_t sz = 0;
 
-    for (l = se->clients; l; l = l->next)
+    for (l = se->clients_active; l; l = l->next)
         sz++;
 
     res = nmem_malloc(nmem, sizeof(*res) * sz);
     *count = 0;
-    for (l = se->clients; l; l = l->next)
+    for (l = se->clients_active; l; l = l->next)
     {
         struct client *cl = l->client;
         WRBUF w = wrbuf_alloc();
@@ -1206,7 +1211,7 @@ struct record_cluster **show_range_start(struct session *se,
         *total = reclist_get_num_records(se->reclist);
 
         *sumhits = 0;
-        for (l = se->clients; l; l = l->next)
+        for (l = se->clients_active; l; l = l->next)
             *sumhits += client_get_hits(l->client);
         
         for (i = 0; i < start; i++)
@@ -1251,7 +1256,7 @@ void statistics(struct session *se, struct statistics *stat)
 
     memset(stat, 0, sizeof(*stat));
     stat->num_hits = 0;
-    for (l = se->clients; l; l = l->next)
+    for (l = se->clients_active; l; l = l->next)
     {
         struct client *cl = l->client;
         if (!client_get_connection(cl))
