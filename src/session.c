@@ -751,7 +751,7 @@ enum pazpar2_error_code session_search(struct session *se,
             no_failed++;
         else if (parse_ret == 0)
         {
-            yaz_log(YLOG_LOG, "client NEW %s", client_get_id(cl));
+            session_log(se, YLOG_LOG, "client NEW %s", client_get_id(cl));
             no_working++;
             if (client_prep_connection(cl, se->service->z3950_operation_timeout,
                                        se->service->z3950_session_timeout,
@@ -761,7 +761,7 @@ enum pazpar2_error_code session_search(struct session *se,
         }
         else
         {
-            yaz_log(YLOG_LOG, "client REUSE %s", client_get_id(cl));
+            session_log(se, YLOG_LOG, "client REUSE %s", client_get_id(cl));
             no_working++;
             if (client_prep_connection(cl, se->service->z3950_operation_timeout,
                                        se->service->z3950_session_timeout,
