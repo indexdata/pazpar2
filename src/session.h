@@ -78,7 +78,7 @@ struct session_database
 #define SESSION_WATCH_SHOW_PREF 2
 #define SESSION_WATCH_TERMLIST  3
 #define SESSION_WATCH_BYTARGET  4
-#define SESSION_WATCH_MAX       3
+#define SESSION_WATCH_MAX       4
 
 #define SESSION_MAX_TERMLISTS 10
 
