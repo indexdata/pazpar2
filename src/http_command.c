@@ -534,7 +534,7 @@ static void termlist_response(struct http_channel *c)
 
 static void termlist_result_ready(void *data)
 {
-    struct http_channel *c = (struct http_channel) data;
+    struct http_channel *c = (struct http_channel *) data;
     yaz_log(c->http_sessions->log_level, "termlist watch released");
     termlist_response(c);
 }
