@@ -52,6 +52,26 @@ function loginFormSubmit() {
 	authCb, authCb);
 }
 
+function handleKeyPress(e, formId, focusId)  
+{  
+  var key;  
+  if(window.event)  
+    key = window.event.keyCode;  
+  else  
+    key = e.which;  
+
+  if(key == 13 || key == 10)  
+  {  
+    document.getElementById(formId).submit();  
+    focusElement = document.getElementById(focusId);
+    if (focusElement)
+      focusElement.focus();  
+    return false;  
+  }  
+  else  
+    return true;  
+}  
+
 function authCb(authData) {
     if (!authData.loginFailed) {
 	triedUser = "";
@@ -383,6 +403,13 @@ function resetPage()
 function triggerSearch ()
 {
     my_paz.search(document.search.query.value, recPerPage, curSort, curFilter);
+/*
+    , startWith,
+	{
+    	   "limit" : getFacets() 
+	}
+	);
+*/
 }
 
 function loadSelect ()
@@ -394,11 +421,11 @@ function loadSelect ()
 // limit the query after clicking the facet
 function limitQuery(field, value)
 {
-	var newQuery = ' and ' + field + '="' + value + '"';
-	querys[field] += newQuery;
-    document.search.query.value += newQuery;
-    onFormSubmitEventHandler();
-    showhide("recordview");
+  var newQuery = ' and ' + field + '="' + value + '"';
+  querys[field] += newQuery;
+  document.search.query.value += newQuery;
+  onFormSubmitEventHandler();
+  showhide("recordview");
 }
 
 // limit the query after clicking the facet
