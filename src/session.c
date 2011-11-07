@@ -869,12 +869,6 @@ void session_destroy(struct session *se) {
     yaz_mutex_destroy(&se->session_mutex);
 }
 
-/* Depreciated: use session_destroy */
-void destroy_session(struct session *se)
-{
-    session_destroy(se);
-}
-
 size_t session_get_memory_status(struct session *session) {
     size_t session_nmem;
     if (session == 0)

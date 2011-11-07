@@ -147,7 +147,7 @@ struct hitsbytarget {
 struct hitsbytarget *get_hitsbytarget(struct session *s, int *count, NMEM nmem);
 struct session *new_session(NMEM nmem, struct conf_service *service,
                             unsigned session_id);
-void destroy_session(struct session *s);
+void session_destroy(struct session *s);
 void session_init_databases(struct session *s);
 void statistics(struct session *s, struct statistics *stat);
 

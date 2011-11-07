@@ -126,7 +126,7 @@ void http_sessions_destroy(http_sessions_t hs)
         {
             struct http_session *s_next = s->next;
             iochan_destroy(s->timeout_iochan);
-            destroy_session(s->psession);
+            session_destroy(s->psession);
             nmem_destroy(s->nmem);
             s = s_next;
         }
@@ -199,7 +199,7 @@ void http_session_destroy(struct http_session *s)
     {   /* destroying for real */
         yaz_log(http_sessions->log_level, "%p HTTP Session %u destroyed", s, s->session_id);
         iochan_destroy(s->timeout_iochan);
-        destroy_session(s->psession);
+        session_destroy(s->psession);
         http_session_use(-1);
         nmem_destroy(s->nmem);
     }
