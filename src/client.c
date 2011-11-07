@@ -988,10 +988,11 @@ static char *make_solrquery(struct client *cl)
     return r;
 }
 
-static void apply_limit(struct session_database *sdb,
-                        facet_limits_t facet_limits,
-                        WRBUF w_pqf, WRBUF w_ccl)
+static int apply_limit(struct session_database *sdb,
+                       facet_limits_t facet_limits,
+                       WRBUF w_pqf, WRBUF w_ccl)
 {
+    int ret = 0;
     int i = 0;
     const char *name;
     const char *value;
@@ -1043,6 +1044,14 @@ static void apply_limit(struct session_database *sdb,
                     wrbuf_puts(w_ccl, ")");
 
                 }
+                else if (!strncmp(s->value, "local:", 6))
+                    ;
+                else
+                {
+                    yaz_log(YLOG_WARN, "Target %s: Bad limitmap '%s'",
+                            sdb->database->id, s->value);
+                    ret = -1; /* bad limitmap */
+                }
                 break;
             }
         }
@@ -1054,6 +1063,7 @@ static void apply_limit(struct session_database *sdb,
         }
     }
     nmem_destroy(nmem_tmp);
+    return ret;
 }
                         
 // Parse the query given the settings specific to this client
@@ -1099,7 +1109,8 @@ int client_parse_query(struct client *cl, const char *query,
         wrbuf_puts(w_pqf, " ");
     }
 
-    apply_limit(sdb, facet_limits, w_pqf, w_ccl);
+    if (apply_limit(sdb, facet_limits, w_pqf, w_ccl))
+        return -2;
 
     yaz_log(YLOG_LOG, "CCL query: %s", wrbuf_cstr(w_ccl));
     cn = ccl_find_str(ccl_map, wrbuf_cstr(w_ccl), &cerror, &cpos);

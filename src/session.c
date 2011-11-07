@@ -689,7 +689,8 @@ enum pazpar2_error_code session_search(struct session *se,
 {
     int live_channels = 0;
     int no_working = 0;
-    int no_failed = 0;
+    int no_failed_query = 0;
+    int no_failed_limit = 0;
     struct client_list *l, *l0;
     struct timeval tval;
     facet_limits_t facet_limits;
@@ -753,8 +754,10 @@ enum pazpar2_error_code session_search(struct session *se,
 
         parse_ret = client_parse_query(cl, query, facet_limits, startrecs,
             maxrecs);
-        if (parse_ret < 0)
-            no_failed++;
+        if (parse_ret == -1)
+            no_failed_query++;
+        else if (parse_ret == -2)
+            no_failed_limit++;
         else if (parse_ret == 0)
         {
             session_log(se, YLOG_LOG, "client NEW %s", client_get_id(cl));
@@ -783,9 +786,14 @@ enum pazpar2_error_code session_search(struct session *se,
 
     if (no_working == 0)
     {
-        if (no_failed > 0)
+        if (no_failed_query > 0)
         {
             *addinfo = "query";
+            return PAZPAR2_MALFORMED_PARAMETER_VALUE;
+        }
+        else if (no_failed_limit > 0)
+        {
+            *addinfo = "limit";
             return PAZPAR2_MALFORMED_PARAMETER_VALUE;
         }
         else
