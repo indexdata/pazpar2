@@ -4,7 +4,7 @@
 // create a parameters array and pass it to the pz2's constructor
 // then register the form submit event with the pz2.search function
 // autoInit is set to true on default
-var usesessions = true;
+var usesessions = false;
 var pazpar2path = '/service-proxy/';
 var showResponseType = '';
 // Facet configuration
@@ -12,7 +12,7 @@ var querys = {'su': '', 'au': '', 'xt': ''};
 var query_client_server = {'su': 'subject', 'au': 'author', 'xt': 'xtargets'};
 var querys_server = {'subject': '', 'author': '', 'xtargets': ''};
 var useLimit = 0;
-var showResponseType = 'json';
+var showResponseType = 'xml';
 if (document.location.hash == '#pazpar2' || document.location.search.match("useproxy=false")) {
     usesessions = false;
     pazpar2path = '/pazpar2/search.pz2';
