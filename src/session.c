@@ -1581,7 +1581,8 @@ int ingest_record(struct client *cl, const char *rec,
 }
 
 static int check_limit_local(struct client *cl,
-                             struct record *record)
+                             struct record *record,
+                             int record_no)
 {
     int skip_record = 0;
     struct session *se = client_get_session(cl);
@@ -1611,6 +1612,7 @@ static int check_limit_local(struct client *cl,
         }
         ser_md = &service->metadata[md_field_id];
         rec_md = record->metadata[md_field_id];
+        yaz_log(YLOG_LOG, "check limit local %s", name);
         for (i = 0; i < num_v; )
         {
             if (rec_md)
@@ -1723,7 +1725,7 @@ static int ingest_to_cluster(struct client *cl,
         }
     }
 
-    if (check_limit_local(cl, record))
+    if (check_limit_local(cl, record, record_no))
     {
         session_log(se, YLOG_LOG, "Facet filtered out record no %d from %s",
                     record_no, sdb->database->id);
