@@ -629,7 +629,12 @@ pz2.prototype =
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.safeGet(
-            { "command": "bytarget", "session": this.sessionID, "windowid" : window.name},
+            { 
+		"command": "bytarget", 
+		"session": this.sessionID, 
+		"block": 1,
+		"windowid" : window.name
+	    },
             function(data) {
                 if ( data.getElementsByTagName("status")[0]
                         .childNodes[0].nodeValue == "OK" ) {
