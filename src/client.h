@@ -103,8 +103,10 @@ void client_unlock(struct client *c);
 int client_has_facet(struct client *cl, const char *name);
 void client_check_preferred_watch(struct client *cl);
 void client_reingest(struct client *cl);
-
-
+const char *client_get_facet_limit_local(struct client *cl,
+                                         struct session_database *sdb,
+                                         int *l,
+                                         NMEM nmem, int *num, char ***values);
 #endif
 
 /*

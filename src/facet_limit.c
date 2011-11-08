@@ -39,6 +39,28 @@ struct facet_limits {
     char **darray;
 };
 
+facet_limits_t facet_limits_dup(facet_limits_t fl)
+{
+    int i;
+    NMEM nmem = nmem_create();
+    facet_limits_t fn = nmem_malloc(nmem, sizeof(*fn));
+    fn->nmem = nmem;
+    fn->num = fl->num;
+    fn->darray = 0;
+    if (fl->num)
+    {
+        fn->darray = nmem_malloc(nmem, fn->num * sizeof(*fn->darray));
+        for (i = 0; i < fn->num; i++)
+        {
+            const char *src = fl->darray[i];
+            size_t sz = strlen(src) + 2 + strlen(src + strlen(src) + 1);
+            fn->darray[i] = nmem_malloc(nmem, sz);
+            memcpy(fn->darray[i], src, sz);
+        }
+    }
+    return fn;
+}
+
 facet_limits_t facet_limits_create(const char *param)
 {
     int i;

@@ -165,13 +165,14 @@ static void session_leave(struct session *s)
     yaz_mutex_leave(s->session_mutex);
 }
 
-void add_facet(struct session *s, const char *type, const char *value, int count)
+static void session_normalize_facet(struct session *s, const char *type,
+                                    const char *value,
+                                    WRBUF display_wrbuf,
+                                    WRBUF facet_wrbuf)
 {
     struct conf_service *service = s->service;
     pp2_charset_token_t prt;
     const char *facet_component;
-    WRBUF facet_wrbuf = wrbuf_alloc();
-    WRBUF display_wrbuf = wrbuf_alloc();
     int i;
     const char *icu_chain_id = 0;
 
@@ -208,6 +209,14 @@ void add_facet(struct session *s, const char *type, const char *value, int count
         }
     }
     pp2_charset_token_destroy(prt);
+}
+
+void add_facet(struct session *s, const char *type, const char *value, int count)
+{
+    WRBUF facet_wrbuf = wrbuf_alloc();
+    WRBUF display_wrbuf = wrbuf_alloc();
+
+    session_normalize_facet(s, type, value, display_wrbuf, facet_wrbuf);
  
     if (wrbuf_len(facet_wrbuf))
     {
@@ -1564,13 +1573,83 @@ int ingest_record(struct client *cl, const char *rec,
     }
     session_enter(se);
     if (client_get_session(cl) == se)
-        ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
+        ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
     session_leave(se);
     
     xmlFreeDoc(xdoc);
     return ret;
 }
 
+static int check_limit_local(struct client *cl,
+                             struct record *record)
+{
+    int skip_record = 0;
+    struct session *se = client_get_session(cl);
+    struct conf_service *service = se->service;
+    NMEM nmem_tmp = nmem_create();
+    struct session_database *sdb = client_get_database(cl);
+    int l = 0;
+    while (!skip_record)
+    {
+        struct conf_metadata *ser_md = 0;
+        struct record_metadata *rec_md = 0;
+        int md_field_id;
+        char **values = 0;
+        int i, num_v = 0;
+        
+        const char *name =
+            client_get_facet_limit_local(cl, sdb, &l, nmem_tmp, &num_v,
+                                         &values);
+        if (!name)
+            break;
+        
+        md_field_id = conf_service_metadata_field_id(service, name);
+        if (md_field_id < 0)
+        {
+            skip_record = 1;
+            break;
+        }
+        ser_md = &service->metadata[md_field_id];
+        rec_md = record->metadata[md_field_id];
+        for (i = 0; i < num_v; )
+        {
+            if (rec_md)
+            {
+                if (ser_md->type == Metadata_type_year 
+                    || ser_md->type == Metadata_type_date)
+                {
+                    int y = atoi(values[i]);
+                    if (y >= rec_md->data.number.min 
+                        && y <= rec_md->data.number.max)
+                        break;
+                }
+                else
+                {
+                    yaz_log(YLOG_LOG, "cmp: '%s' '%s'",
+                            rec_md->data.text.disp, values[i]);
+                    if (!strcmp(rec_md->data.text.disp, values[i]))
+                    {
+                        break;
+                    }
+                }
+                rec_md = rec_md->next;
+            }
+            else
+            {
+                rec_md = record->metadata[md_field_id];
+                i++;
+            }
+        }
+        if (i == num_v)
+        {
+            skip_record = 1;
+            break;
+        }
+    }
+    nmem_destroy(nmem_tmp);
+    return skip_record;
+}
+                             
 static int ingest_to_cluster(struct client *cl,
                              xmlDoc *xdoc,
                              xmlNode *root,
@@ -1644,6 +1723,16 @@ static int ingest_to_cluster(struct client *cl,
         }
     }
 
+    if (check_limit_local(cl, record))
+    {
+        session_log(se, YLOG_LOG, "Facet filtered out record no %d from %s",
+                    record_no, sdb->database->id);
+        if (type)
+            xmlFree(type);
+        if (value)
+            xmlFree(value);
+        return -2;
+    }
     cluster = reclist_insert(se->reclist, service, record,
                              mergekey_norm, &se->total_merged);
     if (!cluster)

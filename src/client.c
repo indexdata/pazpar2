@@ -121,6 +121,7 @@ struct client {
     YAZ_MUTEX mutex;
     int ref_count;
     char *id;
+    facet_limits_t facet_limits;
 };
 
 struct suggestions {
@@ -827,6 +828,7 @@ struct client *client_create(const char *id)
     pazpar2_mutex_create(&cl->mutex, "client");
     cl->preferred = 0;
     cl->ref_count = 1;
+    cl->facet_limits = 0;
     assert(id);
     cl->id = xstrdup(id);
     client_use(1);
@@ -865,6 +867,7 @@ int client_destroy(struct client *c)
             c->cqlquery = 0;
             xfree(c->id);
             assert(!c->connection);
+            facet_limits_destroy(c->facet_limits);
 
             if (c->resultset)
             {
@@ -986,6 +989,33 @@ static char *make_solrquery(struct client *cl)
     odr_destroy(odr_out);
     solr_transform_close(sqlt);
     return r;
+}
+
+const char *client_get_facet_limit_local(struct client *cl,
+                                         struct session_database *sdb,
+                                         int *l,
+                                         NMEM nmem, int *num, char ***values)
+{
+    const char *name = 0;
+    const char *value = 0;
+    for (; (name = facet_limits_get(cl->facet_limits, *l, &value)); (*l)++)
+    {
+        struct setting *s = 0;
+        
+        for (s = sdb->settings[PZ_LIMITMAP]; s; s = s->next)
+        {
+            const char *p = strchr(s->name + 3, ':');
+            if (p && !strcmp(p + 1, name) && s->value &&
+                !strncmp(s->value, "local:", 6))
+            {
+                nmem_strsplit_escape2(nmem, "|", value, values,
+                                      num, 1, '\\', 1);
+                (*l)++;
+                return name;
+            }
+        }
+    }
+    return 0;
 }
 
 static int apply_limit(struct session_database *sdb,
@@ -1111,6 +1141,9 @@ int client_parse_query(struct client *cl, const char *query,
 
     if (apply_limit(sdb, facet_limits, w_pqf, w_ccl))
         return -2;
+
+    facet_limits_destroy(cl->facet_limits);
+    cl->facet_limits = facet_limits_dup(facet_limits);
 
     yaz_log(YLOG_LOG, "CCL query: %s", wrbuf_cstr(w_ccl));
     cn = ccl_find_str(ccl_map, wrbuf_cstr(w_ccl), &cerror, &cpos);

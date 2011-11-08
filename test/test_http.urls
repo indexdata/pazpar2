@@ -55,18 +55,22 @@ http://localhost:9763/search.pz2?session=8&command=search&query=xyzzyz
 2 http://localhost:9763/search.pz2?session=8&command=show&block=1
 http://localhost:9763/search.pz2?session=8&command=search&query=a+and
 1 http://localhost:9763/search.pz2?session=8&command=show&block=1
-http://localhost:9763/search.pz2?command=init&pz:limitmap:author%5Bz3950.indexdata.com%2Fmarc%5D=ccl:author_phrase
-1 http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3dadam\,+james%7Cother_author
+http://localhost:9763/search.pz2?command=init&pz:limitmap:author%5Bz3950.indexdata.com%2Fmarc%5D=ccl:author_phrase&pz:limitmap:subject%5Bz3950.indexdata.com%2fmarc%5D=local:&pz:limitmap:date%5Bz3950.indexdata.com%2fmarc%5D=local:
+1 http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3Dadam\,+james%7Cother_author
 1 http://localhost:9763/search.pz2?session=9&command=show&block=1
-http://localhost:9763/search.pz2?session=9&command=settings&pz:limitmap:author%5Bz3950.indexdata.com%2Fmarc%5D=rpn:%40attr+1%3d1003+%40attr+6%3d3
-1 http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3dadam\,+james%7Cother_author
+http://localhost:9763/search.pz2?session=9&command=settings&pz:limitmap:author%5Bz3950.indexdata.com%2Fmarc%5D=rpn:%40attr+1%3D1003+%40attr+6%3D3
+1 http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3Dadam\,+james%7Cother_author
 1 http://localhost:9763/search.pz2?session=9&command=show&block=1
-http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3dadam\,+james%7Cother_author&filter=pz%3Aid%3Dz3950.indexdata.com%2Fmarc
+http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3Dadam\,+james%7Cother_author&filter=pz%3Aid%3Dz3950.indexdata.com%2Fmarc
 http://localhost:9763/search.pz2?session=9&command=bytarget
 http://localhost:9763/search.pz2?session=9&command=show
-http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3dadam\,+james%7Cother_author&filter=pz%3Aid%3Dnone
+http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3Dadam\,+james%7Cother_author&filter=pz%3Aid%3Dnone
 http://localhost:9763/search.pz2?session=9&command=bytarget
 http://localhost:9763/search.pz2?session=9&command=show
-http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3dadam\,+james%7Cother_author
+http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3Dadam\,+james%7Cother_author
 http://localhost:9763/search.pz2?session=9&command=bytarget
 http://localhost:9763/search.pz2?session=9&command=show
+http://localhost:9763/search.pz2?session=9&command=search&query=computer&limit=subject%3DRailroads
+http://localhost:9763/search.pz2?session=9&command=show&block=1
+http://localhost:9763/search.pz2?session=9&command=search&query=computer&limit=date%3D1977
+http://localhost:9763/search.pz2?session=9&command=show&block=1
