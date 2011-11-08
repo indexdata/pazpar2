@@ -555,12 +555,15 @@ void client_got_records(struct client *cl)
     struct session *se = cl->session;
     if (se)
     {
-        client_unlock(cl);
-        session_alert_watch(se, SESSION_WATCH_SHOW);
-        session_alert_watch(se, SESSION_WATCH_BYTARGET);
-        session_alert_watch(se, SESSION_WATCH_TERMLIST);
-        session_alert_watch(se, SESSION_WATCH_RECORD);
-        client_lock(cl);
+        if (reclist_get_num_records(se->reclist) > 0)
+        {
+            client_unlock(cl);
+            session_alert_watch(se, SESSION_WATCH_SHOW);
+            session_alert_watch(se, SESSION_WATCH_BYTARGET);
+            session_alert_watch(se, SESSION_WATCH_TERMLIST);
+            session_alert_watch(se, SESSION_WATCH_RECORD);
+            client_lock(cl);
+        }
     }
 }
 
