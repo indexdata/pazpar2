@@ -4,13 +4,18 @@
 // create a parameters array and pass it to the pz2's constructor
 // then register the form submit event with the pz2.search function
 // autoInit is set to true on default
-var usesessions = true;
+var usesessions = false;
 var pazpar2path = '/service-proxy/';
 var showResponseType = '';
+// Facet configuration
 var querys = {'su': '', 'au': '', 'xt': ''};
-var showResponseType = 'json';
+var query_client_server = {'su': 'subject', 'au': 'author', 'xt': 'xtargets'};
+var querys_server = {};
+var useLimit = 1;
+// Fail to get JSON working stabil.
+var showResponseType = 'xml';
 if (document.location.hash == '#pazpar2' || document.location.search.match("useproxy=false")) {
-    usesessions = false;
+    usesessions = true;
     pazpar2path = '/pazpar2/search.pz2';
     showResponseType = 'xml';
 }
@@ -62,11 +67,11 @@ function handleKeyPress(e, formId, focusId)
 
   if(key == 13 || key == 10)  
   {  
-    document.getElementById(formId).submit();  
-    focusElement = document.getElementById(focusId);
-    if (focusElement)
-      focusElement.focus();  
-    return false;  
+      onFormSubmitEventHandler();
+      focusElement = document.getElementById(focusId);
+      if (focusElement)
+	  focusElement.focus();  
+      return false;  
   }  
   else  
     return true;  
@@ -256,7 +261,7 @@ function my_onterm(data) {
     termlists.push('<ul>');
     termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'reset_au\',\'All\');return false;">All<a></li>');
     for (var i = 0; i < data.author.length && i < AuthorMax; i++ ) {
-        termlists.push('<li><a href="#" onclick="limitQuery(\'au\', \'' + data.author[i].name +'\');return false;">' 
+        termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'au\', \'' + data.author[i].name +'\');return false;">' 
                             + data.author[i].name 
                             + '  (' 
                             + data.author[i].freq 
@@ -400,16 +405,23 @@ function resetPage()
     totalRec = 0;
 }
 
+function getFacets() {
+    var result = "";
+    for (var key in querys_server) {
+	if (result.length > 0)
+	    result += ","
+	result += querys_server[key];
+    }
+    return result;
+}
+
 function triggerSearch ()
 {
-    my_paz.search(document.search.query.value, recPerPage, curSort, curFilter);
-/*
-    , startWith,
+    my_paz.search(document.search.query.value, recPerPage, curSort, curFilter, undefined,
 	{
     	   "limit" : getFacets() 
 	}
 	);
-*/
 }
 
 function loadSelect ()
@@ -429,6 +441,27 @@ function limitQuery(field, value)
 }
 
 // limit the query after clicking the facet
+function limitQueryServer(field, value)
+{
+    // Check for client field usage
+    var fieldname = query_client_server[field];
+    if (!fieldname) 
+	fieldname = field;	
+    
+    var newQuery = fieldname + '=' + value.replace(",", "\\,").replace("|", "\\,");
+    // Does it already exists?
+    if (querys_server[fieldname]) 
+	querys_server[fieldname] += "," + newQuery;
+    else
+	querys_server[fieldname] = newQuery;
+//  document.search.query.value += newQuery;
+  onFormSubmitEventHandler();
+  showhide("recordview");
+}
+
+
+
+// limit the query after clicking the facet
 function removeQuery (field, value) {
 	document.search.query.value.replace(' and ' + field + '="' + value + '"', '');
     onFormSubmitEventHandler();
@@ -437,17 +470,40 @@ function removeQuery (field, value) {
 
 // limit the query after clicking the facet
 function limitOrResetQuery (field, value, selected) {
-	if (field == 'reset_su' || field == 'reset_au') {
-		var reset_field = field.substring(6);
-		document.search.query.value = document.search.query.value.replace(querys[reset_field], '');
-		querys[reset_field] = '';
-	    onFormSubmitEventHandler();
-	    showhide("recordview");
-	}
-	else 
-		limitQuery(field, value);
+    if (useLimit) {
+	limitOrResetQueryServer(field,value, selected);
+	return ;
+    }
+    if (field == 'reset_su' || field == 'reset_au') {
+	var reset_field = field.substring(6);
+	document.search.query.value = document.search.query.value.replace(querys[reset_field], '');
+	querys[reset_field] = '';
+	onFormSubmitEventHandler();
+	showhide("recordview");
+    }
+    else 
+	limitQuery(field, value);
 	//alert("limitOrResetQuerry: query after: " + document.search.query.value);
 }
+
+// limit the query after clicking the facet
+function limitOrResetQueryServer (field, value, selected) {
+    if (field.substring(0,6) == 'reset_') {
+	var clientname = field.substring(6);
+	var fieldname = query_client_server[clientname];
+	if (!fieldname) 
+	    fieldname = clientname;	
+	delete querys_server[fieldname];
+	onFormSubmitEventHandler();
+	showhide("recordview");
+    }
+    else 
+	limitQueryServer(field, value);
+	//alert("limitOrResetQuerry: query after: " + document.search.query.value);
+}
+
+
+
 
 // limit by target functions
 function limitTarget (id, name)
