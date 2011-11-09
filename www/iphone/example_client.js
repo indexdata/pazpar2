@@ -10,11 +10,12 @@ var showResponseType = '';
 // Facet configuration
 var querys = {'su': '', 'au': '', 'xt': ''};
 var query_client_server = {'su': 'subject', 'au': 'author', 'xt': 'xtargets'};
-var querys_server = {'subject': '', 'author': '', 'xtargets': ''};
-var useLimit = 0;
+var querys_server = {};
+var useLimit = 1;
+// Fail to get JSON working stabil.
 var showResponseType = 'xml';
 if (document.location.hash == '#pazpar2' || document.location.search.match("useproxy=false")) {
-    usesessions = false;
+    usesessions = true;
     pazpar2path = '/pazpar2/search.pz2';
     showResponseType = 'xml';
 }
@@ -260,7 +261,7 @@ function my_onterm(data) {
     termlists.push('<ul>');
     termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'reset_au\',\'All\');return false;">All<a></li>');
     for (var i = 0; i < data.author.length && i < AuthorMax; i++ ) {
-        termlists.push('<li><a href="#" onclick="limitQuery(\'au\', \'' + data.author[i].name +'\');return false;">' 
+        termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'au\', \'' + data.author[i].name +'\');return false;">' 
                             + data.author[i].name 
                             + '  (' 
                             + data.author[i].freq 
@@ -404,19 +405,23 @@ function resetPage()
     totalRec = 0;
 }
 
+function getFacets() {
+    var result = "";
+    for (var key in querys_server) {
+	if (result.length > 0)
+	    result += ","
+	result += querys_server[key];
+    }
+    return result;
+}
+
 function triggerSearch ()
 {
-    my_paz.search(document.search.query.value, recPerPage, curSort, curFilter
-
-/*
-  undefined,
-
+    my_paz.search(document.search.query.value, recPerPage, curSort, curFilter, undefined,
 	{
     	   "limit" : getFacets() 
 	}
-*/
 	);
-
 }
 
 function loadSelect ()
@@ -438,11 +443,17 @@ function limitQuery(field, value)
 // limit the query after clicking the facet
 function limitQueryServer(field, value)
 {
-  var newQuery = field + '="' + value + '"';
-    if (querys_server[field] == '') 
-	querys_server[field] = newQuery;
+    // Check for client field usage
+    var fieldname = query_client_server[field];
+    if (!fieldname) 
+	fieldname = field;	
+    
+    var newQuery = fieldname + '=' + value.replace(",", "\\,").replace("|", "\\,");
+    // Does it already exists?
+    if (querys_server[fieldname]) 
+	querys_server[fieldname] += "," + newQuery;
     else
-	querys_server[field] += "," + newQuery;
+	querys_server[fieldname] = newQuery;
 //  document.search.query.value += newQuery;
   onFormSubmitEventHandler();
   showhide("recordview");
@@ -482,7 +493,7 @@ function limitOrResetQueryServer (field, value, selected) {
 	var fieldname = query_client_server[clientname];
 	if (!fieldname) 
 	    fieldname = clientname;	
-	querys_server[fieldname] = '';
+	delete querys_server[fieldname];
 	onFormSubmitEventHandler();
 	showhide("recordview");
     }
