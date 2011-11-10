@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "charsets.h"
 #include "http.h"
 #include "database.h"
+#include "host.h"
 
 enum conf_metadata_type {
     Metadata_type_generic,    // Generic text field

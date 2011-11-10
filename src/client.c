@@ -683,12 +683,37 @@ int client_has_facet(struct client *cl, const char *name)
     return 0;
 }
 
-void client_start_search(struct client *cl, const char *sort_strategy_and_spec,
-                         int increasing)
+static const char *get_strategy_plus_sort(struct client *l, const char *field)
+{
+    struct session_database *sdb = client_get_database(l);
+    struct setting *s;
+
+    const char *strategy_plus_sort = 0;
+    
+    for (s = sdb->settings[PZ_SORTMAP]; s; s = s->next)
+    {
+        char *p = strchr(s->name + 3, ':');
+        if (!p)
+        {
+            yaz_log(YLOG_WARN, "Malformed sortmap name: %s", s->name);
+            continue;
+        }
+        p++;
+        if (!strcmp(p, field))
+        {
+            strategy_plus_sort = s->value;
+            break;
+        }
+    }
+    return strategy_plus_sort;
+}
+
+void client_start_search(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
     struct connection *co = client_get_connection(cl);
     ZOOM_connection link = connection_get_link(co);
+    struct session *se = client_get_session(cl);
     ZOOM_resultset rs;
     const char *opt_piggyback   = session_setting_oneval(sdb, PZ_PIGGYBACK);
     const char *opt_queryenc    = session_setting_oneval(sdb, PZ_QUERYENCODING);
@@ -767,23 +792,39 @@ void client_start_search(struct client *cl, const char *sort_strategy_and_spec,
         
         ZOOM_query_prefix(q, cl->pquery);
     }
-    if (sort_strategy_and_spec &&
-        strlen(sort_strategy_and_spec) < 40 /* spec below */)
-    {
-        char spec[50], *p;
-        strcpy(spec, sort_strategy_and_spec);
-        p = strchr(spec, ':');
-        if (p)
+    if (se->sorted_results)
+    {   /* first entry is current sorting ! */
+        const char *sort_strategy_and_spec =
+            get_strategy_plus_sort(cl, se->sorted_results->field);
+        int increasing = se->sorted_results->increasing;
+        if (sort_strategy_and_spec && strlen(sort_strategy_and_spec) < 40)
         {
-            *p++ = '\0'; /* cut the string in two */
-            while (*p == ' ')
-                p++;
-            if (increasing)
-                strcat(p, " <");
-            else
-                strcat(p, " >");
-            yaz_log(YLOG_LOG, "applying %s %s", spec, p);
-            ZOOM_query_sortby2(q, spec, p);
+            char spec[50], *p;
+            strcpy(spec, sort_strategy_and_spec);
+            p = strchr(spec, ':');
+            if (p)
+            {
+                *p++ = '\0'; /* cut the string in two */
+                while (*p == ' ')
+                    p++;
+                if (increasing)
+                    strcat(p, " <");
+                else
+                    strcat(p, " >");
+                yaz_log(YLOG_LOG, "applying %s %s", spec, p);
+                ZOOM_query_sortby2(q, spec, p);
+            }
+        }
+        else
+        {
+            /* no native sorting.. If this is not the first search, then
+               skip it entirely */
+            if (se->sorted_results->next)
+            {
+                ZOOM_query_destroy(q);
+                client_set_state_nb(cl, Client_Idle);
+                return;
+            }
         }
     }
     rs = ZOOM_connection_search(link, q);

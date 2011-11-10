@@ -22,15 +22,27 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <yaz/mutex.h>
 
+typedef struct database_hosts *database_hosts_t;
+
 /** \brief Represents a host (irrespective of databases) */
 struct host {
-    char *hostport;
+    char *url;      // logical host/database?args ..
+    char *tproxy;   // tproxy address (no Z39.50 UI)
+    char *proxy;    // logical proxy address
+    char *ipport;   // tproxy or proxy resolved
     struct connection *connections; // All connections to this
     struct host *next;
     YAZ_MUTEX mutex;
     YAZ_COND cond_ready;
 };
 
+database_hosts_t database_hosts_create(void);
+void database_hosts_destroy(database_hosts_t *);
+
+struct host *find_host(database_hosts_t hosts, const char *hostport,
+		       const char *proxy, int port, iochan_man_t iochan_man);
+
+int host_getaddrinfo(struct host *host, iochan_man_t iochan_man);
 
 #endif
 

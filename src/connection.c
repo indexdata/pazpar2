@@ -150,7 +150,7 @@ static void connection_destroy(struct connection *co)
         ZOOM_connection_destroy(co->link);
         iochan_destroy(co->iochan);
     }
-    yaz_log(YLOG_DEBUG, "%p Connection destroy %s", co, co->host->hostport);
+    yaz_log(YLOG_DEBUG, "%p Connection destroy %s", co, co->host->url);
 
     if (co->client)
     {
@@ -183,7 +183,8 @@ static struct connection *connection_create(struct client *cl,
     co->operation_timeout = operation_timeout;
     co->session_timeout = session_timeout;
     
-    connection_connect(co, iochan_man);
+    if (host->ipport)
+        connection_connect(co, iochan_man);
 
     yaz_mutex_enter(host->mutex);
     co->next = co->host->connections;
@@ -367,6 +368,50 @@ static void connection_release(struct connection *co)
     co->client = 0;
 }
 
+void connect_resolver_host(struct host *host, iochan_man_t iochan_man)
+{
+    struct connection *con;
+
+start:
+    yaz_mutex_enter(host->mutex);
+    con = host->connections;
+    while (con)
+    {
+        if (con->state == Conn_Closed)
+        {
+            if (!host->ipport) /* unresolved */
+            {
+                remove_connection_from_host(con);
+                yaz_mutex_leave(host->mutex);
+                connection_destroy(con);
+                goto start;
+                /* start all over .. at some point it will be NULL */
+            }
+            else if (!con->client)
+            {
+                remove_connection_from_host(con);
+                yaz_mutex_leave(host->mutex);
+                connection_destroy(con);
+                /* start all over .. at some point it will be NULL */
+                goto start;
+            }
+            else
+            {
+                yaz_mutex_leave(host->mutex);
+                connection_connect(con, iochan_man);
+                client_start_search(con->client);
+                goto start;
+            }
+        }
+        else
+        {
+            yaz_log(YLOG_LOG, "connect_resolver_host: state=%d", con->state);
+            con = con->next;
+        }
+    }
+    yaz_mutex_leave(host->mutex);
+}
+
 static struct host *connection_get_host(struct connection *con)
 {
     return con->host;
@@ -382,7 +427,6 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     const char *sru_version = 0;
 
     struct session_database *sdb = client_get_database(con->client);
-    const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
     const char *apdulog = session_setting_oneval(sdb, PZ_APDULOG);
 
     assert(con);
@@ -394,11 +438,19 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     if ((charset = session_setting_oneval(sdb, PZ_NEGOTIATION_CHARSET)))
         ZOOM_options_set(zoptions, "charset", charset);
     
-    if (zproxy && *zproxy)
+    assert(host->ipport);
+    if (host->proxy)
     {
-        con->zproxy = xstrdup(zproxy);
-        ZOOM_options_set(zoptions, "proxy", zproxy);
+        yaz_log(YLOG_LOG, "proxy=%s", host->ipport);
+        ZOOM_options_set(zoptions, "proxy", host->ipport);
     }
+    else
+    {
+        assert(host->tproxy);
+        yaz_log(YLOG_LOG, "tproxy=%s", host->ipport);
+        ZOOM_options_set(zoptions, "tproxy", host->ipport);
+    }   
+
     if (apdulog && *apdulog)
         ZOOM_options_set(zoptions, "apdulog", apdulog);
 
@@ -420,14 +472,14 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     {
         char http_hostport[512];
         strcpy(http_hostport, "http://");
-        strcat(http_hostport, host->hostport);
+        strcat(http_hostport, host->url);
+        yaz_log(YLOG_LOG, "SRU connect to : %s", http_hostport);
         ZOOM_connection_connect(con->link, http_hostport, 0);
     }
     else
     {
-        ZOOM_connection_connect(con->link, host->hostport, 0);
+        ZOOM_connection_connect(con->link, host->url, 0);
     }
-    
     con->iochan = iochan_create(-1, connection_handler, 0, "connection_socket");
     con->state = Conn_Connecting;
     iochan_settimeout(con->iochan, con->operation_timeout);
@@ -449,7 +501,9 @@ int client_prep_connection(struct client *cl,
     struct session_database *sdb = client_get_database(cl);
     const char *zproxy = session_setting_oneval(sdb, PZ_ZPROXY);
     const char *url = session_setting_oneval(sdb, PZ_URL);
+    const char *sru = session_setting_oneval(sdb, PZ_SRU);
     struct host *host = 0;
+    int default_port = *sru ? 80 : 210;
 
     if (zproxy && zproxy[0] == '\0')
         zproxy = 0;
@@ -458,10 +512,12 @@ int client_prep_connection(struct client *cl,
         url = sdb->database->id;
 
     host = find_host(client_get_session(cl)->service->server->database_hosts,
-                     url);
+                     url, zproxy, default_port, iochan_man);
 
     yaz_log(YLOG_DEBUG, "client_prep_connection: target=%s url=%s",
             client_get_id(cl), url);
+    if (!host)
+        return 0;
 
     co = client_get_connection(cl);
 

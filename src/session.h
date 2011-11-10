@@ -181,6 +181,7 @@ int ingest_record(struct client *cl, const char *rec, int record_no, NMEM nmem);
 void session_alert_watch(struct session *s, int what);
 void add_facet(struct session *s, const char *type, const char *value, int count);
 
+
 void perform_termlist(struct http_channel *c, struct session *se,
                       const char *name, int num);
 void session_log(struct session *s, int level, const char *fmt, ...)
@@ -189,6 +190,12 @@ void session_log(struct session *s, int level, const char *fmt, ...)
 #endif
     ;
 #endif
+
+struct session_sorted_results {
+    const char *field;
+    int increasing;
+    struct session_sorted_results *next;
+};
 
 /*
  * Local variables:

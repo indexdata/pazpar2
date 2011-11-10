@@ -20,7 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef DATABASE_H
 #define DATABASE_H
 
-typedef struct database_hosts *database_hosts_t;
 struct session_database;
 struct session;
 struct conf_service;
@@ -33,9 +32,5 @@ int predef_grep_databases(void *context, struct conf_service *service,
 int match_zurl(const char *zurl, const char *pattern);
 struct database *new_database(const char *id, NMEM nmem);
 
-database_hosts_t database_hosts_create(void);
-void database_hosts_destroy(database_hosts_t *);
-
-struct host *find_host(database_hosts_t hosts, const char *hostport);
 
 #endif
