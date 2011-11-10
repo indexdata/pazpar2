@@ -192,6 +192,24 @@
     </pz:metadata>
   </xsl:template>
 
+  <!-- Fields produced by Connectors but not yet supported here:
+	### available
+	### citation
+	### medium (overlooked in favour of XSLT parameter)
+	### relevance
+	### holding (but isn't that a container like "item"?
+	### booktitle
+	### copyright
+	### copyrightabstract
+	### pubtype
+	### doctype
+	### extent
+	### format
+	### languageitem
+	### languageabstract
+	### permalink
+    -->
+
   <xsl:template match="text()"/>
 
 </xsl:stylesheet>
