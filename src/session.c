@@ -95,12 +95,6 @@ struct client_list {
     struct client_list *next;
 };
 
-struct session_sorted_results {
-    const char *field;
-    int increasing;
-    struct session_sorted_results *next;
-};
-
 /* session counting (1) , disable client counting (0) */
 static YAZ_MUTEX g_session_mutex = 0;
 static int no_sessions = 0;
@@ -617,31 +611,6 @@ int session_is_preferred_clients_ready(struct session *s)
     return res == 0;
 }
 
-static const char *get_strategy_plus_sort(struct client *l, const char *field)
-{
-    struct session_database *sdb = client_get_database(l);
-    struct setting *s;
-
-    const char *strategy_plus_sort = 0;
-    
-    for (s = sdb->settings[PZ_SORTMAP]; s; s = s->next)
-    {
-        char *p = strchr(s->name + 3, ':');
-        if (!p)
-        {
-            yaz_log(YLOG_WARN, "Malformed sortmap name: %s", s->name);
-            continue;
-        }
-        p++;
-        if (!strcmp(p, field))
-        {
-            strategy_plus_sort = s->value;
-            break;
-        }
-    }
-    return strategy_plus_sort;
-}
-
 void session_sort(struct session *se, const char *field, int increasing)
 {
     struct session_sorted_results *sr;
@@ -673,16 +642,12 @@ void session_sort(struct session *se, const char *field, int increasing)
     for (l = se->clients_active; l; l = l->next)
     {
         struct client *cl = l->client;
-        const char *strategy_plus_sort = get_strategy_plus_sort(cl, field);
-        if (strategy_plus_sort)
-        {
-            struct timeval tval;
-            if (client_prep_connection(cl, se->service->z3950_operation_timeout,
-                                       se->service->z3950_session_timeout,
-                                       se->service->server->iochan_man,
-                                       &tval))
-                client_start_search(cl, strategy_plus_sort, increasing);
-        }
+        struct timeval tval;
+        if (client_prep_connection(cl, se->service->z3950_operation_timeout,
+                                   se->service->z3950_session_timeout,
+                                   se->service->server->iochan_man,
+                                   &tval))
+            client_start_search(cl);
     }
     session_leave(se);
 }
@@ -756,7 +721,6 @@ enum pazpar2_error_code session_search(struct session *se,
     {
         int parse_ret;
         struct client *cl = l->client;
-        const char *strategy_plus_sort = get_strategy_plus_sort(cl, sort_field);
 
         if (prepare_map(se, client_get_database(cl)) < 0)
             continue;
@@ -775,7 +739,7 @@ enum pazpar2_error_code session_search(struct session *se,
                                        se->service->z3950_session_timeout,
                                        se->service->server->iochan_man,
                                        &tval))
-                client_start_search(cl, strategy_plus_sort, increasing);
+                client_start_search(cl);
         }
         else
         {
