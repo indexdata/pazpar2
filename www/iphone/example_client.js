@@ -34,7 +34,10 @@ my_paz = new pz2( { "onshow": my_onshow,
                     "onrecord": my_onrecord } );
 // some state vars
 var curPage = 1;
-var recPerPage = 20;
+var recPerPage = 100;
+var recToShowPageSize = 20;
+var recToShow = recToShowPageSize;
+var recIDs = {};
 var totalRec = 0;
 var curDetRecId = '';
 var curDetRecData = null;
@@ -135,6 +138,21 @@ function my_oninit() {
     my_paz.bytarget();
 }
 
+function showMoreRecords() {
+    var i = recToShow;
+    recToShow += recToShowPageSize;
+    for ( ; i < recToShow && i < recPerPage; i++) {
+	var element = document.getElementById(recIDs[i]);
+	if (element)
+	    element.style.display = '';
+    }
+    if (i == recPerPage) {
+	var element = document.getElementById('recdiv_END');
+	if (element)
+	    element.style.display = 'none';
+    }
+}
+
 function my_onshow(data) {
     totalRec = data.merged;
     // move it out
@@ -147,28 +165,40 @@ function my_onshow(data) {
     drawPager(pager);
 
     var results = document.getElementById("results");
-  
+    
     var html = [];
     if (data.hits == undefined) 
-	return ; 
+	return ;
+    var style = '';
     for (var i = 0; i < data.hits.length; i++) {
         var hit = data.hits[i];
-	      html.push('<li id="recdiv_'+hit.recid+'" >'
-           /* +'<span>'+ (i + 1 + recPerPage * (curPage - 1)) +'. </span>' */
-            +'<a href="#" id="rec_'+hit.recid
-            +'" onclick="showDetails(this.id);return false;">' 
-            + hit["md-title"] +'</a> '); 
-	      if (hit["md-title-responsibility"] !== undefined) {
+	var recID = "recdiv_" + hit.recid; 
+	//var recID = "recdiv_" + i; 
+	recIDs[i] = recID;
+	if (i == recToShow)
+	    style = ' style="display:none" ';
+	html.push('<li id="' + recID + '" ' + style +  '>' 
+		  +'<a href="#" id="rec_'+hit.recid
+		  +'" onclick="showDetails(this.id);return false;">' 
+		  + hit["md-title"] +'</a> '); 
+	if (hit["md-title-responsibility"] !== undefined) {
     	    html.push('<a href="#">'+hit["md-title-responsibility"]+'</a> ');
-  	      if (hit["md-title-remainder"] !== undefined) {
+  	    if (hit["md-title-remainder"] !== undefined) {
   	        html.push('<a href="#">' + hit["md-title-remainder"] + ' </a> ');
-  	      }
+  	    }
       	}
         if (hit.recid == curDetRecId) {
             html.push(renderDetails_iphone(curDetRecData));
         }
-      	html.push('</div>');
+      	html.push('</li>');
     }
+    // set up "More..." if needed. 
+    style = 'display:none';
+    if (recToShow < recPerPage) {
+	style = 'display:block';
+    }
+    html.push('<li id="recdiv_END" style="' + style + '"><a onclick="showMoreRecords()">More...</a></li>');     
+
     replaceHtml(results, html.join(''));
 }
 
@@ -417,6 +447,8 @@ function getFacets() {
 
 function triggerSearch ()
 {
+    // Restore to initial page size
+    recToShow = recToShowPageSize;
     my_paz.search(document.search.query.value, recPerPage, curSort, curFilter, undefined,
 	{
     	   "limit" : getFacets() 
