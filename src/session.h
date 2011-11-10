@@ -191,6 +191,12 @@ void session_log(struct session *s, int level, const char *fmt, ...)
     ;
 #endif
 
+struct session_sorted_results {
+    const char *field;
+    int increasing;
+    struct session_sorted_results *next;
+};
+
 /*
  * Local variables:
  * c-basic-offset: 4

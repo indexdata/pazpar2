@@ -77,8 +77,7 @@ int client_prep_connection(struct client *cl,
                            int operation_timeout, int session_timeout,
                            iochan_man_t iochan,
                            const struct timeval *abstime);
-void client_start_search(struct client *cl, const char *sort_strategy_and_spec,
-                         int increasing);
+void client_start_search(struct client *cl);
 void client_set_session(struct client *cl, struct session *se);
 int client_is_active(struct client *cl);
 int client_is_active_preferred(struct client *cl);
