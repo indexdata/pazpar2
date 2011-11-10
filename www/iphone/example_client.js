@@ -57,7 +57,7 @@ function loginFormSubmit() {
 	authCb, authCb);
 }
 
-function handleKeyPress(e, formId, focusId)  
+function handleKeyPress(e)  
 {  
   var key;  
   if(window.event)  
@@ -67,10 +67,10 @@ function handleKeyPress(e, formId, focusId)
 
   if(key == 13 || key == 10)  
   {  
-      onFormSubmitEventHandler();
-      focusElement = document.getElementById(focusId);
-      if (focusElement)
-	  focusElement.focus();  
+      button = document.getElementById('button');
+      button.focus();
+      button.click();
+
       return false;  
   }  
   else  
