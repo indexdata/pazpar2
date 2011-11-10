@@ -4,7 +4,7 @@
 DEBUG=0   # 0 for release, 1 for debug
 USE_MANIFEST = 1 # Can be enabled Visual Studio 2005/2008
 PACKAGE_NAME=pazpar2
-PACKAGE_VERSION=1.6.3
+PACKAGE_VERSION=1.6.4
 
 # YAZ
 YAZ_DIR=..\..\yaz
@@ -178,6 +178,8 @@ LNKOPT= $(COMMON_LNK_OPTIONS) $(RELEASE_LNK_OPTIONS) $(LNK_LIBS)
 # Source and object modules
 
 PAZPAR2_OBJS = \
+   "$(OBJDIR)\getaddrinfo.obj" \
+   "$(OBJDIR)\host.obj" \
    "$(OBJDIR)\pazpar2.obj" \
    "$(OBJDIR)\pazpar2_config.obj" \
    "$(OBJDIR)\http.obj" \
@@ -201,6 +203,7 @@ PAZPAR2_OBJS = \
    "$(OBJDIR)\ppmutex.obj" \
    "$(OBJDIR)\incref.obj" \
    "$(OBJDIR)\sel_thread.obj" \
+   "$(OBJDIR)\service_xslt.obj" \
    "$(OBJDIR)\connection.obj"  \
    "$(OBJDIR)\facet_limit.obj" 
 

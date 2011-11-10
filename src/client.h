@@ -52,6 +52,7 @@ void client_show_raw_remove(struct client *cl, void *rr);
 const char *client_get_state_str(struct client *cl);
 enum client_state client_get_state(struct client *cl);
 void client_set_state(struct client *cl, enum client_state st);
+void client_set_state_nb(struct client *cl, enum client_state st);
 struct connection *client_get_connection(struct client *cl);
 struct session_database *client_get_database(struct client *cl);
 void client_set_database(struct client *cl, struct session_database *db);
@@ -76,8 +77,7 @@ int client_prep_connection(struct client *cl,
                            int operation_timeout, int session_timeout,
                            iochan_man_t iochan,
                            const struct timeval *abstime);
-void client_start_search(struct client *cl, const char *sort_strategy_and_spec,
-                         int increasing);
+void client_start_search(struct client *cl);
 void client_set_session(struct client *cl, struct session *se);
 int client_is_active(struct client *cl);
 int client_is_active_preferred(struct client *cl);

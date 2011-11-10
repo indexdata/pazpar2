@@ -114,12 +114,21 @@ struct client {
     int startrecs;
     int diagnostic;
     int preferred;
+    struct suggestions *suggestions;
     enum client_state state;
     struct show_raw *show_raw;
     ZOOM_resultset resultset;
     YAZ_MUTEX mutex;
     int ref_count;
     char *id;
+};
+
+struct suggestions {
+    NMEM nmem;
+    int num;
+    char **misspelled;
+    char **suggest;
+    char *passthrough;
 };
 
 struct show_raw {
@@ -153,6 +162,11 @@ enum client_state client_get_state(struct client *cl)
     return cl->state;
 }
 
+void client_set_state_nb(struct client *cl, enum client_state st)
+{
+    cl->state = st;
+}
+
 void client_set_state(struct client *cl, enum client_state st)
 {
     int was_active = 0;
@@ -170,6 +184,8 @@ void client_set_state(struct client *cl, enum client_state st)
                 client_get_id(cl), no_active);
         if (no_active == 0) {
             session_alert_watch(cl->session, SESSION_WATCH_SHOW);
+            session_alert_watch(cl->session, SESSION_WATCH_BYTARGET);
+            session_alert_watch(cl->session, SESSION_WATCH_TERMLIST);
             session_alert_watch(cl->session, SESSION_WATCH_SHOW_PREF);
         }
     }
@@ -502,6 +518,9 @@ void client_check_preferred_watch(struct client *cl)
 
 }
 
+struct suggestions* client_suggestions_create(const char* suggestions_string);
+static void client_suggestions_destroy(struct client *cl);
+
 void client_search_response(struct client *cl)
 {
     struct connection *co = cl->connection;
@@ -524,6 +543,9 @@ void client_search_response(struct client *cl)
         client_report_facets(cl, resultset);
         cl->record_offset = cl->startrecs;
         cl->hits = ZOOM_resultset_size(resultset);
+        if (cl->suggestions)
+            client_suggestions_destroy(cl);
+        cl->suggestions = client_suggestions_create(ZOOM_resultset_option_get(resultset, "suggestions"));
     }
 }
 
@@ -534,6 +556,8 @@ void client_got_records(struct client *cl)
     {
         client_unlock(cl);
         session_alert_watch(se, SESSION_WATCH_SHOW);
+        session_alert_watch(se, SESSION_WATCH_BYTARGET);
+        session_alert_watch(se, SESSION_WATCH_TERMLIST);
         session_alert_watch(se, SESSION_WATCH_RECORD);
         client_lock(cl);
     }
@@ -659,12 +683,37 @@ int client_has_facet(struct client *cl, const char *name)
     return 0;
 }
 
-void client_start_search(struct client *cl, const char *sort_strategy_and_spec,
-                         int increasing)
+static const char *get_strategy_plus_sort(struct client *l, const char *field)
+{
+    struct session_database *sdb = client_get_database(l);
+    struct setting *s;
+
+    const char *strategy_plus_sort = 0;
+    
+    for (s = sdb->settings[PZ_SORTMAP]; s; s = s->next)
+    {
+        char *p = strchr(s->name + 3, ':');
+        if (!p)
+        {
+            yaz_log(YLOG_WARN, "Malformed sortmap name: %s", s->name);
+            continue;
+        }
+        p++;
+        if (!strcmp(p, field))
+        {
+            strategy_plus_sort = s->value;
+            break;
+        }
+    }
+    return strategy_plus_sort;
+}
+
+void client_start_search(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
     struct connection *co = client_get_connection(cl);
     ZOOM_connection link = connection_get_link(co);
+    struct session *se = client_get_session(cl);
     ZOOM_resultset rs;
     const char *opt_piggyback   = session_setting_oneval(sdb, PZ_PIGGYBACK);
     const char *opt_queryenc    = session_setting_oneval(sdb, PZ_QUERYENCODING);
@@ -743,23 +792,39 @@ void client_start_search(struct client *cl, const char *sort_strategy_and_spec,
         
         ZOOM_query_prefix(q, cl->pquery);
     }
-    if (sort_strategy_and_spec &&
-        strlen(sort_strategy_and_spec) < 40 /* spec below */)
-    {
-        char spec[50], *p;
-        strcpy(spec, sort_strategy_and_spec);
-        p = strchr(spec, ':');
-        if (p)
+    if (se->sorted_results)
+    {   /* first entry is current sorting ! */
+        const char *sort_strategy_and_spec =
+            get_strategy_plus_sort(cl, se->sorted_results->field);
+        int increasing = se->sorted_results->increasing;
+        if (sort_strategy_and_spec && strlen(sort_strategy_and_spec) < 40)
         {
-            *p++ = '\0'; /* cut the string in two */
-            while (*p == ' ')
-                p++;
-            if (increasing)
-                strcat(p, " <");
-            else
-                strcat(p, " >");
-            yaz_log(YLOG_LOG, "applying %s %s", spec, p);
-            ZOOM_query_sortby2(q, spec, p);
+            char spec[50], *p;
+            strcpy(spec, sort_strategy_and_spec);
+            p = strchr(spec, ':');
+            if (p)
+            {
+                *p++ = '\0'; /* cut the string in two */
+                while (*p == ' ')
+                    p++;
+                if (increasing)
+                    strcat(p, " <");
+                else
+                    strcat(p, " >");
+                yaz_log(YLOG_LOG, "applying %s %s", spec, p);
+                ZOOM_query_sortby2(q, spec, p);
+            }
+        }
+        else
+        {
+            /* no native sorting.. If this is not the first search, then
+               skip it entirely */
+            if (se->sorted_results->next)
+            {
+                ZOOM_query_destroy(q);
+                client_set_state_nb(cl, Client_Idle);
+                return;
+            }
         }
     }
     rs = ZOOM_connection_search(link, q);
@@ -785,6 +850,7 @@ struct client *client_create(const char *id)
     cl->state = Client_Disconnected;
     cl->show_raw = 0;
     cl->resultset = 0;
+    cl->suggestions = 0;
     cl->mutex = 0;
     pazpar2_mutex_create(&cl->mutex, "client");
     cl->preferred = 0;
@@ -1165,6 +1231,37 @@ int client_get_diagnostic(struct client *cl)
     return cl->diagnostic;
 }
 
+const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
+{
+    /* int idx; */
+    struct suggestions *suggestions = cl->suggestions;
+
+    if (!suggestions) {
+        //yaz_log(YLOG_DEBUG, "No suggestions found");
+        return "";
+    }
+    if (suggestions->passthrough) {
+        yaz_log(YLOG_DEBUG, "Passthrough Suggestions: \n%s\n", suggestions->passthrough);
+        return suggestions->passthrough;
+    }
+    if (suggestions->num == 0) {
+        return "";
+    }
+    /*
+    for (idx = 0; idx < suggestions->num; idx++) {
+        wrbuf_printf(wrbuf, "<suggest term=\"%s\"", suggestions->suggest[idx]);
+        if (suggestions->misspelled[idx] && suggestions->misspelled[idx]) {
+            wrbuf_puts(wrbuf, suggestions->misspelled[idx]);
+            wrbuf_puts(wrbuf, "</suggest>\n");
+        }
+        else
+            wrbuf_puts(wrbuf, "/>\n");
+    }
+    */
+    return wrbuf_cstr(wrbuf);
+}
+
+
 void client_set_database(struct client *cl, struct session_database *db)
 {
     cl->database = db;
@@ -1195,6 +1292,47 @@ void client_set_preferred(struct client *cl, int v)
     cl->preferred = v;
 }
 
+
+struct suggestions* client_suggestions_create(const char* suggestions_string)
+{
+    int i;
+    NMEM nmem;
+    struct suggestions *suggestions;
+    if (suggestions_string == 0)
+        return 0;
+    nmem = nmem_create();
+    suggestions = nmem_malloc(nmem, sizeof(*suggestions));
+    yaz_log(YLOG_DEBUG, "client target suggestions: %s", suggestions_string);
+
+    suggestions->nmem = nmem;
+    suggestions->num = 0;
+    suggestions->misspelled = 0;
+    suggestions->suggest = 0;
+    suggestions->passthrough = nmem_strdup_null(nmem, suggestions_string);
+
+    if (suggestions_string)
+        nmem_strsplit_escape2(suggestions->nmem, "\n", suggestions_string, &suggestions->suggest,
+                              &suggestions->num, 1, '\\', 0);
+    /* Set up misspelled array */
+    suggestions->misspelled = (char **) nmem_malloc(nmem, suggestions->num * sizeof(**suggestions->misspelled));
+    /* replace = with \0 .. for each item */
+    for (i = 0; i < suggestions->num; i++)
+    {
+        char *cp = strchr(suggestions->suggest[i], '=');
+        if (cp) {
+            *cp = '\0';
+            suggestions->misspelled[i] = cp+1;
+        }
+    }
+    return suggestions;
+}
+
+static void client_suggestions_destroy(struct client *cl)
+{
+    NMEM nmem = cl->suggestions->nmem;
+    cl->suggestions = 0;
+    nmem_destroy(nmem);
+}
 
 /*
  * Local variables:

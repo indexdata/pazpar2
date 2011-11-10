@@ -22,7 +22,8 @@ libpazpar2_a_SOURCES = \
 	database.c database.h \
 	eventl.c eventl.h \
 	facet_limit.c facet_limit.h \
-	host.h \
+	getaddrinfo.c \
+	host.c host.h \
 	http.c http.h http_command.c \
 	incref.c incref.h \
 	jenkins_hash.c jenkins_hash.h \
@@ -38,6 +39,7 @@ libpazpar2_a_SOURCES = \
 	record.c record.h \
 	relevance.c relevance.h \
 	sel_thread.c sel_thread.h \
+	service_xslt.c service_xslt.h \
 	session.c session.h \
 	settings.c settings.h \
 	termlists.c termlists.h

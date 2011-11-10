@@ -30,4 +30,6 @@
 <term><name>1973</name><frequency>1</frequency></term>
 <term><name>1980</name><frequency>1</frequency></term>
 </list>
+<list name="medium">
+</list>
 </termlist>

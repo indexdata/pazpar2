@@ -48,6 +48,7 @@ enum pazpar2_error_code {
     PAZPAR2_RECORD_FAIL,
     PAZPAR2_NOT_IMPLEMENTED,
     PAZPAR2_NO_SERVICE,
+    PAZPAR2_ALREADY_BLOCKED,
 
     PAZPAR2_LAST_ERROR
 };
@@ -75,7 +76,9 @@ struct session_database
 #define SESSION_WATCH_SHOW      0
 #define SESSION_WATCH_RECORD    1
 #define SESSION_WATCH_SHOW_PREF 2
-#define SESSION_WATCH_MAX       2
+#define SESSION_WATCH_TERMLIST  3
+#define SESSION_WATCH_BYTARGET  4
+#define SESSION_WATCH_MAX       4
 
 #define SESSION_MAX_TERMLISTS 10
 
@@ -138,12 +141,13 @@ struct hitsbytarget {
     const char *state;
     int connected;
     char *settings_xml;
+    char *suggestions_xml;
 };
 
 struct hitsbytarget *get_hitsbytarget(struct session *s, int *count, NMEM nmem);
 struct session *new_session(NMEM nmem, struct conf_service *service,
                             unsigned session_id);
-void destroy_session(struct session *s);
+void session_destroy(struct session *s);
 void session_init_databases(struct session *s);
 void statistics(struct session *s, struct statistics *stat);
 
@@ -177,6 +181,7 @@ int ingest_record(struct client *cl, const char *rec, int record_no, NMEM nmem);
 void session_alert_watch(struct session *s, int what);
 void add_facet(struct session *s, const char *type, const char *value, int count);
 
+
 void perform_termlist(struct http_channel *c, struct session *se,
                       const char *name, int num);
 void session_log(struct session *s, int level, const char *fmt, ...)
@@ -185,6 +190,12 @@ void session_log(struct session *s, int level, const char *fmt, ...)
 #endif
     ;
 #endif
+
+struct session_sorted_results {
+    const char *field;
+    int increasing;
+    struct session_sorted_results *next;
+};
 
 /*
  * Local variables:

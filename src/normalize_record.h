@@ -21,9 +21,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define NORMALIZE_RECORD_H
 typedef struct normalize_record_s *normalize_record_t;
 
-struct conf_config;
+struct conf_service;
 
-normalize_record_t normalize_record_create(struct conf_config *conf,
+normalize_record_t normalize_record_create(struct conf_service *service,
                                            const char *spec);
 
 void normalize_record_destroy(normalize_record_t nt);

@@ -54,52 +54,6 @@ struct database_criterion {
     struct database_criterion *next;
 };
 
-struct database_hosts {
-    struct host *hosts;
-    YAZ_MUTEX mutex;
-};
-
-// Create a new host structure for hostport
-static struct host *create_host(const char *hostport)
-{
-    struct host *host;
-    char *db_comment;
-
-    host = xmalloc(sizeof(struct host));
-    host->hostport = xstrdup(hostport);
-    db_comment = strchr(host->hostport, '#');
-    if (db_comment)
-        *db_comment = '\0';
-    host->connections = 0;
-    host->mutex = 0;
-
-    pazpar2_mutex_create(&host->mutex, "host");
-
-    yaz_cond_create(&host->cond_ready);
-
-    return host;
-}
-
-struct host *find_host(database_hosts_t hosts, const char *hostport)
-{
-    struct host *p;
-    yaz_mutex_enter(hosts->mutex);
-    for (p = hosts->hosts; p; p = p->next)
-        if (!strcmp(p->hostport, hostport))
-            break;
-    if (!p)
-    {
-        p = create_host(hostport);
-        if (p)
-        {
-            p->next = hosts->hosts;
-            hosts->hosts = p;
-        }
-    }
-    yaz_mutex_leave(hosts->mutex);
-    return p;
-}
-
 struct database *new_database(const char *id, NMEM nmem)
 {
     struct database *db;
@@ -311,34 +265,6 @@ int predef_grep_databases(void *context, struct conf_service *service,
             i++;
         }
     return i;
-}
-
-database_hosts_t database_hosts_create(void)
-{
-    database_hosts_t p = xmalloc(sizeof(*p));
-    p->hosts = 0;
-    p->mutex = 0;
-    pazpar2_mutex_create(&p->mutex, "database");
-    return p;
-}
-
-void database_hosts_destroy(database_hosts_t *pp)
-{
-    if (*pp)
-    {
-        struct host *p = (*pp)->hosts;
-        while (p)
-        {
-            struct host *p_next = p->next;
-            yaz_mutex_destroy(&p->mutex);
-            yaz_cond_destroy(&p->cond_ready);
-            xfree(p->hostport);
-            xfree(p);
-            p = p_next;
-        }
-        yaz_mutex_destroy(&(*pp)->mutex);
-        xfree(*pp);
-    }
 }
 
 /*

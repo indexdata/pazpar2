@@ -54,6 +54,7 @@ static int run(FILE *inf, struct addrinfo *res)
         long long id;
         int sz, r, c;
         char req[100];
+        char request_type[100];
         size_t i;
         struct con **conp;
         c = fgetc(inf);
@@ -66,8 +67,9 @@ static int run(FILE *inf, struct addrinfo *res)
             c = fgetc(inf);
         }
         req[i] = 0;
-        r = sscanf(req, "%lld %lld %lld %d", &tv_sec1, &tv_usec1, &id, &sz);
-        if (r != 4)
+        r = sscanf(req, "%s %lld %lld %lld %d", request_type,
+                   &tv_sec1, &tv_usec1, &id, &sz);
+        if (r != 5)
         {
             fprintf(stderr, "bad line %s\n", req);
             return -1;
@@ -145,11 +147,14 @@ static int run(FILE *inf, struct addrinfo *res)
                             (long long) toread, (long long) r);
                     return -1;
                 }
-                w = write((*conp)->fd, buf, toread);
-                if (w != toread)
-                {
-                    fprintf(stderr, "write truncated\n");
-                    return -1;
+                if (*request_type == 'r')
+                {   /* Only deal with things tha Pazpar2 received */
+                    w = write((*conp)->fd, buf, toread);
+                    if (w != toread)
+                    {
+                        fprintf(stderr, "write truncated\n");
+                        return -1;
+                    }
                 }
                 cnt += toread;
             }

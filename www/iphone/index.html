@@ -30,8 +30,8 @@
     <link rel="apple-touch-icon" href="UiUIKit/stylesheets/images/apple-touch-icon.png" />
  </head>
  
- <body id="normal" onload="auth_check();">
-    <div id="log" name="log" style="display: none;"></div>
+ <body id="normal" onload="auth_check();" style="display: inline; visibility:;">
+    <div id="log" name="log" style="Display:None;"></div>
   <div id="noscript">
     <noscript>
 	<p>Your browser does not support or allow execution of scripts required by this site to work properly.</p>
@@ -55,8 +55,8 @@
 -->
      <td width="100%">
       <form id="searchForm" name="search" style="display: none">
-       <input id="query" type="text" />
-       <input id="button" type="submit" value="go" />
+       <input id="query" type="text" onKeyPress="return handleKeyPress(event)" />
+       <input id="button" type="submit" value="go" /><a id="hidden" href=""></a>
       </form>
      </td>
     </tr>

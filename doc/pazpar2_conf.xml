@@ -369,6 +369,20 @@
        </varlistentry>
 
        <varlistentry>
+	<term id="servicexslt" xreflabel="xslt">xslt</term>
+	<listitem>
+	 <para>
+	  Defines a XSLT stylesheet. The <literal>xslt</literal>
+	  element takes exactly one attribute <literal>id</literal>
+	  which names the stylesheet. This can be referred to in target
+	  settings <xref linkend="pzxslt"/>.
+	 </para>
+	 <para>
+	  The content of the xslt element is the embedded stylesheet XML
+	 </para>
+	</listitem>
+       </varlistentry>
+       <varlistentry>
 	<term id="icuchain" xreflabel="icu_chain">icu_chain</term>
 	<listitem>
 	 <para>
@@ -991,11 +1005,19 @@
     </varlistentry>
 
     <varlistentry>
-     <term>pz:xslt</term>
+     <term id="pzxslt" xreflabel="pz:xslt">pz:xslt</term>
      <listitem>
       <para>
-       Is a comma separated list of of files that specifies
+       Is a comma separated list of of stylesheet names that specifies
        how to convert incoming records to the internal representation.
+      </para>
+      <para>
+       For each name, the embedded stylesheets (XSL) that comes with the
+       service definition are consulted first and takes precedence over
+       external files; see <xref linkend="servicexslt"/>
+       of service definition).
+       If the name does not match an embedded stylesheet it is
+       considered a filename.
       </para>
       <para>
        The suffix of each file specifies the kind of tranformation.

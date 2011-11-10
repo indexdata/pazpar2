@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "charsets.h"
 #include "http.h"
 #include "database.h"
+#include "host.h"
 
 enum conf_metadata_type {
     Metadata_type_generic,    // Generic text field
@@ -117,6 +118,8 @@ struct conf_service
     int ref_count;
     /* duplicated from conf_server */
     pp2_charset_fact_t charsets;
+
+    struct service_xslt *xslt_list;
 
     struct database *databases;
     struct conf_server *server;

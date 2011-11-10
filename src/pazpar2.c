@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 #ifdef WIN32
 #include <winsock.h>
+#include <direct.h>
 #endif
 #if HAVE_UNISTD_H
 #include <unistd.h>
@@ -157,7 +158,13 @@ static int sc_main(
             show_version();
             break;
         case 'w':
-            if (chdir(arg))
+            if (
+#ifdef WIN32
+              _chdir
+#else
+              chdir
+#endif
+                (arg)) 
             {
                 yaz_log(YLOG_FATAL|YLOG_ERRNO, "chdir %s", arg);
                 return 1;

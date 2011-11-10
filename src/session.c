@@ -95,12 +95,6 @@ struct client_list {
     struct client_list *next;
 };
 
-struct session_sorted_results {
-    const char *field;
-    int increasing;
-    struct session_sorted_results *next;
-};
-
 /* session counting (1) , disable client counting (0) */
 static YAZ_MUTEX g_session_mutex = 0;
 static int no_sessions = 0;
@@ -438,7 +432,7 @@ static int prepare_map(struct session *se, struct session_database *sdb)
             }
         }
         sdb->map = normalize_cache_get(se->normalize_cache,
-                                       se->service->server->config, s);
+                                       se->service, s);
         if (!sdb->map)
             return -1;
     }
@@ -597,31 +591,6 @@ int session_is_preferred_clients_ready(struct session *s)
     return res == 0;
 }
 
-static const char *get_strategy_plus_sort(struct client *l, const char *field)
-{
-    struct session_database *sdb = client_get_database(l);
-    struct setting *s;
-
-    const char *strategy_plus_sort = 0;
-    
-    for (s = sdb->settings[PZ_SORTMAP]; s; s = s->next)
-    {
-        char *p = strchr(s->name + 3, ':');
-        if (!p)
-        {
-            yaz_log(YLOG_WARN, "Malformed sortmap name: %s", s->name);
-            continue;
-        }
-        p++;
-        if (!strcmp(p, field))
-        {
-            strategy_plus_sort = s->value;
-            break;
-        }
-    }
-    return strategy_plus_sort;
-}
-
 void session_sort(struct session *se, const char *field, int increasing)
 {
     struct session_sorted_results *sr;
@@ -653,16 +622,12 @@ void session_sort(struct session *se, const char *field, int increasing)
     for (l = se->clients; l; l = l->next)
     {
         struct client *cl = l->client;
-        const char *strategy_plus_sort = get_strategy_plus_sort(cl, field);
-        if (strategy_plus_sort)
-        {
-            struct timeval tval;
-            if (client_prep_connection(cl, se->service->z3950_operation_timeout,
-                                       se->service->z3950_session_timeout,
-                                       se->service->server->iochan_man,
-                                       &tval))
-                client_start_search(cl, strategy_plus_sort, increasing);
-        }
+        struct timeval tval;
+        if (client_prep_connection(cl, se->service->z3950_operation_timeout,
+                                   se->service->z3950_session_timeout,
+                                   se->service->server->iochan_man,
+                                   &tval))
+            client_start_search(cl);
     }
     session_leave(se);
 }
@@ -725,7 +690,6 @@ enum pazpar2_error_code session_search(struct session *se,
     for (l = se->clients; l; l = l->next)
     {
         struct client *cl = l->client;
-        const char *strategy_plus_sort = get_strategy_plus_sort(cl, sort_field);
 
         if (maxrecs)
             client_set_maxrecs(cl, atoi(maxrecs));
@@ -742,7 +706,7 @@ enum pazpar2_error_code session_search(struct session *se,
                                        se->service->z3950_session_timeout,
                                        se->service->server->iochan_man,
                                        &tval))
-                client_start_search(cl, strategy_plus_sort, increasing);
+                client_start_search(cl);
         }
     }
     facet_limits_destroy(facet_limits);
@@ -869,12 +833,6 @@ void session_destroy(struct session *se) {
     yaz_mutex_destroy(&se->session_mutex);
 }
 
-/* Depreciated: use session_destroy */
-void destroy_session(struct session *se)
-{
-    session_destroy(se);
-}
-
 size_t session_get_memory_status(struct session *session) {
     size_t session_nmem;
     if (session == 0)
@@ -921,6 +879,8 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     return session;
 }
 
+const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf);
+
 static struct hitsbytarget *hitsbytarget_nb(struct session *se,
                                             int *count, NMEM nmem)
 {
@@ -949,6 +909,9 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
         res[*count].connected  = client_get_connection(cl) ? 1 : 0;
         session_settings_dump(se, client_get_database(cl), w);
         res[*count].settings_xml = nmem_strdup(nmem, wrbuf_cstr(w));
+        wrbuf_rewind(w);
+        wrbuf_puts(w, "");
+        res[*count].suggestions_xml = nmem_strdup(nmem, client_get_suggestions_xml(cl, w));
         wrbuf_destroy(w);
         (*count)++;
     }
@@ -1045,6 +1008,11 @@ void perform_termlist(struct http_channel *c, struct session *se,
     for (j = 0; j < num_names; j++)
     {
         const char *tname;
+        
+        wrbuf_puts(c->wrbuf, "<list name=\"");
+        wrbuf_xmlputs(c->wrbuf, names[j]);
+        wrbuf_puts(c->wrbuf, "\">\n");
+
         for (i = 0; i < se->num_termlists; i++)
         {
             tname = se->termlists[i].name;
@@ -1056,9 +1024,6 @@ void perform_termlist(struct http_channel *c, struct session *se,
                 if (p)
                 {
                     int i;
-                    wrbuf_puts(c->wrbuf, "<list name=\"");
-                    wrbuf_xmlputs(c->wrbuf, tname);
-                    wrbuf_puts(c->wrbuf, "\">\n");
                     for (i = 0; i < len && i < num; i++)
                     {
                         // prevent sending empty term elements
@@ -1075,19 +1040,15 @@ void perform_termlist(struct http_channel *c, struct session *se,
                                      p[i]->frequency);
                         wrbuf_puts(c->wrbuf, "</term>\n");
                     }
-                    wrbuf_puts(c->wrbuf, "</list>\n");
                 }
             }
         }
         tname = "xtargets";
         if (num_names > 0 && !strcmp(names[j], tname))
         {
-            wrbuf_puts(c->wrbuf, "<list name=\"");
-            wrbuf_xmlputs(c->wrbuf, tname);
-            wrbuf_puts(c->wrbuf, "\">\n");
             targets_termlist_nb(c->wrbuf, se, num, c->nmem);
-            wrbuf_puts(c->wrbuf, "</list>\n");
         }
+        wrbuf_puts(c->wrbuf, "</list>\n");
     }
     session_leave(se);
     nmem_destroy(nmem_tmp);
