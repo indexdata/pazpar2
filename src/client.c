@@ -749,8 +749,6 @@ void client_start_search(struct client *cl)
 
     assert(link);
 
-    cl->hits = 0;
-    cl->record_offset = 0;
     cl->diagnostic = 0;
 
     if (extra_args && *extra_args)
@@ -848,6 +846,8 @@ void client_start_search(struct client *cl)
             }
         }
     }
+    cl->hits = 0;
+    cl->record_offset = 0;
     rs = ZOOM_connection_search(link, q);
     ZOOM_query_destroy(q);
     ZOOM_resultset_destroy(cl->resultset);
