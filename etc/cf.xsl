@@ -284,6 +284,12 @@
     </pz:metadata>
   </xsl:template>
 
+  <xsl:template match="*" >
+    <pz:metadata type="{local-name()}">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
   <xsl:template match="text()"/>
 
 </xsl:stylesheet>
