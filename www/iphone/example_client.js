@@ -22,13 +22,13 @@ if (document.location.hash == '#pazpar2' || document.location.search.match("usep
 
 
 my_paz = new pz2( { "onshow": my_onshow,
-                    "showtime": 500,            //each timer (show, stat, term, bytarget) can be specified this way
+//                    "showtime": 2000,            //each timer (show, stat, term, bytarget) can be specified this way
                     "pazpar2path": pazpar2path,
                     "oninit": my_oninit,
-                    "onstat": my_onstat,
+                    "onstat": null,
                     "onterm": my_onterm_iphone,
                     "termlist": "xtargets,subject,author",
-                    "onbytarget": my_onbytarget,
+                    "onbytarget": null,
 		    "usesessions" : usesessions,
                     "showResponseType": showResponseType,
                     "onrecord": my_onrecord } );
