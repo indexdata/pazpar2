@@ -7,18 +7,18 @@
 <term><name>Wood, Helen M.</name><frequency>1</frequency></term>
 </list>
 <list name="subject">
-<term><name>Bible</name><frequency>1</frequency></term>
-<term><name>Bible. O.t</name><frequency>1</frequency></term>
-<term><name>Cartography</name><frequency>1</frequency></term>
-<term><name>Community Colleges</name><frequency>1</frequency></term>
-<term><name>Computers</name><frequency>1</frequency></term>
-<term><name>Imaging Systems In Medicine</name><frequency>1</frequency></term>
-<term><name>Optical Pattern Recognition</name><frequency>1</frequency></term>
-<term><name>Puget Sound Region (Wash.)</name><frequency>1</frequency></term>
-<term><name>Radioisotope Scanning</name><frequency>1</frequency></term>
-<term><name>Railroads</name><frequency>1</frequency></term>
-<term><name>Scintillation Cameras</name><frequency>1</frequency></term>
-<term><name>Tomography</name><frequency>1</frequency></term>
-<term><name>Universities And Colleges</name><frequency>1</frequency></term>
+<term><name>bible</name><frequency>1</frequency></term>
+<term><name>bible. o.t</name><frequency>1</frequency></term>
+<term><name>cartography</name><frequency>1</frequency></term>
+<term><name>community colleges</name><frequency>1</frequency></term>
+<term><name>computers</name><frequency>1</frequency></term>
+<term><name>imaging systems in medicine</name><frequency>1</frequency></term>
+<term><name>optical pattern recognition</name><frequency>1</frequency></term>
+<term><name>puget sound region (wash.)</name><frequency>1</frequency></term>
+<term><name>radioisotope scanning</name><frequency>1</frequency></term>
+<term><name>railroads</name><frequency>1</frequency></term>
+<term><name>scintillation cameras</name><frequency>1</frequency></term>
+<term><name>tomography</name><frequency>1</frequency></term>
+<term><name>universities and colleges</name><frequency>1</frequency></term>
 </list>
 </termlist>

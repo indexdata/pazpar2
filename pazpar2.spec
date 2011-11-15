@@ -1,6 +1,7 @@
+%define idmetaversion %(. ./IDMETA; echo $VERSION|tr -d '\n')
 Summary: Metasearcher
 Name: pazpar2
-Version: 1.6.5
+Version: %{idmetaversion}
 Release: 1indexdata
 License: GPL
 Group: Applications/Internet
