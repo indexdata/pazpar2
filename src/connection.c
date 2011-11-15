@@ -261,6 +261,7 @@ static void non_block_events(struct connection *co)
         default:
             yaz_log(YLOG_LOG, "Unhandled event (%d) from %s",
                     ev, client_get_id(cl));
+            break;
         }
     }
     if (got_records)
@@ -573,21 +574,21 @@ int client_prep_connection(struct client *cl,
                 }
                 if (co)
                 {
-                    yaz_log(YLOG_LOG, "num_connections = %d (reusing)", num_connections);
+                    yaz_log(YLOG_LOG, "Host %s: num_connections = %d (reusing)", host->hostport, num_connections);
                     break;
                 }
             }
             if (max_connections <= 0 || num_connections < max_connections)
             {
-                yaz_log(YLOG_LOG, "num_connections = %d (new); max = %d",
-                        num_connections, max_connections);
+                yaz_log(YLOG_LOG, "Host %s: num_connections = %d (new); max = %d",
+                        host->hostport, num_connections, max_connections);
                 break;
             }
-            yaz_log(YLOG_LOG, "num_connections = %d (waiting) max = %d",
-                    num_connections, max_connections);
+            yaz_log(YLOG_LOG, "Host %s: num_connections = %d (waiting) max = %d",
+                    host->hostport, num_connections, max_connections);
             if (yaz_cond_wait(host->cond_ready, host->mutex, abstime))
             {
-                yaz_log(YLOG_LOG, "out of connections %s", client_get_id(cl));
+                yaz_log(YLOG_LOG, "Host %s: out of connections %s", host->hostport, client_get_id(cl));
                 client_set_state(cl, Client_Error);
                 yaz_mutex_leave(host->mutex);
                 return 0;
@@ -595,7 +596,7 @@ int client_prep_connection(struct client *cl,
         }
         if (co)
         {
-            yaz_log(YLOG_LOG,  "%p Connection reuse. state: %d", co, co->state);
+            yaz_log(YLOG_LOG,  "Host %s: %p Connection reuse. state: %d", host->hostport, co, co->state);
             connection_release(co);
             client_set_connection(cl, co);
             co->client = cl;
@@ -612,8 +613,9 @@ int client_prep_connection(struct client *cl,
         else
         {
             yaz_mutex_leave(host->mutex);
-            co = connection_create(cl, host, operation_timeout, session_timeout,
-                                   iochan_man);
+            co = connection_create(cl, host, operation_timeout, session_timeout, iochan_man);
+            yaz_log(YLOG_LOG, "Host %s: %p Connection new", host->hostport, co);
+
         }
         assert(co->host);
     }
