@@ -102,7 +102,8 @@ struct client_list;
 struct session {
     struct conf_service *service; /* service in use for this session */
     struct session_database *databases;  // All databases, settings overriden
-    struct client_list *clients;   // Clients connected for current search
+    struct client_list *clients_active; // Clients connected for current search
+    struct client_list *clients_cached; // Clients in cache
     NMEM session_nmem;  // Nmem for session-permanent storage
     NMEM nmem;          // Nmem for each operation (i.e. search, result set, etc)
     int num_termlists;
@@ -117,6 +118,7 @@ struct session {
     normalize_cache_t normalize_cache;
     YAZ_MUTEX session_mutex;
     unsigned session_id;
+    int settings_modified;
     struct session_sorted_results *sorted_results;
 };
 
@@ -181,6 +183,7 @@ int ingest_record(struct client *cl, const char *rec, int record_no, NMEM nmem);
 void session_alert_watch(struct session *s, int what);
 void add_facet(struct session *s, const char *type, const char *value, int count);
 
+
 void perform_termlist(struct http_channel *c, struct session *se,
                       const char *name, int num);
 void session_log(struct session *s, int level, const char *fmt, ...)
@@ -189,6 +192,12 @@ void session_log(struct session *s, int level, const char *fmt, ...)
 #endif
     ;
 #endif
+
+struct session_sorted_results {
+    const char *field;
+    int increasing;
+    struct session_sorted_results *next;
+};
 
 /*
  * Local variables:

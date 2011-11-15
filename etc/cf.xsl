@@ -16,6 +16,13 @@
 
   <xsl:param name="medium" />
 
+  <!--
+    According to cf/builder/templates/parseTask.cff, connectors can
+    also generate a "medium" field, but that is ignored in this
+    stylesheet, the rule below instead using an XSLT parameter.
+    Should the data element be used in preference when it is included?
+  -->
+
   <xsl:template match="/record">
     <pz:record>
       <pz:metadata type="medium">
@@ -121,6 +128,13 @@
     </pz:metadata>
   </xsl:template>
 
+  <!--
+    According to cf/builder/templates/parseTask.cff, connectors can
+    also generate a "holding" field, but it's not clear how that is
+    different from "item".  Perhaps this "item" rule should also
+    handle "holding" in the same way?
+  -->
+
   <xsl:template match="item">
     <pz:metadata type="locallocation">
       <xsl:choose>
@@ -188,6 +202,90 @@
 
   <xsl:template match="id">
     <pz:metadata type="id">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="available">
+    <pz:metadata type="available">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="citation">
+    <pz:metadata type="citation">
+      <xsl:value-of select="."/>
+      </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="relevance">
+    <pz:metadata type="relevance">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="booktitle">
+    <pz:metadata type="booktitle">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="copyright">
+    <pz:metadata type="copyright">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="copyrightabstract">
+    <pz:metadata type="copyrightabstract">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="pubtype">
+    <pz:metadata type="pubtype">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="doctype">
+    <pz:metadata type="doctype">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="extent">
+    <pz:metadata type="extent">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="format">
+    <pz:metadata type="format">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="languageitem">
+    <pz:metadata type="languageitem">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="languageabstract">
+    <pz:metadata type="languageabstract">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="permalink">
+    <pz:metadata type="permalink">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="*" >
+    <pz:metadata type="{local-name()}">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>

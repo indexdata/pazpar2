@@ -55,8 +55,8 @@
 -->
      <td width="100%">
       <form id="searchForm" name="search" style="display: none">
-       <input id="query" type="text" onKeyPress="return handleKeyPress(event, 'searchForm')"/>
-       <input id="button" type="submit" value="go" />
+       <input id="query" type="text" onKeyPress="return handleKeyPress(event)" />
+       <input id="button" type="submit" value="go" /><a id="hidden" href=""></a>
       </form>
      </td>
     </tr>
@@ -136,7 +136,8 @@
          <option value="10">10</option>
          <option value="20">20</option>
          <option value="30">30</option>
-         <option value="50" selected="selected">50</option>
+         <option value="50">50</option>
+         <option value="100" selected="selected">100</option>
         </select>
         per page.
        </form>

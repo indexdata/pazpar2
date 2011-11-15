@@ -121,6 +121,7 @@ struct client {
     YAZ_MUTEX mutex;
     int ref_count;
     char *id;
+    facet_limits_t facet_limits;
 };
 
 struct suggestions {
@@ -554,12 +555,61 @@ void client_got_records(struct client *cl)
     struct session *se = cl->session;
     if (se)
     {
-        client_unlock(cl);
-        session_alert_watch(se, SESSION_WATCH_SHOW);
-        session_alert_watch(se, SESSION_WATCH_BYTARGET);
-        session_alert_watch(se, SESSION_WATCH_TERMLIST);
-        session_alert_watch(se, SESSION_WATCH_RECORD);
-        client_lock(cl);
+        if (reclist_get_num_records(se->reclist) > 0)
+        {
+            client_unlock(cl);
+            session_alert_watch(se, SESSION_WATCH_SHOW);
+            session_alert_watch(se, SESSION_WATCH_BYTARGET);
+            session_alert_watch(se, SESSION_WATCH_TERMLIST);
+            session_alert_watch(se, SESSION_WATCH_RECORD);
+            client_lock(cl);
+        }
+    }
+}
+
+static void client_record_ingest(struct client *cl)
+{
+    const char *msg, *addinfo;
+    ZOOM_record rec = 0;
+    ZOOM_resultset resultset = cl->resultset;
+    int offset = cl->record_offset;
+    if ((rec = ZOOM_resultset_record(resultset, offset)))
+    {
+        cl->record_offset++;
+        if (cl->session == 0)
+            ;
+        else if (ZOOM_record_error(rec, &msg, &addinfo, 0))
+        {
+            yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
+                    msg, addinfo, client_get_id(cl),
+                    cl->record_offset);
+        }
+        else
+        {
+            struct session_database *sdb = client_get_database(cl);
+            NMEM nmem = nmem_create();
+            const char *xmlrec;
+            char type[80];
+            
+            if (nativesyntax_to_type(sdb, type, rec))
+                yaz_log(YLOG_WARN, "Failed to determine record type");
+            xmlrec = ZOOM_record_get(rec, type, NULL);
+            if (!xmlrec)
+                yaz_log(YLOG_WARN, "ZOOM_record_get failed from %s",
+                        client_get_id(cl));
+            else
+            {
+                /* OK = 0, -1 = failure, -2 = Filtered */
+                if (ingest_record(cl, xmlrec, cl->record_offset, nmem) == -1)
+                    yaz_log(YLOG_WARN, "Failed to ingest from %s", client_get_id(cl));
+            }
+            nmem_destroy(nmem);
+        }
+    }
+    else
+    {
+        yaz_log(YLOG_WARN, "Expected record, but got NULL, offset=%d",
+                offset);
     }
 }
 
@@ -578,11 +628,9 @@ void client_record_response(struct client *cl)
     }
     else
     {
-        ZOOM_record rec = 0;
-        const char *msg, *addinfo;
-        
         if (cl->show_raw && cl->show_raw->active)
         {
+            ZOOM_record rec = 0;
             if ((rec = ZOOM_resultset_record(resultset,
                                              cl->show_raw->position-1)))
             {
@@ -597,47 +645,19 @@ void client_record_response(struct client *cl)
         }
         else
         {
-            int offset = cl->record_offset;
-            if ((rec = ZOOM_resultset_record(resultset, offset)))
-            {
-                cl->record_offset++;
-                if (cl->session == 0)
-                    ;
-                else if (ZOOM_record_error(rec, &msg, &addinfo, 0))
-                {
-                    yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
-                            msg, addinfo, client_get_id(cl),
-                            cl->record_offset);
-                }
-                else
-                {
-                    struct session_database *sdb = client_get_database(cl);
-                    NMEM nmem = nmem_create();
-                    const char *xmlrec;
-                    char type[80];
-
-                    if (nativesyntax_to_type(sdb, type, rec))
-                        yaz_log(YLOG_WARN, "Failed to determine record type");
-                    xmlrec = ZOOM_record_get(rec, type, NULL);
-                    if (!xmlrec)
-                        yaz_log(YLOG_WARN, "ZOOM_record_get failed from %s",
-                                client_get_id(cl));
-                    else
-                    {
-                        /* OK = 0, -1 = failure, -2 = Filtered */
-                        if (ingest_record(cl, xmlrec, cl->record_offset, nmem) == -1)
-                            yaz_log(YLOG_WARN, "Failed to ingest from %s", client_get_id(cl));
-                    }
-                    nmem_destroy(nmem);
-                }
-            }
-            else
-            {
-                yaz_log(YLOG_WARN, "Expected record, but got NULL, offset=%d",
-                        offset);
-            }
+            client_record_ingest(cl);
         }
     }
+}
+
+void client_reingest(struct client *cl)
+{
+    int i = cl->startrecs;
+    int to = cl->record_offset;
+
+    cl->record_offset = i;
+    for (; i < to; i++)
+        client_record_ingest(cl);
 }
 
 static void client_set_facets_request(struct client *cl, ZOOM_connection link)
@@ -683,12 +703,37 @@ int client_has_facet(struct client *cl, const char *name)
     return 0;
 }
 
-void client_start_search(struct client *cl, const char *sort_strategy_and_spec,
-                         int increasing)
+static const char *get_strategy_plus_sort(struct client *l, const char *field)
+{
+    struct session_database *sdb = client_get_database(l);
+    struct setting *s;
+
+    const char *strategy_plus_sort = 0;
+    
+    for (s = sdb->settings[PZ_SORTMAP]; s; s = s->next)
+    {
+        char *p = strchr(s->name + 3, ':');
+        if (!p)
+        {
+            yaz_log(YLOG_WARN, "Malformed sortmap name: %s", s->name);
+            continue;
+        }
+        p++;
+        if (!strcmp(p, field))
+        {
+            strategy_plus_sort = s->value;
+            break;
+        }
+    }
+    return strategy_plus_sort;
+}
+
+void client_start_search(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
     struct connection *co = client_get_connection(cl);
     ZOOM_connection link = connection_get_link(co);
+    struct session *se = client_get_session(cl);
     ZOOM_resultset rs;
     const char *opt_piggyback   = session_setting_oneval(sdb, PZ_PIGGYBACK);
     const char *opt_queryenc    = session_setting_oneval(sdb, PZ_QUERYENCODING);
@@ -704,7 +749,6 @@ void client_start_search(struct client *cl, const char *sort_strategy_and_spec,
 
     assert(link);
 
-    cl->record_offset = 0;
     cl->diagnostic = 0;
 
     if (extra_args && *extra_args)
@@ -767,25 +811,43 @@ void client_start_search(struct client *cl, const char *sort_strategy_and_spec,
         
         ZOOM_query_prefix(q, cl->pquery);
     }
-    if (sort_strategy_and_spec &&
-        strlen(sort_strategy_and_spec) < 40 /* spec below */)
-    {
-        char spec[50], *p;
-        strcpy(spec, sort_strategy_and_spec);
-        p = strchr(spec, ':');
-        if (p)
+    if (se->sorted_results)
+    {   /* first entry is current sorting ! */
+        const char *sort_strategy_and_spec =
+            get_strategy_plus_sort(cl, se->sorted_results->field);
+        int increasing = se->sorted_results->increasing;
+        if (sort_strategy_and_spec && strlen(sort_strategy_and_spec) < 40)
         {
-            *p++ = '\0'; /* cut the string in two */
-            while (*p == ' ')
-                p++;
-            if (increasing)
-                strcat(p, " <");
-            else
-                strcat(p, " >");
-            yaz_log(YLOG_LOG, "applying %s %s", spec, p);
-            ZOOM_query_sortby2(q, spec, p);
+            char spec[50], *p;
+            strcpy(spec, sort_strategy_and_spec);
+            p = strchr(spec, ':');
+            if (p)
+            {
+                *p++ = '\0'; /* cut the string in two */
+                while (*p == ' ')
+                    p++;
+                if (increasing)
+                    strcat(p, " <");
+                else
+                    strcat(p, " >");
+                yaz_log(YLOG_LOG, "applying %s %s", spec, p);
+                ZOOM_query_sortby2(q, spec, p);
+            }
+        }
+        else
+        {
+            /* no native sorting.. If this is not the first search, then
+               skip it entirely */
+            if (se->sorted_results->next)
+            {
+                ZOOM_query_destroy(q);
+                client_set_state_nb(cl, Client_Idle);
+                return;
+            }
         }
     }
+    cl->hits = 0;
+    cl->record_offset = 0;
     rs = ZOOM_connection_search(link, q);
     ZOOM_query_destroy(q);
     ZOOM_resultset_destroy(cl->resultset);
@@ -814,6 +876,7 @@ struct client *client_create(const char *id)
     pazpar2_mutex_create(&cl->mutex, "client");
     cl->preferred = 0;
     cl->ref_count = 1;
+    cl->facet_limits = 0;
     assert(id);
     cl->id = xstrdup(id);
     client_use(1);
@@ -852,6 +915,7 @@ int client_destroy(struct client *c)
             c->cqlquery = 0;
             xfree(c->id);
             assert(!c->connection);
+            facet_limits_destroy(c->facet_limits);
 
             if (c->resultset)
             {
@@ -975,10 +1039,38 @@ static char *make_solrquery(struct client *cl)
     return r;
 }
 
-static void apply_limit(struct session_database *sdb,
-                        facet_limits_t facet_limits,
-                        WRBUF w_pqf, WRBUF w_ccl)
+const char *client_get_facet_limit_local(struct client *cl,
+                                         struct session_database *sdb,
+                                         int *l,
+                                         NMEM nmem, int *num, char ***values)
 {
+    const char *name = 0;
+    const char *value = 0;
+    for (; (name = facet_limits_get(cl->facet_limits, *l, &value)); (*l)++)
+    {
+        struct setting *s = 0;
+        
+        for (s = sdb->settings[PZ_LIMITMAP]; s; s = s->next)
+        {
+            const char *p = strchr(s->name + 3, ':');
+            if (p && !strcmp(p + 1, name) && s->value &&
+                !strncmp(s->value, "local:", 6))
+            {
+                nmem_strsplit_escape2(nmem, "|", value, values,
+                                      num, 1, '\\', 1);
+                (*l)++;
+                return name;
+            }
+        }
+    }
+    return 0;
+}
+
+static int apply_limit(struct session_database *sdb,
+                       facet_limits_t facet_limits,
+                       WRBUF w_pqf, WRBUF w_ccl)
+{
+    int ret = 0;
     int i = 0;
     const char *name;
     const char *value;
@@ -1030,6 +1122,14 @@ static void apply_limit(struct session_database *sdb,
                     wrbuf_puts(w_ccl, ")");
 
                 }
+                else if (!strncmp(s->value, "local:", 6))
+                    ;
+                else
+                {
+                    yaz_log(YLOG_WARN, "Target %s: Bad limitmap '%s'",
+                            sdb->database->id, s->value);
+                    ret = -1; /* bad limitmap */
+                }
                 break;
             }
         }
@@ -1041,11 +1141,13 @@ static void apply_limit(struct session_database *sdb,
         }
     }
     nmem_destroy(nmem_tmp);
+    return ret;
 }
                         
 // Parse the query given the settings specific to this client
 int client_parse_query(struct client *cl, const char *query,
-                       facet_limits_t facet_limits)
+                       facet_limits_t facet_limits,
+                       const char *startrecs, const char *maxrecs)
 {
     struct session *se = client_get_session(cl);
     struct session_database *sdb = client_get_database(cl);
@@ -1057,10 +1159,24 @@ int client_parse_query(struct client *cl, const char *query,
     const char *pqf_strftime = session_setting_oneval(sdb, PZ_PQF_STRFTIME);
     const char *query_syntax = session_setting_oneval(sdb, PZ_QUERY_SYNTAX);
     WRBUF w_ccl, w_pqf;
+    int ret_value = 1;
+
     if (!ccl_map)
         return -1;
 
-    cl->hits = -1;
+
+    if (maxrecs && atoi(maxrecs) != cl->maxrecs)
+    {
+        ret_value = 0;
+        cl->maxrecs = atoi(maxrecs);
+    }
+
+    if (startrecs && atoi(startrecs) != cl->startrecs)
+    {
+        ret_value = 0;
+        cl->startrecs = atoi(startrecs);
+    }
+
     w_ccl = wrbuf_alloc();
     wrbuf_puts(w_ccl, query);
 
@@ -1071,7 +1187,11 @@ int client_parse_query(struct client *cl, const char *query,
         wrbuf_puts(w_pqf, " ");
     }
 
-    apply_limit(sdb, facet_limits, w_pqf, w_ccl);
+    if (apply_limit(sdb, facet_limits, w_pqf, w_ccl))
+        return -2;
+
+    facet_limits_destroy(cl->facet_limits);
+    cl->facet_limits = facet_limits_dup(facet_limits);
 
     yaz_log(YLOG_LOG, "CCL query: %s", wrbuf_cstr(w_ccl));
     cn = ccl_find_str(ccl_map, wrbuf_cstr(w_ccl), &cerror, &cpos);
@@ -1108,8 +1228,12 @@ int client_parse_query(struct client *cl, const char *query,
                 wrbuf_putc(w_pqf, cp[0]);
         }
     }
-    xfree(cl->pquery);
-    cl->pquery = xstrdup(wrbuf_cstr(w_pqf));
+    if (!cl->pquery || strcmp(cl->pquery, wrbuf_cstr(w_pqf)))
+    {
+        xfree(cl->pquery);
+        cl->pquery = xstrdup(wrbuf_cstr(w_pqf));
+        ret_value = 0;
+    }
     wrbuf_destroy(w_pqf);
 
     yaz_log(YLOG_LOG, "PQF query: %s", cl->pquery);
@@ -1142,7 +1266,7 @@ int client_parse_query(struct client *cl, const char *query,
     }
 
     ccl_rpn_delete(cn);
-    return 0;
+    return ret_value;
 }
 
 void client_set_session(struct client *cl, struct session *se)
@@ -1231,19 +1355,9 @@ const char *client_get_id(struct client *cl)
     return cl->id;
 }
 
-void client_set_maxrecs(struct client *cl, int v)
-{
-    cl->maxrecs = v;
-}
-
 int client_get_maxrecs(struct client *cl)
 {
     return cl->maxrecs;
-}
-
-void client_set_startrecs(struct client *cl, int v)
-{
-    cl->startrecs = v;
 }
 
 void client_set_preferred(struct client *cl, int v)

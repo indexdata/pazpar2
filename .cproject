@@ -43,6 +43,7 @@
 								<option id="gnu.c.compiler.macosx.exe.debug.option.debugging.level.88106198" name="Debug Level" superClass="gnu.c.compiler.macosx.exe.debug.option.debugging.level" value="gnu.c.debugging.level.max" valueType="enumerated"/>
 								<option id="gnu.c.compiler.option.include.paths.16758435" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/yaz/include}&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/local/include"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1159745856" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>

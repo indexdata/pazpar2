@@ -1242,20 +1242,23 @@
      <listitem>
       <para>
        Specifies attributes for limiting a search to a field - using
-       the limit parameter for search. In some cases the mapping of 
+       the limit parameter for search. It can be used to filter locally
+       or remotely (search in a target). In some cases the mapping of 
        a field to a value is identical to an existing cclmap field; in
        other cases the field must be specified in a different way - for
        example to match a complete field (rather than parts of a subfield).
       </para>
       <para>
-       The value of limitmap may have one of two forms: referral to
-       an exisiting CCL field or a raw PQF string. Leading string
-       determines type; either <literal>ccl:</literal> for CCL field or
-       <literal>rpn:</literal> for PQF/RPN.
+       The value of limitmap may have one of three forms: referral to
+       an existing CCL field, a raw PQF string or a local limit. Leading string
+       determines type; either <literal>ccl:</literal> for CCL field, 
+       <literal>rpn:</literal> for PQF/RPN, or <literal>local:</literal>
+       for filtering in Pazpar2.
       </para>
       <note>
        <para>
 	The limitmap facility is supported for Pazpar2 version 1.6.0.
+	Local filtering is supported in Pazpar2 1.6.6.
        </para>
       </note>
      </listitem>

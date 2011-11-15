@@ -77,24 +77,22 @@ int client_prep_connection(struct client *cl,
                            int operation_timeout, int session_timeout,
                            iochan_man_t iochan,
                            const struct timeval *abstime);
-void client_start_search(struct client *cl, const char *sort_strategy_and_spec,
-                         int increasing);
+void client_start_search(struct client *cl);
 void client_set_session(struct client *cl, struct session *se);
 int client_is_active(struct client *cl);
 int client_is_active_preferred(struct client *cl);
 struct client *client_next_in_session(struct client *cl);
 
 int client_parse_query(struct client *cl, const char *query,
-                       facet_limits_t facet_limits);
+                       facet_limits_t facet_limits, const char *startrecs,
+                       const char *maxrecs);
 Odr_int client_get_hits(struct client *cl);
 int client_get_num_records(struct client *cl);
 int client_get_diagnostic(struct client *cl);
 void client_set_diagnostic(struct client *cl, int diagnostic);
 void client_set_database(struct client *cl, struct session_database *db);
 const char *client_get_id(struct client *cl);
-void client_set_maxrecs(struct client *cl, int v);
 int  client_get_maxrecs(struct client *cl);
-void client_set_startrecs(struct client *cl, int v);
 void client_remove_from_session(struct client *c);
 void client_incref(struct client *c);
 void client_got_records(struct client *c);
@@ -103,7 +101,11 @@ void client_unlock(struct client *c);
 
 int client_has_facet(struct client *cl, const char *name);
 void client_check_preferred_watch(struct client *cl);
-
+void client_reingest(struct client *cl);
+const char *client_get_facet_limit_local(struct client *cl,
+                                         struct session_database *sdb,
+                                         int *l,
+                                         NMEM nmem, int *num, char ***values);
 #endif
 
 /*

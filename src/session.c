@@ -95,12 +95,6 @@ struct client_list {
     struct client_list *next;
 };
 
-struct session_sorted_results {
-    const char *field;
-    int increasing;
-    struct session_sorted_results *next;
-};
-
 /* session counting (1) , disable client counting (0) */
 static YAZ_MUTEX g_session_mutex = 0;
 static int no_sessions = 0;
@@ -165,13 +159,14 @@ static void session_leave(struct session *s)
     yaz_mutex_leave(s->session_mutex);
 }
 
-void add_facet(struct session *s, const char *type, const char *value, int count)
+static void session_normalize_facet(struct session *s, const char *type,
+                                    const char *value,
+                                    WRBUF display_wrbuf,
+                                    WRBUF facet_wrbuf)
 {
     struct conf_service *service = s->service;
     pp2_charset_token_t prt;
     const char *facet_component;
-    WRBUF facet_wrbuf = wrbuf_alloc();
-    WRBUF display_wrbuf = wrbuf_alloc();
     int i;
     const char *icu_chain_id = 0;
 
@@ -208,6 +203,14 @@ void add_facet(struct session *s, const char *type, const char *value, int count
         }
     }
     pp2_charset_token_destroy(prt);
+}
+
+void add_facet(struct session *s, const char *type, const char *value, int count)
+{
+    WRBUF facet_wrbuf = wrbuf_alloc();
+    WRBUF display_wrbuf = wrbuf_alloc();
+
+    session_normalize_facet(s, type, value, display_wrbuf, facet_wrbuf);
  
     if (wrbuf_len(facet_wrbuf))
     {
@@ -405,12 +408,8 @@ static int prepare_map(struct session *se, struct session_database *sdb)
 {
     const char *s;
 
-    if (!sdb->settings)
-    {
-        session_log(se, YLOG_WARN, "No settings on %s", sdb->database->id);
-        return -1;
-    }
-    if ((s = session_setting_oneval(sdb, PZ_XSLT)))
+    if (sdb->settings && sdb->settings[PZ_XSLT] && !sdb->map &&
+        (s = session_setting_oneval(sdb, PZ_XSLT)))        
     {
         char auto_stylesheet[256];
 
@@ -440,25 +439,6 @@ static int prepare_map(struct session *se, struct session_database *sdb)
         sdb->map = normalize_cache_get(se->normalize_cache,
                                        se->service, s);
         if (!sdb->map)
-            return -1;
-    }
-    return 0;
-}
-
-// This analyzes settings and recomputes any supporting data structures
-// if necessary.
-static int prepare_session_database(struct session *se, 
-                                    struct session_database *sdb)
-{
-    if (!sdb->settings)
-    {
-        session_log(se, YLOG_WARN, 
-                "No settings associated with %s", sdb->database->id);
-        return -1;
-    }
-    if (sdb->settings[PZ_XSLT] && !sdb->map)
-    {
-        if (prepare_map(se, sdb) < 0)
             return -1;
     }
     return 0;
@@ -530,26 +510,60 @@ void session_alert_watch(struct session *s, int what)
 static void select_targets_callback(struct session *se,
                                     struct session_database *db)
 {
-    struct client *cl = client_create(db->database->id);
+    struct client *cl;
     struct client_list *l;
 
-    client_set_database(cl, db);
+    for (l = se->clients_cached; l; l = l->next)
+        if (client_get_database(l->client) == db)
+            break;
 
-    client_set_session(cl, se);
+    if (l)
+        cl = l->client;
+    else
+    {
+        cl = client_create(db->database->id);
+        client_set_database(cl, db);
+        client_set_session(cl, se);
+
+        l = xmalloc(sizeof(*l));
+        l->client = cl;
+        l->next = se->clients_cached;
+        se->clients_cached = l;
+    }
 
     l = xmalloc(sizeof(*l));
     l->client = cl;
-    l->next = se->clients;
-    se->clients = l;
+    l->next = se->clients_active;
+    se->clients_active = l;
 }
 
-static void session_remove_clients(struct session *se)
+static void session_reset_active_clients(struct session *se,
+                                         struct client_list *new_list)
 {
     struct client_list *l;
 
     session_enter(se);
-    l = se->clients;
-    se->clients = 0;
+    l = se->clients_active;
+    se->clients_active = new_list;
+    session_leave(se);
+
+    while (l)
+    {
+        struct client_list *l_next = l->next;
+        xfree(l);
+        l = l_next;
+    }
+}
+
+static void session_remove_cached_clients(struct session *se)
+{
+    struct client_list *l;
+
+    session_reset_active_clients(se, 0);
+
+    session_enter(se);
+    l = se->clients_cached;
+    se->clients_cached = 0;
     session_leave(se);
 
     while (l)
@@ -578,7 +592,7 @@ int session_active_clients(struct session *s)
     struct client_list *l;
     int res = 0;
 
-    for (l = s->clients; l; l = l->next)
+    for (l = s->clients_active; l; l = l->next)
         if (client_is_active(l->client))
             res++;
 
@@ -590,36 +604,11 @@ int session_is_preferred_clients_ready(struct session *s)
     struct client_list *l;
     int res = 0;
 
-    for (l = s->clients; l; l = l->next)
+    for (l = s->clients_active; l; l = l->next)
         if (client_is_active_preferred(l->client))
             res++;
     session_log(s, YLOG_DEBUG, "Has %d active preferred clients.", res);
     return res == 0;
-}
-
-static const char *get_strategy_plus_sort(struct client *l, const char *field)
-{
-    struct session_database *sdb = client_get_database(l);
-    struct setting *s;
-
-    const char *strategy_plus_sort = 0;
-    
-    for (s = sdb->settings[PZ_SORTMAP]; s; s = s->next)
-    {
-        char *p = strchr(s->name + 3, ':');
-        if (!p)
-        {
-            yaz_log(YLOG_WARN, "Malformed sortmap name: %s", s->name);
-            continue;
-        }
-        p++;
-        if (!strcmp(p, field))
-        {
-            strategy_plus_sort = s->value;
-            break;
-        }
-    }
-    return strategy_plus_sort;
 }
 
 void session_sort(struct session *se, const char *field, int increasing)
@@ -650,19 +639,15 @@ void session_sort(struct session *se, const char *field, int increasing)
     sr->next = se->sorted_results;
     se->sorted_results = sr;
     
-    for (l = se->clients; l; l = l->next)
+    for (l = se->clients_active; l; l = l->next)
     {
         struct client *cl = l->client;
-        const char *strategy_plus_sort = get_strategy_plus_sort(cl, field);
-        if (strategy_plus_sort)
-        {
-            struct timeval tval;
-            if (client_prep_connection(cl, se->service->z3950_operation_timeout,
-                                       se->service->z3950_session_timeout,
-                                       se->service->server->iochan_man,
-                                       &tval))
-                client_start_search(cl, strategy_plus_sort, increasing);
-        }
+        struct timeval tval;
+        if (client_prep_connection(cl, se->service->z3950_operation_timeout,
+                                   se->service->z3950_session_timeout,
+                                   se->service->server->iochan_man,
+                                   &tval))
+            client_start_search(cl);
     }
     session_leave(se);
 }
@@ -678,8 +663,9 @@ enum pazpar2_error_code session_search(struct session *se,
 {
     int live_channels = 0;
     int no_working = 0;
-    int no_failed = 0;
-    struct client_list *l;
+    int no_failed_query = 0;
+    int no_failed_limit = 0;
+    struct client_list *l, *l0;
     struct timeval tval;
     facet_limits_t facet_limits;
 
@@ -687,11 +673,15 @@ enum pazpar2_error_code session_search(struct session *se,
 
     *addinfo = 0;
 
-    session_remove_clients(se);
+    if (se->settings_modified)
+        session_remove_cached_clients(se);
+    else
+        session_reset_active_clients(se, 0);
     
     session_enter(se);
     reclist_destroy(se->reclist);
     se->reclist = 0;
+    se->settings_modified = 0;
     relevance_destroy(&se->relevance);
     nmem_reset(se->nmem);
     se->total_records = se->total_merged = 0;
@@ -722,41 +712,67 @@ enum pazpar2_error_code session_search(struct session *se,
         session_leave(se);
         return PAZPAR2_MALFORMED_PARAMETER_VALUE;
     }
-    for (l = se->clients; l; l = l->next)
-    {
-        struct client *cl = l->client;
-        const char *strategy_plus_sort = get_strategy_plus_sort(cl, sort_field);
 
-        if (maxrecs)
-            client_set_maxrecs(cl, atoi(maxrecs));
-        if (startrecs)
-            client_set_startrecs(cl, atoi(startrecs));
-        if (prepare_session_database(se, client_get_database(cl)) < 0)
-            ;
-        else if (client_parse_query(cl, query, facet_limits) < 0)
-            no_failed++;
-        else
+    l0 = se->clients_active;
+    se->clients_active = 0;
+    session_leave(se);
+
+    for (l = l0; l; l = l->next)
+    {
+        int parse_ret;
+        struct client *cl = l->client;
+
+        if (prepare_map(se, client_get_database(cl)) < 0)
+            continue;
+
+        parse_ret = client_parse_query(cl, query, facet_limits, startrecs,
+            maxrecs);
+        if (parse_ret == -1)
+            no_failed_query++;
+        else if (parse_ret == -2)
+            no_failed_limit++;
+        else if (parse_ret == 0)
         {
+            session_log(se, YLOG_LOG, "client NEW %s", client_get_id(cl));
             no_working++;
             if (client_prep_connection(cl, se->service->z3950_operation_timeout,
                                        se->service->z3950_session_timeout,
                                        se->service->server->iochan_man,
                                        &tval))
-                client_start_search(cl, strategy_plus_sort, increasing);
+                client_start_search(cl);
+        }
+        else
+        {
+            session_log(se, YLOG_LOG, "client REUSE %s", client_get_id(cl));
+            no_working++;
+            if (client_prep_connection(cl, se->service->z3950_operation_timeout,
+                                       se->service->z3950_session_timeout,
+                                       se->service->server->iochan_man,
+                                       &tval))
+            {
+                client_reingest(cl);
+            }
         }
     }
     facet_limits_destroy(facet_limits);
-    session_leave(se);
+    session_reset_active_clients(se, l0);
+
     if (no_working == 0)
     {
-        if (no_failed > 0)
+        if (no_failed_query > 0)
         {
             *addinfo = "query";
+            return PAZPAR2_MALFORMED_PARAMETER_VALUE;
+        }
+        else if (no_failed_limit > 0)
+        {
+            *addinfo = "limit";
             return PAZPAR2_MALFORMED_PARAMETER_VALUE;
         }
         else
             return PAZPAR2_NO_TARGETS;
     }
+    yaz_log(YLOG_LOG, "session_start_search done");
     return PAZPAR2_NO_ERROR;
 }
 
@@ -840,6 +856,8 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     new->next = sdb->settings[offset];
     sdb->settings[offset] = new;
 
+    se->settings_modified = 1;
+
     // Force later recompute of settings-driven data structures
     // (happens when a search starts and client connections are prepared)
     switch (offset)
@@ -853,11 +871,12 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
     }
 }
 
-void session_destroy(struct session *se) {
+void session_destroy(struct session *se)
+{
     struct session_database *sdb;
     session_log(se, YLOG_DEBUG, "Destroying");
     session_use(-1);
-    session_remove_clients(se);
+    session_remove_cached_clients(se);
 
     for (sdb = se->databases; sdb; sdb = sdb->next)
         session_database_destroy(sdb);
@@ -899,7 +918,9 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->number_of_warnings_unknown_metadata = 0;
     session->num_termlists = 0;
     session->reclist = 0;
-    session->clients = 0;
+    session->clients_active = 0;
+    session->clients_cached = 0;
+    session->settings_modified = 0;
     session->session_nmem = nmem;
     session->nmem = nmem_create();
     session->databases = 0;
@@ -924,12 +945,12 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
     struct client_list *l;
     size_t sz = 0;
 
-    for (l = se->clients; l; l = l->next)
+    for (l = se->clients_active; l; l = l->next)
         sz++;
 
     res = nmem_malloc(nmem, sizeof(*res) * sz);
     *count = 0;
-    for (l = se->clients; l; l = l->next)
+    for (l = se->clients_active; l; l = l->next)
     {
         struct client *cl = l->client;
         WRBUF w = wrbuf_alloc();
@@ -1171,7 +1192,7 @@ struct record_cluster **show_range_start(struct session *se,
         *total = reclist_get_num_records(se->reclist);
 
         *sumhits = 0;
-        for (l = se->clients; l; l = l->next)
+        for (l = se->clients_active; l; l = l->next)
             *sumhits += client_get_hits(l->client);
         
         for (i = 0; i < start; i++)
@@ -1216,7 +1237,7 @@ void statistics(struct session *se, struct statistics *stat)
 
     memset(stat, 0, sizeof(*stat));
     stat->num_hits = 0;
-    for (l = se->clients; l; l = l->next)
+    for (l = se->clients_active; l; l = l->next)
     {
         struct client *cl = l->client;
         if (!client_get_connection(cl))
@@ -1516,13 +1537,85 @@ int ingest_record(struct client *cl, const char *rec,
     }
     session_enter(se);
     if (client_get_session(cl) == se)
-        ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
+        ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
     session_leave(se);
     
     xmlFreeDoc(xdoc);
     return ret;
 }
 
+static int check_limit_local(struct client *cl,
+                             struct record *record,
+                             int record_no)
+{
+    int skip_record = 0;
+    struct session *se = client_get_session(cl);
+    struct conf_service *service = se->service;
+    NMEM nmem_tmp = nmem_create();
+    struct session_database *sdb = client_get_database(cl);
+    int l = 0;
+    while (!skip_record)
+    {
+        struct conf_metadata *ser_md = 0;
+        struct record_metadata *rec_md = 0;
+        int md_field_id;
+        char **values = 0;
+        int i, num_v = 0;
+        
+        const char *name =
+            client_get_facet_limit_local(cl, sdb, &l, nmem_tmp, &num_v,
+                                         &values);
+        if (!name)
+            break;
+        
+        md_field_id = conf_service_metadata_field_id(service, name);
+        if (md_field_id < 0)
+        {
+            skip_record = 1;
+            break;
+        }
+        ser_md = &service->metadata[md_field_id];
+        rec_md = record->metadata[md_field_id];
+        yaz_log(YLOG_LOG, "check limit local %s", name);
+        for (i = 0; i < num_v; )
+        {
+            if (rec_md)
+            {
+                if (ser_md->type == Metadata_type_year 
+                    || ser_md->type == Metadata_type_date)
+                {
+                    int y = atoi(values[i]);
+                    if (y >= rec_md->data.number.min 
+                        && y <= rec_md->data.number.max)
+                        break;
+                }
+                else
+                {
+                    yaz_log(YLOG_LOG, "cmp: '%s' '%s'",
+                            rec_md->data.text.disp, values[i]);
+                    if (!strcmp(rec_md->data.text.disp, values[i]))
+                    {
+                        break;
+                    }
+                }
+                rec_md = rec_md->next;
+            }
+            else
+            {
+                rec_md = record->metadata[md_field_id];
+                i++;
+            }
+        }
+        if (i == num_v)
+        {
+            skip_record = 1;
+            break;
+        }
+    }
+    nmem_destroy(nmem_tmp);
+    return skip_record;
+}
+                             
 static int ingest_to_cluster(struct client *cl,
                              xmlDoc *xdoc,
                              xmlNode *root,
@@ -1596,6 +1689,16 @@ static int ingest_to_cluster(struct client *cl,
         }
     }
 
+    if (check_limit_local(cl, record, record_no))
+    {
+        session_log(se, YLOG_LOG, "Facet filtered out record no %d from %s",
+                    record_no, sdb->database->id);
+        if (type)
+            xmlFree(type);
+        if (value)
+            xmlFree(value);
+        return -2;
+    }
     cluster = reclist_insert(se->reclist, service, record,
                              mergekey_norm, &se->total_merged);
     if (!cluster)

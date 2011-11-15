@@ -15,8 +15,12 @@
   
     if(key == 13 || key == 10)  
     {  
-      document.forms[0].submit()  
-      document.getElementById('testLink').focus();  
+      //document.forms[0].submit();
+      button = document.getElementById('button');
+      button.focus();
+      button.click();
+  
+  
       return false;  
     }  
     else  
@@ -30,6 +34,7 @@
          onKeyPress="return handleKeyPress(event)"  
           maxlength="100"  
                    value="" />  
+      <input id="button" type="submit" value="go" />
       <a href="#" id="testLink"></a>  
     </form>  
   </body>  

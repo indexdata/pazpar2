@@ -32,6 +32,8 @@ const char *facet_limits_get(facet_limits_t fl, int idx, const char **value);
 
 void facet_limits_destroy(facet_limits_t fl);
 
+facet_limits_t facet_limits_dup(facet_limits_t fl);
+
 #endif
 
 /*

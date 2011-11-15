@@ -4,13 +4,18 @@
 // create a parameters array and pass it to the pz2's constructor
 // then register the form submit event with the pz2.search function
 // autoInit is set to true on default
-var usesessions = true;
+var usesessions = false;
 var pazpar2path = '/service-proxy/';
 var showResponseType = '';
+// Facet configuration
 var querys = {'su': '', 'au': '', 'xt': ''};
-var showResponseType = 'json';
+var query_client_server = {'su': 'subject', 'au': 'author', 'xt': 'xtargets'};
+var querys_server = {};
+var useLimit = 1;
+// Fail to get JSON working stabil.
+var showResponseType = 'xml';
 if (document.location.hash == '#pazpar2' || document.location.search.match("useproxy=false")) {
-    usesessions = false;
+    usesessions = true;
     pazpar2path = '/pazpar2/search.pz2';
     showResponseType = 'xml';
 }
@@ -29,7 +34,10 @@ my_paz = new pz2( { "onshow": my_onshow,
                     "onrecord": my_onrecord } );
 // some state vars
 var curPage = 1;
-var recPerPage = 20;
+var recPerPage = 100;
+var recToShowPageSize = 20;
+var recToShow = recToShowPageSize;
+var recIDs = {};
 var totalRec = 0;
 var curDetRecId = '';
 var curDetRecData = null;
@@ -52,7 +60,7 @@ function loginFormSubmit() {
 	authCb, authCb);
 }
 
-function handleKeyPress(e, formId, focusId)  
+function handleKeyPress(e)  
 {  
   var key;  
   if(window.event)  
@@ -62,11 +70,11 @@ function handleKeyPress(e, formId, focusId)
 
   if(key == 13 || key == 10)  
   {  
-    document.getElementById(formId).submit();  
-    focusElement = document.getElementById(focusId);
-    if (focusElement)
-      focusElement.focus();  
-    return false;  
+      button = document.getElementById('button');
+      button.focus();
+      button.click();
+
+      return false;  
   }  
   else  
     return true;  
@@ -130,6 +138,21 @@ function my_oninit() {
     my_paz.bytarget();
 }
 
+function showMoreRecords() {
+    var i = recToShow;
+    recToShow += recToShowPageSize;
+    for ( ; i < recToShow && i < recPerPage; i++) {
+	var element = document.getElementById(recIDs[i]);
+	if (element)
+	    element.style.display = '';
+    }
+    if (i == recPerPage) {
+	var element = document.getElementById('recdiv_END');
+	if (element)
+	    element.style.display = 'none';
+    }
+}
+
 function my_onshow(data) {
     totalRec = data.merged;
     // move it out
@@ -142,31 +165,43 @@ function my_onshow(data) {
     drawPager(pager);
 
     var results = document.getElementById("results");
-  
+    
     var html = [];
     if (data.hits == undefined) 
-	return ; 
+	return ;
+    var style = '';
     for (var i = 0; i < data.hits.length; i++) {
         var hit = data.hits[i];
-	      html.push('<li id="recdiv_'+hit.recid+'" >'
-           /* +'<span>'+ (i + 1 + recPerPage * (curPage - 1)) +'. </span>' */
-            +'<a href="#" id="rec_'+hit.recid
-            +'" onclick="showDetails(this.id);return false;">' 
-            + hit["md-title"] +'</a> '); 
-  	      if (hit["md-title-remainder"] !== undefined) {
-		  html.push('<a href="#">' + hit["md-title-remainder"] + ' </a> ');
-	      if (hit["md-author"] != undefined) {
-		  html.push('<a href="#">'+hit["md-author"]+'</a> ');
-	      }
-	      else if (hit["md-title-responsibility"] !== undefined) {
-		  html.push('<a href="#">'+hit["md-title-responsibility"]+'</a> ');
-  	      }
-      	}
+	var recID = "recdiv_" + hit.recid; 
+	//var recID = "recdiv_" + i; 
+	recIDs[i] = recID;
+	if (i == recToShow)
+	    style = ' style="display:none" ';
+	html.push('<li id="' + recID + '" ' + style +  '>' 
+		  +'<a href="#" id="rec_'+hit.recid
+		  +'" onclick="showDetails(this.id);return false;">' 
+		  + hit["md-title"] +'</a> '); 
+	if (hit["md-title-remainder"] !== undefined) {
+	    html.push('<a href="#">' + hit["md-title-remainder"] + ' </a> ');
+	}
+	if (hit["md-author"] != undefined) {
+	    html.push('<a href="#">'+hit["md-author"]+'</a> ');
+	}
+	else if (hit["md-title-responsibility"] !== undefined) {
+    	    html.push('<a href="#">'+hit["md-title-responsibility"]+'</a> ');
+	}
         if (hit.recid == curDetRecId) {
             html.push(renderDetails_iphone(curDetRecData));
         }
-      	html.push('</div>');
+      	html.push('</li>');
     }
+    // set up "More..." if needed. 
+    style = 'display:none';
+    if (recToShow < recPerPage) {
+	style = 'display:block';
+    }
+    html.push('<li id="recdiv_END" style="' + style + '"><a onclick="showMoreRecords()">More...</a></li>');     
+
     replaceHtml(results, html.join(''));
 }
 
@@ -259,7 +294,7 @@ function my_onterm(data) {
     termlists.push('<ul>');
     termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'reset_au\',\'All\');return false;">All<a></li>');
     for (var i = 0; i < data.author.length && i < AuthorMax; i++ ) {
-        termlists.push('<li><a href="#" onclick="limitQuery(\'au\', \'' + data.author[i].name +'\');return false;">' 
+        termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'au\', \'' + data.author[i].name +'\');return false;">' 
                             + data.author[i].name 
                             + '  (' 
                             + data.author[i].freq 
@@ -403,16 +438,25 @@ function resetPage()
     totalRec = 0;
 }
 
+function getFacets() {
+    var result = "";
+    for (var key in querys_server) {
+	if (result.length > 0)
+	    result += ","
+	result += querys_server[key];
+    }
+    return result;
+}
+
 function triggerSearch ()
 {
-    my_paz.search(document.search.query.value, recPerPage, curSort, curFilter);
-/*
-    , startWith,
+    // Restore to initial page size
+    recToShow = recToShowPageSize;
+    my_paz.search(document.search.query.value, recPerPage, curSort, curFilter, undefined,
 	{
     	   "limit" : getFacets() 
 	}
 	);
-*/
 }
 
 function loadSelect ()
@@ -432,6 +476,27 @@ function limitQuery(field, value)
 }
 
 // limit the query after clicking the facet
+function limitQueryServer(field, value)
+{
+    // Check for client field usage
+    var fieldname = query_client_server[field];
+    if (!fieldname) 
+	fieldname = field;	
+    
+    var newQuery = fieldname + '=' + value.replace(",", "\\,").replace("|", "\\,");
+    // Does it already exists?
+    if (querys_server[fieldname]) 
+	querys_server[fieldname] += "," + newQuery;
+    else
+	querys_server[fieldname] = newQuery;
+//  document.search.query.value += newQuery;
+  onFormSubmitEventHandler();
+  showhide("recordview");
+}
+
+
+
+// limit the query after clicking the facet
 function removeQuery (field, value) {
 	document.search.query.value.replace(' and ' + field + '="' + value + '"', '');
     onFormSubmitEventHandler();
@@ -440,17 +505,40 @@ function removeQuery (field, value) {
 
 // limit the query after clicking the facet
 function limitOrResetQuery (field, value, selected) {
-	if (field == 'reset_su' || field == 'reset_au') {
-		var reset_field = field.substring(6);
-		document.search.query.value = document.search.query.value.replace(querys[reset_field], '');
-		querys[reset_field] = '';
-	    onFormSubmitEventHandler();
-	    showhide("recordview");
-	}
-	else 
-		limitQuery(field, value);
+    if (useLimit) {
+	limitOrResetQueryServer(field,value, selected);
+	return ;
+    }
+    if (field == 'reset_su' || field == 'reset_au') {
+	var reset_field = field.substring(6);
+	document.search.query.value = document.search.query.value.replace(querys[reset_field], '');
+	querys[reset_field] = '';
+	onFormSubmitEventHandler();
+	showhide("recordview");
+    }
+    else 
+	limitQuery(field, value);
 	//alert("limitOrResetQuerry: query after: " + document.search.query.value);
 }
+
+// limit the query after clicking the facet
+function limitOrResetQueryServer (field, value, selected) {
+    if (field.substring(0,6) == 'reset_') {
+	var clientname = field.substring(6);
+	var fieldname = query_client_server[clientname];
+	if (!fieldname) 
+	    fieldname = clientname;	
+	delete querys_server[fieldname];
+	onFormSubmitEventHandler();
+	showhide("recordview");
+    }
+    else 
+	limitQueryServer(field, value);
+	//alert("limitOrResetQuerry: query after: " + document.search.query.value);
+}
+
+
+
 
 // limit by target functions
 function limitTarget (id, name)

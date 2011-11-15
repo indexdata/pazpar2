@@ -1,4 +1,4 @@
-<settings target="opencontent-solr.index:8984/solr">
+<settings target="ocs-test.indexdata.com/solr/select">
   <set name="pz:name" value="opencontent-solr"/>
   
   <set name="pz:apdulog" value="1"/>

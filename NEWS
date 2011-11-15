@@ -1,4 +1,12 @@
+For search, when limit and or filtering is in place and search
+is identical to previous search, the result set is re-used and the
+target is not searched.
+
+Limits may work perform local filtering as well, by using "local:"
+for a limitmap.
+
 --- 1.6.5 2011/11/01
+
 Updated bytarget command to contain a suggestions element with misspelled
 words and suggestions to these. pz2.js has been updated to deliver this 
 onwards as well. Only target that currently delivers this is the solr 
