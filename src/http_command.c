@@ -666,6 +666,14 @@ static void bytarget_response(struct http_channel *c) {
 
         wrbuf_printf(c->wrbuf, "<hits>" ODR_INT_PRINTF "</hits>\n", ht[i].hits);
         wrbuf_printf(c->wrbuf, "<diagnostic>%d</diagnostic>\n", ht[i].diagnostic);
+        if (ht[i].diagnostic)
+        {
+            wrbuf_puts(c->wrbuf, "<addinfo>");
+            if (ht[i].addinfo)
+                wrbuf_xmlputs(c->wrbuf, ht[i].addinfo);
+            wrbuf_puts(c->wrbuf, "</addinfo>\n");
+        }
+
         wrbuf_printf(c->wrbuf, "<records>%d</records>\n", ht[i].records);
 
         wrbuf_puts(c->wrbuf, "<state>");
