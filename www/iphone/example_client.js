@@ -153,10 +153,13 @@ function my_onshow(data) {
             +'<a href="#" id="rec_'+hit.recid
             +'" onclick="showDetails(this.id);return false;">' 
             + hit["md-title"] +'</a> '); 
-	      if (hit["md-title-responsibility"] !== undefined) {
-    	    html.push('<a href="#">'+hit["md-title-responsibility"]+'</a> ');
   	      if (hit["md-title-remainder"] !== undefined) {
-  	        html.push('<a href="#">' + hit["md-title-remainder"] + ' </a> ');
+		  html.push('<a href="#">' + hit["md-title-remainder"] + ' </a> ');
+	      if (hit["md-author"] != undefined) {
+		  html.push('<a href="#">'+hit["md-author"]+'</a> ');
+	      }
+	      else if (hit["md-title-responsibility"] !== undefined) {
+		  html.push('<a href="#">'+hit["md-title-responsibility"]+'</a> ');
   	      }
       	}
         if (hit.recid == curDetRecId) {
@@ -611,8 +614,8 @@ function renderDetails(data, marker)
   	if (data["md-title-remainder"] !== undefined) {
 	      details += ' : <span>' + data["md-title-remainder"] + ' </span>';
   	}
-  	if (data["md-title-responsibility"] !== undefined) {
-	      details += ' <span><i>'+ data["md-title-responsibility"] +'</i></span>';
+  	if (data["md-author"] !== undefined) {
+	      details += ' <span><i>'+ data["md-auhtor"] +'</i></span>';
   	}
  	  details += '</td></tr>';
     }
@@ -669,7 +672,9 @@ function renderDetails_iphone(data, marker)
         if (data["md-title-remainder"] !== undefined) {
 	      details += ' ' + data["md-title-remainder"] + ' ';
         }
-        if (data["md-title-responsibility"] !== undefined) {
+        if (data["md-author"] !== undefined) {
+	      details += '<i>'+ data["md-author"] +'</i>';
+        } else if (data["md-title-responsibility"] !== undefined) {
 	      details += '<i>'+ data["md-title-responsibility"] +'</i>';
         }
         details += '</big>'
