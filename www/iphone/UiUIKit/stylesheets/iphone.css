@@ -32,8 +32,10 @@
 			margin: 15px 0 0 10px;  
 			}
 
+
 #searchForm {
-  background-color: #7ec8b2;
+  background-color: #4AB694; 
+//8AD0B9;
 }
 #nav {
     background-color: #000;
@@ -46,7 +48,7 @@
 #nav li {
   margin: 10px 5px 0 5px;
   float: left;
-  padding: 0;
+  padding: 10px 5px 10px 5px;
   margin: 0;
   list-style: none;
   border-bottom-width: 0px;
@@ -104,6 +106,7 @@
 			padding: 10px;
 			margin: 0 0 0 -10px;
 			min-height: 44px;
+			//position: absolute;
 			-webkit-box-sizing: border-box;
 			}
 
@@ -221,7 +224,16 @@
 				color: #666;
 				border-top: 0px;
 				list-style-type: none;	
+//				padding: 10px 10px 10px 10px;
+//				border: 1px solid #B4B4B4;
+				}
+
+			ul.termlist li a {
+				color: #666;
+				border-top: 0px;
+				list-style-type: none;	
 				padding: 10px 10px 10px 10px;
+				border: 1px solid #B4B4B4;
 				}
 				
 
@@ -246,6 +258,7 @@
 					background-image: url(../images/chevron.png);
 					background-position: right center;
 					background-repeat: no-repeat;
+					border: 1px solid rgb(180,180,180);
 					}
 					
 					
@@ -266,13 +279,13 @@
 					white-space: nowrap;
 					overflow: hidden;
 					display: block;
-					padding: 12px 10px 12px 10px;
-					margin: -10px;
+					padding: 0px 0px 0px 0px;
+					margin: 0px;
 					-webkit-tap-highlight-color:rgba(0,0,0,0);
 				}
 				
 					ul li.img a + a {
-						margin: -10px 10px -20px -5px;
+						margin: 0px 10px 0px -5px;
 						font-size: 17px;
 						font-weight: bold;
 					}
@@ -280,8 +293,8 @@
 					ul li.img a + a + a {
 							font-size: 14px;
 							font-weight: normal;
-							margin-left: -10px;
-							margin-bottom: -10px;
+							margin-left: -5px;
+							margin-bottom: 0px;
 							margin-top: 0;
 						}
 						
@@ -292,9 +305,9 @@
 						
 						
 						ul li.img a + small + a + a {
-							margin-left: -10px;
-							margin-top: -20px;
-							margin-bottom: -10px;
+							margin-left:  -5px;
+							margin-top:    0px;
+							margin-bottom: 0px;
 							font-size: 14px;
 							font-weight: normal;
 							}
@@ -319,7 +332,7 @@
 						ul li a + a + a, ul li.img a + a + a + a, ul li.img a + small + a + a + a {
 							color: #666;
 							font: 13px Helvetica;
-							margin: 0;
+							margin-left: -5px;
 							text-overflow: ellipsis;
 							white-space: nowrap;
 							overflow: hidden;
@@ -394,15 +407,17 @@
 		/* images */
 		
 			ul li.img {
-				padding-left: 115px;
+				padding-left: 60px;
+				height: 58px;
 			}
 		
 			ul li.img a.img {
-				background: url(../images/standard-img.png) no-repeat;
+				/* background: url(../images/standard-img.png) no-repeat; */
 				display: inline-block;
-				width: 100px;
-				height: 75px;
-				margin: -10px 0 -20px -115px;
+				width: 45px;
+				height: 60px;
+				margin: 0px 0px 0px -60px;
+				padding: 0px 0px 0px 0px;
 				float: left;
 			}
 		
@@ -755,7 +770,8 @@
 																
 								ul.field li small {
 									font-size: 13px;
-									font-weight: bold;
+									font-weight: bold
+									display: inline-block;
 								}
 							
 						
