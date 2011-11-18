@@ -139,6 +139,7 @@ struct hitsbytarget {
     const char *name;
     Odr_int hits;
     int diagnostic;
+    const char *addinfo;
     int records;
     const char *state;
     int connected;

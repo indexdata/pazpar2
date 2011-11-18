@@ -108,6 +108,7 @@ struct client {
     struct session *session;
     char *pquery; // Current search
     char *cqlquery; // used for SRU targets only
+    char *addinfo; // diagnostic info for most resent error
     Odr_int hits;
     int record_offset;
     int maxrecs;
@@ -862,6 +863,7 @@ struct client *client_create(const char *id)
     cl->startrecs = 0;
     cl->pquery = 0;
     cl->cqlquery = 0;
+    cl->addinfo = 0;
     cl->database = 0;
     cl->connection = 0;
     cl->session = 0;
@@ -913,6 +915,8 @@ int client_destroy(struct client *c)
             c->pquery = 0;
             xfree(c->cqlquery);
             c->cqlquery = 0;
+            xfree(c->addinfo);
+            c->addinfo = 0;
             xfree(c->id);
             assert(!c->connection);
             facet_limits_destroy(c->facet_limits);
@@ -1304,13 +1308,20 @@ int client_get_num_records(struct client *cl)
     return cl->record_offset;
 }
 
-void client_set_diagnostic(struct client *cl, int diagnostic)
+void client_set_diagnostic(struct client *cl, int diagnostic,
+                           const char *addinfo)
 {
     cl->diagnostic = diagnostic;
+    xfree(cl->addinfo);
+    cl->addinfo = 0;
+    if (addinfo)
+        cl->addinfo = xstrdup(addinfo);
 }
 
-int client_get_diagnostic(struct client *cl)
+int client_get_diagnostic(struct client *cl, const char **addinfo)
 {
+    if (addinfo)
+        *addinfo = cl->addinfo;
     return cl->diagnostic;
 }
 
