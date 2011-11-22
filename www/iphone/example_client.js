@@ -33,10 +33,12 @@ my_paz = new pz2( { "onshow": my_onshow,
                     "onbytarget": null,
 		    "usesessions" : usesessions,
                     "showResponseType": showResponseType,
-                    "onrecord": my_onrecord } );
+                    "onrecord": my_onrecord,
+		    "errorhandler" : my_onerror} 
+);
 // some state vars
 var curPage = 1;
-var recPerPage = 100;
+var recPerPage = 10;
 var recToShowPageSize = 20;
 var recToShow = recToShowPageSize;
 var recIDs = {};
@@ -53,6 +55,28 @@ var tab = "recordview";
 
 var triedPass = "";
 var triedUser = "";
+
+//
+// pz2.js event handlers:
+//
+function my_onerror(error) {
+    switch(error.code) {
+        // No targets!
+    case "8": alert("No resources were selected for the search"); break;
+    	// target not configured, this is a pazpar2 bug
+        // but for now simply research
+    case "9": 
+	triggerSearch(); 
+	break;
+        // authentication
+    case "100" : 
+	auth.check(loggedIn, login);
+	//window.location = "login.html"; break;
+    default: 
+	alert("Unhandled error: " + error.code);
+	throw error; // display error in JavaScript console
+    }
+}
 
 function loginFormSubmit() {
     triedUser = document.loginForm.username.value;
@@ -123,7 +147,7 @@ function logInOrOut() {
 }
 function loggedIn() {
     var login = document.getElementById("login");
-    login.innerHTML = 'Logout(' + auth.displayName + ')';
+    login.innerHTML = 'Logout';
     document.getElementById("log").innerHTML = login.innerHTML;
 }
 
@@ -189,11 +213,11 @@ function my_onshow(data) {
     // move it out
     var pager = document.getElementById("pager");
     pager.innerHTML = "";
-    pager.innerHTML +='<hr/><div style="float: right">Displaying: ' 
+    drawPager(pager);
+    pager.innerHTML +='<div class="status">Displaying: ' 
                     + (data.start + 1) + ' to ' + (data.start + data.num) +
                      ' of ' + data.merged + ' (found: ' 
                      + data.total + ')</div>';
-    drawPager(pager);
 
     var results = document.getElementById("results");
     
@@ -262,14 +286,16 @@ function my_onshow(data) {
 */
       	html.push('</li>');
     }
-    document.getElementById("loading").style.display = 'none';
+    if (data.activeclients == 0)
+	document.getElementById("loading").style.display = 'none';
+/*
     // set up "More..." if needed. 
     style = 'display:none';
     if (recToShow < recPerPage) {
 	style = 'display:block';
     }
     html.push('<li class="img" id="recdiv_END" style="' + style + '"><a onclick="showMoreRecords()">More...</a></li>');     
-
+*/
     replaceHtml(results, html.join(''));
 }
 
@@ -372,7 +398,7 @@ function my_onterm(data) {
     termlists.push('<div id="term_authors" >');
     termlists.push('<h4 class="termtitle">Authors</h4>');
     termlists.push('<ul class="termlist">');
-    termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'reset_au\',\'All\');return false;">All<a></li>');
+    termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'reset_au\',\'All\');return false;">All</a></li>');
     for (var i = 0; i < data.author.length && i < AuthorMax; i++ ) {
         termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'au\', \'' + data.author[i].name +'\');return false;">' 
                             + data.author[i].name 
@@ -433,8 +459,8 @@ function my_onrecord(data) {
     curDetRecData = data;
     var html = renderDetails_iphone(curDetRecData);
     detailRecordDiv.innerHTML = html;
-    document.getElementById("loading").style.diplay = 'none';
     showhide('detailview');
+    document.getElementById("loading").style.display = 'none';
 }
 
 function my_onrecord_iphone(data) {
@@ -541,12 +567,13 @@ function triggerSearch ()
 {
     // Restore to initial page size
     recToShow = recToShowPageSize;
+    document.getElementById("loading").style.display = 'inline';
     my_paz.search(document.search.query.value, recPerPage, curSort, curFilter, undefined,
 	{
     	   "limit" : getFacets() 
 	}
 	);
-    document.getElementById("loading").style.diplay = 'block';
+    showhide("recordview");
 }
 
 function loadSelect ()
@@ -637,7 +664,6 @@ function limitTarget (id, name)
     resetPage();
     loadSelect();
     triggerSearch();
-    showhide("recordview");
     return false;
 }
 
@@ -662,7 +688,7 @@ function limitOrResetTarget(id, name) {
 function drawPager (pagerDiv)
 {
     //client indexes pages from 1 but pz2 from 0
-    var onsides = 6;
+    var onsides = 2;
     var pages = Math.ceil(totalRec / recPerPage);
     
     var firstClkbl = ( curPage - onsides > 0 ) 
@@ -673,10 +699,10 @@ function drawPager (pagerDiv)
         ? firstClkbl + 2*onsides
         : pages;
 
-    var prev = '<span id="prev">&#60;&#60; Prev</span><b> | </b>';
+    var prev = '<span id="prev">Prev</span><b> | </b>';
     if (curPage > 1)
         var prev = '<a href="#" id="prev" onclick="pagerPrev();">'
-        +'&#60;&#60; Prev</a><b> | </b>';
+        +'Prev</a><b> | </b>';
 
     var middle = '';
     for(var i = firstClkbl; i <= lastClkbl; i++) {
@@ -688,10 +714,10 @@ function drawPager (pagerDiv)
             + numLabel + ' </a>';
     }
     
-    var next = '<b> | </b><span id="next">Next &#62;&#62;</span>';
+    var next = '<b> | </b><span id="next">Next</span>';
     if (pages - curPage > 0)
     var next = '<b> | </b><a href="#" id="next" onclick="pagerNext()">'
-        +'Next &#62;&#62;</a>';
+        +'Next</a>';
 
     predots = '';
     if (firstClkbl > 1)
@@ -701,8 +727,8 @@ function drawPager (pagerDiv)
     if (lastClkbl < pages)
         postdots = '...';
 
-    pagerDiv.innerHTML += '<div style="float: none">' 
-        + prev + predots + middle + postdots + next + '</div><hr/>';
+    pagerDiv.innerHTML += '<div class="pager">' 
+        + prev + predots + middle + postdots + next + '</div>';
 }
 
 function showPage (pageNum)
@@ -758,8 +784,8 @@ function showDetails (prefixRecId) {
         return;
     }
     // request the record
+    document.getElementById("loading").style.display = 'inline';
     my_paz.record(recId);
-    document.getElementById("loading").style.diplay = 'block';
 }
 
 function replaceHtml(el, html) {
@@ -804,25 +830,29 @@ function renderDetails(data, marker)
     return details;
 }
 
-function renderLine(title, value) {
+function renderLine(title, value, tag) {
+    if (tag == undefined)
+	tag = 'big';
     if (value != undefined)
-        return '<li><h3>' + title + '</h3> <big>' + value + '<br></big></li>';
+        return '<li><h3>' + title + '</h3><' + tag + '>' + value + '</' + tag + '></li>';
     return '';
 }
 
-function renderLines(title, values, name) {
+function renderLines(title, values, name, tag) {
+    if (tag == undefined)
+	tag = 'big';
     var result = "";
-    result = '<li><h3>' + title + '</h3><big>';
+    result = '<li><h3>' + title + '</h3><' + tag + '>';
     if (values != undefined && values.length)
 	for (var idx = 0 ; idx < values.length ; idx++)
-	    result += values[idx][name] + '<br>';
-    result += '</big>';
+	    result += values[idx][name];
+    result += '</' + tag + '></li>';
     return result;
 }
 
 function renderLinesURL(title, values, name, url) {
     var result = "";
-    result = '<li><h3>' + title + '</h3><big>';
+    result = '<li><h3>' + title + '</h3><span style="display: inline-block;">';
     if (values != undefined && values.length) {
 	for (var idx = 0 ; idx < values.length ; idx++) {
 	    if (values[idx][url] != undefined)
@@ -831,13 +861,13 @@ function renderLinesURL(title, values, name, url) {
 		result += values[idx][name] + '<br>';
 	}
     }
-    result += '</big>';
+    result += '</span></li>';
     return result;
 }
 
 function renderLineURL(title, URL, display) {
     if (URL != undefined)
-    	return '<li><h3>' + title + '</h3> <a href="' + URL + '" target="_blank">' + display + '</a></li>';
+    	return '<li><h3>' + title + '</h3><a href="' + URL + '" target="_blank">' + display + '</a></li>';
     return '';
 }
 
@@ -864,7 +894,7 @@ function renderDetails_iphone(data, marker)
     	details += '<h4>'+ marker + '</h4>'; 
     details += '<ul class="field" >';
     if (data["md-title"] != undefined) {
-    	details += '<li><h3>Title</h3><big> ' + data["md-title"];
+    	details += '<li><h3>Title</h3>' + data["md-title"];
         if (data["md-title-remainder"] != undefined) {
 	      details += ' - ' + data["md-title-remainder"] + ' ';
         }
@@ -875,17 +905,22 @@ function renderDetails_iphone(data, marker)
 	      details += '<i>'+ data["md-title-responsibility"] +'</i>';
         }
 */
-        details += '</big>'
         details += '</li>'
     }
+    var coverimagetag = imageHelper.getImageTagByRecId(data.recid, "md-isbn", undefined, "M");
     details 
     	+=renderLine('Date', 	data["md-date"])
     	+ renderLine('Author', 	data["md-author"])
 //    	+ renderLineURL('URL', 	data["md-electronic-url"], data["md-electronic-url"])
     	+ renderLine('Description', 	data["md-description"]);
    	+ renderLines('Subjects', data["location"], "md-subject");
-    
+
+    if (coverimagetag.length>0) {
+	details += renderLine('Cover', coverimagetag);
+    }
+
     details += renderLinesURL('Location', data["location"], "@name", "md-url_recipe");
+    details += '<li><a href="#" onclick="showhide(\'recordview\')">Back</a></li>';
     details += '</ul></div>';
     return details;
 }
