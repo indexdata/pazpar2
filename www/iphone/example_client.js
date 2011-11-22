@@ -842,11 +842,12 @@ function renderLines(title, values, name, tag) {
     if (tag == undefined)
 	tag = 'big';
     var result = "";
-    result = '<li><h3>' + title + '</h3><' + tag + '>';
     if (values != undefined && values.length)
 	for (var idx = 0 ; idx < values.length ; idx++)
-	    result += values[idx][name];
-    result += '</' + tag + '></li>';
+	    if (values[idx][name] != undefined )
+		result += values[idx][name] + ' ';
+    if (result != "") 
+	result = '<li><h3>' + title + '</h3><' + tag + '>' + result + '</' + tag + '></li>';
     return result;
 }
 
@@ -912,8 +913,8 @@ function renderDetails_iphone(data, marker)
     	+=renderLine('Date', 	data["md-date"])
     	+ renderLine('Author', 	data["md-author"])
 //    	+ renderLineURL('URL', 	data["md-electronic-url"], data["md-electronic-url"])
-    	+ renderLine('Description', 	data["md-description"]);
-   	+ renderLines('Subjects', data["location"], "md-subject");
+    	+ renderLine('Description', 	data["md-description"])
+    	+ renderLines('Subjects', data["location"], "md-subject");
 
     if (coverimagetag.length>0) {
 	details += renderLine('Cover', coverimagetag);
