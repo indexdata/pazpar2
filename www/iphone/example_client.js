@@ -927,7 +927,8 @@ function renderDetails_iphone(data, marker)
     	+ renderLine('Author', 	data["md-author"])
 //    	+ renderLineURL('URL', 	data["md-electronic-url"], data["md-electronic-url"])
     	+ renderLine('Description', 	data["md-description"])
-    	+ renderLines('Subjects', data["location"], "md-subject");
+//    	+ renderLines('Subjects', data["location"], "md-subject")
+    ;
 
     details += renderLinesURL('Location', data["location"], "@name", "md-url_recipe");
     details += '<li><a href="#" onclick="showhide(\'recordview\')" style="font-size: 18px;">Back</a></li>';
