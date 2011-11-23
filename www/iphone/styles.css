@@ -37,7 +37,6 @@ a.crossout:hover {
     font-weight: bold;
 }
 
-
 #heading {
     background-color: #87c9af;
     border-top: 1px solid  #156a16;
@@ -66,7 +65,7 @@ input#query {
 
 div.termtitle {
     margin: 4px;
-    font-weight: bold;
+//    font-weight: bold;
 }
 
 div.record {

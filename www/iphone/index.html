@@ -11,13 +11,14 @@
 <!-- 
   <meta id="viewport" name="viewport" content="width=320; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;" />
  -->  
-
 	<script type="text/javascript" src="/mk2-ui-core/js/ui_bootstrap.js"></script>
 	<script type="text/javascript" src="/mk2-ui-core/js/state.js"></script>
+	<script type="text/javascript" src="/mk2-ui-core/js/images.js"></script>
 	<script type="text/javascript" src="/mk2-ui-core/js/recipe.js"></script>
 	<script type="text/javascript" src="/mk2-ui-core/js/snippet.js"></script>
 	<script type="text/javascript" src="/mk2-ui-core/js/auth.js"></script>        
  	<script type="text/javascript" src="/mk2-ui-core/js/torus.js"></script>
+ 	<script type="text/javascript" src="/mk2-ui-core/js/helper.js"></script>
 <!--
         <script type="text/javascript" src="/mk2-ui-core/js/client.js"></script>
 -->
@@ -26,6 +27,7 @@
     <script type="text/javascript" src="iphone.js" ></script>
     <script type="text/javascript" src="/pazpar2/js/pz2.js"></script>
     <script type="text/javascript" src="example_client.js"></script>
+    <link rel="stylesheet" href="mobile.css" />
     <link rel="stylesheet" href="UiUIKit/stylesheets/iphone.css" />
     <link rel="apple-touch-icon" href="UiUIKit/stylesheets/images/apple-touch-icon.png" />
  </head>
@@ -46,7 +48,7 @@
    <span> | </span>
    <a href="#" onclick="switchView('targetview')">Target Info</a>
   </div>
- 
+
   <div id="heading">
    <table width="100%" border="0" cellpadding="0" cellspacing="0">
     <tr>
@@ -56,7 +58,11 @@
      <td width="100%">
       <form id="searchForm" name="search" style="display: none">
        <input id="query" type="text" onKeyPress="return handleKeyPress(event)" />
-       <input id="button" type="submit" value="go" /><a id="hidden" href=""></a>
+       <input id="button" type="submit" value="go" /><a id="hidden" href="" ></a>
+       <div id="loading" style="display: none;">
+	 <img class="inline" src="gfx/progress.gif" height="14" />
+       </div>
+       <a id="login" style="float: right;" href="#" onclick="logInOrOut(); return 0;">Login</a>
       </form>
      </td>
     </tr>
@@ -79,10 +85,8 @@
             <li><a href="javascript:showhide('xtargets')">Sources</a></li>
             <li><a href="javascript:showhide('subjects')">Subjects</a></li>
             <li><a href="javascript:showhide('authors')">Authors</a></li>
-            <li><a href="#" onclick="logInOrOut(); return 0;" id="login">Login</a></li>
       </ul>
   </div>
-    
   <div id="termlist" style="display: none" >
       <div id="term_xtargets" style="display: none"></div>
       <div id="term_subjects" style="display: none"></div>
@@ -133,21 +137,24 @@
         </select>
         and show 
         <select name="perpage" id="perpage">
-         <option value="10">10</option>
+         <option value="5">5</option>
+         <option value="5" selected="selected">10</option>
          <option value="20">20</option>
          <option value="30">30</option>
          <option value="50">50</option>
-         <option value="100" selected="selected">100</option>
         </select>
         per page.
        </form>
       </div>
-      <div id="pager" style="display: none;"></div>
       <h4>Results by MasterKey</h4>
       <ul id="results"></ul>
       <img id="logo" src="IndexData_MK_logo.png"/>
+      <div id="pager" style="display: block;"></div>
   </div>
-  
+  <div id="detailview" style="display:none">
+      <h4>Detailed view</h4>
+    <div id="detailrecord">meh</div> 
+  </div>
   <div id="targetview" style="display: none">
    <div id="bytarget">
        No information available yet.
