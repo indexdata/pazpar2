@@ -70,8 +70,9 @@ function my_onerror(error) {
 	break;
         // authentication
     case "100" : 
-	auth.check(loggedIn, login);
-	//window.location = "login.html"; break;
+	loginFormSubmit();
+	//window.location = "login.html"; 
+	break;
     default: 
 	alert("Unhandled error: " + error.code);
 	throw error; // display error in JavaScript console
