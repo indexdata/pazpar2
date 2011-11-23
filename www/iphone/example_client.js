@@ -831,9 +831,10 @@ function renderDetails(data, marker)
     return details;
 }
 
+var default_tag = 'big';
 function renderLine(title, value, tag) {
     if (tag == undefined)
-	tag = 'big';
+	tag = default_tag;
     if (value != undefined)
         return '<li><h3>' + title + '</h3><' + tag + '>' + value + '</' + tag + '></li>';
     return '';
@@ -841,7 +842,7 @@ function renderLine(title, value, tag) {
 
 function renderLines(title, values, name, tag) {
     if (tag == undefined)
-	tag = 'big';
+	tag = default_tag;
     var result = "";
     if (values != undefined && values.length)
 	for (var idx = 0 ; idx < values.length ; idx++)
@@ -852,18 +853,23 @@ function renderLines(title, values, name, tag) {
     return result;
 }
 
-function renderLinesURL(title, values, name, url) {
+// Values is a array of locations. 
+
+function renderLinesURL(title, values, name, url, tag) {
+    if (tag == undefined)
+	tag = default_tag;
     var result = "";
-    result = '<li><h3>' + title + '</h3><span style="display: inline-block;">';
+    result = '<li><h3>' + title + '</h3><' + tag + ' style="display: inline-block;">';
     if (values != undefined && values.length) {
 	for (var idx = 0 ; idx < values.length ; idx++) {
-	    if (values[idx][url] != undefined)
-		result += '<a href="' + values[idx][url] + '">' + values[idx][name] + '</a><br>';
+	    var url = choose_url(values[idx], auth.proxyUrl);
+	    if (url != null)
+		result += '<a target="_blank" href="' + url + '">' + values[idx][name] + '</a><br>';
 	    else
 		result += values[idx][name] + '<br>';
 	}
     }
-    result += '</span></li>';
+    result += '</' + tag + '></li>';
     return result;
 }
 
@@ -879,6 +885,15 @@ function renderLineEmail(dtitle, email, display) {
     return '';
 }
 
+
+function find_prioritized(values) {
+    for (var index = 0; index < values.length; index++) {
+	if (values[index] != undefined)
+	    return values[index];
+    }
+    return undefined;
+}
+
 function renderDetails_iphone(data, marker)
 {
 	//return renderDetails(data,marker);
@@ -886,29 +901,26 @@ function renderDetails_iphone(data, marker)
     if (!data) 
 	return ""; 
     var details = '<div class="details" id="det_'+data.recid+'" >'
-/*
-    details = '<div id="header" id="det_'+data.recid+'">' 
-    	+ '<h1>Detailed Info</h1>' 
-    	+ '<a id="backbutton" href="hidedetail(\'det_' + data.recid + '\')">Back</a>' 
-    	+ '</div>';
-*/
     if (marker) 
     	details += '<h4>'+ marker + '</h4>'; 
     details += '<ul class="field" >';
+
+    var title  = '';
     if (data["md-title"] != undefined) {
-    	details += '<li><h3>Title</h3>' + data["md-title"];
+    	title +=  data["md-title"];
         if (data["md-title-remainder"] != undefined) {
-	      details += ' - ' + data["md-title-remainder"] + ' ';
+	    title += '<br><i>' + data["md-title-remainder"] + '</i>';
         }
-/*
-        if (data["md-author"] != undefined) {
-	      details += '<i>'+ data["md-author"] +'</i>';
-        } else if (data["md-title-responsibility"] != undefined) {
-	      details += '<i>'+ data["md-title-responsibility"] +'</i>';
-        }
-*/
-        details += '</li>'
     }
+    details += renderLine('Title', title);
+
+    var author = find_prioritized(
+	[
+	    data["md-author"],
+	    data["md-title-responsibility"]
+	]
+    );
+
     var coverimagetag = imageHelper.getImageTagByRecId(data.recid, "md-isbn", undefined, "M");
     details 
     	+=renderLine('Date', 	data["md-date"])
@@ -917,12 +929,12 @@ function renderDetails_iphone(data, marker)
     	+ renderLine('Description', 	data["md-description"])
     	+ renderLines('Subjects', data["location"], "md-subject");
 
+    details += renderLinesURL('Location', data["location"], "@name", "md-url_recipe");
+    details += '<li><a href="#" onclick="showhide(\'recordview\')" style="font-size: 18px;">Back</a></li>';
     if (coverimagetag.length>0) {
-	details += renderLine('Cover', coverimagetag);
+	details += renderLine('&nbsp;', coverimagetag);
     }
 
-    details += renderLinesURL('Location', data["location"], "@name", "md-url_recipe");
-    details += '<li><a href="#" onclick="showhide(\'recordview\')">Back</a></li>';
     details += '</ul></div>';
     return details;
 }
