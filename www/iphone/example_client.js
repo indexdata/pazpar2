@@ -233,7 +233,7 @@ function my_onshow(data) {
 	var lines = 0;
 	if (i == recToShow)
 	    style = ' style="display:none" ';
-	html.push('<li class="img arrow" id="' + recDivID + '" ' + style +  '>' );
+	html.push('<li class="img" id="' + recDivID + '" ' + style +  '>' );
 	html.push('<a class="img" href="#' + i + '" id="rec_'+hit.recid + '" onclick="showDetails(this.id);return false;" >');
 	if (1) {
             var useThumbnails = hit["md-use_thumbnails"];
