@@ -255,6 +255,10 @@
 					
 				/* universal arrows */
 				
+				ul li.img {
+					border: 1px solid rgb(180,180,180);
+					}
+					
 				ul li.arrow {
 					background-image: url(../images/chevron.png);
 					background-position: right center;
