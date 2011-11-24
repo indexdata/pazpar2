@@ -430,6 +430,10 @@ pz2.prototype =
                 for (i = 0; i < hits.length; i++)
                   show.hits[i] = Element_parseChildNodes(hits[i]);
             } else {
+		// We prob. got a 417 Already blocked, need to retry
+		context.showTimer = setTimeout(function () {
+		    context.show();
+                }, delay);
               context.throwError('Show failed. Malformed WS resonse.',
                   114);
             }
