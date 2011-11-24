@@ -68,10 +68,14 @@ function my_onerror(error) {
     case "9": 
 	triggerSearch(); 
 	break;
+	
+	// Already blocked 
+    case "13": 
+	// ignore
+	break
         // authentication
     case "100" : 
-	loginFormSubmit();
-	//window.location = "login.html"; 
+	auth.check(loggedIn, login);
 	break;
     default: 
 	alert("Unhandled error: " + error.code);
