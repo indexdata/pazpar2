@@ -1035,6 +1035,8 @@ static void show_records_ready(void *data)
     show_records(c, -1);
 }
 
+int show_count = 0;
+
 static void cmd_show(struct http_channel *c)
 {
     struct http_request  *rq = c->request;
@@ -1085,7 +1087,9 @@ static void cmd_show(struct http_channel *c)
         {
             // if there is already a watch/block. we do not block this one
             if (session_set_watch(s->psession, SESSION_WATCH_SHOW,
-                                  show_records_ready, c, c) != 0)
+                                  show_records_ready, c, c) != 0
+//                || (++show_count % 6 == 0)
+                )
             {
                 yaz_log(YLOG_WARN, "Attempt to block multiple times on show block. Not supported!");
                 error(rs, PAZPAR2_ALREADY_BLOCKED, "show"); 
