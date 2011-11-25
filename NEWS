@@ -1,3 +1,5 @@
+--- 1.6.6 2011/11/25
+
 For search, when limit and or filtering is in place and search
 is identical to previous search, the result set is re-used and the
 target is not searched.

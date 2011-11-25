@@ -1,3 +1,9 @@
+pazpar2 (1.6.6-1indexdata) unstable; urgency=low
+
+  * Upstream 
+
+ -- Dennis Schafroth <dennis@indexdata.com>  Fri, 25 Nov 2011 13:53:24 +0000
+
 pazpar2 (1.6.5-1indexdata) unstable; urgency=low
 
   * Upstream
