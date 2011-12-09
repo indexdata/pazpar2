@@ -117,7 +117,7 @@ int match_zurl(const char *zurl, const char *pattern)
         if (!strncmp(pattern, zurl, len))
             return 1;
         else
-            return 2;
+            return 0;
     }
     else if (!strcmp(pattern, zurl))
         return 1;
