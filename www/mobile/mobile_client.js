@@ -935,7 +935,7 @@ function renderDetails_iphone(data, marker)
     ;
 
     details += renderLinesURL('Location', data["location"], "@name", "md-url_recipe");
-    details += '<li><a href="#" onclick="showhide(\'recordview\')" style="font-size: 18px;">Back</a></li>';
+    details += '<li><a href="#" onclick="showhide(\'recordview\')" style="font-size: 18px;margin-left: 10px;">Back</a></li>';
     if (coverimagetag.length>0) {
 	details += renderLine('&nbsp;', coverimagetag);
     }
