@@ -1,73 +1,73 @@
-<record xmlns="http://www.loc.gov/MARC21/slim">
-  <leader>01369nam a2200265 i 4504</leader>
-  <controlfield tag="001">   73090924 //r82</controlfield>
-  <controlfield tag="003">DLC</controlfield>
-  <controlfield tag="005">19820524000000.0</controlfield>
-  <controlfield tag="008">760609s1974    nyua     b    10110 eng  </controlfield>
-  <datafield tag="010" ind1=" " ind2=" ">
-    <subfield code="a">   73090924 //r82</subfield>
-  </datafield>
-  <datafield tag="040" ind1=" " ind2=" ">
-    <subfield code="a">DLC</subfield>
-    <subfield code="c">DLC</subfield>
-    <subfield code="d">DLC</subfield>
-  </datafield>
-  <datafield tag="050" ind1="0" ind2="0">
-    <subfield code="a">RC71.3</subfield>
-    <subfield code="b">.W67 1971</subfield>
-  </datafield>
-  <datafield tag="082" ind1="0" ind2="0">
-    <subfield code="a">616.07/575/02854</subfield>
-  </datafield>
-  <datafield tag="111" ind1="2" ind2="0">
-    <subfield code="a">Workshop on Computer Processing of Dynamic Images from an Anger Scintillation Camera,</subfield>
-    <subfield code="c">Washington University,</subfield>
-    <subfield code="d">1971.</subfield>
-  </datafield>
-  <datafield tag="245" ind1="1" ind2="0">
-    <subfield code="a">Computer processing of dynamic images from an Anger scintillation camera :</subfield>
-    <subfield code="b">the proceedings of a workshop /</subfield>
-    <subfield code="c">cosponsored by the Biomedical Computer Laboratory and the Nuclear Medicine Division, Department of Radiology, School of Medicine, Washington University, St. Louis, January 18-22, 1971 ; edited by Kenneth B. Larson, Jerome R. Cox, Jr.</subfield>
-  </datafield>
-  <datafield tag="260" ind1="0" ind2=" ">
-    <subfield code="a">New York :</subfield>
-    <subfield code="b">Society of Nuclear Medicine,</subfield>
-    <subfield code="c">[c1974]</subfield>
-  </datafield>
-  <datafield tag="300" ind1=" " ind2=" ">
-    <subfield code="a">xiv, p. :</subfield>
-    <subfield code="b">ill. ;</subfield>
-    <subfield code="c">24 cm.</subfield>
-  </datafield>
-  <datafield tag="504" ind1=" " ind2=" ">
-    <subfield code="a">Includes bibliographical references and index.</subfield>
-  </datafield>
-  <datafield tag="650" ind1=" " ind2="0">
-    <subfield code="a">Radioisotope scanning</subfield>
-    <subfield code="x">Data processing</subfield>
-    <subfield code="x">Congresses.</subfield>
-  </datafield>
-  <datafield tag="650" ind1=" " ind2="0">
-    <subfield code="a">Scintillation cameras</subfield>
-    <subfield code="x">Congresses.</subfield>
-  </datafield>
-  <datafield tag="650" ind1=" " ind2="0">
-    <subfield code="a">Imaging systems in medicine</subfield>
-    <subfield code="x">Data processing</subfield>
-    <subfield code="x">Congresses.</subfield>
-  </datafield>
-  <datafield tag="700" ind1="1" ind2="0">
-    <subfield code="a">Larson, Kenneth B.</subfield>
-  </datafield>
-  <datafield tag="700" ind1="1" ind2="0">
-    <subfield code="a">Cox, Jerome R. </subfield>
-  </datafield>
-  <datafield tag="710" ind1="2" ind2="0">
-    <subfield code="a">Washington University, St. Louis.</subfield>
-    <subfield code="b">Biomedical Computer Laboratory.</subfield>
-  </datafield>
-  <datafield tag="710" ind1="2" ind2="0">
-    <subfield code="a">Washington University, St. Louis.</subfield>
-    <subfield code="b">Nuclear Medicine Division.</subfield>
-  </datafield>
-</record>
+<r xmlns="http://www.indexdata.com/turbomarc">
+  <l>01369nam a2200265 i 4504</l>
+  <c001>   73090924 //r82</c001>
+  <c003>DLC</c003>
+  <c005>19820524000000.0</c005>
+  <c008>760609s1974    nyua     b    10110 eng  </c008>
+  <d010 i1=" " i2=" ">
+    <sa>   73090924 //r82</sa>
+  </d010>
+  <d040 i1=" " i2=" ">
+    <sa>DLC</sa>
+    <sc>DLC</sc>
+    <sd>DLC</sd>
+  </d040>
+  <d050 i1="0" i2="0">
+    <sa>RC71.3</sa>
+    <sb>.W67 1971</sb>
+  </d050>
+  <d082 i1="0" i2="0">
+    <sa>616.07/575/02854</sa>
+  </d082>
+  <d111 i1="2" i2="0">
+    <sa>Workshop on Computer Processing of Dynamic Images from an Anger Scintillation Camera,</sa>
+    <sc>Washington University,</sc>
+    <sd>1971.</sd>
+  </d111>
+  <d245 i1="1" i2="0">
+    <sa>Computer processing of dynamic images from an Anger scintillation camera :</sa>
+    <sb>the proceedings of a workshop /</sb>
+    <sc>cosponsored by the Biomedical Computer Laboratory and the Nuclear Medicine Division, Department of Radiology, School of Medicine, Washington University, St. Louis, January 18-22, 1971 ; edited by Kenneth B. Larson, Jerome R. Cox, Jr.</sc>
+  </d245>
+  <d260 i1="0" i2=" ">
+    <sa>New York :</sa>
+    <sb>Society of Nuclear Medicine,</sb>
+    <sc>[c1974]</sc>
+  </d260>
+  <d300 i1=" " i2=" ">
+    <sa>xiv, p. :</sa>
+    <sb>ill. ;</sb>
+    <sc>24 cm.</sc>
+  </d300>
+  <d504 i1=" " i2=" ">
+    <sa>Includes bibliographical references and index.</sa>
+  </d504>
+  <d650 i1=" " i2="0">
+    <sa>Radioisotope scanning</sa>
+    <sx>Data processing</sx>
+    <sx>Congresses.</sx>
+  </d650>
+  <d650 i1=" " i2="0">
+    <sa>Scintillation cameras</sa>
+    <sx>Congresses.</sx>
+  </d650>
+  <d650 i1=" " i2="0">
+    <sa>Imaging systems in medicine</sa>
+    <sx>Data processing</sx>
+    <sx>Congresses.</sx>
+  </d650>
+  <d700 i1="1" i2="0">
+    <sa>Larson, Kenneth B.</sa>
+  </d700>
+  <d700 i1="1" i2="0">
+    <sa>Cox, Jerome R. </sa>
+  </d700>
+  <d710 i1="2" i2="0">
+    <sa>Washington University, St. Louis.</sa>
+    <sb>Biomedical Computer Laboratory.</sb>
+  </d710>
+  <d710 i1="2" i2="0">
+    <sa>Washington University, St. Louis.</sa>
+    <sb>Nuclear Medicine Division.</sb>
+  </d710>
+</r>
