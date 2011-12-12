@@ -888,7 +888,8 @@ static void cmd_record(struct http_channel *c)
         int i;
         struct record*r = rec->records;
         int binary = 0;
-
+        const char *nativesyntax = http_argbyname(rq, "nativesyntax");
+        
         if (binarystr && *binarystr != '0')
             binary = 1;
 
@@ -903,13 +904,14 @@ static void cmd_record(struct http_channel *c)
             http_channel_observer_t obs =
                 http_add_observer(c, r->client, show_raw_reset);
             int ret = client_show_raw_begin(r->client, r->position,
-                                        syntax, esn, 
-                                        obs /* data */,
-                                        show_raw_record_error,
-                                        (binary ? 
-                                         show_raw_record_ok_binary : 
-                                         show_raw_record_ok),
-                                        (binary ? 1 : 0));
+                                            syntax, esn,
+                                            obs /* data */,
+                                            show_raw_record_error,
+                                            (binary ? 
+                                             show_raw_record_ok_binary : 
+                                             show_raw_record_ok),
+                                            (binary ? 1 : 0),
+                                            nativesyntax);
             if (ret == -1)
             {
                 http_remove_observer(obs);

@@ -139,6 +139,7 @@ struct show_raw {
     int binary;
     char *syntax;
     char *esn;
+    char *nativesyntax;
     void (*error_handler)(void *data, const char *addinfo);
     void (*record_handler)(void *data, const char *buf, size_t sz);
     void *data;
@@ -216,15 +217,15 @@ const char *client_get_pquery(struct client *cl)
 }
 
 static void client_send_raw_present(struct client *cl);
-static int nativesyntax_to_type(struct session_database *sdb, char *type,
-                                ZOOM_record rec);
+static int nativesyntax_to_type(const char *s, char *type, ZOOM_record rec);
 
 static void client_show_immediate(
     ZOOM_resultset resultset, struct session_database *sdb, int position,
     void *data,
     void (*error_handler)(void *data, const char *addinfo),
     void (*record_handler)(void *data, const char *buf, size_t sz),
-    int binary)
+    int binary,
+    const char *nativesyntax)
 {
     ZOOM_record rec = 0;
     char type[80];
@@ -242,10 +243,7 @@ static void client_show_immediate(
         error_handler(data, "no record");
         return;
     }
-    if (binary)
-        strcpy(type, "raw");
-    else
-        nativesyntax_to_type(sdb, type, rec);
+    nativesyntax_to_type(nativesyntax, type, rec);
     buf = ZOOM_record_get(rec, type, &len);
     if (!buf)
     {
@@ -262,13 +260,25 @@ int client_show_raw_begin(struct client *cl, int position,
                           void (*error_handler)(void *data, const char *addinfo),
                           void (*record_handler)(void *data, const char *buf,
                                                  size_t sz),
-                          int binary)
+                          int binary,
+                          const char *nativesyntax)
 {
+    if (!nativesyntax)
+    {
+        if (binary)
+            nativesyntax = "raw";
+        else
+        {
+            struct session_database *sdb = client_get_database(cl);
+            nativesyntax = session_setting_oneval(sdb, PZ_NATIVESYNTAX);
+        }
+    }
+
     if (syntax == 0 && esn == 0)
         client_show_immediate(cl->resultset, client_get_database(cl),
                               position, data,
                               error_handler, record_handler,
-                              binary);
+                              binary, nativesyntax);
     else
     {
         struct show_raw *rr, **rrp;
@@ -292,6 +302,10 @@ int client_show_raw_begin(struct client *cl, int position,
             rr->esn = xstrdup(esn);
         else
             rr->esn = 0;
+
+        assert(nativesyntax);
+        rr->nativesyntax = xstrdup(nativesyntax);
+            
         rr->next = 0;
         
         for (rrp = &cl->show_raw; *rrp; rrp = &(*rrp)->next)
@@ -318,6 +332,7 @@ static void client_show_raw_delete(struct show_raw *r)
 {
     xfree(r->syntax);
     xfree(r->esn);
+    xfree(r->nativesyntax);
     xfree(r);
 }
 
@@ -386,11 +401,9 @@ static void client_send_raw_present(struct client *cl)
     connection_continue(co);
 }
 
-static int nativesyntax_to_type(struct session_database *sdb, char *type,
+static int nativesyntax_to_type(const char *s, char *type,
                                 ZOOM_record rec)
 {
-    const char *s = session_setting_oneval(sdb, PZ_NATIVESYNTAX);
-
     if (s && *s)
     {
         if (!strncmp(s, "iso2709", 7))
@@ -408,7 +421,7 @@ static int nativesyntax_to_type(struct session_database *sdb, char *type,
             yaz_snprintf(type, 80, "txml; charset=%s", cp ? cp+1 : "marc-8s");
         }
         else
-            return -1;
+            strcpy(type, s);
         return 0;
     }
     else  /* attempt to deduce structure */
@@ -486,14 +499,7 @@ static void ingest_raw_record(struct client *cl, ZOOM_record rec)
     int len;
     char type[80];
 
-    if (cl->show_raw->binary)
-        strcpy(type, "raw");
-    else
-    {
-        struct session_database *sdb = client_get_database(cl);
-        nativesyntax_to_type(sdb, type, rec);
-    }
-
+    nativesyntax_to_type(cl->show_raw->nativesyntax, type, rec);
     buf = ZOOM_record_get(rec, type, &len);
     cl->show_raw->record_handler(cl->show_raw->data,  buf, len);
     client_show_raw_dequeue(cl);
@@ -592,7 +598,8 @@ static void client_record_ingest(struct client *cl)
             const char *xmlrec;
             char type[80];
             
-            if (nativesyntax_to_type(sdb, type, rec))
+            const char *s = session_setting_oneval(sdb, PZ_NATIVESYNTAX);
+            if (nativesyntax_to_type(s, type, rec))
                 yaz_log(YLOG_WARN, "Failed to determine record type");
             xmlrec = ZOOM_record_get(rec, type, NULL);
             if (!xmlrec)
