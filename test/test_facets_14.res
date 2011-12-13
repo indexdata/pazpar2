@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <termlist><activeclients>0</activeclients>
-<list name="xtargets">
-<term>
-<id>localhost:9999/db1</id>
-<name>db1</name>
-<frequency>8</frequency>
-<state>Client_Idle</state>
-<diagnostic>0</diagnostic>
-</term>
-</list>
 <list name="author">
 <term><name>author0</name><frequency>100</frequency></term>
 <term><name>author1</name><frequency>90</frequency></term>
@@ -44,5 +35,14 @@
 <term><name>date7</name><frequency>30</frequency></term>
 <term><name>date8</name><frequency>20</frequency></term>
 <term><name>date9</name><frequency>10</frequency></term>
+</list>
+<list name="xtargets">
+<term>
+<id>localhost:9999/db1</id>
+<name>db1</name>
+<frequency>8</frequency>
+<state>Client_Idle</state>
+<diagnostic>0</diagnostic>
+</term>
 </list>
 </termlist>
