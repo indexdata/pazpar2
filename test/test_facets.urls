@@ -11,7 +11,7 @@ http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
 http://localhost:9763/search.pz2?session=1&command=search&query=8+and+computer
 http://localhost:9763/search.pz2?session=1&command=show&block=1
-http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
+http://localhost:9763/search.pz2?session=1&command=termlist
 http://localhost:9763/search.pz2?session=1&command=search&query=6+and+computer
 http://localhost:9763/search.pz2?session=1&command=show
 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium

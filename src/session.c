@@ -1058,8 +1058,10 @@ void perform_termlist(struct http_channel *c, struct session *se,
     char **names;
     int num_names = 0;
 
-    if (name)
-        nmem_strsplit(nmem_tmp, ",", name, &names, &num_names);
+    if (!name)
+        name = "*";
+
+    nmem_strsplit(nmem_tmp, ",", name, &names, &num_names);
 
     session_enter(se);
 
@@ -1067,17 +1069,18 @@ void perform_termlist(struct http_channel *c, struct session *se,
     {
         const char *tname;
         
-        wrbuf_puts(c->wrbuf, "<list name=\"");
-        wrbuf_xmlputs(c->wrbuf, names[j]);
-        wrbuf_puts(c->wrbuf, "\">\n");
-
         for (i = 0; i < se->num_termlists; i++)
         {
             tname = se->termlists[i].name;
-            if (num_names > 0 && !strcmp(names[j], tname))
+            if (!strcmp(names[j], tname) || !strcmp(names[j], "*"))
             {
                 struct termlist_score **p = 0;
                 int len;
+
+                wrbuf_puts(c->wrbuf, "<list name=\"");
+                wrbuf_xmlputs(c->wrbuf, tname);
+                wrbuf_puts(c->wrbuf, "\">\n");
+
                 p = termlist_highscore(se->termlists[i].termlist, &len);
                 if (p)
                 {
@@ -1099,14 +1102,19 @@ void perform_termlist(struct http_channel *c, struct session *se,
                         wrbuf_puts(c->wrbuf, "</term>\n");
                     }
                 }
+                wrbuf_puts(c->wrbuf, "</list>\n");
             }
         }
         tname = "xtargets";
-        if (num_names > 0 && !strcmp(names[j], tname))
+        if (!strcmp(names[j], tname) || !strcmp(names[j], "*"))
         {
+            wrbuf_puts(c->wrbuf, "<list name=\"");
+            wrbuf_xmlputs(c->wrbuf, tname);
+            wrbuf_puts(c->wrbuf, "\">\n");
+
             targets_termlist_nb(c->wrbuf, se, num, c->nmem);
+            wrbuf_puts(c->wrbuf, "</list>\n");
         }
-        wrbuf_puts(c->wrbuf, "</list>\n");
     }
     session_leave(se);
     nmem_destroy(nmem_tmp);
