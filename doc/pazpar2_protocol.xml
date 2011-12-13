@@ -428,17 +428,29 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
       <listitem>
        <para>
 	This optional parameter is an integer which, when given, makes
-	Pazpar2 return the raw record for a target. The raw record
-	from first target is numbered 0, second numbered 1, etc.
-	When a raw record is returned Pazpar2 will XSLT transform the
-	record but an XML version is returned. All ISO2709 records are
-	returned as MARCXML. OPAC records are returned as YAZ'
-	OPAC with an MARCXML sibling.
+	Pazpar2 return the original record for a specific target.
+	The record set from first target is numbered 0,
+	second record set is numbered 1, etc.
+	The nativesyntax setting, as usual, is used to determine how to
+	create XML from the original record - unless parameter
+	<literal>binary</literal> is given in which the record is
+	fetched as "raw" from ZOOM C (raw, original record).
        </para>
        <para>
-	When offset is not given the Pazpar2 metadata for the record
+	When offset is not given, the Pazpar2 metadata for the record
 	is returned and with metadata for each targets' data specified
 	in a 'location' list.
+       </para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term>nativesyntax</term>
+      <listitem>
+       <para>
+	This optional parameter can be used to override	pz:nativesyntax
+	as given for the target. This allow an alternative nativesyntax
+	to be used for original records (see parameteroffset above).
        </para>
       </listitem>
      </varlistentry>
@@ -471,9 +483,9 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
       <listitem>
        <para>
 	This optional parameter enables "binary" response for retrieval
-	of a raw record (i.e. when offset is specified). For binary
-	responses the record is <emphasis>not</emphasis> converted to
-	XML and the HTTP content type is application/octet-stream.
+	of a original record (i.e. when offset is specified). For binary
+	response the record by default is fetched from ZOOM C using
+	the "raw" option or by parameter nativesyntax if given.
        </para>
       </listitem>
      </varlistentry>
