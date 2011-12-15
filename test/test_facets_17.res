@@ -45,6 +45,4 @@
 <term><name>date8</name><frequency>20</frequency></term>
 <term><name>date9</name><frequency>10</frequency></term>
 </list>
-<list name="medium">
-</list>
 </termlist>

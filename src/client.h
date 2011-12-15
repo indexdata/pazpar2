@@ -45,7 +45,8 @@ int client_show_raw_begin(struct client *cl, int position,
                           void (*error_handler)(void *data, const char *addinfo),
                           void (*record_handler)(void *data, const char *buf,
                                                  size_t sz),
-                          int binary);
+                          int binary,
+                          const char *nativesyntax);
 
 void client_show_raw_remove(struct client *cl, void *rr);
 
