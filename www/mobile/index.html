@@ -26,6 +26,7 @@
  
     <script type="text/javascript" src="iphone.js" ></script>
     <script type="text/javascript" src="/pazpar2/js/pz2.js"></script>
+    <script type="text/javascript" src="/mk2-ui-core/js/item.js"></script>
     <script type="text/javascript" src="mobile_client.js"></script>
     <link rel="stylesheet" href="mobile.css" />
     <link rel="stylesheet" href="UiUIKit/stylesheets/iphone.css" />
@@ -57,8 +58,8 @@
 -->
      <td width="100%">
       <form id="searchForm" name="search" style="display: none">
-       <input id="query" type="text" onKeyPress="return handleKeyPress(event)" />
-       <input id="button" type="submit" value="go" /><a id="hidden" href="" ></a>
+       <input name="query" id="query" type="text" onKeyPress="return handleKeyPress(event)" />
+       <input id="button" type="submit" value="Search" /><a id="hidden" href="" ></a>
        <div id="loading" style="display: none;">
 	 <img class="inline" src="gfx/progress.gif" height="14" />
        </div>
