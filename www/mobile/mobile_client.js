@@ -12,8 +12,62 @@ var querys = {'su': '', 'au': '', 'xt': ''};
 var query_client_server = {'su': 'subject', 'au': 'author', 'xt': 'xtargets'};
 var querys_server = {};
 var useLimit = 1;
+var state = new State();
 // Fail to get JSON working stabil.
 var showResponseType = 'xml';
+//some state vars
+state.curPage = 1;
+state.recPerPage = 5;
+var recToShowPageSize = 20;
+var recToShow = recToShowPageSize;
+var recIDs = {};
+var totalRec = 0;
+var curDetRecId = '';
+var curDetRecData = null;
+var curSort = 'relevance';
+var curFilter = 'ALL';
+var submitted = false;
+var SourceMax = 16;
+var SubjectMax = 10;
+var AuthorMax = 10;
+var tab = "recordview"; 
+
+var triedPass = "";
+var triedUser = "";
+
+var previousOrientation = 0;
+
+
+window.addEventListener("load",function() {
+  // Set a timeout...
+  setTimeout(function(){
+    // Hide the address bar!
+    window.scrollTo(0, 1);
+  }, 0);
+});
+
+function calcRecPerPage() {
+  state.recPerPage = 5;
+  state.width = window.innerWidth;
+  state.height = window.innerHeight;
+  state.recPerPage = Math.max(Math.round((state.height - 88 - 40) / 60), 5) ; 
+  
+}
+
+function checkOrientation() {
+    if(window.orientation && window.orientation !== previousOrientation){
+        previousOrientation = window.orientation;
+        calcRecPerPage();
+    }
+};
+
+calcRecPerPage(); 
+
+window.addEventListener("resize", checkOrientation, false);
+window.addEventListener("orientationchange", checkOrientation, false);
+
+// (optional) Android doesn't always fire orientationChange on 180 degree turns
+setInterval(checkOrientation, 2000);
 
 var imageHelper = new ImageHelper();
 
@@ -36,25 +90,6 @@ my_paz = new pz2( { "onshow": my_onshow,
                     "onrecord": my_onrecord,
 		    "errorhandler" : my_onerror} 
 );
-// some state vars
-var curPage = 1;
-var recPerPage = 10;
-var recToShowPageSize = 20;
-var recToShow = recToShowPageSize;
-var recIDs = {};
-var totalRec = 0;
-var curDetRecId = '';
-var curDetRecData = null;
-var curSort = 'relevance';
-var curFilter = 'ALL';
-var submitted = false;
-var SourceMax = 16;
-var SubjectMax = 10;
-var AuthorMax = 10;
-var tab = "recordview"; 
-
-var triedPass = "";
-var triedUser = "";
 
 //
 // pz2.js event handlers:
@@ -81,6 +116,12 @@ function my_onerror(error) {
 	alert("Unhandled error: " + error.code);
 	throw error; // display error in JavaScript console
     }
+}
+
+//FF has a bug and un-escaped location.hash, don't use it
+function getRealHash() {
+  var i = window.location.href.indexOf('#');
+  return i > -1 ? window.location.href.substr(i) : "";
 }
 
 function loginFormSubmit() {
@@ -161,6 +202,48 @@ function auth_check() {
     domReady();
 }
 
+
+function auth_check_item(methods) {
+  auth.check(itemMain, function () { window.location = "login.html" + window.location.search + "&page="+window.location.pathname;}, methods );
+}
+
+//when page loads
+function itemMain() {
+  mk_showPage();
+  if (auth.styleCss && document.getElementById("stylesheet")) {
+      document.getElementById("stylesheet").href = auth.styleCss;
+  }
+
+  // parse HTTP GET params (!!!)
+  window.location.parameters = parseQueryString(window.location.search);
+  var params = window.location.parameters;
+  // query params used by optional record_facets.js
+  if (window.RecordFacets != undefined) {
+    this.recordFacets = new RecordFacets();
+    this.recordFacets.setRequestParams(params);
+  }
+  prefixRecId = params["prefixrecid"];
+  query_state = params["query_state"];
+  recQuery = params["recordquery"];    
+  // load templating components
+/*
+  loadComponents();
+  renderComponent("authLogoComp", auth);
+  renderComponent("authInfoComp", auth);
+  renderComponent("infoComp",null);    
+  renderComponent("backToSearchComp",query_state);
+*/
+  my_paz = new pz2( {"pazpar2path": auth.servicePath,
+	                     "usesessions" : usesessions,
+                     "errorhandler" : my_onerror,
+                     "onrecord" : my_onrecord
+  });
+  
+  // http params have highest priority
+  showDetails(prefixRecId,recQuery);
+}
+
+
 //
 // Pz2.js event handlers:
 //
@@ -172,12 +255,12 @@ function my_oninit() {
 function showMoreRecords() {
     var i = recToShow;
     recToShow += recToShowPageSize;
-    for ( ; i < recToShow && i < recPerPage; i++) {
+    for ( ; i < recToShow && i < state.recPerPage; i++) {
 	var element = document.getElementById(recIDs[i]);
 	if (element)
 	    element.style.display = '';
     }
-    if (i == recPerPage) {
+    if (i == state.recPerPage) {
 	var element = document.getElementById('recdiv_END');
 	if (element)
 	    element.style.display = 'none';
@@ -196,25 +279,23 @@ function hideRecords() {
 }
 
 function showRecords() {
-    for (var i = 0 ; i < recToShow && i < recPerPage; i++) {
+    for (var i = 0 ; i < recToShow && i < state.recPerPage; i++) {
 	var element = document.getElementById(recIDs[i]);
 	if (element)
 	    element.style.display = '';
     }
     var element = document.getElementById('recdiv_END');
     if (element) {
-	if (i == recPerPage)
+	if (i == state.recPerPage)
 	    element.style.display = 'none';
 	else
 	    element.style.display = '';
     }
 }
 
-
-
-
 function my_onshow(data) {
-    totalRec = data.merged;
+  hideLogo();
+  totalRec = data.merged;
     // move it out
     var pager = document.getElementById("pager");
     pager.innerHTML = "";
@@ -284,6 +365,11 @@ function my_onshow(data) {
 	    html.push("&nbsp;");	    
 	    html.push("</a>");
 	}
+/*	
+	html.push('<a href="go.html" id="rec_'+ hit.recid + '" >');
+	html.push("item page;");	    
+	html.push("</a>");
+*/
 /*
         if (hit.recid == curDetRecId) {
             html.push(renderDetails_iphone(curDetRecData));
@@ -292,7 +378,7 @@ function my_onshow(data) {
       	html.push('</li>');
     }
     if (data.activeclients == 0)
-	document.getElementById("loading").style.display = 'none';
+      finishLoading();
 /*
     // set up "More..." if needed. 
     style = 'display:none';
@@ -465,7 +551,7 @@ function my_onrecord(data) {
     var html = renderDetails_iphone(curDetRecData);
     detailRecordDiv.innerHTML = html;
     showhide('detailview');
-    document.getElementById("loading").style.display = 'none';
+    finishLoading();
 }
 
 function my_onrecord_iphone(data) {
@@ -497,7 +583,7 @@ function my_onbytarget(data) {
 // wait until the DOM is ready
 function domReady () 
 { 
-    document.search.onsubmit = onFormSubmitEventHandler;
+    // document.search.onsubmit = onFormSubmitEventHandler;
     document.search.query.value = '';
     document.select.sort.onchange = onSelectDdChange;
     document.select.perpage.onchange = onSelectDdChange;
@@ -506,11 +592,32 @@ function domReady ()
     else
     	applicationMode(false);
 
+    window.location.parameters = parseQueryString(window.location.search);
+    window.location.parametersMulti = parseQueryStringMulti(window.location.search);
+
+    // hash params have highest priority, than query params
+    var params = (window.location.hash && window.location.hash.length > 1)
+      ? parseQueryString(getRealHash())
+      : window.location.parameters;
+    var paramsMulti = window.location.parametersMulti;
+/*
     var params = parseQueryString(window.location.search);
     if (params.query) {
 	document.search.query.value = params.query;
 	onFormSubmitEventHandler();
     }
+    
+*/
+    controlRegister.loadControls();
+
+    //append settings to the 'state'
+    loadSettings(function (setts) {
+        state.setFallbackSettings(setts);
+        controlRegister.populateControls(setts);  // set controls from cookies
+        controlRegister.populateControls(params); // override from query string
+        stateChanged(params);        
+    });
+    
 }
  
 function applicationMode(newmode) 
@@ -528,7 +635,7 @@ function applicationMode(newmode)
 	document.getElementById("normal").style.display="inline";
 	document.getElementById("normal").style.visibility="";
 	searchdiv.style.display = '';
-	document.search.onsubmit = onFormSubmit;
+	//document.search.onsubmit = onFormSubmit;
     }
     callback.init();
 }
@@ -536,7 +643,8 @@ function applicationMode(newmode)
 function onFormSubmitEventHandler() 
 {
     resetPage();
-    document.getElementById("logo").style.display = 'none';
+    document.location.hash = "query=" + document.search.query.value;
+    //window.location.search = "query=" + document.search.query.value;
     loadSelect();
     triggerSearch();
     submitted = true;
@@ -548,14 +656,39 @@ function onSelectDdChange()
     if (!submitted) return false;
     resetPage();
     loadSelect();
-    my_paz.show(0, recPerPage, curSort);
+    my_paz.show(0, state.recPerPage, curSort);
     return false;
+}
+
+
+function stateChanged(params) {
+  if (params == undefined) 
+    	return;
+  if (params["query"]) {
+    // If this page was accessed with a query param, usually means
+    // new page refresh, but not always!
+    state.reset(); // to ensure it's clean and fallbacks are loaded
+    calcRecPerPage();
+    state.loadParams(params);
+  } else if (params["query_state"]) {
+	  // If this page was accessed with a serialized State object
+    state.reset(); // to ensure it's clean and fallbacks are loaded
+    state.deserialize(String(params["query_state"]));
+  }
+  document.search.query.value = state.simpleQuery;        
+  document.select.sort.value = state.curSort;        
+  //document.select.perpage.value = state.recPerPage;
+  if (document.category && document.category.category_filter) {
+        document.category.category_filter.value = state.categoryFilter;
+  }
+  if (document.search.query.value != "")
+    triggerSearch();
 }
 
 function resetPage()
 {
-    curPage = 1;
-    totalRec = 0;
+  state.curPage = 1;    
+  totalRec = 0;     
 }
 
 function getFacets() {
@@ -570,10 +703,11 @@ function getFacets() {
 
 function triggerSearch ()
 {
-    // Restore to initial page size
+    // Restore to initial page size. Old stuff
     recToShow = recToShowPageSize;
-    document.getElementById("loading").style.display = 'inline';
-    my_paz.search(document.search.query.value, recPerPage, curSort, curFilter, undefined,
+    
+    displayLoading();
+    my_paz.search(document.search.query.value, state.recPerPage, curSort, curFilter, undefined,
 	{
     	   "limit" : getFacets() 
 	}
@@ -584,7 +718,7 @@ function triggerSearch ()
 function loadSelect ()
 {
     curSort = document.select.sort.value;
-    recPerPage = document.select.perpage.value;
+    //state.recPerPage = document.select.perpage.value;
 }
 
 // limit the query after clicking the facet
@@ -694,10 +828,10 @@ function drawPager (pagerDiv)
 {
     //client indexes pages from 1 but pz2 from 0
     var onsides = 2;
-    var pages = Math.ceil(totalRec / recPerPage);
+    var pages = Math.ceil(totalRec / state.recPerPage);
     
-    var firstClkbl = ( curPage - onsides > 0 ) 
-        ? curPage - onsides
+    var firstClkbl = ( state.curPage - onsides > 0 ) 
+        ? state.curPage - onsides
         : 1;
 
     var lastClkbl = firstClkbl + 2*onsides < pages
@@ -705,14 +839,14 @@ function drawPager (pagerDiv)
         : pages;
 
     var prev = '<span id="prev">Prev</span><b> | </b>';
-    if (curPage > 1)
+    if (state.curPage > 1)
         var prev = '<a href="#" id="prev" onclick="pagerPrev();">'
         +'Prev</a><b> | </b>';
 
     var middle = '';
     for(var i = firstClkbl; i <= lastClkbl; i++) {
         var numLabel = i;
-        if(i == curPage)
+        if(i == state.curPage)
             numLabel = '<b>' + i + '</b>';
 
         middle += '<a href="#" onclick="showPage(' + i + ')"> '
@@ -720,7 +854,7 @@ function drawPager (pagerDiv)
     }
     
     var next = '<b> | </b><span id="next">Next</span>';
-    if (pages - curPage > 0)
+    if (pages - state.curPage > 0)
     var next = '<b> | </b><a href="#" id="next" onclick="pagerNext()">'
         +'Next</a>';
 
@@ -736,24 +870,33 @@ function drawPager (pagerDiv)
         + prev + predots + middle + postdots + next + '</div>';
 }
 
-function showPage (pageNum)
+function showPage(pageNum)
 {
-    curPage = pageNum;
-    my_paz.showPage( curPage - 1 );
+    //state.curPage = pageNum;
+    state.curPage = pageNum;
+    displayLoading();
+    my_paz.showPage( state.curPage - 1 );
 }
 
 // simple paging functions
 
 function pagerNext() {
-    if ( totalRec - recPerPage*curPage > 0) {
+    if ( totalRec - state.recPerPage*state.curPage > 0) {
+      	displayLoading();
         my_paz.showNext();
-        curPage++;
+        //curPage++;
+        state.curPage++;
     }
 }
 
 function pagerPrev() {
-    if ( my_paz.showPrev() != false )
-        curPage--;
+  if ( my_paz.showPrev() != false ) {
+    displayLoading();    
+    state.curPage--;
+    if (state.curPage <= 0)
+      throw "Zeo or negative current page"; 
+  }
+
 }
 
 // swithing view between targets and records
@@ -777,6 +920,19 @@ function switchView(view) {
     }
 }
 
+function hideLogo() {
+  document.getElementById("logo").style.display = 'none';
+}
+
+function displayLoading() {
+  document.getElementById("loading").style.display = 'inline';
+}
+
+function finishLoading() {
+  document.getElementById("loading").style.display = 'none';
+}
+
+
 // detailed record drawing
 function showDetails (prefixRecId) {
     var recId = prefixRecId.replace('rec_', '');
@@ -789,8 +945,8 @@ function showDetails (prefixRecId) {
         return;
     }
     // request the record
-    document.getElementById("loading").style.display = 'inline';
-    my_paz.record(recId);
+    displayLoading()
+    my_paz.record_with_query(recId);
 }
 
 function replaceHtml(el, html) {
