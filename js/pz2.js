@@ -79,6 +79,7 @@ var pz2 = function ( paramArray )
 
     // where are we?
     this.currentStart = 0;
+    // currentNum can be overwritten in show 
     this.currentNum = 20;
 
     // last full record retrieved

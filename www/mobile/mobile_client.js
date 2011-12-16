@@ -35,7 +35,7 @@ var tab = "recordview";
 var triedPass = "";
 var triedUser = "";
 
-var previousOrientation = 0;
+var previousOrientation = window.orientation || 0;
 
 
 window.addEventListener("load",function() {
@@ -47,27 +47,27 @@ window.addEventListener("load",function() {
 });
 
 function calcRecPerPage() {
-  state.recPerPage = 5;
   state.width = window.innerWidth;
   state.height = window.innerHeight;
-  state.recPerPage = Math.max(Math.round((state.height - 88 - 40) / 60), 5) ; 
-  
+  return Math.max(Math.round((state.height - 88 - 40) / 60), 5) ; 
 }
 
 function checkOrientation() {
-    if(window.orientation && window.orientation !== previousOrientation){
-        previousOrientation = window.orientation;
-        calcRecPerPage();
+    if(state.height != window.innerHeight){
+      	var newPageSize = calcRecPerPage();
+      	//alert("orient change: Dimension " + state.width + " " + state.height + " Old Rec/page " + state.recPerPage + " New: " + newPageSize);  
+        state.setRecPerPage(newPageSize);
+        my_paz.show(state.getStartWith(), state.getRecPerPage(), curSort);
     }
 };
 
-calcRecPerPage(); 
+state.setRecPerPage(calcRecPerPage());
 
 window.addEventListener("resize", checkOrientation, false);
 window.addEventListener("orientationchange", checkOrientation, false);
 
 // (optional) Android doesn't always fire orientationChange on 180 degree turns
-setInterval(checkOrientation, 2000);
+//setInterval(checkOrientation, 2000);
 
 var imageHelper = new ImageHelper();
 
@@ -946,7 +946,7 @@ function showDetails (prefixRecId) {
     }
     // request the record
     displayLoading()
-    my_paz.record_with_query(recId);
+    my_paz.record_with_query(recId, state.simpleQuery);
 }
 
 function replaceHtml(el, html) {
