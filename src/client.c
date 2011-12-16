@@ -1067,10 +1067,14 @@ const char *client_get_facet_limit_local(struct client *cl,
             if (p && !strcmp(p + 1, name) && s->value &&
                 !strncmp(s->value, "local:", 6))
             {
+                const char *cp = s->value + 6;
+                while (*cp == ' ')
+                    cp++;
+                    
                 nmem_strsplit_escape2(nmem, "|", value, values,
                                       num, 1, '\\', 1);
                 (*l)++;
-                return name;
+                return *cp ? cp : name;
             }
         }
     }

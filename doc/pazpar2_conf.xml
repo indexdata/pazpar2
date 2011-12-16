@@ -1253,7 +1253,9 @@
        an existing CCL field, a raw PQF string or a local limit. Leading string
        determines type; either <literal>ccl:</literal> for CCL field, 
        <literal>rpn:</literal> for PQF/RPN, or <literal>local:</literal>
-       for filtering in Pazpar2.
+       for filtering in Pazpar2. The local filtering may be followed
+       by a field a metadata field (default is to use the name of the 
+       limitmap itself).
       </para>
       <note>
        <para>
