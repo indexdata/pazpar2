@@ -95,6 +95,7 @@ my_paz = new pz2( { "onshow": my_onshow,
 // pz2.js event handlers:
 //
 function my_onerror(error) {
+  alert("Unhandled error: " + error.code);
     switch(error.code) {
         // No targets!
     case "8": alert("No resources were selected for the search"); break;
@@ -195,11 +196,12 @@ function loggedIn() {
     var login = document.getElementById("login");
     login.innerHTML = 'Logout';
     document.getElementById("log").innerHTML = login.innerHTML;
+    domReady();
 }
 
 function auth_check() {
     auth.check(loggedIn, login);
-    domReady();
+    //domReady();
 }
 
 
