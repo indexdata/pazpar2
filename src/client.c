@@ -237,7 +237,7 @@ static void client_show_immediate(
         error_handler(data, "no resultset");
         return;
     }
-    rec = ZOOM_resultset_record(resultset, position-1);
+    rec = ZOOM_resultset_record_immediate(resultset, position-1);
     if (!rec)
     {
         error_handler(data, "no record");
@@ -580,7 +580,7 @@ static void client_record_ingest(struct client *cl)
     ZOOM_record rec = 0;
     ZOOM_resultset resultset = cl->resultset;
     int offset = cl->record_offset;
-    if ((rec = ZOOM_resultset_record(resultset, offset)))
+    if ((rec = ZOOM_resultset_record_immediate(resultset, offset)))
     {
         cl->record_offset++;
         if (cl->session == 0)
@@ -639,8 +639,8 @@ void client_record_response(struct client *cl)
         if (cl->show_raw && cl->show_raw->active)
         {
             ZOOM_record rec = 0;
-            if ((rec = ZOOM_resultset_record(resultset,
-                                             cl->show_raw->position-1)))
+            if ((rec = ZOOM_resultset_record_immediate(
+                     resultset, cl->show_raw->position-1)))
             {
                 cl->show_raw->active = 0;
                 ingest_raw_record(cl, rec);
