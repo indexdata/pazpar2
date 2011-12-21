@@ -524,7 +524,7 @@ int client_prep_connection(struct client *cl,
     if (co)
     {
         assert(co->host);
-        if (co->host == host)
+        if (co->host == host && client_get_state(cl) == Client_Idle)
             ;  /* reusing connection. It's ours! */
         else 
         {
