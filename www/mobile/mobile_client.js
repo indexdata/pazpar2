@@ -61,6 +61,17 @@ function checkOrientation() {
     }
 };
 
+function setQS (encodedParams) {
+  if ("onhashchange" in window) {
+    window.location.hash = '#' + encodedParams;
+  } else {
+    var  url = document.location.href;
+    var i = url.indexOf("?");
+    if (i > -1) url = url.substr(0, i);
+    document.location.href = url + "?" + encodedParams;
+  }
+}
+
 state.setRecPerPage(calcRecPerPage());
 
 window.addEventListener("resize", checkOrientation, false);
@@ -95,7 +106,6 @@ my_paz = new pz2( { "onshow": my_onshow,
 // pz2.js event handlers:
 //
 function my_onerror(error) {
-  alert("Unhandled error: " + error.code);
     switch(error.code) {
         // No targets!
     case "8": alert("No resources were selected for the search"); break;
@@ -114,8 +124,8 @@ function my_onerror(error) {
 	auth.check(loggedIn, login);
 	break;
     default: 
-	alert("Unhandled error: " + error.code);
-	throw error; // display error in JavaScript console
+      alert("Unhandled error: " + error.code);
+      throw error; // display error in JavaScript console
     }
 }
 
@@ -192,59 +202,20 @@ function logInOrOut() {
     else
     	logout();
 }
-function loggedIn() {
+function loggedIn(context) {
+
+  if (context.ipAuth != true) {
     var login = document.getElementById("login");
     login.innerHTML = 'Logout';
     document.getElementById("log").innerHTML = login.innerHTML;
-    domReady();
+  }
+  domReady();
 }
 
 function auth_check() {
     auth.check(loggedIn, login);
     //domReady();
 }
-
-
-function auth_check_item(methods) {
-  auth.check(itemMain, function () { window.location = "login.html" + window.location.search + "&page="+window.location.pathname;}, methods );
-}
-
-//when page loads
-function itemMain() {
-  mk_showPage();
-  if (auth.styleCss && document.getElementById("stylesheet")) {
-      document.getElementById("stylesheet").href = auth.styleCss;
-  }
-
-  // parse HTTP GET params (!!!)
-  window.location.parameters = parseQueryString(window.location.search);
-  var params = window.location.parameters;
-  // query params used by optional record_facets.js
-  if (window.RecordFacets != undefined) {
-    this.recordFacets = new RecordFacets();
-    this.recordFacets.setRequestParams(params);
-  }
-  prefixRecId = params["prefixrecid"];
-  query_state = params["query_state"];
-  recQuery = params["recordquery"];    
-  // load templating components
-/*
-  loadComponents();
-  renderComponent("authLogoComp", auth);
-  renderComponent("authInfoComp", auth);
-  renderComponent("infoComp",null);    
-  renderComponent("backToSearchComp",query_state);
-*/
-  my_paz = new pz2( {"pazpar2path": auth.servicePath,
-	                     "usesessions" : usesessions,
-                     "errorhandler" : my_onerror,
-                     "onrecord" : my_onrecord
-  });
-  
-  // http params have highest priority
-  showDetails(prefixRecId,recQuery);
-}
-
 
 //
 // Pz2.js event handlers:
@@ -481,10 +452,17 @@ function my_onterm(data) {
     termlists.push('<h4>Subjects</h4>');
     termlists.push('<ul class="termlist">');
     termlists.push('<li><a href="#" target_id="reset_su" onclick="limitOrResetQuery(\'reset_su\',\'All\');return false;">All</a></li>');
-    for (var i = 0; i < data.subject.length && i < SubjectMax; i++ ) {
-        termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'su\', \'' + data.subject[i].name + '\');return false;">' 
-		       + data.subject[i].name + ' (' + data.subject[i].freq + ')</a></li>');
+    if (data.subject) {
+      for (var i = 0; i < data.subject.length && i < SubjectMax; i++ ) {
+          termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'su\', \'' + data.subject[i].name + '\');return false;">' 
+  		       + data.subject[i].name + ' (' + data.subject[i].freq + ')</a></li>');
+      }
     }
+    else {
+      throw "Missing subject termlist: " + data;
+      return;
+    } 
+      
     termlists.push('</ul>');
     termlists.push('</div>');
             
@@ -492,13 +470,20 @@ function my_onterm(data) {
     termlists.push('<h4 class="termtitle">Authors</h4>');
     termlists.push('<ul class="termlist">');
     termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'reset_au\',\'All\');return false;">All</a></li>');
-    for (var i = 0; i < data.author.length && i < AuthorMax; i++ ) {
-        termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'au\', \'' + data.author[i].name +'\');return false;">' 
+    if (data.author) {
+      for (var i = 0; i < data.author.length && i < AuthorMax; i++ ) {
+	termlists.push('<li><a href="#" onclick="limitOrResetQuery(\'au\', \'' + data.author[i].name +'\');return false;">' 
                             + data.author[i].name 
                             + '  (' 
                             + data.author[i].freq 
                             + ')</a></li>');
+      }
     }
+    else {
+      throw "Missing author termlist: " + data;
+      return; 
+    } 
+      
     termlists.push('</ul>');
     termlists.push('</div>');
     var termlist = document.getElementById("termlist");
@@ -896,7 +881,7 @@ function pagerPrev() {
     displayLoading();    
     state.curPage--;
     if (state.curPage <= 0)
-      throw "Zeo or negative current page"; 
+      throw "Zero or negative current page"; 
   }
 
 }
