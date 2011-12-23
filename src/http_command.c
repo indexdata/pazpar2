@@ -166,7 +166,7 @@ struct http_session *http_session_create(struct conf_service *service,
 
     r->timeout_iochan = iochan_create(-1, session_timeout, 0, "http_session_timeout");
     iochan_setdata(r->timeout_iochan, r);
-    yaz_log(http_sessions->log_level, "%p Session %u created. timeout chan=%p timeout=%d", r, sesid, r->timeout_iochan, service->session_timeout);
+    yaz_log(http_sessions->log_level, "Session %u created. timeout chan=%p timeout=%d", sesid, r->timeout_iochan, service->session_timeout);
     iochan_settimeout(r->timeout_iochan, service->session_timeout);
 
     iochan_add(service->server->iochan_man, r->timeout_iochan);
@@ -180,7 +180,7 @@ void http_session_destroy(struct http_session *s)
 
     http_sessions_t http_sessions = s->http_sessions;
 
-    yaz_log(http_sessions->log_level, "%p HTTP Session %u destroyed", s, s->session_id);
+    yaz_log(http_sessions->log_level, "Session %u destroy", s->session_id);
     yaz_mutex_enter(http_sessions->mutex);
     /* only if http_session has no active http sessions on it can be destroyed */
     if (s->destroy_counter == s->activity_counter)
@@ -197,15 +197,15 @@ void http_session_destroy(struct http_session *s)
     yaz_mutex_leave(http_sessions->mutex);
     if (must_destroy)
     {   /* destroying for real */
-        yaz_log(http_sessions->log_level, "%p HTTP Session %u destroyed", s, s->session_id);
+        yaz_log(http_sessions->log_level, "Session %u destroyed", s->session_id);
         iochan_destroy(s->timeout_iochan);
         session_destroy(s->psession);
         http_session_use(-1);
         nmem_destroy(s->nmem);
     }
     else {
-        yaz_log(http_sessions->log_level, "%p HTTP Session %u destroyed delayed. Active clients (%d-%d). Waiting for new timeout.",
-                s, s->session_id, s->activity_counter, s->destroy_counter);
+        yaz_log(http_sessions->log_level, "Session %u destroyed delayed. Active clients (%d-%d). Waiting for new timeout.",
+                s->session_id, s->activity_counter, s->destroy_counter);
     }
 
 }
@@ -441,11 +441,11 @@ static void cmd_init(struct http_channel *c)
     sesid = make_sessionid();
     s = http_session_create(service, c->http_sessions, sesid);
     
-    yaz_log(c->http_sessions->log_level, "%p Session init %u ", s, sesid);
+    yaz_log(c->http_sessions->log_level, "Session init %u ", sesid);
     if (!clear || *clear == '0')
         session_init_databases(s->psession);
     else
-        yaz_log(YLOG_LOG, "HTTP Session %u init: No databases preloaded", sesid);
+        yaz_log(YLOG_LOG, "Session %u init: No databases preloaded", sesid);
     
     if (process_settings(s->psession, c->request, c->response) < 0)
         return;
@@ -491,6 +491,7 @@ static void cmd_settings(struct http_channel *c)
         if (!doc)
         {
             error(rs, PAZPAR2_MALFORMED_SETTING, 0);
+            release_session(c,s);
             return;
         }
         root_n = xmlDocGetRootElement(doc);
@@ -509,10 +510,9 @@ static void cmd_settings(struct http_channel *c)
     release_session(c, s);
 }
 
-static void termlist_response(struct http_channel *c)
+static void termlist_response(struct http_channel *c, struct http_session *s)
 {
     struct http_request *rq = c->request;
-    struct http_session *s = locate_session(c);
     const char *name = http_argbyname(rq, "name");
     const char *nums = http_argbyname(rq, "num");
     int num = 15;
@@ -529,14 +529,17 @@ static void termlist_response(struct http_channel *c)
     perform_termlist(c, s->psession, name, num);
 
     response_close(c, "termlist");
-    release_session(c, s);
 }
 
 static void termlist_result_ready(void *data)
 {
     struct http_channel *c = (struct http_channel *) data;
-    yaz_log(c->http_sessions->log_level, "termlist watch released");
-    termlist_response(c);
+    struct http_session *s = locate_session(c);
+    if (s) {
+        yaz_log(c->http_sessions->log_level, "Session %u termlist watch released", s->session_id);
+        termlist_response(c, s);
+        release_session(c,s);
+    }
 }
 
 static void cmd_termlist(struct http_channel *c)
@@ -557,18 +560,18 @@ static void cmd_termlist(struct http_channel *c)
         if (session_set_watch(s->psession, SESSION_WATCH_TERMLIST,
                               termlist_result_ready, c, c) != 0)
         {
-            yaz_log(YLOG_WARN, "Attempt to block multiple times on termlist block. Not supported!");
+            yaz_log(YLOG_WARN, "Session %u: Attempt to block multiple times on termlist block. Not supported!", s->session_id);
             error(rs, PAZPAR2_ALREADY_BLOCKED, "termlist");
         }
         else
         {
-            yaz_log(c->http_sessions->log_level, "%p Session %u: Blocking on command termlist", s, s->session_id);
+            yaz_log(c->http_sessions->log_level, "Session %u: Blocking on command termlist", s->session_id);
         }
         release_session(c, s);
         return;
     }
 
-    termlist_response(c);
+    termlist_response(c, s);
     release_session(c, s);
 }
 
@@ -638,12 +641,11 @@ static void cmd_server_status(struct http_channel *c)
     xmalloc_trav(0);
 }
 
-static void bytarget_response(struct http_channel *c) {
+static void bytarget_response(struct http_channel *c, struct http_session *s) {
     int count, i;
     struct hitsbytarget *ht;
     struct http_request *rq = c->request;
     const char *settings = http_argbyname(rq, "settings");
-    struct http_session *s = locate_session(c);
 
     ht = get_hitsbytarget(s->psession, &count, c->nmem);
     response_open(c, "bytarget");
@@ -693,14 +695,20 @@ static void bytarget_response(struct http_channel *c) {
         wrbuf_puts(c->wrbuf, "</target>");
     }
     response_close(c, "bytarget");
-    release_session(c, s);
 }
 
 static void bytarget_result_ready(void *data)
 {
     struct http_channel *c = (struct http_channel *) data;
-    yaz_log(c->http_sessions->log_level, "bytarget watch released");
-    bytarget_response(c);
+    struct http_session *s = locate_session(c);
+    if (s) {
+        yaz_log(c->http_sessions->log_level, "Session %u: bytarget watch released", s->session_id);
+        bytarget_response(c, s);
+        release_session(c, s);
+    }
+    else {
+        yaz_log(c->http_sessions->log_level, "No Session found for released bytarget watch");
+    }
 }
 
 
@@ -723,17 +731,17 @@ static void cmd_bytarget(struct http_channel *c)
         if (session_set_watch(s->psession, SESSION_WATCH_BYTARGET,
                               bytarget_result_ready, c, c) != 0)
         {
-            yaz_log(YLOG_WARN, "Attempt to block multiple times on bytarget block. Not supported!");
+            yaz_log(YLOG_WARN, "Session %u: Attempt to block multiple times on bytarget block. Not supported!", s->session_id);
             error(rs, PAZPAR2_ALREADY_BLOCKED, "bytarget"); 
         }
         else
         {
-            yaz_log(c->http_sessions->log_level, "%p Session %u: Blocking on command bytarget", s, s->session_id);
+            yaz_log(c->http_sessions->log_level, "Session %u: Blocking on command bytarget", s->session_id);
         }
         release_session(c, s);
         return;
     }
-    bytarget_response(c);
+    bytarget_response(c, s);
     release_session(c, s);
 }
 
@@ -772,6 +780,7 @@ static void write_metadata(WRBUF w, struct conf_service *service,
                     break;
                 default:
                     wrbuf_puts(w, "[can't represent]");
+                    break;
             }
             wrbuf_printf(w, "</md-%s>", cmd->name);
         }
@@ -845,11 +854,11 @@ void show_raw_reset(void *data, struct http_channel *c, void *data2)
 
 static void cmd_record_ready(void *data);
 
-static void cmd_record(struct http_channel *c)
+static void show_record(struct http_channel *c, struct http_session *s)
 {
     struct http_response *rs = c->response;
     struct http_request *rq = c->request;
-    struct http_session *s = locate_session(c);
+    //struct http_session *s = locate_session(c);
     struct record_cluster *rec, *prev_r, *next_r;
     struct record *r;
     struct conf_service *service;
@@ -877,7 +886,7 @@ static void cmd_record(struct http_channel *c)
         {
             error(rs, PAZPAR2_RECORD_MISSING, idstr);
         }
-        release_session(c, s);
+        //release_session(c, s);
         return;
     }
     if (offsetstr)
@@ -945,21 +954,34 @@ static void cmd_record(struct http_channel *c)
         response_close(c, "record");
     }
     show_single_stop(s->psession, rec);
-    release_session(c, s);
+    //release_session(c, s);
 }
 
 static void cmd_record_ready(void *data)
 {
     struct http_channel *c = (struct http_channel *) data;
-    yaz_log(c->http_sessions->log_level, "record watch released");
-    cmd_record(c);
+    struct http_session *s = locate_session(c);
+    if (s) {
+        yaz_log(c->http_sessions->log_level, "Session %u: record watch released", s->session_id);
+        show_record(c, s);
+        release_session(c,s);
+    }
 }
 
-static void show_records(struct http_channel *c, int active)
+static void cmd_record(struct http_channel *c)
+{
+    struct http_session *s = locate_session(c);
+    if (s) {
+        show_record(c, s);
+        release_session(c,s);
+    }
+}
+
+
+static void show_records(struct http_channel *c, struct http_session *s, int active)
 {
     struct http_request *rq = c->request;
     struct http_response *rs = c->response;
-    struct http_session *s = locate_session(c);
     struct record_cluster **rl;
     struct reclist_sortparms *sp;
     const char *start = http_argbyname(rq, "start");
@@ -987,11 +1009,9 @@ static void show_records(struct http_channel *c, int active)
     if (!(sp = reclist_parse_sortparms(c->nmem, sort, s->psession->service)))
     {
         error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
-        release_session(c, s);
         return;
 
     }
-
     
     rl = show_range_start(s->psession, sp, startn, &numn, &total, &total_hits);
 
@@ -1027,14 +1047,19 @@ static void show_records(struct http_channel *c, int active)
     show_range_stop(s->psession, rl);
 
     response_close(c, "show");
-    release_session(c, s);
 }
 
 static void show_records_ready(void *data)
 {
     struct http_channel *c = (struct http_channel *) data;
-    yaz_log(c->http_sessions->log_level, "show watch released");
-    show_records(c, -1);
+    struct http_session *s = locate_session(c);
+    if (s) {
+        yaz_log(c->http_sessions->log_level, "Session %u: show watch released", s->session_id);
+        show_records(c, s, -1);
+    }
+    else {
+        /* some error message  */
+    }
 }
 
 static void cmd_show(struct http_channel *c)
@@ -1072,7 +1097,7 @@ static void cmd_show(struct http_channel *c)
                                   show_records_ready, c, c) == 0)
             {
                 yaz_log(c->http_sessions->log_level,
-                        "%p Session %u: Blocking on command show (preferred targets)", s, s->session_id);
+                        "Session %u: Blocking on command show (preferred targets)", s->session_id);
             }
             else
             {
@@ -1095,13 +1120,13 @@ static void cmd_show(struct http_channel *c)
             }
             else
             {
-                yaz_log(c->http_sessions->log_level, "%p Session %u: Blocking on command show", s, s->session_id);
+                yaz_log(c->http_sessions->log_level, "Session %u: Blocking on command show", s->session_id);
             }
             release_session(c, s);
             return;
         }
     }
-    show_records(c, status);
+    show_records(c, s, status);
     release_session(c, s);
 }
 
