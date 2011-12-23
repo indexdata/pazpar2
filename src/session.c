@@ -1920,7 +1920,7 @@ void session_log(struct session *s, int level, const char *fmt, ...)
     va_start(ap, fmt);
 
     yaz_vsnprintf(buf, sizeof(buf)-30, fmt, ap);
-    yaz_log(level, "Session (%u): %s", s->session_id, buf);
+    yaz_log(level, "Session %u: %s", s->session_id, buf);
 
     va_end(ap);
 }
