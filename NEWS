@@ -1,3 +1,10 @@
+
+Fix bug introduced in 1.6.6 where a connection re-use could stall
+incoming requests.
+
+Local filtering may now specify a local metadata field, eg.
+ pz:limitmap:somefield[t]=local:otherfield
+
 --- 1.6.6 2011/11/25
 
 For search, when limit and or filtering is in place and search
