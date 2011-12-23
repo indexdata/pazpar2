@@ -583,8 +583,9 @@ static void client_record_ingest(struct client *cl)
     if ((rec = ZOOM_resultset_record_immediate(resultset, offset)))
     {
         cl->record_offset++;
-        if (cl->session == 0)
-            ;
+        if (cl->session == 0) {
+            /* no operation */
+        }
         else if (ZOOM_record_error(rec, &msg, &addinfo, 0))
         {
             yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
@@ -1137,8 +1138,9 @@ static int apply_limit(struct session_database *sdb,
                     wrbuf_puts(w_ccl, ")");
 
                 }
-                else if (!strncmp(s->value, "local:", 6))
-                    ;
+                else if (!strncmp(s->value, "local:", 6)) {
+                    /* no operation */
+                }
                 else
                 {
                     yaz_log(YLOG_WARN, "Target %s: Bad limitmap '%s'",
