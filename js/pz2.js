@@ -390,7 +390,7 @@ pz2.prototype =
             "block": 1,
             "type": this.showResponseType,
             "windowid" : window.name
-          },
+          };
         if (query_state)
           requestParameters["query-state"] = query_state;
         request.safeGet(
