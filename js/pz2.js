@@ -361,7 +361,7 @@ pz2.prototype =
             }
         );
     },
-    show: function(start, num, sort)
+    show: function(start, num, sort, query_state)
     {
         if( !this.searchStatusOK && this.useSessions )
             throw new Error(
@@ -380,7 +380,7 @@ pz2.prototype =
 
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
-        request.safeGet(
+	var requestParameters = 
           {
             "command": "show", 
             "session": this.sessionID, 
@@ -391,6 +391,10 @@ pz2.prototype =
             "type": this.showResponseType,
             "windowid" : window.name
           },
+        if (query_state)
+          requestParameters["query-state"] = query_state;
+        request.safeGet(
+	  requestParameters,
           function(data, type) {
             var show = null;
             var activeClients = 0;
