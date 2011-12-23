@@ -261,6 +261,7 @@ static void non_block_events(struct connection *co)
         default:
             yaz_log(YLOG_LOG, "Unhandled event (%d) from %s",
                     ev, client_get_id(cl));
+            break;
         }
     }
     if (got_records)
