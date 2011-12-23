@@ -204,7 +204,7 @@ void http_session_destroy(struct http_session *s)
         nmem_destroy(s->nmem);
     }
     else {
-        yaz_log(http_sessions->log_level, "Session %u destroyed delayed. Active clients (%d-%d). Waiting for new timeout.",
+        yaz_log(http_sessions->log_level, "Session %u destroying delayed. Active clients (%d-%d). Waiting for new timeout.",
                 s->session_id, s->activity_counter, s->destroy_counter);
     }
 
@@ -1060,6 +1060,7 @@ static void show_records_ready(void *data)
     else {
         /* some error message  */
     }
+    release_session(c,s);
 }
 
 static void cmd_show(struct http_channel *c)
