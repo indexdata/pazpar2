@@ -858,7 +858,6 @@ static void show_record(struct http_channel *c, struct http_session *s)
 {
     struct http_response *rs = c->response;
     struct http_request *rq = c->request;
-    //struct http_session *s = locate_session(c);
     struct record_cluster *rec, *prev_r, *next_r;
     struct record *r;
     struct conf_service *service;
@@ -886,7 +885,6 @@ static void show_record(struct http_channel *c, struct http_session *s)
         {
             error(rs, PAZPAR2_RECORD_MISSING, idstr);
         }
-        //release_session(c, s);
         return;
     }
     if (offsetstr)
@@ -954,7 +952,6 @@ static void show_record(struct http_channel *c, struct http_session *s)
         response_close(c, "record");
     }
     show_single_stop(s->psession, rec);
-    //release_session(c, s);
 }
 
 static void cmd_record_ready(void *data)
