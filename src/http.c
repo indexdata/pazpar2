@@ -1097,6 +1097,7 @@ static void proxy_io(IOCHAN pi, int event)
         default:
             yaz_log(YLOG_WARN, "Unexpected event on connection");
             http_channel_destroy(hc->iochan);
+            break;
     }
 }
 
