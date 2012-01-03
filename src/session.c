@@ -731,27 +731,24 @@ enum pazpar2_error_code session_search(struct session *se,
             no_failed_query++;
         else if (parse_ret == -2)
             no_failed_limit++;
-        else if (parse_ret == 0)
-        {
-            session_log(se, YLOG_LOG, "client NEW %s", client_get_id(cl));
-            no_working++;
-            if (client_prep_connection(cl, se->service->z3950_operation_timeout,
-                                       se->service->z3950_session_timeout,
-                                       se->service->server->iochan_man,
-                                       &tval))
-                client_start_search(cl);
-        }
         else
         {
-            session_log(se, YLOG_LOG, "client REUSE %s", client_get_id(cl));
-            no_working++;
-            if (client_prep_connection(cl, se->service->z3950_operation_timeout,
+            int r =
+                client_prep_connection(cl, se->service->z3950_operation_timeout,
                                        se->service->z3950_session_timeout,
                                        se->service->server->iochan_man,
-                                       &tval))
+                                       &tval);
+            if (parse_ret == 1 && r == 2)
             {
+                session_log(se, YLOG_LOG, "client REUSE %s", client_get_id(cl));
                 client_reingest(cl);
             }
+            else
+            {
+                session_log(se, YLOG_LOG, "client NEW %s", client_get_id(cl));
+                client_start_search(cl);
+            }
+            no_working++;
         }
     }
     facet_limits_destroy(facet_limits);

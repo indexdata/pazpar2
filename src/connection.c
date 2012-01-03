@@ -526,13 +526,12 @@ int client_prep_connection(struct client *cl,
     {
         assert(co->host);
         if (co->host == host && client_get_state(cl) == Client_Idle)
-            ;  /* reusing connection. It's ours! */
-        else 
         {
-            client_incref(cl);
-            connection_release(co);
-            co = 0;
+            return 2;
         }
+        client_incref(cl);
+        connection_release(co);
+        co = 0;
     }
     if (!co)
     {
