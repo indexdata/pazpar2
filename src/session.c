@@ -523,13 +523,14 @@ static void select_targets_callback(struct session *se,
     {
         cl = client_create(db->database->id);
         client_set_database(cl, db);
-        client_set_session(cl, se);
 
         l = xmalloc(sizeof(*l));
         l->client = cl;
         l->next = se->clients_cached;
         se->clients_cached = l;
     }
+    /* set session always. If may be 0 if client is not active */
+    client_set_session(cl, se);
 
     l = xmalloc(sizeof(*l));
     l->client = cl;
@@ -550,6 +551,11 @@ static void session_reset_active_clients(struct session *se,
     while (l)
     {
         struct client_list *l_next = l->next;
+
+        client_lock(l->client); 
+        client_set_session(l->client, 0); /* mark client inactive */
+        client_unlock(l->client);
+
         xfree(l);
         l = l_next;
     }
