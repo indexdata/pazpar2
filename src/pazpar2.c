@@ -123,7 +123,7 @@ static int sc_main(
 	switch (ret)
         {
         case 'd':
-            global_parameters.dump_records = 1;
+            global_parameters.dump_records++;
             break;
         case 'D':
             daemon = 1;

@@ -70,6 +70,7 @@ typedef int socklen_t;
 #include "ppmutex.h"
 #include "session.h"
 #include "http.h"
+#include "parameters.h"
 
 #define MAX_HTTP_HEADER 4096
 
@@ -649,6 +650,12 @@ static struct http_buf *http_serialize_response(struct http_channel *c,
     if (r->payload)
         wrbuf_puts(c->wrbuf, r->payload);
 
+    if (global_parameters.dump_records > 1)
+    {
+        FILE *lf = yaz_log_file();
+        yaz_log(YLOG_LOG, "Response:");
+        fwrite(wrbuf_buf(c->wrbuf), 1, wrbuf_len(c->wrbuf), lf);
+    }
     return http_buf_bywrbuf(c->http_server, c->wrbuf);
 }
 
