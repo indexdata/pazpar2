@@ -77,7 +77,8 @@ void client_disconnect(struct client *cl);
 int client_prep_connection(struct client *cl,
                            int operation_timeout, int session_timeout,
                            iochan_man_t iochan,
-                           const struct timeval *abstime);
+                           const struct timeval *abstime,
+                           int ok_with_working);
 void client_start_search(struct client *cl);
 void client_set_session(struct client *cl, struct session *se);
 int client_is_active(struct client *cl);
