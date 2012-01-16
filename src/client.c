@@ -769,7 +769,6 @@ void client_start_search(struct client *cl)
             yaz_log(YLOG_LOG, "Target %s has preferred status: %d",
                     client_get_id(cl), cl->preferred);
     }
-    client_set_state(cl, Client_Working);
 
     if (*opt_piggyback)
         ZOOM_connection_option_set(link, "piggyback", opt_piggyback);
@@ -850,11 +849,11 @@ void client_start_search(struct client *cl)
             if (se->sorted_results->next)
             {
                 ZOOM_query_destroy(q);
-                client_set_state_nb(cl, Client_Idle);
                 return;
             }
         }
     }
+    client_set_state(cl, Client_Working);
     cl->hits = 0;
     cl->record_offset = 0;
     rs = ZOOM_connection_search(link, q);
