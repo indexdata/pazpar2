@@ -648,12 +648,9 @@ void session_sort(struct session *se, const char *field, int increasing)
     for (l = se->clients_active; l; l = l->next)
     {
         struct client *cl = l->client;
-        struct timeval tval;
-        int ret = client_prep_connection(cl, se->service->z3950_operation_timeout,
-                                         se->service->z3950_session_timeout,
-                                         se->service->server->iochan_man,
-                                         &tval, 1);
-        if (ret)
+        if (client_get_state(cl) == Client_Connecting ||
+            client_get_state(cl) == Client_Idle ||
+            client_get_state(cl) == Client_Working)
             client_start_search(cl);
     }
     session_leave(se);
