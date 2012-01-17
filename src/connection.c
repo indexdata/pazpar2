@@ -496,8 +496,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
 int client_prep_connection(struct client *cl,
                            int operation_timeout, int session_timeout,
                            iochan_man_t iochan_man,
-                           const struct timeval *abstime,
-                           int ok_with_working)
+                           const struct timeval *abstime)
 {
     struct connection *co;
     struct session_database *sdb = client_get_database(cl);
@@ -526,8 +525,7 @@ int client_prep_connection(struct client *cl,
     if (co)
     {
         assert(co->host);
-        if (co->host == host && (client_get_state(cl) == Client_Idle
-                                 || ok_with_working))
+        if (co->host == host && client_get_state(cl) == Client_Idle)
         {
             return 2;
         }

@@ -741,7 +741,7 @@ enum pazpar2_error_code session_search(struct session *se,
                 client_prep_connection(cl, se->service->z3950_operation_timeout,
                                        se->service->z3950_session_timeout,
                                        se->service->server->iochan_man,
-                                       &tval, 0);
+                                       &tval);
             if (parse_ret == 1 && r == 2)
             {
                 session_log(se, YLOG_LOG, "client REUSE %s", client_get_id(cl));
