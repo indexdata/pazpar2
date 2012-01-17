@@ -1,4 +1,6 @@
-Fix bug for command sort, that could return no results for active clients
+--- 1.6.8 2012/01/17
+
+Fix bug for command sort that could return no results for active clients
 (from previous search). This bug was present in 1.6.6-1.6.7.
 
 Fix bug in results that could include results that should have been
