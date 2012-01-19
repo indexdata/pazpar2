@@ -1,3 +1,5 @@
+--- 1.6.9 2012/01/19
+
 Fix SEGV that could occur for failed connections.
 
 --- 1.6.8 2012/01/17
