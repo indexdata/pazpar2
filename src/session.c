@@ -747,7 +747,7 @@ enum pazpar2_error_code session_search(struct session *se,
                 session_log(se, YLOG_LOG, "client REUSE %s", client_get_id(cl));
                 client_reingest(cl);
             }
-            else
+            else if (r)
             {
                 session_log(se, YLOG_LOG, "client NEW %s", client_get_id(cl));
                 client_start_search(cl);
