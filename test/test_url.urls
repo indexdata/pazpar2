@@ -10,3 +10,5 @@ http://localhost:9763/search.pz2?session=1&command=search&query=the&maxrecs=3
 2 http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=title:0
 http://localhost:9763/search.pz2?command=init&clear=1&pz:elements%5Bmy%5D=F&pz:requestsyntax%5Bmy%5D=usmarc&pz:nativesyntax%5Bmy%5D=iso2709&pz:xslt%5Bmy%5D=marc21_test.xsl&pz:name%5Bmy%5D=marcserver&pz:url%5Bmy%5D=z3950.unknown.indexdata.com%2Fmarc
 http://localhost:9763/search.pz2?session=2&command=search&query=fail
+http://localhost:9763/search.pz2?command=init&clear=1&pz:elements%5Bmy%5D=F&pz:requestsyntax%5Bmy%5D=usmarc&pz:nativesyntax%5Bmy%5D=iso2709&pz:xslt%5Bmy%5D=marc21_test.xsl&pz:name%5Bmy%5D=marcserver&pz:url%5Bmy%5D=z3950.indexdata.com%2Fmarc&pz:pqf_strftime%5Bmy%5D=fail+%25%25
+http://localhost:9763/search.pz2?session=3&command=search&query=fail
