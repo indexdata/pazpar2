@@ -992,60 +992,44 @@ static CCL_bibset prepare_cclmap(struct client *cl)
 }
 
 // returns a xmalloced CQL query corresponding to the pquery in client
-static char *make_cqlquery(struct client *cl)
+static char *make_cqlquery(struct client *cl, Z_RPNQuery *zquery)
 {
     cql_transform_t cqlt = cql_transform_create();
-    Z_RPNQuery *zquery;
-    char *r;
+    char *r = 0;
     WRBUF wrb = wrbuf_alloc();
     int status;
-    ODR odr_out = odr_createmem(ODR_ENCODE);
 
-    zquery = p_query_rpn(odr_out, cl->pquery);
-    yaz_log(YLOG_LOG, "PQF: %s", cl->pquery);
     if ((status = cql_transform_rpn2cql_wrbuf(cqlt, wrb, zquery)))
     {
         yaz_log(YLOG_WARN, "Failed to generate CQL query, code=%d", status);
-        r = 0;
     }
     else
     {
         r = xstrdup(wrbuf_cstr(wrb));
     }     
     wrbuf_destroy(wrb);
-    odr_destroy(odr_out);
     cql_transform_close(cqlt);
     return r;
 }
 
 // returns a xmalloced SOLR query corresponding to the pquery in client
 // TODO Could prob. be merge with the similar make_cqlquery
-static char *make_solrquery(struct client *cl)
+static char *make_solrquery(struct client *cl, Z_RPNQuery *zquery)
 {
     solr_transform_t sqlt = solr_transform_create();
-    Z_RPNQuery *zquery;
-    char *r;
+    char *r = 0;
     WRBUF wrb = wrbuf_alloc();
     int status;
-    ODR odr_out = odr_createmem(ODR_ENCODE);
-
-    zquery = p_query_rpn(odr_out, cl->pquery);
-    if (zquery == 0) {
-        yaz_log(YLOG_WARN, "Failed to generate RPN from PQF: %s", cl->pquery);
-        return 0;
-    }
-    yaz_log(YLOG_LOG, "PQF: %s", cl->pquery);
+    
     if ((status = solr_transform_rpn2solr_wrbuf(sqlt, wrb, zquery)))
     {
-        yaz_log(YLOG_WARN, "Failed to generate SOLR query from PQF %s, code=%d", cl->pquery, status);
-        r = 0;
+        yaz_log(YLOG_WARN, "Failed to generate SOLR query, code=%d", status);
     }
     else
     {
         r = xstrdup(wrbuf_cstr(wrb));
     }
     wrbuf_destroy(wrb);
-    odr_destroy(odr_out);
     solr_transform_close(sqlt);
     return r;
 }
@@ -1161,6 +1145,10 @@ static int apply_limit(struct session_database *sdb,
 }
                         
 // Parse the query given the settings specific to this client
+// return 0 if query is OK but different from before
+// return 1 if query is OK but same as before
+// return -1 on query error
+// return -2 on limit error
 int client_parse_query(struct client *cl, const char *query,
                        facet_limits_t facet_limits,
                        const char *startrecs, const char *maxrecs)
@@ -1169,6 +1157,7 @@ int client_parse_query(struct client *cl, const char *query,
     struct session_database *sdb = client_get_database(cl);
     struct ccl_rpn_node *cn;
     int cerror, cpos;
+    ODR odr_out;
     CCL_bibset ccl_map = prepare_cclmap(cl);
     const char *sru = session_setting_oneval(sdb, PZ_SRU);
     const char *pqf_prefix = session_setting_oneval(sdb, PZ_PQF_PREFIX);
@@ -1176,10 +1165,10 @@ int client_parse_query(struct client *cl, const char *query,
     const char *query_syntax = session_setting_oneval(sdb, PZ_QUERY_SYNTAX);
     WRBUF w_ccl, w_pqf;
     int ret_value = 1;
+    Z_RPNQuery *zquery;
 
     if (!ccl_map)
         return -1;
-
 
     if (maxrecs && atoi(maxrecs) != cl->maxrecs)
     {
@@ -1244,6 +1233,7 @@ int client_parse_query(struct client *cl, const char *query,
                 wrbuf_putc(w_pqf, cp[0]);
         }
     }
+
     if (!cl->pquery || strcmp(cl->pquery, wrbuf_cstr(w_pqf)))
     {
         xfree(cl->pquery);
@@ -1251,27 +1241,36 @@ int client_parse_query(struct client *cl, const char *query,
         ret_value = 0;
     }
     wrbuf_destroy(w_pqf);
-
-    yaz_log(YLOG_LOG, "PQF query: %s", cl->pquery);
-
+    
     xfree(cl->cqlquery);
+    cl->cqlquery = 0;
 
-    /* Support for PQF on SRU targets. */
-    /* TODO Refactor */
-    yaz_log(YLOG_DEBUG, "Query syntax: %s", query_syntax);
-    if (strcmp(query_syntax, "pqf") != 0 && *sru)
+    odr_out = odr_createmem(ODR_ENCODE);    
+    zquery = p_query_rpn(odr_out, cl->pquery);
+    if (!zquery)
     {
-        if (!strcmp(sru, "solr")) {
-            if (!(cl->cqlquery = make_solrquery(cl)))
-                return -1;
-        }
-        else {
-            if (!(cl->cqlquery = make_cqlquery(cl)))
-                return -1;
-        }
+
+        session_log(se, YLOG_WARN, "Invalid PQF query for %s: %s",
+                    client_get_id(cl), cl->pquery);
+        ret_value = -1;
     }
     else
-        cl->cqlquery = 0;
+    {
+        session_log(se, YLOG_LOG, "PQF for %s: %s",
+                    client_get_id(cl), cl->pquery);
+        
+        /* Support for PQF on SRU targets. */
+        if (strcmp(query_syntax, "pqf") != 0 && *sru)
+        {
+            if (!strcmp(sru, "solr"))
+                cl->cqlquery = make_solrquery(cl, zquery);
+            else
+                cl->cqlquery = make_cqlquery(cl, zquery);
+            if (!cl->cqlquery)
+                ret_value = -1;
+        }
+    }
+    odr_destroy(odr_out);
 
     /* TODO FIX Not thread safe */
     if (!se->relevance)
@@ -1280,7 +1279,6 @@ int client_parse_query(struct client *cl, const char *query,
         se->relevance = relevance_create_ccl(
             se->service->charsets, se->nmem, cn);
     }
-
     ccl_rpn_delete(cn);
     return ret_value;
 }
