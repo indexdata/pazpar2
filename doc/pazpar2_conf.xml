@@ -1145,7 +1145,7 @@
      <listitem>
       <para>
        Allows you to specify an arbitrary PQF query language substring.
-       The provided string is prefixed the user's query after it has been
+       The provided string is prefixed to the user's query after it has been
        normalized to PQF internally in pazpar2.
        This allows you to attach complex 'filters' to queries for a given
        target, sometimes necessary to select sub-catalogs
@@ -1167,6 +1167,17 @@
        All other characters are copied verbatim. For example, the string
        <literal>@and @attr 1=30 @attr 2=3 %Y %%</literal>
        would search for current year combined with the original PQF (%%).
+      </para>
+      <para>
+       This setting can also be used as more general alternative to
+       pz:pqf_prefix -- a way of embedding the submitted query
+       anywhere in the string rather than appending it to prefix.  For
+       example, if it is desired to omit all records satisfying the
+       query <literal>@attr 1=pica.bib 0007</literal> then this
+       subquery can be combined with the submitted query as the second
+       argument of <literal>@andnot</literal> by using the
+       pz:pqf_strftime value <literal>@not %% @attr 1=pica.bib
+       0007</literal>.
       </para>
      </listitem>
     </varlistentry>
