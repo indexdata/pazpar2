@@ -37,4 +37,5 @@
   <pz:metadata type="subject">dinosaurs, palaeontology</pz:metadata>
   <pz:metadata type="publisher">Reed Elsevier, plc.</pz:metadata>
   <pz:metadata type="description">A big book</pz:metadata>
+  <pz:metadata type="fulltexturl">https://bugzilla.indexdata.com/show_bug.cgi?id=4713</pz:metadata>
 </pz:record>
