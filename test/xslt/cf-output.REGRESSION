@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pz:record xmlns:pz="http://www.indexdata.com/pazpar2/1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:siebel="http://loc.gov/siebel/elements/1.0/">
+  <pz:metadata type="medium"/>
+  <pz:metadata type="electronic-url">http://817748.cfproxy.indexdata.com/www.jstor.org/stable/3436096?&amp;Search=yes&amp;searchText=fish&amp;list=hide&amp;searchUri=%2Faction%2FdoBasicSearch%3FQuery%3Dfish%26acc%3Doff%26wc%3Don&amp;prevSearch=&amp;item=1&amp;ttl=337590&amp;returnArticleService=showFullText</pz:metadata>
+  <pz:metadata type="title">Fish Consumption and Advisory Awareness in the Great Lakes Basin</pz:metadata>
+  <pz:metadata type="title-complete">Fish Consumption and Advisory Awareness in the Great Lakes Basin</pz:metadata>
+  <pz:metadata type="author">Pamela Imm</pz:metadata>
+  <pz:metadata type="author">Lynda Knobeloch</pz:metadata>
+  <pz:metadata type="author">Henry A. Anderson</pz:metadata>
+  <pz:metadata type="author">The Great Lakes Sport Fish Consortium</pz:metadata>
+  <pz:metadata type="journal-title">Environmental Health Perspectives </pz:metadata>
+  <pz:metadata type="permalink">http://www.jstor.org/stable/3436096?&amp;Search=yes&amp;searchText=fish&amp;list=hide&amp;searchUri=%2Faction%2FdoBasicSearch%3FQuery%3Dfish%26acc%3Doff%26wc%3Don&amp;prevSearch=&amp;item=1&amp;ttl=337590&amp;returnArticleService=showFullText</pz:metadata>
+  <pz:metadata type="publication-date">2005-10</pz:metadata>
+  <pz:metadata type="date">2005-10</pz:metadata>
+  <pz:metadata type="volume">113</pz:metadata>
+  <pz:metadata type="issue">10</pz:metadata>
+  <pz:metadata type="page">1325</pz:metadata>
+  <pz:metadata type="endpage">1329</pz:metadata>
+  <pz:metadata type="languageitem">en</pz:metadata>
+  <pz:metadata type="languageabstract">fr</pz:metadata>
+  <pz:metadata type="format">text/pdf</pz:metadata>
+  <pz:metadata type="extent">pp. 456-472</pz:metadata>
+  <pz:metadata type="doctype">research report</pz:metadata>
+  <pz:metadata type="pubtype">journal article</pz:metadata>
+  <pz:metadata type="copyright">Elsevier, of course</pz:metadata>
+  <pz:metadata type="copyrightabstract">public domain</pz:metadata>
+  <pz:metadata type="booktitle">Adventure of Gladys Stoatpamphlet</pz:metadata>
+  <pz:metadata type="relevance">4.375</pz:metadata>
+  <pz:metadata type="citation">Taylor et al. 2011b</pz:metadata>
+  <pz:metadata type="available">2012-03-12</pz:metadata>
+  <pz:metadata type="id">504468</pz:metadata>
+  <pz:metadata type="score">1279</pz:metadata>
+  <pz:metadata type="thumburl">http://www.miketaylor.org.uk/dino/xeno/images/thumb/DINO_4.jpeg</pz:metadata>
+  <pz:metadata type="due">2012-04-12</pz:metadata>
+  <pz:metadata type="issn">1234-5678</pz:metadata>
+  <pz:metadata type="isbn">0891345655</pz:metadata>
+  <pz:metadata type="subject">dinosaurs, palaeontology</pz:metadata>
+  <pz:metadata type="publisher">Reed Elsevier, plc.</pz:metadata>
+  <pz:metadata type="description">A big book</pz:metadata>
+  <pz:metadata type="fulltexturl">https://bugzilla.indexdata.com/show_bug.cgi?id=4713</pz:metadata>
+</pz:record>

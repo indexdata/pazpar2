@@ -62,68 +62,8 @@
     </pz:metadata>
   </xsl:template>
 
-  <xsl:template match="author">
-    <pz:metadata type="author">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="description">
-    <pz:metadata type="description">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-  
-  <xsl:template match="publisher">
-    <pz:metadata type="publisher">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="subject">
-    <pz:metadata type="subject">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="isbn">
-    <pz:metadata type="isbn">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="issn">
-    <pz:metadata type="issn">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
   <xsl:template match="journaltitle">
     <pz:metadata type="journal-title">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="volume">
-    <pz:metadata type="volume">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="issue">
-    <pz:metadata type="issue">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="page">
-    <pz:metadata type="page">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="endpage">
-    <pz:metadata type="endpage">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
@@ -170,12 +110,6 @@
     </pz:metadata>
   </xsl:template>
 
-  <xsl:template match="due">
-    <pz:metadata type="due">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
   <xsl:template match="location">
     <pz:metadata type="locallocation">
       <xsl:value-of select="."/>
@@ -184,102 +118,6 @@
 
   <xsl:template match="callno">
     <pz:metadata type="callnumber">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="thumburl">
-    <pz:metadata type="thumburl">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="score">
-    <pz:metadata type="score">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="id">
-    <pz:metadata type="id">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="available">
-    <pz:metadata type="available">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="citation">
-    <pz:metadata type="citation">
-      <xsl:value-of select="."/>
-      </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="relevance">
-    <pz:metadata type="relevance">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="booktitle">
-    <pz:metadata type="booktitle">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="copyright">
-    <pz:metadata type="copyright">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="copyrightabstract">
-    <pz:metadata type="copyrightabstract">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="pubtype">
-    <pz:metadata type="pubtype">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="doctype">
-    <pz:metadata type="doctype">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="extent">
-    <pz:metadata type="extent">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="format">
-    <pz:metadata type="format">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="languageitem">
-    <pz:metadata type="languageitem">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="languageabstract">
-    <pz:metadata type="languageabstract">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-
-  <xsl:template match="permalink">
-    <pz:metadata type="permalink">
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
