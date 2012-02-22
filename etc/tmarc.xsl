@@ -405,29 +405,29 @@
         </pz:metadata>
       </xsl:for-each>
 
-      <xsl:for-each select="tmarc:d600">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-	    <xsl:variable name='value'>
-	      <xsl:value-of select='normalize-space(.)'/>
-	    </xsl:variable>
-	    <xsl:choose>
-	      <xsl:when test="substring($value,string-length($value)) = ','">
-		<xsl:value-of select="substring($value,0,string-length($value))"/>
-	      </xsl:when>
-	      <xsl:otherwise>
-		<xsl:value-of select="$value"/>
-	      </xsl:otherwise>
-	    </xsl:choose> 
-         </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
+	<xsl:for-each select="tmarc:d600">
+		<pz:metadata type="subject">
+			<xsl:value-of select="tmarc:sa" />
+		</pz:metadata>
+		<pz:metadata type="subject-long">
+			<xsl:for-each select="node()/text()">
+				<xsl:if test="position() > 1">
+					<xsl:text>, </xsl:text>
+				</xsl:if>
+				<xsl:variable name='value'>
+					<xsl:value-of select='normalize-space(.)' />
+				</xsl:variable>
+				<xsl:choose>
+					<xsl:when test="substring($value,string-length($value)) = ','">
+						<xsl:value-of select="substring($value,0,string-length($value))" />
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$value" />
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+		</pz:metadata>
+	</xsl:for-each>
 
       <xsl:for-each select="tmarc:d610">
         <pz:metadata type="subject">
@@ -438,7 +438,17 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
+                <xsl:variable name='value'>
+                    <xsl:value-of select='normalize-space(.)' />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="substring($value,string-length($value)) = ','">
+                        <xsl:value-of select="substring($value,0,string-length($value))" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$value" />
+                    </xsl:otherwise>
+                </xsl:choose>
           </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
@@ -452,7 +462,17 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
+                <xsl:variable name='value'>
+                    <xsl:value-of select='normalize-space(.)' />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="substring($value,string-length($value)) = ','">
+                        <xsl:value-of select="substring($value,0,string-length($value))" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$value" />
+                    </xsl:otherwise>
+                </xsl:choose>
           </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
@@ -466,7 +486,17 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
+                <xsl:variable name='value'>
+                    <xsl:value-of select='normalize-space(.)' />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="substring($value,string-length($value)) = ','">
+                        <xsl:value-of select="substring($value,0,string-length($value))" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$value" />
+                    </xsl:otherwise>
+                </xsl:choose>
           </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
@@ -480,7 +510,17 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
+                <xsl:variable name='value'>
+                    <xsl:value-of select='normalize-space(.)' />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="substring($value,string-length($value)) = ','">
+                        <xsl:value-of select="substring($value,0,string-length($value))" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$value" />
+                    </xsl:otherwise>
+                </xsl:choose>
           </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
@@ -494,7 +534,17 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
+                <xsl:variable name='value'>
+                    <xsl:value-of select='normalize-space(.)' />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="substring($value,string-length($value)) = ','">
+                        <xsl:value-of select="substring($value,0,string-length($value))" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$value" />
+                    </xsl:otherwise>
+                </xsl:choose>
           </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
@@ -508,7 +558,17 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
+                <xsl:variable name='value'>
+                    <xsl:value-of select='normalize-space(.)' />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="substring($value,string-length($value)) = ','">
+                        <xsl:value-of select="substring($value,0,string-length($value))" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$value" />
+                    </xsl:otherwise>
+                </xsl:choose>
           </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
@@ -522,7 +582,17 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
+                <xsl:variable name='value'>
+                    <xsl:value-of select='normalize-space(.)' />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="substring($value,string-length($value)) = ','">
+                        <xsl:value-of select="substring($value,0,string-length($value))" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$value" />
+                    </xsl:otherwise>
+                </xsl:choose>
           </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
@@ -536,7 +606,17 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
+                <xsl:variable name='value'>
+                    <xsl:value-of select='normalize-space(.)' />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="substring($value,string-length($value)) = ','">
+                        <xsl:value-of select="substring($value,0,string-length($value))" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$value" />
+                    </xsl:otherwise>
+                </xsl:choose>
           </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
@@ -564,7 +644,17 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
+                <xsl:variable name='value'>
+                    <xsl:value-of select='normalize-space(.)' />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="substring($value,string-length($value)) = ','">
+                        <xsl:value-of select="substring($value,0,string-length($value))" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$value" />
+                    </xsl:otherwise>
+                </xsl:choose>
           </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
@@ -592,7 +682,17 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
+                <xsl:variable name='value'>
+                    <xsl:value-of select='normalize-space(.)' />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="substring($value,string-length($value)) = ','">
+                        <xsl:value-of select="substring($value,0,string-length($value))" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$value" />
+                    </xsl:otherwise>
+                </xsl:choose>
           </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
@@ -606,7 +706,17 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
+                <xsl:variable name='value'>
+                    <xsl:value-of select='normalize-space(.)' />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="substring($value,string-length($value)) = ','">
+                        <xsl:value-of select="substring($value,0,string-length($value))" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$value" />
+                    </xsl:otherwise>
+                </xsl:choose>
           </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
@@ -620,7 +730,17 @@
             <xsl:if test="position() > 1">
               <xsl:text>, </xsl:text>
             </xsl:if>
-            <xsl:value-of select="." />
+                <xsl:variable name='value'>
+                    <xsl:value-of select='normalize-space(.)' />
+                </xsl:variable>
+                <xsl:choose>
+                    <xsl:when test="substring($value,string-length($value)) = ','">
+                        <xsl:value-of select="substring($value,0,string-length($value))" />
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="$value" />
+                    </xsl:otherwise>
+                </xsl:choose>
           </xsl:for-each>
         </pz:metadata>
       </xsl:for-each>
@@ -639,15 +759,15 @@
           <xsl:value-of select="tmarc:su" />
         </pz:metadata>
         <pz:metadata type="electronic-text">
-          <xsl:choose>
-	    <xsl:when test="tmarc:sy">
-	      <xsl:value-of select="tmarc:sy/text()" />
-	    </xsl:when>
-	    <xsl:when test="tmarc:s3">
-	      <xsl:value-of select="tmarc:s3/text()" />
-	    </xsl:when>
-	     <xsl:otherwise>Get resource</xsl:otherwise>
-	   </xsl:choose>
+         <xsl:choose>
+	      <xsl:when test="tmarc:sy">
+	           <xsl:value-of select="tmarc:sy/text()" />
+	      </xsl:when>
+	      <xsl:when test="tmarc:s3">
+	           <xsl:value-of select="tmarc:s3/text()" />
+	      </xsl:when>
+	      <xsl:otherwise>Get resource</xsl:otherwise>
+	     </xsl:choose>
         </pz:metadata>
         <pz:metadata type="electronic-note">
           <xsl:value-of select="tmarc:sz" />
