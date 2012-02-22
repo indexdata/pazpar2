@@ -652,10 +652,17 @@ pz2.prototype =
                                 == Node.ELEMENT_NODE ) {
                                 var nodeName = 
                                     targetNodes[i].childNodes[j].nodeName;
-                                var nodeText = 
-                                    targetNodes[i].childNodes[j]
-                                        .firstChild.nodeValue;
-                                bytarget[i][nodeName] = nodeText;
+				if (tagetNodes[i].childNodes[j].firstChild != null) 
+				{
+                                    var nodeText = targetNodes[i].childNodes[j]
+					.firstChild.nodeValue;
+                                    bytarget[i][nodeName] = nodeText;
+				}
+				else { 
+				    bytarget[i][nodeName] = "";  
+				}
+
+
                             }
                         }
                         if (bytarget[i]["state"]=="Client_Disconnected") {
