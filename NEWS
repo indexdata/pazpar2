@@ -3,9 +3,9 @@
 Fix SEGV for invalid PQFs and SRU/SOLR targets
 Also refactor a bit the code that converts from PQF to SRU/SOLR queries.
 
-Fix pz2.js: "null object" due to change pazpar2 XML in bytarget result
+Fix pz2.js: "null object" due to change in in bytarget result XML.
 
-Fixes in tmarc.xsl: Subject shorten for extra commas only. 
+Fixes in tmarc.xsl: Subject-long shorten for extra commas only. 
 Added this normalization to the other subject-long fields (d6xx), 
 where it was missing.
 
