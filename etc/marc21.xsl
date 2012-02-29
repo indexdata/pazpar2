@@ -310,7 +310,7 @@
 				</xsl:variable>
 				<xsl:choose>
 					<xsl:when test="substring($value,string-length($value)) = ','">
-						<xsl:value-of select="substring($value,0,string-length($value))" />
+						<xsl:value-of select="substring($value,1,string-length($value)-1)" />
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:value-of select="$value" />
@@ -325,7 +325,7 @@
 	  <xsl:value-of select="marc:subfield[@code='u']"/>
 	</pz:metadata>
 	<pz:metadata type="electronic-text">
-	  <xsl:value-of select="marc:subfield[@code='y' or @code='3']"/>
+	  <xsl:value-of select="marc:subfield[@code='y' or @code='3' or @code='a']"/>
 	</pz:metadata>
 	<pz:metadata type="electronic-note">
 	  <xsl:value-of select="marc:subfield[@code='z']"/>
