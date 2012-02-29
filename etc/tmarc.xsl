@@ -405,354 +405,32 @@
         </pz:metadata>
       </xsl:for-each>
 
-	<xsl:for-each select="tmarc:d600">
-		<pz:metadata type="subject">
-			<xsl:value-of select="tmarc:sa" />
-		</pz:metadata>
-		<pz:metadata type="subject-long">
-			<xsl:for-each select="node()/text()">
-				<xsl:if test="position() > 1">
-					<xsl:text>, </xsl:text>
-				</xsl:if>
-				<xsl:variable name='value'>
-					<xsl:value-of select='normalize-space(.)' />
-				</xsl:variable>
-				<xsl:choose>
-					<xsl:when test="substring($value,string-length($value)) = ','">
-						<xsl:value-of select="substring($value,0,string-length($value))" />
-					</xsl:when>
-					<xsl:otherwise>
-						<xsl:value-of select="$value" />
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:for-each>
-		</pz:metadata>
-	</xsl:for-each>
-
-      <xsl:for-each select="tmarc:d610">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-                <xsl:variable name='value'>
-                    <xsl:value-of select='normalize-space(.)' />
-                </xsl:variable>
-                <xsl:choose>
-                    <xsl:when test="substring($value,string-length($value)) = ','">
-                        <xsl:value-of select="substring($value,0,string-length($value))" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$value" />
-                    </xsl:otherwise>
-                </xsl:choose>
+      <xsl:for-each select="tmarc:d600 | tmarc:d610 | tmarc:d611 | tmarc:d630 |
+                            tmarc:d648 | tmarc:d650 | tmarc:d651 | tmarc:d653 |
+                            tmarc:d654 | tmarc:d655 | tmarc:d656 | tmarc:d657 |
+                            tmarc:d658 | tmarc:d662 | tmarc:d69X">
+         <pz:metadata type="subject">
+           <xsl:value-of select="tmarc:sa"/>
+         </pz:metadata>
+         <pz:metadata type="subject-long">
+           <xsl:for-each select="node()/text()">
+             <xsl:if test="position() &gt; 1">
+               <xsl:text>, </xsl:text>
+             </xsl:if>
+            <xsl:variable name='value'>
+              <xsl:value-of select='normalize-space(.)'/>
+            </xsl:variable>
+            <xsl:choose>
+              <xsl:when test="substring($value, string-length($value)) = ','">
+                <xsl:value-of select="substring($value, 1, string-length($value)-1)"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="$value"/>
+              </xsl:otherwise>
+            </xsl:choose> 
           </xsl:for-each>
-        </pz:metadata>
+         </pz:metadata>
       </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d611">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-                <xsl:variable name='value'>
-                    <xsl:value-of select='normalize-space(.)' />
-                </xsl:variable>
-                <xsl:choose>
-                    <xsl:when test="substring($value,string-length($value)) = ','">
-                        <xsl:value-of select="substring($value,0,string-length($value))" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$value" />
-                    </xsl:otherwise>
-                </xsl:choose>
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d630">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-                <xsl:variable name='value'>
-                    <xsl:value-of select='normalize-space(.)' />
-                </xsl:variable>
-                <xsl:choose>
-                    <xsl:when test="substring($value,string-length($value)) = ','">
-                        <xsl:value-of select="substring($value,0,string-length($value))" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$value" />
-                    </xsl:otherwise>
-                </xsl:choose>
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d648">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-                <xsl:variable name='value'>
-                    <xsl:value-of select='normalize-space(.)' />
-                </xsl:variable>
-                <xsl:choose>
-                    <xsl:when test="substring($value,string-length($value)) = ','">
-                        <xsl:value-of select="substring($value,0,string-length($value))" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$value" />
-                    </xsl:otherwise>
-                </xsl:choose>
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d650">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-                <xsl:variable name='value'>
-                    <xsl:value-of select='normalize-space(.)' />
-                </xsl:variable>
-                <xsl:choose>
-                    <xsl:when test="substring($value,string-length($value)) = ','">
-                        <xsl:value-of select="substring($value,0,string-length($value))" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$value" />
-                    </xsl:otherwise>
-                </xsl:choose>
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d651">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-                <xsl:variable name='value'>
-                    <xsl:value-of select='normalize-space(.)' />
-                </xsl:variable>
-                <xsl:choose>
-                    <xsl:when test="substring($value,string-length($value)) = ','">
-                        <xsl:value-of select="substring($value,0,string-length($value))" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$value" />
-                    </xsl:otherwise>
-                </xsl:choose>
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d653">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-                <xsl:variable name='value'>
-                    <xsl:value-of select='normalize-space(.)' />
-                </xsl:variable>
-                <xsl:choose>
-                    <xsl:when test="substring($value,string-length($value)) = ','">
-                        <xsl:value-of select="substring($value,0,string-length($value))" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$value" />
-                    </xsl:otherwise>
-                </xsl:choose>
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d654">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-                <xsl:variable name='value'>
-                    <xsl:value-of select='normalize-space(.)' />
-                </xsl:variable>
-                <xsl:choose>
-                    <xsl:when test="substring($value,string-length($value)) = ','">
-                        <xsl:value-of select="substring($value,0,string-length($value))" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$value" />
-                    </xsl:otherwise>
-                </xsl:choose>
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d655">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d656">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-                <xsl:variable name='value'>
-                    <xsl:value-of select='normalize-space(.)' />
-                </xsl:variable>
-                <xsl:choose>
-                    <xsl:when test="substring($value,string-length($value)) = ','">
-                        <xsl:value-of select="substring($value,0,string-length($value))" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$value" />
-                    </xsl:otherwise>
-                </xsl:choose>
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d657">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d658">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-                <xsl:variable name='value'>
-                    <xsl:value-of select='normalize-space(.)' />
-                </xsl:variable>
-                <xsl:choose>
-                    <xsl:when test="substring($value,string-length($value)) = ','">
-                        <xsl:value-of select="substring($value,0,string-length($value))" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$value" />
-                    </xsl:otherwise>
-                </xsl:choose>
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d662">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-                <xsl:variable name='value'>
-                    <xsl:value-of select='normalize-space(.)' />
-                </xsl:variable>
-                <xsl:choose>
-                    <xsl:when test="substring($value,string-length($value)) = ','">
-                        <xsl:value-of select="substring($value,0,string-length($value))" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$value" />
-                    </xsl:otherwise>
-                </xsl:choose>
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d69X">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-                <xsl:variable name='value'>
-                    <xsl:value-of select='normalize-space(.)' />
-                </xsl:variable>
-                <xsl:choose>
-                    <xsl:when test="substring($value,string-length($value)) = ','">
-                        <xsl:value-of select="substring($value,0,string-length($value))" />
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="$value" />
-                    </xsl:otherwise>
-                </xsl:choose>
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <!-- or tmarc:d651 or tmarc:d653 or tmarc:d654 or tmarc:d655 or tmarc:d656 
-        or tmarc:d657 or tmarc:d658 or tmarc:d662 or tmarc:d69X"> -->
-
-      <!-- <xsl:for-each select="tmarc:d600" > <pz:metadata type="subject"> 
-        <xsl:value-of select="tmarc:sa"/> </pz:metadata> <pz:metadata type="subject-long"> 
-        <xsl:for-each select="tmarc:sa tmarc:sb tmarc:sc tmarc:sd "> <xsl:if test="position() 
-        > 1"> <xsl:text>, </xsl:text> </xsl:if> <xsl:value-of select="."/> </xsl:for-each> 
-        </pz:metadata> </xsl:for-each> -->
 
       <xsl:for-each select="tmarc:d856">
         <pz:metadata type="electronic-url">
@@ -765,6 +443,9 @@
 	      </xsl:when>
 	      <xsl:when test="tmarc:s3">
 	           <xsl:value-of select="tmarc:s3/text()" />
+	      </xsl:when>
+	      <xsl:when test="tmarc:sa">
+	           <xsl:value-of select="tmarc:sa/text()" />
 	      </xsl:when>
 	      <xsl:otherwise>Get resource</xsl:otherwise>
 	     </xsl:choose>
