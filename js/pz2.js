@@ -652,7 +652,7 @@ pz2.prototype =
                                 == Node.ELEMENT_NODE ) {
                                 var nodeName = 
                                     targetNodes[i].childNodes[j].nodeName;
-				if (tagetNodes[i].childNodes[j].firstChild != null) 
+				if (targetNodes[i].childNodes[j].firstChild != null) 
 				{
                                     var nodeText = targetNodes[i].childNodes[j]
 					.firstChild.nodeValue;
