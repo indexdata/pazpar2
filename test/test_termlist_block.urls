@@ -8,5 +8,6 @@ http://localhost:9763/search.pz2?session=1&command=settings&full_text_target%5Bi
 http://localhost:9763/search.pz2?session=1&command=search&query=su%3D%22computer%22
 4 http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=bytarget
+http://localhost:9763/search.pz2?session=1&command=termlist&block=1&name=xtargets%2Cauthor%2Csubject%2Cdate
 http://localhost:9763/search.pz2?session=1&command=termlist&block=1&report=status&name=xtargets%2Cauthor%2Csubject%2Cdate
-http://localhost:9763/search.pz2?session=1&command=termlist&block=1&report=status&name=xtargets%2Cauthor%2Csubject%2Cdate
+http://localhost:9763/search.pz2?session=1&command=bytarget&report=status
