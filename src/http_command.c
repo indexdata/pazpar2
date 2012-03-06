@@ -510,7 +510,7 @@ static void cmd_settings(struct http_channel *c)
     release_session(c, s);
 }
 
-static void termlist_response(struct http_channel *c, struct http_session *s, const char *cmd_status)
+static void termlist_response(struct http_channel *c, struct http_session *s)
 {
     struct http_request *rq = c->request;
     const char *name = http_argbyname(rq, "name");
@@ -524,10 +524,6 @@ static void termlist_response(struct http_channel *c, struct http_session *s, co
     status = session_active_clients(s->psession);
 
     response_open_no_status(c, "termlist");
-    /* new protocol add a status to response. Triggered by a status parameter */
-    if (cmd_status != 0) {
-        wrbuf_printf(c->wrbuf, "<status>%s</status>\n", cmd_status);
-    }
     wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", status);
 
     perform_termlist(c, s->psession, name, num);
@@ -538,15 +534,10 @@ static void termlist_response(struct http_channel *c, struct http_session *s, co
 static void termlist_result_ready(void *data)
 {
     struct http_channel *c = (struct http_channel *) data;
-    struct http_request *rq = c->request;
-    const char *report = http_argbyname(rq, "report");
-    const char *status = 0;
-    if (report && !strcmp("status", report))
-        status = "OK";
     struct http_session *s = locate_session(c);
     if (s) {
         yaz_log(c->http_sessions->log_level, "Session %u termlist watch released", s->session_id);
-        termlist_response(c, s, status);
+        termlist_response(c, s);
         release_session(c,s);
     }
 }
@@ -557,23 +548,12 @@ static void cmd_termlist(struct http_channel *c)
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(c);
     const char *block = http_argbyname(rq, "block");
-    const char *report = http_argbyname(rq, "report");
-    int report_status = 0;
-    int report_error = 0;
-    const char *status_message;
     int active_clients;
-    if (report  && !strcmp("error", report)) {
-        report_error = 1;
-        status_message = "OK";
-    }
-    if (report  && !strcmp("status", report)) {
-        report_status = 1;
-        status_message = "OK";
-    }
     if (!s)
         return;
 
     active_clients = session_active_clients(s->psession);
+
     if (block && !strcmp("1", block) && active_clients)
     {
         // if there is already a watch/block. we do not block this one
@@ -581,24 +561,17 @@ static void cmd_termlist(struct http_channel *c)
                               termlist_result_ready, c, c) != 0)
         {
             yaz_log(YLOG_WARN, "Session %u: Attempt to block multiple times on termlist block. Not supported!", s->session_id);
-            if (report_error) {
-                error(rs, PAZPAR2_ALREADY_BLOCKED, "termlist");
-                release_session(c, s);
-                return;
-            }
-            if (report_status) {
-                status_message = "WARNING (Already blocked on termlist)";
-            }
+            error(rs, PAZPAR2_ALREADY_BLOCKED, "termlist");
         }
         else
         {
             yaz_log(c->http_sessions->log_level, "Session %u: Blocking on command termlist", s->session_id);
-            release_session(c, s);
-            return;
         }
+        release_session(c, s);
+        return;
     }
 
-    termlist_response(c, s, status_message);
+    termlist_response(c, s);
     release_session(c, s);
 }
 
@@ -668,22 +641,14 @@ static void cmd_server_status(struct http_channel *c)
     xmalloc_trav(0);
 }
 
-static void bytarget_response(struct http_channel *c, struct http_session *s, const char *cmd_status) {
+static void bytarget_response(struct http_channel *c, struct http_session *s) {
     int count, i;
     struct hitsbytarget *ht;
     struct http_request *rq = c->request;
     const char *settings = http_argbyname(rq, "settings");
 
     ht = get_hitsbytarget(s->psession, &count, c->nmem);
-    if (!cmd_status)
-        /* Old protocol, always ok */
-        response_open(c, "bytarget");
-    else {
-        /* New protocol, OK or WARNING (...)*/
-        response_open_no_status(c, "bytarget");
-        wrbuf_printf(c->wrbuf, "<status>%s</status>\n", cmd_status);
-    }
-
+    response_open(c, "bytarget");
     if (count == 0)
         yaz_log(YLOG_WARN, "Empty bytarget Response. No targets found!");
     for (i = 0; i < count; i++)
@@ -736,10 +701,9 @@ static void bytarget_result_ready(void *data)
 {
     struct http_channel *c = (struct http_channel *) data;
     struct http_session *s = locate_session(c);
-    const char *status_message = "OK";
     if (s) {
         yaz_log(c->http_sessions->log_level, "Session %u: bytarget watch released", s->session_id);
-        bytarget_response(c, s, status_message);
+        bytarget_response(c, s);
         release_session(c, s);
     }
     else {
@@ -754,23 +718,13 @@ static void cmd_bytarget(struct http_channel *c)
     struct http_response *rs = c->response;
     struct http_session *s = locate_session(c);
     const char *block = http_argbyname(rq, "block");
-    const char *report = http_argbyname(rq, "report");
-    int block_error = 0;
-    int report_status = 0;
-    const char *status_message = "OK";
-    if (report && !strcmp("error", report)) {
-        block_error = 1;
-    }
-    if (report && !strcmp("status", report)) {
-        report_status = 1;
-    }
-
     int no_active;
 
     if (!s)
         return;
 
     no_active = session_active_clients(s->psession);
+
     if (block && !strcmp("1",block) && no_active)
     {
         // if there is already a watch/block. we do not block this one
@@ -778,23 +732,16 @@ static void cmd_bytarget(struct http_channel *c)
                               bytarget_result_ready, c, c) != 0)
         {
             yaz_log(YLOG_WARN, "Session %u: Attempt to block multiple times on bytarget block. Not supported!", s->session_id);
-            if (block_error) {
-                error(rs, PAZPAR2_ALREADY_BLOCKED, "bytarget");
-                release_session(c, s);
-                return;
-            }
-            if (report_status) {
-                status_message = "WARNING (Already blocked on bytarget)";
-            }
+            error(rs, PAZPAR2_ALREADY_BLOCKED, "bytarget"); 
         }
         else
         {
             yaz_log(c->http_sessions->log_level, "Session %u: Blocking on command bytarget", s->session_id);
-            release_session(c, s);
-            return;
         }
+        release_session(c, s);
+        return;
     }
-    bytarget_response(c, s, status_message);
+    bytarget_response(c, s);
     release_session(c, s);
 }
 
@@ -1120,7 +1067,6 @@ static void cmd_show(struct http_channel *c)
     struct http_session *s = locate_session(c);
     const char *block = http_argbyname(rq, "block");
     const char *sort = http_argbyname(rq, "sort");
-    const char *block_error = http_argbyname(rq, "error");
     struct reclist_sortparms *sp;
     int status;
 
@@ -1150,39 +1096,32 @@ static void cmd_show(struct http_channel *c)
             {
                 yaz_log(c->http_sessions->log_level,
                         "Session %u: Blocking on command show (preferred targets)", s->session_id);
-                release_session(c, s);
-                return;
             }
             else
             {
                 yaz_log(YLOG_WARN, "Attempt to block multiple times on show (preferred targets) block. Not supported!");
-                if (block_error && !strcmp("1", block_error)) {
-                    error(rs, PAZPAR2_ALREADY_BLOCKED, "show (preferred targets)");
-                    release_session(c, s);
-                    return;
-                }
+                error(rs, PAZPAR2_ALREADY_BLOCKED, "show (preferred targets)"); 
             }
+            release_session(c, s);
+            return;
 
         }
         else if (status)
         {
             // if there is already a watch/block. we do not block this one
             if (session_set_watch(s->psession, SESSION_WATCH_SHOW,
-                                  show_records_ready, c, c) != 0)
+                                  show_records_ready, c, c) != 0
+                )
             {
                 yaz_log(YLOG_WARN, "Attempt to block multiple times on show block. Not supported!");
-                if (block_error && !strcmp("1", block_error)) {
-                    error(rs, PAZPAR2_ALREADY_BLOCKED, "show");
-                    release_session(c, s);
-                    return;
-                }
+                error(rs, PAZPAR2_ALREADY_BLOCKED, "show"); 
             }
             else
             {
                 yaz_log(c->http_sessions->log_level, "Session %u: Blocking on command show", s->session_id);
-                release_session(c, s);
-                return;
             }
+            release_session(c, s);
+            return;
         }
     }
     show_records(c, s, status);
