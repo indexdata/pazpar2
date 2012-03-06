@@ -560,7 +560,7 @@ static void cmd_termlist(struct http_channel *c)
     const char *report = http_argbyname(rq, "report");
     int report_status = 0;
     int report_error = 0;
-    const char *status_message;
+    const char *status_message = 0;
     int active_clients;
     if (report  && !strcmp("error", report)) {
         report_error = 1;
@@ -681,7 +681,7 @@ static void bytarget_response(struct http_channel *c, struct http_session *s, co
     else {
         /* New protocol, OK or WARNING (...)*/
         response_open_no_status(c, "bytarget");
-        wrbuf_printf(c->wrbuf, "<status>%s</status>\n", cmd_status);
+        wrbuf_printf(c->wrbuf, "<status>%s</status>", cmd_status);
     }
 
     if (count == 0)
