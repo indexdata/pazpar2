@@ -1,3 +1,27 @@
+--- 1.6.11 2012/03/07
+
+Revert the behavior of returning errors when unable to block 
+on termlist, bytarget and search, when unable to block due to 
+other block. The client will now receive a regular response, 
+but it will be logged in the server. A parameter (report) is
+added to change behavior to return error response or WARNING 
+status message. Consider this "API" as private, as it is mostly 
+untested and could be changed in future releases. 
+
+Fix spell error in pz2.js fix in 1.6.10.
+
+New Marc2TurboMarc.xsl (contribution from Sven Porst). 
+Can solve the missing marc21.xsl updates in some cases. 
+
+tmarc.xsl: Simplify the 6xx to subject-long and fix 1-based 
+substring (contribtion from Sven Porst)
+
+marc21.xsl: fix 1-based substring call
+
+tmarc.xsl and marc21.xsl: use 856$a as last option for electronic-text. 
+
+Add test_termlist_block to test suite
+
 --- 1.6.10 2012/02/23
 
 Fix SEGV for invalid PQFs and SRU/SOLR targets
