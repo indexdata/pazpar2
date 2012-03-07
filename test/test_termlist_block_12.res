@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<termlist><activeclients>0</activeclients>
+<termlist><status>OK</status>
+<activeclients>0</activeclients>
 <list name="xtargets">
 <term>
 <id>id_solr</id>
