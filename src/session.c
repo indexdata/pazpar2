@@ -1069,7 +1069,8 @@ void perform_termlist(struct http_channel *c, struct session *se,
     for (j = 0; j < num_names; j++)
     {
         const char *tname;
-        
+        int must_generate_empty = 1; /* bug 5350 */
+
         for (i = 0; i < se->num_termlists; i++)
         {
             tname = se->termlists[i].name;
@@ -1081,6 +1082,7 @@ void perform_termlist(struct http_channel *c, struct session *se,
                 wrbuf_puts(c->wrbuf, "<list name=\"");
                 wrbuf_xmlputs(c->wrbuf, tname);
                 wrbuf_puts(c->wrbuf, "\">\n");
+                must_generate_empty = 0;
 
                 p = termlist_highscore(se->termlists[i].termlist, &len);
                 if (p)
@@ -1115,6 +1117,13 @@ void perform_termlist(struct http_channel *c, struct session *se,
 
             targets_termlist_nb(c->wrbuf, se, num, c->nmem);
             wrbuf_puts(c->wrbuf, "</list>\n");
+            must_generate_empty = 0;
+        }
+        if (must_generate_empty)
+        {
+            wrbuf_puts(c->wrbuf, "<list name=\"");
+            wrbuf_xmlputs(c->wrbuf, names[j]);
+            wrbuf_puts(c->wrbuf, "\"/>\n");
         }
     }
     session_leave(se);
