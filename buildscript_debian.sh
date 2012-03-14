@@ -2,7 +2,7 @@ PROJECT=$1
 TYPE=tar.gz
 RPMBUILD_HOST=centos5
 
-if ~/proj/git-tools/id-deb-build/check-for-dummy.sh ; then 
+if ../git-tools/id-deb-build/check-versions.sh ; then 
     echo "Version $VERSION OK"
     . IDMETA
 else 
@@ -14,7 +14,7 @@ if [ "$PROJECT" == "" ] ; then
     exit 1
 fi
 
-if [ "$2" != ""]
+if [ "$2" != "" ] ; then 
     TYPE=$2
 fi
 
@@ -31,7 +31,7 @@ if ./buildconf.sh -d ; then
 	if ~/proj/git-tools/id-deb-build/id-pbuild.sh ; then
 	    echo Upload and update repo
 	else
-	    echo "Failed to build $PROJECT $VERSION
+	    echo "Failed to build $PROJECT $VERSION" 
 	    exit 
 	fi
     else
