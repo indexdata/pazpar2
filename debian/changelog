@@ -1,4 +1,10 @@
-pazpar2 (1.6.11-1index) unstable; urgency=low
+pazpar2 (1.6.12-1indexdata) unstable; urgency=low
+
+  * Upstream 
+
+ -- Dennis Schafroth <dennis@indexdata.com>  Wed, 14 Mar 2012 11:22:57 +0000
+
+pazpar2 (1.6.11-1indexdata) unstable; urgency=low
 
   * Upstream 
 

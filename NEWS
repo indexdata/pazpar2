@@ -1,3 +1,9 @@
+--- 1.6.12 2012/03/14
+
+Revert the format change in termlist response, that could break 
+some clients / UIs since they were expecting an (empty) element 
+if no facet values was found. 
+
 --- 1.6.11 2012/03/07
 
 Revert the behavior of returning errors when unable to block 
