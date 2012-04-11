@@ -76,6 +76,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "settings.h"
 #include "normalize7bit.h"
 
+#include <libxml/tree.h>
+
 #define TERMLIST_HIGH_SCORE 25
 
 #define MAX_CHUNK 15
@@ -962,6 +964,7 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
         res[*count].name = *name ? name : "Unknown";
         res[*count].hits = client_get_hits(cl);
         res[*count].records = client_get_num_records(cl);
+        res[*count].filtered = client_get_num_records_filtered(cl);
         res[*count].diagnostic =
             client_get_diagnostic(cl, &res[*count].addinfo);
         res[*count].state = client_get_state_str(cl);
@@ -1541,8 +1544,7 @@ int ingest_record(struct client *cl, const char *rec,
     
     if (!check_record_filter(root, sdb))
     {
-        session_log(se, YLOG_LOG, "Filtered out record no %d from %s",
-                    record_no, sdb->database->id);
+        session_log(se, YLOG_LOG, "Filtered out record no %d from %s", record_no, sdb->database->id);
         xmlFreeDoc(xdoc);
         return -2;
     }
