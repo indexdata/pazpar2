@@ -141,6 +141,7 @@ struct hitsbytarget {
     int diagnostic;
     const char *addinfo;
     int records;
+    int filtered;
     const char *state;
     int connected;
     char *settings_xml;
