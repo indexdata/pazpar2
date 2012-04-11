@@ -111,6 +111,7 @@ struct client {
     char *addinfo; // diagnostic info for most resent error
     Odr_int hits;
     int record_offset;
+    int filtered; // When using local:, this will count the number of filtered records.
     int maxrecs;
     int startrecs;
     int diagnostic;
@@ -546,8 +547,7 @@ void client_search_response(struct client *cl)
     }
     else
     {
-        yaz_log(YLOG_DEBUG, "client_search_response: hits "
-                ODR_INT_PRINTF, cl->hits);
+        yaz_log(YLOG_DEBUG, "client_search_response: hits " ODR_INT_PRINTF, cl->hits);
         client_report_facets(cl, resultset);
         cl->record_offset = cl->startrecs;
         cl->hits = ZOOM_resultset_size(resultset);
@@ -609,8 +609,11 @@ static void client_record_ingest(struct client *cl)
             else
             {
                 /* OK = 0, -1 = failure, -2 = Filtered */
-                if (ingest_record(cl, xmlrec, cl->record_offset, nmem) == -1)
+                int rc = ingest_record(cl, xmlrec, cl->record_offset, nmem);
+                if (rc == -1)
                     yaz_log(YLOG_WARN, "Failed to ingest from %s", client_get_id(cl));
+                if (rc == -2)
+                    cl->filtered += 1;
             }
             nmem_destroy(nmem);
         }
@@ -663,6 +666,7 @@ void client_reingest(struct client *cl)
 {
     int i = cl->startrecs;
     int to = cl->record_offset;
+    cl->filtered = 0;
 
     cl->record_offset = i;
     for (; i < to; i++)
@@ -753,7 +757,13 @@ void client_start_search(struct client *cl)
     const char *opt_sort        = session_setting_oneval(sdb, PZ_SORT);
     const char *opt_preferred   = session_setting_oneval(sdb, PZ_PREFERRED);
     const char *extra_args      = session_setting_oneval(sdb, PZ_EXTRA_ARGS);
-    char maxrecs_str[24], startrecs_str[24];
+    const char *opt_present_chunk = session_setting_oneval(sdb, PZ_PRESENT_CHUNK);
+    /* Default present chunk */
+    int present_chunk = 20;
+    if (opt_present_chunk && strcmp(opt_present_chunk,"")) {
+        present_chunk = atoi(opt_present_chunk);
+    }
+    char maxrecs_str[24], startrecs_str[24], present_chunk_str[24];
     ZOOM_query q;
 
     assert(link);
@@ -792,8 +802,11 @@ void client_start_search(struct client *cl)
     sprintf(maxrecs_str, "%d", cl->maxrecs);
     ZOOM_connection_option_set(link, "count", maxrecs_str);
 
-    if (cl->maxrecs > 20)
-        ZOOM_connection_option_set(link, "presentChunk", "20");
+    /* A present_chunk less than 1 will disable chunking. */
+    if (present_chunk > 0 && cl->maxrecs > present_chunk) {
+        sprintf(present_chunk_str, "%d", present_chunk);
+        ZOOM_connection_option_set(link, "presentChunk", opt_present_chunk);
+    }
     else
         ZOOM_connection_option_set(link, "presentChunk", maxrecs_str);
 
@@ -876,6 +889,7 @@ struct client *client_create(const char *id)
     cl->session = 0;
     cl->hits = 0;
     cl->record_offset = 0;
+    cl->filtered = 0;
     cl->diagnostic = 0;
     cl->state = Client_Disconnected;
     cl->show_raw = 0;
@@ -1316,6 +1330,11 @@ Odr_int client_get_hits(struct client *cl)
 int client_get_num_records(struct client *cl)
 {
     return cl->record_offset;
+}
+
+int client_get_num_records_filtered(struct client *cl)
+{
+    return cl->filtered;
 }
 
 void client_set_diagnostic(struct client *cl, int diagnostic,
