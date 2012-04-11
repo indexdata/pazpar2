@@ -676,7 +676,11 @@ static void bytarget_response(struct http_channel *c, struct http_session *s, co
     struct hitsbytarget *ht;
     struct http_request *rq = c->request;
     const char *settings = http_argbyname(rq, "settings");
-
+    const char *protocol_version = http_argbyname(rq, "version");
+    int version = 0;
+    if (protocol_version && strcmp(protocol_version,"")) {
+        version = atoi(protocol_version);
+    }
     ht = get_hitsbytarget(s->psession, &count, c->nmem);
     if (!cmd_status)
         /* Old protocol, always ok */
@@ -714,8 +718,9 @@ static void bytarget_response(struct http_channel *c, struct http_session *s, co
             wrbuf_puts(c->wrbuf, "</addinfo>\n");
         }
 
-        wrbuf_printf(c->wrbuf, "<records>%d</records>\n", ht[i].records);
-
+        wrbuf_printf(c->wrbuf, "<records>%d</records>\n", ht[i].records - ht[i].filtered);
+        if (version >= 2)
+            wrbuf_printf(c->wrbuf, "<filtered>%d</filtered>\n");
         wrbuf_puts(c->wrbuf, "<state>");
         wrbuf_xmlputs(c->wrbuf, ht[i].state);
         wrbuf_puts(c->wrbuf, "</state>\n");
