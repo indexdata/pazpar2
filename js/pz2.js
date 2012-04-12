@@ -126,6 +126,8 @@ var pz2 = function ( paramArray )
     if (this.useSessions && paramArray.autoInit !== false) {
         this.init(this.sessionId, this.serviceId);
     }
+    // Version parameter
+    this.version = paramArray.version || null;
 };
 
 pz2.prototype = 
@@ -557,7 +559,9 @@ pz2.prototype =
                 "command": "termlist", 
                 "session": this.sessionID, 
                 "name": this.termKeys,
-                "windowid" : window.name
+                "windowid" : window.name, 
+		"version" : this.version
+	
             },
             function(data) {
                 if ( data.getElementsByTagName("termlist") ) {
@@ -587,12 +591,22 @@ pz2.prototype =
                                     .childNodes[0].nodeValue || 'ERROR'
                             };
 
+			    // Only for xtargets: id, records, filtered
                             var termIdNode = 
                                 terms[j].getElementsByTagName("id");
                             if(terms[j].getElementsByTagName("id").length)
                                 term["id"] = 
                                     termIdNode[0].childNodes[0].nodeValue;
                             termList[listName][j] = term;
+
+			    var recordsNode  = terms[j].getElementsByTagName("records");
+			    if (recordsNode && recordsNode.length)
+				term["records"] = recordsNode[0].childNodes[0].nodeValue;
+                              
+			    var filteredNode  = terms[j].getElementsByTagName("filtered");
+			    if (filteredNode && filteredNode.length)
+				term["filtered"] = filteredNode[0].childNodes[0].nodeValue;
+                              
                         }
                     }
 
@@ -638,7 +652,8 @@ pz2.prototype =
 		"command": "bytarget", 
 		"session": this.sessionID, 
 		"block": 1,
-		"windowid" : window.name
+		"windowid" : window.name,
+		"version" : this.version
 	    },
             function(data) {
                 if ( data.getElementsByTagName("status")[0]

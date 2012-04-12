@@ -963,6 +963,7 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
         res[*count].id = client_get_id(cl);
         res[*count].name = *name ? name : "Unknown";
         res[*count].hits = client_get_hits(cl);
+        res[*count].approximation = client_get_approximation(cl);
         res[*count].records = client_get_num_records(cl);
         res[*count].filtered = client_get_num_records_filtered(cl);
         res[*count].diagnostic =
@@ -1044,6 +1045,8 @@ static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
                      ht[i].hits);
 
         if (version >= 2) {
+            // Should not print if we know it isn't a approximation.
+            wrbuf_printf(wrbuf, "<approximation>" ODR_INT_PRINTF "</approximation>\n", ht[i].approximation);
             wrbuf_printf(wrbuf, "<records>%d</records>\n", ht[i].records - ht[i].filtered);
             wrbuf_printf(wrbuf, "<filtered>%d</filtered>\n", ht[i].filtered);
         }
@@ -1186,7 +1189,7 @@ void show_single_stop(struct session *se, struct record_cluster *rec)
 
 struct record_cluster **show_range_start(struct session *se,
                                          struct reclist_sortparms *sp, 
-                                         int start, int *num, int *total, Odr_int *sumhits)
+                                         int start, int *num, int *total, Odr_int *sumhits, Odr_int *approx_hits)
 {
     struct record_cluster **recs;
     struct reclist_sortparms *spp;
@@ -1219,9 +1222,10 @@ struct record_cluster **show_range_start(struct session *se,
         *total = reclist_get_num_records(se->reclist);
 
         *sumhits = 0;
-        for (l = se->clients_active; l; l = l->next)
+        for (l = se->clients_active; l; l = l->next) {
             *sumhits += client_get_hits(l->client);
-        
+            *approx_hits += client_get_approximation(l->client);
+        }
         for (i = 0; i < start; i++)
             if (!reclist_read_record(se->reclist))
             {
