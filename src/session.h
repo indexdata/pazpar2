@@ -186,8 +186,7 @@ void session_alert_watch(struct session *s, int what);
 void add_facet(struct session *s, const char *type, const char *value, int count);
 
 
-void perform_termlist(struct http_channel *c, struct session *se,
-                      const char *name, int num);
+void perform_termlist(struct http_channel *c, struct session *se, const char *name, int num, int version);
 void session_log(struct session *s, int level, const char *fmt, ...)
 #ifdef __GNUC__
     __attribute__ ((format (printf, 3, 4)))
