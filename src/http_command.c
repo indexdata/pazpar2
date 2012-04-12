@@ -720,7 +720,7 @@ static void bytarget_response(struct http_channel *c, struct http_session *s, co
 
         wrbuf_printf(c->wrbuf, "<records>%d</records>\n", ht[i].records - ht[i].filtered);
         if (version >= 2)
-            wrbuf_printf(c->wrbuf, "<filtered>%d</filtered>\n");
+            wrbuf_printf(c->wrbuf, "<filtered>%d</filtered>\n", ht[i].filtered);
         wrbuf_puts(c->wrbuf, "<state>");
         wrbuf_xmlputs(c->wrbuf, ht[i].state);
         wrbuf_puts(c->wrbuf, "</state>\n");
