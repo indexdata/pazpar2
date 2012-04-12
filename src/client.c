@@ -547,10 +547,10 @@ void client_search_response(struct client *cl)
     }
     else
     {
-        yaz_log(YLOG_DEBUG, "client_search_response: hits " ODR_INT_PRINTF, cl->hits);
         client_report_facets(cl, resultset);
         cl->record_offset = cl->startrecs;
         cl->hits = ZOOM_resultset_size(resultset);
+        yaz_log(YLOG_DEBUG, "client_search_response: hits " ODR_INT_PRINTF, cl->hits);
         if (cl->suggestions)
             client_suggestions_destroy(cl);
         cl->suggestions = client_suggestions_create(ZOOM_resultset_option_get(resultset, "suggestions"));
@@ -1330,7 +1330,7 @@ Odr_int client_get_approximation(struct client *cl)
 {
     int records = cl->record_offset + cl->filtered;
     if (records > 0)
-        return cl->hits * cl->record_offset / records;
+        return (cl->hits * cl->record_offset) / records;
     return cl->hits;
 }
 
