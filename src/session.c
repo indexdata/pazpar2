@@ -1015,7 +1015,7 @@ static int cmp_ht(const void *p1, const void *p2)
 }
 
 static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
-                               NMEM nmem)
+                               NMEM nmem, int version)
 {
     struct hitsbytarget *ht;
     int count, i;
@@ -1042,7 +1042,12 @@ static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
         
         wrbuf_printf(wrbuf, "<frequency>" ODR_INT_PRINTF "</frequency>\n",
                      ht[i].hits);
-        
+
+        if (version >= 2) {
+            wrbuf_printf(wrbuf, "<records>%d</records>\n", ht[i].records);
+            wrbuf_printf(wrbuf, "<filtered>%d</filtered>\n", ht[i].filtered);
+        }
+
         wrbuf_puts(wrbuf, "<state>");
         wrbuf_xmlputs(wrbuf, ht[i].state);
         wrbuf_puts(wrbuf, "</state>\n");
@@ -1055,7 +1060,7 @@ static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
 }
 
 void perform_termlist(struct http_channel *c, struct session *se,
-                      const char *name, int num)
+                      const char *name, int num, int version)
 {
     int i, j;
     NMEM nmem_tmp = nmem_create();
@@ -1118,7 +1123,7 @@ void perform_termlist(struct http_channel *c, struct session *se,
             wrbuf_xmlputs(c->wrbuf, tname);
             wrbuf_puts(c->wrbuf, "\">\n");
 
-            targets_termlist_nb(c->wrbuf, se, num, c->nmem);
+            targets_termlist_nb(c->wrbuf, se, num, c->nmem, version);
             wrbuf_puts(c->wrbuf, "</list>\n");
             must_generate_empty = 0;
         }

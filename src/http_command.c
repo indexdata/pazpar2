@@ -513,8 +513,13 @@ static void cmd_settings(struct http_channel *c)
 static void termlist_response(struct http_channel *c, struct http_session *s, const char *cmd_status)
 {
     struct http_request *rq = c->request;
-    const char *name = http_argbyname(rq, "name");
-    const char *nums = http_argbyname(rq, "num");
+    const char *name    = http_argbyname(rq, "name");
+    const char *nums    = http_argbyname(rq, "num");
+    const char *version = http_argbyname(rq, "version");
+    int version_no = 0;
+    if (version && strcmp(version, "")) {
+        version_no = atoi(version);
+    }
     int num = 15;
     int status;
 
@@ -530,7 +535,7 @@ static void termlist_response(struct http_channel *c, struct http_session *s, co
     }
     wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", status);
 
-    perform_termlist(c, s->psession, name, num);
+    perform_termlist(c, s->psession, name, num, version_no);
 
     response_close(c, "termlist");
 }
