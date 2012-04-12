@@ -384,17 +384,19 @@ pz2.prototype =
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
 	var requestParameters = 
           {
-            "command": "show", 
-            "session": this.sessionID, 
-            "start": this.currentStart,
-            "num": this.currentNum, 
-            "sort": this.currentSort, 
-            "block": 1,
-            "type": this.showResponseType,
-            "windowid" : window.name
+              "command": "show", 
+              "session": this.sessionID, 
+              "start": this.currentStart,
+              "num": this.currentNum, 
+              "sort": this.currentSort, 
+              "block": 1,
+              "type": this.showResponseType,
+              "windowid" : window.name,
           };
         if (query_state)
           requestParameters["query-state"] = query_state;
+	if (this.version && this.version > 0)
+	    requestParameters["version"] = this.version;
         request.safeGet(
 	  requestParameters,
           function(data, type) {
