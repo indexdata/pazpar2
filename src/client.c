@@ -1327,6 +1327,14 @@ Odr_int client_get_hits(struct client *cl)
     return cl->hits;
 }
 
+Odr_int client_get_approximation(struct client *cl)
+{
+    int records = cl->record_offset + cl->filtered;
+    if (records > 0)
+        return cl->hits * cl->record_offset / records;
+    return cl->hits;
+}
+
 int client_get_num_records(struct client *cl)
 {
     return cl->record_offset;
