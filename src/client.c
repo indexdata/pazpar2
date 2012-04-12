@@ -758,13 +758,12 @@ void client_start_search(struct client *cl)
     const char *opt_preferred   = session_setting_oneval(sdb, PZ_PREFERRED);
     const char *extra_args      = session_setting_oneval(sdb, PZ_EXTRA_ARGS);
     const char *opt_present_chunk = session_setting_oneval(sdb, PZ_PRESENT_CHUNK);
-    /* Default present chunk */
-    int present_chunk = 20;
+    ZOOM_query q;
+    char maxrecs_str[24], startrecs_str[24], present_chunk_str[24];
+    int present_chunk = 20; // Default chunk size
     if (opt_present_chunk && strcmp(opt_present_chunk,"")) {
         present_chunk = atoi(opt_present_chunk);
     }
-    char maxrecs_str[24], startrecs_str[24], present_chunk_str[24];
-    ZOOM_query q;
 
     assert(link);
 
