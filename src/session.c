@@ -1203,7 +1203,8 @@ struct record_cluster **show_range_start(struct session *se,
     {
         *num = 0;
         *total = 0;
-        *sumhits = 0;
+        *sumhits = 0;        
+        *approx_hits = 0;
         recs = 0;
     }
     else
@@ -1222,6 +1223,7 @@ struct record_cluster **show_range_start(struct session *se,
         *total = reclist_get_num_records(se->reclist);
 
         *sumhits = 0;
+        *approx_hits = 0;
         for (l = se->clients_active; l; l = l->next) {
             *sumhits += client_get_hits(l->client);
             *approx_hits += client_get_approximation(l->client);
