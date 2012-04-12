@@ -1044,7 +1044,7 @@ static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
                      ht[i].hits);
 
         if (version >= 2) {
-            wrbuf_printf(wrbuf, "<records>%d</records>\n", ht[i].records);
+            wrbuf_printf(wrbuf, "<records>%d</records>\n", ht[i].records - ht[i].filtered);
             wrbuf_printf(wrbuf, "<filtered>%d</filtered>\n", ht[i].filtered);
         }
 
