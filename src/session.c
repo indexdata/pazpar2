@@ -1015,6 +1015,14 @@ static int cmp_ht(const void *p1, const void *p2)
     return h2->hits - h1->hits;
 }
 
+// Compares two hitsbytarget nodes by hitcount
+static int cmp_ht_approx(const void *p1, const void *p2)
+{
+    const struct hitsbytarget *h1 = p1;
+    const struct hitsbytarget *h2 = p2;
+    return h2->approximation - h1->approximation;
+}
+
 static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
                                NMEM nmem, int version)
 {
@@ -1022,7 +1030,10 @@ static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
     int count, i;
 
     ht = hitsbytarget_nb(se, &count, nmem);
-    qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht);
+    if (version >= 2)
+        qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht_approx);
+    else
+        qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht);
     for (i = 0; i < count && i < num && ht[i].hits > 0; i++)
     {
 
