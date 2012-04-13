@@ -589,8 +589,7 @@ static void client_record_ingest(struct client *cl)
         else if (ZOOM_record_error(rec, &msg, &addinfo, 0))
         {
             yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
-                    msg, addinfo, client_get_id(cl),
-                    cl->record_offset);
+                    msg, addinfo, client_get_id(cl), cl->record_offset);
         }
         else
         {
@@ -1329,8 +1328,11 @@ Odr_int client_get_hits(struct client *cl)
 Odr_int client_get_approximation(struct client *cl)
 {
     int records = cl->record_offset + cl->filtered;
-    if (records > 0)
-        return (cl->hits * cl->record_offset) / records;
+    if (records > 0) {
+        Odr_int approx = (cl->hits * cl->record_offset) / records;
+        yaz_log(YLOG_LOG, "%s: Approx: %lld * %d / %d = %lld ", client_get_id(cl), cl->hits, cl->record_offset, records, approx);
+        return approx;
+    }
     return cl->hits;
 }
 
