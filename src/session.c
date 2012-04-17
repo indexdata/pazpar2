@@ -1606,9 +1606,7 @@ static int check_limit_local(struct client *cl,
         char **values = 0;
         int i, num_v = 0;
         
-        const char *name =
-            client_get_facet_limit_local(cl, sdb, &l, nmem_tmp, &num_v,
-                                         &values);
+        const char *name = client_get_facet_limit_local(cl, sdb, &l, nmem_tmp, &num_v, &values);
         if (!name)
             break;
         
