@@ -75,7 +75,8 @@ static void conf_metadata_assign(NMEM nmem,
                                  int rank,
                                  int sortkey_offset,
                                  enum conf_metadata_mergekey mt,
-                                 const char *facetrule)
+                                 const char *facetrule,
+                                 const char *limitmap)
 {
     assert(nmem && metadata && name);
     
@@ -96,6 +97,7 @@ static void conf_metadata_assign(NMEM nmem,
     metadata->sortkey_offset = sortkey_offset;
     metadata->mergekey = mt;
     metadata->facetrule = nmem_strdup_null(nmem, facetrule);
+    metadata->limitmap = nmem_strdup_null(nmem, limitmap);
 }
 
 
@@ -160,7 +162,9 @@ static struct conf_metadata* conf_service_add_metadata(
     int rank,
     int sortkey_offset,
     enum conf_metadata_mergekey mt,
-    const char *facetrule)
+    const char *facetrule,
+    const char *limitmap
+    )
 {
     struct conf_metadata * md = 0;
 
@@ -171,7 +175,7 @@ static struct conf_metadata* conf_service_add_metadata(
     md = service->metadata + field_id;
     conf_metadata_assign(service->nmem, md, name, type, merge, setting,
                          brief, termlist, rank, sortkey_offset,
-                         mt, facetrule);
+                         mt, facetrule, limitmap);
     return md;
 }
 
@@ -274,6 +278,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     xmlChar *xml_rank = 0;
     xmlChar *xml_setting = 0;
     xmlChar *xml_mergekey = 0;
+    xmlChar *xml_limitmap = 0;
     xmlChar *xml_icu_chain = 0;
     struct _xmlAttr *attr;
     for (attr = n->properties; attr; attr = attr->next)
@@ -305,6 +310,9 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
         else if (!xmlStrcmp(attr->name, BAD_CAST "mergekey") &&
                  attr->children && attr->children->type == XML_TEXT_NODE)
             xml_mergekey = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "limitmap") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_limitmap = attr->children->content;
         else if (!xmlStrcmp(attr->name, BAD_CAST "facetrule") &&
                  attr->children && attr->children->type == XML_TEXT_NODE)
             xml_icu_chain = attr->children->content;
@@ -448,7 +456,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
                               (const char *) xml_name,
                               type, merge, setting,
                               brief, termlist, rank, sortkey_offset,
-                              mergekey_type, (const char *) xml_icu_chain);
+                              mergekey_type, (const char *) xml_icu_chain, (const char *) xml_limitmap);
     (*md_node)++;
     return 0;
 }
