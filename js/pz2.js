@@ -441,7 +441,14 @@ pz2.prototype =
             } else {
               context.throwError('Show failed. Malformed WS resonse.',
                   114);
-            }
+            };
+	    var approxNode = data.getElementsByTagName("approximation");
+	    if (approxNode)
+		show['approximation'] = 
+		  Number( approxNode[0].childNodes[0].nodeValue);
+	      
+
+	      data.getElementsByTagName("")
             context.activeClients = activeClients; 
             context.showCounter++;
             var delay = context.showTime;
