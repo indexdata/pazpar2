@@ -1587,6 +1587,7 @@ int ingest_record(struct client *cl, const char *rec,
     return ret;
 }
 
+// Skip record on non-zero
 static int check_limit_local(struct client *cl,
                              struct record *record,
                              int record_no)
@@ -1634,10 +1635,10 @@ static int check_limit_local(struct client *cl,
                 }
                 else
                 {
-                    yaz_log(YLOG_LOG, "cmp: '%s' '%s'",
-                            rec_md->data.text.disp, values[i]);
+                    yaz_log(YLOG_LOG, "cmp: '%s' '%s'", rec_md->data.text.disp, values[i]);
                     if (!strcmp(rec_md->data.text.disp, values[i]))
                     {
+                        // Value equals, should not be filtered.
                         break;
                     }
                 }
@@ -1649,6 +1650,7 @@ static int check_limit_local(struct client *cl,
                 i++;
             }
         }
+        // At end , not match
         if (i == num_v)
         {
             skip_record = 1;
