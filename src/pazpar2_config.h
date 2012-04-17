@@ -83,6 +83,7 @@ struct conf_metadata
     enum conf_setting_type setting; // Value is to be taken from session/db settings?
     enum conf_metadata_mergekey mergekey;
     char *facetrule;
+    char *limitmap;
 };
 
 
