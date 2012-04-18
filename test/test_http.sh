@@ -1,11 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 #
 
+FILE=`basename $0`
+TEST=${FILE/.sh/}
 # srcdir might be set by make
 srcdir=${srcdir:-"."}
 
 # Test using test_http.cfg
-exec ${srcdir}/run_pazpar2.sh test_http
+exec ${srcdir}/run_pazpar2.sh $TEST
 
 # Local Variables:
 # mode:shell-script
