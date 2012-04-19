@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service>
+
+  <settings target="*">
+    <set name="pz:limitmap:author" value="ccl:au" />
+    <set name="pz:limitmap:date"   value="local:" />
+    <set name="pz:limitmap:subject" value="rpn: @attr 1=21 @attr 6=3" />
+  </settings>
+
+  <set name="service" value="from-service" />
+
+  <metadata name="url" merge="unique"/>
+  <metadata name="title" brief="yes" sortkey="skiparticle" merge="longest" rank="6" mergekey="required" />
+  <metadata name="title-remainder" brief="yes" merge="longest" rank="5"/>
+  <metadata name="isbn"/>
+
+  <metadata name="date" brief="yes" sortkey="numeric" type="year" merge="range" termlist="yes" limitmap="local:" />
+  <metadata name="author" brief="yes" termlist="yes" merge="longest" rank="2" mergekey="optional" limitmap="ccl:au" />
+  <metadata name="subject" merge="unique" termlist="yes" rank="3" limitmap="rpn: @attr 1=21 @attr 6=3" />
+
+  <metadata name="description" brief="yes" merge="longest" rank="3" />
+  <metadata name="id"/>
+  <metadata name="lccn" merge="unique"/>
+  
+  <metadata name="test-usersetting" brief="yes" setting="postproc"/>
+  <metadata name="test" setting="parameter"/>
+  <metadata name="test-usersetting-2" brief="yes"/>
+</service>
