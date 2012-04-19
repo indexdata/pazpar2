@@ -71,6 +71,7 @@ static char *hard_settings[] = {
     "pz:max_connections",
     "pz:reuse_connections",
     "pz:termlist_term_factor",
+    "pz:termlist_term_cont",
     "pz:preferred",
     "pz:extra_args",
     "pz:query_syntax",
@@ -78,7 +79,8 @@ static char *hard_settings[] = {
     "pz:limitmap:",
     "pz:url",
     "pz:sortmap:",
-    "pz:present_chunk:",
+    "pz:present_chunk",
+    "pz:block_timeout",
     0
 };
 
@@ -100,13 +102,12 @@ int settings_num(struct conf_service *service)
     return service->dictionary->num;
 }
 
-static int settings_lookup(struct conf_service *service, const char *name,
-                           int allow_create)
+/* Find and possible create a new dictionary entry. Pass valid NMEM pointer if creation is allowed, otherwise null */
+static int settings_index_lookup(struct setting_dictionary *dictionary, const char *name, NMEM nmem)
 {
     size_t maxlen;
     int i;
     const char *p;
-    struct setting_dictionary *dictionary = service->dictionary;
     
     assert(name);
 
@@ -117,38 +118,54 @@ static int settings_lookup(struct conf_service *service, const char *name,
     for (i = 0; i < dictionary->num; i++)
         if (!strncmp(name, dictionary->dict[i], maxlen))
             return i;
-    if (!allow_create)
+    if (!nmem)
         return -1;
     if (!strncmp("pz:", name, 3))
         yaz_log(YLOG_WARN, "Adding pz-type setting name %s", name);
     if (dictionary->num + 1 > dictionary->size)
     {
         char **tmp =
-            nmem_malloc(service->nmem, dictionary->size * 2 * sizeof(char*));
+            nmem_malloc(nmem, dictionary->size * 2 * sizeof(char*));
         memcpy(tmp, dictionary->dict, dictionary->size * sizeof(char*));
         dictionary->dict = tmp;
         dictionary->size *= 2;
     }
-    dictionary->dict[dictionary->num] = nmem_strdup(service->nmem, name);
+    dictionary->dict[dictionary->num] = nmem_strdup(nmem, name);
     dictionary->dict[dictionary->num][maxlen-1] = '\0';
     return dictionary->num++;
 }
 
 int settings_create_offset(struct conf_service *service, const char *name)
 {
-    return settings_lookup(service, name, 1);
+    return settings_index_lookup(service->dictionary, name, service->nmem);
 }
 
-int settings_lookup_offset(struct conf_service *service, const char *name)
+static int settings_lookup_offset(struct conf_service *service, const char *name)
 {
-    return settings_lookup(service, name, 0);
+    return settings_index_lookup(service->dictionary, name, 0);
 }
 
-char *settings_name(struct conf_service *service, int offset)
+static char *settings_name(struct conf_service *service, int offset)
 {
     assert(offset < service->dictionary->num);
     return service->dictionary->dict[offset];
 }
+
+
+// Apply a session override to a database
+void service_apply_setting(struct conf_service *service, char *setting, char *value)
+{
+    struct setting *new = nmem_malloc(service->nmem, sizeof(*new));
+    int offset = settings_create_offset(service, setting);
+    expand_settings_array(&service->settings->settings, &service->settings->num_settings, offset, service->nmem);
+    new->precedence = 0;
+    new->target = NULL;
+    new->name = setting;
+    new->value = value;
+    new->next = service->settings->settings[offset];
+    service->settings->settings[offset] = new;
+}
+
 
 static int isdir(const char *path)
 {
@@ -334,6 +351,72 @@ void expand_settings_array(struct setting ***set_ar, int *num, int offset,
     }
 }
 
+void expand_settings_array2(struct settings *settings, int offset, NMEM nmem)
+{
+    assert(offset >= 0);
+    assert(settings);
+    if (offset >= settings->num_settings)
+    {
+        int i, n_num = offset + 10;
+        struct setting **n_ar = nmem_malloc(nmem, n_num * sizeof(*n_ar));
+        for (i = 0; i < settings->num_settings; i++)
+            n_ar[i] = settings->settings[i];
+        for (; i < n_num; i++)
+            n_ar[i] = 0;
+        settings->num_settings = n_num;
+        settings->settings = n_ar;
+    }
+}
+
+void update_settings(struct setting *set, struct settings *settings, int offset, NMEM nmem)
+{
+    struct setting **sp;
+    yaz_log(YLOG_LOG, "update service settings offset %d with %s=%s", offset, set->name, set->value);
+    expand_settings_array2(settings, offset, nmem);
+
+    // First we determine if this setting is overriding any existing settings
+    // with the same name.
+    assert(offset < settings->num_settings);
+    for (sp = &settings->settings[offset]; *sp; )
+        if (!strcmp((*sp)->name, set->name))
+        {
+            if ((*sp)->precedence < set->precedence)
+            {
+                // We discard the value (nmem keeps track of the space)
+                *sp = (*sp)->next; // unlink value from existing setting
+            }
+            else if ((*sp)->precedence > set->precedence)
+            {
+                // Db contains a higher-priority setting. Abort search
+                break;
+            }
+            else if (zurl_wildcard((*sp)->target) > zurl_wildcard(set->target))
+            {
+                // target-specific value trumps wildcard. Delete.
+                *sp = (*sp)->next; // unlink.....
+            }
+            else if (zurl_wildcard((*sp)->target) < zurl_wildcard(set->target))
+                // Db already contains higher-priority setting. Abort search
+                break;
+            else
+                sp = &(*sp)->next;
+        }
+        else
+            sp = &(*sp)->next;
+    if (!*sp) // is null when there are no higher-priority settings, so we add one
+    {
+        struct setting *new = nmem_malloc(nmem, sizeof(*new));
+        memset(new, 0, sizeof(*new));
+        new->precedence = set->precedence;
+        new->target = nmem_strdup_null(nmem, set->target);
+        new->name = nmem_strdup_null(nmem, set->name);
+        new->value = nmem_strdup_null(nmem, set->value);
+        new->next = settings->settings[offset];
+        settings->settings[offset] = new;
+    }
+}
+
+
 // This is called from grep_databases -- adds/overrides setting for a target
 // This is also where the rules for precedence of settings are implemented
 static void update_database_fun(void *context, struct database *db)
@@ -350,8 +433,7 @@ static void update_database_fun(void *context, struct database *db)
         return;
 
     offset = settings_create_offset(service, set->name);
-    expand_settings_array(&db->settings, &db->num_settings, offset,
-                          service->nmem);
+    expand_settings_array(&db->settings, &db->num_settings, offset, service->nmem);
 
     // First we determine if this setting is overriding  any existing settings
     // with the same name.
@@ -420,18 +502,39 @@ static void initialize_hard_settings(struct conf_service *service)
 
 // Read any settings names introduced in service definition (config) and add to dictionary
 // This is done now to avoid errors if user settings are declared in session overrides
-static void initialize_soft_settings(struct conf_service *service)
+void initialize_soft_settings(struct conf_service *service)
 {
     int i;
+    yaz_log(YLOG_LOG, "Init soft settings");
 
     for (i = 0; i < service->num_metadata; i++)
     {
         struct conf_metadata *md = &service->metadata[i];
 
-        if (md->setting == Metadata_setting_no)
-            continue;
+        if (md->setting != Metadata_setting_no)
+            settings_create_offset(service, md->name);
 
-        settings_create_offset(service, md->name);
+        // Also create setting for some metadata attributes.
+        if (md->limitmap) {
+            yaz_log(YLOG_LOG, "Metadata %s has limitmap: %s ",md->name,  md->limitmap);
+            WRBUF wrbuf = wrbuf_alloc();
+            wrbuf_printf(wrbuf, "pz:limitmap:%s", md->name);
+            int index = settings_create_offset(service, wrbuf_cstr(wrbuf));
+            if (index >= 0) {
+                yaz_log(YLOG_LOG, "Service %s default %s=%s",
+                        (service->id ? service->id: "unknown"), wrbuf_cstr(wrbuf), md->limitmap);
+                struct setting new;
+                new.name = (char *) wrbuf_cstr(wrbuf);
+                new.value = md->limitmap;
+                new.next = 0;
+                new.target = 0;
+                new.precedence = 0;
+                int offset = settings_create_offset(service, new.name);
+                update_settings(&new, service->settings, offset, service->nmem);
+            }
+            wrbuf_destroy(wrbuf);
+        // TODO same for facetmap
+        }
     }
 }
 
