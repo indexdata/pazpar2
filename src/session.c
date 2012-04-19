@@ -821,8 +821,7 @@ void session_init_databases(struct session *se)
 static struct session_database *load_session_database(struct session *se, 
                                                       char *id)
 {
-    struct database *db = new_database(id, se->session_nmem);
-
+    struct database *db = new_database_inherit_settings(id, se->session_nmem, se->service->settings);
     session_init_databases_fun((void*) se, db);
 
     // New sdb is head of se->databases list
