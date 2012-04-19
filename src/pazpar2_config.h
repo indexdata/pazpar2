@@ -83,7 +83,9 @@ struct conf_metadata
     enum conf_setting_type setting; // Value is to be taken from session/db settings?
     enum conf_metadata_mergekey mergekey;
     char *facetrule;
-    char *limitmap;
+
+    char *limitmap;  // Should be expanded into service-wide default e.g. pz:limitmap:<name>=value setting
+    char *facetmap;  // Should be expanded into service-wide default e.g. pz:facetmap:<name>=value setting
 };
 
 
@@ -109,6 +111,7 @@ struct conf_service
     int num_sortkeys;
     struct conf_sortkey *sortkeys;
     struct setting_dictionary *dictionary;
+    struct settings *settings;
     struct conf_service *next;
     char *id;
     NMEM nmem;
