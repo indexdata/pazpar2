@@ -71,7 +71,7 @@ static char *hard_settings[] = {
     "pz:max_connections",
     "pz:reuse_connections",
     "pz:termlist_term_factor",
-    "pz:termlist_term_cont",
+    "pz:termlist_term_count",
     "pz:preferred",
     "pz:extra_args",
     "pz:query_syntax",
