@@ -145,7 +145,7 @@ int settings_lookup_offset(struct conf_service *service, const char *name)
     return settings_index_lookup(service->dictionary, name, 0);
 }
 
-static char *settings_name(struct conf_service *service, int offset)
+char *settings_name(struct conf_service *service, int offset)
 {
     assert(offset < service->dictionary->num);
     return service->dictionary->dict[offset];
@@ -368,7 +368,7 @@ void expand_settings_array2(struct settings *settings, int offset, NMEM nmem)
     }
 }
 
-void update_settings(struct setting *set, struct settings *settings, int offset, NMEM nmem)
+static void update_settings(struct setting *set, struct settings *settings, int offset, NMEM nmem)
 {
     struct setting **sp;
     yaz_log(YLOG_LOG, "update service settings offset %d with %s=%s", offset, set->name, set->value);
