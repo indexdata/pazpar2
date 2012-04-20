@@ -4,8 +4,9 @@
   <set name="pz:url"   value="ocs-test.indexdata.com/solr/select" />
 
   <set name="pz:limitmap:author"  value="ccl:author_phrase" />
-  <set name="pz:limitmap:subject" value="rpn:@attr 1=21" />
-  <set name="pz:limitmap:date"    value="local:" />
+  <set name="pz:limitmap:subject" value="rpn:@attr 1=subject_exact" />
+  <set name="pz:limitmap:date"    value="rpn:@attr 1=date @attr 6=3" />
+  <set name="pz:limitmap:medium"  value="rpn:@attr 1=medium_exact @attr 6=3" />
 
   <set name="full_text_target"  value="=NO" />
   <set name="pz:termlist_term_count" value="10"/>
@@ -20,6 +21,7 @@
   <set name="pz:cclmap:issn"  value="u=8" />
   <set name="pz:cclmap:ti"  value="1=title" />
   <set name="pz:cclmap:au"  value="1=author" />
+  <set name="pz:cclmap:author_phrase" value="1=author_exact 6=3"/>
   <set name="pz:xslt"  value="solr-pz2.xsl" />
   <set name="pz:cclmap:term"  value="1=text s=Dal" />
   <set name="pz:cclmap:isbn"  value="1=isbn" />
