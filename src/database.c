@@ -68,7 +68,7 @@ struct database *new_database_inherit_settings(const char *id, NMEM nmem, struct
     db->next = 0;
 
     if (service_settings && service_settings->num_settings > 0) {
-        yaz_log(YLOG_LOG, "copying values from service settings");
+        yaz_log(YLOG_DEBUG, "copying settings from service to database %s settings", db->id);
         db->num_settings = service_settings->num_settings;
         db->settings = nmem_malloc(nmem, sizeof(struct settings*) * db->num_settings);
         // Initialize database settings with service settings
@@ -76,7 +76,7 @@ struct database *new_database_inherit_settings(const char *id, NMEM nmem, struct
 
     }
     else {
-        yaz_log(YLOG_LOG, "No service settings delivered");
+        yaz_log(YLOG_DEBUG, "No service settings to database %s ", db->id);
         db->num_settings = PZ_MAX_EOF;
         db->settings = nmem_malloc(nmem, sizeof(struct settings*) * db->num_settings);
         memset(db->settings, 0, sizeof(struct settings*) * db->num_settings);
@@ -101,7 +101,7 @@ struct database *create_database_for_service(const char *id,
         if (!strcmp(p->id, id))
             return p;
     
-    yaz_log(YLOG_LOG, "new database from service %s values %p", service->id, service->settings);
+    yaz_log(YLOG_DEBUG, "new database %s under service %s values %p", id, service->id);
     p = new_database_inherit_settings(id, service->nmem, service->settings);
 
     p->next = service->databases;
