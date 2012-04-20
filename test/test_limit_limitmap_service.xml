@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<service>
+<service id="limitmap">
 
   <settings target="*">
     <set name="pz:limitmap:author" value="ccl:au" />
