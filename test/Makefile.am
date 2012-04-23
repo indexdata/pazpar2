@@ -1,7 +1,8 @@
 # This file is part of Pazpar2.
 check_SCRIPTS = test_http.sh test_icu.sh test_post.sh \
  test_settings.sh test_turbomarcxml.sh test_facets.sh \
- test_solr.sh test_url.sh test_filter.sh test_termlist_block.sh
+ test_solr.sh test_url.sh test_filter.sh \
+ test_termlist_block.sh test_limit_limitmap.sh
 
 EXTRA_DIST = run_pazpar2.sh marc21_test.xsl tmarc.xsl solr-pz2.xsl \
 	z3950_indexdata_com_marc.xml \
@@ -16,6 +17,11 @@ EXTRA_DIST = run_pazpar2.sh marc21_test.xsl tmarc.xsl solr-pz2.xsl \
 	test_url.cfg test_url.urls \
 	test_filter.cfg test_filter.urls \
 	test_termlist_block.cfg test_termlist_block.urls \
+	test_limit_limitmap.cfg test_limit_limitmap.urls \
+	test_limit_limitmap_service_1.xml test_limit_limitmap_service_2.xml \
+	test_limit_limitmap_setting_1.xml test_limit_limitmap_setting_2.xml \
+	test_limit_limitmap_setting_3.xml test_limit_limitmap_setting_4.xml \
+	test_limit_limitmap_setting_5.xml \
 	$(check_SCRIPTS)
 
 TESTS = $(check_SCRIPTS)
