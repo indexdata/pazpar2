@@ -269,6 +269,10 @@
 	     elements of this type. The default is '0', which
 	     excludes this element from the rank calculation.
 	    </para>
+	    <para>
+	     For Pazpar2 1.6.13 and later, the rank may also defined
+	     "per-document", by the normalization stylesheet. 
+	    </para>
 	   </listitem>
 	  </varlistentry>
 	  
