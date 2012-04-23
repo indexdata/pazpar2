@@ -762,6 +762,7 @@ void client_start_search(struct client *cl)
     int present_chunk = 20; // Default chunk size
     if (opt_present_chunk && strcmp(opt_present_chunk,"")) {
         present_chunk = atoi(opt_present_chunk);
+        yaz_log(YLOG_DEBUG, "Present chunk set to %d", present_chunk);
     }
 
     assert(link);
@@ -803,11 +804,13 @@ void client_start_search(struct client *cl)
     /* A present_chunk less than 1 will disable chunking. */
     if (present_chunk > 0 && cl->maxrecs > present_chunk) {
         sprintf(present_chunk_str, "%d", present_chunk);
-        ZOOM_connection_option_set(link, "presentChunk", opt_present_chunk);
+        ZOOM_connection_option_set(link, "presentChunk", present_chunk_str);
+        yaz_log(YLOG_DEBUG, "Present chunk set to %s", present_chunk_str);
     }
-    else
+    else {
         ZOOM_connection_option_set(link, "presentChunk", maxrecs_str);
-
+        yaz_log(YLOG_DEBUG, "Present chunk set to %s (maxrecs)", maxrecs_str);
+    }
     sprintf(startrecs_str, "%d", cl->startrecs);
     ZOOM_connection_option_set(link, "start", startrecs_str);
 
