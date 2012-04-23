@@ -27,6 +27,7 @@ if test -z "$F"; then
 fi
 
 rm -f ztest.pid
+rm -f ${TEST}ztest.log
 $F -l ${TEST}ztest.log -p ztest.pid -D tcp:localhost:9999
 sleep 1
 if test ! -f ztest.pid; then
