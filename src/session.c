@@ -1786,6 +1786,8 @@ static int ingest_to_cluster(struct client *cl,
             struct record_metadata *rec_md = 0;
             int md_field_id = -1;
             int sk_field_id = -1;
+            int rank = 0;
+            xmlChar *rank_str = 0;
             
             type = xmlGetProp(n, (xmlChar *) "type");
             value = xmlNodeListGetString(xdoc, n->children, 1);
@@ -1799,6 +1801,15 @@ static int ingest_to_cluster(struct client *cl,
                 continue;
             
             ser_md = &service->metadata[md_field_id];
+
+            rank_str = xmlGetProp(n, (xmlChar *) "rank");
+            if (rank_str)
+            {
+                rank = atoi((const char *) rank_str);
+                xmlFree(rank_str);
+            }
+            else
+                rank = ser_md->rank;
             
             if (ser_md->sortkey_offset >= 0)
             {
@@ -1898,10 +1909,11 @@ static int ingest_to_cluster(struct client *cl,
 
 
             // ranking of _all_ fields enabled ... 
-            if (ser_md->rank)
+            if (rank)
+            {
                 relevance_countwords(se->relevance, cluster, 
-                                     (char *) value, ser_md->rank,
-                                     ser_md->name);
+                                     (char *) value, rank, ser_md->name);
+            }
 
             // construct facets ... unless the client already has reported them
             if (ser_md->termlist && !client_has_facet(cl, (char *) type))
