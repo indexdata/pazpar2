@@ -9,6 +9,7 @@
 
   <set name="service" value="from-service" />
 
+  <metadata name="id"/>
   <metadata name="url" merge="unique"/>
   <metadata name="title" brief="yes" sortkey="skiparticle" merge="longest" rank="6" mergekey="required" />
   <metadata name="title-remainder" brief="yes" merge="longest" rank="5"/>
@@ -19,8 +20,9 @@
   <metadata name="subject" merge="unique" termlist="yes" rank="3" limitmap="rpn: @attr 1=21 @attr 6=3" />
 
   <metadata name="description" brief="yes" merge="longest" rank="3" />
-  <metadata name="id"/>
   <metadata name="lccn" merge="unique"/>
+  <metadata name="title-complete" />
+  <metadata name="publication-place" />
   
   <metadata name="test-usersetting" brief="yes" setting="postproc"/>
   <metadata name="test" setting="parameter"/>

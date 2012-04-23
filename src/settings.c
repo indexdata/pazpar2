@@ -71,7 +71,7 @@ static char *hard_settings[] = {
     "pz:max_connections",
     "pz:reuse_connections",
     "pz:termlist_term_factor",
-    "pz:termlist_term_cont",
+    "pz:termlist_term_count",
     "pz:preferred",
     "pz:extra_args",
     "pz:query_syntax",
@@ -505,8 +505,6 @@ static void initialize_hard_settings(struct conf_service *service)
 void initialize_soft_settings(struct conf_service *service)
 {
     int i;
-    yaz_log(YLOG_LOG, "Init soft settings");
-
     for (i = 0; i < service->num_metadata; i++)
     {
         struct conf_metadata *md = &service->metadata[i];
@@ -516,20 +514,22 @@ void initialize_soft_settings(struct conf_service *service)
 
         // Also create setting for some metadata attributes.
         if (md->limitmap) {
-            yaz_log(YLOG_LOG, "Metadata %s has limitmap: %s ",md->name,  md->limitmap);
+            int index; 
             WRBUF wrbuf = wrbuf_alloc();
+            yaz_log(YLOG_DEBUG, "Metadata %s has limitmap: %s ",md->name,  md->limitmap);
             wrbuf_printf(wrbuf, "pz:limitmap:%s", md->name);
-            int index = settings_create_offset(service, wrbuf_cstr(wrbuf));
+            index = settings_create_offset(service, wrbuf_cstr(wrbuf));
             if (index >= 0) {
-                yaz_log(YLOG_LOG, "Service %s default %s=%s",
-                        (service->id ? service->id: "unknown"), wrbuf_cstr(wrbuf), md->limitmap);
                 struct setting new;
+                int offset;
+                yaz_log(YLOG_DEBUG, "Service %s default %s=%s",
+                        (service->id ? service->id: "unknown"), wrbuf_cstr(wrbuf), md->limitmap);
                 new.name = (char *) wrbuf_cstr(wrbuf);
                 new.value = md->limitmap;
                 new.next = 0;
                 new.target = 0;
                 new.precedence = 0;
-                int offset = settings_create_offset(service, new.name);
+                offset = settings_create_offset(service, new.name);
                 update_settings(&new, service->settings, offset, service->nmem);
             }
             wrbuf_destroy(wrbuf);
