@@ -44,7 +44,7 @@ POST='$curl --silent --header "Content-Type: text/xml" --data-binary "@$postfile
 
 if [ -z "$SKIP_PAZPAR2" ] ; then
 # Fire up pazpar2
-    rm -f pazpar2.log
+    rm -f $PREFIX_pazpar2.log
 fi
 PREFIX=$1
 if test "x${PREFIX}" = "x"; then
@@ -61,7 +61,7 @@ if test -n "$PAZPAR2_USE_VALGRIND"; then
 elif test -n "$SKIP_PAZPAR2"; then 
     echo "Skipping pazpar2. Must already be running with correct config!!! " 
 else
-    YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -v all -d -X -l pazpar2.log -f ${srcdir}/${CFG} >extra_pazpar2.log 2>&1 &
+    YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -v loglevel,fatal,warn,log,debug,notime,zoom,zoomdetails -d -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >extra_pazpar2.log 2>&1 &
 fi
 
 PP2PID=$!
