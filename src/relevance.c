@@ -163,7 +163,7 @@ static void pull_terms(NMEM nmem, struct ccl_rpn_node *n,
                 termlist[(*num)++] = words[i];
         }
         break;
-    default: // NOOP
+    default:
         break;
     }
 }
@@ -253,7 +253,6 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
         }
     }
     // Calculate relevance for each document
-
     while (1)
     {
         int t;
@@ -263,18 +262,7 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
             break;
         for (t = 1; t < rel->vec_len; t++)
         {
-            float termfreq;
-#if 1
-            termfreq = (float) rec->term_frequency_vecf[t];
-#else
-            if (rec->term_frequency_vec[0])
-            {
-                termfreq = (float)
-                    rec->term_frequency_vec[t] / rec->term_frequency_vec[0] ;
-            }
-            else
-                termfreq = 0.0;
-#endif
+            float termfreq = (float) rec->term_frequency_vecf[t];
             relevance += 100000 * (termfreq * idfvec[t] + 0.0000005);  
         }
         rec->relevance_score = relevance;
