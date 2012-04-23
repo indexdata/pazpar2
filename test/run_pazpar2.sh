@@ -23,6 +23,12 @@ kill_pazpar2()
     fi
 }
 
+PREFIX=$1
+if test "x${PREFIX}" = "x"; then
+    echo Missing prefix for run_pazpar2.sh
+    exit 1
+fi
+
 # look for curl in PATH
 oIFS=$IFS
 IFS=:
@@ -43,13 +49,8 @@ GET='$curl --silent --output $OUT2 "$f"'
 POST='$curl --silent --header "Content-Type: text/xml" --data-binary "@$postfile" --output $OUT2  "$f"'
 
 if [ -z "$SKIP_PAZPAR2" ] ; then
-# Fire up pazpar2
-    rm -f pazpar2.log
-fi
-PREFIX=$1
-if test "x${PREFIX}" = "x"; then
-    echo Missing prefix for run_pazpar2.sh
-    exit 1
+# remove log if starting pazpar2
+    rm -f $PREFIX_pazpar2.log
 fi
 
 CFG=${PREFIX}.cfg
@@ -57,11 +58,11 @@ URLS=${PREFIX}.urls
 VALGRINDLOG=${PREFIX}_valgrind.log
 
 if test -n "$PAZPAR2_USE_VALGRIND"; then
-    valgrind --num-callers=30 --show-reachable=yes --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -X -l pazpar2.log -f ${CFG} >extra_pazpar2.log 2>&1 &
+    valgrind --num-callers=30 --show-reachable=yes --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -X -l ${PREFIX}_pazpar2.log -f ${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
 elif test -n "$SKIP_PAZPAR2"; then 
     echo "Skipping pazpar2. Must already be running with correct config!!! " 
 else
-    YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -v all -d -X -l pazpar2.log -f ${srcdir}/${CFG} >extra_pazpar2.log 2>&1 &
+    YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -v loglevel,fatal,warn,log,debug,notime,zoom,zoomdetails -d -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
 fi
 
 PP2PID=$!
