@@ -40,6 +40,7 @@ struct relevance
 struct word_entry {
     const char *norm_str;
     int termno;
+    char *ccl_field;
     struct word_entry *next;
 };
 
@@ -89,6 +90,7 @@ static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
 {
     char **words;
     int numwords;
+    char *ccl_field;
     int i;
 
     switch (n->kind)
@@ -105,6 +107,8 @@ static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
         for (i = 0; i < numwords; i++)
         {
             const char *norm_str;
+            
+            ccl_field = nmem_strdup_null(res->nmem, n->u.t.qual);
 
             pp2_charset_token_first(res->prt, words[i], 0);
             while ((norm_str = pp2_charset_token_next(res->prt)))
@@ -114,6 +118,7 @@ static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
                     e = &(*e)->next;
                 *e = nmem_malloc(res->nmem, sizeof(**e));
                 (*e)->norm_str = nmem_strdup(res->nmem, norm_str);
+                (*e)->ccl_field = ccl_field;
                 (*e)->termno = res->vec_len++;
                 (*e)->next = 0;
             }
