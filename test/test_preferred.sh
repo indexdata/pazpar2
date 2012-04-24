@@ -14,10 +14,12 @@ srcdir=${srcdir:-"."}
 #    exit 0
 #fi
 
+TEST=test_preferred_
+
 ${srcdir}/run_pazpar2.sh test_preferred
 E=$?
 
-grep "has preferred" pazpar2.log | cut -f 4- -d ' ' > test_preferred.log
+grep "has preferred" ${TEST}pazpar2.log | cut -f 4- -d ' ' > test_preferred.log
 # 
 if [ -f test_preferred.res ] ; then 
     diff test_preferred.res test_preferred.log > test_preferred.dif
