@@ -1,0 +1,21 @@
+<settings target="ocs-oaister.indexdata.com/solr">
+  <set name="pz:name"                value="Oaister (SOLR)" />
+  <set name="pz:url"                 value="ocs-loc.indexdata.com/solr/select"/>
+  <set name="pz:sru"                 value="solr" />
+  <set name="full_text_target"       value="NO" />
+  <set name="pz:termlist_term_count" value="10" />
+  <set name="pz:piggyback"           value="1" />
+  <set name="pz:preferred"           value="0" />
+  <set name="pz:block_timeout"       value="2" />
+  <set name="pz:cclmap:term"         value="1=text s=al"/> 
+  <set name="pz:cclmap:au"           value="1=author" />
+  <set name="pz:cclmap:ti"           value="1=title" />
+  <set name="pz:cclmap:date"         value="1=date" /> 
+  <set name="pz:cclmap:su"           value="1=subject" />
+  <set name="pz:cclmap:isbn"         value="1=isbn"/> 
+  <set name="pz:cclmap:issn"         value="1=issn"   /> 
+  <set name="pz:queryencoding"       value="UTF-8"/> 
+  <set name="pz:xslt"                value="solr-pz2.xsl" />
+  <set name="use_thumbnails"         value="0" />
+  <set name="use_url_proxy"          value="0" />
+</settings>
