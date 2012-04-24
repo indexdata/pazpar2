@@ -231,19 +231,6 @@
 </hit>
 <hit>
 
-<md-title>Methods of analysis by the U.S. Geological Survey National Water Quality Laboratory</md-title>
-<md-title-remainder>processing, taxonomy, and quality control of benthic macroinvertebrate samples</md-title-remainder>
-<md-date>2000</md-date>
-<md-medium>book</md-medium><location id="ocs-test.indexdata.com/solr/select" name="ocs_test">
-<md-title>Methods of analysis by the U.S. Geological Survey National Water Quality Laboratory</md-title>
-<md-title-remainder>processing, taxonomy, and quality control of benthic macroinvertebrate samples</md-title-remainder>
-<md-date>2000</md-date>
-<md-medium>book</md-medium></location>
-<relevance>13054</relevance>
-<recid>content: title methods of analysis by the u s geological survey national water quality laboratory medium book</recid>
-</hit>
-<hit>
-
 <md-title>Aquatic habitat indicators and their application to water quality objectives within the Clean Water Act</md-title>
 <md-date>1999</md-date>
 <md-author>Bauer, Steve</md-author>
@@ -309,5 +296,16 @@
 <md-medium>book</md-medium></location>
 <relevance>12121</relevance>
 <recid>content: title mercados e instituciones de aguas en bolivia medium book</recid>
+</hit>
+<hit>
+
+<md-title>Water law</md-title>
+<md-date>2000</md-date>
+<md-medium>book</md-medium><location id="ocs-test.indexdata.com/solr/select" name="ocs_test">
+<md-title>Water law</md-title>
+<md-date>2000</md-date>
+<md-medium>book</md-medium></location>
+<relevance>12121</relevance>
+<recid>content: title water law medium book</recid>
 </hit>
 </show>
