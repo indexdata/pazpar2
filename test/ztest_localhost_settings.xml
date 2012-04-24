@@ -1,0 +1,8 @@
+<!-- Solr target -->
+<settings target="localhost:9999/db1">
+  <set name="pz:name"  value="db1" />
+  <set name="pz:url"   value="localhost:9999/db1" />
+  <set name="pz:nativesyntax" value="txml" />
+  <set name="pz:requestsyntax" value="usmarc" />
+  <set name="pz:xslt" value="tmarc.xsl" />
+</settings>
