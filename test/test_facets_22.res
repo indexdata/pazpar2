@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<search><status>OK</status></search>
+<settings><status>OK</status></settings>
