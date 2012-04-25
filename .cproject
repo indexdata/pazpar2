@@ -24,6 +24,9 @@
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.macosx.exe.debug.206052691" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.macosx.exe.debug"/>
 							<builder arguments="-k" buildPath="${workspace_loc:/pazpar2.master/Debug}" command="make" id="cdt.managedbuild.target.gnu.builder.macosx.exe.debug.2009339594" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.macosx.exe.debug"/>
 							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug.937721886" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.debug">
+								<option id="macosx.c.link.option.paths.1800125633" superClass="macosx.c.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="/opt/local/lib/"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.macosx.c.linker.input.377427532" superClass="cdt.managedbuild.tool.macosx.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -75,6 +78,9 @@
 							<targetPlatform id="cdt.managedbuild.target.gnu.platform.macosx.exe.release.2059998902" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.macosx.exe.release"/>
 							<builder buildPath="${workspace_loc:/pazpar2.master/Release}" id="cdt.managedbuild.target.gnu.builder.macosx.exe.release.893517025" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.macosx.exe.release"/>
 							<tool id="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.release.217097143" name="MacOS X C Linker" superClass="cdt.managedbuild.tool.macosx.c.linker.macosx.exe.release">
+								<option id="macosx.c.link.option.paths.2084961" superClass="macosx.c.link.option.paths" valueType="libPaths">
+									<listOptionValue builtIn="false" value="/opt/local/lib/"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.macosx.c.linker.input.1144641815" superClass="cdt.managedbuild.tool.macosx.c.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>

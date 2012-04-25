@@ -1,10 +1,10 @@
 http://localhost:9763/search.pz2?command=init&clear=1
-http://localhost:9763/search.pz2?session=1&command=settings&pz:name%5Blocalhost:9999%2Fdb1%5D=db1&pz:requestsyntax%5Blocalhost:9999%2Fdb1%5D=usmarc&pz:nativesyntax%5Blocalhost:9999%2Fdb1%5D=txml&pz:xslt%5Blocalhost:9999%2Fdb1%5D=tmarc.xsl
+ztest_localhost_settings.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
 4 http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=termlist&block=1&name=xtargets%2Cauthor%2Csubject%2Cdate
-http://localhost:9763/search.pz2?session=1&command=settings&full_text_target%5Bid_solr%5D=NO&pz:termlist_term_count%5Bid_solr%5D=10&use_url_proxy%5Bid_solr%5D=0&pz:piggyback%5Bid_solr%5D=1&pz:preferred%5Bid_solr%5D=0&pz:block_timeout%5Bid_solr%5D=2&pz:cclmap%3Asu%5Bid_solr%5D=1%3Dsubject&pz:sru%5Bid_solr%5D=solr&use_thumbnails%5Bid_solr%5D=0&pz:name%5Bid_solr%5D=LOC+%28SOLR%29&pz:cclmap%3Aissn%5Bid_solr%5D=u%3D8&pz:cclmap%3Ati%5Bid_solr%5D=1%3Dtitle&pz:cclmap%3Aau%5Bid_solr%5D=1%3Dauthor&pz:xslt%5Bid_solr%5D=solr-pz2.xsl&pz:cclmap%3Aterm%5Bid_solr%5D=1%3Dtext+s%3Dal&pz:cclmap%3Aisbn%5Bid_solr%5D=1%3Disbn&pz:queryencoding%5Bid_solr%5D=UTF-8&pz:url%5Bid_solr%5D=ocs-test.indexdata.com%2Fsolr%2Fselect
+test_termlist_block_settings_2.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
 4 http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=bytarget
