@@ -1,0 +1,7 @@
+<!-- Solr target -->
+<settings target="localhost:9999/db1">
+  <set name="pz:maxrecs"  value="2" />
+  <set name="pz:facetmap:author"  value="author" />
+  <set name="pz:facetmap:subject" value="subject" />
+  <set name="pz:facetmap:date"    value="date" />
+</settings>
