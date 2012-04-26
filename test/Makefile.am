@@ -13,6 +13,7 @@ EXTRA_DIST = run_pazpar2.sh marc21_test.xsl tmarc.xsl solr-pz2.xsl \
 	test_post.cfg test_post.urls \
 	test_settings.cfg test_settings.urls \
 	test_solr.cfg test_solr.urls \
+	test_solr_settings_1.xml  test_solr_settings_2.xml  test_solr_settings_3.xml  test_solr_settings_4.xml \
 	test_turbomarcxml.cfg test_turbomarcxml.urls \
 	test_url.cfg test_url.urls \
 	test_filter.cfg test_filter.urls \
