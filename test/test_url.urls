@@ -1,4 +1,4 @@
-test_url_settings_1.xml http://localhost:9763/search.pz2?command=init&clear=1
+test_url_service.xml http://localhost:9763/search.pz2?command=init
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
 2 http://localhost:9763/search.pz2?session=1&command=show&block=1
 test_url_settings_2.xml http://localhost:9763/search.pz2?session=1&command=settings
