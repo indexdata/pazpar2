@@ -162,69 +162,53 @@ static int isdir(const char *path)
 }
 
 // Read settings from an XML file, calling handler function for each setting
-void settings_read_node_x(xmlNode *n,
-                          void *client_data,
-                          void (*fun)(void *client_data,
-                                      struct setting *set))
+int settings_read_node_x(xmlNode *n,
+                         void *client_data,
+                         void (*fun)(void *client_data,
+                                     struct setting *set))
 {
-    xmlChar *namea, *targeta, *valuea, *usera, *precedencea;
+    int ret_val = 0; /* success */
+    char *namea = (char *) xmlGetProp(n, (xmlChar *) "name");
+    char *targeta = (char *) xmlGetProp(n, (xmlChar *) "target");
+    char *valuea = (char *) xmlGetProp(n, (xmlChar *) "value");
+    char *usera = (char *) xmlGetProp(n, (xmlChar *) "user");
+    char *precedencea = (char *) xmlGetProp(n, (xmlChar *) "precedence");
 
-    namea = xmlGetProp(n, (xmlChar *) "name");
-    targeta = xmlGetProp(n, (xmlChar *) "target");
-    valuea = xmlGetProp(n, (xmlChar *) "value");
-    usera = xmlGetProp(n, (xmlChar *) "user");
-    precedencea = xmlGetProp(n, (xmlChar *) "precedence");
     for (n = n->children; n; n = n->next)
     {
         if (n->type != XML_ELEMENT_NODE)
             continue;
         if (!strcmp((const char *) n->name, "set"))
         {
-            char *name, *target, *value, *user, *precedence;
+            struct setting set;
+            char *name = (char *) xmlGetProp(n, (xmlChar *) "name");
+            char *target = (char *) xmlGetProp(n, (xmlChar *) "target");
+            char *value = (char *) xmlGetProp(n, (xmlChar *) "value");
+            char *user = (char *) xmlGetProp(n, (xmlChar *) "user");
+            char *precedence = (char *) xmlGetProp(n, (xmlChar *) "precedence");
 
-            name = (char *) xmlGetProp(n, (xmlChar *) "name");
-            target = (char *) xmlGetProp(n, (xmlChar *) "target");
-            value = (char *) xmlGetProp(n, (xmlChar *) "value");
-            user = (char *) xmlGetProp(n, (xmlChar *) "user");
-            precedence = (char *) xmlGetProp(n, (xmlChar *) "precedence");
+            if (precedence)
+                set.precedence = atoi((char *) precedence);
+            else if (precedencea)
+                set.precedence = atoi((char *) precedencea);
+            else
+                set.precedence = 0;
 
-            if ((!name && !namea) || (!value && !valuea) || (!target && !targeta))
-            {
-                yaz_log(YLOG_FATAL, "set must specify name, value, and target");
-                exit(1);
-            }
+            set.target = target ? target : targeta;
+            set.name = name ? name : namea;
+            set.value = value ? value : valuea;
+            set.next = 0;
+
+            if (set.name && set.value && set.target)
+                (*fun)(client_data, &set);
             else
             {
-                struct setting set;
-                char nameb[1024];
-                char targetb[1024];
-                char valueb[1024];
-
-                // Copy everything into a temporary buffer -- we decide
-                // later if we are keeping it.
-                if (precedence)
-                    set.precedence = atoi((char *) precedence);
-                else if (precedencea)
-                    set.precedence = atoi((char *) precedencea);
+                if (set.name)
+                    yaz_log(YLOG_WARN, "missing value and/or target for "
+                            "setting name=%s", set.name);
                 else
-                    set.precedence = 0;
-                if (target)
-                    strcpy(targetb, target);
-                else
-                    strcpy(targetb, (const char *) targeta);
-                set.target = targetb;
-                if (name)
-                    strcpy(nameb, name);
-                else
-                    strcpy(nameb, (const char *) namea);
-                set.name = nameb;
-                if (value)
-                    strcpy(valueb, value);
-                else
-                    strcpy(valueb, (const char *) valuea);
-                set.value = valueb;
-                set.next = 0;
-                (*fun)(client_data, &set);
+                    yaz_log(YLOG_WARN, "missing name/value/target for setting");
+                ret_val = -1;
             }
             xmlFree(name);
             xmlFree(precedence);
@@ -234,8 +218,9 @@ void settings_read_node_x(xmlNode *n,
         }
         else
         {
-            yaz_log(YLOG_FATAL, "Unknown element %s in settings file", (char*) n->name);
-            exit(1);
+            yaz_log(YLOG_WARN, "Unknown element %s in settings file", 
+                    (char*) n->name);
+            ret_val = -1;
         }
     }
     xmlFree(namea);
@@ -243,35 +228,39 @@ void settings_read_node_x(xmlNode *n,
     xmlFree(valuea);
     xmlFree(usera);
     xmlFree(targeta);
+    return ret_val;
 }
  
-static void read_settings_file(const char *path,
-                               void *client_data,
-                               void (*fun)(void *client_data,
-                                           struct setting *set))
+static int read_settings_file(const char *path,
+                              void *client_data,
+                              void (*fun)(void *client_data,
+                                          struct setting *set))
 {
     xmlDoc *doc = xmlParseFile(path);
     xmlNode *n;
+    int ret;
 
     if (!doc)
     {
         yaz_log(YLOG_FATAL, "Failed to parse %s", path);
-        exit(1);
+        return -1;
     }
     n = xmlDocGetRootElement(doc);
-    settings_read_node_x(n, client_data, fun);
+    ret = settings_read_node_x(n, client_data, fun);
 
     xmlFreeDoc(doc);
+    return ret;
 }
 
 
 // Recursively read files or directories, invoking a 
 // callback for each one
-static void read_settings(const char *path,
+static int read_settings(const char *path,
                           void *client_data,
                           void (*fun)(void *client_data,
                                       struct setting *set))
 {
+    int ret = 0;
     DIR *d;
     struct dirent *de;
     char *dot;
@@ -281,7 +270,7 @@ static void read_settings(const char *path,
         if (!(d = opendir(path)))
         {
             yaz_log(YLOG_FATAL|YLOG_ERRNO, "%s", path);
-            exit(1);
+            return -1;
         }
         while ((de = readdir(d)))
         {
@@ -289,12 +278,14 @@ static void read_settings(const char *path,
             if (*de->d_name == '.' || !strcmp(de->d_name, "CVS"))
                 continue;
             sprintf(tmp, "%s/%s", path, de->d_name);
-            read_settings(tmp, client_data, fun);
+            if (read_settings(tmp, client_data, fun))
+                ret = -1;
         }
         closedir(d);
     }
     else if ((dot = strrchr(path, '.')) && !strcmp(dot + 1, "xml"))
-        read_settings_file(path, client_data, fun);
+        ret = read_settings_file(path, client_data, fun);
+    return ret;
 }
 
 // Determines if a ZURL is a wildcard, and what kind
@@ -456,22 +447,22 @@ void init_settings(struct conf_service *service)
     initialize_soft_settings(service);
 }
 
-void settings_read_file(struct conf_service *service, const char *path,
-                        int pass)
+int settings_read_file(struct conf_service *service, const char *path,
+                       int pass)
 {
     if (pass == 1)
-        read_settings(path, service, prepare_target_dictionary);
+        return read_settings(path, service, prepare_target_dictionary);
     else
-        read_settings(path, service, update_databases);
+        return read_settings(path, service, update_databases);
 }
 
-void settings_read_node(struct conf_service *service, xmlNode *n,
+int settings_read_node(struct conf_service *service, xmlNode *n,
                         int pass)
 {
     if (pass == 1)
-        settings_read_node_x(n, service, prepare_target_dictionary);
+        return settings_read_node_x(n, service, prepare_target_dictionary);
     else
-        settings_read_node_x(n, service, update_databases);
+        return settings_read_node_x(n, service, update_databases);
 }
 
 /*

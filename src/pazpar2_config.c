@@ -576,19 +576,22 @@ static struct conf_service *service_create_static(struct conf_server *server,
                     continue;
                 if (!strcmp((const char *) n->name, "settings"))
                 {
+                    int ret;
                     xmlChar *src = xmlGetProp(n, (xmlChar *) "src");
                     if (src)
                     {
                         WRBUF w = wrbuf_alloc();
                         conf_dir_path(server->config, w, (const char *) src);
-                        settings_read_file(service, wrbuf_cstr(w), pass);
+                        ret = settings_read_file(service, wrbuf_cstr(w), pass);
                         wrbuf_destroy(w);
                         xmlFree(src);
                     }
                     else
                     {
-                        settings_read_node(service, n, pass);
+                        ret = settings_read_node(service, n, pass);
                     }
+                    if (ret)
+                        return 0;
                 }
             }
         }
@@ -596,8 +599,9 @@ static struct conf_service *service_create_static(struct conf_server *server,
     return service;
 }
 
-static void inherit_server_settings(struct conf_service *s)
+static int inherit_server_settings(struct conf_service *s)
 {
+    int ret = 0;
     struct conf_server *server = s->server;
     if (!s->dictionary) /* service has no config settings ? */
     {
@@ -605,8 +609,10 @@ static void inherit_server_settings(struct conf_service *s)
         {
             /* inherit settings from server */
             init_settings(s);
-            settings_read_file(s, server->settings_fname, 1);
-            settings_read_file(s, server->settings_fname, 2);
+            if (settings_read_file(s, server->settings_fname, 1))
+                ret = -1;
+            if (settings_read_file(s, server->settings_fname, 2))
+                ret = -1;
         }
         else
         {
@@ -630,6 +636,7 @@ static void inherit_server_settings(struct conf_service *s)
             s->charsets = pp2_charset_fact_create();
         }
     }
+    return ret;
 }
 
 struct conf_service *service_create(struct conf_server *server,
