@@ -54,7 +54,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PZ_SORTMAP              31
 #define PZ_PRESENT_CHUNK        32
 #define PZ_BLOCK_TIMEOUT        33
-#define PZ_MAX_EOF              34
+#define PZ_EMBED_XSLT           34
+#define PZ_MAX_EOF              35
 
 struct setting
 {

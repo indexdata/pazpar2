@@ -57,7 +57,7 @@ normalize_cache_t normalize_cache_create(void)
 
 normalize_record_t normalize_cache_get(normalize_cache_t nc,
                                        struct conf_service *service,
-                                       const char *spec)
+                                       const char *spec, int embed)
 {
     normalize_record_t nt;
     struct cached_item *ci;
@@ -70,7 +70,7 @@ normalize_record_t normalize_cache_get(normalize_cache_t nc,
         nt = ci->nt;
     else
     {
-        nt = normalize_record_create(service, spec);
+        nt = normalize_record_create(service, spec, embed);
         if (nt)
         {
             ci = nmem_malloc(nc->nmem, sizeof(*ci));

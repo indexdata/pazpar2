@@ -47,57 +47,80 @@ struct normalize_record_s {
 };
 
 normalize_record_t normalize_record_create(struct conf_service *service,
-                                           const char *spec)
+                                           const char *spec, int embed)
 {
     NMEM nmem = nmem_create();
     normalize_record_t nt = nmem_malloc(nmem, sizeof(*nt));
     struct normalize_step **m = &nt->steps;
-    int i, num;
     int no_errors = 0;
-    char **stylesheets;
-    struct conf_config *conf = service->server->config;
 
     nt->nmem = nmem;
 
-    nmem_strsplit(nt->nmem, ",", spec, &stylesheets, &num);
-    for (i = 0; i < num; i++)
+    if (embed)
     {
-        WRBUF fname = conf_get_fname(conf, stylesheets[i]);
-        
-        *m = nmem_malloc(nt->nmem, sizeof(**m));
-        (*m)->marcmap = NULL;
-        (*m)->stylesheet = NULL;
+        xmlDoc *xsp_doc = xmlParseMemory(spec, strlen(spec));
 
-        (*m)->stylesheet2 = service_xslt_get(service, stylesheets[i]);
-        if ((*m)->stylesheet2)
-            ;
-        else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl")) 
-        {    
-            if (!((*m)->stylesheet =
-                  xsltParseStylesheetFile((xmlChar *) wrbuf_cstr(fname))))
-            {
-                yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load stylesheet: %s",
-                        stylesheets[i]);
-                no_errors++;
-            }
-        }
-        else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-5], ".mmap"))
-        {
-            if (!((*m)->marcmap = marcmap_load(wrbuf_cstr(fname), nt->nmem)))
-            {
-                yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load marcmap: %s",
-                        stylesheets[i]);
-                no_errors++;
-            }
-        }
-        else
-        {
-            yaz_log(YLOG_FATAL, "Cannot handle stylesheet: %s", stylesheets[i]);
+        if (!xsp_doc)
             no_errors++;
+        {
+            *m = nmem_malloc(nt->nmem, sizeof(**m));
+            (*m)->marcmap = NULL;
+            (*m)->stylesheet = NULL;
+            (*m)->stylesheet2 = NULL;
+            
+            
+            (*m)->stylesheet = xsltParseStylesheetDoc(xsp_doc);
+            if (!(*m)->stylesheet)
+                no_errors++;
+            m = &(*m)->next;
         }
+    }
+    else
+    {
+        struct conf_config *conf = service->server->config;
+        int i, num;
+        char **stylesheets;
+        nmem_strsplit(nt->nmem, ",", spec, &stylesheets, &num);
 
-        wrbuf_destroy(fname);
-        m = &(*m)->next;
+        for (i = 0; i < num; i++)
+        {
+            WRBUF fname = conf_get_fname(conf, stylesheets[i]);
+            
+            *m = nmem_malloc(nt->nmem, sizeof(**m));
+            (*m)->marcmap = NULL;
+            (*m)->stylesheet = NULL;
+            
+            (*m)->stylesheet2 = service_xslt_get(service, stylesheets[i]);
+            if ((*m)->stylesheet2)
+                ;
+            else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl")) 
+            {    
+                if (!((*m)->stylesheet =
+                      xsltParseStylesheetFile((xmlChar *) wrbuf_cstr(fname))))
+                {
+                    yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load stylesheet: %s",
+                            stylesheets[i]);
+                    no_errors++;
+                }
+            }
+            else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-5], ".mmap"))
+            {
+                if (!((*m)->marcmap = marcmap_load(wrbuf_cstr(fname), nt->nmem)))
+                {
+                    yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load marcmap: %s",
+                            stylesheets[i]);
+                    no_errors++;
+                }
+            }
+            else
+            {
+                yaz_log(YLOG_FATAL, "Cannot handle stylesheet: %s", stylesheets[i]);
+                no_errors++;
+            }
+            
+            wrbuf_destroy(fname);
+            m = &(*m)->next;
+        }
     }
     *m = 0;  /* terminate list of steps */
 

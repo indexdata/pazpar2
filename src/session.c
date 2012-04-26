@@ -408,40 +408,51 @@ const char *session_setting_oneval(struct session_database *db, int offset)
 // setting. However, this is not a realistic use scenario.
 static int prepare_map(struct session *se, struct session_database *sdb)
 {
-    const char *s;
-
-    if (sdb->settings && sdb->settings[PZ_XSLT] && !sdb->map &&
-        (s = session_setting_oneval(sdb, PZ_XSLT)))        
+    if (sdb->settings && !sdb->map)
     {
-        char auto_stylesheet[256];
+        const char *s;
 
-        if (!strcmp(s, "auto"))
+        if (sdb->settings[PZ_EMBED_XSLT] &&
+            (s = session_setting_oneval(sdb, PZ_EMBED_XSLT)))
         {
-            const char *request_syntax = session_setting_oneval(
-                sdb, PZ_REQUESTSYNTAX);
-            if (request_syntax)
-            {
-                char *cp;
-                yaz_snprintf(auto_stylesheet, sizeof(auto_stylesheet),
-                             "%s.xsl", request_syntax);
-                for (cp = auto_stylesheet; *cp; cp++)
-                {
-                    /* deliberately only consider ASCII */
-                    if (*cp > 32 && *cp < 127)
-                        *cp = tolower(*cp);
-                }
-                s = auto_stylesheet;
-            }
-            else
-            {
-                session_log(se, YLOG_WARN,
-                            "No pz:requestsyntax for auto stylesheet");
-            }
+            sdb->map = normalize_cache_get(se->normalize_cache,
+                                           se->service, s, 1);
+            if (!sdb->map)
+                return -1;
         }
-        sdb->map = normalize_cache_get(se->normalize_cache,
-                                       se->service, s);
-        if (!sdb->map)
-            return -1;
+        else if (sdb->settings[PZ_XSLT] &&
+                 (s = session_setting_oneval(sdb, PZ_XSLT)))        
+        {
+            char auto_stylesheet[256];
+            
+            if (!strcmp(s, "auto"))
+            {
+                const char *request_syntax = session_setting_oneval(
+                    sdb, PZ_REQUESTSYNTAX);
+                if (request_syntax)
+                {
+                    char *cp;
+                    yaz_snprintf(auto_stylesheet, sizeof(auto_stylesheet),
+                                 "%s.xsl", request_syntax);
+                    for (cp = auto_stylesheet; *cp; cp++)
+                    {
+                        /* deliberately only consider ASCII */
+                        if (*cp > 32 && *cp < 127)
+                            *cp = tolower(*cp);
+                    }
+                    s = auto_stylesheet;
+                }
+                else
+                {
+                    session_log(se, YLOG_WARN,
+                                "No pz:requestsyntax for auto stylesheet");
+                }
+            }
+            sdb->map = normalize_cache_get(se->normalize_cache,
+                                           se->service, s, 0);
+            if (!sdb->map)
+                return -1;
+        }
     }
     return 0;
 }
