@@ -17,6 +17,7 @@ EXTRA_DIST = run_pazpar2.sh marc21_test.xsl tmarc.xsl solr-pz2.xsl \
 	test_filter.cfg test_filter.urls \
 	test_termlist_block.cfg test_termlist_block.urls \
 	ztest_localhost_settings.xml test_termlist_block_settings_2.xml \
+	test_facets_settings_1.xml test_facets_settings_2.xml \
 	$(check_SCRIPTS)
 
 TESTS = $(check_SCRIPTS)
