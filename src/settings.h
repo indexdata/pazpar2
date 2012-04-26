@@ -44,14 +44,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PZ_MAX_CONNECTIONS      21
 #define PZ_REUSE_CONNECTIONS    22
 #define PZ_TERMLIST_TERM_FACTOR 23
-#define PZ_PREFERRED            24
-#define PZ_EXTRA_ARGS           25
-#define PZ_QUERY_SYNTAX         26
-#define PZ_FACETMAP             27
-#define PZ_LIMITMAP             28
-#define PZ_URL                  29
-#define PZ_SORTMAP              30
-#define PZ_MAX_EOF              31
+#define PZ_TERMLIST_TERM_COUNT  24
+#define PZ_PREFERRED            25
+#define PZ_EXTRA_ARGS           26
+#define PZ_QUERY_SYNTAX         27
+#define PZ_FACETMAP             28
+#define PZ_LIMITMAP             29
+#define PZ_URL                  30
+#define PZ_SORTMAP              31
+#define PZ_PRESENT_CHUNK        32
+#define PZ_BLOCK_TIMEOUT        33
+#define PZ_MAX_EOF              34
 
 struct setting
 {
@@ -62,10 +65,16 @@ struct setting
     struct setting *next;
 };
 
+struct settings
+{
+    // Array of pointer setting, index is looked up in setting_dictionary
+    struct setting **settings;
+    int num_settings;
+};
+
 int settings_read_file(struct conf_service *service, const char *path,
                        int pass);
-int settings_read_node(struct conf_service *service, xmlNode *n,
-                       int pass);
+int settings_read_node(struct conf_service *service, xmlNode *n, int pass);
 int settings_num(struct conf_service *service);
 int settings_create_offset(struct conf_service *service, const char *name);
 int settings_lookup_offset(struct conf_service *service, const char *name);

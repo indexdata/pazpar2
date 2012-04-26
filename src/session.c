@@ -76,6 +76,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "settings.h"
 #include "normalize7bit.h"
 
+#include <libxml/tree.h>
+
 #define TERMLIST_HIGH_SCORE 25
 
 #define MAX_CHUNK 15
@@ -819,8 +821,7 @@ void session_init_databases(struct session *se)
 static struct session_database *load_session_database(struct session *se, 
                                                       char *id)
 {
-    struct database *db = new_database(id, se->session_nmem);
-
+    struct database *db = new_database_inherit_settings(id, se->session_nmem, se->service->settings);
     session_init_databases_fun((void*) se, db);
 
     // New sdb is head of se->databases list
@@ -961,7 +962,9 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
         res[*count].id = client_get_id(cl);
         res[*count].name = *name ? name : "Unknown";
         res[*count].hits = client_get_hits(cl);
+        res[*count].approximation = client_get_approximation(cl);
         res[*count].records = client_get_num_records(cl);
+        res[*count].filtered = client_get_num_records_filtered(cl);
         res[*count].diagnostic =
             client_get_diagnostic(cl, &res[*count].addinfo);
         res[*count].state = client_get_state_str(cl);
@@ -1011,14 +1014,25 @@ static int cmp_ht(const void *p1, const void *p2)
     return h2->hits - h1->hits;
 }
 
+// Compares two hitsbytarget nodes by hitcount
+static int cmp_ht_approx(const void *p1, const void *p2)
+{
+    const struct hitsbytarget *h1 = p1;
+    const struct hitsbytarget *h2 = p2;
+    return h2->approximation - h1->approximation;
+}
+
 static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
-                               NMEM nmem)
+                               NMEM nmem, int version)
 {
     struct hitsbytarget *ht;
     int count, i;
 
     ht = hitsbytarget_nb(se, &count, nmem);
-    qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht);
+    if (version >= 2)
+        qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht_approx);
+    else
+        qsort(ht, count, sizeof(struct hitsbytarget), cmp_ht);
     for (i = 0; i < count && i < num && ht[i].hits > 0; i++)
     {
 
@@ -1039,7 +1053,14 @@ static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
         
         wrbuf_printf(wrbuf, "<frequency>" ODR_INT_PRINTF "</frequency>\n",
                      ht[i].hits);
-        
+
+        if (version >= 2) {
+            // Should not print if we know it isn't a approximation.
+            wrbuf_printf(wrbuf, "<approximation>" ODR_INT_PRINTF "</approximation>\n", ht[i].approximation);
+            wrbuf_printf(wrbuf, "<records>%d</records>\n", ht[i].records - ht[i].filtered);
+            wrbuf_printf(wrbuf, "<filtered>%d</filtered>\n", ht[i].filtered);
+        }
+
         wrbuf_puts(wrbuf, "<state>");
         wrbuf_xmlputs(wrbuf, ht[i].state);
         wrbuf_puts(wrbuf, "</state>\n");
@@ -1052,7 +1073,7 @@ static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
 }
 
 void perform_termlist(struct http_channel *c, struct session *se,
-                      const char *name, int num)
+                      const char *name, int num, int version)
 {
     int i, j;
     NMEM nmem_tmp = nmem_create();
@@ -1115,7 +1136,7 @@ void perform_termlist(struct http_channel *c, struct session *se,
             wrbuf_xmlputs(c->wrbuf, tname);
             wrbuf_puts(c->wrbuf, "\">\n");
 
-            targets_termlist_nb(c->wrbuf, se, num, c->nmem);
+            targets_termlist_nb(c->wrbuf, se, num, c->nmem, version);
             wrbuf_puts(c->wrbuf, "</list>\n");
             must_generate_empty = 0;
         }
@@ -1178,7 +1199,7 @@ void show_single_stop(struct session *se, struct record_cluster *rec)
 
 struct record_cluster **show_range_start(struct session *se,
                                          struct reclist_sortparms *sp, 
-                                         int start, int *num, int *total, Odr_int *sumhits)
+                                         int start, int *num, int *total, Odr_int *sumhits, Odr_int *approx_hits)
 {
     struct record_cluster **recs;
     struct reclist_sortparms *spp;
@@ -1192,7 +1213,8 @@ struct record_cluster **show_range_start(struct session *se,
     {
         *num = 0;
         *total = 0;
-        *sumhits = 0;
+        *sumhits = 0;        
+        *approx_hits = 0;
         recs = 0;
     }
     else
@@ -1211,9 +1233,11 @@ struct record_cluster **show_range_start(struct session *se,
         *total = reclist_get_num_records(se->reclist);
 
         *sumhits = 0;
-        for (l = se->clients_active; l; l = l->next)
+        *approx_hits = 0;
+        for (l = se->clients_active; l; l = l->next) {
             *sumhits += client_get_hits(l->client);
-        
+            *approx_hits += client_get_approximation(l->client);
+        }
         for (i = 0; i < start; i++)
             if (!reclist_read_record(se->reclist))
             {
@@ -1541,8 +1565,7 @@ int ingest_record(struct client *cl, const char *rec,
     
     if (!check_record_filter(root, sdb))
     {
-        session_log(se, YLOG_LOG, "Filtered out record no %d from %s",
-                    record_no, sdb->database->id);
+        session_log(se, YLOG_LOG, "Filtered out record no %d from %s", record_no, sdb->database->id);
         xmlFreeDoc(xdoc);
         return -2;
     }
@@ -1563,6 +1586,7 @@ int ingest_record(struct client *cl, const char *rec,
     return ret;
 }
 
+// Skip record on non-zero
 static int check_limit_local(struct client *cl,
                              struct record *record,
                              int record_no)
@@ -1581,9 +1605,7 @@ static int check_limit_local(struct client *cl,
         char **values = 0;
         int i, num_v = 0;
         
-        const char *name =
-            client_get_facet_limit_local(cl, sdb, &l, nmem_tmp, &num_v,
-                                         &values);
+        const char *name = client_get_facet_limit_local(cl, sdb, &l, nmem_tmp, &num_v, &values);
         if (!name)
             break;
         
@@ -1610,10 +1632,10 @@ static int check_limit_local(struct client *cl,
                 }
                 else
                 {
-                    yaz_log(YLOG_LOG, "cmp: '%s' '%s'",
-                            rec_md->data.text.disp, values[i]);
+                    yaz_log(YLOG_LOG, "cmp: '%s' '%s'", rec_md->data.text.disp, values[i]);
                     if (!strcmp(rec_md->data.text.disp, values[i]))
                     {
+                        // Value equals, should not be filtered.
                         break;
                     }
                 }
@@ -1625,6 +1647,7 @@ static int check_limit_local(struct client *cl,
                 i++;
             }
         }
+        // At end , not match
         if (i == num_v)
         {
             skip_record = 1;

@@ -138,9 +138,11 @@ struct hitsbytarget {
     const char *id;
     const char *name;
     Odr_int hits;
+    Odr_int approximation;
     int diagnostic;
     const char *addinfo;
     int records;
+    int filtered;
     const char *state;
     int connected;
     char *settings_xml;
@@ -165,7 +167,7 @@ enum pazpar2_error_code session_search(struct session *s, const char *query,
 struct record_cluster **show_range_start(struct session *s,
                                          struct reclist_sortparms *sp,
                                          int start,
-                                         int *num, int *total, Odr_int *sumhits);
+                                         int *num, int *total, Odr_int *sumhits, Odr_int *approximation);
 void show_range_stop(struct session *s, struct record_cluster **recs);
 
 struct record_cluster *show_single_start(struct session *s, const char *id,
@@ -185,8 +187,7 @@ void session_alert_watch(struct session *s, int what);
 void add_facet(struct session *s, const char *type, const char *value, int count);
 
 
-void perform_termlist(struct http_channel *c, struct session *se,
-                      const char *name, int num);
+void perform_termlist(struct http_channel *c, struct session *se, const char *name, int num, int version);
 void session_log(struct session *s, int level, const char *fmt, ...)
 #ifdef __GNUC__
     __attribute__ ((format (printf, 3, 4)))

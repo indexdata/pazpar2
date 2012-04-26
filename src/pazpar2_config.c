@@ -75,7 +75,8 @@ static void conf_metadata_assign(NMEM nmem,
                                  int rank,
                                  int sortkey_offset,
                                  enum conf_metadata_mergekey mt,
-                                 const char *facetrule)
+                                 const char *facetrule,
+                                 const char *limitmap)
 {
     assert(nmem && metadata && name);
     
@@ -96,6 +97,7 @@ static void conf_metadata_assign(NMEM nmem,
     metadata->sortkey_offset = sortkey_offset;
     metadata->mergekey = mt;
     metadata->facetrule = nmem_strdup_null(nmem, facetrule);
+    metadata->limitmap = nmem_strdup_null(nmem, limitmap);
 }
 
 
@@ -110,12 +112,13 @@ static void conf_sortkey_assign(NMEM nmem,
     sortkey->type = type;
 }
 
-static struct conf_service *service_init(struct conf_server *server,
+struct conf_service *service_init(struct conf_server *server,
                                          int num_metadata, int num_sortkeys,
                                          const char *service_id)
 {
     struct conf_service * service = 0;
     NMEM nmem = nmem_create();
+
 
     service = nmem_malloc(nmem, sizeof(struct conf_service));
     service->mutex = 0;
@@ -132,7 +135,19 @@ static struct conf_service *service_init(struct conf_server *server,
     service->charsets = 0;
 
     service->id = service_id ? nmem_strdup(nmem, service_id) : 0;
+    // Setup a dictionary from server.
+    service->dictionary = 0;
+
+    service->settings = nmem_malloc(nmem, sizeof(struct settings));
+    service->settings->num_settings = PZ_MAX_EOF;
+    service->settings->settings = nmem_malloc(nmem, sizeof(struct setting*) * service->settings->num_settings);
+    memset(service->settings->settings, 0, sizeof(struct setting*) * service->settings->num_settings);
+    //  inherit_server_settings_values(service);
+
+    service->next = 0;
+
     service->num_metadata = num_metadata;
+
     service->metadata = 0;
     if (service->num_metadata)
         service->metadata 
@@ -144,7 +159,8 @@ static struct conf_service *service_init(struct conf_server *server,
         service->sortkeys 
             = nmem_malloc(nmem, 
                           sizeof(struct conf_sortkey) * service->num_sortkeys);
-    service->dictionary = 0;
+
+
     return service; 
 }
 
@@ -160,7 +176,9 @@ static struct conf_metadata* conf_service_add_metadata(
     int rank,
     int sortkey_offset,
     enum conf_metadata_mergekey mt,
-    const char *facetrule)
+    const char *facetrule,
+    const char *limitmap
+    )
 {
     struct conf_metadata * md = 0;
 
@@ -171,7 +189,7 @@ static struct conf_metadata* conf_service_add_metadata(
     md = service->metadata + field_id;
     conf_metadata_assign(service->nmem, md, name, type, merge, setting,
                          brief, termlist, rank, sortkey_offset,
-                         mt, facetrule);
+                         mt, facetrule, limitmap);
     return md;
 }
 
@@ -274,6 +292,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     xmlChar *xml_rank = 0;
     xmlChar *xml_setting = 0;
     xmlChar *xml_mergekey = 0;
+    xmlChar *xml_limitmap = 0;
     xmlChar *xml_icu_chain = 0;
     struct _xmlAttr *attr;
     for (attr = n->properties; attr; attr = attr->next)
@@ -308,6 +327,9 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
         else if (!xmlStrcmp(attr->name, BAD_CAST "facetrule") &&
                  attr->children && attr->children->type == XML_TEXT_NODE)
             xml_icu_chain = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "limitmap") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_limitmap = attr->children->content;
         else
         {
             yaz_log(YLOG_FATAL, "Unknown metadata attribute '%s'", attr->name);
@@ -448,7 +470,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
                               (const char *) xml_name,
                               type, merge, setting,
                               brief, termlist, rank, sortkey_offset,
-                              mergekey_type, (const char *) xml_icu_chain);
+                              mergekey_type, (const char *) xml_icu_chain, (const char *) xml_limitmap);
     (*md_node)++;
     return 0;
 }
@@ -557,6 +579,15 @@ static struct conf_service *service_create_static(struct conf_server *server,
             if (service_xslt_config(service, n))
                 return 0;
         }
+        else if (!strcmp((const char *) n->name, (const char *) "set"))
+        {
+            xmlChar *name= xmlGetProp(n, (xmlChar *) "name");
+            xmlChar *value = xmlGetProp(n, (xmlChar *) "value");
+            if (service->dictionary && name && value) {
+                yaz_log(YLOG_DEBUG, "service set: %s=%s (Not implemented)", (char *) name, (char *) value);
+                //service_aply_setting(service, name, value);
+            }
+        }
         else
         {
             yaz_log(YLOG_FATAL, "Bad element: %s", n->name);
@@ -616,8 +647,7 @@ static int inherit_server_settings(struct conf_service *s)
         }
         else
         {
-            yaz_log(YLOG_WARN, "service '%s' has no settings",
-                    s->id ? s->id : "unnamed");
+            yaz_log(YLOG_WARN, "server '%s' has no settings", s->id ? s->id : "unnamed");
             init_settings(s);
         }
     }
@@ -642,8 +672,7 @@ static int inherit_server_settings(struct conf_service *s)
 struct conf_service *service_create(struct conf_server *server,
                                     xmlNode *node)
 {
-    struct conf_service *service = service_create_static(server,
-                                                         node, 0);
+    struct conf_service *service = service_create_static(server, node, 0);
     if (service)
     {
         inherit_server_settings(service);

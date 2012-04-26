@@ -152,6 +152,9 @@ if [ -z "$SKIP_PAZPAR2" ] ; then
     sleep 2
 fi
 
+# clean out empty diff files
+find . -name "$TEST*.dif" -empty -delete 
+
 exit $code
 
 # Local Variables:

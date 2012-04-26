@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 struct session_database;
 struct session;
 struct conf_service;
+struct settings;
+
 struct database *create_database_for_service(const char *id,
 					     struct conf_service *service);
 int session_grep_databases(struct session *se, const char *filter,
@@ -31,6 +33,8 @@ int predef_grep_databases(void *context, struct conf_service *service,
 			  void (*fun)(void *context, struct database *db));
 int match_zurl(const char *zurl, const char *pattern);
 struct database *new_database(const char *id, NMEM nmem);
+// inherit values from (service) settings
+struct database *new_database_inherit_settings(const char *id, NMEM nmem, struct settings *settings);
 
 
 #endif

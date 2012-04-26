@@ -93,6 +93,16 @@ struct http_sessions {
 static YAZ_MUTEX g_http_session_mutex = 0;
 static int g_http_sessions = 0;
 
+int get_version(struct http_request *rq) {
+    const char *version = http_argbyname(rq, "version");
+    int version_no = 0;
+    if (version && strcmp(version, "")) {
+        version_no = atoi(version);
+    }
+    return version_no;
+}
+
+
 int http_session_use(int delta)
 {
     int sessions;
@@ -518,8 +528,9 @@ static void cmd_settings(struct http_channel *c)
 static void termlist_response(struct http_channel *c, struct http_session *s, const char *cmd_status)
 {
     struct http_request *rq = c->request;
-    const char *name = http_argbyname(rq, "name");
-    const char *nums = http_argbyname(rq, "num");
+    const char *name    = http_argbyname(rq, "name");
+    const char *nums    = http_argbyname(rq, "num");
+    int version = get_version(rq);
     int num = 15;
     int status;
 
@@ -535,7 +546,7 @@ static void termlist_response(struct http_channel *c, struct http_session *s, co
     }
     wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", status);
 
-    perform_termlist(c, s->psession, name, num);
+    perform_termlist(c, s->psession, name, num, version);
 
     response_close(c, "termlist");
 }
@@ -681,7 +692,7 @@ static void bytarget_response(struct http_channel *c, struct http_session *s, co
     struct hitsbytarget *ht;
     struct http_request *rq = c->request;
     const char *settings = http_argbyname(rq, "settings");
-
+    int version = get_version(rq);
     ht = get_hitsbytarget(s->psession, &count, c->nmem);
     if (!cmd_status)
         /* Old protocol, always ok */
@@ -719,8 +730,11 @@ static void bytarget_response(struct http_channel *c, struct http_session *s, co
             wrbuf_puts(c->wrbuf, "</addinfo>\n");
         }
 
-        wrbuf_printf(c->wrbuf, "<records>%d</records>\n", ht[i].records);
-
+        wrbuf_printf(c->wrbuf, "<records>%d</records>\n", ht[i].records - ht[i].filtered);
+        if (version >= 2) {
+            wrbuf_printf(c->wrbuf, "<filtered>%d</filtered>\n", ht[i].filtered);
+            wrbuf_printf(c->wrbuf, "<approximation>" ODR_INT_PRINTF "</approximation>\n", ht[i].approximation);
+        }
         wrbuf_puts(c->wrbuf, "<state>");
         wrbuf_xmlputs(c->wrbuf, ht[i].state);
         wrbuf_puts(c->wrbuf, "</state>\n");
@@ -1048,10 +1062,13 @@ static void show_records(struct http_channel *c, struct http_session *s, int act
     const char *start = http_argbyname(rq, "start");
     const char *num = http_argbyname(rq, "num");
     const char *sort = http_argbyname(rq, "sort");
+    int version = get_version(rq);
+
     int startn = 0;
     int numn = 20;
     int total;
     Odr_int total_hits;
+    Odr_int approx_hits;
     int i;
 
     if (!s)
@@ -1074,12 +1091,15 @@ static void show_records(struct http_channel *c, struct http_session *s, int act
 
     }
     
-    rl = show_range_start(s->psession, sp, startn, &numn, &total, &total_hits);
+    rl = show_range_start(s->psession, sp, startn, &numn, &total, &total_hits, &approx_hits);
 
     response_open(c, "show");
     wrbuf_printf(c->wrbuf, "\n<activeclients>%d</activeclients>\n", active);
     wrbuf_printf(c->wrbuf, "<merged>%d</merged>\n", total);
     wrbuf_printf(c->wrbuf, "<total>" ODR_INT_PRINTF "</total>\n", total_hits);
+    if (version >= 2) {
+        wrbuf_printf(c->wrbuf, "<approximation>" ODR_INT_PRINTF "</approximation>\n", approx_hits);
+    }
     wrbuf_printf(c->wrbuf, "<start>%d</start>\n", startn);
     wrbuf_printf(c->wrbuf, "<num>%d</num>\n", numn);
 
@@ -1132,6 +1152,7 @@ static void cmd_show(struct http_channel *c)
     const char *block = http_argbyname(rq, "block");
     const char *sort = http_argbyname(rq, "sort");
     const char *block_error = http_argbyname(rq, "report");
+
     struct reclist_sortparms *sp;
     int status;
     int report_error = 0;

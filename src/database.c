@@ -56,21 +56,36 @@ struct database_criterion {
 
 struct database *new_database(const char *id, NMEM nmem)
 {
+    return new_database_inherit_settings(id, nmem, 0);
+}
+struct database *new_database_inherit_settings(const char *id, NMEM nmem, struct settings *service_settings)
+{
     struct database *db;
     struct setting *idset;
 
     db = nmem_malloc(nmem, sizeof(*db));
     db->id = nmem_strdup(nmem, id);
-    db->num_settings = PZ_MAX_EOF;
-    db->settings = nmem_malloc(nmem, sizeof(struct settings*) * 
-                               db->num_settings);
     db->next = 0;
-    memset(db->settings, 0, sizeof(struct settings*) * db->num_settings);
+
+    if (service_settings && service_settings->num_settings > 0) {
+        yaz_log(YLOG_DEBUG, "copying settings from service to database %s settings", db->id);
+        db->num_settings = service_settings->num_settings;
+        db->settings = nmem_malloc(nmem, sizeof(struct settings*) * db->num_settings);
+        // Initialize database settings with service settings
+        memcpy(db->settings, service_settings->settings,  sizeof(struct settings*) * db->num_settings);
+
+    }
+    else {
+        yaz_log(YLOG_DEBUG, "No service settings to database %s ", db->id);
+        db->num_settings = PZ_MAX_EOF;
+        db->settings = nmem_malloc(nmem, sizeof(struct settings*) * db->num_settings);
+        memset(db->settings, 0, sizeof(struct settings*) * db->num_settings);
+    }
     idset = nmem_malloc(nmem, sizeof(*idset));
     idset->precedence = 0;
     idset->name = "pz:id";
     idset->target = idset->value = db->id;
-    idset->next = 0;
+    idset->next = db->settings[PZ_ID];
     db->settings[PZ_ID] = idset;
 
     return db;
@@ -86,8 +101,9 @@ struct database *create_database_for_service(const char *id,
         if (!strcmp(p->id, id))
             return p;
     
-    p = new_database(id, service->nmem);
-    
+    yaz_log(YLOG_DEBUG, "new database %s under service %s values %p", id, service->id);
+    p = new_database_inherit_settings(id, service->nmem, service->settings);
+
     p->next = service->databases;
     service->databases = p;
 

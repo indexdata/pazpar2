@@ -126,6 +126,8 @@ var pz2 = function ( paramArray )
     if (this.useSessions && paramArray.autoInit !== false) {
         this.init(this.sessionId, this.serviceId);
     }
+    // Version parameter
+    this.version = paramArray.version || null;
 };
 
 pz2.prototype = 
@@ -382,17 +384,19 @@ pz2.prototype =
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
 	var requestParameters = 
           {
-            "command": "show", 
-            "session": this.sessionID, 
-            "start": this.currentStart,
-            "num": this.currentNum, 
-            "sort": this.currentSort, 
-            "block": 1,
-            "type": this.showResponseType,
-            "windowid" : window.name
+              "command": "show", 
+              "session": this.sessionID, 
+              "start": this.currentStart,
+              "num": this.currentNum, 
+              "sort": this.currentSort, 
+              "block": 1,
+              "type": this.showResponseType,
+              "windowid" : window.name,
           };
         if (query_state)
           requestParameters["query-state"] = query_state;
+	if (this.version && this.version > 0)
+	    requestParameters["version"] = this.version;
         request.safeGet(
 	  requestParameters,
           function(data, type) {
@@ -437,7 +441,14 @@ pz2.prototype =
             } else {
               context.throwError('Show failed. Malformed WS resonse.',
                   114);
-            }
+            };
+	    var approxNode = data.getElementsByTagName("approximation");
+	    if (approxNode)
+		show['approximation'] = 
+		  Number( approxNode[0].childNodes[0].nodeValue);
+	      
+
+	      data.getElementsByTagName("")
             context.activeClients = activeClients; 
             context.showCounter++;
             var delay = context.showTime;
@@ -557,7 +568,9 @@ pz2.prototype =
                 "command": "termlist", 
                 "session": this.sessionID, 
                 "name": this.termKeys,
-                "windowid" : window.name
+                "windowid" : window.name, 
+		"version" : this.version
+	
             },
             function(data) {
                 if ( data.getElementsByTagName("termlist") ) {
@@ -587,12 +600,22 @@ pz2.prototype =
                                     .childNodes[0].nodeValue || 'ERROR'
                             };
 
+			    // Only for xtargets: id, records, filtered
                             var termIdNode = 
                                 terms[j].getElementsByTagName("id");
                             if(terms[j].getElementsByTagName("id").length)
                                 term["id"] = 
                                     termIdNode[0].childNodes[0].nodeValue;
                             termList[listName][j] = term;
+
+			    var recordsNode  = terms[j].getElementsByTagName("records");
+			    if (recordsNode && recordsNode.length)
+				term["records"] = recordsNode[0].childNodes[0].nodeValue;
+                              
+			    var filteredNode  = terms[j].getElementsByTagName("filtered");
+			    if (filteredNode && filteredNode.length)
+				term["filtered"] = filteredNode[0].childNodes[0].nodeValue;
+                              
                         }
                     }
 
@@ -638,7 +661,8 @@ pz2.prototype =
 		"command": "bytarget", 
 		"session": this.sessionID, 
 		"block": 1,
-		"windowid" : window.name
+		"windowid" : window.name,
+		"version" : this.version
 	    },
             function(data) {
                 if ( data.getElementsByTagName("status")[0]
