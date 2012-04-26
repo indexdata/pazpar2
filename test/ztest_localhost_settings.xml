@@ -1,4 +1,4 @@
-<!-- Solr target -->
+<!-- ztest Z39.50 target -->
 <settings target="localhost:9999/db1">
   <set name="pz:name"  value="db1" />
   <set name="pz:url"   value="localhost:9999/db1" />
