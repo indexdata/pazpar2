@@ -22,9 +22,9 @@ EXTRA_DIST = run_pazpar2.sh marc21_test.xsl tmarc.xsl solr-pz2.xsl \
 	test_url_service.xml  test_url_settings_1.xml  test_url_settings_2.xml  test_url_settings_3.xml  test_url_settings_4.xml \
 	test_limit_limitmap.cfg test_limit_limitmap.urls \
 	test_limit_limitmap_service.xml \
-	test_limit_limitmap_setting_1.xml test_limit_limitmap_setting_2.xml \
-	test_limit_limitmap_setting_3.xml test_limit_limitmap_setting_4.xml \
-	test_limit_limitmap_setting_5.xml \
+	test_limit_limitmap_settings_1.xml test_limit_limitmap_settings_2.xml \
+	test_limit_limitmap_settings_3.xml test_limit_limitmap_settings_4.xml \
+	test_limit_limitmap_settings_5.xml \
 	ztest_localhost_settings.xml test_termlist_block_settings_2.xml \
 	test_facets_settings_1.xml test_facets_settings_2.xml \
 	$(check_SCRIPTS)
