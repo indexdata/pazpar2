@@ -1,0 +1,9 @@
+<!-- Testign URL setting -->
+<settings target="my">
+  <set name="pz:name"  value="marcserver" />
+  <set name="pz:url"   value="z3950.indexdata.com/marc" />
+  <set name="pz:nativesyntax" value="iso2709" />
+  <set name="pz:requestsyntax" value="usmarc" />
+  <set name="pz:xslt" value="marc21_test.xsl" />
+  <set name="pz:elements" value="F" />
+</settings>
