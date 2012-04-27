@@ -47,12 +47,16 @@ struct normalize_record_s {
 };
 
 normalize_record_t normalize_record_create(struct conf_service *service,
-                                           const char *spec, int embed)
+                                           const char *spec)
 {
     NMEM nmem = nmem_create();
     normalize_record_t nt = nmem_malloc(nmem, sizeof(*nt));
     struct normalize_step **m = &nt->steps;
     int no_errors = 0;
+    int embed = 0;
+
+    if (*spec == '<')
+        embed = 1;
 
     nt->nmem = nmem;
 

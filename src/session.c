@@ -412,16 +412,8 @@ static int prepare_map(struct session *se, struct session_database *sdb)
     {
         const char *s;
 
-        if (sdb->settings[PZ_EMBED_XSLT] &&
-            (s = session_setting_oneval(sdb, PZ_EMBED_XSLT)))
-        {
-            sdb->map = normalize_cache_get(se->normalize_cache,
-                                           se->service, s, 1);
-            if (!sdb->map)
-                return -1;
-        }
-        else if (sdb->settings[PZ_XSLT] &&
-                 (s = session_setting_oneval(sdb, PZ_XSLT)))        
+        if (sdb->settings[PZ_XSLT] &&
+            (s = session_setting_oneval(sdb, PZ_XSLT)))        
         {
             char auto_stylesheet[256];
             
@@ -449,7 +441,7 @@ static int prepare_map(struct session *se, struct session_database *sdb)
                 }
             }
             sdb->map = normalize_cache_get(se->normalize_cache,
-                                           se->service, s, 0);
+                                           se->service, s);
             if (!sdb->map)
                 return -1;
         }

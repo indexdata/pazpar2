@@ -81,7 +81,6 @@ static char *hard_settings[] = {
     "pz:sortmap:",
     "pz:present_chunk",
     "pz:block_timeout",
-    "pz:embed_xslt",
     0
 };
 
@@ -199,12 +198,16 @@ int settings_read_node_x(xmlNode *n,
             continue;
         if (!strcmp((const char *) n->name, "set"))
         {
+            xmlNode *root = n->children;
             struct setting set;
             char *name = (char *) xmlGetProp(n, (xmlChar *) "name");
             char *target = (char *) xmlGetProp(n, (xmlChar *) "target");
             char *value = (char *) xmlGetProp(n, (xmlChar *) "value");
             char *user = (char *) xmlGetProp(n, (xmlChar *) "user");
             char *precedence = (char *) xmlGetProp(n, (xmlChar *) "precedence");
+            xmlChar *buf_out = 0;
+
+            set.next = 0;
 
             if (precedence)
                 set.precedence = atoi((char *) precedence);
@@ -215,8 +218,33 @@ int settings_read_node_x(xmlNode *n,
 
             set.target = target ? target : targeta;
             set.name = name ? name : namea;
-            set.value = value ? value : valuea;
-            set.next = 0;
+
+            while (root && root->type != XML_ELEMENT_NODE)
+                root = root->next;
+            if (!root)
+                set.value = value ? value : valuea;
+            else
+            {   /* xml document content for this setting */
+                xmlDoc *doc = xmlNewDoc(BAD_CAST "1.0");
+                if (!doc)
+                {
+                    if (set.name)
+                        yaz_log(YLOG_WARN, "bad XML content for setting "
+                                "name=%s", set.name);
+                    else
+                        yaz_log(YLOG_WARN, "bad XML content for setting");
+                    ret_val = -1;
+                }
+                else
+                {
+                    int len_out;
+                    xmlDocSetRootElement(doc, xmlCopyNode(root, 1));
+                    xmlDocDumpMemory(doc, &buf_out, &len_out);
+                    /* xmlDocDumpMemory 0-terminates */
+                    set.value = (char *) buf_out; 
+                    xmlFreeDoc(doc);
+                }
+            }
 
             if (set.name && set.value && set.target)
                 (*fun)(client_data, &set);
@@ -229,6 +257,7 @@ int settings_read_node_x(xmlNode *n,
                     yaz_log(YLOG_WARN, "missing name/value/target for setting");
                 ret_val = -1;
             }
+            xmlFree(buf_out);
             xmlFree(name);
             xmlFree(precedence);
             xmlFree(value);

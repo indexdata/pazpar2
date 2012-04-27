@@ -24,7 +24,7 @@ typedef struct normalize_record_s *normalize_record_t;
 struct conf_service;
 
 normalize_record_t normalize_record_create(struct conf_service *service,
-                                           const char *spec, int embed);
+                                           const char *spec);
 
 void normalize_record_destroy(normalize_record_t nt);
 
