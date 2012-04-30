@@ -138,7 +138,7 @@ struct conf_service *service_init(struct conf_server *server,
     // Setup a dictionary from server.
     service->dictionary = 0;
 
-    service->settings = nmem_malloc(nmem, sizeof(struct settings));
+    service->settings = nmem_malloc(nmem, sizeof(*service->settings));
     service->settings->num_settings = PZ_MAX_EOF;
     service->settings->settings = nmem_malloc(nmem, sizeof(struct setting*) * service->settings->num_settings);
     memset(service->settings->settings, 0, sizeof(struct setting*) * service->settings->num_settings);
