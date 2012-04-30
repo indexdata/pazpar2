@@ -50,7 +50,7 @@ POST='$curl --silent --header "Content-Type: text/xml" --data-binary "@$postfile
 
 if [ -z "$SKIP_PAZPAR2" ] ; then
 # remove log if starting pazpar2
-    rm -f $PREFIX_pazpar2.log
+    rm -f ${PREFIX}_pazpar2.log
 fi
 
 CFG=${PREFIX}.cfg
