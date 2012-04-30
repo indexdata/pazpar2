@@ -58,7 +58,7 @@ struct database *new_database(const char *id, NMEM nmem)
 {
     return new_database_inherit_settings(id, nmem, 0);
 }
-struct database *new_database_inherit_settings(const char *id, NMEM nmem, struct settings *service_settings)
+struct database *new_database_inherit_settings(const char *id, NMEM nmem, struct settings_array *service_settings)
 {
     struct database *db;
     struct setting *idset;
@@ -70,16 +70,15 @@ struct database *new_database_inherit_settings(const char *id, NMEM nmem, struct
     if (service_settings && service_settings->num_settings > 0) {
         yaz_log(YLOG_DEBUG, "copying settings from service to database %s settings", db->id);
         db->num_settings = service_settings->num_settings;
-        db->settings = nmem_malloc(nmem, sizeof(struct settings*) * db->num_settings);
+        db->settings = nmem_malloc(nmem, sizeof(*db->settings) * db->num_settings);
         // Initialize database settings with service settings
-        memcpy(db->settings, service_settings->settings,  sizeof(struct settings*) * db->num_settings);
-
+        memcpy(db->settings, service_settings->settings,  sizeof(*db->settings) * db->num_settings);
     }
     else {
         yaz_log(YLOG_DEBUG, "No service settings to database %s ", db->id);
         db->num_settings = PZ_MAX_EOF;
-        db->settings = nmem_malloc(nmem, sizeof(struct settings*) * db->num_settings);
-        memset(db->settings, 0, sizeof(struct settings*) * db->num_settings);
+        db->settings = nmem_malloc(nmem, sizeof(*db->settings) * db->num_settings);
+        memset(db->settings, 0, sizeof(*db->settings) * db->num_settings);
     }
     idset = nmem_malloc(nmem, sizeof(*idset));
     idset->precedence = 0;
@@ -101,9 +100,8 @@ struct database *create_database_for_service(const char *id,
         if (!strcmp(p->id, id))
             return p;
     
-    yaz_log(YLOG_DEBUG, "new database %s under service %s values %p", id, service->id);
+    yaz_log(YLOG_DEBUG, "new database %s under service %s", id, service->id);
     p = new_database_inherit_settings(id, service->nmem, service->settings);
-
     p->next = service->databases;
     service->databases = p;
 
