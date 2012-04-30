@@ -111,7 +111,7 @@ struct conf_service
     int num_sortkeys;
     struct conf_sortkey *sortkeys;
     struct setting_dictionary *dictionary;
-    struct settings *settings;
+    struct settings_array *settings;
     struct conf_service *next;
     char *id;
     NMEM nmem;
