@@ -65,7 +65,7 @@ struct setting
     struct setting *next;
 };
 
-struct settings
+struct settings_array
 {
     // Array of pointer setting, index is looked up in setting_dictionary
     struct setting **settings;

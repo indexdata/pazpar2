@@ -351,7 +351,7 @@ void expand_settings_array(struct setting ***set_ar, int *num, int offset,
     }
 }
 
-void expand_settings_array2(struct settings *settings, int offset, NMEM nmem)
+void expand_settings_array2(struct settings_array *settings, int offset, NMEM nmem)
 {
     assert(offset >= 0);
     assert(settings);
@@ -368,7 +368,7 @@ void expand_settings_array2(struct settings *settings, int offset, NMEM nmem)
     }
 }
 
-static void update_settings(struct setting *set, struct settings *settings, int offset, NMEM nmem)
+static void update_settings(struct setting *set, struct settings_array *settings, int offset, NMEM nmem)
 {
     struct setting **sp;
     yaz_log(YLOG_LOG, "update service settings offset %d with %s=%s", offset, set->name, set->value);
