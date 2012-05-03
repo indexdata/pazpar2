@@ -579,7 +579,7 @@
      <record   xmlns="http://www.indexdata.com/pazpar2/1.0"
      mergekey="title The Shining author King, Stephen">
 
-     <metadata type="title">The Shining</metadata>
+     <metadata type="title" rank="2">The Shining</metadata>
 
      <metadata type="author">King, Stephen</metadata>
 
@@ -604,7 +604,8 @@
     records are never merged. The 'metadata' elements provide the meat
     of the elements -- the content. the 'type' attribute is used to
     match each element against processing rules that determine what
-    happens to the data element next.
+    happens to the data element next. The attribute, 'rank' specifies
+    specifies a multipler for ranking for this element.
    </para>
 
    <para>

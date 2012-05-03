@@ -1,0 +1,4 @@
+<!-- Solr target -->
+<settings target="LOC Solr Test">
+  <set name="pz:termlist_term_factor" value="1"/>
+</settings>

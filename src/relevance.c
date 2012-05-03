@@ -37,26 +37,12 @@ struct relevance
     NMEM nmem;
 };
 
-
 struct word_entry {
     const char *norm_str;
     int termno;
+    char *ccl_field;
     struct word_entry *next;
 };
-
-static void add_word_entry(NMEM nmem, 
-                           struct word_entry **entries,
-                           const char *norm_str,
-                           int term_no)
-{
-    struct word_entry *ne = nmem_malloc(nmem, sizeof(*ne));
-    ne->norm_str = nmem_strdup(nmem, norm_str);
-    ne->termno = term_no;
-    
-    ne->next = *entries;
-    *entries = ne;
-}
-
 
 int word_entry_match(struct word_entry *entries, const char *norm_str)
 {
@@ -66,26 +52,6 @@ int word_entry_match(struct word_entry *entries, const char *norm_str)
             return entries->termno;
     }
     return 0;
-}
-
-static struct word_entry *build_word_entries(pp2_charset_token_t prt,
-                                             NMEM nmem,
-                                             const char **terms)
-{
-    int termno = 1; /* >0 signals THERE is an entry */
-    struct word_entry *entries = 0;
-    const char **p = terms;
-
-    for (; *p; p++)
-    {
-        const char *norm_str;
-
-        pp2_charset_token_first(prt, *p, 0);
-        while ((norm_str = pp2_charset_token_next(prt)))
-            add_word_entry(nmem, &entries, norm_str, termno);
-        termno++;
-    }
-    return entries;
 }
 
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
@@ -120,30 +86,11 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
     cluster->term_frequency_vec[0] += length;
 }
 
-static struct relevance *relevance_create(pp2_charset_fact_t pft,
-                                          NMEM nmem, const char **terms)
-{
-    struct relevance *res = nmem_malloc(nmem, sizeof(struct relevance));
-    const char **p;
-    int i;
-
-    for (p = terms, i = 0; *p; p++, i++)
-        ;
-    res->vec_len = ++i;
-    res->doc_frequency_vec = nmem_malloc(nmem, res->vec_len * sizeof(int));
-    memset(res->doc_frequency_vec, 0, res->vec_len * sizeof(int));
-    res->nmem = nmem;
-    res->prt = pp2_charset_token_create(pft, "relevance");
-    res->entries = build_word_entries(res->prt, nmem, terms);
-    return res;
-}
-
-// Recursively traverse query structure to extract terms.
-static void pull_terms(NMEM nmem, struct ccl_rpn_node *n,
-                       char **termlist, int *num, int max_terms)
+static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
 {
     char **words;
     int numwords;
+    char *ccl_field;
     int i;
 
     switch (n->kind)
@@ -152,18 +99,32 @@ static void pull_terms(NMEM nmem, struct ccl_rpn_node *n,
     case CCL_RPN_OR:
     case CCL_RPN_NOT:
     case CCL_RPN_PROX:
-        pull_terms(nmem, n->u.p[0], termlist, num, max_terms);
-        pull_terms(nmem, n->u.p[1], termlist, num, max_terms);
+        pull_terms(res, n->u.p[0]);
+        pull_terms(res, n->u.p[1]);
         break;
     case CCL_RPN_TERM:
-        nmem_strsplit(nmem, " ", n->u.t.term, &words, &numwords);
+        nmem_strsplit(res->nmem, " ", n->u.t.term, &words, &numwords);
         for (i = 0; i < numwords; i++)
         {
-            if (*num < max_terms)
-                termlist[(*num)++] = words[i];
+            const char *norm_str;
+            
+            ccl_field = nmem_strdup_null(res->nmem, n->u.t.qual);
+
+            pp2_charset_token_first(res->prt, words[i], 0);
+            while ((norm_str = pp2_charset_token_next(res->prt)))
+            {
+                struct word_entry **e = &res->entries;
+                while (*e)
+                    e = &(*e)->next;
+                *e = nmem_malloc(res->nmem, sizeof(**e));
+                (*e)->norm_str = nmem_strdup(res->nmem, norm_str);
+                (*e)->ccl_field = ccl_field;
+                (*e)->termno = res->vec_len++;
+                (*e)->next = 0;
+            }
         }
         break;
-    default: // NOOP
+    default:
         break;
     }
 }
@@ -171,12 +132,20 @@ static void pull_terms(NMEM nmem, struct ccl_rpn_node *n,
 struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
                                        NMEM nmem, struct ccl_rpn_node *query)
 {
-    char *termlist[512];
-    int num = 0;
+    struct relevance *res = nmem_malloc(nmem, sizeof(*res));
+    int i;
 
-    pull_terms(nmem, query, termlist, &num, sizeof(termlist)/sizeof(*termlist));
-    termlist[num] = 0;
-    return relevance_create(pft, nmem, (const char **) termlist);
+    res->nmem = nmem;
+    res->entries = 0;
+    res->vec_len = 1;
+    res->prt = pp2_charset_token_create(pft, "relevance");
+    
+    pull_terms(res, query);
+
+    res->doc_frequency_vec = nmem_malloc(nmem, res->vec_len * sizeof(int));
+    for (i = 0; i < res->vec_len; i++)
+        res->doc_frequency_vec[i] = 0;        
+    return res;
 }
 
 void relevance_destroy(struct relevance **rp)
@@ -215,7 +184,6 @@ void relevance_newrec(struct relevance *r, struct record_cluster *rec)
     }
 }
 
-
 void relevance_donerecord(struct relevance *r, struct record_cluster *cluster)
 {
     int i;
@@ -253,7 +221,6 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
         }
     }
     // Calculate relevance for each document
-
     while (1)
     {
         int t;
@@ -263,18 +230,7 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
             break;
         for (t = 1; t < rel->vec_len; t++)
         {
-            float termfreq;
-#if 1
-            termfreq = (float) rec->term_frequency_vecf[t];
-#else
-            if (rec->term_frequency_vec[0])
-            {
-                termfreq = (float)
-                    rec->term_frequency_vec[t] / rec->term_frequency_vec[0] ;
-            }
-            else
-                termfreq = 0.0;
-#endif
+            float termfreq = (float) rec->term_frequency_vecf[t];
             relevance += 100000 * (termfreq * idfvec[t] + 0.0000005);  
         }
         rec->relevance_score = relevance;

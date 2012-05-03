@@ -269,6 +269,10 @@
 	     elements of this type. The default is '0', which
 	     excludes this element from the rank calculation.
 	    </para>
+	    <para>
+	     For Pazpar2 1.6.13 and later, the rank may also defined
+	     "per-document", by the normalization stylesheet. 
+	    </para>
 	   </listitem>
 	  </varlistentry>
 	  
@@ -1078,6 +1082,15 @@
      </listitem>
     </varlistentry>
     <varlistentry>
+     <term>pz:presentchunk</term>
+     <listitem>
+      <para>
+       Controls the chunk size in present requests. Pazpar2 will 
+       make (maxrecs / chunk) request(s). The default is 20.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
      <term>pz:id</term>
      <listitem>
       <para>
@@ -1114,7 +1127,7 @@
      <listitem>
       <para>
        This setting enables
-       <ulink url="&url.sru;">SRU</ulink>/<ulink url="&url.solr;">SOLR</ulink>
+       <ulink url="&url.sru;">SRU</ulink>/<ulink url="&url.solr;">Solr</ulink>
        support.
        It has four possible settings.
        'get', enables SRU access through GET requests. 'post' enables SRU/POST
@@ -1123,7 +1136,7 @@
        the protocol.
       </para>
       <para>
-       A value of 'solr' anables SOLR client support. This is supported
+       A value of 'solr' enables Solr client support. This is supported
        for Pazpar version 1.5.0 and later.
       </para>
      </listitem>
@@ -1135,7 +1148,7 @@
       <para>
        This allows SRU version to be specified. If unset Pazpar2
        will the default of YAZ (currently 1.2). Should be set
-       to 1.1 or 1.2. For SOLR, the current supported/tested version is 1.4
+       to 1.1 or 1.2. For Solr, the current supported/tested version is 1.4 and 3.x.
       </para>
      </listitem>
     </varlistentry>
@@ -1220,13 +1233,35 @@
       </para>
      </listitem>
     </varlistentry>
-
     <varlistentry>
      <term>pz:block_timeout</term>
      <listitem>
       <para>
        (Not yet implemented).
        Specifies the time for which a block should be released anyway.      
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>pz:termlist_term_count</term>
+     <listitem>
+      <para>
+       Specifies number of facet terms to be requested from the target. 
+       The default is unspecified e.g. server-decided. Also see pz:facetmap.
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>pz:termlist_term_factor</term>
+     <listitem>
+      <para>
+       Specifies whether to use a factor for pazpar2 generated facets (1) or not (0). 
+       When mixing locallly generated (by the downloaded (pz:maxrecs) samples) 
+       facet with native (target-generated) facets, the later will dominated the dominate the facet list
+       since they are generated based on the complete result set. 
+       By scaling up the facet count using the ratio between total hit count and the sample size, 
+       the total facet count can be approximated and thus better compared with native facets. 
+       This is not enabled by default.
       </para>
      </listitem>
     </varlistentry>
@@ -1241,7 +1276,7 @@
       </para>
       <note>
        <para>
-	At this point only SOLR targets have been tested with this
+	At this point only Solr targets have been tested with this
 	facility.
        </para>
       </note>

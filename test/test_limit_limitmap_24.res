@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <show><status>OK</status>
 <activeclients>2</activeclients>
-<merged>40</merged>
+<merged>60</merged>
 <total>2015</total>
 <start>0</start>
 <num>20</num>
@@ -57,6 +57,31 @@
 </hit>
 <hit>
 
+<md-title>Everything you need to know about the dangers of computer hacking</md-title>
+<md-date>2000</md-date>
+<md-author>Knittel, John</md-author>
+<md-description>Explains what computer hacking is, who does it, and how dangerous it can be</md-description><location id="Target-2" name="LOC-SOLR">
+<md-title>Everything you need to know about the dangers of computer hacking</md-title>
+<md-date>2000</md-date>
+<md-author>Knittel, John</md-author>
+<md-description>Explains what computer hacking is, who does it, and how dangerous it can be</md-description></location>
+<relevance>26979</relevance>
+<recid>content: title everything you need to know about the dangers of computer hacking author knittel john</recid>
+</hit>
+<hit>
+
+<md-title>Kids&apos; computer book</md-title>
+<md-date>1994</md-date>
+<md-description>Discusses a variety of educational and game software for children  with suggestions for setting up a computer system. Includes a 3 1/2 in. disk with 6 shareware programs for children</md-description><location id="Target-2" name="LOC-SOLR">
+<md-title>Kids&apos; computer book</md-title>
+<md-date>1994</md-date>
+<md-description>&quot;For kids and their parents&quot;--Cover</md-description>
+<md-description>Discusses a variety of educational and game software for children  with suggestions for setting up a computer system. Includes a 3 1/2 in. disk with 6 shareware programs for children</md-description></location>
+<relevance>23651</relevance>
+<recid>content: title kids computer book</recid>
+</hit>
+<hit>
+
 <md-title>Computer friendly</md-title>
 <md-date>1999</md-date>
 <md-author>Steinbacher, Raymond</md-author><location id="Target-2" name="LOC-SOLR">
@@ -81,6 +106,22 @@
 </hit>
 <hit>
 
+<md-title>Quicken 2000 for the Mac</md-title>
+<md-title-remainder>the official guide</md-title-remainder>
+<md-date>2000</md-date>
+<md-author>Langer, Maria</md-author>
+<md-description>&quot;Covers Quicken deluxe 2000 for the Mac&quot;--Cover</md-description><location id="Target-2" name="LOC-SOLR">
+<md-title>Quicken 2000 for the Mac</md-title>
+<md-title-remainder>the official guide</md-title-remainder>
+<md-date>2000</md-date>
+<md-author>Langer, Maria</md-author>
+<md-description>Includes index</md-description>
+<md-description>&quot;Covers Quicken deluxe 2000 for the Mac&quot;--Cover</md-description></location>
+<relevance>23082</relevance>
+<recid>content: title quicken for the mac author langer maria</recid>
+</hit>
+<hit>
+
 <md-title>Unix Secure Shell</md-title>
 <md-date>1999</md-date>
 <md-author>Carasik, Anne H</md-author>
@@ -94,6 +135,34 @@
 </hit>
 <hit>
 
+<md-title>Eight International Conference on Computer Communications and Networks</md-title>
+<md-title-remainder>proceedings, 11-13 October 1999, Boston, Massachusetts</md-title-remainder>
+<md-date>1999</md-date>
+<md-description>&quot;IEEE catalog number 99EX370&quot;--T.p. verso</md-description><location id="Target-2" name="LOC-SOLR">
+<md-title>Eight International Conference on Computer Communications and Networks</md-title>
+<md-title-remainder>proceedings, 11-13 October 1999, Boston, Massachusetts</md-title-remainder>
+<md-date>1999</md-date>
+<md-description>&quot;IEEE catalog number 99EX370&quot;--T.p. verso</md-description></location>
+<relevance>21799</relevance>
+<recid>content: title eight international conference on computer communications and networks</recid>
+</hit>
+<hit>
+
+<md-title>Complete CL</md-title>
+<md-title-remainder>the definitive control language programming guide</md-title-remainder>
+<md-date>1999</md-date>
+<md-author>Malaga, Ernie</md-author>
+<md-description>Includes index</md-description><location id="Target-2" name="LOC-SOLR">
+<md-title>Complete CL</md-title>
+<md-title-remainder>the definitive control language programming guide</md-title-remainder>
+<md-date>1999</md-date>
+<md-author>Malaga, Ernie</md-author>
+<md-description>Includes index</md-description></location>
+<relevance>20517</relevance>
+<recid>content: title complete cl author malaga ernie</recid>
+</hit>
+<hit>
+
 <md-title>3D games</md-title>
 <md-title-remainder>real-time rendering and software technology</md-title-remainder>
 <md-date>2001</md-date>
@@ -104,17 +173,6 @@
 <md-author>Watt, Alan H</md-author></location>
 <relevance>20517</relevance>
 <recid>content: title d games author watt alan h</recid>
-</hit>
-<hit>
-
-<md-title>Java applications strategies for the AS/400</md-title>
-<md-date>1999</md-date>
-<md-author>Denoncourt, Don</md-author><location id="Target-2" name="LOC-SOLR">
-<md-title>Java applications strategies for the AS/400</md-title>
-<md-date>1999</md-date>
-<md-author>Denoncourt, Don</md-author></location>
-<relevance>20517</relevance>
-<recid>content: title java applications strategies for the as author denoncourt don</recid>
 </hit>
 <hit>
 
@@ -152,6 +210,17 @@
 </hit>
 <hit>
 
+<md-title>3D computer graphics</md-title>
+<md-date>2000</md-date>
+<md-author>Watt, Alan H</md-author><location id="Target-2" name="LOC-SOLR">
+<md-title>3D computer graphics</md-title>
+<md-date>2000</md-date>
+<md-author>Watt, Alan H</md-author></location>
+<relevance>17952</relevance>
+<recid>content: title d computer graphics author watt alan h</recid>
+</hit>
+<hit>
+
 <md-title>Insanely great</md-title>
 <md-title-remainder>the life and times of Macintosh, the computer that changed everything</md-title-remainder>
 <md-date>2000</md-date>
@@ -184,66 +253,5 @@
 <md-author>Cole, Eric</md-author></location>
 <relevance>15388</relevance>
 <recid>content: title hackers beware author cole eric</recid>
-</hit>
-<hit>
-
-<md-title>How computer programming works</md-title>
-<md-date>2000</md-date>
-<md-author>Appleman, Daniel</md-author><location id="Target-2" name="LOC-SOLR">
-<md-title>How computer programming works</md-title>
-<md-date>2000</md-date>
-<md-author>Appleman, Daniel</md-author></location>
-<relevance>15388</relevance>
-<recid>content: title how computer programming works author appleman daniel</recid>
-</hit>
-<hit>
-
-<md-title>Icon design</md-title>
-<md-date>2001</md-date>
-<md-author>Caplin, Steve</md-author>
-<md-description>Includes index</md-description><location id="Target-2" name="LOC-SOLR">
-<md-title>Icon design</md-title>
-<md-date>2001</md-date>
-<md-author>Caplin, Steve</md-author>
-<md-description>Includes index</md-description></location>
-<relevance>15388</relevance>
-<recid>content: title icon design author caplin steve</recid>
-</hit>
-<hit>
-
-<md-title>Information security architecture</md-title>
-<md-date>2000</md-date>
-<md-author>Tudor, Jan Killmeyer</md-author><location id="Target-2" name="LOC-SOLR">
-<md-title>Information security architecture</md-title>
-<md-date>2000</md-date>
-<md-author>Tudor, Jan Killmeyer</md-author></location>
-<relevance>15388</relevance>
-<recid>content: title information security architecture author tudor jan killmeyer</recid>
-</hit>
-<hit>
-
-<md-title>Windows 2000</md-title>
-<md-title-remainder>design &amp; migration</md-title-remainder>
-<md-date>2000</md-date>
-<md-author>Morimoto, Rand</md-author>
-<md-description>Includes index</md-description><location id="Target-2" name="LOC-SOLR">
-<md-title>Windows 2000</md-title>
-<md-title-remainder>design &amp; migration</md-title-remainder>
-<md-date>2000</md-date>
-<md-author>Morimoto, Rand</md-author>
-<md-description>Includes index</md-description></location>
-<relevance>15388</relevance>
-<recid>content: title windows author morimoto rand</recid>
-</hit>
-<hit>
-
-<md-title>The essence of computer graphics</md-title>
-<md-date>2000</md-date>
-<md-author>Cooley, Peter</md-author><location id="Target-2" name="LOC-SOLR">
-<md-title>The essence of computer graphics</md-title>
-<md-date>2000</md-date>
-<md-author>Cooley, Peter</md-author></location>
-<relevance>13849</relevance>
-<recid>content: title the essence of computer graphics author cooley peter</recid>
 </hit>
 </show>

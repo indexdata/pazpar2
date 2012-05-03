@@ -1,0 +1,11 @@
+<!-- Solr target -->
+<settings target="LOC Solr Test">
+  <!-- Configure native facets -->
+  <set name="pz:termlist_term_count" value="10"/>
+  <set name="pz:facetmap:author"  value="author_exact"  />
+  <set name="pz:facetmap:subject" value="subject_exact" />
+  <set name="pz:facetmap:medium"  value="medium_exact"  />
+  <set name="pz:facetmap:date"  value="date" />
+  <!-- disable scale up factor -->
+  <set name="pz:termlist_term_factor" value="0"/>
+</settings>

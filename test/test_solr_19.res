@@ -4,6 +4,6 @@
 <name>LOC Solr Test</name>
 <hits>1995</hits>
 <diagnostic>0</diagnostic>
-<records>100</records>
+<records>200</records>
 <state>Client_Idle</state>
 </target></bytarget>
