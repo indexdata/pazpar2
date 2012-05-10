@@ -689,6 +689,8 @@ enum pazpar2_error_code session_search(struct session *se,
     se->reclist = 0;
     se->settings_modified = 0;
     relevance_destroy(&se->relevance);
+    if (nmem_total(se->nmem))
+        session_log(se, YLOG_DEBUG, "NMEN operation usage %zd", nmem_total(se->nmem));
     nmem_reset(se->nmem);
     se->total_records = se->total_merged = 0;
     se->num_termlists = 0;
@@ -885,6 +887,10 @@ void session_destroy(struct session *se)
     normalize_cache_destroy(se->normalize_cache);
     relevance_destroy(&se->relevance);
     reclist_destroy(se->reclist);
+    if (nmem_total(se->nmem))
+        session_log(se, YLOG_DEBUG, "NMEN operation usage %zd", nmem_total(se->nmem));
+    if (nmem_total(se->session_nmem))
+        session_log(se, YLOG_DEBUG, "NMEN session usage %zd", nmem_total(se->session_nmem));
     nmem_destroy(se->nmem);
     service_destroy(se->service);
     yaz_mutex_destroy(&se->session_mutex);
