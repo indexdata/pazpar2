@@ -27,6 +27,7 @@
     <icu_chain id="facet" locale="en">
       <display/>
       <transform rule="Title"/>
+      <transliterate>[[:WhiteSpace:][,.-]]* } [$] > ;</transliterate>
     </icu_chain>
     
     <include src="services-enabled/*.xml"/>
