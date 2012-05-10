@@ -1092,7 +1092,7 @@ static int apply_limit(struct session_database *sdb,
     for (i = 0; (name = facet_limits_get(facet_limits, i, &value)); i++)
     {
         struct setting *s = 0;
-        
+        nmem_reset(nmem_tmp);
         for (s = sdb->settings[PZ_LIMITMAP]; s; s = s->next)
         {
             const char *p = strchr(s->name + 3, ':');
@@ -1148,7 +1148,6 @@ static int apply_limit(struct session_database *sdb,
                 break;
             }
         }
-        nmem_reset(nmem_tmp);
         if (!s)
         {
             yaz_log(YLOG_WARN, "Target %s: limit %s used, but no limitmap defined",
