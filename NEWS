@@ -15,6 +15,9 @@ Metadata field rank may given by XML internal document (pz:xslt
 result). If rank is not given, the rank from service description is
 used - as before.
 
+New setting, pz:present_chunk, that specifies numer of records to fetch
+at a time.
+
 --- 1.6.12 2012/03/14
 
 Revert the format change in termlist response, that could break 
