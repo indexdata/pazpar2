@@ -1,8 +1,11 @@
 # This file is part of Pazpar2.
+
+# These tests require a Solr target
+solr_tests = test_solr.sh test_termlist_block.sh test_limit_limitmap.sh
 check_SCRIPTS = test_http.sh test_icu.sh test_post.sh \
  test_settings.sh test_turbomarcxml.sh test_facets.sh \
- test_solr.sh test_url.sh test_filter.sh \
- test_termlist_block.sh test_limit_limitmap.sh
+ test_url.sh test_filter.sh \
+ $(solr_tests)
 
 EXTRA_DIST = run_pazpar2.sh marc21_test.xsl tmarc.xsl solr-pz2.xsl \
 	z3950_indexdata_com_marc.xml \
@@ -13,7 +16,7 @@ EXTRA_DIST = run_pazpar2.sh marc21_test.xsl tmarc.xsl solr-pz2.xsl \
 	test_post.cfg test_post.urls \
 	test_settings.cfg test_settings.urls \
 	test_solr.cfg test_solr.urls \
-	test_solr_settings_1.xml  test_solr_settings_2.xml  test_solr_settings_3.xml  test_solr_settings_4.xml \
+	test_solr_settings_1.xml  test_solr_settings_2.xml  test_solr_settings_3.xml  test_solr_settings_4.xml test_solr_settings_5.xml \
 	test_turbomarcxml.cfg test_turbomarcxml.urls \
 	test_url.cfg test_url.urls \
 	test_filter.cfg test_filter.urls \
