@@ -24,12 +24,18 @@
       <casemap rule="l"/>
     </icu_chain>
 
-    <icu_chain id="facet" locale="en">
+    <icu_chain id="facet-author" locale="en">
       <display/>
       <transform rule="Title"/>
       <transliterate>[[:WhiteSpace:][,.-]]* } [$] > ;</transliterate>
     </icu_chain>
     
+    <icu_chain id="facet-subject" locale="en">
+      <display/>
+      <transform rule="Title"/>
+      <transliterate>[[:WhiteSpace:][,.-]]* } [$] > ;</transliterate>
+    </icu_chain>
+
     <include src="services-enabled/*.xml"/>
 
   </server>
