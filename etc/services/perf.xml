@@ -77,7 +77,7 @@
   <metadata name="issn"/>
   <metadata name="tech-rep-nr"/>
   <metadata name="author" brief="yes" termlist="yes" merge="unique" 
-	    rank="2" mergekey="optional"/>
+	    rank="2" mergekey="optional" facetrule="facet-author" />
   <metadata name="author-title"/>
   <metadata name="author-date"/>
   <metadata name="corporate-name"/>
@@ -112,8 +112,8 @@
   <metadata name="series-title"/>
   
   <metadata name="description" brief="yes" merge="unique" rank="3"/>
-  <metadata name="subject-long" rank="3"/>
-  <metadata name="subject" termlist="yes" rank="0"/>
+  <metadata name="subject" termlist="yes" rank="0" facetrule="facet-subject" />
+  <metadata name="subject-long" rank="3" />
   <metadata name="snippet" brief="yes" merge="unique"/>
   <metadata name="electronic-url" brief="yes" merge="no"/>
   <metadata name="electronic-format-type" />
