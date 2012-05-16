@@ -28,12 +28,14 @@
     <set name="pz:piggyback" value="1" />
 
     <!-- field-specific mappings -->
-    <set name="pz:cclmap:au" value="u=1004 s=al"/>
-    <set name="pz:cclmap:ti" value="u=4 s=al"/>
-    <set name="pz:cclmap:su" value="u=21 s=al"/>
-    <set name="pz:cclmap:isbn" value="u=7"/>
-    <set name="pz:cclmap:issn" value="u=8"/>
-    <set name="pz:cclmap:date" value="u=30 r=r"/>
+    <set name="pz:cclmap:au"       value="u=1004 s=al"/>
+    <set name="pz:cclmap:au_exact" value="u=1004 s=al 6=3 "/>
+    <set name="pz:cclmap:ti"       value="u=4 s=al"/>
+    <set name="pz:cclmap:su"       value="u=21 s=al"/>
+    <set name="pz:cclmap:su_exact" value="u=21 s=al 6=3"/>
+    <set name="pz:cclmap:isbn"     value="u=7"/>
+    <set name="pz:cclmap:issn"     value="u=8"/>
+    <set name="pz:cclmap:date"     value="u=30 r=r"/>
 
     <!-- Retrieval settings -->
 
@@ -76,8 +78,9 @@
   <metadata name="isbn"/>
   <metadata name="issn"/>
   <metadata name="tech-rep-nr"/>
+  <!-- Use the cclmap for author. Can be improved with a completeness. Needs to be overriden for SRU/Solr targets -->
   <metadata name="author" brief="yes" termlist="yes" merge="unique" 
-	    rank="2" mergekey="optional" facetrule="facet-author" />
+	    rank="2" mergekey="optional" facetrule="facet-author" limitmap="ccl:au_exact" />
   <metadata name="author-title"/>
   <metadata name="author-date"/>
   <metadata name="corporate-name"/>
@@ -95,7 +98,8 @@
   <metadata name="title-dates" brief="yes" merge="longest"/>
   <metadata name="title-medium" brief="yes" merge="longest"/>
   <metadata name="title-number-section" brief="yes" merge="longest"/>
-  <metadata name="medium" brief="yes" merge="no" mergekey="optional"/>
+  <!-- Do a record filtering for medium -->
+  <metadata name="medium" brief="yes" merge="no" mergekey="optional" limitmap="local:" />
   <metadata name="iii-id" brief="yes" merge="no"/>
   <metadata name="edition"/>
   <metadata name="publication-place"/>
@@ -112,7 +116,8 @@
   <metadata name="series-title"/>
   
   <metadata name="description" brief="yes" merge="unique" rank="3"/>
-  <metadata name="subject" termlist="yes" rank="0" facetrule="facet-subject" />
+  <!-- Use the cclmap for subject. Can be improved with a completeness. Needs to be overriden for SRU/Solr targets -->
+  <metadata name="subject" termlist="yes" rank="0" facetrule="facet-subject" limitmap="ccl:su_exact" />
   <metadata name="subject-long" rank="3"/>
   <metadata name="snippet" brief="yes" merge="unique"/>
   <metadata name="electronic-url" brief="yes" merge="no"/>
