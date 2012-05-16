@@ -442,8 +442,9 @@ pz2.prototype =
               context.throwError('Show failed. Malformed WS resonse.',
                   114);
             };
+	    
 	    var approxNode = data.getElementsByTagName("approximation");
-	    if (approxNode)
+	    if (approxNode && approxNode[0] && approxNode[0].childNodes[0] && approxNode[0].childNodes[0].nodeValue)
 		show['approximation'] = 
 		  Number( approxNode[0].childNodes[0].nodeValue);
 	      
