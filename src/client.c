@@ -764,10 +764,10 @@ void client_start_search(struct client *cl)
         present_chunk = atoi(opt_present_chunk);
         yaz_log(YLOG_DEBUG, "Present chunk set to %d", present_chunk);
     }
-
     assert(link);
 
     cl->diagnostic = 0;
+    cl->filtered = 0;
 
     if (extra_args && *extra_args)
         ZOOM_connection_option_set(link, "extraArgs", extra_args);
