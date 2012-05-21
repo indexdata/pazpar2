@@ -118,9 +118,10 @@ void termlist_insert(struct termlist *tl, const char *display_term,
         return;
     strcpy(buf, norm_term);
     /* chop right */
+    /*
     for (cp = buf + strlen(buf); cp != buf && strchr(",. -", cp[-1]); cp--)
         cp[-1] = '\0';
-    
+    */
     bucket = jenkins_hash((unsigned char *)buf) % tl->hash_size;
     for (p = &tl->hashtable[bucket]; *p; p = &(*p)->next)
     {

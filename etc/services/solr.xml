@@ -3,19 +3,21 @@
   <timeout session="30" z3950_operation="15" z3950_session="60"/>
   
   <settings target="*">
-    <set target="donut:8983/solr/select" name="pz:name" value="solr1"/>
-    <set target="satay:8983/solr/select" name="pz:name" value="solr2"/>
+    <set target="donut:8983/solr" name="pz:name" value="solr2"/>
+    <set target="ocs-test.indexdata.com/solr" name="pz:name" value="solr1"/>
 
     <!-- mapping for unqualified search -->
     <set name="pz:cclmap:term" value="1=title"/>
 
     <!-- field-specific mappings -->
-    <set name="pz:cclmap:au"   value="1=author" />
-    <set name="pz:cclmap:ti"   value="1=title"  />
-    <set name="pz:cclmap:su"   value="1=subject"/>
-    <set name="pz:cclmap:isbn" value="1=isbn" />
-    <set name="pz:cclmap:issn" value="1=issn" />
-    <set name="pz:cclmap:date" value="1=date" />
+    <set name="pz:cclmap:au"         value="1=author" />
+    <set name="pz:cclmap:au_exact"   value="1=author 6=3" />
+    <set name="pz:cclmap:ti"         value="1=title"  />
+    <set name="pz:cclmap:su"         value="1=subject"/>
+    <set name="pz:cclmap:su_exact"   value="1=subject 6=3"/>
+    <set name="pz:cclmap:isbn"       value="1=isbn" />
+    <set name="pz:cclmap:issn"       value="1=issn" />
+    <set name="pz:cclmap:date"       value="1=date" />
 
     <!-- Retrieval settings -->
 
@@ -64,7 +66,7 @@
   <metadata name="issn"/>
   <metadata name="tech-rep-nr"/>
   <metadata name="author" brief="yes" termlist="yes" merge="unique" 
-	    rank="2" mergekey="optional"/>
+	    rank="2" mergekey="optional" limitmap="ccl:au_exact"/>
   <metadata name="author-title"/>
   <metadata name="author-date"/>
   <metadata name="corporate-name"/>
@@ -82,7 +84,7 @@
   <metadata name="title-dates" brief="yes" merge="longest"/>
   <metadata name="title-medium" brief="yes" merge="longest"/>
   <metadata name="title-number-section" brief="yes" merge="longest"/>
-  <metadata name="medium" brief="yes" merge="no" mergekey="optional"/>
+  <metadata name="medium" brief="yes" merge="no" mergekey="optional" limitmap="ccl:medium_exact"/>
   <metadata name="iii-id" brief="yes" merge="no"/>
   <metadata name="edition"/>
   <metadata name="publication-place"/>
@@ -99,8 +101,8 @@
   <metadata name="series-title"/>
   
   <metadata name="description" brief="yes" merge="unique" rank="3"/>
+  <metadata name="subject" termlist="yes" rank="0" limitmap="ccl:su_exact"/>
   <metadata name="subject-long" rank="3"/>
-  <metadata name="subject" termlist="yes" rank="0"/>
   <metadata name="snippet" brief="yes" merge="unique"/>
   <metadata name="electronic-url" brief="yes" merge="no"/>
   <metadata name="electronic-format-type" />

@@ -1,4 +1,4 @@
-<!-- Solr target -->
+<!-- Solr target, settings 4-->
 <settings target="LOC Solr Test">
   <set name="pz:maxrecs" value="200" /> 
   <set name="pz:present_chunk" value="0"/>

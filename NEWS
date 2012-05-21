@@ -1,3 +1,23 @@
+Setting pz:xslt may embed local XSLT as an alternative to referring
+to filenames.
+Value is not CDATA but XML nodes embedded, so escaping is not necessary
+but a root element *must* be present. For example:
+<settings target="target="z3950.indexdata.com/marc">
+     <set name="pz:xslt">
+       <xsl:stylesheet
+          version="1.0"
+        ..
+       </xsl:stylesheet>
+     </set>
+    </settings>
+
+Metadata field rank may given by XML internal document (pz:xslt
+result). If rank is not given, the rank from service description is
+used - as before.
+
+New setting, pz:present_chunk, that specifies number of records to fetch
+at a time.
+
 --- 1.6.12 2012/03/14
 
 Revert the format change in termlist response, that could break 

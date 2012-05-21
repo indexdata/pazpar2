@@ -24,11 +24,16 @@
       <casemap rule="l"/>
     </icu_chain>
 
+    <!-- default rule if not facetrule is defined on meta-data element -->
     <icu_chain id="facet" locale="en">
-      <display/>
-      <transform rule="Title"/>
+      <transliterate>[[:WhiteSpace:][,.-]]* } [$] > ;</transliterate>
     </icu_chain>
     
+    <!-- Specific facet rule -->
+    <icu_chain id="facet-subject" locale="en">
+      <transliterate>[[:WhiteSpace:][,.-]]* } [$] > ;</transliterate>
+    </icu_chain>
+
     <include src="services-enabled/*.xml"/>
 
   </server>

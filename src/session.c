@@ -408,40 +408,43 @@ const char *session_setting_oneval(struct session_database *db, int offset)
 // setting. However, this is not a realistic use scenario.
 static int prepare_map(struct session *se, struct session_database *sdb)
 {
-    const char *s;
-
-    if (sdb->settings && sdb->settings[PZ_XSLT] && !sdb->map &&
-        (s = session_setting_oneval(sdb, PZ_XSLT)))        
+    if (sdb->settings && !sdb->map)
     {
-        char auto_stylesheet[256];
+        const char *s;
 
-        if (!strcmp(s, "auto"))
+        if (sdb->settings[PZ_XSLT] &&
+            (s = session_setting_oneval(sdb, PZ_XSLT)))        
         {
-            const char *request_syntax = session_setting_oneval(
-                sdb, PZ_REQUESTSYNTAX);
-            if (request_syntax)
+            char auto_stylesheet[256];
+            
+            if (!strcmp(s, "auto"))
             {
-                char *cp;
-                yaz_snprintf(auto_stylesheet, sizeof(auto_stylesheet),
-                             "%s.xsl", request_syntax);
-                for (cp = auto_stylesheet; *cp; cp++)
+                const char *request_syntax = session_setting_oneval(
+                    sdb, PZ_REQUESTSYNTAX);
+                if (request_syntax)
                 {
-                    /* deliberately only consider ASCII */
-                    if (*cp > 32 && *cp < 127)
-                        *cp = tolower(*cp);
+                    char *cp;
+                    yaz_snprintf(auto_stylesheet, sizeof(auto_stylesheet),
+                                 "%s.xsl", request_syntax);
+                    for (cp = auto_stylesheet; *cp; cp++)
+                    {
+                        /* deliberately only consider ASCII */
+                        if (*cp > 32 && *cp < 127)
+                            *cp = tolower(*cp);
+                    }
+                    s = auto_stylesheet;
                 }
-                s = auto_stylesheet;
+                else
+                {
+                    session_log(se, YLOG_WARN,
+                                "No pz:requestsyntax for auto stylesheet");
+                }
             }
-            else
-            {
-                session_log(se, YLOG_WARN,
-                            "No pz:requestsyntax for auto stylesheet");
-            }
+            sdb->map = normalize_cache_get(se->normalize_cache,
+                                           se->service, s);
+            if (!sdb->map)
+                return -1;
         }
-        sdb->map = normalize_cache_get(se->normalize_cache,
-                                       se->service, s);
-        if (!sdb->map)
-            return -1;
     }
     return 0;
 }
@@ -689,6 +692,8 @@ enum pazpar2_error_code session_search(struct session *se,
     se->reclist = 0;
     se->settings_modified = 0;
     relevance_destroy(&se->relevance);
+    if (nmem_total(se->nmem))
+        session_log(se, YLOG_DEBUG, "NMEN operation usage %zd", nmem_total(se->nmem));
     nmem_reset(se->nmem);
     se->total_records = se->total_merged = 0;
     se->num_termlists = 0;
@@ -885,6 +890,10 @@ void session_destroy(struct session *se)
     normalize_cache_destroy(se->normalize_cache);
     relevance_destroy(&se->relevance);
     reclist_destroy(se->reclist);
+    if (nmem_total(se->nmem))
+        session_log(se, YLOG_DEBUG, "NMEN operation usage %zd", nmem_total(se->nmem));
+    if (nmem_total(se->session_nmem))
+        session_log(se, YLOG_DEBUG, "NMEN session usage %zd", nmem_total(se->session_nmem));
     nmem_destroy(se->nmem);
     service_destroy(se->service);
     yaz_mutex_destroy(&se->session_mutex);

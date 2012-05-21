@@ -343,6 +343,28 @@
 	  </varlistentry>
 	  
 	  <varlistentry>
+	   <term id="metadata_limitmap">limitmap</term>
+	   <listitem>
+	    <para>
+	     Specifies a default limitmap for this field. This is to avoid mass 
+	     configuring of targets. However it is important to review/do this on a per
+	     target since it is usually target-specific. See limitmap for format. 
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	  
+	  <varlistentry>
+	   <term id="metadata_facetmap">facetmap</term>
+	   <listitem>
+	    <para>
+	     Specifies a default facetmap for this field. This is to avoid mass 
+	     configuring of targets. However it is important to review/do this on a per
+	     target since it is usually target-specific. See facetmap for format. 
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	  
+	  <varlistentry>
 	   <term>setting</term>
 	   <listitem>
 	    <para>
@@ -527,6 +549,18 @@
        </varlistentry>
        
        <varlistentry>
+	<term>set</term>
+	<listitem>
+	 <para>
+	  Specifies a variable that will be inherited by all targets defined in settings
+	  <screen>
+	   &lt;set name="test" value="en"..&lt;set>
+	  </screen>
+	 </para>
+	</listitem>
+       </varlistentry>
+       
+       <varlistentry>
 	<term>settings</term>
 	<listitem>
 	 <para>
@@ -587,7 +621,7 @@
              type="year" merge="range" termlist="yes"/>
    <metadata name="author" brief="yes" termlist="yes"
              merge="longest" rank="2"/>
-   <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
+   <metadata name="subject" merge="unique" termlist="yes" rank="3" limitmap="local:"/>
    <metadata name="url" merge="unique"/>
    <icu_chain id="relevance" locale="el">
     <transform rule="[:Control:] Any-Remove"/>

@@ -498,6 +498,7 @@ static void cmd_settings(struct http_channel *c)
     {
         xmlDoc *doc = xmlParseMemory(rq->content_buf, rq->content_len);
         xmlNode *root_n;
+        int ret;
         if (!doc)
         {
             error(rs, PAZPAR2_MALFORMED_SETTING, 0);
@@ -505,10 +506,14 @@ static void cmd_settings(struct http_channel *c)
             return;
         }
         root_n = xmlDocGetRootElement(doc);
-
-        settings_read_node_x(root_n, s->psession, apply_local_setting);
-
+        ret = settings_read_node_x(root_n, s->psession, apply_local_setting);
         xmlFreeDoc(doc);
+        if (ret)
+        {
+            error(rs, PAZPAR2_MALFORMED_SETTING, 0);
+            release_session(c,s);
+            return;
+        }            
     }
     if (process_settings(s->psession, rq, rs) < 0)
     {
