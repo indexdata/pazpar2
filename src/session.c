@@ -751,12 +751,12 @@ enum pazpar2_error_code session_search(struct session *se,
                                        &tval);
             if (parse_ret == 1 && r == 2)
             {
-                session_log(se, YLOG_LOG, "client REUSE %s", client_get_id(cl));
+                session_log(se, YLOG_LOG, "client %s REUSE result", client_get_id(cl));
                 client_reingest(cl);
             }
             else if (r)
             {
-                session_log(se, YLOG_LOG, "client NEW %s", client_get_id(cl));
+                session_log(se, YLOG_LOG, "client %s NEW search", client_get_id(cl));
                 client_start_search(cl);
             }
             no_working++;
