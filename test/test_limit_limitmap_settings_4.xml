@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<settings target="Target-1">
-  <set name="pz:limitmap:MySubject" value="local:subject" />
+<settings target="Target-2">
+  <set name="pz:limitmap:Mysubject" value="local:subject" />
 </settings>
 
 

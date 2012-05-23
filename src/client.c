@@ -764,10 +764,10 @@ void client_start_search(struct client *cl)
         present_chunk = atoi(opt_present_chunk);
         yaz_log(YLOG_DEBUG, "Present chunk set to %d", present_chunk);
     }
-
     assert(link);
 
     cl->diagnostic = 0;
+    cl->filtered = 0;
 
     if (extra_args && *extra_args)
         ZOOM_connection_option_set(link, "extraArgs", extra_args);
@@ -1331,7 +1331,7 @@ Odr_int client_get_approximation(struct client *cl)
 {
     if (cl->record_offset > 0) {
         Odr_int approx = ((10 * cl->hits * (cl->record_offset - cl->filtered)) / cl->record_offset + 5) /10;
-        yaz_log(YLOG_LOG, "%s: Approx: %lld * %d / %d = %lld ", client_get_id(cl), cl->hits, cl->record_offset - cl->filtered, cl->record_offset, approx);
+        yaz_log(YLOG_DEBUG, "%s: Approx: %lld * %d / %d = %lld ", client_get_id(cl), cl->hits, cl->record_offset - cl->filtered, cl->record_offset, approx);
         return approx;
     }
     return cl->hits;
