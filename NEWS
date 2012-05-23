@@ -1,3 +1,8 @@
+Introducing a version=2 parameter for show, termlist and bytarget commands.
+This enables pazpar2 to return approximation on hit and count count when 
+doing record filtering using the limit parameter on search and a 
+limitmap with a value of "local:"
+
 Setting pz:xslt may embed local XSLT as an alternative to referring
 to filenames.
 Value is not CDATA but XML nodes embedded, so escaping is not necessary
@@ -15,8 +20,17 @@ Metadata field rank may given by XML internal document (pz:xslt
 result). If rank is not given, the rank from service description is
 used - as before.
 
+Metadata field can now configured a default limitmap and facetmap. 
+Setting limitmap to "local:" would work for all kind of targets, but would
+prob. not be the optimal solution. But at least better than the default behavior 
+of pazpar2 where no filtering is done. 
+
+A service definition can now also contains <set/> that defines service-wide
+settings. These will override server-wide sets and will be overridded by 
+settings.
+
 New setting, pz:present_chunk, that specifies number of records to fetch
-at a time.
+at a time. Zero will disable chunkation; will fetch max_records at once.
 
 --- 1.6.12 2012/03/14
 
