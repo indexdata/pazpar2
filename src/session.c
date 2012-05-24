@@ -1626,7 +1626,7 @@ static int check_limit_local(struct client *cl,
         }
         ser_md = &service->metadata[md_field_id];
         rec_md = record->metadata[md_field_id];
-        yaz_log(YLOG_LOG, "check limit local %s", name);
+        yaz_log(YLOG_DEBUG, "check limit local %s", name);
         for (i = 0; i < num_v; )
         {
             if (rec_md)
@@ -1641,7 +1641,7 @@ static int check_limit_local(struct client *cl,
                 }
                 else
                 {
-                    yaz_log(YLOG_LOG, "cmp: '%s' '%s'", rec_md->data.text.disp, values[i]);
+                    yaz_log(YLOG_DEBUG, "cmp: '%s' '%s'", rec_md->data.text.disp, values[i]);
                     if (!strcmp(rec_md->data.text.disp, values[i]))
                     {
                         // Value equals, should not be filtered.
