@@ -15,7 +15,7 @@ if test -z "$SERVICE"; then
 fi
 
 RECORDS=40
-QUERY=100
+QUERY=water
 NUM=20
 H="http://127.0.0.1:${PORT}/search.pz2"
 
