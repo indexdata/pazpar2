@@ -9,7 +9,8 @@ Options:                  Default values
     [--query=QUERY]       water
     [--service=SERVICE]
     [--settings=SETTINGS]
-    [--outfile=OUTFILE]   1
+    [--outfile=OUTFILE]
+    [--timed]
 EOF
     exit 1
 }
@@ -18,6 +19,13 @@ SERVICE=""
 SETTINGS=""
 QUERY=water
 OF=1
+TIME=""
+
+if test $# -eq 0; then 
+    usage
+    exit 0;
+fi
+
 while test $# -gt 0; do
     case "$1" in
         -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
@@ -39,13 +47,22 @@ while test $# -gt 0; do
 	--outfile=*)
 	  OF=$optarg
 	  ;;
+	--timed)
+	  TIME="yes"
+	  ;;
 	-*)
 	  usage
 	  ;;
     esac
     shift
 done
-wget -q -O $OF.init.xml "$H/?command=init${SERVICE}"
+
+if [ "$TIME" != "" ] ; then
+    /usr/bin/time --format "$OF, init, %e" wget -q -O ${TMP_DIR}$OF.init.xml "$H/?command=init${SERVICE}"  2> ${TMP_DIR}$OF.init.time
+else
+    wget -q -O ${TMP_DIR}$OF.init.xml "$H/?command=init${SERVICE}" 
+fi
+
 R="$?"
 if [ "$R" != 0 ]; then
     if [ "$R" = "4" ]; then    
@@ -58,11 +75,24 @@ if [ "$R" != 0 ]; then
 fi
 S=`xsltproc get_session.xsl $OF.init.xml`
 if [ -n "$SETTINGS" ] ; then
-    wget -q -O $OF.settings.xml "$H?command=settings&session=$S&${SETTINGS}"
+    if [ "$TIME" != "" ] ; then
+	/usr/bin/time --format "$OF, settings, %e" wget -q -O ${TMP_DIR}$OF.settings.xml "$H?command=settings&session=$S&${SETTINGS}" 2> ${TMP_DIR}$OF.settings.time
+    else
+	wget -q -O ${TMP_DIR}$OF.settings.xml "$H?command=settings&session=$S&${SETTINGS}" 
+    fi
 fi
-wget -q -O $OF.search.xml "$H?command=search&query=$QUERY&session=$S"
+
+if [ "$TIME" != "" ] ; then
+    /usr/bin/time --format "$OF, search, %e" wget -q -O ${TMP_DIR}$OF.search.xml "$H?command=search&query=$QUERY&session=$S" 2> ${TMP_DIR}$OF.search.time
+else
+    wget -q -O ${TMP_DIR}$OF.search.xml "$H?command=search&query=$QUERY&session=$S"
+fi
 sleep 1
-wget -q -O $OF.show.xml "$H?command=show&session=$S&sort=relevance&start=0&num=100&block=1"
+if [ "$TIME" != "" ] ; then
+    /usr/bin/time --format "$OF, show, %e" wget -q -O ${TMP_DIR}$OF.show.xml "$H?command=show&session=$S&sort=relevance&start=0&num=100&block=1" 2> ${TMP_DIR}$OF.show.time
+else
+    wget -q -O ${TMP_DIR}$OF.show.xml "$H?command=show&session=$S&sort=relevance&start=0&num=100&block=1"
+fi
 exit 0
 
 # Local Variables:
