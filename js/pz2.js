@@ -124,7 +124,7 @@ var pz2 = function ( paramArray )
     }
     // else, auto init session or wait for a user init?
     if (this.useSessions && paramArray.autoInit !== false) {
-        this.init(this.sessionId, this.serviceId);
+        this.init(this.sessionID, this.serviceId);
     }
     // Version parameter
     this.version = paramArray.version || null;
