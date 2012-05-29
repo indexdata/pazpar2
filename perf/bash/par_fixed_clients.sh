@@ -12,8 +12,10 @@ PORT=$2
 SERVICE=$3
 CLIENT_SCRIPT="client_timed.sh"
 rm -f *.time
-export TMP_DIR=run_`date +"%Y%m%d_%H%M%S"`/
-mkdir ${TMP_DIR}
+if [ "$TMP_DIR" == "" ] ; then  
+    export TMP_DIR=run_`date +"%Y%m%d_%H%M%S"`/
+fi  
+mkdir -p ${TMP_DIR} 
 rm -f latest
 ln -s ${TMP_DIR} latest
 while test $r -lt $ROUNDS; do

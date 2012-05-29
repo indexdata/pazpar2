@@ -637,12 +637,12 @@ void session_sort(struct session *se, const char *field, int increasing)
     }
     if (sr)
     {
-        yaz_log(YLOG_LOG, "search_sort: field=%s increasing=%d already fetched",
+        session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d already fetched",
                 field, increasing);
         session_leave(se);
         return;
     }
-    yaz_log(YLOG_LOG, "search_sort: field=%s increasing=%d must fetch",
+    session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d must fetch",
             field, increasing);
     sr = nmem_malloc(se->nmem, sizeof(*sr));
     sr->field = nmem_strdup(se->nmem, field);
@@ -780,7 +780,7 @@ enum pazpar2_error_code session_search(struct session *se,
         else
             return PAZPAR2_NO_TARGETS;
     }
-    yaz_log(YLOG_LOG, "session_start_search done");
+    session_log(se, YLOG_LOG, "session_start_search done");
     return PAZPAR2_NO_ERROR;
 }
 

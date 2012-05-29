@@ -1,3 +1,6 @@
 while true; do 
-      sh par.sh par.config.dennis 
+    export TMP_DIR=run_`date +"%Y%m%d_%H%M%S"`/
+    mkdir -p ${TMP_DIR}
+    sh par.sh par.config.dennis 
+    sleep 60
 done
