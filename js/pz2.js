@@ -201,6 +201,9 @@ pz2.prototype =
                         context.sessionID = 
                             data.getElementsByTagName("session")[0]
                                 .childNodes[0].nodeValue;
+                        if (data.getElementsByTagName("keepAlive").length > 0) {
+                            context.keepAlive = data.getElementsByTagName("keepAlive")[0].childNodes[0].nodeValue;
+                        }
                         context.pingTimer =
                             setTimeout(
                                 function () {

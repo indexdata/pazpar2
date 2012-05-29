@@ -470,6 +470,8 @@ static void cmd_init(struct http_channel *c)
     wrbuf_puts(c->wrbuf, "</session>"
                "<protocol>" PAZPAR2_PROTOCOL_VERSION "</protocol>");
     
+    wrbuf_printf(c->wrbuf, "<keepAlive>%d</keepAlive>\n", 1000 * ((s->psession->service->session_timeout >= 20) ?
+                                                                  (s->psession->service->session_timeout - 10) : 50));
     response_close(c, "init");
 }
 
