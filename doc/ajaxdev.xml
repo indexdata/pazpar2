@@ -235,7 +235,7 @@
   <varlistentry><term>reset ()</term>
   <listitem><para>reset state</para></listitem></varlistentry>
 
-  <varlistentry><term>init (sesionId)</term>
+  <varlistentry><term>init (sessionId, serviceId)</term>
   <listitem><para>session-mode, initialize new session or pick up a session already initialized</para></listitem></varlistentry>
 
   <varlistentry><term>ping ()</term>
