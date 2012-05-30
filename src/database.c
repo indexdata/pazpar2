@@ -100,7 +100,8 @@ struct database *create_database_for_service(const char *id,
         if (!strcmp(p->id, id))
             return p;
     
-    yaz_log(YLOG_DEBUG, "new database %s under service %s", id, service->id);
+    yaz_log(YLOG_DEBUG, "new database %s under service %s", id,
+       service->id ? service->id : "null");
     p = new_database_inherit_settings(id, service->nmem, service->settings);
     p->next = service->databases;
     service->databases = p;

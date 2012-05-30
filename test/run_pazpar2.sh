@@ -153,7 +153,7 @@ if [ -z "$SKIP_PAZPAR2" ] ; then
 fi
 
 # clean out empty diff files
-find . -name "$TEST*.dif" -empty -delete 
+find . -name "$TEST*.dif" -size 0c -print|xargs rm
 
 exit $code
 
