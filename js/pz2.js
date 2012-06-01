@@ -394,7 +394,7 @@ pz2.prototype =
               "sort": this.currentSort, 
               "block": 1,
               "type": this.showResponseType,
-              "windowid" : window.name,
+              "windowid" : window.name
           };
         if (query_state)
           requestParameters["query-state"] = query_state;
