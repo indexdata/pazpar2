@@ -1,6 +1,0 @@
-<!-- Testing URL changing, add sort -->
-<settings target="my">
-  <set name="pz:url"           value="z3950.indexdata.com/gils" />
-  <set name="pz:sortmap:title" value="type7:title" />
-</settings>
-

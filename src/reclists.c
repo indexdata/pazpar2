@@ -64,10 +64,10 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
         char parm[256];
         char *pp;
         const char *cpp;
-        int increasing;
+        int increasing = 0;
         int i;
         int offset = 0;
-        enum conf_sortkey_type type;
+        enum conf_sortkey_type type = Metadata_sortkey_string;
         struct reclist_sortparms *new;
 
         if (!(cpp = strchr(parms, ',')))
@@ -77,39 +77,56 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
 
         if ((pp = strchr(parm, ':')))
         {
-            increasing = pp[1] == '1' ? 1 : 0;
-            *pp = '\0';
-        }
-        else
-            increasing = 0;
-        if (!strcmp(parm, "relevance"))
-        {
-            type = Metadata_sortkey_relevance;
-        } 
-        else if (!strcmp(parm, "position"))
-        {
-            type = Metadata_sortkey_position;
-        }
-        else
-        {
-            for (i = 0; i < service->num_sortkeys; i++)
+            if (pp[1] == '1')
+                increasing = 1;
+            else if (pp[1] == '0')
+                increasing = 0;
+            else
             {
-                struct conf_sortkey *sk = &service->sortkeys[i];
-                if (!strcmp(sk->name, parm))
-                {
-                    type = sk->type;
-                    if (type == Metadata_sortkey_skiparticle)
-                        type = Metadata_sortkey_string;
-                    break;
-                }
-            }
-            if (i >= service->num_sortkeys)
-            {
-                yaz_log(YLOG_FATAL, "Bad sortkey: %s", parm);
+                yaz_log(YLOG_FATAL, "Bad sortkey modifier: %s", parm);
                 return 0;
             }
+           
+            if (pp[2])
+            {
+                if (pp[2] == 'p')
+                    type = Metadata_sortkey_position;
+                else
+                    yaz_log(YLOG_FATAL, "Bad sortkey modifier: %s", parm);
+            }
+            *pp = '\0';
+        }
+        if (type != Metadata_sortkey_position)
+        {
+            if (!strcmp(parm, "relevance"))
+            {
+                type = Metadata_sortkey_relevance;
+            } 
+            else if (!strcmp(parm, "position"))
+            {
+                type = Metadata_sortkey_position;
+            }
             else
+            {
+                for (i = 0; i < service->num_sortkeys; i++)
+                {
+                    struct conf_sortkey *sk = &service->sortkeys[i];
+                    if (!strcmp(sk->name, parm))
+                    {
+                        type = sk->type;
+                        if (type == Metadata_sortkey_skiparticle)
+                            type = Metadata_sortkey_string;
+                        break;
+                    }
+                }
+                if (i >= service->num_sortkeys)
+                {
+                    yaz_log(YLOG_FATAL, "Sortkey not defined in service: %s",
+                            parm);
+                    return 0;
+                }
                 offset = i;
+            }
         }
         new = *rp = nmem_malloc(nmem, sizeof(struct reclist_sortparms));
         new->next = 0;
@@ -179,10 +196,7 @@ static int reclist_cmp(const void *p1, const void *p2)
                 for (rec = r2->records; rec; rec = rec->next)
                     if (pos2 == 0 || rec->position < pos2)
                         pos2 = rec->position;
-                if (s->increasing)
-                    res = pos1 - pos2;
-                else
-                    res = pos2 - pos1;
+                res = pos1 - pos2;
             }
             break;
         default:

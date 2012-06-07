@@ -1173,7 +1173,8 @@ static void cmd_show(struct http_channel *c)
         release_session(c, s);
         return;
     }
-    session_sort(s->psession, sp->name, sp->increasing);
+    session_sort(s->psession, sp->name, sp->increasing,
+                 sp->type == Metadata_sortkey_position);
 
     status = session_active_clients(s->psession);
 

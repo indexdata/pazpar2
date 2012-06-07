@@ -622,34 +622,64 @@ int session_is_preferred_clients_ready(struct session *s)
     return res == 0;
 }
 
-void session_sort(struct session *se, const char *field, int increasing)
+static void session_clear_set(struct session *se,
+                              const char *sort_field, int increasing)
+{
+    reclist_destroy(se->reclist);
+    se->reclist = 0;
+    if (nmem_total(se->nmem))
+        session_log(se, YLOG_DEBUG, "NMEN operation usage %zd",
+                    nmem_total(se->nmem));
+    nmem_reset(se->nmem);
+    se->total_records = se->total_merged = 0;
+    se->num_termlists = 0;
+    
+    /* reset list of sorted results and clear to relevance search */
+    se->sorted_results = nmem_malloc(se->nmem, sizeof(*se->sorted_results));
+    se->sorted_results->field = nmem_strdup(se->nmem, sort_field);
+    se->sorted_results->increasing = increasing;
+    se->sorted_results->next = 0;
+    
+    se->reclist = reclist_create(se->nmem);
+}
+
+void session_sort(struct session *se, const char *field, int increasing,
+                  int clear_set)
 {
     struct session_sorted_results *sr;
     struct client_list *l;
 
     session_enter(se);
 
-    /* see if we already have sorted for this critieria */
-    for (sr = se->sorted_results; sr; sr = sr->next)
+    yaz_log(YLOG_LOG, "session_sort field=%s", field);
+    if (clear_set)
     {
-        if (!strcmp(field, sr->field) && increasing == sr->increasing)
-            break;
+        session_clear_set(se, field, increasing);
     }
-    if (sr)
+    else
     {
-        session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d already fetched",
-                field, increasing);
-        session_leave(se);
-        return;
+        /* see if we already have sorted for this critieria */
+        for (sr = se->sorted_results; sr; sr = sr->next)
+        {
+            if (!strcmp(field, sr->field) && increasing == sr->increasing)
+                break;
+        }
+        if (sr)
+        {
+            session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d already fetched",
+                        field, increasing);
+            session_leave(se);
+            return;
+        }
+        session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d must fetch",
+                    field, increasing);
+        sr = nmem_malloc(se->nmem, sizeof(*sr));
+        sr->field = nmem_strdup(se->nmem, field);
+        sr->increasing = increasing;
+        sr->next = se->sorted_results;
+        se->sorted_results = sr;
     }
-    session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d must fetch",
-            field, increasing);
-    sr = nmem_malloc(se->nmem, sizeof(*sr));
-    sr->field = nmem_strdup(se->nmem, field);
-    sr->increasing = increasing;
-    sr->next = se->sorted_results;
-    se->sorted_results = sr;
-    
+        
     for (l = se->clients_active; l; l = l->next)
     {
         struct client *cl = l->client;
@@ -688,29 +718,16 @@ enum pazpar2_error_code session_search(struct session *se,
         session_reset_active_clients(se, 0);
     
     session_enter(se);
-    reclist_destroy(se->reclist);
-    se->reclist = 0;
     se->settings_modified = 0;
+    session_clear_set(se, sort_field, increasing);
     relevance_destroy(&se->relevance);
-    if (nmem_total(se->nmem))
-        session_log(se, YLOG_DEBUG, "NMEN operation usage %zd", nmem_total(se->nmem));
-    nmem_reset(se->nmem);
-    se->total_records = se->total_merged = 0;
-    se->num_termlists = 0;
 
-    /* reset list of sorted results and clear to relevance search */
-    se->sorted_results = nmem_malloc(se->nmem, sizeof(*se->sorted_results));
-    se->sorted_results->field = nmem_strdup(se->nmem, sort_field);
-    se->sorted_results->increasing = increasing;
-    se->sorted_results->next = 0;
-    
     live_channels = select_targets(se, filter);
     if (!live_channels)
     {
         session_leave(se);
         return PAZPAR2_NO_TARGETS;
     }
-    se->reclist = reclist_create(se->nmem);
 
     yaz_gettimeofday(&tval);
     

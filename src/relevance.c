@@ -130,8 +130,9 @@ static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
 }
 
 struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
-                                       NMEM nmem, struct ccl_rpn_node *query)
+                                       struct ccl_rpn_node *query)
 {
+    NMEM nmem = nmem_create();
     struct relevance *res = nmem_malloc(nmem, sizeof(*res));
     int i;
 
@@ -153,6 +154,7 @@ void relevance_destroy(struct relevance **rp)
     if (*rp)
     {
         pp2_charset_token_destroy((*rp)->prt);
+        nmem_destroy((*rp)->nmem);
         *rp = 0;
     }
 }

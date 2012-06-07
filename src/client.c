@@ -1290,8 +1290,7 @@ int client_parse_query(struct client *cl, const char *query,
     if (!se->relevance)
     {
         // Initialize relevance structure with query terms
-        se->relevance = relevance_create_ccl(
-            se->service->charsets, se->nmem, cn);
+        se->relevance = relevance_create_ccl(se->service->charsets, cn);
     }
     ccl_rpn_delete(cn);
     return ret_value;
