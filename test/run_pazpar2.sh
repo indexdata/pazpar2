@@ -104,7 +104,7 @@ for f in `cat ${srcdir}/${URLS}`; do
 	fi
 	if test -f $OUT1; then
 	    if diff $OUT1 $OUT2 >$DIFF; then
-		:
+		rm $DIFF
 	    else
 		echo "Test $testno: Failed. See $OUT1, $OUT2 and $DIFF"
 		echo "URL: $f"
@@ -151,9 +151,6 @@ if [ -z "$SKIP_PAZPAR2" ] ; then
     kill_pazpar2
     sleep 2
 fi
-
-# clean out empty diff files
-find . -name "$TEST*.dif" -size 0c -print|xargs rm
 
 exit $code
 

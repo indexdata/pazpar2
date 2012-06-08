@@ -124,7 +124,7 @@ var pz2 = function ( paramArray )
     }
     // else, auto init session or wait for a user init?
     if (this.useSessions && paramArray.autoInit !== false) {
-        this.init(this.sessionId, this.serviceId);
+        this.init(this.sessionID, this.serviceId);
     }
     // Version parameter
     this.version = paramArray.version || null;
@@ -201,6 +201,9 @@ pz2.prototype =
                         context.sessionID = 
                             data.getElementsByTagName("session")[0]
                                 .childNodes[0].nodeValue;
+                        if (data.getElementsByTagName("keepAlive").length > 0) {
+                            context.keepAlive = data.getElementsByTagName("keepAlive")[0].childNodes[0].nodeValue;
+                        }
                         context.pingTimer =
                             setTimeout(
                                 function () {
@@ -391,7 +394,7 @@ pz2.prototype =
               "sort": this.currentSort, 
               "block": 1,
               "type": this.showResponseType,
-              "windowid" : window.name,
+              "windowid" : window.name
           };
         if (query_state)
           requestParameters["query-state"] = query_state;

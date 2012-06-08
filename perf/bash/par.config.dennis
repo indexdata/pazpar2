@@ -1,10 +1,11 @@
 DELAY=0.0001
 WAIT=5
-NUMBER=10
+NUMBER=20
 ROUNDS=10
 PORT=9004
 #SERVICE=perf_t
 SHUTDOWN=0
+HOST=satay
 NOSETTINGS="use_url_proxy%5Bcatalog.library.cornell.edu%3A7090%2Fvoyager%5D=0\
 &pz%3Acclmap%3Asu%5Bcatalog.library.cornell.edu%3A7090%2Fvoyager%5D=1%3D21+s%3Dal\
 &secondary_request_syntax%5Bcatalog.library.cornell.edu%3A7090%2Fvoyager%5D=OPAC\

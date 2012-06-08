@@ -4,7 +4,7 @@
 <name>MIT OpenCourseWare</name>
 <hits>0</hits>
 <diagnostic>114</diagnostic>
-<addinfo> (backend=localhost:9003)</addinfo>
+<addinfo>(backend=localhost:9003)</addinfo>
 <records>0</records>
 <state>Client_Error</state>
 </target></bytarget>
