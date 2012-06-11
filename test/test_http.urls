@@ -74,3 +74,6 @@ http://localhost:9763/search.pz2?session=9&command=search&query=computer&limit=M
 http://localhost:9763/search.pz2?session=9&command=show&block=1
 http://localhost:9763/search.pz2?session=9&command=search&query=computer&limit=date%3D1977
 http://localhost:9763/search.pz2?session=9&command=show&block=1
+http://localhost:9763/search.pz2?command=init
+http://localhost:9763/search.pz2?session=10&command=search&query=au%3dadam
+http://localhost:9763/search.pz2?session=10&command=show&block=1

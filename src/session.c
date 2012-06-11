@@ -1933,12 +1933,12 @@ static int ingest_to_cluster(struct client *cl,
                 }
             }
 
-
             // ranking of _all_ fields enabled ... 
             if (rank)
             {
                 relevance_countwords(se->relevance, cluster, 
-                                     (char *) value, rank, ser_md->name);
+                                     (char *) value, rank, ser_md->name,
+                                     ser_md->frank);
             }
 
             // construct facets ... unless the client already has reported them

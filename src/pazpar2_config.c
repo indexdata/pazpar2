@@ -76,7 +76,8 @@ static void conf_metadata_assign(NMEM nmem,
                                  int sortkey_offset,
                                  enum conf_metadata_mergekey mt,
                                  const char *facetrule,
-                                 const char *limitmap)
+                                 const char *limitmap,
+                                 const char *frank)
 {
     assert(nmem && metadata && name);
     
@@ -98,6 +99,7 @@ static void conf_metadata_assign(NMEM nmem,
     metadata->mergekey = mt;
     metadata->facetrule = nmem_strdup_null(nmem, facetrule);
     metadata->limitmap = nmem_strdup_null(nmem, limitmap);
+    metadata->frank = nmem_strdup_null(nmem, frank);
 }
 
 
@@ -177,7 +179,8 @@ static struct conf_metadata* conf_service_add_metadata(
     int sortkey_offset,
     enum conf_metadata_mergekey mt,
     const char *facetrule,
-    const char *limitmap
+    const char *limitmap,
+    const char *frank
     )
 {
     struct conf_metadata * md = 0;
@@ -189,7 +192,7 @@ static struct conf_metadata* conf_service_add_metadata(
     md = service->metadata + field_id;
     conf_metadata_assign(service->nmem, md, name, type, merge, setting,
                          brief, termlist, rank, sortkey_offset,
-                         mt, facetrule, limitmap);
+                         mt, facetrule, limitmap, frank);
     return md;
 }
 
@@ -294,6 +297,8 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     xmlChar *xml_mergekey = 0;
     xmlChar *xml_limitmap = 0;
     xmlChar *xml_icu_chain = 0;
+    xmlChar *xml_frank = 0;
+
     struct _xmlAttr *attr;
     for (attr = n->properties; attr; attr = attr->next)
     {
@@ -330,6 +335,9 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
         else if (!xmlStrcmp(attr->name, BAD_CAST "limitmap") &&
                  attr->children && attr->children->type == XML_TEXT_NODE)
             xml_limitmap = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "frank") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_frank = attr->children->content;
         else
         {
             yaz_log(YLOG_FATAL, "Unknown metadata attribute '%s'", attr->name);
@@ -470,7 +478,10 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
                               (const char *) xml_name,
                               type, merge, setting,
                               brief, termlist, rank, sortkey_offset,
-                              mergekey_type, (const char *) xml_icu_chain, (const char *) xml_limitmap);
+                              mergekey_type,
+                              (const char *) xml_icu_chain,
+                              (const char *) xml_limitmap,
+                              (const char *) xml_frank);
     (*md_node)++;
     return 0;
 }

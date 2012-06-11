@@ -6,7 +6,7 @@
 
   <!-- field-specific mappings -->
   <set name="pz:cclmap:ti" value="u=4 s=al"/>
-  <set name="pz:cclmap:su" value="u=21 s=al"/>
+  <set name="pz:cclmap:au" value="u=1003 s=al"/>
   <set name="pz:cclmap:isbn" value="u=7"/>
   <set name="pz:cclmap:issn" value="u=8"/>
   <set name="pz:cclmap:date" value="u=30 r=r"/>

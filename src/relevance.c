@@ -44,34 +44,45 @@ struct word_entry {
     struct word_entry *next;
 };
 
-int word_entry_match(struct word_entry *entries, const char *norm_str)
+static int word_entry_match(struct word_entry *entries, const char *norm_str,
+                            const char *frank, int *local_mult)
 {
     for (; entries; entries = entries->next)
     {
         if (!strcmp(norm_str, entries->norm_str))
+        {
+            const char *cp = 0;
+            if (frank && (cp = strchr(frank, ' ')))
+            {
+                if ((cp - frank) == strlen(entries->ccl_field) &&
+                    memcmp(entries->ccl_field, frank, cp - frank) == 0)
+                    *local_mult = atoi(cp + 1);
+            }
             return entries->termno;
+        }
     }
     return 0;
 }
 
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
-                          const char *words, int multiplier, const char *name)
+                          const char *words, int multiplier, const char *name,
+                          const char *frank)
 {
     int *mult = cluster->term_frequency_vec_tmp;
     const char *norm_str;
     int i, length = 0;
-
     pp2_charset_token_first(r->prt, words, 0);
     for (i = 1; i < r->vec_len; i++)
         mult[i] = 0;
 
     while ((norm_str = pp2_charset_token_next(r->prt)))
     {
-        int res = word_entry_match(r->entries, norm_str);
+        int local_mult = multiplier;
+        int res = word_entry_match(r->entries, norm_str, frank, &local_mult);
         if (res)
         {
             assert(res < r->vec_len);
-            mult[res] += multiplier;
+            mult[res] += local_mult;
         }
         length++;
     }
