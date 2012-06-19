@@ -1812,8 +1812,8 @@ static int ingest_to_cluster(struct client *cl,
             struct record_metadata *rec_md = 0;
             int md_field_id = -1;
             int sk_field_id = -1;
-            int rank = 0;
-            xmlChar *rank_str = 0;
+            const char *rank;
+            xmlChar *xml_rank;
             
             type = xmlGetProp(n, (xmlChar *) "type");
             value = xmlNodeListGetString(xdoc, n->children, 1);
@@ -1828,15 +1828,6 @@ static int ingest_to_cluster(struct client *cl,
             
             ser_md = &service->metadata[md_field_id];
 
-            rank_str = xmlGetProp(n, (xmlChar *) "rank");
-            if (rank_str)
-            {
-                rank = atoi((const char *) rank_str);
-                xmlFree(rank_str);
-            }
-            else
-                rank = ser_md->rank;
-            
             if (ser_md->sortkey_offset >= 0)
             {
                 sk_field_id = ser_md->sortkey_offset;
@@ -1848,6 +1839,9 @@ static int ingest_to_cluster(struct client *cl,
                                           ser_md->type, 0);
             if (!rec_md)
                 continue;
+
+            xml_rank = xmlGetProp(n, (xmlChar *) "rank");
+            rank = xml_rank ? (const char *) xml_rank : ser_md->rank;
 
             wheretoput = &cluster->metadata[md_field_id];
 
@@ -1937,8 +1931,7 @@ static int ingest_to_cluster(struct client *cl,
             if (rank)
             {
                 relevance_countwords(se->relevance, cluster, 
-                                     (char *) value, rank, ser_md->name,
-                                     ser_md->frank);
+                                     (char *) value, rank, ser_md->name);
             }
 
             // construct facets ... unless the client already has reported them
@@ -1961,6 +1954,8 @@ static int ingest_to_cluster(struct client *cl,
             }
 
             // cleaning up
+            if (xml_rank)
+                xmlFree(xml_rank);
             xmlFree(type);
             xmlFree(value);
             type = value = 0;

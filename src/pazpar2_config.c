@@ -72,12 +72,11 @@ static void conf_metadata_assign(NMEM nmem,
                                  enum conf_setting_type setting,
                                  int brief,
                                  int termlist,
-                                 int rank,
+                                 const char *rank,
                                  int sortkey_offset,
                                  enum conf_metadata_mergekey mt,
                                  const char *facetrule,
-                                 const char *limitmap,
-                                 const char *frank)
+                                 const char *limitmap)
 {
     assert(nmem && metadata && name);
     
@@ -94,12 +93,11 @@ static void conf_metadata_assign(NMEM nmem,
     metadata->setting = setting;
     metadata->brief = brief;   
     metadata->termlist = termlist;
-    metadata->rank = rank;    
+    metadata->rank = nmem_strdup_null(nmem, rank);
     metadata->sortkey_offset = sortkey_offset;
     metadata->mergekey = mt;
     metadata->facetrule = nmem_strdup_null(nmem, facetrule);
     metadata->limitmap = nmem_strdup_null(nmem, limitmap);
-    metadata->frank = nmem_strdup_null(nmem, frank);
 }
 
 
@@ -175,12 +173,11 @@ static struct conf_metadata* conf_service_add_metadata(
     enum conf_setting_type setting,
     int brief,
     int termlist,
-    int rank,
+    const char *rank,
     int sortkey_offset,
     enum conf_metadata_mergekey mt,
     const char *facetrule,
-    const char *limitmap,
-    const char *frank
+    const char *limitmap
     )
 {
     struct conf_metadata * md = 0;
@@ -192,7 +189,7 @@ static struct conf_metadata* conf_service_add_metadata(
     md = service->metadata + field_id;
     conf_metadata_assign(service->nmem, md, name, type, merge, setting,
                          brief, termlist, rank, sortkey_offset,
-                         mt, facetrule, limitmap, frank);
+                         mt, facetrule, limitmap);
     return md;
 }
 
@@ -284,7 +281,6 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     enum conf_metadata_mergekey mergekey_type = Metadata_mergekey_no;
     int brief = 0;
     int termlist = 0;
-    int rank = 0;
     int sortkey_offset = 0;
     xmlChar *xml_name = 0;
     xmlChar *xml_brief = 0;
@@ -297,7 +293,6 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     xmlChar *xml_mergekey = 0;
     xmlChar *xml_limitmap = 0;
     xmlChar *xml_icu_chain = 0;
-    xmlChar *xml_frank = 0;
 
     struct _xmlAttr *attr;
     for (attr = n->properties; attr; attr = attr->next)
@@ -335,9 +330,6 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
         else if (!xmlStrcmp(attr->name, BAD_CAST "limitmap") &&
                  attr->children && attr->children->type == XML_TEXT_NODE)
             xml_limitmap = attr->children->content;
-        else if (!xmlStrcmp(attr->name, BAD_CAST "frank") &&
-                 attr->children && attr->children->type == XML_TEXT_NODE)
-            xml_frank = attr->children->content;
         else
         {
             yaz_log(YLOG_FATAL, "Unknown metadata attribute '%s'", attr->name);
@@ -373,9 +365,6 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
         }
     }
     
-    if (xml_rank)
-        rank = atoi((const char *) xml_rank);
-
     if (xml_type)
     {
         if (!strcmp((const char *) xml_type, "generic"))
@@ -477,11 +466,11 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     conf_service_add_metadata(service, *md_node,
                               (const char *) xml_name,
                               type, merge, setting,
-                              brief, termlist, rank, sortkey_offset,
+                              brief, termlist,
+                              (const char *) xml_rank, sortkey_offset,
                               mergekey_type,
                               (const char *) xml_icu_chain,
-                              (const char *) xml_limitmap,
-                              (const char *) xml_frank);
+                              (const char *) xml_limitmap);
     (*md_node)++;
     return 0;
 }

@@ -45,18 +45,23 @@ struct word_entry {
 };
 
 static int word_entry_match(struct word_entry *entries, const char *norm_str,
-                            const char *frank, int *local_mult)
+                            const char *rank, int *mult)
 {
     for (; entries; entries = entries->next)
     {
         if (!strcmp(norm_str, entries->norm_str))
         {
             const char *cp = 0;
-            if (frank && (cp = strchr(frank, ' ')))
+            int no_read = 0;
+            sscanf(rank, "%d%n", mult, &no_read);
+            rank += no_read;
+            while (*rank == ' ')
+                rank++;
+            if (no_read > 0 && (cp = strchr(rank, ' ')))
             {
-                if ((cp - frank) == strlen(entries->ccl_field) &&
-                    memcmp(entries->ccl_field, frank, cp - frank) == 0)
-                    *local_mult = atoi(cp + 1);
+                if ((cp - rank) == strlen(entries->ccl_field) &&
+                    memcmp(entries->ccl_field, rank, cp - rank) == 0)
+                    *mult = atoi(cp + 1);
             }
             return entries->termno;
         }
@@ -65,8 +70,8 @@ static int word_entry_match(struct word_entry *entries, const char *norm_str,
 }
 
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
-                          const char *words, int multiplier, const char *name,
-                          const char *frank)
+                          const char *words, const char *rank,
+                          const char *name)
 {
     int *mult = cluster->term_frequency_vec_tmp;
     const char *norm_str;
@@ -75,10 +80,11 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
     for (i = 1; i < r->vec_len; i++)
         mult[i] = 0;
 
+    assert(rank);
     while ((norm_str = pp2_charset_token_next(r->prt)))
     {
-        int local_mult = multiplier;
-        int res = word_entry_match(r->entries, norm_str, frank, &local_mult);
+        int local_mult = 0;
+        int res = word_entry_match(r->entries, norm_str, rank, &local_mult);
         if (res)
         {
             assert(res < r->vec_len);

@@ -73,9 +73,7 @@ struct conf_metadata
     char *name;  // The field name. Output by normalization stylesheet
     int brief;   // Is this element to be returned in the brief format?
     int termlist;// Is this field to be treated as a termlist for browsing?
-    int rank;    // Rank factor. 0 means don't use this field for ranking, 
-                 // 1 is default
-                 // values >1  give additional significance to a field
+    const char *rank;
     int sortkey_offset; // -1 if it's not a sortkey, otherwise index
                         // into service/record_cluster->sortkey array
     enum conf_metadata_type type;
@@ -85,7 +83,6 @@ struct conf_metadata
     char *facetrule;
 
     char *limitmap;  // Should be expanded into service-wide default e.g. pz:limitmap:<name>=value setting
-    char *frank;
 };
 
 
