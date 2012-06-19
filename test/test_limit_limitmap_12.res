@@ -27,12 +27,12 @@
 <term><name>Appleman, Daniel</name><frequency>1</frequency></term>
 <term><name>Bainbridge, David I</name><frequency>1</frequency></term>
 <term><name>Caplin, Steve</name><frequency>1</frequency></term>
+<term><name>Carasik, Anne H</name><frequency>1</frequency></term>
 <term><name>Cole, Eric</name><frequency>1</frequency></term>
-<term><name>Cooley, Peter</name><frequency>1</frequency></term>
 <term><name>De Jong, Kenneth A</name><frequency>1</frequency></term>
 <term><name>Dowd, Kevin</name><frequency>1</frequency></term>
-<term><name>Englund, Carl R</name><frequency>1</frequency></term>
 <term><name>Hodges, M. Susan</name><frequency>1</frequency></term>
+<term><name>Kaasgaard, Klaus</name><frequency>1</frequency></term>
 </list>
 <list name="subject">
 <term><name>Computer file</name><frequency>24</frequency></term>
