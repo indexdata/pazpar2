@@ -44,34 +44,51 @@ struct word_entry {
     struct word_entry *next;
 };
 
-int word_entry_match(struct word_entry *entries, const char *norm_str)
+static int word_entry_match(struct word_entry *entries, const char *norm_str,
+                            const char *rank, int *mult)
 {
     for (; entries; entries = entries->next)
     {
         if (!strcmp(norm_str, entries->norm_str))
+        {
+            const char *cp = 0;
+            int no_read = 0;
+            sscanf(rank, "%d%n", mult, &no_read);
+            rank += no_read;
+            while (*rank == ' ')
+                rank++;
+            if (no_read > 0 && (cp = strchr(rank, ' ')))
+            {
+                if ((cp - rank) == strlen(entries->ccl_field) &&
+                    memcmp(entries->ccl_field, rank, cp - rank) == 0)
+                    *mult = atoi(cp + 1);
+            }
             return entries->termno;
+        }
     }
     return 0;
 }
 
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
-                          const char *words, int multiplier, const char *name)
+                          const char *words, const char *rank,
+                          const char *name)
 {
     int *mult = cluster->term_frequency_vec_tmp;
     const char *norm_str;
     int i, length = 0;
-
     pp2_charset_token_first(r->prt, words, 0);
     for (i = 1; i < r->vec_len; i++)
         mult[i] = 0;
 
+    assert(rank);
     while ((norm_str = pp2_charset_token_next(r->prt)))
     {
-        int res = word_entry_match(r->entries, norm_str);
+        int local_mult = 0;
+        int res = word_entry_match(r->entries, norm_str, rank, &local_mult);
         if (res)
         {
             assert(res < r->vec_len);
-            mult[res] += multiplier;
+            mult[res] += local_mult;
         }
         length++;
     }
@@ -130,8 +147,9 @@ static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
 }
 
 struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
-                                       NMEM nmem, struct ccl_rpn_node *query)
+                                       struct ccl_rpn_node *query)
 {
+    NMEM nmem = nmem_create();
     struct relevance *res = nmem_malloc(nmem, sizeof(*res));
     int i;
 
@@ -153,6 +171,7 @@ void relevance_destroy(struct relevance **rp)
     if (*rp)
     {
         pp2_charset_token_destroy((*rp)->prt);
+        nmem_destroy((*rp)->nmem);
         *rp = 0;
     }
 }

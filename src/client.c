@@ -412,16 +412,12 @@ static int nativesyntax_to_type(const char *s, char *type,
             const char *cp = strchr(s, ';');
             yaz_snprintf(type, 80, "xml; charset=%s", cp ? cp+1 : "marc-8s");
         }
-        else if (!strncmp(s, "xml", 3))
-        {
-            strcpy(type, "xml");
-        }
         else if (!strncmp(s, "txml", 4))
         {
             const char *cp = strchr(s, ';');
             yaz_snprintf(type, 80, "txml; charset=%s", cp ? cp+1 : "marc-8s");
         }
-        else
+        else /* pass verbatim to ZOOM - including "xml" */
             strcpy(type, s);
         return 0;
     }
@@ -1290,8 +1286,7 @@ int client_parse_query(struct client *cl, const char *query,
     if (!se->relevance)
     {
         // Initialize relevance structure with query terms
-        se->relevance = relevance_create_ccl(
-            se->service->charsets, se->nmem, cn);
+        se->relevance = relevance_create_ccl(se->service->charsets, cn);
     }
     ccl_rpn_delete(cn);
     return ret_value;

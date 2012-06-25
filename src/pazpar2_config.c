@@ -72,7 +72,7 @@ static void conf_metadata_assign(NMEM nmem,
                                  enum conf_setting_type setting,
                                  int brief,
                                  int termlist,
-                                 int rank,
+                                 const char *rank,
                                  int sortkey_offset,
                                  enum conf_metadata_mergekey mt,
                                  const char *facetrule,
@@ -93,7 +93,7 @@ static void conf_metadata_assign(NMEM nmem,
     metadata->setting = setting;
     metadata->brief = brief;   
     metadata->termlist = termlist;
-    metadata->rank = rank;    
+    metadata->rank = nmem_strdup_null(nmem, rank);
     metadata->sortkey_offset = sortkey_offset;
     metadata->mergekey = mt;
     metadata->facetrule = nmem_strdup_null(nmem, facetrule);
@@ -173,7 +173,7 @@ static struct conf_metadata* conf_service_add_metadata(
     enum conf_setting_type setting,
     int brief,
     int termlist,
-    int rank,
+    const char *rank,
     int sortkey_offset,
     enum conf_metadata_mergekey mt,
     const char *facetrule,
@@ -281,7 +281,6 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     enum conf_metadata_mergekey mergekey_type = Metadata_mergekey_no;
     int brief = 0;
     int termlist = 0;
-    int rank = 0;
     int sortkey_offset = 0;
     xmlChar *xml_name = 0;
     xmlChar *xml_brief = 0;
@@ -294,6 +293,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     xmlChar *xml_mergekey = 0;
     xmlChar *xml_limitmap = 0;
     xmlChar *xml_icu_chain = 0;
+
     struct _xmlAttr *attr;
     for (attr = n->properties; attr; attr = attr->next)
     {
@@ -365,9 +365,6 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
         }
     }
     
-    if (xml_rank)
-        rank = atoi((const char *) xml_rank);
-
     if (xml_type)
     {
         if (!strcmp((const char *) xml_type, "generic"))
@@ -469,8 +466,11 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     conf_service_add_metadata(service, *md_node,
                               (const char *) xml_name,
                               type, merge, setting,
-                              brief, termlist, rank, sortkey_offset,
-                              mergekey_type, (const char *) xml_icu_chain, (const char *) xml_limitmap);
+                              brief, termlist,
+                              (const char *) xml_rank, sortkey_offset,
+                              mergekey_type,
+                              (const char *) xml_icu_chain,
+                              (const char *) xml_limitmap);
     (*md_node)++;
     return 0;
 }
