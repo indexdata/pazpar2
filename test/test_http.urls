@@ -53,7 +53,7 @@ http://localhost:9763/search.pz2?command=init
 http://localhost:9763/search.pz2?session=8&command=settings&pz:name%5Bz3950.indexdata.com%2Fmarc%5D=marc&pz:requestsyntax%5Bz3950.indexdata.com%2Fmarc%5D=usmarc&pz:nativesyntax%5Bz3950.indexdata.com%2Fmarc%5D=iso2709&pz:xslt%5Bz3950.indexdata.com%2Fmarc%5D=marc21%5Ftest.xsl&pz:recordfilter%5Bz3950.indexdata.com%2Fmarc%5D=date
 http://localhost:9763/search.pz2?session=8&command=search&query=xyzzyz
 2 http://localhost:9763/search.pz2?session=8&command=show&block=1
-http://localhost:9763/search.pz2?session=8&command=search&query=a+and
+http://localhost:9763/search.pz2?session=8&command=search&query=a+AND
 1 http://localhost:9763/search.pz2?session=8&command=show&block=1
 http://localhost:9763/search.pz2?command=init&pz:limitmap:author%5Bz3950.indexdata.com%2Fmarc%5D=ccl:author_phrase&pz:limitmap:Mysubject%5Bz3950.indexdata.com%2fmarc%5D=local:subject&pz:limitmap:date%5Bz3950.indexdata.com%2fmarc%5D=local:
 1 http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3Dadam\,+james%7Cother_author
@@ -76,4 +76,6 @@ http://localhost:9763/search.pz2?session=9&command=search&query=computer&limit=d
 http://localhost:9763/search.pz2?session=9&command=show&block=1
 http://localhost:9763/search.pz2?command=init
 http://localhost:9763/search.pz2?session=10&command=search&query=au%3dadam
+http://localhost:9763/search.pz2?session=10&command=show&block=1
+http://localhost:9763/search.pz2?session=10&command=search&query=teachers+AND+greece
 http://localhost:9763/search.pz2?session=10&command=show&block=1

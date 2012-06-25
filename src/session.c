@@ -754,7 +754,7 @@ enum pazpar2_error_code session_search(struct session *se,
             continue;
 
         parse_ret = client_parse_query(cl, query, facet_limits, startrecs,
-            maxrecs);
+                                       maxrecs, se->service->ccl_bibset);
         if (parse_ret == -1)
             no_failed_query++;
         else if (parse_ret == -2)
