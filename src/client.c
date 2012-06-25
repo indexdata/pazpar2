@@ -695,7 +695,7 @@ static void client_set_facets_request(struct client *cl, ZOOM_connection link)
                 wrbuf_puts(w, ",");
         }
     }
-    yaz_log(YLOG_LOG, "using facets str: %s", wrbuf_cstr(w));
+    yaz_log(YLOG_DEBUG, "using facets str: %s", wrbuf_cstr(w));
     ZOOM_connection_option_set(link, "facets",
                                wrbuf_len(w) ? wrbuf_cstr(w) : 0);
     wrbuf_destroy(w);
