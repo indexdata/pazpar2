@@ -7,21 +7,24 @@
 <num>3</num>
 <hit>
 
-<md-title>BIBLIOGRAPHY OF MAINE GEOLOGY</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
+<md-title>BIBLIOGRAPHY OF MAINE GEOLOGY</md-title><location id="z3950.indexdata.com/gils"
+ name="Index Data GILS test server" checksum="2074161109">
 <md-title>BIBLIOGRAPHY OF MAINE GEOLOGY</md-title></location>
 <relevance>0</relevance>
 <recid>content: title bibliography of maine geology author medium book</recid>
 </hit>
 <hit>
 
-<md-title>GROUNDWATER RESOURCE MAPS - COUNTY SERIES</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
+<md-title>GROUNDWATER RESOURCE MAPS - COUNTY SERIES</md-title><location id="z3950.indexdata.com/gils"
+ name="Index Data GILS test server" checksum="1899968820">
 <md-title>GROUNDWATER RESOURCE MAPS - COUNTY SERIES</md-title></location>
 <relevance>0</relevance>
 <recid>content: title groundwater resource maps county series author medium book</recid>
 </hit>
 <hit>
 
-<md-title>OIL/GAS DRILLING</md-title><location id="z3950.indexdata.com/gils" name="Index Data GILS test server">
+<md-title>OIL/GAS DRILLING</md-title><location id="z3950.indexdata.com/gils"
+ name="Index Data GILS test server" checksum="1725776531">
 <md-title>OIL/GAS DRILLING</md-title></location>
 <relevance>0</relevance>
 <recid>content: title oil gas drilling author medium book</recid>

@@ -10,7 +10,8 @@
 <md-title>Computer science &amp; technology</md-title>
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
 <md-date>1977</md-date>
-<md-subject>Optical pattern recognition</md-subject><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-subject>Optical pattern recognition</md-subject><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="3659474317">
 <md-title>Computer science &amp; technology</md-title>
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
 <md-date>1977</md-date>
@@ -27,7 +28,8 @@
 <md-date>1973-1980</md-date>
 <md-subject>Bible. O.T</md-subject>
 <md-subject>Bible</md-subject>
-<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="3136897450">
 <md-title>The Computer Bible</md-title>
 <md-date>1973-1980</md-date>
 <md-subject>Bible. O.T</md-subject>
@@ -45,7 +47,8 @@
 <md-title>The use of passwords for controlled access to computer resources</md-title>
 <md-date>1977</md-date>
 <md-author>Wood, Helen M</md-author>
-<md-subject>Computers</md-subject><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-subject>Computers</md-subject><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="3833666606">
 <md-title>The use of passwords for controlled access to computer resources</md-title>
 <md-date>1977</md-date>
 <md-author>Wood, Helen M</md-author>
@@ -62,7 +65,8 @@
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
 <md-date>1977</md-date>
 <md-subject>Tomography</md-subject>
-<md-description>Includes bibliographical references and index</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-description>Includes bibliographical references and index</md-description><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="3485282028">
 <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
 <md-date>1977</md-date>

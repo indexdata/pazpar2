@@ -48,7 +48,7 @@ http://localhost:9763/search.pz2?command=init&pz:elements%5Bz3950.indexdata.com%
 http://localhost:9763/search.pz2?session=7&command=search&query=greece
 1 http://localhost:9763/search.pz2?session=7&command=show&block=1
 1 http://localhost:9763/search.pz2?session=6&command=show&block=1
-http://localhost:9763/search.pz2?session=6&command=record&id=content%3A+title+computer+processing+of+dynamic+images+from+an+anger+scintillation+camera+author+medium+book&offset=0
+http://localhost:9763/search.pz2?session=6&command=record&id=content%3A+title+computer+processing+of+dynamic+images+from+an+anger+scintillation+camera+author+medium+book&checksum=2614320583
 http://localhost:9763/search.pz2?command=init
 http://localhost:9763/search.pz2?session=8&command=settings&pz:name%5Bz3950.indexdata.com%2Fmarc%5D=marc&pz:requestsyntax%5Bz3950.indexdata.com%2Fmarc%5D=usmarc&pz:nativesyntax%5Bz3950.indexdata.com%2Fmarc%5D=iso2709&pz:xslt%5Bz3950.indexdata.com%2Fmarc%5D=marc21%5Ftest.xsl&pz:recordfilter%5Bz3950.indexdata.com%2Fmarc%5D=date
 http://localhost:9763/search.pz2?session=8&command=search&query=xyzzyz

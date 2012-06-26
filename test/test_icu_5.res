@@ -9,7 +9,8 @@
 
 <md-title>The Computer Bible</md-title>
 <md-date>1973-1980</md-date>
-<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="3136897450">
 <md-title>The Computer Bible</md-title>
 <md-date>1973-1980</md-date>
 <md-description tag="500">Hebrew and Greek; introductions in English</md-description>
@@ -24,7 +25,8 @@
 <md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
 <md-title-remainder>the proceedings of a workshop</md-title-remainder>
 <md-date>1974</md-date>
-<md-description>Includes bibliographical references and index</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-description>Includes bibliographical references and index</md-description><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="2962705161">
 <md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
 <md-title-remainder>the proceedings of a workshop</md-title-remainder>
 <md-date>1974</md-date>
@@ -38,7 +40,8 @@
 
 <md-title>Computer science &amp; technology</md-title>
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
-<md-date>1977</md-date><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-date>1977</md-date><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="3659474317">
 <md-title>Computer science &amp; technology</md-title>
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
 <md-date>1977</md-date>
@@ -50,13 +53,15 @@
 <hit>
 
 <md-title>How to program a computer</md-title>
-<md-author>Jack Collins</md-author><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-author>Jack Collins</md-author><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="2788512872">
 <md-title>How to program a computer</md-title>
 <md-author>Jack Collins</md-author>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="2614320583">
 <md-title>How to program a computer</md-title>
 <md-author>Jack Collins</md-author>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
@@ -69,7 +74,8 @@
 
 <md-title>A plan for community college computer development</md-title>
 <md-date>1971</md-date>
-<md-description>Cover title</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-description>Cover title</md-description><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="4182051184">
 <md-title>A plan for community college computer development</md-title>
 <md-date>1971</md-date>
 <md-description tag="500">Cover title</md-description>
@@ -84,7 +90,8 @@
 <md-title-remainder>a portfolio of thematic computer maps</md-title-remainder>
 <md-date>1974</md-date>
 <md-author>Mairs, John W</md-author>
-<md-description>Scale of maps ca. 1:1,000,000</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-description>Scale of maps ca. 1:1,000,000</md-description><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="3311089739">
 <md-title>The Puget Sound Region</md-title>
 <md-title-remainder>a portfolio of thematic computer maps</md-title-remainder>
 <md-date>1974</md-date>
@@ -101,7 +108,8 @@
 <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
 <md-date>1977</md-date>
-<md-description>Includes bibliographical references and index</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-description>Includes bibliographical references and index</md-description><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="3485282028">
 <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
 <md-date>1977</md-date>
@@ -115,7 +123,8 @@
 
 <md-title>The use of passwords for controlled access to computer resources</md-title>
 <md-date>1977</md-date>
-<md-author>Wood, Helen M</md-author><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-author>Wood, Helen M</md-author><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="3833666606">
 <md-title>The use of passwords for controlled access to computer resources</md-title>
 <md-date>1977</md-date>
 <md-author>Wood, Helen M</md-author>
@@ -130,7 +139,8 @@
 <md-title-remainder>final report</md-title-remainder>
 <md-date>1971</md-date>
 <md-author>Englund, Carl R</md-author>
-<md-description>&quot;Contract DOT-UT-10003.&quot;</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-description>&quot;Contract DOT-UT-10003.&quot;</md-description><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="4007858895">
 <md-title>Washington metropolitan area rail computer feasibility study;</md-title>
 <md-title-remainder>final report</md-title-remainder>
 <md-date>1971</md-date>

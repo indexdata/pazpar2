@@ -10,7 +10,8 @@
 <md-title>Adobe Illustrator for the Mac</md-title>
 <md-title-remainder>fast &amp; easy</md-title-remainder>
 <md-date>2001</md-date>
-<md-author>Woodward, C. Michael</md-author><location id="id_solr" name="LOC (SOLR)">
+<md-author>Woodward, C. Michael</md-author><location id="id_solr"
+ name="LOC (SOLR)" checksum="1471384697">
 <md-title>Adobe Illustrator for the Mac</md-title>
 <md-title-remainder>fast &amp; easy</md-title-remainder>
 <md-date>2001</md-date>
@@ -21,7 +22,8 @@
 <hit>
 
 <md-title>Advanced computer performance modeling and simulation</md-title>
-<md-date>1998</md-date><location id="id_solr" name="LOC (SOLR)">
+<md-date>1998</md-date><location id="id_solr"
+ name="LOC (SOLR)" checksum="3924860916">
 <md-title>Advanced computer performance modeling and simulation</md-title>
 <md-date>1998</md-date></location>
 <relevance>43542</relevance>
@@ -33,7 +35,8 @@
 <md-title-remainder>issues surrounding the establishment of an international regime</md-title-remainder>
 <md-date>2000</md-date>
 <md-author>Aldrich, Richard W</md-author>
-<md-description>&quot;April 2000.&quot;</md-description><location id="id_solr" name="LOC (SOLR)">
+<md-description>&quot;April 2000.&quot;</md-description><location id="id_solr"
+ name="LOC (SOLR)" checksum="2501955422">
 <md-title>Cyberterrorism and computer crimes</md-title>
 <md-title-remainder>issues surrounding the establishment of an international regime</md-title-remainder>
 <md-date>2000</md-date>
@@ -47,7 +50,8 @@
 <md-title>Software design and usability</md-title>
 <md-title-remainder>talks with Bonnie Nardi, Jakob Nielsen, David Smith, Austin Henderson &amp; Jed Harris, Terry Winograd, Stephanie Rosenbaum</md-title-remainder>
 <md-date>2000</md-date>
-<md-author>Kaasgaard, Klaus</md-author><location id="id_solr" name="LOC (SOLR)">
+<md-author>Kaasgaard, Klaus</md-author><location id="id_solr"
+ name="LOC (SOLR)" checksum="514030763">
 <md-title>Software design and usability</md-title>
 <md-title-remainder>talks with Bonnie Nardi, Jakob Nielsen, David Smith, Austin Henderson &amp; Jed Harris, Terry Winograd, Stephanie Rosenbaum</md-title-remainder>
 <md-date>2000</md-date>
@@ -60,7 +64,8 @@
 <md-title>Everything you need to know about the dangers of computer hacking</md-title>
 <md-date>2000</md-date>
 <md-author>Knittel, John</md-author>
-<md-description>Explains what computer hacking is, who does it, and how dangerous it can be</md-description><location id="id_solr" name="LOC (SOLR)">
+<md-description>Explains what computer hacking is, who does it, and how dangerous it can be</md-description><location id="id_solr"
+ name="LOC (SOLR)" checksum="440813972">
 <md-title>Everything you need to know about the dangers of computer hacking</md-title>
 <md-date>2000</md-date>
 <md-author>Knittel, John</md-author>
@@ -72,7 +77,8 @@
 
 <md-title>Computer peripherals</md-title>
 <md-date>1995</md-date>
-<md-author>Cook, Barry M</md-author><location id="id_solr" name="LOC (SOLR)">
+<md-author>Cook, Barry M</md-author><location id="id_solr"
+ name="LOC (SOLR)" checksum="3558776961">
 <md-title>Computer peripherals</md-title>
 <md-date>1995</md-date>
 <md-author>Cook, Barry M</md-author></location>
@@ -83,7 +89,8 @@
 
 <md-title>Kids&apos; computer book</md-title>
 <md-date>1994</md-date>
-<md-description>Discusses a variety of educational and game software for children  with suggestions for setting up a computer system. Includes a 3 1/2 in. disk with 6 shareware programs for children</md-description><location id="id_solr" name="LOC (SOLR)">
+<md-description>Discusses a variety of educational and game software for children  with suggestions for setting up a computer system. Includes a 3 1/2 in. disk with 6 shareware programs for children</md-description><location id="id_solr"
+ name="LOC (SOLR)" checksum="2747856609">
 <md-title>Kids&apos; computer book</md-title>
 <md-date>1994</md-date>
 <md-description>&quot;For kids and their parents&quot;--Cover</md-description>
@@ -95,7 +102,8 @@
 
 <md-title>Computer friendly</md-title>
 <md-date>1999</md-date>
-<md-author>Steinbacher, Raymond</md-author><location id="id_solr" name="LOC (SOLR)">
+<md-author>Steinbacher, Raymond</md-author><location id="id_solr"
+ name="LOC (SOLR)" checksum="194912785">
 <md-title>Computer friendly</md-title>
 <md-date>1999</md-date>
 <md-author>Steinbacher, Raymond</md-author></location>
@@ -106,7 +114,8 @@
 
 <md-title>Computer misuse</md-title>
 <md-date>1999</md-date>
-<md-description>&quot;Also published as Parliamentary Paper E 31AO&quot;--T.p. verso</md-description><location id="id_solr" name="LOC (SOLR)">
+<md-description>&quot;Also published as Parliamentary Paper E 31AO&quot;--T.p. verso</md-description><location id="id_solr"
+ name="LOC (SOLR)" checksum="268129576">
 <md-title>Computer misuse</md-title>
 <md-date>1999</md-date>
 <md-description>&quot;May 1999.&quot;</md-description>
@@ -120,7 +129,8 @@
 <md-title>Computer networking</md-title>
 <md-title-remainder>a top-down approach featuring the Internet</md-title-remainder>
 <md-date>2001</md-date>
-<md-author>Ross, Keith W</md-author><location id="id_solr" name="LOC (SOLR)">
+<md-author>Ross, Keith W</md-author><location id="id_solr"
+ name="LOC (SOLR)" checksum="3485560170">
 <md-title>Computer networking</md-title>
 <md-title-remainder>a top-down approach featuring the Internet</md-title-remainder>
 <md-date>2001</md-date>
@@ -133,7 +143,8 @@
 <md-title>CorelDRAW 8 for Windows</md-title>
 <md-date>1998</md-date>
 <md-author>Davis, Phyllis</md-author>
-<md-description>Includes index</md-description><location id="id_solr" name="LOC (SOLR)">
+<md-description>Includes index</md-description><location id="id_solr"
+ name="LOC (SOLR)" checksum="1570852302">
 <md-title>CorelDRAW 8 for Windows</md-title>
 <md-date>1998</md-date>
 <md-author>Davis, Phyllis</md-author>
@@ -147,7 +158,8 @@
 <md-title-remainder>the official guide</md-title-remainder>
 <md-date>2000</md-date>
 <md-author>Langer, Maria</md-author>
-<md-description>&quot;Covers Quicken deluxe 2000 for the Mac&quot;--Cover</md-description><location id="id_solr" name="LOC (SOLR)">
+<md-description>&quot;Covers Quicken deluxe 2000 for the Mac&quot;--Cover</md-description><location id="id_solr"
+ name="LOC (SOLR)" checksum="3705210543">
 <md-title>Quicken 2000 for the Mac</md-title>
 <md-title-remainder>the official guide</md-title-remainder>
 <md-date>2000</md-date>
@@ -160,7 +172,8 @@
 <hit>
 
 <md-title>Sicherheit und Schutz im Netz</md-title>
-<md-date>1998</md-date><location id="id_solr" name="LOC (SOLR)">
+<md-date>1998</md-date><location id="id_solr"
+ name="LOC (SOLR)" checksum="932616346">
 <md-title>Sicherheit und Schutz im Netz</md-title>
 <md-date>1998</md-date></location>
 <relevance>32656</relevance>
@@ -171,7 +184,8 @@
 <md-title>Unix Secure Shell</md-title>
 <md-date>1999</md-date>
 <md-author>Carasik, Anne H</md-author>
-<md-description>Includes index</md-description><location id="id_solr" name="LOC (SOLR)">
+<md-description>Includes index</md-description><location id="id_solr"
+ name="LOC (SOLR)" checksum="2109620653">
 <md-title>Unix Secure Shell</md-title>
 <md-date>1999</md-date>
 <md-author>Carasik, Anne H</md-author>
@@ -184,7 +198,8 @@
 <md-title>Eight International Conference on Computer Communications and Networks</md-title>
 <md-title-remainder>proceedings, 11-13 October 1999, Boston, Massachusetts</md-title-remainder>
 <md-date>1999</md-date>
-<md-description>&quot;IEEE catalog number 99EX370&quot;--T.p. verso</md-description><location id="id_solr" name="LOC (SOLR)">
+<md-description>&quot;IEEE catalog number 99EX370&quot;--T.p. verso</md-description><location id="id_solr"
+ name="LOC (SOLR)" checksum="759931950">
 <md-title>Eight International Conference on Computer Communications and Networks</md-title>
 <md-title-remainder>proceedings, 11-13 October 1999, Boston, Massachusetts</md-title-remainder>
 <md-date>1999</md-date>
@@ -197,7 +212,8 @@
 <md-title>Building storage networks</md-title>
 <md-date>2000</md-date>
 <md-author>Farley, Marc</md-author>
-<md-description>Includes index</md-description><location id="id_solr" name="LOC (SOLR)">
+<md-description>Includes index</md-description><location id="id_solr"
+ name="LOC (SOLR)" checksum="2282305049">
 <md-title>Building storage networks</md-title>
 <md-date>2000</md-date>
 <md-author>Farley, Marc</md-author>
@@ -211,7 +227,8 @@
 <md-title-remainder>the definitive control language programming guide</md-title-remainder>
 <md-date>1999</md-date>
 <md-author>Malaga, Ernie</md-author>
-<md-description>Includes index</md-description><location id="id_solr" name="LOC (SOLR)">
+<md-description>Includes index</md-description><location id="id_solr"
+ name="LOC (SOLR)" checksum="2036403862">
 <md-title>Complete CL</md-title>
 <md-title-remainder>the definitive control language programming guide</md-title-remainder>
 <md-date>1999</md-date>
@@ -225,7 +242,8 @@
 <md-title>3D games</md-title>
 <md-title-remainder>real-time rendering and software technology</md-title-remainder>
 <md-date>2001</md-date>
-<md-author>Watt, Alan H</md-author><location id="id_solr" name="LOC (SOLR)">
+<md-author>Watt, Alan H</md-author><location id="id_solr"
+ name="LOC (SOLR)" checksum="3459309356">
 <md-title>3D games</md-title>
 <md-title-remainder>real-time rendering and software technology</md-title-remainder>
 <md-date>2001</md-date>
@@ -237,7 +255,8 @@
 
 <md-title>Java applications strategies for the AS/400</md-title>
 <md-date>1999</md-date>
-<md-author>Denoncourt, Don</md-author><location id="id_solr" name="LOC (SOLR)">
+<md-author>Denoncourt, Don</md-author><location id="id_solr"
+ name="LOC (SOLR)" checksum="3239658983">
 <md-title>Java applications strategies for the AS/400</md-title>
 <md-date>1999</md-date>
 <md-author>Denoncourt, Don</md-author></location>
@@ -249,7 +268,8 @@
 <md-title>Mastering algorithms with C</md-title>
 <md-date>1999</md-date>
 <md-author>Loudon, Kyle</md-author>
-<md-description>&quot;Useful techniques from sorting to encryption&quot;--Cover</md-description><location id="id_solr" name="LOC (SOLR)">
+<md-description>&quot;Useful techniques from sorting to encryption&quot;--Cover</md-description><location id="id_solr"
+ name="LOC (SOLR)" checksum="121695994">
 <md-title>Mastering algorithms with C</md-title>
 <md-date>1999</md-date>
 <md-author>Loudon, Kyle</md-author>

@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 #include "pazpar2_config.h"
+#include "client.h"
 #include "record.h"
 
 union data_types * data_types_assign(NMEM nmem, 
@@ -55,6 +56,8 @@ struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys,
 {
     struct record * record = 0;
     int i = 0;
+    const char *name = client_get_id(client);
+    unsigned h = position;
     
     // assert(nmem);
 
@@ -76,6 +79,11 @@ struct record * record_create(NMEM nmem, int num_metadata, int num_sortkeys,
         record->sortkeys[i] = 0;
 
     record->position = position;
+
+    for (i = 0; name[i]; i++)
+        h = h * 65509 + ((unsigned char *) name)[i];
+
+    record->checksum = h;
     
     return record;
 }

@@ -875,10 +875,14 @@ static void write_subrecord(struct record *r, WRBUF w,
 
     wrbuf_puts(w, "<location id=\"");
     wrbuf_xmlputs(w, client_get_id(r->client));
+    wrbuf_puts(w, "\"\n");
+
+    wrbuf_puts(w, " name=\"");
+    wrbuf_xmlputs(w,  *name ? name : "Unknown");
     wrbuf_puts(w, "\" ");
 
-    wrbuf_puts(w, "name=\"");
-    wrbuf_xmlputs(w,  *name ? name : "Unknown");
+    wrbuf_puts(w, "checksum=\"");
+    wrbuf_printf(w,  "%u", r->checksum);
     wrbuf_puts(w, "\">");
 
     write_metadata(w, service, r->metadata, show_details);
@@ -944,6 +948,7 @@ static void show_record(struct http_channel *c, struct http_session *s)
     const char *idstr = http_argbyname(rq, "id");
     const char *offsetstr = http_argbyname(rq, "offset");
     const char *binarystr = http_argbyname(rq, "binary");
+    const char *checksumstr = http_argbyname(rq, "checksum");
     
     if (!s)
         return;
@@ -967,9 +972,8 @@ static void show_record(struct http_channel *c, struct http_session *s)
         }
         return;
     }
-    if (offsetstr)
+    if (offsetstr || checksumstr)
     {
-        int offset = atoi(offsetstr);
         const char *syntax = http_argbyname(rq, "syntax");
         const char *esn = http_argbyname(rq, "esn");
         int i;
@@ -980,8 +984,19 @@ static void show_record(struct http_channel *c, struct http_session *s)
         if (binarystr && *binarystr != '0')
             binary = 1;
 
-        for (i = 0; i < offset && r; r = r->next, i++)
-            ;
+        if (checksumstr)
+        {
+            long v = atol(checksumstr);
+            for (i = 0; r; r = r->next)
+                if (v == r->checksum)
+                    break;
+        }
+        else
+        {
+            int offset = atoi(offsetstr);
+            for (i = 0; i < offset && r; r = r->next, i++)
+                ;
+        }
         if (!r)
         {
             error(rs, PAZPAR2_RECORD_FAIL, "no record at offset given");

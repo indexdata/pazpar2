@@ -10,7 +10,8 @@
 
 <md-title>Computer science &amp; technology</md-title>
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
-<md-date>1977</md-date><location id="Target-1" name="ztest-db1">
+<md-date>1977</md-date><location id="Target-1"
+ name="ztest-db1" checksum="1487286940">
 <md-title>Computer science &amp; technology</md-title>
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
 <md-date>1977</md-date>
@@ -22,7 +23,8 @@
 
 <md-title>The Computer Bible</md-title>
 <md-date>1973-1980</md-date>
-<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="Target-1" name="ztest-db1">
+<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="Target-1"
+ name="ztest-db1" checksum="3541567481">
 <md-title>The Computer Bible</md-title>
 <md-date>1973-1980</md-date>
 <md-description>Hebrew and Greek; introductions in English</md-description>
@@ -35,7 +37,8 @@
 
 <md-title>The use of passwords for controlled access to computer resources</md-title>
 <md-date>1977</md-date>
-<md-author>Wood, Helen M</md-author><location id="Target-1" name="ztest-db1">
+<md-author>Wood, Helen M</md-author><location id="Target-1"
+ name="ztest-db1" checksum="2234182525">
 <md-title>The use of passwords for controlled access to computer resources</md-title>
 <md-date>1977</md-date>
 <md-author>Wood, Helen M</md-author>
@@ -47,7 +50,8 @@
 
 <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
-<md-date>1977</md-date><location id="Target-1" name="ztest-db1">
+<md-date>1977</md-date><location id="Target-1"
+ name="ztest-db1" checksum="740391355">
 <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
 <md-date>1977</md-date>

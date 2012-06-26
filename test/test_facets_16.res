@@ -8,10 +8,12 @@
 <hit>
 
 <md-title>How to program a computer</md-title>
-<md-author>Jack Collins</md-author><location id="localhost:9999/db1" name="db1">
+<md-author>Jack Collins</md-author><location id="localhost:9999/db1"
+ name="db1" checksum="4195168235">
 <md-title>How to program a computer</md-title>
 <md-author>Jack Collins</md-author></location>
-<location id="localhost:9999/db1" name="db1">
+<location id="localhost:9999/db1"
+ name="db1" checksum="75373906">
 <md-title>How to program a computer</md-title>
 <md-author>Jack Collins</md-author></location>
 <count>2</count>

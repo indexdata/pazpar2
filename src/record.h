@@ -57,13 +57,15 @@ union data_types * data_types_assign(NMEM nmem,
 struct record {
     struct client *client;
     // Array mirrors list of metadata fields in config
-    struct record_metadata **metadata; 
+    struct record_metadata **metadata;
     // Array mirrors list of sortkey fields in config
     union data_types **sortkeys;
     // Next in cluster of merged records       
     struct record *next;  
     // client result set position;
     int position;
+    // checksum
+    unsigned checksum;
 };
 
 
