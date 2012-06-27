@@ -564,6 +564,23 @@
 	</listitem>
        </varlistentry>
 
+       <varlistentry>
+	<term>ccldirective</term>
+	<listitem>
+	 <para>
+	  Customizes the CCL parsing (interpretation of query parameter
+	  in search).
+	  The name and value of the CCL directive is gigen by attributes
+	  'name' and 'value' respectively. Refer to possible list of names
+	  in the
+	  <ulink 
+	      url="http://www.indexdata.com/yaz/doc/tools.html#ccl.directives.table">
+	   YAZ manual
+	   </ulink>.
+	 </para>
+	</listitem>
+       </varlistentry>
+
 <!--       
        <varlistentry>
 	<term>set</term>
