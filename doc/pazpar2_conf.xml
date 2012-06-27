@@ -262,16 +262,32 @@
 	     Specifies that this element is to be used to
 	     help rank 
 	     records against the user's query (when ranking is
-	     requested). The value is an integer, used as a
+	     requested). 
+	     The valus is of the form 
+	     <literallayout>
+	      M [F N]
+	     </literallayout>
+	     where M is an integer, used as a
 	     multiplier against the basic TF*IDF score. A value of
-	     1 is the base, higher values give additional
-	     weight to 
+	     1 is the base, higher values give additional weight to
 	     elements of this type. The default is '0', which
 	     excludes this element from the rank calculation.
 	    </para>
 	    <para>
+	     F is a CCL field and N is the multipler for terms
+	     that matches those part of the CCL field in search.
+	     The F+N combo allows the system to use a different
+	     multipler for a certain field. For example, a rank value of
+	     "<literal>1 au 3</literal>" gives a multipler of 3 for
+	     all terms part of the au(thor) terms and 1 for everything else.
+	    </para>
+	    <para>
 	     For Pazpar2 1.6.13 and later, the rank may also defined
 	     "per-document", by the normalization stylesheet. 
+	    </para>
+	    <para>
+	     The per field rank was introduced in Pazpar2 1.6.15. Earlier
+	     releases only allowed a rank value M (simple integer).
 	    </para>
 	   </listitem>
 	  </varlistentry>
