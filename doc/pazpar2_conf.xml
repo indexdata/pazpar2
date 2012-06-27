@@ -563,7 +563,8 @@
 	 </para>
 	</listitem>
        </varlistentry>
-       
+
+<!--       
        <varlistentry>
 	<term>set</term>
 	<listitem>
@@ -575,7 +576,7 @@
 	 </para>
 	</listitem>
        </varlistentry>
-       
+-->   
        <varlistentry>
 	<term>settings</term>
 	<listitem>
