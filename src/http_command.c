@@ -943,7 +943,6 @@ static void show_record(struct http_channel *c, struct http_session *s)
     struct http_response *rs = c->response;
     struct http_request *rq = c->request;
     struct record_cluster *rec, *prev_r, *next_r;
-    struct record *r;
     struct conf_service *service;
     const char *idstr = http_argbyname(rq, "id");
     const char *offsetstr = http_argbyname(rq, "offset");
@@ -1023,6 +1022,7 @@ static void show_record(struct http_channel *c, struct http_session *s)
     }
     else
     {
+        struct record *r;
         response_open_no_status(c, "record");
         wrbuf_puts(c->wrbuf, "\n<recid>");
         wrbuf_xmlputs(c->wrbuf, rec->recid);
