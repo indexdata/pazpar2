@@ -990,18 +990,18 @@ static void show_record(struct http_channel *c, struct http_session *s)
             for (i = 0; r; r = r->next)
                 if (v == r->checksum)
                     break;
+            if (!r)
+                error(rs, PAZPAR2_RECORD_FAIL, "no record");
         }
         else
         {
             int offset = atoi(offsetstr);
             for (i = 0; i < offset && r; r = r->next, i++)
                 ;
+            if (!r)
+                error(rs, PAZPAR2_RECORD_FAIL, "no record at offset given");
         }
-        if (!r)
-        {
-            error(rs, PAZPAR2_RECORD_FAIL, "no record at offset given");
-        }
-        else
+        if (r)
         {
             http_channel_observer_t obs =
                 http_add_observer(c, r->client, show_raw_reset);
