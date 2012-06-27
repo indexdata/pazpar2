@@ -1,3 +1,4 @@
+--- 1.6.15 2012/06/27
 
 New facility: ccldirective may be given in service definition. Allows
 CCL parsing to be customized a bit, such as defining names of operators
