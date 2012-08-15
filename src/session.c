@@ -78,8 +78,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <libxml/tree.h>
 
-#define TERMLIST_HIGH_SCORE 100
-
 #define MAX_CHUNK 15
 
 #define MAX(a,b) ((a)>(b)?(a):(b))
@@ -231,8 +229,7 @@ void add_facet(struct session *s, const char *type, const char *value, int count
             }
             
             s->termlists[i].name = nmem_strdup(s->nmem, type);
-            s->termlists[i].termlist 
-                = termlist_create(s->nmem, TERMLIST_HIGH_SCORE);
+            s->termlists[i].termlist = termlist_create(s->nmem);
             s->num_termlists = i + 1;
         }
         
@@ -1114,7 +1111,8 @@ void perform_termlist(struct http_channel *c, struct session *se,
                 wrbuf_puts(c->wrbuf, "\">\n");
                 must_generate_empty = 0;
 
-                p = termlist_highscore(se->termlists[i].termlist, &len);
+                p = termlist_highscore(se->termlists[i].termlist, &len,
+                                       nmem_tmp);
                 if (p)
                 {
                     int i;

@@ -31,10 +31,11 @@ struct termlist_score
 
 struct termlist;
 
-struct termlist *termlist_create(NMEM nmem, int highscore_size);
+struct termlist *termlist_create(NMEM nmem);
 void termlist_insert(struct termlist *tl, const char *display_term,
                      const char *norm_term, int freq);
-struct termlist_score **termlist_highscore(struct termlist *tl, int *len);
+struct termlist_score **termlist_highscore(struct termlist *tl, int *len,
+                                           NMEM nmem);
 
 #endif
 
