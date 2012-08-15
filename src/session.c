@@ -1014,23 +1014,6 @@ struct hitsbytarget *get_hitsbytarget(struct session *se, int *count, NMEM nmem)
     session_leave(se);
     return p;
 }
-    
-struct termlist_score **get_termlist_score(struct session *se,
-                                           const char *name, int *num)
-{
-    int i;
-    struct termlist_score **tl = 0;
-
-    session_enter(se);
-    for (i = 0; i < se->num_termlists; i++)
-        if (!strcmp((const char *) se->termlists[i].name, name))
-        {
-            tl = termlist_highscore(se->termlists[i].termlist, num);
-            break;
-        }
-    session_leave(se);
-    return tl;
-}
 
 // Compares two hitsbytarget nodes by hitcount
 static int cmp_ht(const void *p1, const void *p2)
