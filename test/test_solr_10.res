@@ -29,19 +29,19 @@
 <list name="author">
 <term><name>Baker, M. N</name><frequency>38</frequency></term>
 <term><name>Ambrose, David</name><frequency>19</frequency></term>
+<term><name>Austin, George Lowell</name><frequency>19</frequency></term>
 <term><name>Base, Graeme</name><frequency>19</frequency></term>
 <term><name>Bauer, Steve</name><frequency>19</frequency></term>
+<term><name>Bryan, Michelle</name><frequency>19</frequency></term>
+<term><name>Das, Keshab</name><frequency>19</frequency></term>
+<term><name>Davis, Floyd</name><frequency>19</frequency></term>
 <term><name>De Villiers, Marq</name><frequency>19</frequency></term>
+<term><name>Dinesh Kumar, M</name><frequency>19</frequency></term>
+<term><name>Donald, Rhonda Lucas</name><frequency>19</frequency></term>
+<term><name>Ellet, Charles</name><frequency>19</frequency></term>
 <term><name>Faeth, Paul</name><frequency>19</frequency></term>
 <term><name>Farnham, Henry P</name><frequency>19</frequency></term>
 <term><name>Fisher, D. E</name><frequency>19</frequency></term>
-<term><name>Frey, Hans</name><frequency>19</frequency></term>
-<term><name>Fuller, George Warrren</name><frequency>19</frequency></term>
-<term><name>Gingerich, Stephen B</name><frequency>19</frequency></term>
-<term><name>Glover, David</name><frequency>19</frequency></term>
-<term><name>Grant, Pamela</name><frequency>19</frequency></term>
-<term><name>Hochschwender, Ted</name><frequency>19</frequency></term>
-<term><name>Jones, Michelle</name><frequency>19</frequency></term>
 </list>
 <list name="date">
 <term><name>2000</name><frequency>608</frequency></term>

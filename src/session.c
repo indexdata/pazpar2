@@ -78,7 +78,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <libxml/tree.h>
 
-#define TERMLIST_HIGH_SCORE 25
+#define TERMLIST_HIGH_SCORE 100
 
 #define MAX_CHUNK 15
 
@@ -237,7 +237,7 @@ void add_facet(struct session *s, const char *type, const char *value, int count
         }
         
 #if 0
-        session_log(s, YLOG_DEBUG, "Facets for %s: %s norm:%s (%d)", type, value, wrbuf_cstr(facet_wrbuf), count);
+        session_log(s, YLOG_LOG, "Facets for %s: %s norm:%s (%d)", type, value, wrbuf_cstr(facet_wrbuf), count);
 #endif
         termlist_insert(s->termlists[i].termlist, wrbuf_cstr(display_wrbuf),
                         wrbuf_cstr(facet_wrbuf), count);

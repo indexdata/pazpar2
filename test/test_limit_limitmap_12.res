@@ -26,13 +26,13 @@
 <term><name>Aldrich, Richard W</name><frequency>1</frequency></term>
 <term><name>Appleman, Daniel</name><frequency>1</frequency></term>
 <term><name>Bainbridge, David I</name><frequency>1</frequency></term>
+<term><name>Barksdale, Karl</name><frequency>1</frequency></term>
+<term><name>Bicalho, Alexander</name><frequency>1</frequency></term>
+<term><name>Blair, John D</name><frequency>1</frequency></term>
+<term><name>Bott, Ed</name><frequency>1</frequency></term>
+<term><name>Brogden, William B</name><frequency>1</frequency></term>
 <term><name>Caplin, Steve</name><frequency>1</frequency></term>
 <term><name>Carasik, Anne H</name><frequency>1</frequency></term>
-<term><name>Cole, Eric</name><frequency>1</frequency></term>
-<term><name>De Jong, Kenneth A</name><frequency>1</frequency></term>
-<term><name>Dowd, Kevin</name><frequency>1</frequency></term>
-<term><name>Hodges, M. Susan</name><frequency>1</frequency></term>
-<term><name>Kaasgaard, Klaus</name><frequency>1</frequency></term>
 </list>
 <list name="subject">
 <term><name>Computer file</name><frequency>24</frequency></term>
