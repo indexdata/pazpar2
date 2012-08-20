@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns="http://www.indexdata.com/turbomarc" xmlns:pz="http://www.indexdata.com/pazpar2/1.0" xmlns:tmarc="http://www.indexdata.com/turbomarc">
+  <pz:record>
+    <pz:metadata type="id">  2005336282</pz:metadata>
+    <pz:metadata type="oclc-number">(OCoLC)170490164</pz:metadata>
+    <pz:metadata type="lccn">  2005336282</pz:metadata>
+    <pz:metadata type="system-control-nr">(OCoLC)170490164</pz:metadata>
+    <pz:metadata type="date">2005-</pz:metadata>
+    <pz:metadata type="title">Qaḍāʼ al-usrah :</pz:metadata>
+    <pz:metadata type="title-remainder">majallah mutakhaṣṣiṣah /</pz:metadata>
+    <pz:metadata type="title-responsibility">Wizārat al-ʻAdl.</pz:metadata>
+    <pz:metadata type="title-dates"/>
+    <pz:metadata type="title-medium"/>
+    <pz:metadata type="title-number-section"/>
+    <pz:metadata type="title-complete">Qaḍāʼ al-usrah : majallah mutakhaṣṣiṣah /</pz:metadata>
+    <pz:metadata type="publication-place">al-Rabāṭ :</pz:metadata>
+    <pz:metadata type="publication-name">Jamʻīyat Nashr al-Maʻlūmah al-Qānūnīyah wa-al-Qaḍāʼīyah,</pz:metadata>
+    <pz:metadata type="publication-date">2005-</pz:metadata>
+    <pz:metadata type="physical-extent">v. :</pz:metadata>
+    <pz:metadata type="physical-format">ill. ;</pz:metadata>
+    <pz:metadata type="physical-dimensions">24 cm.</pz:metadata>
+    <pz:metadata type="physical-accomp"/>
+    <pz:metadata type="physical-unittype"/>
+    <pz:metadata type="physical-unitsize"/>
+    <pz:metadata type="physical-specified"/>
+    <pz:metadata type="description">Some issues have also a distinctive title.</pz:metadata>
+    <pz:metadata type="description">Latest issue consulted: al-ʻAdad 3. (Dujanbir 2006).</pz:metadata>
+    <pz:metadata type="subject">Domestic relations (Islamic law)</pz:metadata>
+    <pz:metadata type="subject-long">Domestic relations (Islamic law), Morocco.</pz:metadata>
+    <pz:metadata type="subject">Divorce (Islamic law)</pz:metadata>
+    <pz:metadata type="subject-long">Divorce (Islamic law)</pz:metadata>
+    <pz:metadata type="subject">Marriage law</pz:metadata>
+    <pz:metadata type="subject-long">Marriage law, Morocco.</pz:metadata>
+    <pz:metadata type="subject">Law reports, digests, etc.</pz:metadata>
+    <pz:metadata type="subject-long">Law reports, digests, etc., Morocco.</pz:metadata>
+    <pz:metadata type="medium">journal</pz:metadata>
+    <pz:metadata type="has-fulltext">no</pz:metadata>
+  </pz:record>
+</collection>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns="http://www.indexdata.com/turbomarc" xmlns:pz="http://www.indexdata.com/pazpar2/1.0" xmlns:tmarc="http://www.indexdata.com/turbomarc">
+  <pz:record>
+    <pz:metadata type="oclc-number"/>
+    <pz:metadata type="author">Sloman</pz:metadata>
+    <pz:metadata type="author-title"/>
+    <pz:metadata type="author-date"/>
+    <pz:metadata type="date">2002</pz:metadata>
+    <pz:metadata type="title">On the road with Bob Dylan</pz:metadata>
+    <pz:metadata type="title-remainder"/>
+    <pz:metadata type="title-responsibility"/>
+    <pz:metadata type="title-dates"/>
+    <pz:metadata type="title-medium"/>
+    <pz:metadata type="title-number-section"/>
+    <pz:metadata type="title-complete">On the road with Bob Dylan</pz:metadata>
+    <pz:metadata type="edition">Revised edition</pz:metadata>
+    <pz:metadata type="publication-place">New York</pz:metadata>
+    <pz:metadata type="publication-name">Three Rivers Press</pz:metadata>
+    <pz:metadata type="publication-date">2002</pz:metadata>
+    <pz:metadata type="physical-extent">xv, 464 sider, tavler</pz:metadata>
+    <pz:metadata type="physical-format"/>
+    <pz:metadata type="physical-dimensions"/>
+    <pz:metadata type="physical-accomp"/>
+    <pz:metadata type="physical-unittype"/>
+    <pz:metadata type="physical-unitsize"/>
+    <pz:metadata type="physical-specified"/>
+    <pz:metadata type="description">Tidligere: 1. udgave. New York, Bantam, 1978</pz:metadata>
+    <pz:metadata type="medium">book</pz:metadata>
+    <pz:metadata type="has-fulltext">no</pz:metadata>
+  </pz:record>
+</collection>

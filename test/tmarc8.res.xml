@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns="http://www.indexdata.com/turbomarc" xmlns:pz="http://www.indexdata.com/pazpar2/1.0" xmlns:tmarc="http://www.indexdata.com/turbomarc">
+  <pz:record>
+    <pz:metadata type="id">UCD-002592301</pz:metadata>
+    <pz:metadata type="oclc-number"/>
+    <pz:metadata type="system-control-nr">99851339eo</pz:metadata>
+    <pz:metadata type="author">Clinton, Atkinson.</pz:metadata>
+    <pz:metadata type="author-title"/>
+    <pz:metadata type="author-date"/>
+    <pz:metadata type="date">1583?</pz:metadata>
+    <pz:metadata type="title">Clinton, Purser &amp; Arnold, to their countreymen wheresoeuer</pz:metadata>
+    <pz:metadata type="title-remainder">Wherein is described by their own hands their vnfeigned penitence for their offences past: their patience in welcoming their death, &amp; their duetiful minds towardes her most excellent Maiestie</pz:metadata>
+    <pz:metadata type="title-responsibility"/>
+    <pz:metadata type="title-dates"/>
+    <pz:metadata type="title-medium">[electronic resource] :</pz:metadata>
+    <pz:metadata type="title-number-section"/>
+    <pz:metadata type="title-complete">Clinton, Purser &amp; Arnold, to their countreymen wheresoeuer Wherein is described by their own hands their vnfeigned penitence for their offences past: their patience in welcoming their death, &amp; their duetiful minds towardes her most excellent Maiestie</pz:metadata>
+    <pz:metadata type="publication-place">London :</pz:metadata>
+    <pz:metadata type="publication-name">Imprinted by Iohn Wolfe and are to be sold [by W. Wright] at the middle shop in the Poultry, ioyning S. Mildreds Church,</pz:metadata>
+    <pz:metadata type="publication-date">[1583?]</pz:metadata>
+    <pz:metadata type="physical-extent">[12] p</pz:metadata>
+    <pz:metadata type="physical-format"/>
+    <pz:metadata type="physical-dimensions"/>
+    <pz:metadata type="physical-accomp"/>
+    <pz:metadata type="physical-unittype"/>
+    <pz:metadata type="physical-unitsize"/>
+    <pz:metadata type="physical-specified"/>
+    <pz:metadata type="description">In verse</pz:metadata>
+    <pz:metadata type="description">The first poem is signed: Thomas Walton alias Purser</pz:metadata>
+    <pz:metadata type="description">Clinton's full name and bookseller's name from, and publication date conjectured by, STC</pz:metadata>
+    <pz:metadata type="description">Signatures: A⁴ B²</pz:metadata>
+    <pz:metadata type="description">Reproduction of the original in the Bodleian Library</pz:metadata>
+    <pz:metadata type="subject">Electronic texts.</pz:metadata>
+    <pz:metadata type="subject-long">Electronic texts., local</pz:metadata>
+    <pz:metadata type="subject">Pirates</pz:metadata>
+    <pz:metadata type="subject-long">Pirates, England, Early works to 1800.</pz:metadata>
+    <pz:metadata type="electronic-url">http://gateway.proquest.com/openurl?ctx_ver=Z39.88-2003&amp;res_id=xri:eebo&amp;rft_val_fmt=&amp;rft_id=xri:eebo:image:16610</pz:metadata>
+    <pz:metadata type="electronic-text">Get resource</pz:metadata>
+    <pz:metadata type="electronic-note">Restricted to UC campuses</pz:metadata>
+    <pz:metadata type="electronic-format-instruction"/>
+    <pz:metadata type="electronic-format-type"/>
+    <pz:metadata type="electronic-url">http://gateway.proquest.com/openurl?ctx_ver=Z39.88-2003&amp;res_id=xri:eebo&amp;rft_val_fmt=&amp;rft_id=xri:eebo:image:16610</pz:metadata>
+    <pz:metadata type="electronic-text">Get resource</pz:metadata>
+    <pz:metadata type="electronic-note">Restricted to UC campuses</pz:metadata>
+    <pz:metadata type="electronic-format-instruction"/>
+    <pz:metadata type="electronic-format-type"/>
+    <pz:metadata type="electronic-url">http://gateway.proquest.com/openurl?ctx_ver=Z39.88-2003&amp;res_id=xri:eebo&amp;rft_val_fmt=&amp;rft_id=xri:eebo:image:16610</pz:metadata>
+    <pz:metadata type="electronic-text">Get resource</pz:metadata>
+    <pz:metadata type="electronic-note">Restricted to UC campuses</pz:metadata>
+    <pz:metadata type="electronic-format-instruction"/>
+    <pz:metadata type="electronic-format-type"/>
+    <pz:metadata type="electronic-url">http://gateway.proquest.com/openurl?ctx_ver=Z39.88-2003&amp;res_id=xri:eebo&amp;rft_val_fmt=&amp;rft_id=xri:eebo:image:16610</pz:metadata>
+    <pz:metadata type="electronic-text">Get resource</pz:metadata>
+    <pz:metadata type="electronic-note">Restricted to UC campuses</pz:metadata>
+    <pz:metadata type="electronic-format-instruction"/>
+    <pz:metadata type="electronic-format-type"/>
+    <pz:metadata type="callnumber">Internet</pz:metadata>
+    <pz:metadata type="medium">book (electronic)</pz:metadata>
+    <pz:metadata type="has-fulltext">no</pz:metadata>
+    <pz:metadata type="iii-id">DVXL</pz:metadata>
+  </pz:record>
+</collection>
