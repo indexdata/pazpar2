@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <collection xmlns="http://www.indexdata.com/turbomarc" xmlns:pz="http://www.indexdata.com/pazpar2/1.0" xmlns:tmarc="http://www.indexdata.com/turbomarc">
   <pz:record>
-    <pz:metadata type="oclc-number"/>
-    <pz:metadata type="date">-</pz:metadata>
     <pz:metadata type="medium">other</pz:metadata>
     <pz:metadata type="has-fulltext">no</pz:metadata>
   </pz:record>

@@ -2,29 +2,18 @@
 <collection xmlns="http://www.indexdata.com/turbomarc" xmlns:pz="http://www.indexdata.com/pazpar2/1.0" xmlns:tmarc="http://www.indexdata.com/turbomarc">
   <pz:record>
     <pz:metadata type="id">   77123332 </pz:metadata>
-    <pz:metadata type="oclc-number"/>
     <pz:metadata type="lccn">   77123332 </pz:metadata>
     <pz:metadata type="system-control-nr">57779</pz:metadata>
     <pz:metadata type="system-control-nr">90490</pz:metadata>
     <pz:metadata type="system-control-nr">93202</pz:metadata>
     <pz:metadata type="date">2001</pz:metadata>
     <pz:metadata type="title">Voyager Diacritic test -- New input 001 (SBIE).</pz:metadata>
-    <pz:metadata type="title-remainder"/>
-    <pz:metadata type="title-responsibility"/>
-    <pz:metadata type="title-dates"/>
-    <pz:metadata type="title-medium"/>
-    <pz:metadata type="title-number-section"/>
     <pz:metadata type="title-complete">Voyager Diacritic test -- New input 001 (SBIE).</pz:metadata>
     <pz:metadata type="publication-place">ny :</pz:metadata>
     <pz:metadata type="publication-name">ny,</pz:metadata>
     <pz:metadata type="publication-date">2001.</pz:metadata>
     <pz:metadata type="physical-extent">100 p. ;</pz:metadata>
-    <pz:metadata type="physical-format"/>
     <pz:metadata type="physical-dimensions">12 cm.</pz:metadata>
-    <pz:metadata type="physical-accomp"/>
-    <pz:metadata type="physical-unittype"/>
-    <pz:metadata type="physical-unitsize"/>
-    <pz:metadata type="physical-specified"/>
     <pz:metadata type="description">New copy imported from file (8/12/99).</pz:metadata>
     <pz:metadata type="description">VOYAGER COLUMN 0  (NEW):  Degree sign (°);  Phono Copyright mark (℗);  Copyright mark (©);  Sharp (♯);  Inverted Question mark (¿);  Inverted Exclamation mark (¡).</pz:metadata>
     <pz:metadata type="description">VOYAGER COLUMN 1:  Script L (ℓ);  Polish L (Ł);  Scandanavian O (Ø);  D with Crossbar (Đ);  Icelandic Thorn (Þ);  AE Digraph (Æ); OE Digraph (Œ);  Miagkii Znak (ʹ);  Dot at Midline (·).</pz:metadata>

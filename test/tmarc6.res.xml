@@ -2,29 +2,12 @@
 <collection xmlns="http://www.indexdata.com/turbomarc" xmlns:pz="http://www.indexdata.com/pazpar2/1.0" xmlns:tmarc="http://www.indexdata.com/turbomarc">
   <pz:record>
     <pz:metadata type="id">   11224466 </pz:metadata>
-    <pz:metadata type="oclc-number"/>
     <pz:metadata type="lccn">   11224466 </pz:metadata>
     <pz:metadata type="author">Jack Collins</pz:metadata>
-    <pz:metadata type="author-title"/>
-    <pz:metadata type="author-date"/>
-    <pz:metadata type="date"/>
     <pz:metadata type="title">How to program a computer</pz:metadata>
-    <pz:metadata type="title-remainder"/>
-    <pz:metadata type="title-responsibility"/>
-    <pz:metadata type="title-dates"/>
-    <pz:metadata type="title-medium"/>
-    <pz:metadata type="title-number-section"/>
     <pz:metadata type="title-complete">How to program a computer</pz:metadata>
     <pz:metadata type="publication-place">Penguin</pz:metadata>
-    <pz:metadata type="publication-name"/>
-    <pz:metadata type="publication-date"/>
     <pz:metadata type="physical-extent">p. cm.</pz:metadata>
-    <pz:metadata type="physical-format"/>
-    <pz:metadata type="physical-dimensions"/>
-    <pz:metadata type="physical-accomp"/>
-    <pz:metadata type="physical-unittype"/>
-    <pz:metadata type="physical-unitsize"/>
-    <pz:metadata type="physical-specified"/>
     <pz:metadata type="medium">book</pz:metadata>
     <pz:metadata type="has-fulltext">no</pz:metadata>
   </pz:record>
