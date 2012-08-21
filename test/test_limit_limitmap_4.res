@@ -8,11 +8,13 @@
 <hit>
 
 <md-title>How to program a computer</md-title>
-<md-author>Jack Collins</md-author><location id="Target-1" name="ztest-db1">
+<md-author>Jack Collins</md-author><location id="Target-1"
+ name="ztest-db1" checksum="2047776311">
 <md-title>How to program a computer</md-title>
 <md-author>Jack Collins</md-author>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
-<location id="Target-1" name="ztest-db1">
+<location id="Target-1"
+ name="ztest-db1" checksum="1300880726">
 <md-title>How to program a computer</md-title>
 <md-author>Jack Collins</md-author>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
@@ -24,7 +26,8 @@
 
 <md-title>Computer science &amp; technology</md-title>
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
-<md-date>1977</md-date><location id="Target-1" name="ztest-db1">
+<md-date>1977</md-date><location id="Target-1"
+ name="ztest-db1" checksum="1487286940">
 <md-title>Computer science &amp; technology</md-title>
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
 <md-date>1977</md-date>
@@ -36,7 +39,8 @@
 
 <md-title>The Computer Bible</md-title>
 <md-date>1973-1980</md-date>
-<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="Target-1" name="ztest-db1">
+<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="Target-1"
+ name="ztest-db1" checksum="3541567481">
 <md-title>The Computer Bible</md-title>
 <md-date>1973-1980</md-date>
 <md-description>Hebrew and Greek; introductions in English</md-description>
@@ -49,7 +53,8 @@
 
 <md-title>A plan for community college computer development</md-title>
 <md-date>1971</md-date>
-<md-description>Cover title</md-description><location id="Target-1" name="ztest-db1">
+<md-description>Cover title</md-description><location id="Target-1"
+ name="ztest-db1" checksum="3727973695">
 <md-title>A plan for community college computer development</md-title>
 <md-date>1971</md-date>
 <md-description>Cover title</md-description>
@@ -63,7 +68,8 @@
 <md-title-remainder>final report</md-title-remainder>
 <md-date>1971</md-date>
 <md-author>Englund, Carl R</md-author>
-<md-description>&quot;Contract DOT-UT-10003.&quot;</md-description><location id="Target-1" name="ztest-db1">
+<md-description>&quot;Contract DOT-UT-10003.&quot;</md-description><location id="Target-1"
+ name="ztest-db1" checksum="2981078110">
 <md-title>Washington metropolitan area rail computer feasibility study;</md-title>
 <md-title-remainder>final report</md-title-remainder>
 <md-date>1971</md-date>
@@ -79,7 +85,8 @@
 <md-title-remainder>a portfolio of thematic computer maps</md-title-remainder>
 <md-date>1974</md-date>
 <md-author>Mairs, John W</md-author>
-<md-description>Scale of maps ca. 1:1,000,000</md-description><location id="Target-1" name="ztest-db1">
+<md-description>Scale of maps ca. 1:1,000,000</md-description><location id="Target-1"
+ name="ztest-db1" checksum="4288463066">
 <md-title>The Puget Sound Region</md-title>
 <md-title-remainder>a portfolio of thematic computer maps</md-title-remainder>
 <md-date>1974</md-date>
@@ -93,7 +100,8 @@
 
 <md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
 <md-title-remainder>the proceedings of a workshop</md-title-remainder>
-<md-date>1974</md-date><location id="Target-1" name="ztest-db1">
+<md-date>1974</md-date><location id="Target-1"
+ name="ztest-db1" checksum="2794671896">
 <md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
 <md-title-remainder>the proceedings of a workshop</md-title-remainder>
 <md-date>1974</md-date>
@@ -105,7 +113,8 @@
 
 <md-title>The use of passwords for controlled access to computer resources</md-title>
 <md-date>1977</md-date>
-<md-author>Wood, Helen M</md-author><location id="Target-1" name="ztest-db1">
+<md-author>Wood, Helen M</md-author><location id="Target-1"
+ name="ztest-db1" checksum="2234182525">
 <md-title>The use of passwords for controlled access to computer resources</md-title>
 <md-date>1977</md-date>
 <md-author>Wood, Helen M</md-author>
@@ -117,7 +126,8 @@
 
 <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
-<md-date>1977</md-date><location id="Target-1" name="ztest-db1">
+<md-date>1977</md-date><location id="Target-1"
+ name="ztest-db1" checksum="740391355">
 <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
 <md-date>1977</md-date>

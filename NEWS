@@ -1,3 +1,16 @@
+--- 1.6.15 2012/06/27
+
+New facility: ccldirective may be given in service definition. Allows
+CCL parsing to be customized a bit, such as defining names of operators
+and, or, not.
+
+New facility: raw record by checksum, rather than offset. The record
+command optionally takes checksum which identifies certain record from
+a database.
+
+New facility: per field ranking. Rank may be given as M [F N] where
+M is default rank and N is rank for CCL terms from field F.
+
 --- 1.6.14 2012/06/04
 
 Fix for IE7/8 in pz.js

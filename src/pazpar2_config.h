@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <yaz/nmem.h>
 #include <yaz/mutex.h>
+#include <yaz/ccl.h>
 #include "charsets.h"
 #include "http.h"
 #include "database.h"
@@ -122,6 +123,7 @@ struct conf_service
 
     struct service_xslt *xslt_list;
 
+    CCL_bibset ccl_bibset;
     struct database *databases;
     struct conf_server *server;
 };

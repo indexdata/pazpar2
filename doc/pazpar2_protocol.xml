@@ -437,12 +437,35 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
 	fetched as "raw" from ZOOM C (raw, original record).
        </para>
        <para>
-	When offset is not given, the Pazpar2 metadata for the record
+	When offset/checksum is not given, the Pazpar2 metadata for the record
 	is returned and with metadata for each targets' data specified
 	in a 'location' list.
        </para>
       </listitem>
      </varlistentry>
+
+     <varlistentry>
+      <term>checksum</term>
+      <listitem>
+       <para>
+	This optional parameter is a string which, when given, makes
+	Pazpar2 return the original record for a specific target. The
+	checksum is returned as attribtue 'checksum' in element
+	'location' for show command and record command (when checksum
+	and offset is NOT given).
+	The nativesyntax setting, as usual, is used to determine how to
+	create XML from the original record - unless parameter
+	<literal>binary</literal> is given in which the record is
+	fetched as "raw" from ZOOM C (raw, original record).
+       </para>
+       <para>
+	When offset/checksum is not given, the Pazpar2 metadata for the record
+	is returned and with metadata for each targets' data specified
+	in a 'location' list.
+       </para>
+      </listitem>
+     </varlistentry>
+
 
      <varlistentry>
       <term>nativesyntax</term>

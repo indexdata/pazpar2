@@ -978,7 +978,7 @@ void client_disconnect(struct client *cl)
 
 
 // Initialize CCL map for a target
-static CCL_bibset prepare_cclmap(struct client *cl)
+static CCL_bibset prepare_cclmap(struct client *cl, CCL_bibset base_bibset)
 {
     struct session_database *sdb = client_get_database(cl);
     struct setting *s;
@@ -986,7 +986,10 @@ static CCL_bibset prepare_cclmap(struct client *cl)
 
     if (!sdb->settings)
         return 0;
-    res = ccl_qual_mk();
+    if (base_bibset)
+        res = ccl_qual_dup(base_bibset);
+    else
+        res = ccl_qual_mk();
     for (s = sdb->settings[PZ_CCLMAP]; s; s = s->next)
     {
         char *p = strchr(s->name + 3, ':');
@@ -1078,12 +1081,18 @@ const char *client_get_facet_limit_local(struct client *cl,
 
 static int apply_limit(struct session_database *sdb,
                        facet_limits_t facet_limits,
-                       WRBUF w_pqf, WRBUF w_ccl)
+                       WRBUF w_pqf, WRBUF w_ccl,
+                       CCL_bibset ccl_map)
 {
     int ret = 0;
     int i = 0;
     const char *name;
     const char *value;
+    const char **and_op_names = ccl_qual_search_special(ccl_map, "and");
+    const char *and_op = and_op_names ? and_op_names[0] : "and";
+    const char **or_op_names = ccl_qual_search_special(ccl_map, "or");
+    const char *or_op = or_op_names ? or_op_names[0] : "or";
+
     NMEM nmem_tmp = nmem_create();
     for (i = 0; (name = facet_limits_get(facet_limits, i, &value)); i++)
     {
@@ -1117,13 +1126,13 @@ static int apply_limit(struct session_database *sdb,
                 else if (!strncmp(s->value, "ccl:", 4))
                 {
                     const char *ccl = s->value + 4;
-
-                    wrbuf_puts(w_ccl, " and (");
+                    
+                    wrbuf_printf(w_ccl, " %s (", and_op);
 
                     for (i = 0; i < num; i++)
                     {
                         if (i)
-                            wrbuf_puts(w_ccl, " or ");
+                            wrbuf_printf(w_ccl, " %s ", or_op);
                         wrbuf_puts(w_ccl, ccl);
                         wrbuf_puts(w_ccl, "=\"");
                         wrbuf_puts(w_ccl, values[i]);
@@ -1161,14 +1170,15 @@ static int apply_limit(struct session_database *sdb,
 // return -2 on limit error
 int client_parse_query(struct client *cl, const char *query,
                        facet_limits_t facet_limits,
-                       const char *startrecs, const char *maxrecs)
+                       const char *startrecs, const char *maxrecs,
+                       CCL_bibset bibset)
 {
     struct session *se = client_get_session(cl);
     struct session_database *sdb = client_get_database(cl);
     struct ccl_rpn_node *cn;
     int cerror, cpos;
     ODR odr_out;
-    CCL_bibset ccl_map = prepare_cclmap(cl);
+    CCL_bibset ccl_map = prepare_cclmap(cl, bibset);
     const char *sru = session_setting_oneval(sdb, PZ_SRU);
     const char *pqf_prefix = session_setting_oneval(sdb, PZ_PQF_PREFIX);
     const char *pqf_strftime = session_setting_oneval(sdb, PZ_PQF_STRFTIME);
@@ -1202,8 +1212,11 @@ int client_parse_query(struct client *cl, const char *query,
         wrbuf_puts(w_pqf, " ");
     }
 
-    if (apply_limit(sdb, facet_limits, w_pqf, w_ccl))
+    if (apply_limit(sdb, facet_limits, w_pqf, w_ccl, ccl_map))
+    {
+        ccl_qual_rm(&ccl_map);
         return -2;
+    }
 
     facet_limits_destroy(cl->facet_limits);
     cl->facet_limits = facet_limits_dup(facet_limits);

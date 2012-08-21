@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns="http://www.indexdata.com/turbomarc" xmlns:pz="http://www.indexdata.com/pazpar2/1.0" xmlns:tmarc="http://www.indexdata.com/turbomarc">
+  <pz:record>
+    <pz:metadata type="id">000277485</pz:metadata>
+    <pz:metadata type="author">Μαρούδης, Κωνσταντίνος Ιω</pz:metadata>
+    <pz:metadata type="date">1894</pz:metadata>
+    <pz:metadata type="title">Ελληνικόν κρυπτογραφικόν λεξικόν /</pz:metadata>
+    <pz:metadata type="title-responsibility">Κωνστ. Ι. Μαρούδης.</pz:metadata>
+    <pz:metadata type="title-complete">Ελληνικόν κρυπτογραφικόν λεξικόν /</pz:metadata>
+    <pz:metadata type="publication-place">Αθήνα,</pz:metadata>
+    <pz:metadata type="publication-date">1894.</pz:metadata>
+    <pz:metadata type="physical-extent">248 σελ.</pz:metadata>
+    <pz:metadata type="subject">Greek language, Modern</pz:metadata>
+    <pz:metadata type="subject-long">Greek language, Modern, Dialects, Dictionaries</pz:metadata>
+    <pz:metadata type="subject">Cryptography.</pz:metadata>
+    <pz:metadata type="subject-long">Cryptography.</pz:metadata>
+    <pz:metadata type="medium">book</pz:metadata>
+    <pz:metadata type="has-fulltext">no</pz:metadata>
+  </pz:record>
+</collection>

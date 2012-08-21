@@ -12,7 +12,8 @@
 <md-date>1971</md-date>
 <md-author>Englund, Carl R</md-author>
 <md-subject>Railroads</md-subject>
-<md-description>&quot;Contract DOT-UT-10003.&quot;</md-description><location id="z3950.indexdata.com/marc" name="Index Data MARC test server">
+<md-description>&quot;Contract DOT-UT-10003.&quot;</md-description><location id="z3950.indexdata.com/marc"
+ name="Index Data MARC test server" checksum="4007858895">
 <md-title>Washington metropolitan area rail computer feasibility study;</md-title>
 <md-title-remainder>final report</md-title-remainder>
 <md-date>1971</md-date>

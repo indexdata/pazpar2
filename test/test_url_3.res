@@ -8,10 +8,12 @@
 <hit>
 
 <md-title>How to program a computer</md-title>
-<md-author>Jack Collins</md-author><location id="my" name="marcserver">
+<md-author>Jack Collins</md-author><location id="my"
+ name="marcserver" checksum="64172">
 <md-title>How to program a computer</md-title>
 <md-author>Jack Collins</md-author></location>
-<location id="my" name="marcserver">
+<location id="my"
+ name="marcserver" checksum="3602387">
 <md-title>How to program a computer</md-title>
 <md-author>Jack Collins</md-author></location>
 <count>2</count>
@@ -22,7 +24,8 @@
 
 <md-title>The Computer Bible</md-title>
 <md-date>1973-1980</md-date>
-<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="my" name="marcserver">
+<md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description><location id="my"
+ name="marcserver" checksum="4287955038">
 <md-title>The Computer Bible</md-title>
 <md-date>1973-1980</md-date>
 <md-description tag="500">Hebrew and Greek; introductions in English</md-description>
@@ -34,7 +37,8 @@
 
 <md-title>Computer science &amp; technology</md-title>
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
-<md-date>1977</md-date><location id="my" name="marcserver">
+<md-date>1977</md-date><location id="my"
+ name="marcserver" checksum="4277340393">
 <md-title>Computer science &amp; technology</md-title>
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
 <md-date>1977</md-date></location>
@@ -45,7 +49,8 @@
 
 <md-title>A plan for community college computer development</md-title>
 <md-date>1971</md-date>
-<md-description>Cover title</md-description><location id="my" name="marcserver">
+<md-description>Cover title</md-description><location id="my"
+ name="marcserver" checksum="4266725748">
 <md-title>A plan for community college computer development</md-title>
 <md-date>1971</md-date>
 <md-description tag="500">Cover title</md-description></location>
@@ -58,7 +63,8 @@
 <md-title-remainder>final report</md-title-remainder>
 <md-date>1971</md-date>
 <md-author>Englund, Carl R</md-author>
-<md-description>&quot;Contract DOT-UT-10003.&quot;</md-description><location id="my" name="marcserver">
+<md-description>&quot;Contract DOT-UT-10003.&quot;</md-description><location id="my"
+ name="marcserver" checksum="4270263963">
 <md-title>Washington metropolitan area rail computer feasibility study;</md-title>
 <md-title-remainder>final report</md-title-remainder>
 <md-date>1971</md-date>
@@ -73,7 +79,8 @@
 <md-title-remainder>a portfolio of thematic computer maps</md-title-remainder>
 <md-date>1974</md-date>
 <md-author>Mairs, John W</md-author>
-<md-description>Scale of maps ca. 1:1,000,000</md-description><location id="my" name="marcserver">
+<md-description>Scale of maps ca. 1:1,000,000</md-description><location id="my"
+ name="marcserver" checksum="4284416823">
 <md-title>The Puget Sound Region</md-title>
 <md-title-remainder>a portfolio of thematic computer maps</md-title-remainder>
 <md-date>1974</md-date>
@@ -88,7 +95,8 @@
 <md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
 <md-title-remainder>the proceedings of a workshop</md-title-remainder>
 <md-date>1974</md-date>
-<md-description>Includes bibliographical references and index</md-description><location id="my" name="marcserver">
+<md-description>Includes bibliographical references and index</md-description><location id="my"
+ name="marcserver" checksum="4291493253">
 <md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
 <md-title-remainder>the proceedings of a workshop</md-title-remainder>
 <md-date>1974</md-date>
@@ -100,7 +108,8 @@
 
 <md-title>The use of passwords for controlled access to computer resources</md-title>
 <md-date>1977</md-date>
-<md-author>Wood, Helen M</md-author><location id="my" name="marcserver">
+<md-author>Wood, Helen M</md-author><location id="my"
+ name="marcserver" checksum="4273802178">
 <md-title>The use of passwords for controlled access to computer resources</md-title>
 <md-date>1977</md-date>
 <md-author>Wood, Helen M</md-author></location>
@@ -112,7 +121,8 @@
 <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
 <md-date>1977</md-date>
-<md-description>Includes bibliographical references and index</md-description><location id="my" name="marcserver">
+<md-description>Includes bibliographical references and index</md-description><location id="my"
+ name="marcserver" checksum="4280878608">
 <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
 <md-date>1977</md-date>

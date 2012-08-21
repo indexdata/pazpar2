@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns="http://www.indexdata.com/turbomarc" xmlns:pz="http://www.indexdata.com/pazpar2/1.0" xmlns:tmarc="http://www.indexdata.com/turbomarc">
+  <pz:record>
+    <pz:metadata type="title">Byfornyelse ved Ibsen-Ringen</pz:metadata>
+    <pz:metadata type="title-complete">Byfornyelse ved Ibsen-Ringen</pz:metadata>
+    <pz:metadata type="physical-format">farvefoto</pz:metadata>
+    <pz:metadata type="physical-format">plan</pz:metadata>
+    <pz:metadata type="physical-format">snit</pz:metadata>
+    <pz:metadata type="subject-long">byfornyelse</pz:metadata>
+    <pz:metadata type="subject-long">sanering</pz:metadata>
+    <pz:metadata type="subject">Telje Torp Aasen Arkitektkontor</pz:metadata>
+    <pz:metadata type="subject-long">Telje Torp Aasen Arkitektkontor, Kristian Augustsgate 7B</pz:metadata>
+    <pz:metadata type="subject">Eng, Dagfin</pz:metadata>
+    <pz:metadata type="subject-long">Eng, Dagfin</pz:metadata>
+    <pz:metadata type="subject-long">anlund, Tom, Kristian Augustsgate, Pilestredet 19</pz:metadata>
+    <pz:metadata type="medium">web</pz:metadata>
+    <pz:metadata type="has-fulltext">no</pz:metadata>
+  </pz:record>
+</collection>

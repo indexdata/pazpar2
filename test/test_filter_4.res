@@ -24,17 +24,17 @@
 <term><name>Bible. O.T</name><frequency>1</frequency></term>
 <term><name>Cartography</name><frequency>1</frequency></term>
 <term><name>Computers</name><frequency>1</frequency></term>
+<term><name>Dropouts</name><frequency>1</frequency></term>
 <term><name>Educational technology</name><frequency>1</frequency></term>
 <term><name>Federal aid to education</name><frequency>1</frequency></term>
 <term><name>Greece</name><frequency>1</frequency></term>
 <term><name>Greek literature</name><frequency>1</frequency></term>
+<term><name>Handicapped children</name><frequency>1</frequency></term>
 <term><name>Imaging systems in medicine</name><frequency>1</frequency></term>
 <term><name>Instructional materials centers</name><frequency>1</frequency></term>
 <term><name>Leno, Jay</name><frequency>1</frequency></term>
 <term><name>Letterman, David</name><frequency>1</frequency></term>
 <term><name>Libraries and community</name><frequency>1</frequency></term>
-<term><name>Libraries and education</name><frequency>1</frequency></term>
-<term><name>Optical pattern recognition</name><frequency>1</frequency></term>
 </list>
 <list name="xtargets">
 <term>

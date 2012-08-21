@@ -10,7 +10,8 @@
 <md-title>The nitrogen permitting and trading plan for Long Island Sound</md-title>
 <md-date>2000</md-date>
 <md-description>&quot;In response to Special Act No. 99-6.&quot;</md-description>
-<md-medium>book</md-medium><location id="LOC Solr Test" name="LOC Solr Test">
+<md-medium>book</md-medium><location id="LOC Solr Test"
+ name="LOC Solr Test" checksum="3168968100">
 <md-title>The nitrogen permitting and trading plan for Long Island Sound</md-title>
 <md-date>2000</md-date>
 <md-description>Title from cover</md-description>
@@ -24,7 +25,8 @@
 
 <md-title>Report of the Water commissioners to the Common council of the city of Albany;</md-title>
 <md-date>1872</md-date>
-<md-medium>book</md-medium><location id="LOC Solr Test" name="LOC Solr Test">
+<md-medium>book</md-medium><location id="LOC Solr Test"
+ name="LOC Solr Test" checksum="1554355631">
 <md-title>Report of the Water commissioners to the Common council of the city of Albany;</md-title>
 <md-date>1872</md-date>
 <md-medium>book</md-medium></location>

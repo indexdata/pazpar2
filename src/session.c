@@ -78,8 +78,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <libxml/tree.h>
 
-#define TERMLIST_HIGH_SCORE 25
-
 #define MAX_CHUNK 15
 
 #define MAX(a,b) ((a)>(b)?(a):(b))
@@ -231,13 +229,12 @@ void add_facet(struct session *s, const char *type, const char *value, int count
             }
             
             s->termlists[i].name = nmem_strdup(s->nmem, type);
-            s->termlists[i].termlist 
-                = termlist_create(s->nmem, TERMLIST_HIGH_SCORE);
+            s->termlists[i].termlist = termlist_create(s->nmem);
             s->num_termlists = i + 1;
         }
         
 #if 0
-        session_log(s, YLOG_DEBUG, "Facets for %s: %s norm:%s (%d)", type, value, wrbuf_cstr(facet_wrbuf), count);
+        session_log(s, YLOG_LOG, "Facets for %s: %s norm:%s (%d)", type, value, wrbuf_cstr(facet_wrbuf), count);
 #endif
         termlist_insert(s->termlists[i].termlist, wrbuf_cstr(display_wrbuf),
                         wrbuf_cstr(facet_wrbuf), count);
@@ -754,7 +751,7 @@ enum pazpar2_error_code session_search(struct session *se,
             continue;
 
         parse_ret = client_parse_query(cl, query, facet_limits, startrecs,
-            maxrecs);
+                                       maxrecs, se->service->ccl_bibset);
         if (parse_ret == -1)
             no_failed_query++;
         else if (parse_ret == -2)
@@ -1014,23 +1011,6 @@ struct hitsbytarget *get_hitsbytarget(struct session *se, int *count, NMEM nmem)
     session_leave(se);
     return p;
 }
-    
-struct termlist_score **get_termlist_score(struct session *se,
-                                           const char *name, int *num)
-{
-    int i;
-    struct termlist_score **tl = 0;
-
-    session_enter(se);
-    for (i = 0; i < se->num_termlists; i++)
-        if (!strcmp((const char *) se->termlists[i].name, name))
-        {
-            tl = termlist_highscore(se->termlists[i].termlist, num);
-            break;
-        }
-    session_leave(se);
-    return tl;
-}
 
 // Compares two hitsbytarget nodes by hitcount
 static int cmp_ht(const void *p1, const void *p2)
@@ -1131,7 +1111,8 @@ void perform_termlist(struct http_channel *c, struct session *se,
                 wrbuf_puts(c->wrbuf, "\">\n");
                 must_generate_empty = 0;
 
-                p = termlist_highscore(se->termlists[i].termlist, &len);
+                p = termlist_highscore(se->termlists[i].termlist, &len,
+                                       nmem_tmp);
                 if (p)
                 {
                     int i;

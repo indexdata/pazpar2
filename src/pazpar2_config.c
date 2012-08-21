@@ -127,6 +127,7 @@ struct conf_service *service_init(struct conf_server *server,
     service->next = 0;
     service->databases = 0;
     service->xslt_list = 0;
+    service->ccl_bibset = 0;
     service->server = server;
     service->session_timeout = 60; /* default session timeout */
     service->z3950_session_timeout = 180;
@@ -259,6 +260,7 @@ void service_destroy(struct conf_service *service)
         {
             service_xslt_destroy(service);
             pp2_charset_fact_destroy(service->charsets);
+            ccl_qual_rm(&service->ccl_bibset);
             yaz_mutex_destroy(&service->mutex);
             nmem_destroy(service->nmem);
         }
@@ -541,6 +543,29 @@ static struct conf_service *service_create_static(struct conf_server *server,
                     return 0;
                 }
             }
+        }
+        else if (!strcmp((const char *) n->name, "ccldirective"))
+        {
+            char *name;
+            char *value;
+            if (!service->ccl_bibset)
+                service->ccl_bibset = ccl_qual_mk();
+            name = (char *) xmlGetProp(n, (xmlChar *) "name");
+            if (!name)
+            {
+                yaz_log(YLOG_FATAL, "ccldirective: missing @name");
+                return 0;
+            }
+            value = (char *) xmlGetProp(n, (xmlChar *) "value");
+            if (!value)
+            { 
+                xmlFree(name);
+                yaz_log(YLOG_FATAL, "ccldirective: missing @value");
+                return 0;
+            }
+            ccl_qual_add_special(service->ccl_bibset, name, value);
+            xmlFree(value);
+            xmlFree(name);
         }
         else if (!strcmp((const char *) n->name, "settings"))
             got_settings++;

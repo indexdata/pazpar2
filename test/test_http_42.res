@@ -13,7 +13,8 @@
 <md-subject>Greek literature</md-subject>
 <md-subject>Philosophy, Ancient</md-subject>
 <md-subject>Greece</md-subject>
-<md-description>Reprint of the 1909 ed., which was issued as the 1904-1906 Gifford lectures</md-description><location id="z3950.indexdata.com/marc" name="marc">
+<md-description>Reprint of the 1909 ed., which was issued as the 1904-1906 Gifford lectures</md-description><location id="z3950.indexdata.com/marc"
+ name="marc" checksum="3659474317">
 <md-title>The religious teachers of Greece</md-title>
 <md-date>1972</md-date>
 <md-author>Adam, James</md-author>
@@ -36,7 +37,8 @@
 <md-author>Mairs, John W</md-author>
 <md-subject>Cartography</md-subject>
 <md-subject>Puget Sound region (Wash.)</md-subject>
-<md-description>Scale of maps ca. 1:1,000,000</md-description><location id="z3950.indexdata.com/marc" name="marc">
+<md-description>Scale of maps ca. 1:1,000,000</md-description><location id="z3950.indexdata.com/marc"
+ name="marc" checksum="2962705161">
 <md-title>The Puget Sound Region</md-title>
 <md-title-remainder>a portfolio of thematic computer maps</md-title-remainder>
 <md-date>1974</md-date>
@@ -57,7 +59,8 @@
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
 <md-date>1977</md-date>
 <md-subject>Tomography</md-subject>
-<md-description>Includes bibliographical references and index</md-description><location id="z3950.indexdata.com/marc" name="marc">
+<md-description>Includes bibliographical references and index</md-description><location id="z3950.indexdata.com/marc"
+ name="marc" checksum="3136897450">
 <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
 <md-title-remainder>proceedings of the workshop</md-title-remainder>
 <md-date>1977</md-date>
@@ -74,7 +77,8 @@
 <md-title>The use of passwords for controlled access to computer resources</md-title>
 <md-date>1977</md-date>
 <md-author>Wood, Helen M</md-author>
-<md-subject>Computers</md-subject><location id="z3950.indexdata.com/marc" name="marc">
+<md-subject>Computers</md-subject><location id="z3950.indexdata.com/marc"
+ name="marc" checksum="3485282028">
 <md-title>The use of passwords for controlled access to computer resources</md-title>
 <md-date>1977</md-date>
 <md-author>Wood, Helen M</md-author>
@@ -90,7 +94,8 @@
 <md-title>Computer science &amp; technology</md-title>
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
 <md-date>1977</md-date>
-<md-subject>Optical pattern recognition</md-subject><location id="z3950.indexdata.com/marc" name="marc">
+<md-subject>Optical pattern recognition</md-subject><location id="z3950.indexdata.com/marc"
+ name="marc" checksum="3311089739">
 <md-title>Computer science &amp; technology</md-title>
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
 <md-date>1977</md-date>

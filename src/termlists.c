@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <config.h>
 #endif
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <yaz/yaz-util.h>
@@ -44,15 +45,11 @@ struct termlist
     struct termlist_bucket **hashtable;
     unsigned hash_size;
 
-    struct termlist_score **highscore;
-    int highscore_size;
-    int highscore_num;
-    int highscore_min;
-
+    int no_entries;
     NMEM nmem;
 };
 
-struct termlist *termlist_create(NMEM nmem, int highscore_size)
+struct termlist *termlist_create(NMEM nmem)
 {
     struct termlist *res = nmem_malloc(nmem, sizeof(struct termlist));
     res->hash_size = 399;
@@ -60,51 +57,8 @@ struct termlist *termlist_create(NMEM nmem, int highscore_size)
         nmem_malloc(nmem, res->hash_size * sizeof(struct termlist_bucket*));
     memset(res->hashtable, 0, res->hash_size * sizeof(struct termlist_bucket*));
     res->nmem = nmem;
-
-    res->highscore = nmem_malloc(nmem, highscore_size * sizeof(struct termlist_score *));
-    res->highscore_size = highscore_size;
-    res->highscore_num = 0;
-    res->highscore_min = 0;
-
+    res->no_entries = 0;
     return res;
-}
-
-static void update_highscore(struct termlist *tl, struct termlist_score *t)
-{
-    int i;
-    int smallest;
-    int me = -1;
-
-    if (tl->highscore_num > tl->highscore_size && t->frequency < tl->highscore_min)
-        return;
-
-    smallest = 0;
-    for (i = 0; i < tl->highscore_num; i++)
-    {
-        if (tl->highscore[i]->frequency < tl->highscore[smallest]->frequency)
-            smallest = i;
-        if (tl->highscore[i] == t)
-            me = i;
-    }
-    if (tl->highscore_num)
-        tl->highscore_min = tl->highscore[smallest]->frequency;
-    if (t->frequency < tl->highscore_min)
-        tl->highscore_min = t->frequency;
-    if (me >= 0)
-        return;
-    if (tl->highscore_num < tl->highscore_size)
-    {
-        tl->highscore[tl->highscore_num++] = t;
-        if (t->frequency < tl->highscore_min)
-            tl->highscore_min = t->frequency;
-    }
-    else
-    {
-        if (t->frequency > tl->highscore[smallest]->frequency)
-        {
-            tl->highscore[smallest] = t;
-        }
-    }
 }
 
 void termlist_insert(struct termlist *tl, const char *display_term,
@@ -123,7 +77,6 @@ void termlist_insert(struct termlist *tl, const char *display_term,
         if (!strcmp(buf, (*p)->term.norm_term))
         {
             (*p)->term.frequency += freq;
-            update_highscore(tl, &((*p)->term));
             break;
         }
     }
@@ -137,7 +90,7 @@ void termlist_insert(struct termlist *tl, const char *display_term,
         new->term.frequency = freq;
         new->next = 0;
         *p = new;
-        update_highscore(tl, &new->term);
+        tl->no_entries++;
     }
 }
 
@@ -151,11 +104,25 @@ static int compare(const void *s1, const void *s2)
     return strcmp((*p1)->display_term, (*p2)->display_term);
 }
 
-struct termlist_score **termlist_highscore(struct termlist *tl, int *len)
+struct termlist_score **termlist_highscore(struct termlist *tl, int *len,
+                                           NMEM nmem)
 {
-    qsort(tl->highscore, tl->highscore_num, sizeof(struct termlist_score*), compare);
-    *len = tl->highscore_num;
-    return tl->highscore;
+    struct termlist_score **highscore =
+        (struct termlist_score **)
+        nmem_malloc(nmem, tl->no_entries * sizeof(*highscore));
+    
+    int no = 0;
+    unsigned bucket;
+    for (bucket = 0; bucket < tl->hash_size; bucket++)
+    {
+        struct termlist_bucket *p;
+        for (p = tl->hashtable[bucket]; p; p = p->next)
+            highscore[no++] = &p->term;
+    }
+    assert(no == tl->no_entries);
+    qsort(highscore, tl->no_entries, sizeof(struct termlist_score*), compare);
+    *len = tl->no_entries;
+    return highscore;
 }
 
 /*
