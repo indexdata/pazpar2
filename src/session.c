@@ -620,7 +620,7 @@ int session_is_preferred_clients_ready(struct session *s)
 }
 
 static void session_clear_set(struct session *se,
-                              const char *sort_field, int increasing)
+                              const char *sort_field, int increasing, int position)
 {
     reclist_destroy(se->reclist);
     se->reclist = 0;
@@ -635,47 +635,47 @@ static void session_clear_set(struct session *se,
     se->sorted_results = nmem_malloc(se->nmem, sizeof(*se->sorted_results));
     se->sorted_results->field = nmem_strdup(se->nmem, sort_field);
     se->sorted_results->increasing = increasing;
+    se->sorted_results->position = position;
     se->sorted_results->next = 0;
     
     se->reclist = reclist_create(se->nmem);
 }
 
 void session_sort(struct session *se, const char *field, int increasing,
-                  int clear_set)
+                  int position)
 {
     struct session_sorted_results *sr;
     struct client_list *l;
 
     session_enter(se);
 
-    yaz_log(YLOG_LOG, "session_sort field=%s", field);
-    if (clear_set)
+    yaz_log(YLOG_LOG, "session_sort field=%s increasing=%d position=%d", field, increasing, position);
+    /* see if we already have sorted for this critieria */
+    for (sr = se->sorted_results; sr; sr = sr->next)
     {
-        session_clear_set(se, field, increasing);
+        if (!strcmp(field, sr->field) && increasing == sr->increasing && sr->position == position)
+            break;
     }
-    else
+    if (sr)
     {
-        /* see if we already have sorted for this critieria */
-        for (sr = se->sorted_results; sr; sr = sr->next)
-        {
-            if (!strcmp(field, sr->field) && increasing == sr->increasing)
-                break;
-        }
-        if (sr)
-        {
-            session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d already fetched",
-                        field, increasing);
-            session_leave(se);
-            return;
-        }
-        session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d must fetch",
-                    field, increasing);
-        sr = nmem_malloc(se->nmem, sizeof(*sr));
-        sr->field = nmem_strdup(se->nmem, field);
-        sr->increasing = increasing;
-        sr->next = se->sorted_results;
-        se->sorted_results = sr;
+        z(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d position=%d already fetched",
+                    field, increasing, position);
+        session_leave(se);
+        return;
     }
+    if (position)
+    {
+        session_clear_set(se, field, increasing, position);
+    }
+
+    session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d must fetch",
+                field, increasing);
+    sr = nmem_malloc(se->nmem, sizeof(*sr));
+    sr->field = nmem_strdup(se->nmem, field);
+    sr->increasing = increasing;
+    sr->position = position;
+    sr->next = se->sorted_results;
+    se->sorted_results = sr;
         
     for (l = se->clients_active; l; l = l->next)
     {
