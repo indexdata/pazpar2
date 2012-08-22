@@ -640,8 +640,7 @@ static void session_clear_set(struct session *se,
     se->reclist = reclist_create(se->nmem);
 }
 
-void session_sort(struct session *se, const char *field, int increasing,
-                  int clear_set)
+void session_sort(struct session *se, const char *field, int increasing, int clear_set)
 {
     struct session_sorted_results *sr;
     struct client_list *l;
@@ -649,6 +648,10 @@ void session_sort(struct session *se, const char *field, int increasing,
     session_enter(se);
 
     yaz_log(YLOG_LOG, "session_sort field=%s", field);
+    // TODO In order for this to work, clear_set may only be true on first call. Every following (poll) may not. 
+    // I do not think we can decide this from the outside of the session. 
+    // The logic should be when we change to/away from a native sort order, 
+    // it should cleared on the first call
     if (clear_set)
     {
         session_clear_set(se, field, increasing);

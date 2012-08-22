@@ -156,8 +156,7 @@ void session_destroy(struct session *s);
 void session_init_databases(struct session *s);
 void statistics(struct session *s, struct statistics *stat);
 
-void session_sort(struct session *se, const char *field, int increasing,
-                  int clear_set);
+void session_sort(struct session *se, const char *field, int increasing, int clear_set);
 
 enum pazpar2_error_code session_search(struct session *s, const char *query,
                                        const char *startrecs,
