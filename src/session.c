@@ -651,6 +651,7 @@ void session_sort(struct session *se, const char *field, int increasing,
 
     yaz_log(YLOG_LOG, "session_sort field=%s increasing=%d position=%d", field, increasing, position);
     /* see if we already have sorted for this critieria */
+    /* TODO I do not see the point in saving all previous sorts. Dont we re-sort anyway ? */
     for (sr = se->sorted_results; sr; sr = sr->next)
     {
         if (!strcmp(field, sr->field) && increasing == sr->increasing && sr->position == position)
@@ -658,7 +659,7 @@ void session_sort(struct session *se, const char *field, int increasing,
     }
     if (sr)
     {
-        z(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d position=%d already fetched",
+        session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d position=%d already fetched",
                     field, increasing, position);
         session_leave(se);
         return;
@@ -668,8 +669,8 @@ void session_sort(struct session *se, const char *field, int increasing,
         session_clear_set(se, field, increasing, position);
     }
 
-    session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d must fetch",
-                field, increasing);
+    session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d position=%d must fetch",
+                field, increasing, position);
     sr = nmem_malloc(se->nmem, sizeof(*sr));
     sr->field = nmem_strdup(se->nmem, field);
     sr->increasing = increasing;
@@ -695,7 +696,8 @@ enum pazpar2_error_code session_search(struct session *se,
                                        const char *filter,
                                        const char *limit,
                                        const char **addinfo,
-                                       const char *sort_field, int increasing)
+                                       const char *sort_field,
+                                       int increasing)
 {
     int live_channels = 0;
     int no_working = 0;
@@ -716,7 +718,7 @@ enum pazpar2_error_code session_search(struct session *se,
     
     session_enter(se);
     se->settings_modified = 0;
-    session_clear_set(se, sort_field, increasing);
+    session_clear_set(se, sort_field, increasing, 0); /* hardcoded position */
     relevance_destroy(&se->relevance);
 
     live_channels = select_targets(se, filter);

@@ -691,7 +691,7 @@ static void client_set_facets_request(struct client *cl, ZOOM_connection link)
                 wrbuf_puts(w, ",");
         }
     }
-    yaz_log(YLOG_LOG, "using facets str: %s", wrbuf_cstr(w));
+    yaz_log(YLOG_DEBUG, "using facets str: %s", wrbuf_cstr(w));
     ZOOM_connection_option_set(link, "facets",
                                wrbuf_len(w) ? wrbuf_cstr(w) : 0);
     wrbuf_destroy(w);
@@ -1429,11 +1429,11 @@ struct suggestions* client_suggestions_create(const char* suggestions_string)
     int i;
     NMEM nmem;
     struct suggestions *suggestions;
-    if (suggestions_string == 0)
+    if (suggestions_string == 0 || suggestions_string[0] == 0 )
         return 0;
     nmem = nmem_create();
     suggestions = nmem_malloc(nmem, sizeof(*suggestions));
-    yaz_log(YLOG_DEBUG, "client target suggestions: %s", suggestions_string);
+    yaz_log(YLOG_DEBUG, "client target suggestions: %s.", suggestions_string);
 
     suggestions->nmem = nmem;
     suggestions->num = 0;

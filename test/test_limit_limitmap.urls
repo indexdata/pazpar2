@@ -6,7 +6,7 @@ http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=termlist&block=1&name=xtargets%2Cauthor%2Csubject%2Cdate
 test_limit_limitmap_settings_2.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
-4 http://localhost:9763/search.pz2?session=1&command=show&block=1
+10 http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=termlist&block=1&name=xtargets%2Cauthor%2Csubject%2Cdate
 http://localhost:9763/search.pz2?session=1&command=termlist&block=1&report=status&name=xtargets%2Cauthor%2Csubject%2Cdate
@@ -28,4 +28,16 @@ http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=M
 1 http://localhost:9763/search.pz2?session=1&command=show&block=1&version=2
 http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=date%3D1977
 http://localhost:9763/search.pz2?session=1&command=show&block=1&version=2
+http://localhost:9763/search.pz2?session=1&command=termlist&block=1&version2=
+http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=date%3C1977
+http://localhost:9763/search.pz2?session=1&command=show&block=1&version=2
 http://localhost:9763/search.pz2?session=1&command=termlist&block=1&version=2
+http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=date%3D1977-1997
+http://localhost:9763/search.pz2?session=1&command=show&block=1&version=2
+http://localhost:9763/search.pz2?session=1&command=termlist&block=1&version2=
+http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=date%3C1977
+http://localhost:9763/search.pz2?session=1&command=show&block=1&version=2
+http://localhost:9763/search.pz2?session=1&command=termlist&block=1&version=2
+http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=date%3D1977-1997
+http://localhost:9763/search.pz2?session=1&command=show&block=1&version=2
+http://localhost:9763/search.pz2?session=1&command=termlist&block=1&version2=
