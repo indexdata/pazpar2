@@ -202,6 +202,7 @@ static int reclist_cmp(const void *p1, const void *p2)
         default:
             yaz_log(YLOG_WARN, "Bad sort type: %d", s->type);
             res = 0;
+            break;
         }
     }
     if (res == 0)
