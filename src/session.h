@@ -197,6 +197,7 @@ void session_log(struct session *s, int level, const char *fmt, ...)
 struct session_sorted_results {
     const char *field;
     int increasing;
+    int position;
     struct session_sorted_results *next;
 };
 
