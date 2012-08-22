@@ -1188,8 +1188,9 @@ static void cmd_show(struct http_channel *c)
         release_session(c, s);
         return;
     }
-    session_sort(s->psession, sp->name, sp->increasing,
-                 sp->type == Metadata_sortkey_position);
+    session_sort(s->psession, sp->name, sp->increasing, 0);
+                 /* TODO This was too simple. Will make pazpar2 continuing reseting the session resultset and redo the search. Disable this for now
+                    sp->type == Metadata_sortkey_position */
 
     status = session_active_clients(s->psession);
 
