@@ -664,27 +664,32 @@ void session_sort(struct session *se, const char *field, int increasing,
         session_leave(se);
         return;
     }
-    if (position)
-    {
-        session_clear_set(se, field, increasing, position);
-    }
-
     session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d position=%d must fetch",
                 field, increasing, position);
-    sr = nmem_malloc(se->nmem, sizeof(*sr));
-    sr->field = nmem_strdup(se->nmem, field);
-    sr->increasing = increasing;
-    sr->position = position;
-    sr->next = se->sorted_results;
-    se->sorted_results = sr;
-        
+    if (position)
+    {
+        yaz_log(YLOG_DEBUG, "Reset results due to position");
+        session_clear_set(se, field, increasing, position);
+    }
+    else {
+        sr = nmem_malloc(se->nmem, sizeof(*sr));
+        sr->field = nmem_strdup(se->nmem, field);
+        sr->increasing = increasing;
+        sr->position = position;
+        sr->next = se->sorted_results;
+        se->sorted_results = sr;
+    }
+    yaz_log(YLOG_DEBUG, "Restarting search for clients due to change in sort order");
+    
     for (l = se->clients_active; l; l = l->next)
     {
         struct client *cl = l->client;
         if (client_get_state(cl) == Client_Connecting ||
             client_get_state(cl) == Client_Idle ||
-            client_get_state(cl) == Client_Working)
+            client_get_state(cl) == Client_Working) {
+            yaz_log(YLOG_DEBUG, "Client %s: Restarting search due to change in sort order", client_get_id(cl));
             client_start_search(cl);
+        }
     }
     session_leave(se);
 }
