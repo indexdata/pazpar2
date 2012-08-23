@@ -817,15 +817,14 @@ void client_start_search(struct client *cl)
     q = ZOOM_query_create();
     if (cl->cqlquery)
     {
-        yaz_log(YLOG_LOG, "Search %s CQL: %s", client_get_id(cl),
-                cl->cqlquery);
+        yaz_log(YLOG_LOG, "Client %s: Search CQL: %s", client_get_id(cl), cl->cqlquery);
         ZOOM_query_cql(q, cl->cqlquery);
         if (*opt_sort)
             ZOOM_query_sortby(q, opt_sort);
     }
     else
     {
-        yaz_log(YLOG_LOG, "Search %s PQF: %s", client_get_id(cl), cl->pquery);
+        yaz_log(YLOG_LOG, "Client %s: Search PQF: %s", client_get_id(cl), cl->pquery);
         
         ZOOM_query_prefix(q, cl->pquery);
     }
@@ -834,6 +833,7 @@ void client_start_search(struct client *cl)
         const char *sort_strategy_and_spec =
             get_strategy_plus_sort(cl, se->sorted_results->field);
         int increasing = se->sorted_results->increasing;
+        int position = se->sorted_results->position;
         if (sort_strategy_and_spec && strlen(sort_strategy_and_spec) < 40)
         {
             char spec[50], *p;
@@ -848,7 +848,7 @@ void client_start_search(struct client *cl)
                     strcat(p, " <");
                 else
                     strcat(p, " >");
-                yaz_log(YLOG_LOG, "applying %s %s", spec, p);
+                yaz_log(YLOG_LOG, "Client %s: applying sorting %s %s", client_get_id(cl), spec, p);
                 ZOOM_query_sortby2(q, spec, p);
             }
         }
@@ -858,11 +858,13 @@ void client_start_search(struct client *cl)
                skip it entirely */
             if (se->sorted_results->next)
             {
+                yaz_log(YLOG_DEBUG,"Client %s: Do not (re)search anyway", client_get_id(cl));
                 ZOOM_query_destroy(q);
                 return;
             }
         }
     }
+    yaz_log(YLOG_DEBUG,"Client %s: Starting search", client_get_id(cl));
     client_set_state(cl, Client_Working);
     cl->hits = 0;
     cl->record_offset = 0;
@@ -1221,15 +1223,15 @@ int client_parse_query(struct client *cl, const char *query,
     facet_limits_destroy(cl->facet_limits);
     cl->facet_limits = facet_limits_dup(facet_limits);
 
-    yaz_log(YLOG_LOG, "CCL query: %s", wrbuf_cstr(w_ccl));
+    yaz_log(YLOG_LOG, "Client %s: CCL query: %s", client_get_id(cl), wrbuf_cstr(w_ccl));
     cn = ccl_find_str(ccl_map, wrbuf_cstr(w_ccl), &cerror, &cpos);
     ccl_qual_rm(&ccl_map);
     if (!cn)
     {
         client_set_state(cl, Client_Error);
-        session_log(se, YLOG_WARN, "Failed to parse CCL query '%s' for %s",
-                    wrbuf_cstr(w_ccl),
-                    client_get_id(cl));
+        session_log(se, YLOG_WARN, "Client %s: Failed to parse CCL query '%s'",
+                    client_get_id(cl),
+                    wrbuf_cstr(w_ccl));
         wrbuf_destroy(w_ccl);
         wrbuf_destroy(w_pqf);
         return -1;
@@ -1273,13 +1275,13 @@ int client_parse_query(struct client *cl, const char *query,
     if (!zquery)
     {
 
-        session_log(se, YLOG_WARN, "Invalid PQF query for %s: %s",
+        session_log(se, YLOG_WARN, "Invalid PQF query for Client %s: %s",
                     client_get_id(cl), cl->pquery);
         ret_value = -1;
     }
     else
     {
-        session_log(se, YLOG_LOG, "PQF for %s: %s",
+        session_log(se, YLOG_LOG, "PQF for Client %s: %s",
                     client_get_id(cl), cl->pquery);
         
         /* Support for PQF on SRU targets. */
