@@ -1,11 +1,11 @@
 --- 1.6.16 2012/08/22
 
-Revert the changes introduce in 1.6.15 around the position sorting. It resetted the 
+Fix a bug introduce in 1.6.15 around the position sorting. It resetted the 
 resultset and sorting when the sort order is position. However this will be done on
 every client poll, which will make pazpar2 continuing reset and fetching. 
 It should only be done on FIRST request where the sort order change. 
 
-Fix an issue on suggestions: Also disable suggestions on empty string. 
+Fix an issue on suggestion option: Also disable suggestions on empty string. 
 
 Clean up in turbo marc stylesheet. 
 
