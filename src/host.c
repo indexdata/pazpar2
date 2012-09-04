@@ -99,7 +99,12 @@ struct host *find_host(database_hosts_t hosts, const char *url,
     yaz_mutex_enter(hosts->mutex);
     for (p = hosts->hosts; p; p = p->next)
         if (!strcmp(p->url, url))
-            break;
+        {
+            if (p->proxy && proxy && !strcmp(p->proxy, proxy))
+                break;
+            if (!p->proxy && !proxy)
+                break;
+        }
     if (!p)
     {
         p = create_host(url, proxy, port, iochan_man);
