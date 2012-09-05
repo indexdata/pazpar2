@@ -1,3 +1,8 @@
+--- 1.6.17 2012/09/05
+
+Fix bad re-use of connections (connections with changing proxy should not
+be reused).
+
 --- 1.6.16 2012/08/22
 
 Fix a bug introduce in 1.6.15 around the position sorting. It resetted the 
