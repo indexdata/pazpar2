@@ -118,7 +118,7 @@ static int sc_main(
     yaz_log_init_prefix("pazpar2");
     yaz_log_xml_errors(0, YLOG_WARN);
 
-    while ((ret = options("dDf:h:l:p:R:tu:v:VX", argv, argc, &arg)) != -2)
+    while ((ret = options("dDf:h:l:p:R:tu:v:Vw:X", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
