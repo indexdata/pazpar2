@@ -1,3 +1,4 @@
+--- 1.6.18 2012/09/17
 
 Rank algorithm configurable by 'rank' element inside service. So far
 only, attribute 'cluster' is recognized. If cluster="yes", multiple
