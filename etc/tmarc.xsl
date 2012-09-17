@@ -720,6 +720,16 @@
         </pz:metadata>
       </xsl:for-each>
 
+      <xsl:for-each select="tmarc:d903">
+        <xsl:if test="tmarc:sa">
+          <pz:metadata type="publication-date">
+            <xsl:value-of select="substring(tmarc:sa,1,4)"/>
+          </pz:metadata>
+          <pz:metadata type="date">
+            <xsl:value-of select="substring(tmarc:sa,1,4)"/>
+          </pz:metadata>
+        </xsl:if>
+      </xsl:for-each>
 
       <!-- <xsl:if test="$fulltext_b"> <pz:metadata type="fulltext"> <xsl:value-of 
         select="$fulltext_b"/> </pz:metadata> </xsl:if> -->
