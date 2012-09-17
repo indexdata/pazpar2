@@ -26,7 +26,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<relevance>150000</relevance>
+<relevance>60819</relevance>
 <recid>content: title the religious teachers of greece author adam james medium book</recid>
 </hit>
 <hit>
@@ -48,7 +48,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<relevance>100000</relevance>
+<relevance>40546</relevance>
 <recid>content: title four psalms author smith george adam medium book</recid>
 </hit>
 </show>

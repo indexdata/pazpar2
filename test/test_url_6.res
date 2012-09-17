@@ -13,7 +13,7 @@
 <md-title>APPLIED GEOLOGY FILE</md-title>
 <md-description tag="520">Reports and memorandums completed by the Site Investigation Section comprise this data set.  Subjects include geotechnical appraisal of public facility sites before and during construction and evaluations of hazardous waste problems</md-description>
 <md-description tag="513">1970-PRESENT</md-description></location>
-<relevance>3923</relevance>
+<relevance>6707</relevance>
 <recid>content: title applied geology file author medium book</recid>
 </hit>
 <hit>
@@ -24,7 +24,7 @@
 <md-title>UTAH GEOLOGICAL AND MINERAL SURVEY PUBLICATIONS</md-title>
 <md-description tag="520">Publications of the Utah Geological and Mineral Survey include reports of investigation, special studies, bulletins, open-file reports, geologic map of Utah, publications of geological societies, geologic and oil and mineral maps, coal monographs, circulars, water resource bulletins, and reprints of articles</md-description>
 <md-description tag="513">-PRESENT</md-description></location>
-<relevance>2896</relevance>
+<relevance>4951</relevance>
 <recid>content: title utah geological and mineral survey publications author medium book</recid>
 </hit>
 <hit>

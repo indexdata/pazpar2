@@ -16,7 +16,7 @@
 <md-title-remainder>fast &amp; easy</md-title-remainder>
 <md-date>2001</md-date>
 <md-author>Woodward, C. Michael</md-author></location>
-<relevance>45304</relevance>
+<relevance>50734</relevance>
 <recid>content: title adobe illustrator for the mac author woodward c michael</recid>
 </hit>
 <hit>
@@ -26,7 +26,7 @@
  name="LOC-SOLR" checksum="3541567482">
 <md-title>Advanced computer performance modeling and simulation</md-title>
 <md-date>1998</md-date></location>
-<relevance>45304</relevance>
+<relevance>50734</relevance>
 <recid>content: title advanced computer performance modeling and simulation</recid>
 </hit>
 <hit>
@@ -42,7 +42,7 @@
 <md-date>2000</md-date>
 <md-author>Aldrich, Richard W</md-author>
 <md-description>&quot;April 2000.&quot;</md-description></location>
-<relevance>45304</relevance>
+<relevance>50734</relevance>
 <recid>content: title cyberterrorism and computer crimes author aldrich richard w</recid>
 </hit>
 <hit>
@@ -56,7 +56,7 @@
 <md-title-remainder>talks with Bonnie Nardi, Jakob Nielsen, David Smith, Austin Henderson &amp; Jed Harris, Terry Winograd, Stephanie Rosenbaum</md-title-remainder>
 <md-date>2000</md-date>
 <md-author>Kaasgaard, Klaus</md-author></location>
-<relevance>41529</relevance>
+<relevance>46506</relevance>
 <recid>content: title software design and usability author kaasgaard klaus</recid>
 </hit>
 <hit>
@@ -70,7 +70,7 @@
 <md-date>2000</md-date>
 <md-author>Knittel, John</md-author>
 <md-description>Explains what computer hacking is, who does it, and how dangerous it can be</md-description></location>
-<relevance>39715</relevance>
+<relevance>44474</relevance>
 <recid>content: title everything you need to know about the dangers of computer hacking author knittel john</recid>
 </hit>
 <hit>
@@ -82,7 +82,7 @@
 <md-title>Computer peripherals</md-title>
 <md-date>1995</md-date>
 <md-author>Cook, Barry M</md-author></location>
-<relevance>39641</relevance>
+<relevance>44392</relevance>
 <recid>content: title computer peripherals author cook barry m</recid>
 </hit>
 <hit>
@@ -95,7 +95,7 @@
 <md-date>1994</md-date>
 <md-description>&quot;For kids and their parents&quot;--Cover</md-description>
 <md-description>Discusses a variety of educational and game software for children  with suggestions for setting up a computer system. Includes a 3 1/2 in. disk with 6 shareware programs for children</md-description></location>
-<relevance>34817</relevance>
+<relevance>38990</relevance>
 <recid>content: title kids computer book</recid>
 </hit>
 <hit>
@@ -107,7 +107,7 @@
 <md-title>Computer friendly</md-title>
 <md-date>1999</md-date>
 <md-author>Steinbacher, Raymond</md-author></location>
-<relevance>33978</relevance>
+<relevance>38050</relevance>
 <recid>content: title computer friendly author steinbacher raymond</recid>
 </hit>
 <hit>
@@ -121,7 +121,7 @@
 <md-description>&quot;May 1999.&quot;</md-description>
 <md-description>&quot;NZLC R54&quot;--T.p. verso</md-description>
 <md-description>&quot;Also published as Parliamentary Paper E 31AO&quot;--T.p. verso</md-description></location>
-<relevance>33978</relevance>
+<relevance>38050</relevance>
 <recid>content: title computer misuse</recid>
 </hit>
 <hit>
@@ -135,7 +135,7 @@
 <md-title-remainder>a top-down approach featuring the Internet</md-title-remainder>
 <md-date>2001</md-date>
 <md-author>Ross, Keith W</md-author></location>
-<relevance>33978</relevance>
+<relevance>38050</relevance>
 <recid>content: title computer networking author ross keith w</recid>
 </hit>
 <hit>
@@ -149,7 +149,7 @@
 <md-date>1998</md-date>
 <md-author>Davis, Phyllis</md-author>
 <md-description>Includes index</md-description></location>
-<relevance>33978</relevance>
+<relevance>38050</relevance>
 <recid>content: title coreldraw for windows author davis phyllis</recid>
 </hit>
 <hit>
@@ -166,7 +166,7 @@
 <md-author>Langer, Maria</md-author>
 <md-description>Includes index</md-description>
 <md-description>&quot;Covers Quicken deluxe 2000 for the Mac&quot;--Cover</md-description></location>
-<relevance>33978</relevance>
+<relevance>38050</relevance>
 <recid>content: title quicken for the mac author langer maria</recid>
 </hit>
 <hit>
@@ -176,7 +176,7 @@
  name="LOC-SOLR" checksum="2604453496">
 <md-title>Sicherheit und Schutz im Netz</md-title>
 <md-date>1998</md-date></location>
-<relevance>33978</relevance>
+<relevance>38050</relevance>
 <recid>content: title sicherheit und schutz im netz</recid>
 </hit>
 <hit>
@@ -190,7 +190,7 @@
 <md-date>1999</md-date>
 <md-author>Carasik, Anne H</md-author>
 <md-description>Includes index</md-description></location>
-<relevance>33978</relevance>
+<relevance>38050</relevance>
 <recid>content: title unix secure shell author carasik anne h</recid>
 </hit>
 <hit>
@@ -204,7 +204,7 @@
 <md-title-remainder>proceedings, 11-13 October 1999, Boston, Massachusetts</md-title-remainder>
 <md-date>1999</md-date>
 <md-description>&quot;IEEE catalog number 99EX370&quot;--T.p. verso</md-description></location>
-<relevance>32090</relevance>
+<relevance>35936</relevance>
 <recid>content: title eight international conference on computer communications and networks</recid>
 </hit>
 <hit>
@@ -218,7 +218,7 @@
 <md-date>2000</md-date>
 <md-author>Farley, Marc</md-author>
 <md-description>Includes index</md-description></location>
-<relevance>30203</relevance>
+<relevance>33822</relevance>
 <recid>content: title building storage networks author farley marc</recid>
 </hit>
 <hit>
@@ -234,7 +234,7 @@
 <md-date>1999</md-date>
 <md-author>Malaga, Ernie</md-author>
 <md-description>Includes index</md-description></location>
-<relevance>30203</relevance>
+<relevance>33822</relevance>
 <recid>content: title complete cl author malaga ernie</recid>
 </hit>
 <hit>
@@ -248,7 +248,7 @@
 <md-title-remainder>real-time rendering and software technology</md-title-remainder>
 <md-date>2001</md-date>
 <md-author>Watt, Alan H</md-author></location>
-<relevance>30203</relevance>
+<relevance>33822</relevance>
 <recid>content: title d games author watt alan h</recid>
 </hit>
 <hit>
@@ -260,7 +260,7 @@
 <md-title>Java applications strategies for the AS/400</md-title>
 <md-date>1999</md-date>
 <md-author>Denoncourt, Don</md-author></location>
-<relevance>30203</relevance>
+<relevance>33822</relevance>
 <recid>content: title java applications strategies for the as author denoncourt don</recid>
 </hit>
 <hit>
@@ -275,7 +275,7 @@
 <md-author>Loudon, Kyle</md-author>
 <md-description>&quot;Useful techniques from sorting to encryption&quot;--Cover</md-description>
 <md-description>Includes index</md-description></location>
-<relevance>30203</relevance>
+<relevance>33822</relevance>
 <recid>content: title mastering algorithms with c author loudon kyle</recid>
 </hit>
 </show>

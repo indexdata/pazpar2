@@ -12,7 +12,7 @@
  name="gils" checksum="2074161109">
 <md-title>BIBLIOGRAPHY OF MAINE GEOLOGY</md-title>
 <md-description>This data base is a computer based bibliography of marine geology.  It allows searching by topic and geographic location, similar to GEOREF.  It is currently under development to replace the printed Bibliography of Marine Geology</md-description></location>
-<relevance>9416</relevance>
+<relevance>11882</relevance>
 <recid>content: title bibliography of maine geology</recid>
 </hit>
 <hit>

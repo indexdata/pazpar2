@@ -23,7 +23,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<relevance>85714</relevance>
+<relevance>59412</relevance>
 <recid>content: title washington metropolitan area rail computer feasibility study author englund carl r medium book</recid>
 </hit>
 </show>

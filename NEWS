@@ -1,3 +1,10 @@
+
+Rank algorithm configurable by 'rank' element inside service. So far
+only, attribute 'cluster' is recognized. If cluster="yes", multiple
+records inside a cluster boosts higher than single records. This
+is default behavior and existing behavior. cluster="no" takes the
+average score of each record in a cluster.
+
 --- 1.6.17 2012/09/05
 
 Fix bad re-use of connections (connections with changing proxy should not

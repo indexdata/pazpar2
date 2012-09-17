@@ -19,7 +19,7 @@ under development to replace the printed Bibliography of Marine Geology</md-desc
 <md-description tag="513">1692-PRESENT</md-description>
 <md-test-usersetting-2>test-usersetting-2 data: 
 </md-test-usersetting-2></location>
-<relevance>9416</relevance>
+<relevance>11882</relevance>
 <recid>content: title bibliography of maine geology author medium book</recid>
 </hit>
 <hit>

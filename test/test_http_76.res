@@ -19,7 +19,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<relevance>57536</relevance>
+<relevance>102165</relevance>
 <recid>content: title computer science technology author medium book</recid>
 </hit>
 <hit>
@@ -39,7 +39,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<relevance>57536</relevance>
+<relevance>102165</relevance>
 <recid>content: title the computer bible author medium book</recid>
 </hit>
 <hit>
@@ -56,7 +56,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<relevance>17260</relevance>
+<relevance>30649</relevance>
 <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>

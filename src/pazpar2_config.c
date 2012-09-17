@@ -132,6 +132,7 @@ struct conf_service *service_init(struct conf_server *server,
     service->session_timeout = 60; /* default session timeout */
     service->z3950_session_timeout = 180;
     service->z3950_operation_timeout = 30;
+    service->rank_cluster = 1;
 
     service->charsets = 0;
 
@@ -612,6 +613,21 @@ static struct conf_service *service_create_static(struct conf_server *server,
                 yaz_log(YLOG_DEBUG, "service set: %s=%s (Not implemented)", (char *) name, (char *) value);
                 //service_aply_setting(service, name, value);
             }
+        }
+        else if (!strcmp((const char *) n->name, "rank"))
+        {
+            char *rank_cluster = (char *) xmlGetProp(n, (xmlChar *) "cluster");
+
+            if (rank_cluster && !strcmp(rank_cluster, "yes"))
+                service->rank_cluster = 1;
+            else if (rank_cluster && !strcmp(rank_cluster, "no"))
+                service->rank_cluster = 0;
+            else
+            {
+                yaz_log(YLOG_FATAL, "service: rank@cluster boolean");
+                return 0;
+            }
+            xmlFree(rank_cluster);
         }
         else
         {

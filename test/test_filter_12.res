@@ -26,7 +26,7 @@
 <md-subject>Leno, Jay</md-subject>
 <md-subject>Talk shows</md-subject>
 <md-description tag="500">Includes index</md-description></location>
-<relevance>27070</relevance>
+<relevance>51972</relevance>
 <recid>content: title the late shift author carter bill medium book</recid>
 </hit>
 <hit>
@@ -43,7 +43,7 @@
 <md-subject>Bible</md-subject>
 <md-description tag="500">Hebrew and Greek; introductions in English</md-description>
 <md-description tag="500">Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description></location>
-<relevance>17402</relevance>
+<relevance>33410</relevance>
 <recid>content: title the computer bible author medium book</recid>
 </hit>
 <hit>
@@ -64,7 +64,7 @@
 <md-subject>Greece</md-subject>
 <md-description tag="500">Reprint of the 1909 ed., which was issued as the 1904-1906 Gifford lectures</md-description>
 <md-description tag="504">Includes bibliographical references</md-description></location>
-<relevance>15187</relevance>
+<relevance>29158</relevance>
 <recid>content: title the religious teachers of greece author adam james medium book</recid>
 </hit>
 <hit>
@@ -85,7 +85,7 @@
 <md-subject>Puget Sound region (Wash.)</md-subject>
 <md-description tag="500">Scale of maps ca. 1:1,000,000</md-description>
 <md-description tag="504">Bibliography: p. 4</md-description></location>
-<relevance>13051</relevance>
+<relevance>25058</relevance>
 <recid>content: title the puget sound region author mairs john w medium book</recid>
 </hit>
 <hit>
@@ -101,7 +101,7 @@
 <md-date>1977</md-date>
 <md-subject>Tomography</md-subject>
 <md-description tag="504">Includes bibliographical references and index</md-description></location>
-<relevance>10876</relevance>
+<relevance>20881</relevance>
 <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 <hit>
@@ -121,7 +121,7 @@
 <md-subject>Scintillation cameras</md-subject>
 <md-subject>Imaging systems in medicine</md-subject>
 <md-description tag="504">Includes bibliographical references and index</md-description></location>
-<relevance>8701</relevance>
+<relevance>16705</relevance>
 <recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 <hit>
@@ -140,7 +140,7 @@
 <md-subject>Dropouts</md-subject>
 <md-description tag="533">Microfiche</md-description>
 <md-description tag="500">Distributed to depository libraries in microfiche</md-description></location>
-<relevance>7251</relevance>
+<relevance>13921</relevance>
 <recid>content: title dealing with dropouts author paulu nancy medium</recid>
 </hit>
 <hit>
@@ -159,7 +159,7 @@
 <md-subject>Handicapped children</md-subject>
 <md-description tag="533">Microfiche</md-description>
 <md-description tag="500">Distributed to depository libraries in microfiche</md-description></location>
-<relevance>6960</relevance>
+<relevance>13364</relevance>
 <recid>content: title national dissemination model for the i m special program of physical education for the handicapped author medium</recid>
 </hit>
 <hit>
@@ -173,7 +173,7 @@
 <md-date>1977</md-date>
 <md-author>Wood, Helen M</md-author>
 <md-subject>Computers</md-subject></location>
-<relevance>5220</relevance>
+<relevance>10023</relevance>
 <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>
@@ -187,7 +187,7 @@
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
 <md-date>1977</md-date>
 <md-subject>Optical pattern recognition</md-subject></location>
-<relevance>3107</relevance>
+<relevance>5966</relevance>
 <recid>content: title computer science technology author medium book</recid>
 </hit>
 <hit>
@@ -209,7 +209,7 @@
 <md-description tag="500">Distributed to depository libraries in microfiche</md-description>
 <md-description tag="500">&quot;December 1984.&quot;</md-description>
 <md-description tag="500">Includes indexes</md-description></location>
-<relevance>1740</relevance>
+<relevance>3341</relevance>
 <recid>content: title technology programs that work author medium book</recid>
 </hit>
 <hit>

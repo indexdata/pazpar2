@@ -19,7 +19,7 @@
 <md-subject>Bible</md-subject>
 <md-description tag="500">Hebrew and Greek; introductions in English</md-description>
 <md-description tag="500">Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description></location>
-<relevance>67294</relevance>
+<relevance>94000</relevance>
 <recid>content: title the computer bible author medium book</recid>
 </hit>
 <hit>
@@ -40,7 +40,7 @@
 <md-subject>Puget Sound region (Wash.)</md-subject>
 <md-description tag="500">Scale of maps ca. 1:1,000,000</md-description>
 <md-description tag="504">Bibliography: p. 4</md-description></location>
-<relevance>50470</relevance>
+<relevance>70500</relevance>
 <recid>content: title the puget sound region author mairs john w medium book</recid>
 </hit>
 <hit>
@@ -56,7 +56,7 @@
 <md-date>1977</md-date>
 <md-subject>Tomography</md-subject>
 <md-description tag="504">Includes bibliographical references and index</md-description></location>
-<relevance>42059</relevance>
+<relevance>58750</relevance>
 <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 <hit>
@@ -76,7 +76,7 @@
 <md-subject>Scintillation cameras</md-subject>
 <md-subject>Imaging systems in medicine</md-subject>
 <md-description tag="504">Includes bibliographical references and index</md-description></location>
-<relevance>33647</relevance>
+<relevance>47000</relevance>
 <recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 <hit>
@@ -90,7 +90,7 @@
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
 <md-date>1977</md-date>
 <md-subject>Optical pattern recognition</md-subject></location>
-<relevance>12016</relevance>
+<relevance>16785</relevance>
 <recid>content: title computer science technology author medium book</recid>
 </hit>
 <hit>

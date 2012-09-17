@@ -34,6 +34,7 @@ struct relevance
     int vec_len;
     struct word_entry *entries;
     pp2_charset_token_t prt;
+    int rank_cluster;
     NMEM nmem;
 };
 
@@ -147,7 +148,8 @@ static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
 }
 
 struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
-                                       struct ccl_rpn_node *query)
+                                       struct ccl_rpn_node *query,
+                                       int rank_cluster)
 {
     NMEM nmem = nmem_create();
     struct relevance *res = nmem_malloc(nmem, sizeof(*res));
@@ -156,6 +158,7 @@ struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
     res->nmem = nmem;
     res->entries = 0;
     res->vec_len = 1;
+    res->rank_cluster = rank_cluster;
     res->prt = pp2_charset_token_create(pft, "relevance");
     
     pull_terms(res, query);
@@ -228,15 +231,9 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
             idfvec[i] = 0;
         else
         {
-            // This conditional may be terribly wrong
-            // It was there to address the situation where vec[0] == vec[i]
-            // which leads to idfvec[i] == 0... not sure about this
-            // Traditional TF-IDF may assume that a word that occurs in every
-            // record is irrelevant, but this is actually something we will
-            // see a lot
-            if ((idfvec[i] = log((float) rel->doc_frequency_vec[0] /
-                            rel->doc_frequency_vec[i])) < 0.0000001)
-                idfvec[i] = 1;
+            /* add one to nominator idf(t,D) to ensure a value > 0 */
+            idfvec[i] = log((float) (1 + rel->doc_frequency_vec[0]) /
+                            rel->doc_frequency_vec[i]);
         }
     }
     // Calculate relevance for each document
@@ -250,7 +247,17 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
         for (t = 1; t < rel->vec_len; t++)
         {
             float termfreq = (float) rec->term_frequency_vecf[t];
-            relevance += 100000 * (termfreq * idfvec[t] + 0.0000005);  
+            relevance += 100000 * termfreq * idfvec[t];
+        }
+        if (!rel->rank_cluster)
+        {
+            struct record *record;
+            int cluster_size = 0;
+
+            for (record = rec->records; record; record = record->next)
+                cluster_size++;
+            
+            relevance /= cluster_size;
         }
         rec->relevance_score = relevance;
     }

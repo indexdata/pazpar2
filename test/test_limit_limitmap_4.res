@@ -19,7 +19,7 @@
 <md-author>Jack Collins</md-author>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
 <count>2</count>
-<relevance>25286</relevance>
+<relevance>48160</relevance>
 <recid>content: title how to program a computer author jack collins</recid>
 </hit>
 <hit>
@@ -32,7 +32,7 @@
 <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
 <md-date>1977</md-date>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
-<relevance>21072</relevance>
+<relevance>40134</relevance>
 <recid>content: title computer science technology</recid>
 </hit>
 <hit>
@@ -46,7 +46,7 @@
 <md-description>Hebrew and Greek; introductions in English</md-description>
 <md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
-<relevance>21072</relevance>
+<relevance>40134</relevance>
 <recid>content: title the computer bible</recid>
 </hit>
 <hit>
@@ -59,7 +59,7 @@
 <md-date>1971</md-date>
 <md-description>Cover title</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
-<relevance>9030</relevance>
+<relevance>17200</relevance>
 <recid>content: title a plan for community college computer development</recid>
 </hit>
 <hit>
@@ -76,7 +76,7 @@
 <md-author>Englund, Carl R</md-author>
 <md-description>&quot;Contract DOT-UT-10003.&quot;</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
-<relevance>9030</relevance>
+<relevance>17200</relevance>
 <recid>content: title washington metropolitan area rail computer feasibility study author englund carl r</recid>
 </hit>
 <hit>
@@ -93,7 +93,7 @@
 <md-author>Mairs, John W</md-author>
 <md-description>Scale of maps ca. 1:1,000,000</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
-<relevance>8780</relevance>
+<relevance>16722</relevance>
 <recid>content: title the puget sound region author mairs john w</recid>
 </hit>
 <hit>
@@ -106,7 +106,7 @@
 <md-title-remainder>the proceedings of a workshop</md-title-remainder>
 <md-date>1974</md-date>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
-<relevance>6321</relevance>
+<relevance>12040</relevance>
 <recid>content: title computer processing of dynamic images from an anger scintillation camera</recid>
 </hit>
 <hit>
@@ -119,7 +119,7 @@
 <md-date>1977</md-date>
 <md-author>Wood, Helen M</md-author>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
-<relevance>6321</relevance>
+<relevance>12040</relevance>
 <recid>content: title the use of passwords for controlled access to computer resources author wood helen m</recid>
 </hit>
 <hit>

@@ -19,7 +19,7 @@
 <md-author>Englund, Carl R</md-author>
 <md-description>&quot;Contract DOT-UT-10003.&quot;</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
-<relevance>85714</relevance>
+<relevance>59412</relevance>
 <recid>content: title washington metropolitan area rail computer feasibility study author englund carl r</recid>
 </hit>
 </show>

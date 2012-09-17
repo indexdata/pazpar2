@@ -26,7 +26,7 @@
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
-<relevance>540000</relevance>
+<relevance>374298</relevance>
 <recid>content: title the religious teachers of greece author adam james medium book</recid>
 </hit>
 </show>

@@ -17,7 +17,7 @@
 <md-author>Adam, James</md-author>
 <md-description>Reprint of the 1909 ed., which was issued as the 1904-1906 Gifford lectures</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
-<relevance>620000</relevance>
+<relevance>429749</relevance>
 <recid>content: title the religious teachers of greece author adam james</recid>
 </hit>
 </show>

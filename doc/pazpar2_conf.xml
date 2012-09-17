@@ -581,6 +581,22 @@
 	</listitem>
        </varlistentry>
 
+       <varlistentry>
+	<term>rank</term>
+	<listitem>
+	 <para>
+	  Customizes the ranking (relevance) algorithm.
+	  Attribute 'cluster' is a boolean
+	  that controls whether Pazpar2 should boost ranking for merged
+	  records. Is 'yes' by default. A value of 'no' will make
+	  Pazpar2 avergage ranking of each record in a cluster.
+	 </para>
+	 <para>
+	  This configuration was added in pazpar2 1.6.18.
+	 </para>
+	</listitem>
+       </varlistentry>
+
 <!--       
        <varlistentry>
 	<term>set</term>

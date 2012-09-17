@@ -17,7 +17,7 @@
 <md-title>How to program a computer</md-title>
 <md-author>Jack Collins</md-author></location>
 <count>2</count>
-<relevance>240000</relevance>
+<relevance>97311</relevance>
 <recid>content: title how to program a computer author jack collins</recid>
 </hit>
 </show>
