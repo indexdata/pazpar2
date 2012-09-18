@@ -1083,17 +1083,12 @@ const char *client_get_facet_limit_local(struct client *cl,
 
 static int apply_limit(struct session_database *sdb,
                        facet_limits_t facet_limits,
-                       WRBUF w_pqf, WRBUF w_ccl,
-                       CCL_bibset ccl_map)
+                       WRBUF w_pqf, CCL_bibset ccl_map)
 {
     int ret = 0;
     int i = 0;
     const char *name;
     const char *value;
-    const char **and_op_names = ccl_qual_search_special(ccl_map, "and");
-    const char *and_op = and_op_names ? and_op_names[0] : "and";
-    const char **or_op_names = ccl_qual_search_special(ccl_map, "or");
-    const char *or_op = or_op_names ? or_op_names[0] : "or";
 
     NMEM nmem_tmp = nmem_create();
     for (i = 0; (name = facet_limits_get(facet_limits, i, &value)); i++)
@@ -1128,20 +1123,34 @@ static int apply_limit(struct session_database *sdb,
                 else if (!strncmp(s->value, "ccl:", 4))
                 {
                     const char *ccl = s->value + 4;
-                    
-                    wrbuf_printf(w_ccl, " %s (", and_op);
-
+                    WRBUF ccl_w = wrbuf_alloc();
                     for (i = 0; i < num; i++)
                     {
-                        if (i)
-                            wrbuf_printf(w_ccl, " %s ", or_op);
-                        wrbuf_puts(w_ccl, ccl);
-                        wrbuf_puts(w_ccl, "=\"");
-                        wrbuf_puts(w_ccl, values[i]);
-                        wrbuf_puts(w_ccl, "\"");
-                    }
-                    wrbuf_puts(w_ccl, ")");
+                        int cerror, cpos;
+                        struct ccl_rpn_node *cn;
 
+                        wrbuf_rewind(ccl_w);
+                        wrbuf_puts(ccl_w, ccl);
+                        wrbuf_puts(ccl_w, "=\"");
+                        wrbuf_puts(ccl_w, values[i]);
+                        wrbuf_puts(ccl_w, "\"");
+
+                        cn = ccl_find_str(ccl_map, wrbuf_cstr(ccl_w), 
+                                          &cerror, &cpos);
+                        if (cn)
+                        {
+                            if (i == 0)
+                                wrbuf_printf(w_pqf, "@and ");
+
+                            /* or multiple values.. could be bad if last CCL
+                               parse fails, but this is unlikely to happen */
+                            if (i < num - 1)
+                                wrbuf_printf(w_pqf, "@or ");
+                            ccl_pquery(w_pqf, cn);
+                            ccl_rpn_delete(cn);
+                        }
+                    }
+                    wrbuf_destroy(ccl_w);
                 }
                 else if (!strncmp(s->value, "local:", 6)) {
                     /* no operation */
@@ -1214,7 +1223,7 @@ int client_parse_query(struct client *cl, const char *query,
         wrbuf_puts(w_pqf, " ");
     }
 
-    if (apply_limit(sdb, facet_limits, w_pqf, w_ccl, ccl_map))
+    if (apply_limit(sdb, facet_limits, w_pqf, ccl_map))
     {
         ccl_qual_rm(&ccl_map);
         return -2;
