@@ -8,7 +8,6 @@ for m in tmarc?.xml; do
 	xsltproc ../etc/tmarc.xsl $m >$l
 	if test -f $r; then
 		if diff $l $r >$d; then
-			echo "$b: OK"
 			rm $d
 		else
 			echo "$b: FAIL; check $d"
