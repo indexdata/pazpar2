@@ -83,7 +83,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define MAX(a,b) ((a)>(b)?(a):(b))
 
 // Note: Some things in this structure will eventually move to configuration
-struct parameters global_parameters = 
+struct parameters global_parameters =
 {
     0,   // dump_records
     0,   // debug_mode
@@ -211,7 +211,7 @@ void add_facet(struct session *s, const char *type, const char *value, int count
     WRBUF display_wrbuf = wrbuf_alloc();
 
     session_normalize_facet(s, type, value, display_wrbuf, facet_wrbuf);
- 
+
     if (wrbuf_len(facet_wrbuf))
     {
         int i;
@@ -227,12 +227,12 @@ void add_facet(struct session *s, const char *type, const char *value, int count
                 wrbuf_destroy(display_wrbuf);
                 return;
             }
-            
+
             s->termlists[i].name = nmem_strdup(s->nmem, type);
             s->termlists[i].termlist = termlist_create(s->nmem);
             s->num_termlists = i + 1;
         }
-        
+
 #if 0
         session_log(s, YLOG_LOG, "Facets for %s: %s norm:%s (%d)", type, value, wrbuf_cstr(facet_wrbuf), count);
 #endif
@@ -342,9 +342,9 @@ static xmlDoc *normalize_record(struct session *se,
     if (rdoc)
     {
         char *parms[MAX_XSLT_ARGS*2+1];
-        
+
         insert_settings_parameters(sdb, service, parms, nmem);
-        
+
         if (normalize_record_transform(sdb->map, &rdoc, (const char **)parms))
         {
             session_log(se, YLOG_WARN, "Normalize failed from %s",
@@ -353,10 +353,10 @@ static xmlDoc *normalize_record(struct session *se,
         else
         {
             insert_settings_values(sdb, rdoc, service);
-            
+
             if (global_parameters.dump_records)
             {
-                session_log(se, YLOG_LOG, "Normalized record from %s", 
+                session_log(se, YLOG_LOG, "Normalized record from %s",
                             sdb->database->id);
                 log_xml_doc(rdoc);
             }
@@ -410,10 +410,10 @@ static int prepare_map(struct session *se, struct session_database *sdb)
         const char *s;
 
         if (sdb->settings[PZ_XSLT] &&
-            (s = session_setting_oneval(sdb, PZ_XSLT)))        
+            (s = session_setting_oneval(sdb, PZ_XSLT)))
         {
             char auto_stylesheet[256];
-            
+
             if (!strcmp(s, "auto"))
             {
                 const char *request_syntax = session_setting_oneval(
@@ -458,7 +458,7 @@ static void session_watch_cancel(void *data, struct http_channel *c,
 }
 
 // set watch. Returns 0=OK, -1 if watch is already set
-int session_set_watch(struct session *s, int what, 
+int session_set_watch(struct session *s, int what,
                       session_watchfun fun, void *data,
                       struct http_channel *chan)
 {
@@ -468,7 +468,7 @@ int session_set_watch(struct session *s, int what,
         ret = -1;
     else
     {
-        
+
         s->watchlist[what].fun = fun;
         s->watchlist[what].data = data;
         s->watchlist[what].obs = http_add_observer(chan, &s->watchlist[what],
@@ -554,7 +554,7 @@ static void session_reset_active_clients(struct session *se,
     {
         struct client_list *l_next = l->next;
 
-        client_lock(l->client); 
+        client_lock(l->client);
         client_set_session(l->client, 0); /* mark client inactive */
         client_unlock(l->client);
 
@@ -588,7 +588,7 @@ static void session_remove_cached_clients(struct session *se)
 }
 
 // Associates a set of clients with a session;
-// Note: Session-databases represent databases with per-session 
+// Note: Session-databases represent databases with per-session
 // setting overrides
 static int select_targets(struct session *se, const char *filter)
 {
@@ -630,14 +630,14 @@ static void session_clear_set(struct session *se,
     nmem_reset(se->nmem);
     se->total_records = se->total_merged = 0;
     se->num_termlists = 0;
-    
+
     /* reset list of sorted results and clear to relevance search */
     se->sorted_results = nmem_malloc(se->nmem, sizeof(*se->sorted_results));
     se->sorted_results->field = nmem_strdup(se->nmem, sort_field);
     se->sorted_results->increasing = increasing;
     se->sorted_results->position = position;
     se->sorted_results->next = 0;
-    
+
     se->reclist = reclist_create(se->nmem);
 }
 
@@ -680,7 +680,7 @@ void session_sort(struct session *se, const char *field, int increasing,
         se->sorted_results = sr;
     }
     yaz_log(YLOG_DEBUG, "Restarting search for clients due to change in sort order");
-    
+
     for (l = se->clients_active; l; l = l->next)
     {
         struct client *cl = l->client;
@@ -720,7 +720,7 @@ enum pazpar2_error_code session_search(struct session *se,
         session_remove_cached_clients(se);
     else
         session_reset_active_clients(se, 0);
-    
+
     session_enter(se);
     se->settings_modified = 0;
     session_clear_set(se, sort_field, increasing, 0); /* hardcoded position */
@@ -734,7 +734,7 @@ enum pazpar2_error_code session_search(struct session *se,
     }
 
     yaz_gettimeofday(&tval);
-    
+
     tval.tv_sec += 5;
 
     facet_limits = facet_limits_create(limit);
@@ -813,7 +813,7 @@ static void session_init_databases_fun(void *context, struct database *db)
     int i;
 
     new->database = db;
-    
+
     new->map = 0;
     assert(db->settings);
     new->settings = nmem_malloc(se->session_nmem,
@@ -844,7 +844,7 @@ void session_init_databases(struct session *se)
 
 // Probably session_init_databases_fun should be refactored instead of
 // called here.
-static struct session_database *load_session_database(struct session *se, 
+static struct session_database *load_session_database(struct session *se,
                                                       char *id)
 {
     struct database *db = new_database_inherit_settings(id, se->session_nmem, se->service->settings);
@@ -855,7 +855,7 @@ static struct session_database *load_session_database(struct session *se,
 }
 
 // Find an existing session database. If not found, load it
-static struct session_database *find_session_database(struct session *se, 
+static struct session_database *find_session_database(struct session *se,
                                                       char *id)
 {
     struct session_database *sdb;
@@ -1050,20 +1050,20 @@ static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
     {
 
         // do only print terms which have display names
-    
+
         wrbuf_puts(wrbuf, "<term>\n");
 
         wrbuf_puts(wrbuf, "<id>");
         wrbuf_xmlputs(wrbuf, ht[i].id);
         wrbuf_puts(wrbuf, "</id>\n");
-        
+
         wrbuf_puts(wrbuf, "<name>");
         if (!ht[i].name || !ht[i].name[0])
             wrbuf_xmlputs(wrbuf, "NO TARGET NAME");
         else
             wrbuf_xmlputs(wrbuf, ht[i].name);
         wrbuf_puts(wrbuf, "</name>\n");
-        
+
         wrbuf_printf(wrbuf, "<frequency>" ODR_INT_PRINTF "</frequency>\n",
                      ht[i].hits);
 
@@ -1077,8 +1077,8 @@ static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
         wrbuf_puts(wrbuf, "<state>");
         wrbuf_xmlputs(wrbuf, ht[i].state);
         wrbuf_puts(wrbuf, "</state>\n");
-        
-        wrbuf_printf(wrbuf, "<diagnostic>%d</diagnostic>\n", 
+
+        wrbuf_printf(wrbuf, "<diagnostic>%d</diagnostic>\n",
                      ht[i].diagnostic);
         wrbuf_puts(wrbuf, "</term>\n");
     }
@@ -1128,14 +1128,14 @@ void perform_termlist(struct http_channel *c, struct session *se,
                         // prevent sending empty term elements
                         if (!p[i]->display_term || !p[i]->display_term[0])
                             continue;
-                        
+
                         wrbuf_puts(c->wrbuf, "<term>");
                         wrbuf_puts(c->wrbuf, "<name>");
                         wrbuf_xmlputs(c->wrbuf, p[i]->display_term);
                         wrbuf_puts(c->wrbuf, "</name>");
-                        
-                        wrbuf_printf(c->wrbuf, 
-                                     "<frequency>%d</frequency>", 
+
+                        wrbuf_printf(c->wrbuf,
+                                     "<frequency>%d</frequency>",
                                      p[i]->frequency);
                         wrbuf_puts(c->wrbuf, "</term>\n");
                     }
@@ -1173,7 +1173,7 @@ void report_nmem_stats(void)
     nmem_get_memory_in_use(&in_use);
     nmem_get_memory_free(&is_free);
 
-    yaz_log(YLOG_LOG, "nmem stat: use=%ld free=%ld", 
+    yaz_log(YLOG_LOG, "nmem stat: use=%ld free=%ld",
             (long) in_use, (long) is_free);
 }
 #endif
@@ -1212,13 +1212,13 @@ void show_single_stop(struct session *se, struct record_cluster *rec)
 }
 
 struct record_cluster **show_range_start(struct session *se,
-                                         struct reclist_sortparms *sp, 
+                                         struct reclist_sortparms *sp,
                                          int start, int *num, int *total, Odr_int *sumhits, Odr_int *approx_hits)
 {
     struct record_cluster **recs;
     struct reclist_sortparms *spp;
     int i;
-#if USE_TIMING    
+#if USE_TIMING
     yaz_timing_t t = yaz_timing_create();
 #endif
     session_enter(se);
@@ -1227,14 +1227,14 @@ struct record_cluster **show_range_start(struct session *se,
     {
         *num = 0;
         *total = 0;
-        *sumhits = 0;        
+        *sumhits = 0;
         *approx_hits = 0;
         recs = 0;
     }
     else
     {
         struct client_list *l;
-        
+
         for (spp = sp; spp; spp = spp->next)
             if (spp->type == Metadata_sortkey_relevance)
             {
@@ -1242,7 +1242,7 @@ struct record_cluster **show_range_start(struct session *se,
                 break;
             }
         reclist_sort(se->reclist, sp);
-        
+
         reclist_enter(se->reclist);
         *total = reclist_get_num_records(se->reclist);
 
@@ -1259,7 +1259,7 @@ struct record_cluster **show_range_start(struct session *se,
                 recs = 0;
                 break;
             }
-        
+
         for (i = 0; i < *num; i++)
         {
             struct record_cluster *r = reclist_read_record(se->reclist);
@@ -1274,7 +1274,7 @@ struct record_cluster **show_range_start(struct session *se,
     }
 #if USE_TIMING
     yaz_timing_stop(t);
-    yaz_log(YLOG_LOG, "show %6.5f %3.2f %3.2f", 
+    yaz_log(YLOG_LOG, "show %6.5f %3.2f %3.2f",
             yaz_timing_get_real(t), yaz_timing_get_user(t),
             yaz_timing_get_sys(t));
     yaz_timing_destroy(&t);
@@ -1322,7 +1322,7 @@ static struct record_metadata *record_metadata_init(
 {
     struct record_metadata *rec_md = record_metadata_create(nmem);
     struct record_metadata_attr **attrp = &rec_md->attributes;
-    
+
     for (; attr; attr = attr->next)
     {
         if (attr->children && attr->children->content)
@@ -1347,7 +1347,7 @@ static struct record_metadata *record_metadata_init(
         char *p = nmem_strdup(nmem, value);
 
         p = normalize7bit_generic(p, " ,/.:([");
-        
+
         rec_md->data.text.disp = p;
         rec_md->data.text.sort = 0;
     }
@@ -1392,7 +1392,7 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
                     const char *norm_str;
                     pp2_charset_token_t prt =
                         pp2_charset_token_create(service->charsets, "mergekey");
-                    
+
                     pp2_charset_token_first(prt, (const char *) value, 0);
                     if (wrbuf_len(norm_wr) > 0)
                         wrbuf_puts(norm_wr, " ");
@@ -1458,7 +1458,7 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
                                               service, norm_wr);
                 if (r == 0 && ser_md->mergekey == Metadata_mergekey_required)
                 {
-                    /* no mergekey on this one and it is required.. 
+                    /* no mergekey on this one and it is required..
                        Generate unique key instead */
                     wrbuf_rewind(norm_wr);
                     break;
@@ -1484,7 +1484,7 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     return mergekey_norm;
 }
 
-/** \brief see if metadata for pz:recordfilter exists 
+/** \brief see if metadata for pz:recordfilter exists
     \param root xml root element of normalized record
     \param sdb session database for client
     \retval 0 if there is no metadata for pz:recordfilter
@@ -1493,7 +1493,7 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     If there is no pz:recordfilter defined, this function returns 1
     as well.
 */
-    
+
 static int check_record_filter(xmlNode *root, struct session_database *sdb)
 {
     int match = 0;
@@ -1571,19 +1571,19 @@ int ingest_record(struct client *cl, const char *rec,
     xmlDoc *xdoc = normalize_record(se, sdb, service, rec, nmem);
     xmlNode *root;
     const char *mergekey_norm;
-    
+
     if (!xdoc)
         return -1;
-    
+
     root = xmlDocGetRootElement(xdoc);
-    
+
     if (!check_record_filter(root, sdb))
     {
         session_log(se, YLOG_LOG, "Filtered out record no %d from %s", record_no, sdb->database->id);
         xmlFreeDoc(xdoc);
         return -2;
     }
-    
+
     mergekey_norm = get_mergekey(xdoc, cl, record_no, service, nmem);
     if (!mergekey_norm)
     {
@@ -1595,7 +1595,7 @@ int ingest_record(struct client *cl, const char *rec,
     if (client_get_session(cl) == se)
         ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
     session_leave(se);
-    
+
     xmlFreeDoc(xdoc);
     return ret;
 }
@@ -1618,11 +1618,11 @@ static int check_limit_local(struct client *cl,
         int md_field_id;
         char **values = 0;
         int i, num_v = 0;
-        
+
         const char *name = client_get_facet_limit_local(cl, sdb, &l, nmem_tmp, &num_v, &values);
         if (!name)
             break;
-        
+
         md_field_id = conf_service_metadata_field_id(service, name);
         if (md_field_id < 0)
         {
@@ -1636,11 +1636,11 @@ static int check_limit_local(struct client *cl,
         {
             if (rec_md)
             {
-                if (ser_md->type == Metadata_type_year 
+                if (ser_md->type == Metadata_type_year
                     || ser_md->type == Metadata_type_date)
                 {
                     int y = atoi(values[i]);
-                    if (y >= rec_md->data.number.min 
+                    if (y >= rec_md->data.number.min
                         && y <= rec_md->data.number.max)
                         break;
                 }
@@ -1671,7 +1671,7 @@ static int check_limit_local(struct client *cl,
     nmem_destroy(nmem_tmp);
     return skip_record;
 }
-                             
+
 static int ingest_to_cluster(struct client *cl,
                              xmlDoc *xdoc,
                              xmlNode *root,
@@ -1686,7 +1686,7 @@ static int ingest_to_cluster(struct client *cl,
     int term_factor = 1;
     struct record_cluster *cluster;
     struct session_database *sdb = client_get_database(cl);
-    struct record *record = record_create(se->nmem, 
+    struct record *record = record_create(se->nmem,
                                           service->num_metadata,
                                           service->num_sortkeys, cl,
                                           record_no);
@@ -1698,7 +1698,7 @@ static int ingest_to_cluster(struct client *cl,
         if (value)
             xmlFree(value);
         type = value = 0;
-        
+
         if (n->type != XML_ELEMENT_NODE)
             continue;
         if (!strcmp((const char *) n->name, "metadata"))
@@ -1707,26 +1707,26 @@ static int ingest_to_cluster(struct client *cl,
             struct record_metadata **wheretoput = 0;
             struct record_metadata *rec_md = 0;
             int md_field_id = -1;
-            
+
             type = xmlGetProp(n, (xmlChar *) "type");
             value = xmlNodeListGetString(xdoc, n->children, 1);
-            
+
             if (!type || !value || !*value)
                 continue;
-            
-            md_field_id 
+
+            md_field_id
                 = conf_service_metadata_field_id(service, (const char *) type);
             if (md_field_id < 0)
             {
                 if (se->number_of_warnings_unknown_metadata == 0)
                 {
-                    session_log(se, YLOG_WARN, 
+                    session_log(se, YLOG_WARN,
                             "Ignoring unknown metadata element: %s", type);
                 }
                 se->number_of_warnings_unknown_metadata++;
                 continue;
             }
-           
+
             ser_md = &service->metadata[md_field_id];
 
             // non-merged metadata
@@ -1779,7 +1779,7 @@ static int ingest_to_cluster(struct client *cl,
 
 
     relevance_newrec(se->relevance, cluster);
-    
+
     // now parsing XML record and adding data to cluster or record metadata
     for (n = root->children; n; n = n->next)
     {
@@ -1789,7 +1789,7 @@ static int ingest_to_cluster(struct client *cl,
         if (value)
             xmlFree(value);
         type = value = 0;
-        
+
         if (n->type != XML_ELEMENT_NODE)
             continue;
         if (!strcmp((const char *) n->name, "metadata"))
@@ -1802,18 +1802,18 @@ static int ingest_to_cluster(struct client *cl,
             int sk_field_id = -1;
             const char *rank;
             xmlChar *xml_rank;
-            
+
             type = xmlGetProp(n, (xmlChar *) "type");
             value = xmlNodeListGetString(xdoc, n->children, 1);
-            
+
             if (!type || !value || !*value)
                 continue;
-            
-            md_field_id 
+
+            md_field_id
                 = conf_service_metadata_field_id(service, (const char *) type);
             if (md_field_id < 0)
                 continue;
-            
+
             ser_md = &service->metadata[md_field_id];
 
             if (ser_md->sortkey_offset >= 0)
@@ -1839,7 +1839,7 @@ static int ingest_to_cluster(struct client *cl,
             {
                 while (*wheretoput)
                 {
-                    if (!strcmp((const char *) (*wheretoput)->data.text.disp, 
+                    if (!strcmp((const char *) (*wheretoput)->data.text.disp,
                                 rec_md->data.text.disp))
                         break;
                     wheretoput = &(*wheretoput)->next;
@@ -1849,22 +1849,22 @@ static int ingest_to_cluster(struct client *cl,
             }
             else if (ser_md->merge == Metadata_merge_longest)
             {
-                if (!*wheretoput 
-                    || strlen(rec_md->data.text.disp) 
+                if (!*wheretoput
+                    || strlen(rec_md->data.text.disp)
                     > strlen((*wheretoput)->data.text.disp))
                 {
                     *wheretoput = rec_md;
                     if (ser_sk)
                     {
                         const char *sort_str = 0;
-                        int skip_article = 
+                        int skip_article =
                             ser_sk->type == Metadata_sortkey_skiparticle;
 
                         if (!cluster->sortkeys[sk_field_id])
-                            cluster->sortkeys[sk_field_id] = 
-                                nmem_malloc(se->nmem, 
+                            cluster->sortkeys[sk_field_id] =
+                                nmem_malloc(se->nmem,
                                             sizeof(union data_types));
-                         
+
                         prt =
                             pp2_charset_token_create(service->charsets, "sort");
 
@@ -1872,18 +1872,18 @@ static int ingest_to_cluster(struct client *cl,
                                                 skip_article);
 
                         pp2_charset_token_next(prt);
-                         
+
                         sort_str = pp2_get_sort(prt);
-                         
-                        cluster->sortkeys[sk_field_id]->text.disp = 
+
+                        cluster->sortkeys[sk_field_id]->text.disp =
                             rec_md->data.text.disp;
                         if (!sort_str)
                         {
                             sort_str = rec_md->data.text.disp;
-                            session_log(se, YLOG_WARN, 
+                            session_log(se, YLOG_WARN,
                                     "Could not make sortkey. Bug #1858");
                         }
-                        cluster->sortkeys[sk_field_id]->text.sort = 
+                        cluster->sortkeys[sk_field_id]->text.sort =
                             nmem_strdup(se->nmem, sort_str);
                         pp2_charset_token_destroy(prt);
                     }
@@ -1901,7 +1901,7 @@ static int ingest_to_cluster(struct client *cl,
                 {
                     *wheretoput = rec_md;
                     if (ser_sk)
-                        cluster->sortkeys[sk_field_id] 
+                        cluster->sortkeys[sk_field_id]
                             = &rec_md->data;
                 }
                 else
@@ -1915,10 +1915,10 @@ static int ingest_to_cluster(struct client *cl,
                 }
             }
 
-            // ranking of _all_ fields enabled ... 
+            // ranking of _all_ fields enabled ...
             if (rank)
             {
-                relevance_countwords(se->relevance, cluster, 
+                relevance_countwords(se->relevance, cluster,
                                      (char *) value, rank, ser_md->name);
             }
 

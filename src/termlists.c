@@ -110,7 +110,7 @@ struct termlist_score **termlist_highscore(struct termlist *tl, int *len,
     struct termlist_score **highscore =
         (struct termlist_score **)
         nmem_malloc(nmem, tl->no_entries * sizeof(*highscore));
-    
+
     int no = 0;
     unsigned bucket;
     for (bucket = 0; bucket < tl->hash_size; bucket++)

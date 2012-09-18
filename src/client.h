@@ -18,7 +18,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 /** \file client.h
-    \brief Z39.50 client 
+    \brief Z39.50 client
 */
 
 #ifndef CLIENT_H

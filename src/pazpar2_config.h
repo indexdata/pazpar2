@@ -69,7 +69,7 @@ enum conf_metadata_mergekey {
 // An array of these structure provides a 'map' against which
 // discovered metadata elements are matched. It also governs storage,
 // to minimize number of cycles needed at various tages of processing
-struct conf_metadata 
+struct conf_metadata
 {
     char *name;  // The field name. Output by normalization stylesheet
     int brief;   // Is this element to be returned in the brief format?

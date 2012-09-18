@@ -17,7 +17,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
-/** \file 
+/** \file
     \brief MARC MAP utilities (hash lookup etc)
 */
 
@@ -116,7 +116,7 @@ void marchash_ingest_marcxml(struct marchash *marchash, xmlNodePtr rec_node)
              if (field)
              {
                  sub_node = field_node->children;
-                 while (sub_node) 
+                 while (sub_node)
                  {
                      if ((sub_node->type == XML_ELEMENT_NODE) &&
                          !strcmp((const char *) sub_node->name, "subfield"))
@@ -131,7 +131,7 @@ void marchash_ingest_marcxml(struct marchash *marchash, xmlNodePtr rec_node)
                          xmlFree(code);
                      }
                      sub_node = sub_node->next;
-                 } 
+                 }
              }
          }
          field_node = field_node->next;
@@ -144,15 +144,15 @@ struct marcfield *marchash_add_field(struct marchash *marchash,
     int slot;
     struct marcfield *new;
     struct marcfield *last;
-    
+
     slot = jenkins_hash((const unsigned char *) key) & MARCHASH_MASK;
     new = marchash->table[slot];
     last = NULL;
-    
-    while (new) 
+
+    while (new)
     {
-        last = new; 
-        new = new->next;     
+        last = new;
+        new = new->next;
     }
 
     new = nmem_malloc(marchash->nmem, sizeof (struct marcfield));
@@ -165,8 +165,8 @@ struct marcfield *marchash_add_field(struct marchash *marchash,
     new->next = NULL;
     new->subfields = NULL;
     strncpy(new->key, key, 4);
-    
-    // only 3 char in a marc field name 
+
+    // only 3 char in a marc field name
     if (new->key[3] != '\0')
         return 0;
 
@@ -211,7 +211,7 @@ struct marcfield *marchash_get_field (struct marchash *marchash,
     struct marcfield *cur;
     if (last)
         cur = last->next;
-    else 
+    else
         cur = marchash->table[jenkins_hash((const unsigned char *)key) & MARCHASH_MASK];
     while (cur)
     {
@@ -253,9 +253,9 @@ char *marchash_catenate_subfields(struct marcfield *field,
     {
         outsize += strlen(cur->val) + delimsize;
         cur = cur->next;
-    }  
+    }
     if (outsize > 0)
-        output = nmem_malloc(nmem, outsize); 
+        output = nmem_malloc(nmem, outsize);
     else
         return NULL;
     *output = '\0';
@@ -264,9 +264,9 @@ char *marchash_catenate_subfields(struct marcfield *field,
     {
         strtrimcat(output, cur->val);
         if (cur->next)
-            strcat(output, delim); 
+            strcat(output, delim);
         cur = cur->next;
-    } 
+    }
     return output;
 }
 /*

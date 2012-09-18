@@ -107,13 +107,13 @@ void http_set_proxyaddr(const char *url, struct conf_server *ser);
 int http_init(const char *addr, struct conf_server *ser,
               const char *record_fname);
 void http_close_server(struct conf_server *ser);
-void http_addheader(struct http_response *r, 
+void http_addheader(struct http_response *r,
                     const char *name, const char *value);
 const char *http_lookup_header(struct http_header *header,
                                const char *name);
-struct http_header * http_header_append(struct http_channel *ch, 
-                                        struct http_header * hp, 
-                                        const char *name, 
+struct http_header * http_header_append(struct http_channel *ch,
+                                        struct http_header * hp,
+                                        const char *name,
                                         const char *value);
 const char *http_argbyname(struct http_request *r, const char *name);
 const char *http_headerbyname(struct http_header *r, const char *name);

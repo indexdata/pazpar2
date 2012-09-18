@@ -50,7 +50,7 @@ static int word_entry_match(struct word_entry *entries, const char *norm_str,
 {
     for (; entries; entries = entries->next)
     {
-        if (!strcmp(norm_str, entries->norm_str))
+        if (*norm_str && !strcmp(norm_str, entries->norm_str))
         {
             const char *cp = 0;
             int no_read = 0;

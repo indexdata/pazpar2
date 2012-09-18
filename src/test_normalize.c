@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "normalize7bit.h"
 
-int test_normalize7bit_generic(const char *rm_chars, const char *input, 
+int test_normalize7bit_generic(const char *rm_chars, const char *input,
                                const char *expect_output)
 {
     int ret = 0;
@@ -54,17 +54,17 @@ int test_normalize7bit_mergekey(const char *input,
 
 int main(int argc, char **argv)
 {
-    YAZ_CHECK_INIT(argc, argv); 
+    YAZ_CHECK_INIT(argc, argv);
     YAZ_CHECK_LOG();
 
     YAZ_CHECK(test_normalize7bit_generic("/; ", " how are you; ", "how are you"));
     YAZ_CHECK(!test_normalize7bit_generic("/; ", " how are you; ", "how are youx"));
- 
+
     YAZ_CHECK(test_normalize7bit_generic("/; "," ", ""));
 
     YAZ_CHECK(test_normalize7bit_mergekey("the art of computer", "the art of computer"));
     YAZ_CHECK(test_normalize7bit_mergekey("The Art Of Computer", "the art of computer"));
-   
+
     YAZ_CHECK_TERM;
 }
 
