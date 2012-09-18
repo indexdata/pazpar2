@@ -108,7 +108,7 @@ static void *sel_thread_handler(void *vp)
 
         /* work on this item */
         p->work_handler(work_this->data);
-        
+
         /* put it back into output queue */
         yaz_mutex_enter(p->mutex);
         work_this->next = p->output_queue;
@@ -121,7 +121,7 @@ static void *sel_thread_handler(void *vp)
 #else
         (void) write(p->write_fd, "", 1);
 #endif
-    }        
+    }
     yaz_mutex_leave(p->mutex);
     return 0;
 }
@@ -151,7 +151,7 @@ sel_thread_t sel_thread_create(void (*work_handler)(void *work_data),
     {
         nmem_destroy(nmem);
         return 0;
-    }    
+    }
 
     *read_fd = p->read_fd = yaz_spipe_get_read_fd(p->spipe);
     p->write_fd = yaz_spipe_get_write_fd(p->spipe);
@@ -186,7 +186,7 @@ void sel_thread_destroy(sel_thread_t p)
     p->stop_flag = 1;
     yaz_cond_broadcast(p->input_data);
     yaz_mutex_leave(p->mutex);
-    
+
     for (i = 0; i< p->no_threads; i++)
         yaz_thread_join(&p->thread_id[i], 0);
 
@@ -242,7 +242,7 @@ void *sel_thread_result(sel_thread_t p)
         /* put freed item in free list */
         work_this->next = p->free_queue;
         p->free_queue = work_this;
-        
+
         data = work_this->data;
 #ifdef WIN32
         (void) recv(p->read_fd, read_buf, 1, 0);

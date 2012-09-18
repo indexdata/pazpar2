@@ -99,7 +99,7 @@ struct database *create_database_for_service(const char *id,
     for (p = service->databases; p; p = p->next)
         if (!strcmp(p->id, id))
             return p;
-    
+
     yaz_log(YLOG_DEBUG, "new database %s under service %s", id,
        service->id ? service->id : "null");
     p = new_database_inherit_settings(id, service->nmem, service->settings);
@@ -142,7 +142,7 @@ int match_zurl(const char *zurl, const char *pattern)
 
 // This will be generalized at some point
 static int match_criterion(struct setting **settings,
-                           struct conf_service *service, 
+                           struct conf_service *service,
                            struct database_criterion *c)
 {
     int offset = settings_lookup_offset(service, c->name);
@@ -164,12 +164,12 @@ static int match_criterion(struct setting **settings,
                 if (match_zurl(settings[offset]->value, v->value))
                     break;
             }
-            else 
+            else
             {
                 if (!strcmp(settings[offset]->value, v->value))
                     break;
             }
-        }            
+        }
         else if (c->type == PAZPAR2_SUBSTRING_MATCH)
         {
             if (strstr(settings[offset]->value, v->value))

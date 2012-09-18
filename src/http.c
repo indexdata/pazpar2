@@ -696,12 +696,12 @@ static int http_weshouldproxy(struct http_request *rq)
 }
 
 
-struct http_header * http_header_append(struct http_channel *ch, 
-                                        struct http_header * hp, 
-                                        const char *name, 
+struct http_header * http_header_append(struct http_channel *ch,
+                                        struct http_header * hp,
+                                        const char *name,
                                         const char *value)
 {
-    struct http_header *hpnew = 0; 
+    struct http_header *hpnew = 0;
 
     if (!hp | !ch)
         return 0;
@@ -713,18 +713,18 @@ struct http_header * http_header_append(struct http_channel *ch,
         hpnew = nmem_malloc(ch->nmem, sizeof *hpnew);
         hpnew->name = nmem_strdup(ch->nmem, name);
         hpnew->value = nmem_strdup(ch->nmem, value);
-        
+
         hpnew->next = 0;
         hp->next = hpnew;
         hp = hp->next;
-        
+
         return hpnew;
     }
 
     return hp;
 }
 
-   
+
 static int is_inprogress(void)
 {
 #ifdef WIN32
@@ -735,7 +735,7 @@ static int is_inprogress(void)
         return 1;
 #endif
     return 0;
-} 
+}
 
 static void enable_nonblock(int sock)
 {
@@ -745,7 +745,7 @@ static void enable_nonblock(int sock)
     if (ioctlsocket(sock, FIONBIO, &flags) < 0)
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "ioctlsocket");
 #else
-    if ((flags = fcntl(sock, F_GETFL, 0)) < 0) 
+    if ((flags = fcntl(sock, F_GETFL, 0)) < 0)
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl");
     if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0)
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl2");
@@ -780,10 +780,10 @@ static int http_proxy(struct http_request *rq)
             abort();
         enable_nonblock(sock);
         if (connect(sock, (struct sockaddr *)
-                    c->server->http_server->proxy_addr, 
+                    c->server->http_server->proxy_addr,
                     sizeof(*c->server->http_server->proxy_addr)) < 0)
         {
-            if (!is_inprogress()) 
+            if (!is_inprogress())
             {
                 yaz_log(YLOG_WARN|YLOG_ERRNO, "Proxy connect");
                 return -1;
@@ -808,27 +808,27 @@ static int http_proxy(struct http_request *rq)
         yaz_log(YLOG_WARN, "Failed to find Host header in proxy");
         return -1;
     }
-    
+
     // Add new header about paraz2 version, host, remote client address, etc.
     {
         char server_via[128];
 
         hp = rq->headers;
-        hp = http_header_append(c, hp, 
+        hp = http_header_append(c, hp,
                                 "X-Pazpar2-Version", PACKAGE_VERSION);
-        hp = http_header_append(c, hp, 
+        hp = http_header_append(c, hp,
                                 "X-Pazpar2-Server-Host", ser->host);
         sprintf(server_port, "%d",  ser->port);
-        hp = http_header_append(c, hp, 
+        hp = http_header_append(c, hp,
                                 "X-Pazpar2-Server-Port", server_port);
-        yaz_snprintf(server_via, sizeof(server_via), 
-                     "1.1 %s:%s (%s/%s)",  
+        yaz_snprintf(server_via, sizeof(server_via),
+                     "1.1 %s:%s (%s/%s)",
                      ser->host ? ser->host : "@",
                      server_port, PACKAGE_NAME, PACKAGE_VERSION);
         hp = http_header_append(c, hp, "Via" , server_via);
         hp = http_header_append(c, hp, "X-Forwarded-For", c->addr);
     }
-    
+
     requestbuf = http_serialize_request(rq);
 
     http_buf_enqueue(&p->oqueue, requestbuf);
@@ -881,7 +881,7 @@ static void http_io(IOCHAN i, int event)
         {
             int res, reqlen;
             struct http_buf *htbuf;
-            
+
             htbuf = http_buf_create(hc->http_server);
             res = recv(iochan_getfd(i), htbuf->buf, HTTP_BUF_SIZE -1, 0);
             if (res == -1 && errno == EAGAIN)
@@ -1014,7 +1014,7 @@ static void http_io(IOCHAN i, int event)
                     }
                 }
             }
-            if (!hc->oqueue && hc->proxy && !hc->proxy->iochan) 
+            if (!hc->oqueue && hc->proxy && !hc->proxy->iochan)
                 http_channel_destroy(i); // Server closed; we're done
         }
         else
@@ -1086,7 +1086,7 @@ static void proxy_io(IOCHAN pi, int event)
                 return;
             }
             if (res == htbuf->len)
-            { 
+            {
                 struct http_buf *np = htbuf->next;
                 http_buf_destroy(hc->http_server, htbuf);
                 pc->oqueue = np;
@@ -1205,7 +1205,7 @@ static void http_accept(IOCHAN i, int event)
 
     yaz_log(YLOG_DEBUG, "New command connection");
     c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT, "http_session_socket");
-    
+
     ch = http_channel_create(server->http_server, inet_ntoa(addr.sin_addr),
                              server);
     ch->iochan = c;
@@ -1277,12 +1277,12 @@ int http_init(const char *addr, struct conf_server *server,
                     &one, sizeof(one)) < 0)
         return 1;
 
-    if (bind(l, (struct sockaddr *) &myaddr, sizeof myaddr) < 0) 
+    if (bind(l, (struct sockaddr *) &myaddr, sizeof myaddr) < 0)
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "bind");
         return 1;
     }
-    if (listen(l, SOMAXCONN) < 0) 
+    if (listen(l, SOMAXCONN) < 0)
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "listen");
         return 1;

@@ -86,7 +86,7 @@ static int run(FILE *inf, struct addrinfo *res)
             }
             else
                 spec.tv_usec = tv_usec1 - tv_usec0;
-            
+
             select(0, 0, 0, 0, &spec);
         }
         tv_sec0 = tv_sec1;
@@ -213,7 +213,7 @@ int main(int argc, char **argv)
         hints.ai_addr           = NULL;
         hints.ai_canonname      = NULL;
         hints.ai_next           = NULL;
-    
+
         cp = strchr(host, ':');
         if (*cp)
         {

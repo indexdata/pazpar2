@@ -55,18 +55,18 @@ struct marcmap *marcmap_load(const char *filename, NMEM nmem)
     mmhead = NULL;
     fp = fopen(filename, "r");
 
-    while ((c = getc(fp) ) != EOF) 
+    while ((c = getc(fp) ) != EOF)
     {
         // allocate some space
         if (newrec)
         {
-            if (mm != NULL) 
+            if (mm != NULL)
             {
                 mm->next = nmem_malloc(nmem, sizeof(struct marcmap));
                 mm = mm->next;
             }
             // first one!
-            else 
+            else
             { mm = nmem_malloc(nmem, sizeof(struct marcmap));
                 mmhead = mm;
             }
@@ -93,8 +93,8 @@ struct marcmap *marcmap_load(const char *filename, NMEM nmem)
                 mm->subfield = buf[len-2];
             }
             // third, pz fieldname
-            else if (field == 2) 
-            { 
+            else if (field == 2)
+            {
                 mm->pz = nmem_malloc(nmem, len * sizeof(char));
                 strncpy(mm->pz, buf, len);
             }
@@ -131,17 +131,17 @@ xmlDoc *marcmap_apply(struct marcmap *marcmap, xmlDoc *xml_in)
     xmlDocPtr xml_out;
     xmlNodePtr xml_out_root;
     xmlNodePtr rec_node;
-    xmlNodePtr meta_node; 
+    xmlNodePtr meta_node;
     struct marchash *marchash;
     struct marcfield *field;
     struct marcsubfield *subfield;
     struct marcmap *mmcur;
-     
+
     xml_out = xmlNewDoc(BAD_CAST "1.0");
     xml_out->encoding = xmlCharStrdup("UTF-8");
     xml_out_root = xmlNewNode(NULL, BAD_CAST "record");
     xmlDocSetRootElement(xml_out, xml_out_root);
-    ns_pz = xmlNewNs(xml_out_root, BAD_CAST "http://www.indexdata.com/pazpar2/1.0", BAD_CAST "pz"); 
+    ns_pz = xmlNewNs(xml_out_root, BAD_CAST "http://www.indexdata.com/pazpar2/1.0", BAD_CAST "pz");
     xmlSetNs(xml_out_root, ns_pz);
     nmem = nmem_create();
     rec_node = xmlDocGetRootElement(xml_in);
@@ -158,7 +158,7 @@ xmlDoc *marcmap_apply(struct marcmap *marcmap, xmlDoc *xml_in)
             if ((mmcur->subfield == '$') && (s = field->val))
             {
                 meta_node = xmlNewChild(xml_out_root, ns_pz, BAD_CAST "metadata", BAD_CAST s);
-                xmlSetProp(meta_node, BAD_CAST "type", BAD_CAST mmcur->pz); 
+                xmlSetProp(meta_node, BAD_CAST "type", BAD_CAST mmcur->pz);
             }
             // catenate all subfields
             else if ((mmcur->subfield == '*') && (s = marchash_catenate_subfields(field, " ", nmem)))
@@ -167,10 +167,10 @@ xmlDoc *marcmap_apply(struct marcmap *marcmap, xmlDoc *xml_in)
                 xmlSetProp(meta_node, BAD_CAST "type", BAD_CAST mmcur->pz);
             }
             // subfield value
-            else if (mmcur->subfield) 
+            else if (mmcur->subfield)
             {
                 subfield = 0;
-                while ((subfield = 
+                while ((subfield =
                         marchash_get_subfield(mmcur->subfield,
                                               field, subfield)) != 0)
                 {
@@ -181,7 +181,7 @@ xmlDoc *marcmap_apply(struct marcmap *marcmap, xmlDoc *xml_in)
                     }
                 }
             }
-            
+
         }
         mmcur = mmcur->next;
     }

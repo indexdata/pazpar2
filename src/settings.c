@@ -108,7 +108,7 @@ static int settings_index_lookup(struct setting_dictionary *dictionary, const ch
     size_t maxlen;
     int i;
     const char *p;
-    
+
     assert(name);
 
     if (!strncmp("pz:", name, 3) && (p = strchr(name + 3, ':')))
@@ -241,7 +241,7 @@ int settings_read_node_x(xmlNode *n,
                     xmlDocSetRootElement(doc, xmlCopyNode(root, 1));
                     xmlDocDumpMemory(doc, &buf_out, &len_out);
                     /* xmlDocDumpMemory 0-terminates */
-                    set.value = (char *) buf_out; 
+                    set.value = (char *) buf_out;
                     xmlFreeDoc(doc);
                 }
             }
@@ -266,7 +266,7 @@ int settings_read_node_x(xmlNode *n,
         }
         else
         {
-            yaz_log(YLOG_WARN, "Unknown element %s in settings file", 
+            yaz_log(YLOG_WARN, "Unknown element %s in settings file",
                     (char*) n->name);
             ret_val = -1;
         }
@@ -278,7 +278,7 @@ int settings_read_node_x(xmlNode *n,
     xmlFree(targeta);
     return ret_val;
 }
- 
+
 static int read_settings_file(const char *path,
                               void *client_data,
                               void (*fun)(void *client_data,
@@ -301,7 +301,7 @@ static int read_settings_file(const char *path,
 }
 
 
-// Recursively read files or directories, invoking a 
+// Recursively read files or directories, invoking a
 // callback for each one
 static int read_settings(const char *path,
                           void *client_data,
@@ -444,7 +444,7 @@ static void update_database_fun(void *context, struct database *db)
 {
     struct setting *set = ((struct update_database_context *)
                            context)->set;
-    struct conf_service *service = ((struct update_database_context *) 
+    struct conf_service *service = ((struct update_database_context *)
                                     context)->service;
     struct setting **sp;
     int offset;
@@ -535,7 +535,7 @@ void initialize_soft_settings(struct conf_service *service)
 
         // Also create setting for some metadata attributes.
         if (md->limitmap) {
-            int index; 
+            int index;
             WRBUF wrbuf = wrbuf_alloc();
             yaz_log(YLOG_DEBUG, "Metadata %s has limitmap: %s ",md->name,  md->limitmap);
             wrbuf_printf(wrbuf, "pz:limitmap:%s", md->name);
@@ -571,9 +571,9 @@ static void prepare_target_dictionary(void *client_data, struct setting *set)
 void init_settings(struct conf_service *service)
 {
     struct setting_dictionary *new;
-    
+
     assert(service->nmem);
-    
+
     new = nmem_malloc(service->nmem, sizeof(*new));
     memset(new, 0, sizeof(*new));
     service->dictionary = new;

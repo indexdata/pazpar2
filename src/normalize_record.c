@@ -71,8 +71,8 @@ normalize_record_t normalize_record_create(struct conf_service *service,
             (*m)->marcmap = NULL;
             (*m)->stylesheet = NULL;
             (*m)->stylesheet2 = NULL;
-            
-            
+
+
             (*m)->stylesheet = xsltParseStylesheetDoc(xsp_doc);
             if (!(*m)->stylesheet)
                 no_errors++;
@@ -89,16 +89,16 @@ normalize_record_t normalize_record_create(struct conf_service *service,
         for (i = 0; i < num; i++)
         {
             WRBUF fname = conf_get_fname(conf, stylesheets[i]);
-            
+
             *m = nmem_malloc(nt->nmem, sizeof(**m));
             (*m)->marcmap = NULL;
             (*m)->stylesheet = NULL;
-            
+
             (*m)->stylesheet2 = service_xslt_get(service, stylesheets[i]);
             if ((*m)->stylesheet2)
                 ;
-            else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl")) 
-            {    
+            else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl"))
+            {
                 if (!((*m)->stylesheet =
                       xsltParseStylesheetFile((xmlChar *) wrbuf_cstr(fname))))
                 {
@@ -121,7 +121,7 @@ normalize_record_t normalize_record_create(struct conf_service *service,
                 yaz_log(YLOG_FATAL, "Cannot handle stylesheet: %s", stylesheets[i]);
                 no_errors++;
             }
-            
+
             wrbuf_destroy(fname);
             m = &(*m)->next;
         }
@@ -170,7 +170,7 @@ int normalize_record_transform(normalize_record_t nt, xmlDoc **doc,
                 ndoc = 0;
 	    xmlFreeDoc(*doc);
             *doc = 0;
-            
+
             if (ndoc)
                 root = xmlDocGetRootElement(ndoc);
 

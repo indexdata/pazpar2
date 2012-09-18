@@ -55,7 +55,7 @@ static struct host *create_host(const char *url, const char *proxy,
     else
     {
         char *cp;
-        
+
         host->tproxy = xmalloc (strlen(url) + 10); /* so we can add :port */
         strcpy(host->tproxy, url);
         for (cp = host->tproxy; *cp; cp++)
