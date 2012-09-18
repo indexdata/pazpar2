@@ -1,3 +1,14 @@
+--- 1.6.19 2012/09/18
+
+Rank algorithm skips strings that gets normalized to empty string.
+For example, & and ! could map to the empty string. The weight for
+those terms is now 0 (as if they were not part of the query).
+
+Rank algorithm does not use CCL from limitmap; only from the query
+parameter (user query).
+
+Obey -w dir.
+
 --- 1.6.18 2012/09/17
 
 Rank algorithm configurable by 'rank' element inside service. So far
