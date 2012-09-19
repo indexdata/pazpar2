@@ -14,6 +14,15 @@
     </pz:record>
   </xsl:template>
 
+  <xsl:template match="float[@name]">
+    <pz:metadata>
+	<xsl:attribute  name="type">
+	  <xsl:value-of select="@name"/>
+	</xsl:attribute>
+	<xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
   <xsl:template match="str[@name]">
     <pz:metadata>
 	<xsl:attribute  name="type">
