@@ -163,7 +163,7 @@ enum pazpar2_error_code session_search(struct session *s, const char *query,
                                        const char *maxrecs,
                                        const char *filter, const char *limit,
                                        const char **addinfo,
-                                       const char *sort_field, int increasing);
+                                       struct reclist_sortparms *sort_parm);
 struct record_cluster **show_range_start(struct session *s,
                                          struct reclist_sortparms *sp,
                                          int start,
