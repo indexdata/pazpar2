@@ -1087,7 +1087,7 @@ static void show_records(struct http_channel *c, struct http_session *s, int act
     Odr_int total_hits;
     Odr_int approx_hits;
     int i;
-
+    struct conf_service *service = 0;
     if (!s)
         return;
 
@@ -1099,9 +1099,12 @@ static void show_records(struct http_channel *c, struct http_session *s, int act
         startn = atoi(start);
     if (num)
         numn = atoi(num);
-    if (!sort)
-        sort = "relevance";
-    if (!(sp = reclist_parse_sortparms(c->nmem, sort, s->psession->service)))
+
+    service = s->psession->service;
+    if (!sort) {
+        sort = service->default_sort;
+    }
+    if (!(sp = reclist_parse_sortparms(c->nmem, sort, service)))
     {
         error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
         return;
@@ -1169,6 +1172,7 @@ static void cmd_show(struct http_channel *c)
     const char *block = http_argbyname(rq, "block");
     const char *sort = http_argbyname(rq, "sort");
     const char *block_error = http_argbyname(rq, "report");
+    struct conf_service *service = 0;
 
     struct reclist_sortparms *sp;
     int status;
@@ -1179,18 +1183,18 @@ static void cmd_show(struct http_channel *c)
     if (!s)
         return;
 
-    if (!sort)
-        sort = "relevance";
+    service = s->psession->service;
+    if (!sort) {
+        sort = service->default_sort;
+    }
 
-    if (!(sp = reclist_parse_sortparms(c->nmem, sort, s->psession->service)))
+    if (!(sp = reclist_parse_sortparms(c->nmem, sort, service)))
     {
         error(c->response, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
         release_session(c, s);
         return;
     }
     session_sort(s->psession, sp->name, sp->increasing, sp->type == Metadata_sortkey_position);
-                 /* TODO This was too simple. Will make pazpar2 continuing reseting the session resultset and redo the search. Disable this for now
-                    sp->type == Metadata_sortkey_position */
 
     status = session_active_clients(s->psession);
 
@@ -1270,11 +1274,14 @@ static void cmd_search(struct http_channel *c)
     const char *maxrecs = http_argbyname(rq, "maxrecs");
     const char *startrecs = http_argbyname(rq, "startrecs");
     const char *limit = http_argbyname(rq, "limit");
+    const char *sort = http_argbyname(rq, "sort");
     enum pazpar2_error_code code;
     const char *addinfo = 0;
+    struct reclist_sortparms *sp;
 
     if (!s)
         return;
+
     if (!query)
     {
         error(rs, PAZPAR2_MISSING_PARAMETER, "query");
@@ -1287,8 +1294,17 @@ static void cmd_search(struct http_channel *c)
         release_session(c, s);
         return;
     }
+    if (!sort)
+        sort = "relevance";
+    if (!(sp = reclist_parse_sortparms(c->nmem, sort, s->psession->service)))
+    {
+        error(c->response, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
+        release_session(c, s);
+        return;
+    }
+
     code = session_search(s->psession, query, startrecs, maxrecs, filter, limit,
-                          &addinfo, "relevance", 0);
+                          &addinfo, sp);
     if (code)
     {
         error(rs, code, addinfo);
