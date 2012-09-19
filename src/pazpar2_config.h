@@ -117,6 +117,7 @@ struct conf_service
     int z3950_session_timeout;
     int z3950_operation_timeout;
     int rank_cluster;
+    char *default_sort;
 
     int ref_count;
     /* duplicated from conf_server */

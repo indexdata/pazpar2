@@ -137,6 +137,7 @@ struct conf_service *service_init(struct conf_server *server,
     service->charsets = 0;
 
     service->id = service_id ? nmem_strdup(nmem, service_id) : 0;
+
     // Setup a dictionary from server.
     service->dictionary = 0;
 
@@ -156,6 +157,8 @@ struct conf_service *service_init(struct conf_server *server,
             = nmem_malloc(nmem,
                           sizeof(struct conf_metadata) * service->num_metadata);
     service->num_sortkeys = num_sortkeys;
+
+    service->default_sort = nmem_strdup(nmem, "relevance");
     service->sortkeys = 0;
     if (service->num_sortkeys)
         service->sortkeys
@@ -628,6 +631,21 @@ static struct conf_service *service_create_static(struct conf_server *server,
                 return 0;
             }
             xmlFree(rank_cluster);
+        }
+        else if (!strcmp((const char *) n->name, "sort-default"))
+        {
+            char *default_sort = (char *) xmlGetProp(n, (xmlChar *) "field");
+
+            if (default_sort && strcmp(default_sort, "")) {
+                service->default_sort = nmem_strdup(service->nmem, default_sort);
+                yaz_log(YLOG_LOG, "service %d: default sort order configured to: %s", service_id, default_sort);
+            }
+            else
+            {
+                yaz_log(YLOG_FATAL, "default sort order is invalid: %s", default_sort);
+                return 0;
+            }
+            xmlFree(default_sort);
         }
         else
         {
