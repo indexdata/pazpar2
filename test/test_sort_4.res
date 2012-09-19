@@ -7,6 +7,38 @@
 <num>20</num>
 <hit>
 
+<md-title>Water management problems and challenges in India</md-title>
+<md-title-remainder>an analytical review</md-title-remainder>
+<md-date>2000</md-date>
+<md-author>Dinesh Kumar, M</md-author>
+<md-medium>book</md-medium><location id="LOC Solr Test"
+ name="LOC Solr Test" checksum="1554355631">
+<md-title>Water management problems and challenges in India</md-title>
+<md-title-remainder>an analytical review</md-title-remainder>
+<md-date>2000</md-date>
+<md-author>Dinesh Kumar, M</md-author>
+<md-medium>book</md-medium>
+<md-score>2.3047338</md-score></location>
+<recid>content: title water management problems and challenges in india author dinesh kumar m medium book</recid>
+</hit>
+<hit>
+
+<md-title>The magic of water</md-title>
+<md-title-remainder>reflection and transparency at the water&apos;s edge</md-title-remainder>
+<md-date>2000</md-date>
+<md-author>Hochschwender, Ted</md-author>
+<md-medium>book</md-medium><location id="LOC Solr Test"
+ name="LOC Solr Test" checksum="3168968100">
+<md-title>The magic of water</md-title>
+<md-title-remainder>reflection and transparency at the water&apos;s edge</md-title-remainder>
+<md-date>2000</md-date>
+<md-author>Hochschwender, Ted</md-author>
+<md-medium>book</md-medium>
+<md-score>2.2315488</md-score></location>
+<recid>content: title the magic of water author hochschwender ted medium book</recid>
+</hit>
+<hit>
+
 <md-title>Water</md-title>
 <md-date>1999</md-date>
 <md-author>De Villiers, Marq</md-author>
@@ -17,31 +49,35 @@
 <md-author>De Villiers, Marq</md-author>
 <md-medium>book</md-medium>
 <md-score>2.1864624</md-score></location>
-<relevance>34851</relevance>
 <recid>content: title water author de villiers marq medium book</recid>
 </hit>
 <hit>
 
-<md-title>Potable water and methods of detecting impurities</md-title>
-<md-date>1899-1906</md-date>
-<md-author>Baker, M. N</md-author>
+<md-title>Water use for public water supply in Michigan, 1998</md-title>
+<md-date>2000</md-date>
+<md-description>&quot;January 3, 2000.&quot;</md-description>
 <md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="1810338543">
-<md-title>Potable water and methods of detecting impurities</md-title>
-<md-date>1906</md-date>
-<md-author>Baker, M. N</md-author>
+ name="LOC Solr Test" checksum="2103225742">
+<md-title>Water use for public water supply in Michigan, 1998</md-title>
+<md-date>2000</md-date>
+<md-description>&quot;January 3, 2000.&quot;</md-description>
 <md-medium>book</md-medium>
-<md-score>1.7852391</md-score></location>
-<location id="LOC Solr Test"
- name="LOC Solr Test" checksum="1261468432">
-<md-title>Potable water and methods of detecting impurities</md-title>
-<md-date>1899</md-date>
-<md-author>Baker, M. N</md-author>
+<md-score>2.1864624</md-score></location>
+<recid>content: title water use for public water supply in michigan medium book</recid>
+</hit>
+<hit>
+
+<md-title>Report to the IUCN on water demand management country study</md-title>
+<md-title-remainder>Namibia</md-title-remainder>
+<md-date>1999</md-date>
+<md-medium>book</md-medium><location id="LOC Solr Test"
+ name="LOC Solr Test" checksum="3717838211">
+<md-title>Report to the IUCN on water demand management country study</md-title>
+<md-title-remainder>Namibia</md-title-remainder>
+<md-date>1999</md-date>
 <md-medium>book</md-medium>
-<md-score>1.7852391</md-score></location>
-<count>2</count>
-<relevance>32470</relevance>
-<recid>content: title potable water and methods of detecting impurities author baker m n medium book</recid>
+<md-score>2.115072</md-score></location>
+<recid>content: title report to the iucn on water demand management country study medium book</recid>
 </hit>
 <hit>
 
@@ -57,26 +93,7 @@
 <md-description>&quot;Balochistan conservation strategy background paper&quot;--T.p</md-description>
 <md-medium>book</md-medium>
 <md-score>2.0614164</md-score></location>
-<relevance>30305</relevance>
 <recid>content: title water author majeed abdul medium book</recid>
-</hit>
-<hit>
-
-<md-title>Water</md-title>
-<md-date>2000</md-date>
-<md-author>Grant, Pamela</md-author>
-<md-description>Examines major environmental issues surrounding water, giving examples of attempts to solve global problems and sources for more information</md-description>
-<md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="648602593">
-<md-title>Water</md-title>
-<md-date>2000</md-date>
-<md-author>Grant, Pamela</md-author>
-<md-description>Includes index</md-description>
-<md-description>Examines major environmental issues surrounding water, giving examples of attempts to solve global problems and sources for more information</md-description>
-<md-medium>book</md-medium>
-<md-score>1.8037393</md-score></location>
-<relevance>27753</relevance>
-<recid>content: title water author grant pamela medium book</recid>
 </hit>
 <hit>
 
@@ -92,26 +109,54 @@
 <md-description>Includes index</md-description>
 <md-medium>book</md-medium>
 <md-score>2.0614164</md-score></location>
-<relevance>27274</relevance>
 <recid>content: title water law author fisher d e medium book</recid>
 </hit>
 <hit>
 
-<md-title>A Primer on fresh water</md-title>
-<md-title-remainder>questions and answers</md-title-remainder>
-<md-date>2000</md-date>
-<md-description>Issued also in French under title: Notions élémentaires sur l&apos;eau douce : questions et réponses</md-description>
+<md-title>Evaluation and control of water pollution in Bhavani Basin</md-title>
+<md-title-remainder>final report</md-title-remainder>
+<md-date>1998</md-date>
+<md-description>&quot;Funded by Institute for water Studies, Water Resources Organisation (PWD).&quot;</md-description>
 <md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="2684093717">
-<md-title>A Primer on fresh water</md-title>
-<md-title-remainder>questions and answers</md-title-remainder>
-<md-date>2000</md-date>
-<md-description>Issued also in French under title: Notions élémentaires sur l&apos;eau douce : questions et réponses</md-description>
-<md-description>Includes index</md-description>
+ name="LOC Solr Test" checksum="4266708322">
+<md-title>Evaluation and control of water pollution in Bhavani Basin</md-title>
+<md-title-remainder>final report</md-title-remainder>
+<md-date>1998</md-date>
+<md-description>&quot;Funded by Institute for water Studies, Water Resources Organisation (PWD).&quot;</md-description>
+<md-description>With reference to India</md-description>
 <md-medium>book</md-medium>
-<md-score>2.016642</md-score></location>
-<relevance>26365</relevance>
-<recid>content: title a primer on fresh water medium book</recid>
+<md-score>2.0614164</md-score></location>
+<recid>content: title evaluation and control of water pollution in bhavani basin medium book</recid>
+</hit>
+<hit>
+
+<md-title>UNSIA Water Cluster</md-title>
+<md-title-remainder>priorities and strategies for water in Africa</md-title-remainder>
+<md-date>2000</md-date>
+<md-description>&quot;United Nations System-wide Initiative on Africa (UNSIA).&quot;</md-description>
+<md-medium>book</md-medium><location id="LOC Solr Test"
+ name="LOC Solr Test" checksum="1586353495">
+<md-title>UNSIA Water Cluster</md-title>
+<md-title-remainder>priorities and strategies for water in Africa</md-title-remainder>
+<md-date>2000</md-date>
+<md-description>&quot;United Nations System-wide Initiative on Africa (UNSIA).&quot;</md-description>
+<md-medium>book</md-medium>
+<md-score>2.0614164</md-score></location>
+<recid>content: title unsia water cluster medium book</recid>
+</hit>
+<hit>
+
+<md-title>Water technology management</md-title>
+<md-date>2001</md-date>
+<md-description>Collection of articles with reference to India</md-description>
+<md-medium>book</md-medium><location id="LOC Solr Test"
+ name="LOC Solr Test" checksum="3200965964">
+<md-title>Water technology management</md-title>
+<md-date>2001</md-date>
+<md-description>Collection of articles with reference to India</md-description>
+<md-medium>book</md-medium>
+<md-score>2.0614164</md-score></location>
+<recid>content: title water technology management medium book</recid>
 </hit>
 <hit>
 
@@ -125,8 +170,21 @@
 <md-author>Thresh, John Clough</md-author>
 <md-medium>book</md-medium>
 <md-score>2.0614164</md-score></location>
-<relevance>22729</relevance>
 <recid>content: title water and water supplies author thresh john clough medium book</recid>
+</hit>
+<hit>
+
+<md-title>Wonderful water</md-title>
+<md-date>2001</md-date>
+<md-author>Glover, David</md-author>
+<md-medium>book</md-medium><location id="LOC Solr Test"
+ name="LOC Solr Test" checksum="2135223606">
+<md-title>Wonderful water</md-title>
+<md-date>2001</md-date>
+<md-author>Glover, David</md-author>
+<md-medium>book</md-medium>
+<md-score>2.037116</md-score></location>
+<recid>content: title wonderful water author glover david medium book</recid>
 </hit>
 <hit>
 
@@ -150,42 +208,85 @@
 <md-medium>book</md-medium>
 <md-score>2.016642</md-score></location>
 <count>2</count>
-<relevance>22729</relevance>
 <recid>content: title water quality assessment of the state water project medium book</recid>
 </hit>
 <hit>
 
-<md-title>Water-supply</md-title>
-<md-title-remainder>(Considered principally from a sanitary standpoint.)</md-title-remainder>
-<md-date>1896</md-date>
-<md-author>Mason, William Pitt</md-author>
+<md-title>A Primer on fresh water</md-title>
+<md-title-remainder>questions and answers</md-title-remainder>
+<md-date>2000</md-date>
+<md-description>Issued also in French under title: Notions élémentaires sur l&apos;eau douce : questions et réponses</md-description>
 <md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="2359208654">
-<md-title>Water-supply</md-title>
-<md-title-remainder>(Considered principally from a sanitary standpoint.)</md-title-remainder>
-<md-date>1896</md-date>
-<md-author>Mason, William Pitt</md-author>
+ name="LOC Solr Test" checksum="2684093717">
+<md-title>A Primer on fresh water</md-title>
+<md-title-remainder>questions and answers</md-title-remainder>
+<md-date>2000</md-date>
+<md-description>Issued also in French under title: Notions élémentaires sur l&apos;eau douce : questions et réponses</md-description>
+<md-description>Includes index</md-description>
 <md-medium>book</md-medium>
-<md-score>1.7852391</md-score></location>
-<relevance>22729</relevance>
-<recid>content: title water supply author mason william pitt medium book</recid>
+<md-score>2.016642</md-score></location>
+<recid>content: title a primer on fresh water medium book</recid>
 </hit>
 <hit>
 
-<md-title>The law of waters and water rights</md-title>
-<md-title-remainder>international, national, state, municipal, and individual, including irrigation, drainage, and municipal water supply</md-title-remainder>
-<md-date>1904</md-date>
-<md-author>Farnham, Henry P</md-author>
+<md-title>Who governs water?</md-title>
+<md-title-remainder>the politics of water resource management</md-title-remainder>
+<md-date>1999</md-date>
+<md-author>Frey, Hans</md-author>
 <md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="1682347087">
-<md-title>The law of waters and water rights</md-title>
-<md-title-remainder>international, national, state, municipal, and individual, including irrigation, drainage, and municipal water supply</md-title-remainder>
-<md-date>1904</md-date>
-<md-author>Farnham, Henry P</md-author>
+ name="LOC Solr Test" checksum="3738890">
+<md-title>Who governs water?</md-title>
+<md-title-remainder>the politics of water resource management</md-title-remainder>
+<md-date>1999</md-date>
+<md-author>Frey, Hans</md-author>
 <md-medium>book</md-medium>
-<md-score>1.8935319</md-score></location>
-<relevance>21946</relevance>
-<recid>content: title the law of waters and water rights author farnham henry p medium book</recid>
+<md-score>1.9282786</md-score></location>
+<recid>content: title who governs water author frey hans medium book</recid>
+</hit>
+<hit>
+
+<md-title>1999 wastewater and drinking water user charge survey</md-title>
+<md-date>1999</md-date>
+<md-description>&quot;December, 1999.&quot;</md-description>
+<md-medium>book</md-medium><location id="LOC Solr Test"
+ name="LOC Solr Test" checksum="1618351359">
+<md-title>1999 wastewater and drinking water user charge survey</md-title>
+<md-date>1999</md-date>
+<md-description>Cover title</md-description>
+<md-description>&quot;December, 1999.&quot;</md-description>
+<md-medium>book</md-medium>
+<md-score>1.9282786</md-score></location>
+<recid>content: title wastewater and drinking water user charge survey medium book</recid>
+</hit>
+<hit>
+
+<md-title>Proposition 13</md-title>
+<md-title-remainder>Safe Drinking Water, Clean Water, Watershed Protection, and Flood Protection Act</md-title-remainder>
+<md-date>2000</md-date>
+<md-description>&quot;March 2000.&quot;</md-description>
+<md-medium>book</md-medium><location id="LOC Solr Test"
+ name="LOC Solr Test" checksum="3232963828">
+<md-title>Proposition 13</md-title>
+<md-title-remainder>Safe Drinking Water, Clean Water, Watershed Protection, and Flood Protection Act</md-title-remainder>
+<md-date>2000</md-date>
+<md-description>&quot;March 2000.&quot;</md-description>
+<md-medium>book</md-medium>
+<md-score>1.9282786</md-score></location>
+<recid>content: title proposition medium book</recid>
+</hit>
+<hit>
+
+<md-title>District water supply plan</md-title>
+<md-date>2000</md-date>
+<md-description>[1] [No special title] -- [2] Appendixes</md-description>
+<md-medium>book</md-medium><location id="LOC Solr Test"
+ name="LOC Solr Test" checksum="552609001">
+<md-title>District water supply plan</md-title>
+<md-date>2000</md-date>
+<md-description>[1] [No special title] -- [2] Appendixes</md-description>
+<md-medium>book</md-medium>
+<md-score>1.9282786</md-score></location>
+<recid>content: title district water supply plan medium book</recid>
 </hit>
 <hit>
 
@@ -211,175 +312,22 @@
 <md-medium>book</md-medium>
 <md-score>1.9282786</md-score></location>
 <count>2</count>
-<relevance>20514</relevance>
 <recid>content: title water in press medium book</recid>
 </hit>
 <hit>
 
-<md-title>Water-power</md-title>
-<md-title-remainder>an outline of the development and application of the energy of flowing water</md-title-remainder>
-<md-date>1900-1901</md-date>
-<md-author>Frizell, Joseph P</md-author>
-<md-description>Original imprint 1901, corrected to 1900</md-description>
-<md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="2322304367">
-<md-title>Water-power</md-title>
-<md-title-remainder>an outline of the development and application of the energy of flowing water</md-title-remainder>
-<md-date>1901</md-date>
-<md-author>Frizell, Joseph P</md-author>
-<md-medium>book</md-medium>
-<md-score>1.4576416</md-score></location>
-<location id="LOC Solr Test"
- name="LOC Solr Test" checksum="707691898">
-<md-title>Water-power</md-title>
-<md-title-remainder>an outline of the development and application of the energy of flowing water</md-title-remainder>
-<md-date>1900</md-date>
-<md-author>Frizell, Joseph P</md-author>
-<md-description>Original imprint 1901, corrected to 1900</md-description>
-<md-medium>book</md-medium>
-<md-score>1.4576416</md-score></location>
-<count>2</count>
-<relevance>20514</relevance>
-<recid>content: title water power author frizell joseph p medium book</recid>
-</hit>
-<hit>
-
-<md-title>Water-supply engineering</md-title>
-<md-title-remainder>The designing, construction, and maintenance of water-supply systems, both city and irrigation</md-title-remainder>
-<md-date>1903-1909</md-date>
-<md-author>Folwell, Amory Prescott</md-author>
-<md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="3196059541">
-<md-title>Water-supply engineering</md-title>
-<md-title-remainder>The designing, construction, and maintenance of water-supply systems, both city and irrigation</md-title-remainder>
-<md-date>1909</md-date>
-<md-author>Folwell, Amory Prescott</md-author>
-<md-medium>book</md-medium>
-<md-score>1.5620842</md-score></location>
-<location id="LOC Solr Test"
- name="LOC Solr Test" checksum="1000579097">
-<md-title>Water-supply engineering</md-title>
-<md-title-remainder>The designing, construction, and maintenance of water-supply systems, both city and irrigation</md-title-remainder>
-<md-date>1903</md-date>
-<md-author>Folwell, Amory Prescott</md-author>
-<md-medium>book</md-medium>
-<md-score>1.5620842</md-score></location>
-<count>2</count>
-<relevance>20514</relevance>
-<recid>content: title water supply engineering author folwell amory prescott medium book</recid>
-</hit>
-<hit>
-
-<md-title>Regulations on the disposal of arsenic residuals from drinking water treatment plants</md-title>
-<md-date>2000</md-date>
-<md-description>&quot;EPA Contract 68-C7-0011, work assignment 0-38.&quot;</md-description>
-<md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="99732482">
-<md-title>Regulations on the disposal of arsenic residuals from drinking water treatment plants</md-title>
-<md-date>2000</md-date>
-<md-description>&quot;May 2000.&quot;</md-description>
-<md-description>&quot;EPA/600/R-00/025.&quot;</md-description>
-<md-description>&quot;EPA Contract 68-C7-0011, work assignment 0-38.&quot;</md-description>
-<md-medium>book</md-medium>
-<md-score>1.8129189</md-score></location>
-<relevance>20456</relevance>
-<recid>content: title regulations on the disposal of arsenic residuals from drinking water treatment plants medium book</recid>
-</hit>
-<hit>
-
-<md-title>A guide to Montana water quality regulation</md-title>
-<md-date>1997</md-date>
-<md-author>Bryan, Michelle</md-author>
-<md-description>&quot;A joint publication of Legislative Environmental Policy Office, Environmental Quality Council [and] Montana University System, Water Center&quot;</md-description>
-<md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="291719666">
-<md-title>A guide to Montana water quality regulation</md-title>
-<md-date>1997</md-date>
-<md-author>Bryan, Michelle</md-author>
-<md-description>&quot;A joint publication of Legislative Environmental Policy Office, Environmental Quality Council [and] Montana University System, Water Center&quot;</md-description>
-<md-medium>book</md-medium>
-<md-score>1.6398468</md-score></location>
-<relevance>19800</relevance>
-<recid>content: title a guide to montana water quality regulation author bryan michelle medium book</recid>
-</hit>
-<hit>
-
-<md-title>Water technology management</md-title>
-<md-date>2001</md-date>
-<md-description>Collection of articles with reference to India</md-description>
-<md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="3200965964">
-<md-title>Water technology management</md-title>
-<md-date>2001</md-date>
-<md-description>Collection of articles with reference to India</md-description>
-<md-medium>book</md-medium>
-<md-score>2.0614164</md-score></location>
-<relevance>19698</relevance>
-<recid>content: title water technology management medium book</recid>
-</hit>
-<hit>
-
-<md-title>Aquatic habitat indicators and their application to water quality objectives within the Clean Water Act</md-title>
+<md-title>Pahāṛa para pānī</md-title>
 <md-date>1999</md-date>
-<md-author>Bauer, Steve</md-author>
-<md-description>&quot;This document was developed for US Environmental Protection Agency, Region 10, Seattle Washington, with the Idaho Water Resources Institute, University of Idaho.&quot;</md-description>
+<md-author>Ravi, Rājeśa</md-author>
+<md-description>On the effort of conserving rain water for drinking and harvesting; case study of selected villages in Rajasthan, India</md-description>
 <md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="67734618">
-<md-title>Aquatic habitat indicators and their application to water quality objectives within the Clean Water Act</md-title>
+ name="LOC Solr Test" checksum="3781833939">
+<md-title>Pahāṛa para pānī</md-title>
 <md-date>1999</md-date>
-<md-author>Bauer, Steve</md-author>
-<md-description>&quot;This document was developed for US Environmental Protection Agency, Region 10, Seattle Washington, with the Idaho Water Resources Institute, University of Idaho.&quot;</md-description>
+<md-author>Ravi, Rājeśa</md-author>
+<md-description>On the effort of conserving rain water for drinking and harvesting; case study of selected villages in Rajasthan, India</md-description>
 <md-medium>book</md-medium>
-<md-score>1.8935319</md-score></location>
-<relevance>19525</relevance>
-<recid>content: title aquatic habitat indicators and their application to water quality objectives within the clean water act author bauer steve medium book</recid>
-</hit>
-<hit>
-
-<md-title>An empirical analysis of water temperature and dissolved oxygen conditions in the Red Deer River</md-title>
-<md-date>1997</md-date>
-<md-author>Saffran, Karen Anita</md-author>
-<md-description>&quot;March 1997.&quot;</md-description>
-<md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="2908078765">
-<md-title>An empirical analysis of water temperature and dissolved oxygen conditions in the Red Deer River</md-title>
-<md-date>1997</md-date>
-<md-author>Saffran, Karen Anita</md-author>
-<md-description>&quot;March 1997.&quot;</md-description>
-<md-medium>book</md-medium>
-<md-score>1.7285503</md-score></location>
-<relevance>19395</relevance>
-<recid>content: title an empirical analysis of water temperature and dissolved oxygen conditions in the red deer river author saffran karen anita medium book</recid>
-</hit>
-<hit>
-
-<md-title>Surface water quality monitoring procedures manual</md-title>
-<md-date>1999</md-date>
-<md-description>&quot;GI-252&quot;--Cover</md-description>
-<md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="2780087309">
-<md-title>Surface water quality monitoring procedures manual</md-title>
-<md-date>1999</md-date>
-<md-description>&quot;June 1999.&quot;</md-description>
-<md-description>&quot;GI-252&quot;--Cover</md-description>
-<md-medium>book</md-medium>
-<md-score>1.8129189</md-score></location>
-<relevance>18940</relevance>
-<recid>content: title surface water quality monitoring procedures manual medium book</recid>
-</hit>
-<hit>
-
-<md-title>International Conference on Management of Drinking Water Resources, Chennai, December 3-5, 1997</md-title>
-<md-title-remainder>proceedings</md-title-remainder>
-<md-date>1997</md-date>
-<md-medium>book</md-medium><location id="LOC Solr Test"
- name="LOC Solr Test" checksum="2748089445">
-<md-title>International Conference on Management of Drinking Water Resources, Chennai, December 3-5, 1997</md-title>
-<md-title-remainder>proceedings</md-title-remainder>
-<md-date>1997</md-date>
-<md-medium>book</md-medium>
-<md-score>1.8935319</md-score></location>
-<relevance>18486</relevance>
-<recid>content: title international conference on management of drinking water resources chennai december medium book</recid>
+<md-score>1.9282786</md-score></location>
+<recid>content: title paha r a para pa ni author ravi ra jes a medium book</recid>
 </hit>
 </show>
