@@ -833,7 +833,7 @@ void client_start_search(struct client *cl)
         const char *sort_strategy_and_spec =
             get_strategy_plus_sort(cl, se->sorted_results->field);
         int increasing = se->sorted_results->increasing;
-        int position = se->sorted_results->position;
+        // int position = se->sorted_results->position;
         if (sort_strategy_and_spec && strlen(sort_strategy_and_spec) < 40)
         {
             char spec[50], *p;
