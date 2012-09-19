@@ -638,7 +638,7 @@ static void session_clear_set(struct session *se,
     se->sorted_results->position = position;
     se->sorted_results->next = 0;
 
-    session_log(se, YLOG_DEBUG, "clear_set search_sort: field=%s increasing=%d position=%d configured",
+    session_log(se, YLOG_DEBUG, "clear_set session_sort: field=%s increasing=%d position=%d configured",
                 sort_field, increasing, position);
 
     se->reclist = reclist_create(se->nmem);
