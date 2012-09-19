@@ -21,7 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define MARCMAP_H
 
 struct marcmap
-{ 
+{
     char *field;
     char subfield;
     char *pz;
