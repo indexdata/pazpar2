@@ -10,13 +10,11 @@
 
   <set name="full_text_target"  value="=NO" />
   <!-- Configure native facets -->
-<!--
   <set name="pz:termlist_term_count" value="10"/>
   <set name="pz:facetmap:author"  value="author_exact"  />
   <set name="pz:facetmap:subject" value="subject_exact" />
   <set name="pz:facetmap:medium"  value="medium_exact"  />
   <set name="pz:facetmap:date"  value="date" />
--->
 
   <set name="use_url_proxy"  value="0" />
   <set name="pz:piggyback"   value="1" />
