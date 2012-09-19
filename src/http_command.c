@@ -1278,6 +1278,7 @@ static void cmd_search(struct http_channel *c)
     enum pazpar2_error_code code;
     const char *addinfo = 0;
     struct reclist_sortparms *sp;
+    struct conf_service *service = 0;
 
     if (!s)
         return;
@@ -1294,8 +1295,10 @@ static void cmd_search(struct http_channel *c)
         release_session(c, s);
         return;
     }
-    if (!sort)
-        sort = "relevance";
+    service = s->psession->service;
+    if (!sort) {
+        sort = service->default_sort;
+    }
     if (!(sp = reclist_parse_sortparms(c->nmem, sort, s->psession->service)))
     {
         error(c->response, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
