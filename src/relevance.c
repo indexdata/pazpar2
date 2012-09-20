@@ -125,7 +125,7 @@ static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
         for (i = 0; i < numwords; i++)
         {
             const char *norm_str;
-            
+
             ccl_field = nmem_strdup_null(res->nmem, n->u.t.qual);
 
             pp2_charset_token_first(res->prt, words[i], 0);
@@ -160,12 +160,12 @@ struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
     res->vec_len = 1;
     res->rank_cluster = rank_cluster;
     res->prt = pp2_charset_token_create(pft, "relevance");
-    
+
     pull_terms(res, query);
 
     res->doc_frequency_vec = nmem_malloc(nmem, res->vec_len * sizeof(int));
     for (i = 0; i < res->vec_len; i++)
-        res->doc_frequency_vec[i] = 0;        
+        res->doc_frequency_vec[i] = 0;
     return res;
 }
 
@@ -191,14 +191,14 @@ void relevance_newrec(struct relevance *r, struct record_cluster *rec)
                         r->vec_len * sizeof(*rec->term_frequency_vec));
         for (i = 0; i < r->vec_len; i++)
             rec->term_frequency_vec[i] = 0;
-        
+
         // term frequency divided by length of field [1,...]
         rec->term_frequency_vecf =
             nmem_malloc(r->nmem,
                         r->vec_len * sizeof(*rec->term_frequency_vecf));
         for (i = 0; i < r->vec_len; i++)
             rec->term_frequency_vecf[i] = 0.0;
-        
+
         // for relevance_countwords (so we don't have to xmalloc/xfree)
         rec->term_frequency_vec_tmp =
             nmem_malloc(r->nmem,
@@ -256,7 +256,7 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
 
             for (record = rec->records; record; record = record->next)
                 cluster_size++;
-            
+
             relevance /= cluster_size;
         }
         rec->relevance_score = relevance;
