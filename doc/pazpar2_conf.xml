@@ -597,6 +597,24 @@
 	</listitem>
        </varlistentry>
 
+       <varlistentry id="sort-default">
+	<term>sort-default</term>
+	<listitem>
+	 <para>
+	  Specifies the default sort criteria (default 'relevance'),
+	  which previous was hard-coded as default criteria in search. 
+	  This is a fix/work-around to avoid re-searching when using 
+	  target-based sorting. In order for this to work efficient, 
+	  the search must also have the sort critera parameter; otherwise 
+	  pazpar2 will do re-searching on search criteria changes, if
+	  changed between search and show command.
+	 </para>
+	 <para>
+	  This configuration was added in pazpar2 1.6.20.
+	 </para>
+	</listitem>
+       </varlistentry>
+
 <!--       
        <varlistentry>
 	<term>set</term>
