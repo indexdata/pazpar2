@@ -1,0 +1,1924 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+  <lst name="responseHeader">
+    <int name="status">0</int>
+    <int name="QTime">62</int>
+    <lst name="params">
+      <str name="facet">true</str>
+      <str name="fl">*,score</str>
+      <str name="facet.mincount">1</str>
+      <str name="start">20</str>
+      <str name="q">text:water</str>
+      <arr name="facet.field">
+        <str>date</str>
+        <str>medium_exact</str>
+        <str>subject_exact</str>
+        <str>author_exact</str>
+      </arr>
+      <str name="rows">20</str>
+    </lst>
+  </lst>
+  <result name="response" numFound="1995" start="20" maxScore="2.3047338">
+    <doc>
+      <float name="score">1.9282786</float>
+      <str name="author">Ravi, Rājeśa.</str>
+      <str name="author-date"/>
+      <str name="author-title"/>
+      <arr name="date">
+        <str>1999</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1999</str>
+      </arr>
+      <arr name="description">
+        <str>On the effort of conserving rain water for drinking and harvesting; case study of selected villages in Rajasthan, India.</str>
+      </arr>
+      <arr name="edition">
+        <str>1. saṃskaraṇa.</str>
+      </arr>
+      <str name="id">   00371304 </str>
+      <str name="id_exact">   00371304 </str>
+      <arr name="lccn">
+        <str>   00371304 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>22 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>60 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill. ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>1999.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>Taruṇa Bhārata Saṅgha,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Alavara :</str>
+      </arr>
+      <arr name="subject">
+        <str>Water harvesting</str>
+        <str>Rain-water</str>
+        <str>Water-supply</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water harvesting, India, Rajasthan.</str>
+        <str>Rain-water (Water-supply), India, Rajasthan.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water harvesting</str>
+        <str>Rain-water</str>
+        <str>Water-supply</str>
+      </arr>
+      <str name="title">Pahāṛa para pānī /</str>
+      <str name="title-complete">Pahāṛa para pānī /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder"/>
+      <str name="title-responsibility">Rājeśa Ravi, Jineśa Jaina.</str>
+    </doc>
+    <doc>
+      <float name="score">1.9282786</float>
+      <arr name="date">
+        <str>1999</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1999</str>
+      </arr>
+      <str name="id">   00394954 </str>
+      <str name="id_exact">   00394954 </str>
+      <arr name="isbn">
+        <str>9521105534</str>
+      </arr>
+      <arr name="lccn">
+        <str>   00394954 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>30 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>43 p. ;</str>
+      </arr>
+      <arr name="physical-format">
+        <str/>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>1999.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>Edita,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Helsinki :</str>
+      </arr>
+      <arr name="subject">
+        <str>Water quality management</str>
+        <str>Nutrient pollution of water</str>
+        <str>Eutrophication</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water quality management, Finland.</str>
+        <str>Water quality management, Government policy, Finland.</str>
+        <str>Nutrient pollution of water, Finland.</str>
+        <str>Eutrophication, Control, Finland.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water quality management</str>
+        <str>Nutrient pollution of water</str>
+        <str>Eutrophication</str>
+      </arr>
+      <str name="title">Water protection targets for the year 2005.</str>
+      <str name="title-complete">Water protection targets for the year 2005.</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder"/>
+      <str name="title-responsibility"/>
+      <str name="title-uniform">Målen för skydd av vattnen fram till år 2005.</str>
+      <str name="title-uniform-key"/>
+      <str name="title-uniform-media"/>
+      <str name="title-uniform-partname"/>
+      <str name="title-uniform-parts"/>
+    </doc>
+    <doc>
+      <float name="score">1.9282786</float>
+      <arr name="date">
+        <str>1998</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1998</str>
+      </arr>
+      <str name="id">   00410461 </str>
+      <str name="id_exact">   00410461 </str>
+      <arr name="isbn">
+        <str>9290903589</str>
+      </arr>
+      <arr name="lccn">
+        <str>   00410461 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>28 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>v, 32 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill., map ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>c1998.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>International Water Management Institute,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Colombo, Sri Lanka :</str>
+      </arr>
+      <arr name="series-title">
+        <str>SWIM paper,</str>
+      </arr>
+      <arr name="subject">
+        <str>Water resources development</str>
+        <str>Water use</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water resources development.</str>
+        <str>Water use.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water resources development</str>
+        <str>Water use</str>
+      </arr>
+      <str name="title">Improving water utilization from a catchment perspective</str>
+      <str name="title-complete">Improving water utilization from a catchment perspective</str>
+      <str name="title-dates"/>
+      <str name="title-medium">[microform] /</str>
+      <str name="title-number-section"/>
+      <str name="title-remainder"/>
+      <str name="title-responsibility">Charles Batchelor ... [et al.].</str>
+    </doc>
+    <doc>
+      <float name="score">1.9282786</float>
+      <arr name="date">
+        <str>1999</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1999</str>
+      </arr>
+      <str name="id">   00410463 </str>
+      <str name="id_exact">   00410463 </str>
+      <arr name="isbn">
+        <str>9290903767</str>
+      </arr>
+      <arr name="lccn">
+        <str>   00410463 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>28 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>ix, 59 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill. ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>c1999.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>International Water Management Institute,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Colombo, Sri Lanka :</str>
+      </arr>
+      <arr name="series-title">
+        <str>SWIM paper,</str>
+      </arr>
+      <arr name="subject">
+        <str>Water resources development</str>
+        <str>Water quality management</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water resources development.</str>
+        <str>Water quality management.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water resources development</str>
+        <str>Water quality management</str>
+      </arr>
+      <str name="title">Modeling water resources management at the basin level</str>
+      <str name="title-complete">Modeling water resources management at the basin level review and future directions /</str>
+      <str name="title-dates"/>
+      <str name="title-medium">[microform] :</str>
+      <str name="title-number-section"/>
+      <str name="title-remainder">review and future directions /</str>
+      <str name="title-responsibility">Daene C. McKinney ... [et al.].</str>
+    </doc>
+    <doc>
+      <float name="score">1.9282786</float>
+      <str name="corporate-date"/>
+      <str name="corporate-location"/>
+      <str name="corporate-name">Boston Water Power Company.</str>
+      <arr name="date">
+        <str>1855</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1855</str>
+      </arr>
+      <str name="id">   00537021 </str>
+      <str name="id_exact">   00537021 </str>
+      <arr name="lccn">
+        <str>   00537021 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>23 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>24 p. ;</str>
+      </arr>
+      <arr name="physical-format">
+        <str/>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>1855.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>Printed by Dutton and Wentworth,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Boston :</str>
+      </arr>
+      <arr name="subject">
+        <str>Boston Water Power Company</str>
+        <str>Water-power</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Boston Water Power Company.</str>
+        <str>Water-power, Massachusetts, Boston.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Boston Water Power Company</str>
+        <str>Water-power</str>
+      </arr>
+      <str name="title">Report of the directors of the Boston Water-Power Company to its stockholders, April 24, 1855.</str>
+      <str name="title-complete">Report of the directors of the Boston Water-Power Company to its stockholders, April 24, 1855.</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder"/>
+      <str name="title-responsibility"/>
+    </doc>
+    <doc>
+      <float name="score">1.9131546</float>
+      <str name="author">Sherk, George William.</str>
+      <str name="author-date"/>
+      <str name="author-title"/>
+      <arr name="date">
+        <str>2000</str>
+      </arr>
+      <arr name="date_exact">
+        <str>2000</str>
+      </arr>
+      <arr name="description">
+        <str>Includes index.</str>
+      </arr>
+      <str name="id">   00059311 </str>
+      <str name="id_exact">   00059311 </str>
+      <arr name="isbn">
+        <str>9041198199 (hardcover : alk. paper)</str>
+      </arr>
+      <arr name="lccn">
+        <str>   00059311 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str/>
+      </arr>
+      <arr name="physical-extent">
+        <str>p. cm.</str>
+      </arr>
+      <arr name="physical-format">
+        <str/>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>2000.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>Kluwer Law International,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Boston, MA :</str>
+      </arr>
+      <arr name="series-title">
+        <str>International and national water law and policy series ;</str>
+      </arr>
+      <arr name="subject">
+        <str>Water rights</str>
+        <str>Water resources development</str>
+        <str>Interstate agreements</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water rights, United States.</str>
+        <str>Water resources development, Law and legislation, United States.</str>
+        <str>Interstate agreements, United States.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water rights</str>
+        <str>Water resources development</str>
+        <str>Interstate agreements</str>
+      </arr>
+      <str name="title">Dividing the waters :</str>
+      <str name="title-complete">Dividing the waters : the resolution of interstate water conflicts in the United States /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder">the resolution of interstate water conflicts in the United States /</str>
+      <str name="title-responsibility">by George William Sherk.</str>
+    </doc>
+    <doc>
+      <float name="score">1.9131546</float>
+      <str name="author">Faeth, Paul.</str>
+      <str name="author-date"/>
+      <str name="author-title"/>
+      <arr name="date">
+        <str>2000</str>
+      </arr>
+      <arr name="date_exact">
+        <str>2000</str>
+      </arr>
+      <str name="id">   00104473 </str>
+      <str name="id_exact">   00104473 </str>
+      <arr name="isbn">
+        <str>1569731977</str>
+      </arr>
+      <arr name="lccn">
+        <str>   00104473 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>26 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>viii, 50 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill., map ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>2000.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>World Resources Institute,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Washington, DC :</str>
+      </arr>
+      <arr name="subject">
+        <str>Nutrient pollution of water</str>
+        <str>Water quality management</str>
+        <str>Water</str>
+        <str>Agricultural pollution</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Nutrient pollution of water, United States.</str>
+        <str>Water quality management, United States.</str>
+        <str>Water, Pollution, Environmental aspects, United States.</str>
+        <str>Water, Pollution, United States, Prevention.</str>
+        <str>Agricultural pollution, United States.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Nutrient pollution of water</str>
+        <str>Water quality management</str>
+        <str>Water</str>
+        <str>Agricultural pollution</str>
+      </arr>
+      <str name="title">Fertile ground :</str>
+      <str name="title-complete">Fertile ground : nutrient trading's potential to cost-effectively improve water quality /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder">nutrient trading's potential to cost-effectively improve water quality /</str>
+      <str name="title-responsibility">Paul Faeth.</str>
+    </doc>
+    <doc>
+      <float name="score">1.9131546</float>
+      <arr name="date">
+        <str>1999</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1999</str>
+      </arr>
+      <str name="id">   00265121 </str>
+      <str name="id_exact">   00265121 </str>
+      <arr name="isbn">
+        <str>1853126853</str>
+      </arr>
+      <arr name="lccn">
+        <str>   00265121 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>24 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>588 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill., maps ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>c1999.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>WIT Press,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Southampton, UK ;</str>
+      </arr>
+      <arr name="series-title">
+        <str>International series on progress in water resources,</str>
+      </arr>
+      <arr name="subject">
+        <str>Water</str>
+        <str>Water quality management</str>
+        <str>Sewage</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water, Pollution, Congresses.</str>
+        <str>Water, Pollution, Mathematical models, Congresses.</str>
+        <str>Water, Pollution, Measurement, Congresses.</str>
+        <str>Water quality management, Congresses.</str>
+        <str>Sewage, Purification, Congresses.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water</str>
+        <str>Water quality management</str>
+        <str>Sewage</str>
+      </arr>
+      <str name="title">Water pollution V :</str>
+      <str name="title-complete">Water pollution V : modelling, measuring and prediction /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder">modelling, measuring and prediction /</str>
+      <str name="title-responsibility">editors, C.A. Brebbia, P. Anagnostopoulos</str>
+    </doc>
+    <doc>
+      <float name="score">1.9131546</float>
+      <str name="author">Powell, J. M.</str>
+      <str name="author-date"/>
+      <str name="author-title"/>
+      <arr name="date">
+        <str>1998</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1998</str>
+      </arr>
+      <str name="id">   00340598 </str>
+      <str name="id_exact">   00340598 </str>
+      <arr name="isbn">
+        <str>0730974170</str>
+      </arr>
+      <arr name="lccn">
+        <str>   00340598 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>30 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>100 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill., maps ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>1998.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>Water and Rivers Commission,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Perth, W.A. :</str>
+      </arr>
+      <arr name="subject">
+        <str>Water resources development</str>
+        <str>Water-supply</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water resources development, Australia, Western Australia, History.</str>
+        <str>Water-supply, Australia, Western Australia.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water resources development</str>
+        <str>Water-supply</str>
+      </arr>
+      <arr name="system-control-nr">
+        <str>abn98297323</str>
+      </arr>
+      <str name="title">Watering the western third :</str>
+      <str name="title-complete">Watering the western third : water, land, and community in Western Australia, 1826-1998 /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder">water, land, and community in Western Australia, 1826-1998 /</str>
+      <str name="title-responsibility">J.M. Powell.</str>
+    </doc>
+    <doc>
+      <float name="score">1.9131546</float>
+      <str name="author">Shade, Patricia J.</str>
+      <str name="author-date"/>
+      <str name="author-title"/>
+      <arr name="date">
+        <str>1999</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1999</str>
+      </arr>
+      <str name="id">   00689246 </str>
+      <str name="id_exact">   00689246 </str>
+      <arr name="lccn">
+        <str>   00689246 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>28 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>iv, 36 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill., maps ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>1999.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>U.S. Dept. of the Interior, U.S. Geological Survey ;</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Honolulu, Hawaii :</str>
+      </arr>
+      <arr name="series-title">
+        <str>Water-resources investigations report ;</str>
+      </arr>
+      <arr name="subject">
+        <str>Water balance</str>
+        <str>Hydrology</str>
+        <str>Water-supply</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water balance (Hydrology), Hawaii, Maui.</str>
+        <str>Water-supply, Hawaii, Maui.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water balance</str>
+        <str>Hydrology</str>
+        <str>Water-supply</str>
+      </arr>
+      <str name="title">Water budget of East Maui, Hawaii /</str>
+      <str name="title-complete">Water budget of East Maui, Hawaii /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder"/>
+      <str name="title-responsibility">by Patricia J. Shade : prepared in cooperation with the County of Maui Department of Water Supply, State of Hawaii Commission on Water Resource Management.</str>
+    </doc>
+    <doc>
+      <float name="score">1.8935319</float>
+      <arr name="date">
+        <str>1997?</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1997?</str>
+      </arr>
+      <str name="id">   00371661 </str>
+      <str name="id_exact">   00371661 </str>
+      <arr name="lccn">
+        <str>   00371661 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <str name="meeting-date">(1997 :</str>
+      <str name="meeting-location">Madras, India)</str>
+      <str name="meeting-name">International Conference on Management of Drinking Water Resources</str>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>25 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>429 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill., maps ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>[1997?]</str>
+      </arr>
+      <arr name="publication-name">
+        <str>The Institute,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Chennai :</str>
+      </arr>
+      <arr name="subject">
+        <str>Drinking water</str>
+        <str>Water resources development</str>
+        <str>Water-supply</str>
+        <str>Water conservation</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Drinking water, India, Congresses.</str>
+        <str>Water resources development, India, Congresses.</str>
+        <str>Water-supply, India, Management, Congresses.</str>
+        <str>Water conservation, Government policy, India, Congresses.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Drinking water</str>
+        <str>Water resources development</str>
+        <str>Water-supply</str>
+        <str>Water conservation</str>
+      </arr>
+      <str name="title">International Conference on Management of Drinking Water Resources, Chennai, December 3-5, 1997 :</str>
+      <str name="title-complete">International Conference on Management of Drinking Water Resources, Chennai, December 3-5, 1997 : proceedings /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder">proceedings /</str>
+      <str name="title-responsibility">organised by Central Leather Research Institute, Anna University, Tamil Nadu Water Supply and Drainage Board.</str>
+    </doc>
+    <doc>
+      <float name="score">1.8935319</float>
+      <str name="author">Bauer, Steve.</str>
+      <str name="author-date"/>
+      <str name="author-title"/>
+      <arr name="date">
+        <str>1999</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1999</str>
+      </arr>
+      <arr name="description">
+        <str>"This document was developed for US Environmental Protection Agency, Region 10, Seattle Washington, with the Idaho Water Resources Institute, University of Idaho."</str>
+      </arr>
+      <str name="id">   00457130 </str>
+      <str name="id_exact">   00457130 </str>
+      <arr name="lccn">
+        <str>   00457130 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>28 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>viii, 99 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill., maps ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>1999.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>United States Environmental Protection Agency, Region 10 ;</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Seattle, WA :</str>
+      </arr>
+      <arr name="subject">
+        <str>United States</str>
+        <str>Indicators</str>
+        <str>Biology</str>
+        <str>Water quality management</str>
+        <str>Water quality</str>
+        <str>Water</str>
+      </arr>
+      <arr name="subject-long">
+        <str>United States., Federal Water Pollution Control Act.</str>
+        <str>Indicators (Biology)</str>
+        <str>Water quality management, United States.</str>
+        <str>Water quality, United States.</str>
+        <str>Water, Pollution, Law and legislation, United States.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>United States</str>
+        <str>Indicators</str>
+        <str>Biology</str>
+        <str>Water quality management</str>
+        <str>Water quality</str>
+        <str>Water</str>
+      </arr>
+      <arr name="system-control-nr">
+        <str>(OCoLC)ocm42633073</str>
+      </arr>
+      <str name="title">Aquatic habitat indicators and their application to water quality objectives within the Clean Water Act /</str>
+      <str name="title-complete">Aquatic habitat indicators and their application to water quality objectives within the Clean Water Act /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder"/>
+      <str name="title-responsibility">Stephen B. Bauer and Stephen C. Ralph.</str>
+    </doc>
+    <doc>
+      <float name="score">1.8935319</float>
+      <str name="author">Farnham, Henry P.</str>
+      <str name="author-date">1863-1929.</str>
+      <str name="author-title"/>
+      <arr name="date">
+        <str>1904</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1904</str>
+      </arr>
+      <str name="id">   04012965 </str>
+      <str name="id_exact">   04012965 </str>
+      <arr name="lccn">
+        <str>   04012965 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>24 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>3 v. (clxxx, 2956 p.) ;</str>
+      </arr>
+      <arr name="physical-format">
+        <str/>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>1904.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>The Lawyers Co-operative Publishing Company,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Rochester :</str>
+      </arr>
+      <arr name="subject">
+        <str>Water rights</str>
+        <str>Riparian rights</str>
+        <str>Water</str>
+        <str>Irrigation laws</str>
+        <str>Drainage laws</str>
+        <str>Water-supply</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water rights, United States.</str>
+        <str>Riparian rights, United States.</str>
+        <str>Water, Law and legislation, United States.</str>
+        <str>Irrigation laws, United States.</str>
+        <str>Drainage laws, United States.</str>
+        <str>Water-supply.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water rights</str>
+        <str>Riparian rights</str>
+        <str>Water</str>
+        <str>Irrigation laws</str>
+        <str>Drainage laws</str>
+        <str>Water-supply</str>
+      </arr>
+      <arr name="system-control-nr">
+        <str>(OCoLC)507586</str>
+      </arr>
+      <str name="title">The law of waters and water rights :</str>
+      <str name="title-complete">The law of waters and water rights : international, national, state, municipal, and individual, including irrigation, drainage, and municipal water supply /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder">international, national, state, municipal, and individual, including irrigation, drainage, and municipal water supply /</str>
+      <str name="title-responsibility">by Henry Philip Farnham.</str>
+    </doc>
+    <doc>
+      <float name="score">1.822052</float>
+      <arr name="date">
+        <str>2000</str>
+      </arr>
+      <arr name="date_exact">
+        <str>2000</str>
+      </arr>
+      <str name="id">   00108038 </str>
+      <str name="id_exact">   00108038 </str>
+      <arr name="lccn">
+        <str>   00108038 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>28 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>x, 240 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>maps ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>c2000.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>Pennsylvania Bar Institute,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>[Mechanicsburg, Pa.] :</str>
+      </arr>
+      <arr name="subject">
+        <str>Water</str>
+        <str>Rivers</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water, Law and legislation, Pennsylvania.</str>
+        <str>Rivers, Law and legislation, Pennsylvania.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water</str>
+        <str>Rivers</str>
+      </arr>
+      <str name="title">Water law.</str>
+      <str name="title-complete">Water law.</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder"/>
+      <str name="title-responsibility"/>
+    </doc>
+    <doc>
+      <float name="score">1.822052</float>
+      <str name="corporate-date">(2000 :</str>
+      <str name="corporate-location">Miami, Fla.)</str>
+      <str name="corporate-name">American Water Resources Association.</str>
+      <arr name="date">
+        <str>2000</str>
+      </arr>
+      <arr name="date_exact">
+        <str>2000</str>
+      </arr>
+      <str name="id">   00131698 </str>
+      <str name="id_exact">   00131698 </str>
+      <arr name="isbn">
+        <str>1882132521</str>
+      </arr>
+      <arr name="lccn">
+        <str>   00131698 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>28 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>xiii, 400 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill., maps ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>c2000.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>The Association,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Middleburg, Va. :</str>
+      </arr>
+      <arr name="subject">
+        <str>Water resources development</str>
+        <str>Coastal zone management</str>
+        <str>Water quality management</str>
+        <str>Water-supply</str>
+        <str>Urban hydrology</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water resources development, Congresses.</str>
+        <str>Coastal zone management, Congresses.</str>
+        <str>Water quality management, Congresses.</str>
+        <str>Water-supply, Congresses.</str>
+        <str>Urban hydrology, Congresses.</str>
+        <str>Water resources development, United States, Congresses.</str>
+        <str>Coastal zone management, United States, Congresses.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water resources development</str>
+        <str>Coastal zone management</str>
+        <str>Water quality management</str>
+        <str>Water-supply</str>
+        <str>Urban hydrology</str>
+      </arr>
+      <arr name="system-control-nr">
+        <str>(OCoLC)ocm45420923</str>
+      </arr>
+      <str name="title">Water quantity and quality issues in coastal urban areas :</str>
+      <str name="title-complete">Water quantity and quality issues in coastal urban areas : proceedings, American Water Resources Association's Annual Water Resources Conference : November 6-9, 2000, Miami Florida /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder">proceedings, American Water Resources Association's Annual Water Resources Conference : November 6-9, 2000, Miami Florida /</str>
+      <str name="title-responsibility">edited by Robert W. Higgins ; sponsored by the American Water Resources Association ; hosted by the Florida Section, American Water Resources Association ; co-sponsored by CH2M Hill ... [et al.].</str>
+    </doc>
+    <doc>
+      <float name="score">1.822052</float>
+      <str name="author">Lee, Richard</str>
+      <str name="author-date"/>
+      <str name="author-title"/>
+      <arr name="date">
+        <str>1999</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1999</str>
+      </arr>
+      <str name="id">   00265435  </str>
+      <str name="id_exact">   00265435  </str>
+      <arr name="isbn">
+        <str>0964981416</str>
+      </arr>
+      <arr name="lccn">
+        <str>   00265435  </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>23 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>iv, 331 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill., map ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>c1999.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>W. Tricker,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Independence, Ohio :</str>
+      </arr>
+      <arr name="subject">
+        <str>Water gardens</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water gardens, Miscellanea.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water gardens</str>
+      </arr>
+      <str name="title">Tricker's 1101 water gardening :</str>
+      <str name="title-complete">Tricker's 1101 water gardening : questions and answers /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder">questions and answers /</str>
+      <str name="title-responsibility">by Richard Lee.</str>
+    </doc>
+    <doc>
+      <float name="score">1.822052</float>
+      <str name="author">Rafiq, Abdul Qadir.</str>
+      <str name="author-date"/>
+      <str name="author-title"/>
+      <arr name="date">
+        <str>1999?</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1999?</str>
+      </arr>
+      <str name="id">   00283173 </str>
+      <str name="id_exact">   00283173 </str>
+      <arr name="lccn">
+        <str>   00283173 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>28 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>46 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>1 map ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>[1999?]</str>
+      </arr>
+      <arr name="publication-name">
+        <str>LEAD, Pakistan,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Islamabad :</str>
+      </arr>
+      <arr name="subject">
+        <str>Water resources development</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water resources development, Pakistan.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water resources development</str>
+      </arr>
+      <str name="title">Institutions &amp; leadership in water resource management /</str>
+      <str name="title-complete">Institutions &amp; leadership in water resource management /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder"/>
+      <str name="title-responsibility">Abdul Qadir Rafiq.</str>
+    </doc>
+    <doc>
+      <float name="score">1.8129189</float>
+      <str name="author">Gingerich, Stephen B.</str>
+      <str name="author-date"/>
+      <str name="author-title"/>
+      <arr name="date">
+        <str>1999</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1999</str>
+      </arr>
+      <str name="id">   00300149 </str>
+      <str name="id_exact">   00300149 </str>
+      <arr name="lccn">
+        <str>   00300149 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>28 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>iv, 38 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill., maps ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>1999.</str>
+      </arr>
+      <arr name="publication-name">
+        <str>U.S. Dept. of the Interior, U.S. Geological Survey ;</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Honolulu, Hawaii :</str>
+      </arr>
+      <arr name="series-title">
+        <str>Water-resources investigations report ;</str>
+      </arr>
+      <arr name="subject">
+        <str>Water balance</str>
+        <str>Hydrology</str>
+        <str>Groundwater</str>
+        <str>Water-supply</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water balance (Hydrology), Hawaii, Haiku Region.</str>
+        <str>Groundwater, Hawaii, Haiku Region.</str>
+        <str>Water-supply, Hawaii, Haiku Region.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water balance</str>
+        <str>Hydrology</str>
+        <str>Groundwater</str>
+        <str>Water-supply</str>
+      </arr>
+      <arr name="system-control-nr">
+        <str>(OCoLC)ocm43421325</str>
+      </arr>
+      <str name="title">Ground water and surface water in the Haiku area, East Maui, Hawaii /</str>
+      <str name="title-complete">Ground water and surface water in the Haiku area, East Maui, Hawaii /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder"/>
+      <str name="title-responsibility">by Stephen B. Gingerich ; prepared in cooperation with the County of Maui Department of Water Supply, State of Hawaii Commission on Water Resource Management.</str>
+    </doc>
+    <doc>
+      <float name="score">1.8129189</float>
+      <str name="corporate-date"/>
+      <str name="corporate-location"/>
+      <str name="corporate-name">Texas Natural Resource Conservation Commission.</str>
+      <arr name="date">
+        <str>1999</str>
+      </arr>
+      <arr name="date_exact">
+        <str>1999</str>
+      </arr>
+      <arr name="description">
+        <str>"June 1999."</str>
+        <str>"GI-252"--Cover.</str>
+      </arr>
+      <str name="id">   00301741 </str>
+      <str name="id_exact">   00301741 </str>
+      <arr name="lccn">
+        <str>   00301741 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>28 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>1 v. (various pagings) :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill. ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>[1999]</str>
+      </arr>
+      <arr name="publication-name">
+        <str>The Commission,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Austin, TX :</str>
+      </arr>
+      <arr name="subject">
+        <str>Water quality</str>
+        <str>Water</str>
+        <str>Water quality biological assessment</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water quality, Texas, Measurement, Handbooks, manuals, etc.</str>
+        <str>Water, Sampling, Texas, Handbooks, manuals, etc.</str>
+        <str>Water, Texas, Analysis, Handbooks, manuals, etc.</str>
+        <str>Water quality biological assessment, Texas, Handbooks, manuals, etc.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water quality</str>
+        <str>Water</str>
+        <str>Water quality biological assessment</str>
+      </arr>
+      <arr name="system-control-nr">
+        <str>(OCoLC)ocm43074299</str>
+      </arr>
+      <str name="title">Surface water quality monitoring procedures manual /</str>
+      <str name="title-complete">Surface water quality monitoring procedures manual /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder"/>
+      <str name="title-responsibility">prepared by the Surface Water Quality Monitoring Program, Water Quality Division, Texas Natural Resource Conservation Commission.</str>
+    </doc>
+    <doc>
+      <float name="score">1.8129189</float>
+      <arr name="date">
+        <str>2000</str>
+      </arr>
+      <arr name="date_exact">
+        <str>2000</str>
+      </arr>
+      <arr name="description">
+        <str>"May 2000."</str>
+        <str>"EPA/600/R-00/025."</str>
+        <str>"EPA Contract 68-C7-0011, work assignment 0-38."</str>
+      </arr>
+      <str name="id">   00326482 </str>
+      <str name="id_exact">   00326482 </str>
+      <arr name="lccn">
+        <str>   00326482 </str>
+      </arr>
+      <arr name="medium">
+        <str>book</str>
+      </arr>
+      <arr name="medium_exact">
+        <str>book</str>
+      </arr>
+      <arr name="physical-accomp">
+        <str/>
+      </arr>
+      <arr name="physical-dimensions">
+        <str>28 cm.</str>
+      </arr>
+      <arr name="physical-extent">
+        <str>ix, 38 p. :</str>
+      </arr>
+      <arr name="physical-format">
+        <str>ill. ;</str>
+      </arr>
+      <arr name="physical-specified">
+        <str/>
+      </arr>
+      <arr name="physical-unitsize">
+        <str/>
+      </arr>
+      <arr name="physical-unittype">
+        <str/>
+      </arr>
+      <arr name="publication-date">
+        <str>[2000]</str>
+      </arr>
+      <arr name="publication-name">
+        <str>National Risk Management Research Laboratory, Office of Research and Development, U.S. Environmental Protection Agency,</str>
+      </arr>
+      <arr name="publication-place">
+        <str>Cincinnati, OH :</str>
+      </arr>
+      <arr name="subject">
+        <str>Water</str>
+        <str>Water treatment plant residuals</str>
+        <str>Water treatment plants</str>
+        <str>Drinking water</str>
+      </arr>
+      <arr name="subject-long">
+        <str>Water, Purification, Arsenic removal.</str>
+        <str>Water treatment plant residuals, Management.</str>
+        <str>Water treatment plants, Waste disposal.</str>
+        <str>Water, Pollution, Law and legislation, United States.</str>
+        <str>Drinking water, Law and legislation, United States.</str>
+      </arr>
+      <arr name="subject_exact">
+        <str>Water</str>
+        <str>Water treatment plant residuals</str>
+        <str>Water treatment plants</str>
+        <str>Drinking water</str>
+      </arr>
+      <str name="title">Regulations on the disposal of arsenic residuals from drinking water treatment plants /</str>
+      <str name="title-complete">Regulations on the disposal of arsenic residuals from drinking water treatment plants /</str>
+      <str name="title-dates"/>
+      <str name="title-medium"/>
+      <str name="title-number-section"/>
+      <str name="title-remainder"/>
+      <str name="title-responsibility">by Science Applications International Corporation, Reston, Virginia ; work assignment manager, Thomas J. Sorg.</str>
+    </doc>
+  </result>
+  <lst name="facet_counts">
+    <lst name="facet_queries"/>
+    <lst name="facet_fields">
+      <lst name="date">
+        <int name="2000">411</int>
+        <int name="1999">318</int>
+        <int name="1998">90</int>
+        <int name="2001">87</int>
+        <int name="1907">50</int>
+        <int name="1902">46</int>
+        <int name="1906">43</int>
+        <int name="1905">39</int>
+        <int name="1909">39</int>
+        <int name="1904">36</int>
+        <int name="1997">35</int>
+        <int name="1908">33</int>
+        <int name="1996">32</int>
+        <int name="1903">30</int>
+        <int name="1901">29</int>
+        <int name="1897">28</int>
+        <int name="1896">21</int>
+        <int name="1881">17</int>
+        <int name="1891">16</int>
+        <int name="1899">16</int>
+        <int name="1900">16</int>
+        <int name="1910">15</int>
+        <int name="1880">14</int>
+        <int name="1883">14</int>
+        <int name="1889">14</int>
+        <int name="1894">14</int>
+        <int name="1895">14</int>
+        <int name="1885">13</int>
+        <int name="1884">12</int>
+        <int name="1886">12</int>
+        <int name="1887">12</int>
+        <int name="1893">12</int>
+        <int name="1898">12</int>
+        <int name="1875">11</int>
+        <int name="1892">11</int>
+        <int name="1995">11</int>
+        <int name="1845">10</int>
+        <int name="1872">10</int>
+        <int name="1877">10</int>
+        <int name="1890">10</int>
+        <int name="1854">9</int>
+        <int name="1874">9</int>
+        <int name="1888">9</int>
+        <int name="1992">9</int>
+        <int name="1858">8</int>
+        <int name="1860">8</int>
+        <int name="1878">8</int>
+        <int name="1994">8</int>
+        <int name="1799">7</int>
+        <int name="1846">7</int>
+        <int name="1851">7</int>
+        <int name="1869">7</int>
+        <int name="1990">7</int>
+        <int name="1836">6</int>
+        <int name="1837">6</int>
+        <int name="1844">6</int>
+        <int name="1855">6</int>
+        <int name="1868">6</int>
+        <int name="1870">6</int>
+        <int name="1873">6</int>
+        <int name="2002">6</int>
+        <int name="1788">5</int>
+        <int name="1835">5</int>
+        <int name="1853">5</int>
+        <int name="1861">5</int>
+        <int name="1866">5</int>
+        <int name="1879">5</int>
+        <int name="1882">5</int>
+        <int name="1984">5</int>
+        <int name="1993">5</int>
+        <int name="1840">4</int>
+        <int name="1852">4</int>
+        <int name="1859">4</int>
+        <int name="1867">4</int>
+        <int name="1871">4</int>
+        <int name="1876">4</int>
+        <int name="1983">4</int>
+        <int name="1985">4</int>
+        <int name="19961999">4</int>
+        <int name="19992000">4</int>
+        <int name="1811">3</int>
+        <int name="1823">3</int>
+        <int name="1834">3</int>
+        <int name="1838">3</int>
+        <int name="1839">3</int>
+        <int name="1842">3</int>
+        <int name="1850">3</int>
+        <int name="1856">3</int>
+        <int name="1863">3</int>
+        <int name="1864">3</int>
+        <int name="1865">3</int>
+        <int name="199">3</int>
+        <int name="1991">3</int>
+        <int name="03">2</int>
+        <int name="1792">2</int>
+        <int name="1794">2</int>
+        <int name="1795">2</int>
+        <int name="1801">2</int>
+        <int name="1805">2</int>
+        <int name="1810">2</int>
+      </lst>
+      <lst name="medium_exact">
+        <int name="book">1984</int>
+        <int name="web">8</int>
+        <int name="book (electronic)">3</int>
+      </lst>
+      <lst name="subject_exact">
+        <int name="Water-supply">185</int>
+        <int name="Water">169</int>
+        <int name="Groundwater">94</int>
+        <int name="Water resources development">93</int>
+        <int name="Water quality">87</int>
+        <int name="Mineral waters">52</int>
+        <int name="Water quality management">50</int>
+        <int name="United States">43</int>
+        <int name="Irrigation">33</int>
+        <int name="N.Y.">28</int>
+        <int name="Hydraulic engineering">24</int>
+        <int name="Geology">23</int>
+        <int name="U.S.">23</int>
+        <int name="Groundwater flow">22</int>
+        <int name="Birds">21</int>
+        <int name="Hydrology">21</int>
+        <int name="Water rights">21</int>
+        <int name="American">20</int>
+        <int name="Drinking water">19</int>
+        <int name="Hydrogeology">19</int>
+        <int name="Water supply">18</int>
+        <int name="England">17</int>
+        <int name="Water use">17</int>
+        <int name="Fishes">16</int>
+        <int name="Love stories">16</int>
+        <int name="Rural">16</int>
+        <int name="Stream measurements">16</int>
+        <int name="Territorial waters">16</int>
+        <int name="Water quality biological assessment">16</int>
+        <int name="Water-supply engineering">16</int>
+        <int name="Christian fiction">15</int>
+        <int name="Domestic fiction">15</int>
+        <int name="Hydrotherapy">15</int>
+        <int name="Water conservation">15</int>
+        <int name="Great Britain">14</int>
+        <int name="Land use">14</int>
+        <int name="Mass.">14</int>
+        <int name="Nutrient pollution of water">14</int>
+        <int name="Floods">13</int>
+        <int name="Health resorts">13</int>
+        <int name="New York">13</int>
+        <int name="Streamflow">13</int>
+        <int name="Watershed management">13</int>
+        <int name="Sewage">12</int>
+        <int name="Water-power">12</int>
+        <int name="Ill.">11</int>
+        <int name="Indians of North America">11</int>
+        <int name="Inland navigation">11</int>
+        <int name="Italy">11</int>
+        <int name="Natural history">11</int>
+        <int name="Soils">11</int>
+        <int name="Water table">11</int>
+        <int name="Watercolor painting">11</int>
+        <int name="Aquifers">10</int>
+        <int name="Canals">10</int>
+        <int name="Hot-water heating">10</int>
+        <int name="Nitrates">10</int>
+        <int name="Psychological fiction">10</int>
+        <int name="Sanitation">10</int>
+        <int name="Chemistry">9</int>
+        <int name="Hydroelectric power plants">9</int>
+        <int name="Mississippi River Valley">9</int>
+        <int name="Radioactive pollution of water">9</int>
+        <int name="Rivers">9</int>
+        <int name="Science">9</int>
+        <int name="1939-1945">8</int>
+        <int name="Calif.">8</int>
+        <int name="California">8</int>
+        <int name="Canada">8</int>
+        <int name="Christian life">8</int>
+        <int name="Dams">8</int>
+        <int name="Harbors">8</int>
+        <int name="Historical fiction">8</int>
+        <int name="Inland water transportation">8</int>
+        <int name="Ipswich">8</int>
+        <int name="Irrigation laws">8</int>
+        <int name="Mississippi River">8</int>
+        <int name="Nonpoint source pollution">8</int>
+        <int name="Ohio River">8</int>
+        <int name="Psychology">8</int>
+        <int name="Sewerage">8</int>
+        <int name="Steam-boilers">8</int>
+        <int name="Water birds">8</int>
+        <int name="Water mills">8</int>
+        <int name="Watersheds">8</int>
+        <int name="World War">8</int>
+        <int name="Agriculture">7</int>
+        <int name="Biology">7</int>
+        <int name="Biotic communities">7</int>
+        <int name="Contaminated sediments">7</int>
+        <int name="Ecology">7</int>
+        <int name="Heating">7</int>
+        <int name="Hydraulics">7</int>
+        <int name="Indicators">7</int>
+        <int name="John">7</int>
+        <int name="Pesticides">7</int>
+        <int name="Stratigraphic">7</int>
+        <int name="W">7</int>
+        <int name="Washington">7</int>
+        <int name="Women">7</int>
+      </lst>
+      <lst name="author_exact">
+        <int name="Waters, Clara Erskine Clement,">9</int>
+        <int name="Waters, Henry F.">8</int>
+        <int name="Moorman, J. J.">7</int>
+        <int name="Waters, Thomas Franklin,">6</int>
+        <int name="Basak, P.">5</int>
+        <int name="Bergren, Lisa Tawn.">5</int>
+        <int name="Kingsley, Charles,">5</int>
+        <int name="Tyndall, John,">5</int>
+        <int name="Baldwin, William J.">4</int>
+        <int name="Holme, Charles,">4</int>
+        <int name="James, E. J.">4</int>
+        <int name="Nuttall, Thomas,">4</int>
+        <int name="Walton, George Edward,">4</int>
+        <int name="Wilkins, John H.">4</int>
+        <int name="Arthur, Kay,">3</int>
+        <int name="Byrd, Sandra.">3</int>
+        <int name="Conclin, George.">3</int>
+        <int name="Eliot, George,">3</int>
+        <int name="Emerson, James,">3</int>
+        <int name="Folwell, Amory Prescott,">3</int>
+        <int name="Frizell, Joseph P.">3</int>
+        <int name="Jones, Annie,">3</int>
+        <int name="Leverett, Frank,">3</int>
+        <int name="Mills, Robert,">3</int>
+        <int name="Pushpangadan, K.">3</int>
+        <int name="Rumsey, James,">3</int>
+        <int name="Spearman, Frank H.">3</int>
+        <int name="Spellman, Frank R.">3</int>
+        <int name="Towne, Douglas Clark,">3</int>
+        <int name="Turneaure, F. E.">3</int>
+        <int name="Waters, Robert Edmond Chester,">3</int>
+        <int name="Waters, Robert,">3</int>
+        <int name="Alcorn, Randy C.">2</int>
+        <int name="Ambrose, David,">2</int>
+        <int name="Baker, M. N.">2</int>
+        <int name="Baldwin, Loammi,">2</int>
+        <int name="Balsillie, James H.">2</int>
+        <int name="Baruch, Simon,">2</int>
+        <int name="Bergman, Torbern,">2</int>
+        <int name="Boyd, Nathan E.">2</int>
+        <int name="Browning, Elizabeth Barrett,">2</int>
+        <int name="Bryant, William Cullen,">2</int>
+        <int name="Chase, Eliza B.">2</int>
+        <int name="Chatterjee, S.">2</int>
+        <int name="Christensen, Victoria G.">2</int>
+        <int name="Cloud, Marshall Morgan,">2</int>
+        <int name="Cramer, Zadok,">2</int>
+        <int name="Cundall, H. M.">2</int>
+        <int name="Cunliffe-Owen, Marguerite,">2</int>
+        <int name="Dawson, Charles C.">2</int>
+        <int name="Ellet, Charles,">2</int>
+        <int name="Elliott, John G.">2</int>
+        <int name="Fairchild, Herman L.">2</int>
+        <int name="Fanning, John Thomas,">2</int>
+        <int name="Fatherree, Jim.">2</int>
+        <int name="Garbarino, John R.">2</int>
+        <int name="Gingerich, Stephen B.">2</int>
+        <int name="Gordon, J. D.">2</int>
+        <int name="Hale, Edward Everett,">2</int>
+        <int name="Halliwell-Phillipps, J. O.">2</int>
+        <int name="Harland, Marion,">2</int>
+        <int name="Hazen, Allen,">2</int>
+        <int name="Hazlehurst, James Nisbit.">2</int>
+        <int name="Howells, William Dean,">2</int>
+        <int name="Jacobson, Cliff.">2</int>
+        <int name="Johnson, Emory Richard,">2</int>
+        <int name="Jones, Harry Clary,">2</int>
+        <int name="Jordan, David Starr,">2</int>
+        <int name="Kennedy, Laurie E.">2</int>
+        <int name="King, Thomas,">2</int>
+        <int name="Laffan, William M.">2</int>
+        <int name="Lawlor, Sean M.">2</int>
+        <int name="Leffmann, Henry,">2</int>
+        <int name="Lorimer, Norma,">2</int>
+        <int name="Magner, D.">2</int>
+        <int name="Mahan, A. T.">2</int>
+        <int name="Mansfield, Robert Blachford,">2</int>
+        <int name="Mason, William Pitt,">2</int>
+        <int name="Mathews, F. Schuyler">2</int>
+        <int name="Molina Bedoya, Felipe,">2</int>
+        <int name="Moon, James H.,">2</int>
+        <int name="Nazimuddin, M.">2</int>
+        <int name="Nissen, Hartvig,">2</int>
+        <int name="O'Neil, Patrick E.">2</int>
+        <int name="Orcutt, Jane.">2</int>
+        <int name="Ott, A. G.">2</int>
+        <int name="Page, Jason.">2</int>
+        <int name="Parkhurst, H. E.">2</int>
+        <int name="Patterson, Kevin,">2</int>
+        <int name="Paul, Don S.">2</int>
+        <int name="Preston, H. W.">2</int>
+        <int name="Rafter, Geo. W.">2</int>
+        <int name="Richards, Ellen H.">2</int>
+        <int name="Richardson, C. J.">2</int>
+        <int name="Roosevelt, Robert Barnwell,">2</int>
+        <int name="Smeaton, John,">2</int>
+        <int name="Smith, Matthew Hale,">2</int>
+        <int name="Soler-López, Luis R.">2</int>
+        <int name="Vail, Isaac Newton,">2</int>
+        <int name="Waters, W. G.">2</int>
+      </lst>
+    </lst>
+    <lst name="facet_dates"/>
+  </lst>
+</response>
