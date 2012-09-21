@@ -7,6 +7,13 @@ is used in service.
 Record as returned by show/record command have a minimal indentation
 which makes things human-readable.
 
+New configuration of default sorting criteria (sort-default) in 
+service definition. If no criteria is defined it will be as before
+'relevance'. 
+
+Search command now supports sort parameter just as the show command. 
+If no parameter is give, it will use the service sort-default value.
+
 --- 1.6.19 2012/09/18
 
 Rank algorithm skips strings that gets normalized to empty string.
