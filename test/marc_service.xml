@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
     <service id="marc">
+      <rank debug="yes"/>
       <settings src="z3950_indexdata_com_marc.xml"/>
       <metadata name="url" merge="unique"/>
       <metadata name="title" brief="yes" sortkey="skiparticle" merge="longest" rank="6"/>

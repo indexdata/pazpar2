@@ -1,3 +1,12 @@
+--- 1.6.20 2012/09/21
+
+Rank algorithm details may be printed as part of show reseponse in
+element <relevance_info>.. This is only printed if <rank debug="yes"/>
+is used in service.
+
+Record as returned by show/record command have a minimal indentation
+which makes things human-readable.
+
 --- 1.6.19 2012/09/18
 
 Rank algorithm skips strings that gets normalized to empty string.

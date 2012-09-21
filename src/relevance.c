@@ -40,6 +40,7 @@ struct relevance
 
 struct word_entry {
     const char *norm_str;
+    const char *display_str;
     int termno;
     char *ccl_field;
     struct word_entry *next;
@@ -77,6 +78,9 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
     int *mult = cluster->term_frequency_vec_tmp;
     const char *norm_str;
     int i, length = 0;
+    struct word_entry *e = r->entries;
+    WRBUF w = cluster->relevance_explain1;
+
     pp2_charset_token_first(r->prt, words, 0);
     for (i = 1; i < r->vec_len; i++)
         mult[i] = 0;
@@ -96,9 +100,14 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
 
     for (i = 1; i < r->vec_len; i++)
     {
-        if (length > 0) /* only add if non-empty */
+        if (length > 0 && mult[i] > 0) /* only add if non-empty */
+        {
+            wrbuf_printf(w, "%s: field=%s vecf[%d] += mult(%d) / length(%d);\n",
+                         e->display_str, name, i, mult[i], length);
             cluster->term_frequency_vecf[i] += (double) mult[i] / length;
+        }
         cluster->term_frequency_vec[i] += mult[i];
+        e = e->next;
     }
 
     cluster->term_frequency_vec[0] += length;
@@ -138,6 +147,7 @@ static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
                 (*e)->norm_str = nmem_strdup(res->nmem, norm_str);
                 (*e)->ccl_field = ccl_field;
                 (*e)->termno = res->vec_len++;
+                (*e)->display_str = nmem_strdup(res->nmem, words[i]);
                 (*e)->next = 0;
             }
         }
@@ -239,15 +249,27 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
     // Calculate relevance for each document
     while (1)
     {
-        int t;
         int relevance = 0;
+        WRBUF w;
+        struct word_entry *e = rel->entries;
         struct record_cluster *rec = reclist_read_record(reclist);
         if (!rec)
             break;
-        for (t = 1; t < rel->vec_len; t++)
+        w = rec->relevance_explain2;
+        wrbuf_rewind(w);
+        for (i = 1; i < rel->vec_len; i++)
         {
-            float termfreq = (float) rec->term_frequency_vecf[t];
-            relevance += 100000 * termfreq * idfvec[t];
+            float termfreq = (float) rec->term_frequency_vecf[i];
+            int add = 100000 * termfreq * idfvec[i];
+
+            wrbuf_printf(w, "idf[%d] = log(((1 + total(%d))/termoccur(%d));\n",
+                         i, rel->doc_frequency_vec[0],
+                         rel->doc_frequency_vec[i]);
+            wrbuf_printf(w, "%s: relevance += 100000 * vecf[%d](%f) * "
+                         "idf[%d](%f) (%d);\n",
+                         e->display_str, i, termfreq, i, idfvec[i], add);
+            relevance += add;
+            e = e->next;
         }
         if (!rel->rank_cluster)
         {
@@ -257,7 +279,13 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
             for (record = rec->records; record; record = record->next)
                 cluster_size++;
 
+            wrbuf_printf(w, "score = relevance(%d)/cluster_size(%d);\n",
+                         relevance, cluster_size);
             relevance /= cluster_size;
+        }
+        else
+        {
+            wrbuf_printf(w, "score = relevance(%d);\n", relevance);
         }
         rec->relevance_score = relevance;
     }

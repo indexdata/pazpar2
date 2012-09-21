@@ -88,6 +88,8 @@ struct record_cluster
     float *term_frequency_vecf;
     // Set-specific ID for this record
     char *recid;
+    WRBUF relevance_explain1;
+    WRBUF relevance_explain2;
     struct record *records;
 };
 

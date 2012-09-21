@@ -294,7 +294,16 @@ struct reclist *reclist_create(NMEM nmem)
 void reclist_destroy(struct reclist *l)
 {
     if (l)
+    {
+        struct reclist_bucket *rb;
+        
+        for (rb = l->sorted_list; rb; rb = rb->snext)
+        {
+            wrbuf_destroy(rb->record->relevance_explain1);
+            wrbuf_destroy(rb->record->relevance_explain2);
+        }
         yaz_mutex_destroy(&l->mutex);
+    }
 }
 
 int reclist_get_num_records(struct reclist *l)
@@ -372,6 +381,8 @@ struct record_cluster *reclist_insert(struct reclist *l,
         memset(cluster->sortkeys, 0,
                sizeof(union data_types*) * service->num_sortkeys);
 
+        cluster->relevance_explain1 = wrbuf_alloc();
+        cluster->relevance_explain2 = wrbuf_alloc();
         /* attach to hash list */
         *p = new;
 

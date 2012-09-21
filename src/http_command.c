@@ -826,7 +826,7 @@ static void cmd_bytarget(struct http_channel *c)
 }
 
 static void write_metadata(WRBUF w, struct conf_service *service,
-        struct record_metadata **ml, int full)
+                           struct record_metadata **ml, int full, int indent)
 {
     int imeta;
 
@@ -839,7 +839,10 @@ static void write_metadata(WRBUF w, struct conf_service *service,
         for (md = ml[imeta]; md; md = md->next)
         {
             struct record_metadata_attr *attr = md->attributes;
-            wrbuf_printf(w, "\n<md-%s", cmd->name);
+            int i;
+            for (i = 0; i < indent; i++)
+                wrbuf_putc(w, ' ');
+            wrbuf_printf(w, "<md-%s", cmd->name);
 
             for (; attr; attr = attr->next)
             {
@@ -862,7 +865,7 @@ static void write_metadata(WRBUF w, struct conf_service *service,
                     wrbuf_puts(w, "[can't represent]");
                     break;
             }
-            wrbuf_printf(w, "</md-%s>", cmd->name);
+            wrbuf_printf(w, "</md-%s>\n", cmd->name);
         }
     }
 }
@@ -873,20 +876,20 @@ static void write_subrecord(struct record *r, WRBUF w,
     const char *name = session_setting_oneval(
         client_get_database(r->client), PZ_NAME);
 
-    wrbuf_puts(w, "<location id=\"");
+    wrbuf_puts(w, " <location id=\"");
     wrbuf_xmlputs(w, client_get_id(r->client));
     wrbuf_puts(w, "\"\n");
 
-    wrbuf_puts(w, " name=\"");
+    wrbuf_puts(w, "    name=\"");
     wrbuf_xmlputs(w,  *name ? name : "Unknown");
     wrbuf_puts(w, "\" ");
 
     wrbuf_puts(w, "checksum=\"");
     wrbuf_printf(w,  "%u", r->checksum);
-    wrbuf_puts(w, "\">");
+    wrbuf_puts(w, "\">\n");
 
-    write_metadata(w, service, r->metadata, show_details);
-    wrbuf_puts(w, "</location>\n");
+    write_metadata(w, service, r->metadata, show_details, 2);
+    wrbuf_puts(w, " </location>\n");
 }
 
 static void show_raw_record_error(void *data, const char *addinfo)
@@ -1024,26 +1027,26 @@ static void show_record(struct http_channel *c, struct http_session *s)
     {
         struct record *r;
         response_open_no_status(c, "record");
-        wrbuf_puts(c->wrbuf, "\n<recid>");
+        wrbuf_puts(c->wrbuf, "\n <recid>");
         wrbuf_xmlputs(c->wrbuf, rec->recid);
         wrbuf_puts(c->wrbuf, "</recid>\n");
         if (prev_r)
         {
-            wrbuf_puts(c->wrbuf, "<prevrecid>");
+            wrbuf_puts(c->wrbuf, " <prevrecid>");
             wrbuf_xmlputs(c->wrbuf, prev_r->recid);
             wrbuf_puts(c->wrbuf, "</prevrecid>\n");
         }
         if (next_r)
         {
-            wrbuf_puts(c->wrbuf, "<nextrecid>");
+            wrbuf_puts(c->wrbuf, " <nextrecid>");
             wrbuf_xmlputs(c->wrbuf, next_r->recid);
             wrbuf_puts(c->wrbuf, "</nextrecid>\n");
         }
-        wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n",
+        wrbuf_printf(c->wrbuf, " <activeclients>%d</activeclients>\n",
                      session_active_clients(s->psession));
-        write_metadata(c->wrbuf, service, rec->metadata, 1);
+        write_metadata(c->wrbuf, service, rec->metadata, 1, 1);
         for (r = rec->records; r; r = r->next)
-            write_subrecord(r, c->wrbuf, service, 1);
+            write_subrecord(r, c->wrbuf, service, 2);
         response_close(c, "record");
     }
     show_single_stop(s->psession, rec);
@@ -1131,15 +1134,23 @@ static void show_records(struct http_channel *c, struct http_session *s, int act
         struct conf_service *service = s->psession->service;
 
         wrbuf_puts(c->wrbuf, "<hit>\n");
-        write_metadata(c->wrbuf, service, rec->metadata, 0);
+        write_metadata(c->wrbuf, service, rec->metadata, 0, 1);
         for (ccount = 0, p = rl[i]->records; p;  p = p->next, ccount++)
             write_subrecord(p, c->wrbuf, service, 0); // subrecs w/o details
-        if (ccount > 1)
-            wrbuf_printf(c->wrbuf, "<count>%d</count>\n", ccount);
+        wrbuf_printf(c->wrbuf, " <count>%d</count>\n", ccount);
 	if (strstr(sort, "relevance"))
-	    wrbuf_printf(c->wrbuf, "<relevance>%d</relevance>\n",
+        {
+	    wrbuf_printf(c->wrbuf, " <relevance>%d</relevance>\n",
                          rec->relevance_score);
-        wrbuf_puts(c->wrbuf, "<recid>");
+            if (service->rank_debug)
+            {
+                wrbuf_printf(c->wrbuf, " <relevance_info>\n");
+                wrbuf_xmlputs(c->wrbuf, wrbuf_cstr(rec->relevance_explain1));
+                wrbuf_xmlputs(c->wrbuf, wrbuf_cstr(rec->relevance_explain2));
+                wrbuf_printf(c->wrbuf, " </relevance_info>\n");
+            }
+        }
+        wrbuf_puts(c->wrbuf, " <recid>");
         wrbuf_xmlputs(c->wrbuf, rec->recid);
         wrbuf_puts(c->wrbuf, "</recid>\n");
         wrbuf_puts(c->wrbuf, "</hit>\n");
