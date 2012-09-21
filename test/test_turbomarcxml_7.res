@@ -15,12 +15,6 @@
  </location>
  <count>1</count>
  <relevance>11882</relevance>
- <relevance_info>
-computer: field=description vecf[1] += mult(3) / length(35);
-idf[1] = log(((1 + total(3))/termoccur(1));
-computer: relevance += 100000 * vecf[1](0.085714) * idf[1](1.386294) (11882);
-score = relevance(11882);
- </relevance_info>
  <recid>content: title bibliography of maine geology</recid>
 </hit>
 <hit>
@@ -33,11 +27,6 @@ score = relevance(11882);
  </location>
  <count>1</count>
  <relevance>0</relevance>
- <relevance_info>
-idf[1] = log(((1 + total(3))/termoccur(1));
-computer: relevance += 100000 * vecf[1](0.000000) * idf[1](1.386294) (0);
-score = relevance(0);
- </relevance_info>
  <recid>content: title groundwater resource maps county series</recid>
 </hit>
 <hit>
@@ -50,11 +39,6 @@ score = relevance(0);
  </location>
  <count>1</count>
  <relevance>0</relevance>
- <relevance_info>
-idf[1] = log(((1 + total(3))/termoccur(1));
-computer: relevance += 100000 * vecf[1](0.000000) * idf[1](1.386294) (0);
-score = relevance(0);
- </relevance_info>
  <recid>content: title oil gas drilling</recid>
 </hit>
 </show>

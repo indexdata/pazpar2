@@ -20,13 +20,6 @@
  </location>
  <count>2</count>
  <relevance>53554</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(5);
-computer: field=title vecf[1] += mult(6) / length(5);
-idf[1] = log(((1 + total(9))/termoccur(8));
-computer: relevance += 100000 * vecf[1](2.400000) * idf[1](0.223144) (53554);
-score = relevance(53554);
- </relevance_info>
  <recid>content: title how to program a computer author jack collins</recid>
 </hit>
 <hit>
@@ -41,12 +34,6 @@ score = relevance(53554);
  </location>
  <count>1</count>
  <relevance>44628</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(3);
-idf[1] = log(((1 + total(9))/termoccur(8));
-computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.223144) (44628);
-score = relevance(44628);
- </relevance_info>
  <recid>content: title computer science technology</recid>
 </hit>
 <hit>
@@ -62,12 +49,6 @@ score = relevance(44628);
  </location>
  <count>1</count>
  <relevance>44628</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(3);
-idf[1] = log(((1 + total(9))/termoccur(8));
-computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.223144) (44628);
-score = relevance(44628);
- </relevance_info>
  <recid>content: title the computer bible</recid>
 </hit>
 <hit>
@@ -86,12 +67,6 @@ score = relevance(44628);
  </location>
  <count>1</count>
  <relevance>19126</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(7);
-idf[1] = log(((1 + total(9))/termoccur(8));
-computer: relevance += 100000 * vecf[1](0.857143) * idf[1](0.223144) (19126);
-score = relevance(19126);
- </relevance_info>
  <recid>content: title washington metropolitan area rail computer feasibility study author englund carl r</recid>
 </hit>
 <hit>
@@ -110,12 +85,6 @@ score = relevance(19126);
  </location>
  <count>1</count>
  <relevance>18595</relevance>
- <relevance_info>
-computer: field=title-remainder vecf[1] += mult(5) / length(6);
-idf[1] = log(((1 + total(9))/termoccur(8));
-computer: relevance += 100000 * vecf[1](0.833333) * idf[1](0.223144) (18595);
-score = relevance(18595);
- </relevance_info>
  <recid>content: title the puget sound region author mairs john w</recid>
 </hit>
 <hit>
@@ -130,12 +99,6 @@ score = relevance(18595);
  </location>
  <count>1</count>
  <relevance>13388</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(10);
-idf[1] = log(((1 + total(9))/termoccur(8));
-computer: relevance += 100000 * vecf[1](0.600000) * idf[1](0.223144) (13388);
-score = relevance(13388);
- </relevance_info>
  <recid>content: title computer processing of dynamic images from an anger scintillation camera</recid>
 </hit>
 <hit>
@@ -150,12 +113,6 @@ score = relevance(13388);
  </location>
  <count>1</count>
  <relevance>13388</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(10);
-idf[1] = log(((1 + total(9))/termoccur(8));
-computer: relevance += 100000 * vecf[1](0.600000) * idf[1](0.223144) (13388);
-score = relevance(13388);
- </relevance_info>
  <recid>content: title the use of passwords for controlled access to computer resources author wood helen m</recid>
 </hit>
 <hit>
@@ -170,11 +127,6 @@ score = relevance(13388);
  </location>
  <count>1</count>
  <relevance>0</relevance>
- <relevance_info>
-idf[1] = log(((1 + total(9))/termoccur(8));
-computer: relevance += 100000 * vecf[1](0.000000) * idf[1](0.223144) (0);
-score = relevance(0);
- </relevance_info>
  <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine</recid>
 </hit>
 </show>

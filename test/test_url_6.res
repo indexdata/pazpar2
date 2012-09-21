@@ -16,12 +16,6 @@
  </location>
  <count>1</count>
  <relevance>6707</relevance>
- <relevance_info>
-the: field=description vecf[1] += mult(3) / length(31);
-idf[1] = log(((1 + total(3))/termoccur(2));
-the: relevance += 100000 * vecf[1](0.096774) * idf[1](0.693147) (6707);
-score = relevance(6707);
- </relevance_info>
  <recid>content: title applied geology file author medium book</recid>
 </hit>
 <hit>
@@ -35,12 +29,6 @@ score = relevance(6707);
  </location>
  <count>1</count>
  <relevance>4951</relevance>
- <relevance_info>
-the: field=description vecf[1] += mult(3) / length(42);
-idf[1] = log(((1 + total(3))/termoccur(2));
-the: relevance += 100000 * vecf[1](0.071429) * idf[1](0.693147) (4951);
-score = relevance(4951);
- </relevance_info>
  <recid>content: title utah geological and mineral survey publications author medium book</recid>
 </hit>
 <hit>
@@ -54,11 +42,6 @@ score = relevance(4951);
  </location>
  <count>1</count>
  <relevance>0</relevance>
- <relevance_info>
-idf[1] = log(((1 + total(3))/termoccur(2));
-the: relevance += 100000 * vecf[1](0.000000) * idf[1](0.693147) (0);
-score = relevance(0);
- </relevance_info>
  <recid>content: title utah earthquake epicenters author medium book</recid>
 </hit>
 </show>

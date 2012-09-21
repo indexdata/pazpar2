@@ -133,6 +133,7 @@ struct conf_service *service_init(struct conf_server *server,
     service->z3950_session_timeout = 180;
     service->z3950_operation_timeout = 30;
     service->rank_cluster = 1;
+    service->rank_debug = 0;
 
     service->charsets = 0;
 
@@ -620,17 +621,33 @@ static struct conf_service *service_create_static(struct conf_server *server,
         else if (!strcmp((const char *) n->name, "rank"))
         {
             char *rank_cluster = (char *) xmlGetProp(n, (xmlChar *) "cluster");
-
-            if (rank_cluster && !strcmp(rank_cluster, "yes"))
-                service->rank_cluster = 1;
-            else if (rank_cluster && !strcmp(rank_cluster, "no"))
-                service->rank_cluster = 0;
-            else
+            char *rank_debug = (char *) xmlGetProp(n, (xmlChar *) "debug");
+            if (rank_cluster)
             {
-                yaz_log(YLOG_FATAL, "service: rank@cluster boolean");
-                return 0;
+                if (!strcmp(rank_cluster, "yes"))
+                    service->rank_cluster = 1;
+                else if (!strcmp(rank_cluster, "no"))
+                    service->rank_cluster = 0;
+                else 
+                {
+                    yaz_log(YLOG_FATAL, "service: rank@cluster boolean");
+                    return 0;
+                }
+            }
+            if (rank_debug)
+            {
+                if (!strcmp(rank_debug, "yes"))
+                    service->rank_debug = 1;
+                else if (!strcmp(rank_debug, "no"))
+                    service->rank_debug = 0;
+                else
+                {
+                    yaz_log(YLOG_FATAL, "service: rank@debug boolean");
+                    return 0;
+                }
             }
             xmlFree(rank_cluster);
+            xmlFree(rank_debug);
         }
         else if (!strcmp((const char *) n->name, "sort-default"))
         {
@@ -638,7 +655,8 @@ static struct conf_service *service_create_static(struct conf_server *server,
 
             if (default_sort && strcmp(default_sort, "")) {
                 service->default_sort = nmem_strdup(service->nmem, default_sort);
-                yaz_log(YLOG_LOG, "service %d: default sort order configured to: %s", service_id, default_sort);
+                yaz_log(YLOG_LOG, "service %s: default sort order configured to: %s",
+                        service_id, default_sort);
             }
             else
             {

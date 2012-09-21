@@ -20,13 +20,6 @@
  </location>
  <count>2</count>
  <relevance>69043</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(5);
-computer: field=title vecf[1] += mult(6) / length(5);
-idf[1] = log(((1 + total(7))/termoccur(6));
-computer: relevance += 100000 * vecf[1](2.400000) * idf[1](0.287682) (69043);
-score = relevance(69043);
- </relevance_info>
  <recid>content: title how to program a computer author jack collins</recid>
 </hit>
 <hit>
@@ -41,12 +34,6 @@ score = relevance(69043);
  </location>
  <count>1</count>
  <relevance>57536</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(3);
-idf[1] = log(((1 + total(7))/termoccur(6));
-computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.287682) (57536);
-score = relevance(57536);
- </relevance_info>
  <recid>content: title computer science technology</recid>
 </hit>
 <hit>
@@ -62,12 +49,6 @@ score = relevance(57536);
  </location>
  <count>1</count>
  <relevance>57536</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(3);
-idf[1] = log(((1 + total(7))/termoccur(6));
-computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.287682) (57536);
-score = relevance(57536);
- </relevance_info>
  <recid>content: title the computer bible</recid>
 </hit>
 <hit>
@@ -86,12 +67,6 @@ score = relevance(57536);
  </location>
  <count>1</count>
  <relevance>23973</relevance>
- <relevance_info>
-computer: field=title-remainder vecf[1] += mult(5) / length(6);
-idf[1] = log(((1 + total(7))/termoccur(6));
-computer: relevance += 100000 * vecf[1](0.833333) * idf[1](0.287682) (23973);
-score = relevance(23973);
- </relevance_info>
  <recid>content: title the puget sound region author mairs john w</recid>
 </hit>
 <hit>
@@ -106,12 +81,6 @@ score = relevance(23973);
  </location>
  <count>1</count>
  <relevance>17260</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(10);
-idf[1] = log(((1 + total(7))/termoccur(6));
-computer: relevance += 100000 * vecf[1](0.600000) * idf[1](0.287682) (17260);
-score = relevance(17260);
- </relevance_info>
  <recid>content: title computer processing of dynamic images from an anger scintillation camera</recid>
 </hit>
 <hit>
@@ -126,11 +95,6 @@ score = relevance(17260);
  </location>
  <count>1</count>
  <relevance>0</relevance>
- <relevance_info>
-idf[1] = log(((1 + total(7))/termoccur(6));
-computer: relevance += 100000 * vecf[1](0.000000) * idf[1](0.287682) (0);
-score = relevance(0);
- </relevance_info>
  <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine</recid>
 </hit>
 </show>

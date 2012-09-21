@@ -19,15 +19,6 @@
  </location>
  <count>1</count>
  <relevance>34675</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=subject vecf[1] += mult(3) / length(3);
-water: field=title vecf[1] += mult(6) / length(1);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](11.500000) * idf[1](0.030153) (34675);
-score = relevance(34675);
- </relevance_info>
  <recid>content: title water author de villiers marq medium book</recid>
 </hit>
 <hit>
@@ -51,17 +42,6 @@ score = relevance(34675);
  </location>
  <count>2</count>
  <relevance>32306</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=title vecf[1] += mult(6) / length(7);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=title vecf[1] += mult(6) / length(7);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](10.714286) * idf[1](0.030153) (32306);
-score = relevance(32306);
- </relevance_info>
  <recid>content: title potable water and methods of detecting impurities author baker m n medium book</recid>
 </hit>
 <hit>
@@ -80,15 +60,6 @@ score = relevance(32306);
  </location>
  <count>1</count>
  <relevance>30153</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(3);
-water: field=title vecf[1] += mult(6) / length(1);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](10.000000) * idf[1](0.030153) (30153);
-score = relevance(30153);
- </relevance_info>
  <recid>content: title water author majeed abdul medium book</recid>
 </hit>
 <hit>
@@ -108,14 +79,6 @@ score = relevance(30153);
  </location>
  <count>1</count>
  <relevance>27613</relevance>
- <relevance_info>
-water: field=description vecf[1] += mult(3) / length(19);
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=title vecf[1] += mult(6) / length(1);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](9.157894) * idf[1](0.030153) (27613);
-score = relevance(27613);
- </relevance_info>
  <recid>content: title water author grant pamela medium book</recid>
 </hit>
 <hit>
@@ -134,15 +97,6 @@ score = relevance(27613);
  </location>
  <count>1</count>
  <relevance>27137</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=title vecf[1] += mult(6) / length(2);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](9.000000) * idf[1](0.030153) (27137);
-score = relevance(27137);
- </relevance_info>
  <recid>content: title water law author fisher d e medium book</recid>
 </hit>
 <hit>
@@ -162,16 +116,6 @@ score = relevance(27137);
  </location>
  <count>1</count>
  <relevance>26233</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=title vecf[1] += mult(6) / length(5);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](8.700000) * idf[1](0.030153) (26233);
-score = relevance(26233);
- </relevance_info>
  <recid>content: title a primer on fresh water medium book</recid>
 </hit>
 <hit>
@@ -188,14 +132,6 @@ score = relevance(26233);
  </location>
  <count>1</count>
  <relevance>22614</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=title vecf[1] += mult(12) / length(4);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](7.500000) * idf[1](0.030153) (22614);
-score = relevance(22614);
- </relevance_info>
  <recid>content: title water and water supplies author thresh john clough medium book</recid>
 </hit>
 <hit>
@@ -221,17 +157,6 @@ score = relevance(22614);
  </location>
  <count>2</count>
  <relevance>22614</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(4);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=title vecf[1] += mult(12) / length(8);
-water: field=subject vecf[1] += mult(3) / length(4);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=title vecf[1] += mult(12) / length(8);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](7.500000) * idf[1](0.030153) (22614);
-score = relevance(22614);
- </relevance_info>
  <recid>content: title water quality assessment of the state water project medium book</recid>
 </hit>
 <hit>
@@ -250,14 +175,6 @@ score = relevance(22614);
  </location>
  <count>1</count>
  <relevance>22614</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=title vecf[1] += mult(6) / length(2);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](7.500000) * idf[1](0.030153) (22614);
-score = relevance(22614);
- </relevance_info>
  <recid>content: title water supply author mason william pitt medium book</recid>
 </hit>
 <hit>
@@ -276,16 +193,6 @@ score = relevance(22614);
  </location>
  <count>1</count>
  <relevance>21836</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=title vecf[1] += mult(6) / length(7);
-water: field=title-remainder vecf[1] += mult(5) / length(13);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](7.241758) * idf[1](0.030153) (21836);
-score = relevance(21836);
- </relevance_info>
  <recid>content: title the law of waters and water rights author farnham henry p medium book</recid>
 </hit>
 <hit>
@@ -313,17 +220,6 @@ score = relevance(21836);
  </location>
  <count>2</count>
  <relevance>20411</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(3);
-water: field=title vecf[1] += mult(6) / length(3);
-water: field=title-remainder vecf[1] += mult(5) / length(13);
-water: field=subject vecf[1] += mult(3) / length(3);
-water: field=title vecf[1] += mult(6) / length(3);
-water: field=title-remainder vecf[1] += mult(5) / length(13);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](6.769231) * idf[1](0.030153) (20411);
-score = relevance(20411);
- </relevance_info>
  <recid>content: title water in press medium book</recid>
 </hit>
 <hit>
@@ -342,16 +238,6 @@ score = relevance(20411);
  </location>
  <count>1</count>
  <relevance>20353</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=subject vecf[1] += mult(3) / length(4);
-water: field=subject vecf[1] += mult(3) / length(3);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=title vecf[1] += mult(6) / length(12);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](6.750000) * idf[1](0.030153) (20353);
-score = relevance(20353);
- </relevance_info>
  <recid>content: title regulations on the disposal of arsenic residuals from drinking water treatment plants medium book</recid>
 </hit>
 <hit>
@@ -370,16 +256,6 @@ score = relevance(20353);
  </location>
  <count>1</count>
  <relevance>19700</relevance>
- <relevance_info>
-water: field=description vecf[1] += mult(3) / length(17);
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=subject vecf[1] += mult(3) / length(3);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=title vecf[1] += mult(6) / length(7);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](6.533614) * idf[1](0.030153) (19700);
-score = relevance(19700);
- </relevance_info>
  <recid>content: title a guide to montana water quality regulation author bryan michelle medium book</recid>
 </hit>
 <hit>
@@ -396,15 +272,6 @@ score = relevance(19700);
  </location>
  <count>1</count>
  <relevance>19599</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=title vecf[1] += mult(6) / length(3);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](6.500000) * idf[1](0.030153) (19599);
-score = relevance(19599);
- </relevance_info>
  <recid>content: title water technology management medium book</recid>
 </hit>
 <hit>
@@ -423,16 +290,6 @@ score = relevance(19599);
  </location>
  <count>1</count>
  <relevance>19427</relevance>
- <relevance_info>
-water: field=description vecf[1] += mult(3) / length(21);
-water: field=subject vecf[1] += mult(3) / length(3);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=title vecf[1] += mult(12) / length(15);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](6.442857) * idf[1](0.030153) (19427);
-score = relevance(19427);
- </relevance_info>
  <recid>content: title aquatic habitat indicators and their application to water quality objectives within the clean water act author bauer steve medium book</recid>
 </hit>
 <hit>
@@ -451,15 +308,6 @@ score = relevance(19427);
  </location>
  <count>1</count>
  <relevance>19297</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=title vecf[1] += mult(6) / length(15);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](6.400000) * idf[1](0.030153) (19297);
-score = relevance(19297);
- </relevance_info>
  <recid>content: title an empirical analysis of water temperature and dissolved oxygen conditions in the red deer river author saffran karen anita medium book</recid>
 </hit>
 <hit>
@@ -477,15 +325,6 @@ score = relevance(19297);
  </location>
  <count>1</count>
  <relevance>18845</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=subject vecf[1] += mult(3) / length(4);
-water: field=title vecf[1] += mult(6) / length(6);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](6.250000) * idf[1](0.030153) (18845);
-score = relevance(18845);
- </relevance_info>
  <recid>content: title surface water quality monitoring procedures manual medium book</recid>
 </hit>
 <hit>
@@ -502,16 +341,6 @@ score = relevance(18845);
  </location>
  <count>1</count>
  <relevance>18393</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(3);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=title vecf[1] += mult(6) / length(10);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](6.100000) * idf[1](0.030153) (18393);
-score = relevance(18393);
- </relevance_info>
  <recid>content: title international conference on management of drinking water resources chennai december medium book</recid>
 </hit>
 <hit>
@@ -526,14 +355,6 @@ score = relevance(18393);
  </location>
  <count>1</count>
  <relevance>18091</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(2);
-water: field=subject vecf[1] += mult(3) / length(1);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](6.000000) * idf[1](0.030153) (18091);
-score = relevance(18091);
- </relevance_info>
  <recid>content: title mercados e instituciones de aguas en bolivia medium book</recid>
 </hit>
 <hit>
@@ -548,13 +369,6 @@ score = relevance(18091);
  </location>
  <count>1</count>
  <relevance>18091</relevance>
- <relevance_info>
-water: field=subject vecf[1] += mult(3) / length(1);
-water: field=title vecf[1] += mult(6) / length(2);
-idf[1] = log(((1 + total(100))/termoccur(98));
-water: relevance += 100000 * vecf[1](6.000000) * idf[1](0.030153) (18091);
-score = relevance(18091);
- </relevance_info>
  <recid>content: title water law medium book</recid>
 </hit>
 </show>

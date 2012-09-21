@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
     <service id="gils">
+      <rank debug="yes"/>
       <settings target="z3950.indexdata.com/gils">
 	<set name="pz:name" value="Index Data GILS test server"/>
 	

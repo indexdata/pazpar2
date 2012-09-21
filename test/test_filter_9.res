@@ -22,12 +22,6 @@
  </location>
  <count>1</count>
  <relevance>94000</relevance>
- <relevance_info>
-the: field=title vecf[1] += mult(6) / length(3);
-idf[1] = log(((1 + total(7))/termoccur(5));
-the: relevance += 100000 * vecf[1](2.000000) * idf[1](0.470004) (94000);
-score = relevance(94000);
- </relevance_info>
  <recid>content: title the computer bible author medium book</recid>
 </hit>
 <hit>
@@ -51,12 +45,6 @@ score = relevance(94000);
  </location>
  <count>1</count>
  <relevance>70500</relevance>
- <relevance_info>
-the: field=title vecf[1] += mult(6) / length(4);
-idf[1] = log(((1 + total(7))/termoccur(5));
-the: relevance += 100000 * vecf[1](1.500000) * idf[1](0.470004) (70500);
-score = relevance(70500);
- </relevance_info>
  <recid>content: title the puget sound region author mairs john w medium book</recid>
 </hit>
 <hit>
@@ -75,12 +63,6 @@ score = relevance(70500);
  </location>
  <count>1</count>
  <relevance>58750</relevance>
- <relevance_info>
-the: field=title-remainder vecf[1] += mult(5) / length(4);
-idf[1] = log(((1 + total(7))/termoccur(5));
-the: relevance += 100000 * vecf[1](1.250000) * idf[1](0.470004) (58750);
-score = relevance(58750);
- </relevance_info>
  <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 <hit>
@@ -103,12 +85,6 @@ score = relevance(58750);
  </location>
  <count>1</count>
  <relevance>47000</relevance>
- <relevance_info>
-the: field=title-remainder vecf[1] += mult(5) / length(5);
-idf[1] = log(((1 + total(7))/termoccur(5));
-the: relevance += 100000 * vecf[1](1.000000) * idf[1](0.470004) (47000);
-score = relevance(47000);
- </relevance_info>
  <recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 <hit>
@@ -125,12 +101,6 @@ score = relevance(47000);
  </location>
  <count>1</count>
  <relevance>16785</relevance>
- <relevance_info>
-the: field=title-remainder vecf[1] += mult(5) / length(14);
-idf[1] = log(((1 + total(7))/termoccur(5));
-the: relevance += 100000 * vecf[1](0.357143) * idf[1](0.470004) (16785);
-score = relevance(16785);
- </relevance_info>
  <recid>content: title computer science technology author medium book</recid>
 </hit>
 <hit>
@@ -148,11 +118,6 @@ score = relevance(16785);
  </location>
  <count>2</count>
  <relevance>0</relevance>
- <relevance_info>
-idf[1] = log(((1 + total(7))/termoccur(5));
-the: relevance += 100000 * vecf[1](0.000000) * idf[1](0.470004) (0);
-score = relevance(0);
- </relevance_info>
  <recid>content: title how to program a computer author jack collins medium book</recid>
 </hit>
 </show>

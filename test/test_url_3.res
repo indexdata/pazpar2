@@ -20,13 +20,6 @@
  </location>
  <count>2</count>
  <relevance>48160</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(5);
-computer: field=title vecf[1] += mult(6) / length(5);
-idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](2.400000) * idf[1](0.200671) (48160);
-score = relevance(48160);
- </relevance_info>
  <recid>content: title how to program a computer author jack collins medium book</recid>
 </hit>
 <hit>
@@ -42,12 +35,6 @@ score = relevance(48160);
  </location>
  <count>1</count>
  <relevance>40134</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(3);
-idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.200671) (40134);
-score = relevance(40134);
- </relevance_info>
  <recid>content: title the computer bible author medium book</recid>
 </hit>
 <hit>
@@ -62,12 +49,6 @@ score = relevance(40134);
  </location>
  <count>1</count>
  <relevance>30100</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(4);
-idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](1.500000) * idf[1](0.200671) (30100);
-score = relevance(30100);
- </relevance_info>
  <recid>content: title computer science technology author medium book</recid>
 </hit>
 <hit>
@@ -82,12 +63,6 @@ score = relevance(30100);
  </location>
  <count>1</count>
  <relevance>17200</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(7);
-idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](0.857143) * idf[1](0.200671) (17200);
-score = relevance(17200);
- </relevance_info>
  <recid>content: title a plan for community college computer development author medium book</recid>
 </hit>
 <hit>
@@ -106,12 +81,6 @@ score = relevance(17200);
  </location>
  <count>1</count>
  <relevance>17200</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(7);
-idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](0.857143) * idf[1](0.200671) (17200);
-score = relevance(17200);
- </relevance_info>
  <recid>content: title washington metropolitan area rail computer feasibility study author englund carl r medium book</recid>
 </hit>
 <hit>
@@ -131,12 +100,6 @@ score = relevance(17200);
  </location>
  <count>1</count>
  <relevance>16722</relevance>
- <relevance_info>
-computer: field=title-remainder vecf[1] += mult(5) / length(6);
-idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](0.833333) * idf[1](0.200671) (16722);
-score = relevance(16722);
- </relevance_info>
  <recid>content: title the puget sound region author mairs john w medium book</recid>
 </hit>
 <hit>
@@ -153,12 +116,6 @@ score = relevance(16722);
  </location>
  <count>1</count>
  <relevance>12040</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(10);
-idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](0.600000) * idf[1](0.200671) (12040);
-score = relevance(12040);
- </relevance_info>
  <recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 <hit>
@@ -173,12 +130,6 @@ score = relevance(12040);
  </location>
  <count>1</count>
  <relevance>12040</relevance>
- <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(10);
-idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](0.600000) * idf[1](0.200671) (12040);
-score = relevance(12040);
- </relevance_info>
  <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>
@@ -195,11 +146,6 @@ score = relevance(12040);
  </location>
  <count>1</count>
  <relevance>0</relevance>
- <relevance_info>
-idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](0.000000) * idf[1](0.200671) (0);
-score = relevance(0);
- </relevance_info>
  <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 </show>

@@ -20,13 +20,6 @@
  </location>
  <count>1</count>
  <relevance>291121</relevance>
- <relevance_info>
-greece: field=title vecf[1] += mult(6) / length(5);
-greece: field=subject vecf[1] += mult(3) / length(1);
-idf[1] = log(((1 + total(1))/termoccur(1));
-greece: relevance += 100000 * vecf[1](4.200000) * idf[1](0.693147) (291121);
-score = relevance(291121);
- </relevance_info>
  <recid>content: title the religious teachers of greece author adam james</recid>
 </hit>
 </show>

@@ -19,14 +19,6 @@
  </location>
  <count>1</count>
  <relevance>49512</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(1);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](6.000000) * idf[1](0.082521) (49512);
-score = relevance(49512);
- </relevance_info>
  <recid>content: title adobe illustrator for the mac author woodward c michael</recid>
 </hit>
 <hit>
@@ -39,16 +31,6 @@ score = relevance(49512);
  </location>
  <count>1</count>
  <relevance>49512</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(3);
-computer: field=subject vecf[1] += mult(3) / length(3);
-computer: field=title vecf[1] += mult(6) / length(6);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](6.000000) * idf[1](0.082521) (49512);
-score = relevance(49512);
- </relevance_info>
  <recid>content: title advanced computer performance modeling and simulation</recid>
 </hit>
 <hit>
@@ -67,15 +49,6 @@ score = relevance(49512);
  </location>
  <count>1</count>
  <relevance>49512</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=title vecf[1] += mult(6) / length(4);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](6.000000) * idf[1](0.082521) (49512);
-score = relevance(49512);
- </relevance_info>
  <recid>content: title cyberterrorism and computer crimes author aldrich richard w</recid>
 </hit>
 <hit>
@@ -92,15 +65,6 @@ score = relevance(49512);
  </location>
  <count>1</count>
  <relevance>45386</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(3);
-computer: field=subject vecf[1] += mult(3) / length(2);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](5.500000) * idf[1](0.082521) (45386);
-score = relevance(45386);
- </relevance_info>
  <recid>content: title software design and usability author kaasgaard klaus</recid>
 </hit>
 <hit>
@@ -117,16 +81,6 @@ score = relevance(45386);
  </location>
  <count>1</count>
  <relevance>43403</relevance>
- <relevance_info>
-computer: field=description vecf[1] += mult(3) / length(14);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=title vecf[1] += mult(6) / length(11);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](5.259740) * idf[1](0.082521) (43403);
-score = relevance(43403);
- </relevance_info>
  <recid>content: title everything you need to know about the dangers of computer hacking author knittel john</recid>
 </hit>
 <hit>
@@ -141,14 +95,6 @@ score = relevance(43403);
  </location>
  <count>1</count>
  <relevance>43323</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(4);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=title vecf[1] += mult(6) / length(2);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](5.250000) * idf[1](0.082521) (43323);
-score = relevance(43323);
- </relevance_info>
  <recid>content: title computer peripherals author cook barry m</recid>
 </hit>
 <hit>
@@ -164,15 +110,6 @@ score = relevance(43323);
  </location>
  <count>1</count>
  <relevance>38051</relevance>
- <relevance_info>
-computer: field=description vecf[1] += mult(3) / length(27);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(3);
-computer: field=title vecf[1] += mult(6) / length(3);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.611111) * idf[1](0.082521) (38051);
-score = relevance(38051);
- </relevance_info>
  <recid>content: title kids computer book</recid>
 </hit>
 <hit>
@@ -187,13 +124,6 @@ score = relevance(38051);
  </location>
  <count>1</count>
  <relevance>37134</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=title vecf[1] += mult(6) / length(2);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.500000) * idf[1](0.082521) (37134);
-score = relevance(37134);
- </relevance_info>
  <recid>content: title computer friendly author steinbacher raymond</recid>
 </hit>
 <hit>
@@ -210,13 +140,6 @@ score = relevance(37134);
  </location>
  <count>1</count>
  <relevance>37134</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=title vecf[1] += mult(6) / length(2);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.500000) * idf[1](0.082521) (37134);
-score = relevance(37134);
- </relevance_info>
  <recid>content: title computer misuse</recid>
 </hit>
 <hit>
@@ -233,13 +156,6 @@ score = relevance(37134);
  </location>
  <count>1</count>
  <relevance>37134</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=title vecf[1] += mult(6) / length(2);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.500000) * idf[1](0.082521) (37134);
-score = relevance(37134);
- </relevance_info>
  <recid>content: title computer networking author ross keith w</recid>
 </hit>
 <hit>
@@ -256,14 +172,6 @@ score = relevance(37134);
  </location>
  <count>1</count>
  <relevance>37134</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.500000) * idf[1](0.082521) (37134);
-score = relevance(37134);
- </relevance_info>
  <recid>content: title coreldraw for windows author davis phyllis</recid>
 </hit>
 <hit>
@@ -283,13 +191,6 @@ score = relevance(37134);
  </location>
  <count>1</count>
  <relevance>37134</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(1);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.500000) * idf[1](0.082521) (37134);
-score = relevance(37134);
- </relevance_info>
  <recid>content: title quicken for the mac author langer maria</recid>
 </hit>
 <hit>
@@ -302,14 +203,6 @@ score = relevance(37134);
  </location>
  <count>1</count>
  <relevance>37134</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.500000) * idf[1](0.082521) (37134);
-score = relevance(37134);
- </relevance_info>
  <recid>content: title sicherheit und schutz im netz</recid>
 </hit>
 <hit>
@@ -326,14 +219,6 @@ score = relevance(37134);
  </location>
  <count>1</count>
  <relevance>37134</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.500000) * idf[1](0.082521) (37134);
-score = relevance(37134);
- </relevance_info>
  <recid>content: title unix secure shell author carasik anne h</recid>
 </hit>
 <hit>
@@ -350,15 +235,6 @@ score = relevance(37134);
  </location>
  <count>1</count>
  <relevance>35071</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(3);
-computer: field=subject vecf[1] += mult(3) / length(3);
-computer: field=title vecf[1] += mult(6) / length(8);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.250000) * idf[1](0.082521) (35071);
-score = relevance(35071);
- </relevance_info>
  <recid>content: title eight international conference on computer communications and networks</recid>
 </hit>
 <hit>
@@ -375,14 +251,6 @@ score = relevance(35071);
  </location>
  <count>1</count>
  <relevance>33008</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(3);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.000000) * idf[1](0.082521) (33008);
-score = relevance(33008);
- </relevance_info>
  <recid>content: title building storage networks author farley marc</recid>
 </hit>
 <hit>
@@ -401,13 +269,6 @@ score = relevance(33008);
  </location>
  <count>1</count>
  <relevance>33008</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(1);
-computer: field=subject vecf[1] += mult(3) / length(3);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.000000) * idf[1](0.082521) (33008);
-score = relevance(33008);
- </relevance_info>
  <recid>content: title complete cl author malaga ernie</recid>
 </hit>
 <hit>
@@ -424,14 +285,6 @@ score = relevance(33008);
  </location>
  <count>1</count>
  <relevance>33008</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(3);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.000000) * idf[1](0.082521) (33008);
-score = relevance(33008);
- </relevance_info>
  <recid>content: title d games author watt alan h</recid>
 </hit>
 <hit>
@@ -446,13 +299,6 @@ score = relevance(33008);
  </location>
  <count>1</count>
  <relevance>33008</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(3);
-computer: field=subject vecf[1] += mult(3) / length(1);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.000000) * idf[1](0.082521) (33008);
-score = relevance(33008);
- </relevance_info>
  <recid>content: title java applications strategies for the as author denoncourt don</recid>
 </hit>
 <hit>
@@ -470,14 +316,6 @@ score = relevance(33008);
  </location>
  <count>1</count>
  <relevance>33008</relevance>
- <relevance_info>
-computer: field=subject vecf[1] += mult(3) / length(3);
-computer: field=subject vecf[1] += mult(3) / length(2);
-computer: field=subject vecf[1] += mult(3) / length(2);
-idf[1] = log(((1 + total(100))/termoccur(93));
-computer: relevance += 100000 * vecf[1](4.000000) * idf[1](0.082521) (33008);
-score = relevance(33008);
- </relevance_info>
  <recid>content: title mastering algorithms with c author loudon kyle</recid>
 </hit>
 </show>
