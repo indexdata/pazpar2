@@ -19,6 +19,12 @@
 <md-description>&quot;In response to Special Act No. 99-6.&quot;</md-description>
 <md-medium>book</md-medium></location>
 <relevance>121639</relevance>
+<relevance_info>
+water: field=subject vecf[1] += mult(3) / length(1);
+idf[1] = log(((1 + total(2))/termoccur(2));
+water: relevance += 100000 * vecf[1](3.000000) * idf[1](0.405465) (121639);
+score = relevance(121639);
+</relevance_info>
 <recid>content: title the nitrogen permitting and trading plan for long island sound medium book</recid>
 </hit>
 <hit>
@@ -31,6 +37,13 @@
 <md-date>1872</md-date>
 <md-medium>book</md-medium></location>
 <relevance>78196</relevance>
+<relevance_info>
+water: field=subject vecf[1] += mult(3) / length(2);
+water: field=title vecf[1] += mult(6) / length(14);
+idf[1] = log(((1 + total(2))/termoccur(2));
+water: relevance += 100000 * vecf[1](1.928571) * idf[1](0.405465) (78196);
+score = relevance(78196);
+</relevance_info>
 <recid>content: title report of the water commissioners to the common council of the city of albany medium book</recid>
 </hit>
 </show>

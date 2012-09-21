@@ -27,6 +27,13 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>31823</relevance>
+<relevance_info>
+the: field=title vecf[1] += mult(6) / length(5);
+the: field=description vecf[1] += mult(6) / length(11);
+idf[1] = log(((1 + total(5))/termoccur(5));
+the: relevance += 100000 * vecf[1](1.745455) * idf[1](0.182322) (31823);
+score = relevance(31823);
+</relevance_info>
 <recid>content: title the religious teachers of greece author adam james medium book</recid>
 </hit>
 <hit>
@@ -51,6 +58,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>27348</relevance>
+<relevance_info>
+the: field=title vecf[1] += mult(6) / length(4);
+idf[1] = log(((1 + total(5))/termoccur(5));
+the: relevance += 100000 * vecf[1](1.500000) * idf[1](0.182322) (27348);
+score = relevance(27348);
+</relevance_info>
 <recid>content: title the puget sound region author mairs john w medium book</recid>
 </hit>
 <hit>
@@ -70,6 +83,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>22790</relevance>
+<relevance_info>
+the: field=title-remainder vecf[1] += mult(5) / length(4);
+idf[1] = log(((1 + total(5))/termoccur(5));
+the: relevance += 100000 * vecf[1](1.250000) * idf[1](0.182322) (22790);
+score = relevance(22790);
+</relevance_info>
 <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 <hit>
@@ -87,6 +106,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>10939</relevance>
+<relevance_info>
+the: field=title vecf[1] += mult(6) / length(10);
+idf[1] = log(((1 + total(5))/termoccur(5));
+the: relevance += 100000 * vecf[1](0.600000) * idf[1](0.182322) (10939);
+score = relevance(10939);
+</relevance_info>
 <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>
@@ -104,6 +129,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>6511</relevance>
+<relevance_info>
+the: field=title-remainder vecf[1] += mult(5) / length(14);
+idf[1] = log(((1 + total(5))/termoccur(5));
+the: relevance += 100000 * vecf[1](0.357143) * idf[1](0.182322) (6511);
+score = relevance(6511);
+</relevance_info>
 <recid>content: title computer science technology author medium book</recid>
 </hit>
 </show>

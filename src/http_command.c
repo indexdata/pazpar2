@@ -1137,8 +1137,14 @@ static void show_records(struct http_channel *c, struct http_session *s, int act
         if (ccount > 1)
             wrbuf_printf(c->wrbuf, "<count>%d</count>\n", ccount);
 	if (strstr(sort, "relevance"))
+        {
 	    wrbuf_printf(c->wrbuf, "<relevance>%d</relevance>\n",
                          rec->relevance_score);
+            wrbuf_printf(c->wrbuf, "<relevance_info>\n");
+            wrbuf_xmlputs(c->wrbuf, wrbuf_cstr(rec->relevance_explain1));
+            wrbuf_xmlputs(c->wrbuf, wrbuf_cstr(rec->relevance_explain2));
+	    wrbuf_printf(c->wrbuf, "</relevance_info>\n");
+        }
         wrbuf_puts(c->wrbuf, "<recid>");
         wrbuf_xmlputs(c->wrbuf, rec->recid);
         wrbuf_puts(c->wrbuf, "</recid>\n");

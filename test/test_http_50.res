@@ -26,6 +26,11 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>0</relevance>
+<relevance_info>
+idf[1] = log(((1 + total(1))/termoccur(0));
+louis: relevance += 100000 * vecf[1](0.000000) * idf[1](0.000000) (0);
+score = relevance(0);
+</relevance_info>
 <recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 </show>

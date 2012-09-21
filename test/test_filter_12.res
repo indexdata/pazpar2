@@ -27,6 +27,13 @@
 <md-subject>Talk shows</md-subject>
 <md-description tag="500">Includes index</md-description></location>
 <relevance>51972</relevance>
+<relevance_info>
+the: field=title vecf[1] += mult(6) / length(3);
+the: field=title-remainder vecf[1] += mult(10) / length(9);
+idf[1] = log(((1 + total(12))/termoccur(11));
+the: relevance += 100000 * vecf[1](3.111111) * idf[1](0.167054) (51972);
+score = relevance(51972);
+</relevance_info>
 <recid>content: title the late shift author carter bill medium book</recid>
 </hit>
 <hit>
@@ -44,6 +51,12 @@
 <md-description tag="500">Hebrew and Greek; introductions in English</md-description>
 <md-description tag="500">Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description></location>
 <relevance>33410</relevance>
+<relevance_info>
+the: field=title vecf[1] += mult(6) / length(3);
+idf[1] = log(((1 + total(12))/termoccur(11));
+the: relevance += 100000 * vecf[1](2.000000) * idf[1](0.167054) (33410);
+score = relevance(33410);
+</relevance_info>
 <recid>content: title the computer bible author medium book</recid>
 </hit>
 <hit>
@@ -65,6 +78,13 @@
 <md-description tag="500">Reprint of the 1909 ed., which was issued as the 1904-1906 Gifford lectures</md-description>
 <md-description tag="504">Includes bibliographical references</md-description></location>
 <relevance>29158</relevance>
+<relevance_info>
+the: field=title vecf[1] += mult(6) / length(5);
+the: field=description vecf[1] += mult(6) / length(11);
+idf[1] = log(((1 + total(12))/termoccur(11));
+the: relevance += 100000 * vecf[1](1.745455) * idf[1](0.167054) (29158);
+score = relevance(29158);
+</relevance_info>
 <recid>content: title the religious teachers of greece author adam james medium book</recid>
 </hit>
 <hit>
@@ -86,6 +106,12 @@
 <md-description tag="500">Scale of maps ca. 1:1,000,000</md-description>
 <md-description tag="504">Bibliography: p. 4</md-description></location>
 <relevance>25058</relevance>
+<relevance_info>
+the: field=title vecf[1] += mult(6) / length(4);
+idf[1] = log(((1 + total(12))/termoccur(11));
+the: relevance += 100000 * vecf[1](1.500000) * idf[1](0.167054) (25058);
+score = relevance(25058);
+</relevance_info>
 <recid>content: title the puget sound region author mairs john w medium book</recid>
 </hit>
 <hit>
@@ -102,6 +128,12 @@
 <md-subject>Tomography</md-subject>
 <md-description tag="504">Includes bibliographical references and index</md-description></location>
 <relevance>20881</relevance>
+<relevance_info>
+the: field=title-remainder vecf[1] += mult(5) / length(4);
+idf[1] = log(((1 + total(12))/termoccur(11));
+the: relevance += 100000 * vecf[1](1.250000) * idf[1](0.167054) (20881);
+score = relevance(20881);
+</relevance_info>
 <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 <hit>
@@ -122,6 +154,12 @@
 <md-subject>Imaging systems in medicine</md-subject>
 <md-description tag="504">Includes bibliographical references and index</md-description></location>
 <relevance>16705</relevance>
+<relevance_info>
+the: field=title-remainder vecf[1] += mult(5) / length(5);
+idf[1] = log(((1 + total(12))/termoccur(11));
+the: relevance += 100000 * vecf[1](1.000000) * idf[1](0.167054) (16705);
+score = relevance(16705);
+</relevance_info>
 <recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 <hit>
@@ -141,6 +179,12 @@
 <md-description tag="533">Microfiche</md-description>
 <md-description tag="500">Distributed to depository libraries in microfiche</md-description></location>
 <relevance>13921</relevance>
+<relevance_info>
+the: field=title-remainder vecf[1] += mult(5) / length(6);
+idf[1] = log(((1 + total(12))/termoccur(11));
+the: relevance += 100000 * vecf[1](0.833333) * idf[1](0.167054) (13921);
+score = relevance(13921);
+</relevance_info>
 <recid>content: title dealing with dropouts author paulu nancy medium</recid>
 </hit>
 <hit>
@@ -160,6 +204,12 @@
 <md-description tag="533">Microfiche</md-description>
 <md-description tag="500">Distributed to depository libraries in microfiche</md-description></location>
 <relevance>13364</relevance>
+<relevance_info>
+the: field=title vecf[1] += mult(12) / length(15);
+idf[1] = log(((1 + total(12))/termoccur(11));
+the: relevance += 100000 * vecf[1](0.800000) * idf[1](0.167054) (13364);
+score = relevance(13364);
+</relevance_info>
 <recid>content: title national dissemination model for the i m special program of physical education for the handicapped author medium</recid>
 </hit>
 <hit>
@@ -174,6 +224,12 @@
 <md-author>Wood, Helen M</md-author>
 <md-subject>Computers</md-subject></location>
 <relevance>10023</relevance>
+<relevance_info>
+the: field=title vecf[1] += mult(6) / length(10);
+idf[1] = log(((1 + total(12))/termoccur(11));
+the: relevance += 100000 * vecf[1](0.600000) * idf[1](0.167054) (10023);
+score = relevance(10023);
+</relevance_info>
 <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>
@@ -188,6 +244,12 @@
 <md-date>1977</md-date>
 <md-subject>Optical pattern recognition</md-subject></location>
 <relevance>5966</relevance>
+<relevance_info>
+the: field=title-remainder vecf[1] += mult(5) / length(14);
+idf[1] = log(((1 + total(12))/termoccur(11));
+the: relevance += 100000 * vecf[1](0.357143) * idf[1](0.167054) (5966);
+score = relevance(5966);
+</relevance_info>
 <recid>content: title computer science technology author medium book</recid>
 </hit>
 <hit>
@@ -210,6 +272,12 @@
 <md-description tag="500">&quot;December 1984.&quot;</md-description>
 <md-description tag="500">Includes indexes</md-description></location>
 <relevance>3341</relevance>
+<relevance_info>
+the: field=description vecf[1] += mult(6) / length(30);
+idf[1] = log(((1 + total(12))/termoccur(11));
+the: relevance += 100000 * vecf[1](0.200000) * idf[1](0.167054) (3341);
+score = relevance(3341);
+</relevance_info>
 <recid>content: title technology programs that work author medium book</recid>
 </hit>
 <hit>
@@ -239,6 +307,11 @@
 <md-description tag="504">Includes bibliographical references</md-description>
 <md-description tag="500">&quot;LP 87-403c.&quot;</md-description></location>
 <relevance>0</relevance>
+<relevance_info>
+idf[1] = log(((1 + total(12))/termoccur(11));
+the: relevance += 100000 * vecf[1](0.000000) * idf[1](0.167054) (0);
+score = relevance(0);
+</relevance_info>
 <recid>content: title check this out author seager andrew j medium book</recid>
 </hit>
 </show>

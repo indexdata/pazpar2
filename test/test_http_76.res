@@ -20,6 +20,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>102165</relevance>
+<relevance_info>
+computer: field=title vecf[1] += mult(6) / length(3);
+idf[1] = log(((1 + total(4))/termoccur(3));
+computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.510826) (102165);
+score = relevance(102165);
+</relevance_info>
 <recid>content: title computer science technology author medium book</recid>
 </hit>
 <hit>
@@ -40,6 +46,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>102165</relevance>
+<relevance_info>
+computer: field=title vecf[1] += mult(6) / length(3);
+idf[1] = log(((1 + total(4))/termoccur(3));
+computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.510826) (102165);
+score = relevance(102165);
+</relevance_info>
 <recid>content: title the computer bible author medium book</recid>
 </hit>
 <hit>
@@ -57,6 +69,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>30649</relevance>
+<relevance_info>
+computer: field=title vecf[1] += mult(6) / length(10);
+idf[1] = log(((1 + total(4))/termoccur(3));
+computer: relevance += 100000 * vecf[1](0.600000) * idf[1](0.510826) (30649);
+score = relevance(30649);
+</relevance_info>
 <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>
@@ -76,6 +94,11 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>0</relevance>
+<relevance_info>
+idf[1] = log(((1 + total(4))/termoccur(3));
+computer: relevance += 100000 * vecf[1](0.000000) * idf[1](0.510826) (0);
+score = relevance(0);
+</relevance_info>
 <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 </show>

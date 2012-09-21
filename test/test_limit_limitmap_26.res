@@ -16,6 +16,12 @@
 <md-date>1977</md-date>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
 <relevance>102165</relevance>
+<relevance_info>
+computer: field=title vecf[1] += mult(6) / length(3);
+idf[1] = log(((1 + total(4))/termoccur(3));
+computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.510826) (102165);
+score = relevance(102165);
+</relevance_info>
 <recid>content: title computer science technology</recid>
 </hit>
 <hit>
@@ -30,6 +36,12 @@
 <md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
 <relevance>102165</relevance>
+<relevance_info>
+computer: field=title vecf[1] += mult(6) / length(3);
+idf[1] = log(((1 + total(4))/termoccur(3));
+computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.510826) (102165);
+score = relevance(102165);
+</relevance_info>
 <recid>content: title the computer bible</recid>
 </hit>
 <hit>
@@ -43,6 +55,12 @@
 <md-author>Wood, Helen M</md-author>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
 <relevance>30649</relevance>
+<relevance_info>
+computer: field=title vecf[1] += mult(6) / length(10);
+idf[1] = log(((1 + total(4))/termoccur(3));
+computer: relevance += 100000 * vecf[1](0.600000) * idf[1](0.510826) (30649);
+score = relevance(30649);
+</relevance_info>
 <recid>content: title the use of passwords for controlled access to computer resources author wood helen m</recid>
 </hit>
 <hit>
@@ -56,6 +74,11 @@
 <md-date>1977</md-date>
 <md-test-usersetting>XXXXXXXXXX</md-test-usersetting></location>
 <relevance>0</relevance>
+<relevance_info>
+idf[1] = log(((1 + total(4))/termoccur(3));
+computer: relevance += 100000 * vecf[1](0.000000) * idf[1](0.510826) (0);
+score = relevance(0);
+</relevance_info>
 <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine</recid>
 </hit>
 </show>

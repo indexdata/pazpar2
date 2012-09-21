@@ -18,6 +18,13 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>72241</relevance>
+<relevance_info>
+computer: field=title vecf[1] += mult(6) / length(10);
+computer: field=subject vecf[1] += mult(3) / length(1);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * vecf[1](3.600000) * idf[1](0.200671) (72241);
+score = relevance(72241);
+</relevance_info>
 <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>
@@ -39,6 +46,13 @@
         YYYYYYYYY</md-test-usersetting-2></location>
 <count>2</count>
 <relevance>48160</relevance>
+<relevance_info>
+computer: field=title vecf[1] += mult(6) / length(5);
+computer: field=title vecf[1] += mult(6) / length(5);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * vecf[1](2.400000) * idf[1](0.200671) (48160);
+score = relevance(48160);
+</relevance_info>
 <recid>content: title how to program a computer author jack collins medium book</recid>
 </hit>
 <hit>
@@ -55,6 +69,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>40134</relevance>
+<relevance_info>
+computer: field=title vecf[1] += mult(6) / length(3);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.200671) (40134);
+score = relevance(40134);
+</relevance_info>
 <recid>content: title the computer bible author medium book</recid>
 </hit>
 <hit>
@@ -70,6 +90,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>30100</relevance>
+<relevance_info>
+computer: field=title vecf[1] += mult(6) / length(4);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * vecf[1](1.500000) * idf[1](0.200671) (30100);
+score = relevance(30100);
+</relevance_info>
 <recid>content: title computer science technology author medium book</recid>
 </hit>
 <hit>
@@ -85,6 +111,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>17200</relevance>
+<relevance_info>
+computer: field=title vecf[1] += mult(6) / length(7);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * vecf[1](0.857143) * idf[1](0.200671) (17200);
+score = relevance(17200);
+</relevance_info>
 <recid>content: title a plan for community college computer development author medium book</recid>
 </hit>
 <hit>
@@ -104,6 +136,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>17200</relevance>
+<relevance_info>
+computer: field=title vecf[1] += mult(6) / length(7);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * vecf[1](0.857143) * idf[1](0.200671) (17200);
+score = relevance(17200);
+</relevance_info>
 <recid>content: title washington metropolitan area rail computer feasibility study author englund carl r medium book</recid>
 </hit>
 <hit>
@@ -124,6 +162,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>16722</relevance>
+<relevance_info>
+computer: field=title-remainder vecf[1] += mult(5) / length(6);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * vecf[1](0.833333) * idf[1](0.200671) (16722);
+score = relevance(16722);
+</relevance_info>
 <recid>content: title the puget sound region author mairs john w medium book</recid>
 </hit>
 <hit>
@@ -141,6 +185,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>12040</relevance>
+<relevance_info>
+computer: field=title vecf[1] += mult(6) / length(10);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * vecf[1](0.600000) * idf[1](0.200671) (12040);
+score = relevance(12040);
+</relevance_info>
 <recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 <hit>
@@ -158,6 +208,11 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>0</relevance>
+<relevance_info>
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * vecf[1](0.000000) * idf[1](0.200671) (0);
+score = relevance(0);
+</relevance_info>
 <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 </show>

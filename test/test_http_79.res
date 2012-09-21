@@ -27,6 +27,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>60819</relevance>
+<relevance_info>
+adam: field=author vecf[1] += mult(3) / length(2);
+idf[1] = log(((1 + total(2))/termoccur(2));
+adam: relevance += 100000 * vecf[1](1.500000) * idf[1](0.405465) (60819);
+score = relevance(60819);
+</relevance_info>
 <recid>content: title the religious teachers of greece author adam james medium book</recid>
 </hit>
 <hit>
@@ -49,6 +55,12 @@
 <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2></location>
 <relevance>40546</relevance>
+<relevance_info>
+adam: field=author vecf[1] += mult(3) / length(3);
+idf[1] = log(((1 + total(2))/termoccur(2));
+adam: relevance += 100000 * vecf[1](1.000000) * idf[1](0.405465) (40546);
+score = relevance(40546);
+</relevance_info>
 <recid>content: title four psalms author smith george adam medium book</recid>
 </hit>
 </show>
