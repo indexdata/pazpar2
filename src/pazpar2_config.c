@@ -656,7 +656,7 @@ static struct conf_service *service_create_static(struct conf_server *server,
             if (default_sort && strcmp(default_sort, "")) {
                 service->default_sort = nmem_strdup(service->nmem, default_sort);
                 yaz_log(YLOG_LOG, "service %s: default sort order configured to: %s",
-                        service_id, default_sort);
+                        service_id ? service_id : "unnamed", default_sort);
             }
             else
             {
