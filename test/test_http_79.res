@@ -30,7 +30,8 @@
  <count>1</count>
  <relevance>60819</relevance>
  <relevance_info>
-adam: field=author vecf[1] += mult(3) / length(2);
+adam: mult[1] += local_mult(3) / (1+log2(1+lead_decay(0.000000) * length(0)));
+adam: field=author vecf[1] += mult[1](3) / length(2);
 idf[1] = log(((1 + total(2))/termoccur(2));
 adam: relevance += 100000 * vecf[1](1.500000) * idf[1](0.405465) (60819);
 score = relevance(60819);
@@ -60,7 +61,8 @@ score = relevance(60819);
  <count>1</count>
  <relevance>40546</relevance>
  <relevance_info>
-adam: field=author vecf[1] += mult(3) / length(3);
+adam: mult[1] += local_mult(3) / (1+log2(1+lead_decay(0.000000) * length(2)));
+adam: field=author vecf[1] += mult[1](3) / length(3);
 idf[1] = log(((1 + total(2))/termoccur(2));
 adam: relevance += 100000 * vecf[1](1.000000) * idf[1](0.405465) (40546);
 score = relevance(40546);

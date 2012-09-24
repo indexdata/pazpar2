@@ -19,7 +19,8 @@
  <count>1</count>
  <relevance>11882</relevance>
  <relevance_info>
-computer: field=description vecf[1] += mult(3) / length(35);
+computer: mult[1] += local_mult(3) / (1+log2(1+lead_decay(0.000000) * length(5)));
+computer: field=description vecf[1] += mult[1](3) / length(35);
 idf[1] = log(((1 + total(3))/termoccur(1));
 computer: relevance += 100000 * vecf[1](0.085714) * idf[1](1.386294) (11882);
 score = relevance(11882);

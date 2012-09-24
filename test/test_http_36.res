@@ -23,7 +23,8 @@
  <count>1</count>
  <relevance>50262</relevance>
  <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(3);
+computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
+computer: field=title vecf[1] += mult[1](6) / length(3);
 idf[1] = log(((1 + total(8))/termoccur(7));
 computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.251314) (50262);
 score = relevance(50262);
@@ -51,7 +52,8 @@ score = relevance(50262);
  <count>1</count>
  <relevance>50262</relevance>
  <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(3);
+computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(1)));
+computer: field=title vecf[1] += mult[1](6) / length(3);
 idf[1] = log(((1 + total(8))/termoccur(7));
 computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.251314) (50262);
 score = relevance(50262);
@@ -78,7 +80,8 @@ score = relevance(50262);
  <count>1</count>
  <relevance>21541</relevance>
  <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(7);
+computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(5)));
+computer: field=title vecf[1] += mult[1](6) / length(7);
 idf[1] = log(((1 + total(8))/termoccur(7));
 computer: relevance += 100000 * vecf[1](0.857143) * idf[1](0.251314) (21541);
 score = relevance(21541);
@@ -107,7 +110,8 @@ score = relevance(21541);
  <count>1</count>
  <relevance>21541</relevance>
  <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(7);
+computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
+computer: field=title vecf[1] += mult[1](6) / length(7);
 idf[1] = log(((1 + total(8))/termoccur(7));
 computer: relevance += 100000 * vecf[1](0.857143) * idf[1](0.251314) (21541);
 score = relevance(21541);
@@ -139,7 +143,8 @@ score = relevance(21541);
  <count>1</count>
  <relevance>20942</relevance>
  <relevance_info>
-computer: field=title-remainder vecf[1] += mult(5) / length(6);
+computer: mult[1] += local_mult(5) / (1+log2(1+lead_decay(0.000000) * length(4)));
+computer: field=title-remainder vecf[1] += mult[1](5) / length(6);
 idf[1] = log(((1 + total(8))/termoccur(7));
 computer: relevance += 100000 * vecf[1](0.833333) * idf[1](0.251314) (20942);
 score = relevance(20942);
@@ -170,7 +175,8 @@ score = relevance(20942);
  <count>1</count>
  <relevance>15078</relevance>
  <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(10);
+computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
+computer: field=title vecf[1] += mult[1](6) / length(10);
 idf[1] = log(((1 + total(8))/termoccur(7));
 computer: relevance += 100000 * vecf[1](0.600000) * idf[1](0.251314) (15078);
 score = relevance(15078);
@@ -195,7 +201,8 @@ score = relevance(15078);
  <count>1</count>
  <relevance>15078</relevance>
  <relevance_info>
-computer: field=title vecf[1] += mult(6) / length(10);
+computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(8)));
+computer: field=title vecf[1] += mult[1](6) / length(10);
 idf[1] = log(((1 + total(8))/termoccur(7));
 computer: relevance += 100000 * vecf[1](0.600000) * idf[1](0.251314) (15078);
 score = relevance(15078);

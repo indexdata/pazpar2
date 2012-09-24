@@ -30,9 +30,12 @@
  <count>1</count>
  <relevance>374298</relevance>
  <relevance_info>
-teachers: field=title vecf[1] += mult(6) / length(5);
-greece: field=title vecf[2] += mult(6) / length(5);
-greece: field=subject vecf[2] += mult(3) / length(1);
+teachers: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(2)));
+greece: mult[2] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
+teachers: field=title vecf[1] += mult[1](6) / length(5);
+greece: field=title vecf[2] += mult[2](6) / length(5);
+greece: mult[2] += local_mult(3) / (1+log2(1+lead_decay(0.000000) * length(0)));
+greece: field=subject vecf[2] += mult[2](3) / length(1);
 idf[1] = log(((1 + total(1))/termoccur(1));
 teachers: relevance += 100000 * vecf[1](1.200000) * idf[1](0.693147) (83177);
 idf[2] = log(((1 + total(1))/termoccur(1));
