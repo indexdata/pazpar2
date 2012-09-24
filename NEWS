@@ -1,3 +1,4 @@
+--- 1.6.21 2012/09/24
 
 Rank tweak: follow=number will increase mult by number if two terms
 occur next to each other; number-1 if they are one term apart , .. 0

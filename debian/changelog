@@ -1,3 +1,9 @@
+pazpar2 (1.6.21-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@debian-testing>  Mon, 24 Sep 2012 19:47:58 +0200
+
 pazpar2 (1.6.20-1indexdata) unstable; urgency=low
 
   * Upstream.
