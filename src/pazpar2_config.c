@@ -134,6 +134,9 @@ struct conf_service *service_init(struct conf_server *server,
     service->z3950_operation_timeout = 30;
     service->rank_cluster = 1;
     service->rank_debug = 0;
+    service->rank_follow = 0;
+    service->rank_lead = 0;
+    service->rank_length = 2;
 
     service->charsets = 0;
 
@@ -622,6 +625,9 @@ static struct conf_service *service_create_static(struct conf_server *server,
         {
             char *rank_cluster = (char *) xmlGetProp(n, (xmlChar *) "cluster");
             char *rank_debug = (char *) xmlGetProp(n, (xmlChar *) "debug");
+            char *rank_follow = (char *) xmlGetProp(n, (xmlChar *) "follow");
+            char *rank_lead = (char *) xmlGetProp(n, (xmlChar *) "lead");
+            char *rank_length= (char *) xmlGetProp(n, (xmlChar *) "length");
             if (rank_cluster)
             {
                 if (!strcmp(rank_cluster, "yes"))
@@ -646,8 +652,33 @@ static struct conf_service *service_create_static(struct conf_server *server,
                     return 0;
                 }
             }
+            if (rank_follow)
+            {
+                service->rank_follow = atoi(rank_follow);
+            }
+            if (rank_lead)
+            {
+                service->rank_lead = atoi(rank_lead);
+            }
+            if (rank_length)
+            {
+                if (!strcmp(rank_length, "linear"))
+                    service->rank_length = 2;
+                else if (!strcmp(rank_length, "log"))
+                    service->rank_length = 1; 
+                else if (!strcmp(rank_length, "none"))
+                    service->rank_length = 0;
+                else
+                {
+                    yaz_log(YLOG_FATAL, "service: rank@length linear|log|none");
+                    return 0;
+                }
+            }
             xmlFree(rank_cluster);
             xmlFree(rank_debug);
+            xmlFree(rank_follow);
+            xmlFree(rank_lead);
+            xmlFree(rank_length);
         }
         else if (!strcmp((const char *) n->name, "sort-default"))
         {

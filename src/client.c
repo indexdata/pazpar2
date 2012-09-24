@@ -1311,7 +1311,10 @@ int client_parse_query(struct client *cl, const char *query,
     {
         // Initialize relevance structure with query terms
         se->relevance = relevance_create_ccl(se->service->charsets, cn,
-                                             se->service->rank_cluster);
+                                             se->service->rank_cluster,
+                                             se->service->rank_follow,
+                                             se->service->rank_lead,
+                                             se->service->rank_length);
     }
     ccl_rpn_delete(cn);
     return ret_value;

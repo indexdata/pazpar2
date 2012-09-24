@@ -1,3 +1,18 @@
+
+Rank tweak: follow=number will increase mult by number if two terms
+occur next to each other; number-1 if they are one term apart , .. 0
+if they are number a part (all in order). Default is 0 (following
+terms has no effect).
+
+Rank tweak: lead=number will increase mult by number if term is first
+term in field, number-1 if second, ... 0 if term is at offset
+number of more. Default value is 0 (position irrelevant).
+
+Rank tweak: length=strategy. length="linear" if mult is to be divided
+by length (existing, default behavior), length="log" if mult is to be 
+divided by log2(1+length), length="none" if mult is not to be affected
+by length.
+
 --- 1.6.20 2012/09/21
 
 Rank algorithm details may be printed as part of show reseponse in

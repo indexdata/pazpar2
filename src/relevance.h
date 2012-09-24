@@ -30,7 +30,8 @@ struct reclist;
 
 struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
                                        struct ccl_rpn_node *query,
-                                       int rank_cluster);
+                                       int rank_cluster, int follow_boost,
+                                       int lead_boost, int length_divide);
 void relevance_destroy(struct relevance **rp);
 void relevance_newrec(struct relevance *r, struct record_cluster *cluster);
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,

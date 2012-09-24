@@ -31,10 +31,14 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 struct relevance
 {
     int *doc_frequency_vec;
+    int *term_frequency_vec_tmp;
     int vec_len;
     struct word_entry *entries;
     pp2_charset_token_t prt;
     int rank_cluster;
+    int follow_boost;
+    int lead_boost;
+    int length_divide;
     NMEM nmem;
 };
 
@@ -42,17 +46,22 @@ struct word_entry {
     const char *norm_str;
     const char *display_str;
     int termno;
+    int follow_boost;
     char *ccl_field;
     struct word_entry *next;
 };
 
-static int word_entry_match(struct word_entry *entries, const char *norm_str,
+static int word_entry_match(struct relevance *r, const char *norm_str,
                             const char *rank, int *mult)
 {
-    for (; entries; entries = entries->next)
+    int i = 1;
+    struct word_entry *entries = r->entries;
+    for (; entries; entries = entries->next, i++)
     {
         if (*norm_str && !strcmp(norm_str, entries->norm_str))
         {
+            int extra = r->follow_boost;
+            struct word_entry *e_follow = entries;
             const char *cp = 0;
             int no_read = 0;
             sscanf(rank, "%d%n", mult, &no_read);
@@ -65,8 +74,14 @@ static int word_entry_match(struct word_entry *entries, const char *norm_str,
                     memcmp(entries->ccl_field, rank, cp - rank) == 0)
                     *mult = atoi(cp + 1);
             }
+            (*mult) += entries->follow_boost;
+            while ((e_follow = e_follow->next) != 0 && extra > 0)
+            {
+                e_follow->follow_boost = extra--;
+            }
             return entries->termno;
         }
+        entries->follow_boost = 0;
     }
     return 0;
 }
@@ -75,39 +90,57 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
                           const char *words, const char *rank,
                           const char *name)
 {
-    int *mult = cluster->term_frequency_vec_tmp;
+    int *mult = r->term_frequency_vec_tmp;
     const char *norm_str;
     int i, length = 0;
-    struct word_entry *e = r->entries;
+    int lead_mult = r->lead_boost;
+    struct word_entry *e;
     WRBUF w = cluster->relevance_explain1;
 
     pp2_charset_token_first(r->prt, words, 0);
-    for (i = 1; i < r->vec_len; i++)
+    for (e = r->entries, i = 1; i < r->vec_len; i++, e = e->next)
+    {
         mult[i] = 0;
+        e->follow_boost = 0;
+    }
 
     assert(rank);
     while ((norm_str = pp2_charset_token_next(r->prt)))
     {
         int local_mult = 0;
-        int res = word_entry_match(r->entries, norm_str, rank, &local_mult);
+        int res = word_entry_match(r, norm_str, rank, &local_mult);
         if (res)
         {
             assert(res < r->vec_len);
-            mult[res] += local_mult;
+            mult[res] += local_mult + lead_mult;
         }
+        if (lead_mult > 0)
+            --lead_mult;
         length++;
     }
 
-    for (i = 1; i < r->vec_len; i++)
+    for (e = r->entries, i = 1; i < r->vec_len; i++, e = e->next)
     {
-        if (length > 0 && mult[i] > 0) /* only add if non-empty */
+        if (length == 0 || mult[i] == 0)
+            continue;
+        wrbuf_printf(w, "%s: field=%s vecf[%d] += mult(%d)",
+                     e->display_str, name, i, mult[i]);
+        switch (r->length_divide)
         {
-            wrbuf_printf(w, "%s: field=%s vecf[%d] += mult(%d) / length(%d);\n",
-                         e->display_str, name, i, mult[i], length);
+        case 0:
+            wrbuf_printf(w, ";\n");
+            cluster->term_frequency_vecf[i] += (double) mult[i];
+            break;
+        case 1:
+            wrbuf_printf(w, " / log2(1+length(%d));\n", length);
+            cluster->term_frequency_vecf[i] +=
+                (double) mult[i] / log2(1 + length);
+            break;
+        case 2:
+            wrbuf_printf(w, " / length(%d);\n", length);
             cluster->term_frequency_vecf[i] += (double) mult[i] / length;
         }
         cluster->term_frequency_vec[i] += mult[i];
-        e = e->next;
     }
 
     cluster->term_frequency_vec[0] += length;
@@ -159,7 +192,9 @@ static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
 
 struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
                                        struct ccl_rpn_node *query,
-                                       int rank_cluster)
+                                       int rank_cluster,
+                                       int follow_boost, int lead_boost,
+                                       int length_divide)
 {
     NMEM nmem = nmem_create();
     struct relevance *res = nmem_malloc(nmem, sizeof(*res));
@@ -169,6 +204,9 @@ struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
     res->entries = 0;
     res->vec_len = 1;
     res->rank_cluster = rank_cluster;
+    res->follow_boost = follow_boost;
+    res->lead_boost = lead_boost;
+    res->length_divide = length_divide;
     res->prt = pp2_charset_token_create(pft, "relevance");
 
     pull_terms(res, query);
@@ -176,6 +214,11 @@ struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
     res->doc_frequency_vec = nmem_malloc(nmem, res->vec_len * sizeof(int));
     for (i = 0; i < res->vec_len; i++)
         res->doc_frequency_vec[i] = 0;
+
+    // worker array
+    res->term_frequency_vec_tmp =
+        nmem_malloc(res->nmem,
+                    res->vec_len * sizeof(*res->term_frequency_vec_tmp));
     return res;
 }
 
@@ -208,11 +251,6 @@ void relevance_newrec(struct relevance *r, struct record_cluster *rec)
                         r->vec_len * sizeof(*rec->term_frequency_vecf));
         for (i = 0; i < r->vec_len; i++)
             rec->term_frequency_vecf[i] = 0.0;
-
-        // for relevance_countwords (so we don't have to xmalloc/xfree)
-        rec->term_frequency_vec_tmp =
-            nmem_malloc(r->nmem,
-                        r->vec_len * sizeof(*rec->term_frequency_vec_tmp));
     }
 }
 
