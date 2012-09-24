@@ -119,7 +119,7 @@ struct conf_service
     int rank_cluster;
     int rank_debug;
     int rank_follow;
-    int rank_lead;
+    double rank_lead;
     int rank_length;
     char *default_sort;
 

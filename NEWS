@@ -4,9 +4,10 @@ occur next to each other; number-1 if they are one term apart , .. 0
 if they are number a part (all in order). Default is 0 (following
 terms has no effect).
 
-Rank tweak: lead=number will increase mult by number if term is first
-term in field, number-1 if second, ... 0 if term is at offset
-number of more. Default value is 0 (position irrelevant).
+Rank tweak: lead=k will divide mult by 1 + log2(1+k*l) where k is
+value given by lead and l is length from beginning of field where
+term occurs (l=0 for first term, l=1 for second term, ..). Default
+value of k is 0.0.
 
 Rank tweak: length=strategy. length="linear" if mult is to be divided
 by length (existing, default behavior), length="log" if mult is to be 

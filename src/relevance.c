@@ -37,7 +37,7 @@ struct relevance
     pp2_charset_token_t prt;
     int rank_cluster;
     int follow_boost;
-    int lead_boost;
+    double lead_decay;
     int length_divide;
     NMEM nmem;
 };
@@ -51,8 +51,9 @@ struct word_entry {
     struct word_entry *next;
 };
 
-static int word_entry_match(struct relevance *r, const char *norm_str,
-                            const char *rank, int *mult)
+static struct word_entry *word_entry_match(struct relevance *r,
+                                           const char *norm_str,
+                                           const char *rank, int *mult)
 {
     int i = 1;
     struct word_entry *entries = r->entries;
@@ -79,7 +80,7 @@ static int word_entry_match(struct relevance *r, const char *norm_str,
             {
                 e_follow->follow_boost = extra--;
             }
-            return entries->termno;
+            return entries;
         }
         entries->follow_boost = 0;
     }
@@ -93,7 +94,7 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
     int *mult = r->term_frequency_vec_tmp;
     const char *norm_str;
     int i, length = 0;
-    int lead_mult = r->lead_boost;
+    double lead_decay = r->lead_decay;
     struct word_entry *e;
     WRBUF w = cluster->relevance_explain1;
 
@@ -108,14 +109,14 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
     while ((norm_str = pp2_charset_token_next(r->prt)))
     {
         int local_mult = 0;
-        int res = word_entry_match(r, norm_str, rank, &local_mult);
-        if (res)
+        e = word_entry_match(r, norm_str, rank, &local_mult);
+        if (e)
         {
+            int res = e->termno;
             assert(res < r->vec_len);
-            mult[res] += local_mult + lead_mult;
+            mult[res] += local_mult / (1 + log2(1 + lead_decay * length));
+            wrbuf_printf(w, "%s: mult[%d] += local_mult(%d) / (1+log2(1+lead_decay(%f) * length(%d)));\n", e->display_str, res, local_mult, lead_decay, length);
         }
-        if (lead_mult > 0)
-            --lead_mult;
         length++;
     }
 
@@ -123,8 +124,8 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
     {
         if (length == 0 || mult[i] == 0)
             continue;
-        wrbuf_printf(w, "%s: field=%s vecf[%d] += mult(%d)",
-                     e->display_str, name, i, mult[i]);
+        wrbuf_printf(w, "%s: field=%s vecf[%d] += mult[%d](%d)",
+                     e->display_str, name, i, i, mult[i]);
         switch (r->length_divide)
         {
         case 0:
@@ -193,7 +194,7 @@ static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
 struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
                                        struct ccl_rpn_node *query,
                                        int rank_cluster,
-                                       int follow_boost, int lead_boost,
+                                       int follow_boost, double lead_decay,
                                        int length_divide)
 {
     NMEM nmem = nmem_create();
@@ -205,7 +206,7 @@ struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
     res->vec_len = 1;
     res->rank_cluster = rank_cluster;
     res->follow_boost = follow_boost;
-    res->lead_boost = lead_boost;
+    res->lead_decay = lead_decay;
     res->length_divide = length_divide;
     res->prt = pp2_charset_token_create(pft, "relevance");
 

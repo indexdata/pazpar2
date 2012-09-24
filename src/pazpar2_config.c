@@ -135,7 +135,7 @@ struct conf_service *service_init(struct conf_server *server,
     service->rank_cluster = 1;
     service->rank_debug = 0;
     service->rank_follow = 0;
-    service->rank_lead = 0;
+    service->rank_lead = 0.0;
     service->rank_length = 2;
 
     service->charsets = 0;
@@ -658,7 +658,7 @@ static struct conf_service *service_create_static(struct conf_server *server,
             }
             if (rank_lead)
             {
-                service->rank_lead = atoi(rank_lead);
+                service->rank_lead = atof(rank_lead);
             }
             if (rank_length)
             {
