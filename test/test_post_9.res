@@ -14,8 +14,9 @@
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(3))/termoccur(0));
-computer: relevance += 100000 * vecf[1](0.000000) * idf[1](0.000000) (0);
+computer: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title bibliography of maine geology author medium book</recid>
@@ -29,8 +30,9 @@ score = relevance(0);
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(3))/termoccur(0));
-computer: relevance += 100000 * vecf[1](0.000000) * idf[1](0.000000) (0);
+computer: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title groundwater resource maps county series author medium book</recid>
@@ -44,8 +46,9 @@ score = relevance(0);
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(3))/termoccur(0));
-computer: relevance += 100000 * vecf[1](0.000000) * idf[1](0.000000) (0);
+computer: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title oil gas drilling author medium book</recid>

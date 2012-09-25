@@ -30,13 +30,16 @@
  <count>1</count>
  <relevance>31823</relevance>
  <relevance_info>
-the: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
-the: field=title vecf[1] += mult[1](6) / length(5);
-the: mult[1] += local_mult(3) / (1+log2(1+lead_decay(0.000000) * length(2)));
-the: mult[1] += local_mult(3) / (1+log2(1+lead_decay(0.000000) * length(8)));
-the: field=description vecf[1] += mult[1](6) / length(11);
+field=title content=The religious teachers of Greece.;
+the: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
+the: tf[1] += w[1](6) / length(5) (1.200000);
+field=description content=Reprint of the 1909 ed., which was issued as the  ...;
+the: w[1] += w(3) / (1+log2(1+lead_decay(0.000000) * length(2)));
+the: w[1] += w(3) / (1+log2(1+lead_decay(0.000000) * length(8)));
+the: tf[1] += w[1](6) / length(11) (1.745455);
+relevance = 0;
 idf[1] = log(((1 + total(5))/termoccur(5));
-the: relevance += 100000 * vecf[1](1.745455) * idf[1](0.182322) (31823);
+the: relevance += 100000 * tf[1](1.745455) * idf[1](0.182322) (31823);
 score = relevance(31823);
  </relevance_info>
  <recid>content: title the religious teachers of greece author adam james medium book</recid>
@@ -66,10 +69,12 @@ score = relevance(31823);
  <count>1</count>
  <relevance>27348</relevance>
  <relevance_info>
-the: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
-the: field=title vecf[1] += mult[1](6) / length(4);
+field=title content=The Puget Sound Region :;
+the: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
+the: tf[1] += w[1](6) / length(4) (1.500000);
+relevance = 0;
 idf[1] = log(((1 + total(5))/termoccur(5));
-the: relevance += 100000 * vecf[1](1.500000) * idf[1](0.182322) (27348);
+the: relevance += 100000 * tf[1](1.500000) * idf[1](0.182322) (27348);
 score = relevance(27348);
  </relevance_info>
  <recid>content: title the puget sound region author mairs john w medium book</recid>
@@ -94,10 +99,12 @@ score = relevance(27348);
  <count>1</count>
  <relevance>22790</relevance>
  <relevance_info>
-the: mult[1] += local_mult(5) / (1+log2(1+lead_decay(0.000000) * length(2)));
-the: field=title-remainder vecf[1] += mult[1](5) / length(4);
+field=title-remainder content=proceedings of the workshop ... /;
+the: w[1] += w(5) / (1+log2(1+lead_decay(0.000000) * length(2)));
+the: tf[1] += w[1](5) / length(4) (1.250000);
+relevance = 0;
 idf[1] = log(((1 + total(5))/termoccur(5));
-the: relevance += 100000 * vecf[1](1.250000) * idf[1](0.182322) (22790);
+the: relevance += 100000 * tf[1](1.250000) * idf[1](0.182322) (22790);
 score = relevance(22790);
  </relevance_info>
  <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
@@ -120,10 +127,12 @@ score = relevance(22790);
  <count>1</count>
  <relevance>10939</relevance>
  <relevance_info>
-the: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
-the: field=title vecf[1] += mult[1](6) / length(10);
+field=title content=The use of passwords for controlled access to com ...;
+the: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
+the: tf[1] += w[1](6) / length(10) (0.600000);
+relevance = 0;
 idf[1] = log(((1 + total(5))/termoccur(5));
-the: relevance += 100000 * vecf[1](0.600000) * idf[1](0.182322) (10939);
+the: relevance += 100000 * tf[1](0.600000) * idf[1](0.182322) (10939);
 score = relevance(10939);
  </relevance_info>
  <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
@@ -146,10 +155,12 @@ score = relevance(10939);
  <count>1</count>
  <relevance>6511</relevance>
  <relevance_info>
-the: mult[1] += local_mult(5) / (1+log2(1+lead_decay(0.000000) * length(6)));
-the: field=title-remainder vecf[1] += mult[1](5) / length(14);
+field=title-remainder content=proceedings of a workshop held at the National Bu ...;
+the: w[1] += w(5) / (1+log2(1+lead_decay(0.000000) * length(6)));
+the: tf[1] += w[1](5) / length(14) (0.357143);
+relevance = 0;
 idf[1] = log(((1 + total(5))/termoccur(5));
-the: relevance += 100000 * vecf[1](0.357143) * idf[1](0.182322) (6511);
+the: relevance += 100000 * tf[1](0.357143) * idf[1](0.182322) (6511);
 score = relevance(6511);
  </relevance_info>
  <recid>content: title computer science technology author medium book</recid>

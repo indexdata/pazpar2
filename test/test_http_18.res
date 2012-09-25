@@ -19,10 +19,12 @@
  <count>1</count>
  <relevance>11882</relevance>
  <relevance_info>
-computer: mult[1] += local_mult(3) / (1+log2(1+lead_decay(0.000000) * length(5)));
-computer: field=description vecf[1] += mult[1](3) / length(35);
+field=description content=This data base is a computer based bibliography o ...;
+computer: w[1] += w(3) / (1+log2(1+lead_decay(0.000000) * length(5)));
+computer: tf[1] += w[1](3) / length(35) (0.085714);
+relevance = 0;
 idf[1] = log(((1 + total(3))/termoccur(1));
-computer: relevance += 100000 * vecf[1](0.085714) * idf[1](1.386294) (11882);
+computer: relevance += 100000 * tf[1](0.085714) * idf[1](1.386294) (11882);
 score = relevance(11882);
  </relevance_info>
  <recid>content: title bibliography of maine geology author medium book</recid>
@@ -41,8 +43,9 @@ score = relevance(11882);
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(3))/termoccur(1));
-computer: relevance += 100000 * vecf[1](0.000000) * idf[1](1.386294) (0);
+computer: relevance += 100000 * tf[1](0.000000) * idf[1](1.386294) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title groundwater resource maps county series author medium book</recid>
@@ -61,8 +64,9 @@ score = relevance(0);
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(3))/termoccur(1));
-computer: relevance += 100000 * vecf[1](0.000000) * idf[1](1.386294) (0);
+computer: relevance += 100000 * tf[1](0.000000) * idf[1](1.386294) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title oil gas drilling author medium book</recid>

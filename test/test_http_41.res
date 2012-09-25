@@ -14,8 +14,9 @@
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(8))/termoccur(0));
-the: relevance += 100000 * vecf[1](0.000000) * idf[1](0.000000) (0);
+the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title applied geology file author medium book</recid>
@@ -29,8 +30,9 @@ score = relevance(0);
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(8))/termoccur(0));
-the: relevance += 100000 * vecf[1](0.000000) * idf[1](0.000000) (0);
+the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title electric log library author medium book</recid>
@@ -44,8 +46,9 @@ score = relevance(0);
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(8))/termoccur(0));
-the: relevance += 100000 * vecf[1](0.000000) * idf[1](0.000000) (0);
+the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title isotopic dates of rocks and minerals author medium book</recid>
@@ -59,8 +62,9 @@ score = relevance(0);
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(8))/termoccur(0));
-the: relevance += 100000 * vecf[1](0.000000) * idf[1](0.000000) (0);
+the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title mine map index author medium book</recid>
@@ -74,8 +78,9 @@ score = relevance(0);
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(8))/termoccur(0));
-the: relevance += 100000 * vecf[1](0.000000) * idf[1](0.000000) (0);
+the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title utah crib file author medium book</recid>
@@ -89,8 +94,9 @@ score = relevance(0);
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(8))/termoccur(0));
-the: relevance += 100000 * vecf[1](0.000000) * idf[1](0.000000) (0);
+the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title utah earthquake epicenters author medium book</recid>
@@ -104,8 +110,9 @@ score = relevance(0);
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(8))/termoccur(0));
-the: relevance += 100000 * vecf[1](0.000000) * idf[1](0.000000) (0);
+the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title utah geologic map bibliography author medium book</recid>
@@ -119,8 +126,9 @@ score = relevance(0);
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(8))/termoccur(0));
-the: relevance += 100000 * vecf[1](0.000000) * idf[1](0.000000) (0);
+the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title utah geological and mineral survey publications author medium book</recid>

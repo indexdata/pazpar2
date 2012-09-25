@@ -14,10 +14,12 @@
  <count>1</count>
  <relevance>86304</relevance>
  <relevance_info>
-utah: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
-utah: field=title vecf[1] += mult[1](6) / length(2);
+field=title content=UTAH GEOCHROMOMETRY;
+utah: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
+utah: tf[1] += w[1](6) / length(2) (3.000000);
+relevance = 0;
 idf[1] = log(((1 + total(3))/termoccur(3));
-utah: relevance += 100000 * vecf[1](3.000000) * idf[1](0.287682) (86304);
+utah: relevance += 100000 * tf[1](3.000000) * idf[1](0.287682) (86304);
 score = relevance(86304);
  </relevance_info>
  <recid>content: title utah geochromometry author medium book</recid>
@@ -31,10 +33,12 @@ score = relevance(86304);
  <count>1</count>
  <relevance>57536</relevance>
  <relevance_info>
-utah: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
-utah: field=title vecf[1] += mult[1](6) / length(3);
+field=title content=UTAH EARTHQUAKE EPICENTERS;
+utah: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
+utah: tf[1] += w[1](6) / length(3) (2.000000);
+relevance = 0;
 idf[1] = log(((1 + total(3))/termoccur(3));
-utah: relevance += 100000 * vecf[1](2.000000) * idf[1](0.287682) (57536);
+utah: relevance += 100000 * tf[1](2.000000) * idf[1](0.287682) (57536);
 score = relevance(57536);
  </relevance_info>
  <recid>content: title utah earthquake epicenters author medium book</recid>
@@ -48,10 +52,12 @@ score = relevance(57536);
  <count>1</count>
  <relevance>28768</relevance>
  <relevance_info>
-utah: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
-utah: field=title vecf[1] += mult[1](6) / length(6);
+field=title content=UTAH GEOLOGICAL AND MINERAL SURVEY PUBLICATIONS;
+utah: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
+utah: tf[1] += w[1](6) / length(6) (1.000000);
+relevance = 0;
 idf[1] = log(((1 + total(3))/termoccur(3));
-utah: relevance += 100000 * vecf[1](1.000000) * idf[1](0.287682) (28768);
+utah: relevance += 100000 * tf[1](1.000000) * idf[1](0.287682) (28768);
 score = relevance(28768);
  </relevance_info>
  <recid>content: title utah geological and mineral survey publications author medium book</recid>

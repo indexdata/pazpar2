@@ -23,10 +23,12 @@
  <count>1</count>
  <relevance>102165</relevance>
  <relevance_info>
-computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
-computer: field=title vecf[1] += mult[1](6) / length(3);
+field=title content=Computer science &amp;amp; technology :;
+computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
+computer: tf[1] += w[1](6) / length(3) (2.000000);
+relevance = 0;
 idf[1] = log(((1 + total(4))/termoccur(3));
-computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.510826) (102165);
+computer: relevance += 100000 * tf[1](2.000000) * idf[1](0.510826) (102165);
 score = relevance(102165);
  </relevance_info>
  <recid>content: title computer science technology author medium book</recid>
@@ -52,10 +54,12 @@ score = relevance(102165);
  <count>1</count>
  <relevance>102165</relevance>
  <relevance_info>
-computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(1)));
-computer: field=title vecf[1] += mult[1](6) / length(3);
+field=title content=The Computer Bible /;
+computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(1)));
+computer: tf[1] += w[1](6) / length(3) (2.000000);
+relevance = 0;
 idf[1] = log(((1 + total(4))/termoccur(3));
-computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.510826) (102165);
+computer: relevance += 100000 * tf[1](2.000000) * idf[1](0.510826) (102165);
 score = relevance(102165);
  </relevance_info>
  <recid>content: title the computer bible author medium book</recid>
@@ -78,10 +82,12 @@ score = relevance(102165);
  <count>1</count>
  <relevance>30649</relevance>
  <relevance_info>
-computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(8)));
-computer: field=title vecf[1] += mult[1](6) / length(10);
+field=title content=The use of passwords for controlled access to com ...;
+computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(8)));
+computer: tf[1] += w[1](6) / length(10) (0.600000);
+relevance = 0;
 idf[1] = log(((1 + total(4))/termoccur(3));
-computer: relevance += 100000 * vecf[1](0.600000) * idf[1](0.510826) (30649);
+computer: relevance += 100000 * tf[1](0.600000) * idf[1](0.510826) (30649);
 score = relevance(30649);
  </relevance_info>
  <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
@@ -106,8 +112,9 @@ score = relevance(30649);
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(4))/termoccur(3));
-computer: relevance += 100000 * vecf[1](0.000000) * idf[1](0.510826) (0);
+computer: relevance += 100000 * tf[1](0.000000) * idf[1](0.510826) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>

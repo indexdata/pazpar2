@@ -30,10 +30,12 @@
  <count>1</count>
  <relevance>60819</relevance>
  <relevance_info>
-adam: mult[1] += local_mult(3) / (1+log2(1+lead_decay(0.000000) * length(0)));
-adam: field=author vecf[1] += mult[1](3) / length(2);
+field=author content=Adam, James,;
+adam: w[1] += w(3) / (1+log2(1+lead_decay(0.000000) * length(0)));
+adam: tf[1] += w[1](3) / length(2) (1.500000);
+relevance = 0;
 idf[1] = log(((1 + total(2))/termoccur(2));
-adam: relevance += 100000 * vecf[1](1.500000) * idf[1](0.405465) (60819);
+adam: relevance += 100000 * tf[1](1.500000) * idf[1](0.405465) (60819);
 score = relevance(60819);
  </relevance_info>
  <recid>content: title the religious teachers of greece author adam james medium book</recid>
@@ -61,10 +63,12 @@ score = relevance(60819);
  <count>1</count>
  <relevance>40546</relevance>
  <relevance_info>
-adam: mult[1] += local_mult(3) / (1+log2(1+lead_decay(0.000000) * length(2)));
-adam: field=author vecf[1] += mult[1](3) / length(3);
+field=author content=Smith, George Adam,;
+adam: w[1] += w(3) / (1+log2(1+lead_decay(0.000000) * length(2)));
+adam: tf[1] += w[1](3) / length(3) (1.000000);
+relevance = 0;
 idf[1] = log(((1 + total(2))/termoccur(2));
-adam: relevance += 100000 * vecf[1](1.000000) * idf[1](0.405465) (40546);
+adam: relevance += 100000 * tf[1](1.000000) * idf[1](0.405465) (40546);
 score = relevance(40546);
  </relevance_info>
  <recid>content: title four psalms author smith george adam medium book</recid>

@@ -21,12 +21,15 @@
  <count>2</count>
  <relevance>48160</relevance>
  <relevance_info>
-computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
-computer: field=title vecf[1] += mult[1](6) / length(5);
-computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
-computer: field=title vecf[1] += mult[1](6) / length(5);
+field=title content=How to program a computer;
+computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
+computer: tf[1] += w[1](6) / length(5) (1.200000);
+field=title content=How to program a computer;
+computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
+computer: tf[1] += w[1](6) / length(5) (2.400000);
+relevance = 0;
 idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](2.400000) * idf[1](0.200671) (48160);
+computer: relevance += 100000 * tf[1](2.400000) * idf[1](0.200671) (48160);
 score = relevance(48160);
  </relevance_info>
  <recid>content: title how to program a computer author jack collins medium book</recid>
@@ -44,10 +47,12 @@ score = relevance(48160);
  <count>1</count>
  <relevance>40134</relevance>
  <relevance_info>
-computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
-computer: field=title vecf[1] += mult[1](6) / length(3);
+field=title content=Computer science &amp;amp; technology :;
+computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
+computer: tf[1] += w[1](6) / length(3) (2.000000);
+relevance = 0;
 idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.200671) (40134);
+computer: relevance += 100000 * tf[1](2.000000) * idf[1](0.200671) (40134);
 score = relevance(40134);
  </relevance_info>
  <recid>content: title computer science technology author medium book</recid>
@@ -63,10 +68,12 @@ score = relevance(40134);
  <count>1</count>
  <relevance>40134</relevance>
  <relevance_info>
-computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(1)));
-computer: field=title vecf[1] += mult[1](6) / length(3);
+field=title content=The Computer Bible /;
+computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(1)));
+computer: tf[1] += w[1](6) / length(3) (2.000000);
+relevance = 0;
 idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](2.000000) * idf[1](0.200671) (40134);
+computer: relevance += 100000 * tf[1](2.000000) * idf[1](0.200671) (40134);
 score = relevance(40134);
  </relevance_info>
  <recid>content: title the computer bible author medium book</recid>
@@ -82,10 +89,12 @@ score = relevance(40134);
  <count>1</count>
  <relevance>17200</relevance>
  <relevance_info>
-computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(5)));
-computer: field=title vecf[1] += mult[1](6) / length(7);
+field=title content=A plan for community college computer development.;
+computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(5)));
+computer: tf[1] += w[1](6) / length(7) (0.857143);
+relevance = 0;
 idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](0.857143) * idf[1](0.200671) (17200);
+computer: relevance += 100000 * tf[1](0.857143) * idf[1](0.200671) (17200);
 score = relevance(17200);
  </relevance_info>
  <recid>content: title a plan for community college computer development author medium book</recid>
@@ -105,10 +114,12 @@ score = relevance(17200);
  <count>1</count>
  <relevance>17200</relevance>
  <relevance_info>
-computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
-computer: field=title vecf[1] += mult[1](6) / length(7);
+field=title content=Washington metropolitan area rail computer feasib ...;
+computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
+computer: tf[1] += w[1](6) / length(7) (0.857143);
+relevance = 0;
 idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](0.857143) * idf[1](0.200671) (17200);
+computer: relevance += 100000 * tf[1](0.857143) * idf[1](0.200671) (17200);
 score = relevance(17200);
  </relevance_info>
  <recid>content: title washington metropolitan area rail computer feasibility study author englund carl r medium book</recid>
@@ -128,10 +139,12 @@ score = relevance(17200);
  <count>1</count>
  <relevance>16722</relevance>
  <relevance_info>
-computer: mult[1] += local_mult(5) / (1+log2(1+lead_decay(0.000000) * length(4)));
-computer: field=title-remainder vecf[1] += mult[1](5) / length(6);
+field=title-remainder content=a portfolio of thematic computer maps /;
+computer: w[1] += w(5) / (1+log2(1+lead_decay(0.000000) * length(4)));
+computer: tf[1] += w[1](5) / length(6) (0.833333);
+relevance = 0;
 idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](0.833333) * idf[1](0.200671) (16722);
+computer: relevance += 100000 * tf[1](0.833333) * idf[1](0.200671) (16722);
 score = relevance(16722);
  </relevance_info>
  <recid>content: title the puget sound region author mairs john w medium book</recid>
@@ -149,10 +162,12 @@ score = relevance(16722);
  <count>1</count>
  <relevance>12040</relevance>
  <relevance_info>
-computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
-computer: field=title vecf[1] += mult[1](6) / length(10);
+field=title content=Computer processing of dynamic images from an Ang ...;
+computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
+computer: tf[1] += w[1](6) / length(10) (0.600000);
+relevance = 0;
 idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](0.600000) * idf[1](0.200671) (12040);
+computer: relevance += 100000 * tf[1](0.600000) * idf[1](0.200671) (12040);
 score = relevance(12040);
  </relevance_info>
  <recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
@@ -170,10 +185,12 @@ score = relevance(12040);
  <count>1</count>
  <relevance>12040</relevance>
  <relevance_info>
-computer: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(8)));
-computer: field=title vecf[1] += mult[1](6) / length(10);
+field=title content=The use of passwords for controlled access to com ...;
+computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(8)));
+computer: tf[1] += w[1](6) / length(10) (0.600000);
+relevance = 0;
 idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](0.600000) * idf[1](0.200671) (12040);
+computer: relevance += 100000 * tf[1](0.600000) * idf[1](0.200671) (12040);
 score = relevance(12040);
  </relevance_info>
  <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
@@ -191,8 +208,9 @@ score = relevance(12040);
  <count>1</count>
  <relevance>0</relevance>
  <relevance_info>
+relevance = 0;
 idf[1] = log(((1 + total(10))/termoccur(9));
-computer: relevance += 100000 * vecf[1](0.000000) * idf[1](0.200671) (0);
+computer: relevance += 100000 * tf[1](0.000000) * idf[1](0.200671) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>

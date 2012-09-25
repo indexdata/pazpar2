@@ -30,17 +30,20 @@
  <count>1</count>
  <relevance>374298</relevance>
  <relevance_info>
-teachers: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(2)));
-greece: mult[2] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
-greece: mult[2] += mult[2](6) * follow(0.000000) / (1+log2(d(2));
-teachers: field=title vecf[1] += mult[1](6) / length(5);
-greece: field=title vecf[2] += mult[2](6) / length(5);
-greece: mult[2] += local_mult(3) / (1+log2(1+lead_decay(0.000000) * length(0)));
-greece: field=subject vecf[2] += mult[2](3) / length(1);
+field=title content=The religious teachers of Greece.;
+teachers: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(2)));
+greece: w[2] += w(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
+greece: w[2] += w[2](6) * follow(0.000000) / (1+log2(d(2));
+teachers: tf[1] += w[1](6) / length(5) (1.200000);
+greece: tf[2] += w[2](6) / length(5) (1.200000);
+field=subject content=Greece;
+greece: w[2] += w(3) / (1+log2(1+lead_decay(0.000000) * length(0)));
+greece: tf[2] += w[2](3) / length(1) (4.200000);
+relevance = 0;
 idf[1] = log(((1 + total(1))/termoccur(1));
-teachers: relevance += 100000 * vecf[1](1.200000) * idf[1](0.693147) (83177);
+teachers: relevance += 100000 * tf[1](1.200000) * idf[1](0.693147) (83177);
 idf[2] = log(((1 + total(1))/termoccur(1));
-greece: relevance += 100000 * vecf[2](4.200000) * idf[2](0.693147) (291121);
+greece: relevance += 100000 * tf[2](4.200000) * idf[2](0.693147) (291121);
 score = relevance(374298);
  </relevance_info>
  <recid>content: title the religious teachers of greece author adam james medium book</recid>
