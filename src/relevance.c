@@ -32,11 +32,12 @@ struct relevance
 {
     int *doc_frequency_vec;
     int *term_frequency_vec_tmp;
+    int *term_pos;
     int vec_len;
     struct word_entry *entries;
     pp2_charset_token_t prt;
     int rank_cluster;
-    int follow_boost;
+    double follow_factor;
     double lead_decay;
     int length_divide;
     NMEM nmem;
@@ -46,7 +47,6 @@ struct word_entry {
     const char *norm_str;
     const char *display_str;
     int termno;
-    int follow_boost;
     char *ccl_field;
     struct word_entry *next;
 };
@@ -61,8 +61,6 @@ static struct word_entry *word_entry_match(struct relevance *r,
     {
         if (*norm_str && !strcmp(norm_str, entries->norm_str))
         {
-            int extra = r->follow_boost;
-            struct word_entry *e_follow = entries;
             const char *cp = 0;
             int no_read = 0;
             sscanf(rank, "%d%n", mult, &no_read);
@@ -75,14 +73,8 @@ static struct word_entry *word_entry_match(struct relevance *r,
                     memcmp(entries->ccl_field, rank, cp - rank) == 0)
                     *mult = atoi(cp + 1);
             }
-            (*mult) += entries->follow_boost;
-            while ((e_follow = e_follow->next) != 0 && extra > 0)
-            {
-                e_follow->follow_boost = extra--;
-            }
             return entries;
         }
-        entries->follow_boost = 0;
     }
     return 0;
 }
@@ -102,7 +94,7 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
     for (e = r->entries, i = 1; i < r->vec_len; i++, e = e->next)
     {
         mult[i] = 0;
-        e->follow_boost = 0;
+        r->term_pos[i] = 0;
     }
 
     assert(rank);
@@ -113,9 +105,25 @@ void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
         if (e)
         {
             int res = e->termno;
+            int j;
+
             assert(res < r->vec_len);
             mult[res] += local_mult / (1 + log2(1 + lead_decay * length));
-            wrbuf_printf(w, "%s: mult[%d] += local_mult(%d) / (1+log2(1+lead_decay(%f) * length(%d)));\n", e->display_str, res, local_mult, lead_decay, length);
+            wrbuf_printf(w, "%s: mult[%d] += local_mult(%d) / "
+                         "(1+log2(1+lead_decay(%f) * length(%d)));\n",
+                         e->display_str, res, local_mult, lead_decay, length);
+            j = res - 1;
+            if (j > 0 && r->term_pos[j])
+            {
+                int d = length + 1 - r->term_pos[j];
+                mult[res] += mult[res] * r->follow_factor / (1 + log2(d));
+                wrbuf_printf(w, "%s: mult[%d] += mult[%d](%d) * follow(%f) / "
+                             "(1+log2(d(%d));\n",
+                             e->display_str, res, res, mult[res],
+                             r->follow_factor, d);
+            }
+            for (j = 0; j < r->vec_len; j++)
+                r->term_pos[j] = j < res ? 0 : length + 1;
         }
         length++;
     }
@@ -194,7 +202,7 @@ static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
 struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
                                        struct ccl_rpn_node *query,
                                        int rank_cluster,
-                                       int follow_boost, double lead_decay,
+                                       double follow_factor, double lead_decay,
                                        int length_divide)
 {
     NMEM nmem = nmem_create();
@@ -205,7 +213,7 @@ struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
     res->entries = 0;
     res->vec_len = 1;
     res->rank_cluster = rank_cluster;
-    res->follow_boost = follow_boost;
+    res->follow_factor = follow_factor;
     res->lead_decay = lead_decay;
     res->length_divide = length_divide;
     res->prt = pp2_charset_token_create(pft, "relevance");
@@ -220,6 +228,10 @@ struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
     res->term_frequency_vec_tmp =
         nmem_malloc(res->nmem,
                     res->vec_len * sizeof(*res->term_frequency_vec_tmp));
+
+    res->term_pos =
+        nmem_malloc(res->nmem, res->vec_len * sizeof(*res->term_pos));
+
     return res;
 }
 

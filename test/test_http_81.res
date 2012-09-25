@@ -32,6 +32,7 @@
  <relevance_info>
 teachers: mult[1] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(2)));
 greece: mult[2] += local_mult(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
+greece: mult[2] += mult[2](6) * follow(0.000000) / (1+log2(d(2));
 teachers: field=title vecf[1] += mult[1](6) / length(5);
 greece: field=title vecf[2] += mult[2](6) / length(5);
 greece: mult[2] += local_mult(3) / (1+log2(1+lead_decay(0.000000) * length(0)));

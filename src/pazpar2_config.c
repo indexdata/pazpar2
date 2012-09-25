@@ -134,7 +134,7 @@ struct conf_service *service_init(struct conf_server *server,
     service->z3950_operation_timeout = 30;
     service->rank_cluster = 1;
     service->rank_debug = 0;
-    service->rank_follow = 0;
+    service->rank_follow = 0.0;
     service->rank_lead = 0.0;
     service->rank_length = 2;
 
@@ -654,7 +654,7 @@ static struct conf_service *service_create_static(struct conf_server *server,
             }
             if (rank_follow)
             {
-                service->rank_follow = atoi(rank_follow);
+                service->rank_follow = atof(rank_follow);
             }
             if (rank_lead)
             {

@@ -118,7 +118,7 @@ struct conf_service
     int z3950_operation_timeout;
     int rank_cluster;
     int rank_debug;
-    int rank_follow;
+    double rank_follow;
     double rank_lead;
     int rank_length;
     char *default_sort;
