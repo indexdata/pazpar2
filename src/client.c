@@ -994,15 +994,33 @@ static CCL_bibset prepare_cclmap(struct client *cl, CCL_bibset base_bibset)
         res = ccl_qual_mk();
     for (s = sdb->settings[PZ_CCLMAP]; s; s = s->next)
     {
+        const char *addinfo = 0;
         char *p = strchr(s->name + 3, ':');
         if (!p)
         {
-            yaz_log(YLOG_WARN, "Malformed cclmap name: %s", s->name);
+            WRBUF w = wrbuf_alloc();
+            wrbuf_printf(w, "Malformed cclmap. name=%s", s->name);
+            yaz_log(YLOG_WARN, "%s: %s", client_get_id(cl), wrbuf_cstr(w));
+            client_set_diagnostic(cl, ZOOM_ERROR_CCL_CONFIG, wrbuf_cstr(w));
+            client_set_state_nb(cl, Client_Error);
             ccl_qual_rm(&res);
+            wrbuf_destroy(w);
             return 0;
         }
         p++;
-        ccl_qual_fitem(res, s->value, p);
+        if (ccl_qual_fitem2(res, s->value, p, &addinfo))
+        {
+            WRBUF w = wrbuf_alloc();
+
+            wrbuf_printf(w, "Malformed cclmap. name=%s: value=%s (%s)",
+                         s->name, p, addinfo);
+            yaz_log(YLOG_WARN, "%s: %s", client_get_id(cl), wrbuf_cstr(w));
+            client_set_diagnostic(cl, ZOOM_ERROR_CCL_CONFIG, wrbuf_cstr(w));
+            client_set_state_nb(cl, Client_Error);
+            ccl_qual_rm(&res);
+            wrbuf_destroy(w);
+            return 0;
+        }
     }
     return res;
 }
@@ -1199,7 +1217,7 @@ int client_parse_query(struct client *cl, const char *query,
     Z_RPNQuery *zquery;
 
     if (!ccl_map)
-        return -1;
+        return -3;
 
     if (maxrecs && atoi(maxrecs) != cl->maxrecs)
     {
