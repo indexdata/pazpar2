@@ -764,7 +764,7 @@ enum pazpar2_error_code session_search(struct session *se,
             no_failed_query++;
         else if (parse_ret == -2)
             no_failed_limit++;
-        else if (parse_ret)
+        else if (parse_ret < 0)
             no_working++; /* other error, such as bad CCL map */
         else
         {
