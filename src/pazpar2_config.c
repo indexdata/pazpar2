@@ -512,6 +512,18 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     return 0;
 }
 
+
+static void service_add_metadata(xmlNode *n, int *num_metadata, int *num_sortkeys)
+{
+    (*num_metadata)++;
+
+    xmlChar *sortkey = xmlGetProp(n, (xmlChar *) "sortkey");
+    if (sortkey && strcmp((const char *) sortkey, "no"))
+        (*num_sortkeys)++;
+    xmlFree(sortkey);
+}
+
+
 static struct conf_service *service_create_static(struct conf_server *server,
                                                   xmlNode *node,
                                                   const char *service_id)
@@ -530,11 +542,18 @@ static struct conf_service *service_create_static(struct conf_server *server,
         if (n->type == XML_ELEMENT_NODE && !strcmp((const char *)
                                                    n->name, "metadata"))
         {
-            xmlChar *sortkey = xmlGetProp(n, (xmlChar *) "sortkey");
-            num_metadata++;
-            if (sortkey && strcmp((const char *) sortkey, "no"))
-                num_sortkeys++;
-            xmlFree(sortkey);
+            if (n->children) // This is a <metadata> container, look at its contents.
+            {
+                xmlNode *m;
+                for (m = n->children; m; m = m->next)
+                {
+                    if (m->type == XML_ELEMENT_NODE &&
+                            !strcmp((const char *) m->name, "metadata"))
+                        service_add_metadata(m, &num_metadata, &num_sortkeys);
+                }
+            }
+            else // This is a metadata-element proper, count it right away.
+                service_add_metadata(n, &num_metadata, &num_sortkeys);
         }
 
     service = service_init(server, num_metadata, num_sortkeys, service_id);
@@ -631,8 +650,17 @@ static struct conf_service *service_create_static(struct conf_server *server,
         }
         else if (!strcmp((const char *) n->name, (const char *) "metadata"))
         {
-            if (parse_metadata(service, n, &md_node, &sk_node))
-                return 0;
+            if (n->children) // This is a <metadata> container, look at its content.
+            {
+                xmlNode *m;
+                for (m = n->children; m; m = m->next)
+                    if ((!strcmp((const char *) m->name, (const char *) "metadata")))
+                        if (parse_metadata(service, m, &md_node, &sk_node))
+                            return 0;
+            }
+            else // This is a metadata-element proper, count it right away.
+                if (parse_metadata(service, n, &md_node, &sk_node))
+                    return 0;
         }
         else if (!strcmp((const char *) n->name, (const char *) "xslt"))
         {
@@ -683,7 +711,7 @@ static struct conf_service *service_create_static(struct conf_server *server,
                 if (!strcmp(rank_length, "linear"))
                     service->rank_length = 2;
                 else if (!strcmp(rank_length, "log"))
-                    service->rank_length = 1; 
+                    service->rank_length = 1;
                 else if (!strcmp(rank_length, "none"))
                     service->rank_length = 0;
                 else
