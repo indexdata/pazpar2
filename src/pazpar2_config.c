@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#include <libxml/xinclude.h>
 
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>
@@ -1232,7 +1233,10 @@ static int parse_config(struct conf_config *config, xmlNode *root)
 
 struct conf_config *config_create(const char *fname, int verbose)
 {
-    xmlDoc *doc = xmlParseFile(fname);
+    xmlDoc *doc = xmlReadFile(fname,
+                              NULL,
+                              XML_PARSE_XINCLUDE + XML_PARSE_NOBLANKS
+                              + XML_PARSE_NSCLEAN + XML_PARSE_NONET );
     xmlNode *n;
     const char *p;
     int r;
@@ -1245,6 +1249,14 @@ struct conf_config *config_create(const char *fname, int verbose)
     {
         yaz_log(YLOG_FATAL, "Failed to read %s", fname);
         nmem_destroy(nmem);
+        return 0;
+    }
+
+    // Perform XInclude.
+    r = xmlXIncludeProcess(doc);
+    if (r == -1)
+    {
+        yaz_log(YLOG_FATAL, "XInclude processing failed");
         return 0;
     }
 
