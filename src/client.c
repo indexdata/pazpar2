@@ -752,7 +752,7 @@ void client_start_search(struct client *cl)
     const char *opt_preferred   = session_setting_oneval(sdb, PZ_PREFERRED);
     const char *extra_args      = session_setting_oneval(sdb, PZ_EXTRA_ARGS);
     const char *opt_present_chunk = session_setting_oneval(sdb, PZ_PRESENT_CHUNK);
-    ZOOM_query q;
+    ZOOM_query query;
     char maxrecs_str[24], startrecs_str[24], present_chunk_str[24];
     int present_chunk = 20; // Default chunk size
     if (opt_present_chunk && strcmp(opt_present_chunk,"")) {
@@ -813,26 +813,26 @@ void client_start_search(struct client *cl)
     /* facets definition is in PQF */
     client_set_facets_request(cl, link);
 
-    q = ZOOM_query_create();
+    query = ZOOM_query_create();
     if (cl->cqlquery)
     {
         yaz_log(YLOG_LOG, "Client %s: Search CQL: %s", client_get_id(cl), cl->cqlquery);
-        ZOOM_query_cql(q, cl->cqlquery);
+        ZOOM_query_cql(query, cl->cqlquery);
         if (*opt_sort)
-            ZOOM_query_sortby(q, opt_sort);
+            ZOOM_query_sortby(query, opt_sort);
     }
     else
     {
         yaz_log(YLOG_LOG, "Client %s: Search PQF: %s", client_get_id(cl), cl->pquery);
 
-        ZOOM_query_prefix(q, cl->pquery);
+        ZOOM_query_prefix(query, cl->pquery);
     }
     if (se->sorted_results)
     {   /* first entry is current sorting ! */
         const char *sort_strategy_and_spec =
-            get_strategy_plus_sort(cl, se->sorted_results->field);
+            get_strategy_plus_sort(cl, se->sorted_results->name);
         int increasing = se->sorted_results->increasing;
-        // int position = se->sorted_results->position;
+        // int position = se->sorted_results->type;
         if (sort_strategy_and_spec && strlen(sort_strategy_and_spec) < 40)
         {
             char spec[50], *p;
@@ -848,17 +848,17 @@ void client_start_search(struct client *cl)
                 else
                     strcat(p, " >");
                 yaz_log(YLOG_LOG, "Client %s: applying sorting %s %s", client_get_id(cl), spec, p);
-                ZOOM_query_sortby2(q, spec, p);
+                ZOOM_query_sortby2(query, spec, p);
             }
         }
         else
         {
-            /* no native sorting.. If this is not the first search, then
-               skip it entirely */
+            /* no native sorting.. If this is not the first search, then skip it entirely */
             if (se->sorted_results->next)
             {
+                // TODO this seems wrong. Need to re-ingest instead?
                 yaz_log(YLOG_DEBUG,"Client %s: Do not (re)search anyway", client_get_id(cl));
-                ZOOM_query_destroy(q);
+                ZOOM_query_destroy(query);
                 return;
             }
         }
@@ -867,8 +867,8 @@ void client_start_search(struct client *cl)
     client_set_state(cl, Client_Working);
     cl->hits = 0;
     cl->record_offset = 0;
-    rs = ZOOM_connection_search(link, q);
-    ZOOM_query_destroy(q);
+    rs = ZOOM_connection_search(link, query);
+    ZOOM_query_destroy(query);
     ZOOM_resultset_destroy(cl->resultset);
     cl->resultset = rs;
     connection_continue(co);
@@ -1497,6 +1497,11 @@ static void client_suggestions_destroy(struct client *cl)
     nmem_destroy(nmem);
 }
 
+int client_test_sort_order(struct client *cl, struct reclist_sortparms *sp)
+{
+    //TODO implement correctly.
+    return 1;
+}
 /*
  * Local variables:
  * c-basic-offset: 4
