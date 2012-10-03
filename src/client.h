@@ -111,6 +111,9 @@ const char *client_get_facet_limit_local(struct client *cl,
                                          struct session_database *sdb,
                                          int *l,
                                          NMEM nmem, int *num, char ***values);
+
+int client_test_sort_order(struct client *cl, struct reclist_sortparms *sp);
+
 #endif
 
 /*
