@@ -119,7 +119,7 @@ struct session {
     YAZ_MUTEX session_mutex;
     unsigned session_id;
     int settings_modified;
-    struct session_sorted_results *sorted_results;
+    struct reclist_sortparms *sorted_results;
 };
 
 struct statistics {
@@ -156,7 +156,7 @@ void session_destroy(struct session *s);
 void session_init_databases(struct session *s);
 void statistics(struct session *s, struct statistics *stat);
 
-void session_sort(struct session *se, const char *field, int increasing, int clear_set);
+void session_sort(struct session *se, struct reclist_sortparms *sp);
 
 enum pazpar2_error_code session_search(struct session *s, const char *query,
                                        const char *startrecs,
@@ -192,13 +192,6 @@ void session_log(struct session *s, int level, const char *fmt, ...)
 #endif
     ;
 #endif
-
-struct session_sorted_results {
-    const char *field;
-    int increasing;
-    int position;
-    struct session_sorted_results *next;
-};
 
 /*
  * Local variables:
