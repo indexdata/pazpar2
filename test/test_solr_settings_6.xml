@@ -1,0 +1,8 @@
+<!-- Solr target, Settings 5 -->
+<settings target="LOC Solr Test">
+  <set name="pz:present_chunk" value="0"/>
+  <set name="pz:sortmap:title"  value="solr:title" /> 
+  <set name="pz:sortmap:date"   value="solr:date" /> 
+  <set name="pz:sortmap:author" value="solr:author" /> 
+  <set name="pz:sortmap:score"  value="solr:score" /> 
+</settings>
