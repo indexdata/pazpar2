@@ -619,8 +619,7 @@ int session_is_preferred_clients_ready(struct session *s)
     return res == 0;
 }
 
-static void session_clear_set(struct session *se,
-                              const char *sort_field, int increasing, int position)
+static void session_clear_set(struct session *se, struct reclist_sortparms *sp)
 {
     reclist_destroy(se->reclist);
     se->reclist = 0;
@@ -633,55 +632,67 @@ static void session_clear_set(struct session *se,
 
     /* reset list of sorted results and clear to relevance search */
     se->sorted_results = nmem_malloc(se->nmem, sizeof(*se->sorted_results));
-    se->sorted_results->field = nmem_strdup(se->nmem, sort_field);
-    se->sorted_results->increasing = increasing;
-    se->sorted_results->position = position;
+    se->sorted_results->name = nmem_strdup(se->nmem, sp->name);
+    se->sorted_results->increasing = sp->increasing;
+    se->sorted_results->type = sp->type;
     se->sorted_results->next = 0;
 
-    session_log(se, YLOG_DEBUG, "clear_set session_sort: field=%s increasing=%d position=%d configured",
-                sort_field, increasing, position);
+    session_log(se, YLOG_DEBUG, "clear_set session_sort: field=%s increasing=%d type=%d configured",
+            sp->name, sp->increasing, sp->type);
 
     se->reclist = reclist_create(se->nmem);
 }
 
-void session_sort(struct session *se, const char *field, int increasing,
-                  int position)
+void session_sort(struct session *se, struct reclist_sortparms *sp)
 {
-    struct session_sorted_results *sr;
+    struct reclist_sortparms *sr;
     struct client_list *l;
-
+    const char *field = sp->name;
+    int increasing = sp->increasing;
+    int type  = sp->type;
+    int clients_research = 0;
     session_enter(se);
 
-    yaz_log(YLOG_LOG, "session_sort field=%s increasing=%d position=%d", field, increasing, position);
-    /* see if we already have sorted for this critieria */
+    yaz_log(YLOG_LOG, "session_sort field=%s increasing=%d type=%d", field, increasing, type);
+    /* see if we already have sorted for this criteria */
     for (sr = se->sorted_results; sr; sr = sr->next)
     {
-        if (!strcmp(field, sr->field) && increasing == sr->increasing && sr->position == position)
+        if (!reclist_sortparms_cmp(sr,sp))
             break;
     }
     if (sr)
     {
-        session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d position=%d already fetched",
-                    field, increasing, position);
+        session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d already fetched",
+                    field, increasing, type);
         session_leave(se);
         return;
     }
-    session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d position=%d must fetch",
-                field, increasing, position);
-    if (position)
+    session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d must fetch",
+                    field, increasing, type);
+
+    // We need to reset reclist on every sort that changes the records, not just for position
+    // So if just one client requires new searching, we need to clear set.
+    // Ask each of the client if sorting requires re-search due to native sort
+    // If it does it will require us to
+    for (l = se->clients_active; l; l = l->next)
     {
-        yaz_log(YLOG_DEBUG, "Reset results due to position");
-        session_clear_set(se, field, increasing, position);
+        struct client *cl = l->client;
+        clients_research += client_test_sort_order(cl, sp);
+    }
+    if (clients_research) {
+        yaz_log(YLOG_DEBUG, "Reset results due to %d clients researching");
+        session_clear_set(se, sp);
     }
     else {
+        // A new sorting based on same record set
         sr = nmem_malloc(se->nmem, sizeof(*sr));
-        sr->field = nmem_strdup(se->nmem, field);
+        sr->name = nmem_strdup(se->nmem, field);
         sr->increasing = increasing;
-        sr->position = position;
+        sr->type = type;
         sr->next = se->sorted_results;
         se->sorted_results = sr;
     }
-    yaz_log(YLOG_DEBUG, "Restarting search for clients due to change in sort order");
+    // yaz_log(YLOG_DEBUG, "Restarting search or re-ingesting for clients due to change in sort order");
 
     for (l = se->clients_active; l; l = l->next)
     {
@@ -689,8 +700,14 @@ void session_sort(struct session *se, const char *field, int increasing,
         if (client_get_state(cl) == Client_Connecting ||
             client_get_state(cl) == Client_Idle ||
             client_get_state(cl) == Client_Working) {
-            yaz_log(YLOG_DEBUG, "Client %s: Restarting search due to change in sort order", client_get_id(cl));
-            client_start_search(cl);
+            if (client_test_sort_order(cl, sp)) {
+                yaz_log(YLOG_DEBUG, "Client %s: Restarting search due to change in sort order", client_get_id(cl));
+                client_start_search(cl);
+            }
+            else {
+                yaz_log(YLOG_DEBUG, "Client %s: Reingesting due to change in sort order", client_get_id(cl));
+                client_reingest(cl);
+            }
         }
     }
     session_leave(se);
@@ -712,6 +729,7 @@ enum pazpar2_error_code session_search(struct session *se,
     struct client_list *l, *l0;
     struct timeval tval;
     facet_limits_t facet_limits;
+    int same_sort_order = 0;
 
     session_log(se, YLOG_DEBUG, "Search");
 
@@ -724,7 +742,12 @@ enum pazpar2_error_code session_search(struct session *se,
 
     session_enter(se);
     se->settings_modified = 0;
-    session_clear_set(se, sp->name, sp->increasing, sp->type == Metadata_sortkey_position);
+
+    if (se->sorted_results) {
+        if (!reclist_sortparms_cmp(se->sorted_results, sp))
+            same_sort_order = 1;
+    }
+    session_clear_set(se, sp);
     relevance_destroy(&se->relevance);
 
     live_channels = select_targets(se, filter);
@@ -773,7 +796,7 @@ enum pazpar2_error_code session_search(struct session *se,
                                        se->service->z3950_session_timeout,
                                        se->service->server->iochan_man,
                                        &tval);
-            if (parse_ret == 1 && r == 2)
+            if (parse_ret == 1 && r == 2 && same_sort_order)
             {
                 session_log(se, YLOG_LOG, "client %s REUSE result", client_get_id(cl));
                 client_reingest(cl);
