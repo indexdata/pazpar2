@@ -615,8 +615,7 @@ static void client_record_ingest(struct client *cl)
     }
     else
     {
-        yaz_log(YLOG_WARN, "Expected record, but got NULL, offset=%d",
-                offset);
+        yaz_log(YLOG_WARN, "Expected record, but got NULL, offset=%d", offset);
     }
 }
 
