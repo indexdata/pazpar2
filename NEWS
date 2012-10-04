@@ -1,3 +1,11 @@
+--- 1.6.22 2012/10/05
+
+Requires YAZ-4.2.40 to support native solr support. 
+
+Fix logic handling whether or not to re-do search. A new sort order 
+whould not trigger a new search, which is required for targets with
+native sorting capabilities.
+
 --- 1.6.21 2012/09/24
 
 Rank tweak: follow=number will increase mult by number if two terms
