@@ -23,9 +23,9 @@
   <set name="pz:preferred"   value="1" />
   <set name="pz:block_timeout"  value="2" />
   <set name="pz:cclmap:term"  value="1=text s=Dal" />
-  <set name="pz:cclmap:au"    value="1=author"   />
-  <set name="pz:cclmap:su"    value="1=subject"  />
-  <set name="pz:cclmap:date"  value="1=date" />
+  <set name="pz:cclmap:au"    value="1=author t=z"   />
+  <set name="pz:cclmap:su"    value="1=subject t=z"  />
+  <set name="pz:cclmap:date"  value="1=date t=z" />
 <!--
   <set name="pz:cclmap:issn"  value="1=issn" />
 -->
