@@ -50,7 +50,7 @@ struct conf_config
 {
     NMEM nmem; /* for conf_config and servers memory */
     struct conf_server *servers;
-    
+
     int no_threads;
     WRBUF confdir;
     iochan_man_t iochan_man;
@@ -63,8 +63,8 @@ struct service_xslt
     xsltStylesheetPtr xsp;
     struct service_xslt *next;
 };
-    
-static void conf_metadata_assign(NMEM nmem, 
+
+static void conf_metadata_assign(NMEM nmem,
                                  struct conf_metadata * metadata,
                                  const char *name,
                                  enum conf_metadata_type type,
@@ -79,7 +79,7 @@ static void conf_metadata_assign(NMEM nmem,
                                  const char *limitmap)
 {
     assert(nmem && metadata && name);
-    
+
     metadata->name = nmem_strdup(nmem, name);
 
     metadata->type = type;
@@ -88,10 +88,10 @@ static void conf_metadata_assign(NMEM nmem,
     if (metadata->type == Metadata_type_year)
         metadata->merge = Metadata_merge_range;
     else
-        metadata->merge = merge;    
+        metadata->merge = merge;
 
     metadata->setting = setting;
-    metadata->brief = brief;   
+    metadata->brief = brief;
     metadata->termlist = termlist;
     metadata->rank = nmem_strdup_null(nmem, rank);
     metadata->sortkey_offset = sortkey_offset;
@@ -101,13 +101,13 @@ static void conf_metadata_assign(NMEM nmem,
 }
 
 
-static void conf_sortkey_assign(NMEM nmem, 
+static void conf_sortkey_assign(NMEM nmem,
                                 struct conf_sortkey * sortkey,
                                 const char *name,
                                 enum conf_sortkey_type type)
 {
     assert(nmem && sortkey && name);
-    
+
     sortkey->name = nmem_strdup(nmem, name);
     sortkey->type = type;
 }
@@ -132,10 +132,16 @@ struct conf_service *service_init(struct conf_server *server,
     service->session_timeout = 60; /* default session timeout */
     service->z3950_session_timeout = 180;
     service->z3950_operation_timeout = 30;
+    service->rank_cluster = 1;
+    service->rank_debug = 0;
+    service->rank_follow = 0.0;
+    service->rank_lead = 0.0;
+    service->rank_length = 2;
 
     service->charsets = 0;
 
     service->id = service_id ? nmem_strdup(nmem, service_id) : 0;
+
     // Setup a dictionary from server.
     service->dictionary = 0;
 
@@ -151,18 +157,20 @@ struct conf_service *service_init(struct conf_server *server,
 
     service->metadata = 0;
     if (service->num_metadata)
-        service->metadata 
-            = nmem_malloc(nmem, 
+        service->metadata
+            = nmem_malloc(nmem,
                           sizeof(struct conf_metadata) * service->num_metadata);
     service->num_sortkeys = num_sortkeys;
+
+    service->default_sort = nmem_strdup(nmem, "relevance");
     service->sortkeys = 0;
     if (service->num_sortkeys)
-        service->sortkeys 
-            = nmem_malloc(nmem, 
+        service->sortkeys
+            = nmem_malloc(nmem,
                           sizeof(struct conf_sortkey) * service->num_sortkeys);
 
 
-    return service; 
+    return service;
 }
 
 static struct conf_metadata* conf_service_add_metadata(
@@ -220,7 +228,7 @@ int conf_service_metadata_field_id(struct conf_service *service,
 
     if (!service || !service->metadata || !service->num_metadata)
         return -1;
-    
+
     for (i = 0; i < service->num_metadata; i++)
         if (!strcmp(name, (service->metadata[i]).name))
             return i;
@@ -338,7 +346,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    
+
     // now do the parsing logic
     if (!xml_name)
     {
@@ -355,7 +363,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    
+
     if (xml_termlist)
     {
         if (!strcmp((const char *) xml_termlist, "yes"))
@@ -366,7 +374,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    
+
     if (xml_type)
     {
         if (!strcmp((const char *) xml_type, "generic"))
@@ -377,12 +385,12 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             type = Metadata_type_date;
         else
         {
-            yaz_log(YLOG_FATAL, 
+            yaz_log(YLOG_FATAL,
                     "Unknown value for metadata/type: %s", xml_type);
             return -1;
         }
     }
-    
+
     if (xml_merge)
     {
         if (!strcmp((const char *) xml_merge, "no"))
@@ -397,12 +405,12 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             merge = Metadata_merge_all;
         else
         {
-            yaz_log(YLOG_FATAL, 
+            yaz_log(YLOG_FATAL,
                     "Unknown value for metadata/merge: %s", xml_merge);
             return -1;
         }
     }
-    
+
     if (xml_setting)
     {
         if (!strcmp((const char *) xml_setting, "no"))
@@ -418,14 +426,14 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             return -1;
         }
     }
-    
+
     // add a sortkey if so specified
     if (xml_sortkey && strcmp((const char *) xml_sortkey, "no"))
     {
         enum conf_sortkey_type sk_type;
         if (merge == Metadata_merge_no)
         {
-            yaz_log(YLOG_FATAL, 
+            yaz_log(YLOG_FATAL,
                     "Can't specify sortkey on a non-merged field");
             return -1;
         }
@@ -436,19 +444,19 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
         else
         {
             yaz_log(YLOG_FATAL,
-                    "Unknown sortkey in metadata element: %s", 
+                    "Unknown sortkey in metadata element: %s",
                     xml_sortkey);
             return -1;
         }
         sortkey_offset = *sk_node;
-        
+
         conf_service_add_sortkey(service, *sk_node,
-                                 (const char *) xml_name, sk_type);        
+                                 (const char *) xml_name, sk_type);
         (*sk_node)++;
     }
     else
         sortkey_offset = -1;
-    
+
     if (xml_mergekey)
     {
         if (!strcmp((const char *) xml_mergekey, "required"))
@@ -489,7 +497,7 @@ static struct conf_service *service_create_static(struct conf_server *server,
     int num_metadata = 0;
     int num_sortkeys = 0;
     int got_settings = 0;
-    
+
     // count num_metadata and num_sortkeys
     for (n = node->children; n; n = n->next)
         if (n->type == XML_ELEMENT_NODE && !strcmp((const char *)
@@ -558,7 +566,7 @@ static struct conf_service *service_create_static(struct conf_server *server,
             }
             value = (char *) xmlGetProp(n, (xmlChar *) "value");
             if (!value)
-            { 
+            {
                 xmlFree(name);
                 yaz_log(YLOG_FATAL, "ccldirective: missing @value");
                 return 0;
@@ -612,6 +620,81 @@ static struct conf_service *service_create_static(struct conf_server *server,
                 yaz_log(YLOG_DEBUG, "service set: %s=%s (Not implemented)", (char *) name, (char *) value);
                 //service_aply_setting(service, name, value);
             }
+        }
+        else if (!strcmp((const char *) n->name, "rank"))
+        {
+            char *rank_cluster = (char *) xmlGetProp(n, (xmlChar *) "cluster");
+            char *rank_debug = (char *) xmlGetProp(n, (xmlChar *) "debug");
+            char *rank_follow = (char *) xmlGetProp(n, (xmlChar *) "follow");
+            char *rank_lead = (char *) xmlGetProp(n, (xmlChar *) "lead");
+            char *rank_length= (char *) xmlGetProp(n, (xmlChar *) "length");
+            if (rank_cluster)
+            {
+                if (!strcmp(rank_cluster, "yes"))
+                    service->rank_cluster = 1;
+                else if (!strcmp(rank_cluster, "no"))
+                    service->rank_cluster = 0;
+                else 
+                {
+                    yaz_log(YLOG_FATAL, "service: rank@cluster boolean");
+                    return 0;
+                }
+            }
+            if (rank_debug)
+            {
+                if (!strcmp(rank_debug, "yes"))
+                    service->rank_debug = 1;
+                else if (!strcmp(rank_debug, "no"))
+                    service->rank_debug = 0;
+                else
+                {
+                    yaz_log(YLOG_FATAL, "service: rank@debug boolean");
+                    return 0;
+                }
+            }
+            if (rank_follow)
+            {
+                service->rank_follow = atof(rank_follow);
+            }
+            if (rank_lead)
+            {
+                service->rank_lead = atof(rank_lead);
+            }
+            if (rank_length)
+            {
+                if (!strcmp(rank_length, "linear"))
+                    service->rank_length = 2;
+                else if (!strcmp(rank_length, "log"))
+                    service->rank_length = 1; 
+                else if (!strcmp(rank_length, "none"))
+                    service->rank_length = 0;
+                else
+                {
+                    yaz_log(YLOG_FATAL, "service: rank@length linear|log|none");
+                    return 0;
+                }
+            }
+            xmlFree(rank_cluster);
+            xmlFree(rank_debug);
+            xmlFree(rank_follow);
+            xmlFree(rank_lead);
+            xmlFree(rank_length);
+        }
+        else if (!strcmp((const char *) n->name, "sort-default"))
+        {
+            char *default_sort = (char *) xmlGetProp(n, (xmlChar *) "field");
+
+            if (default_sort && strcmp(default_sort, "")) {
+                service->default_sort = nmem_strdup(service->nmem, default_sort);
+                yaz_log(YLOG_LOG, "service %s: default sort order configured to: %s",
+                        service_id ? service_id : "unnamed", default_sort);
+            }
+            else
+            {
+                yaz_log(YLOG_FATAL, "default sort order is invalid: %s", default_sort);
+                return 0;
+            }
+            xmlFree(default_sort);
         }
         else
         {
@@ -676,7 +759,7 @@ static int inherit_server_settings(struct conf_service *s)
             init_settings(s);
         }
     }
-    
+
     /* use relevance/sort/mergekey/facet from server if not defined
        for this service.. */
     if (!s->charsets)
@@ -808,8 +891,8 @@ static struct conf_server *server_create(struct conf_config *config,
             {
                 yaz_log(YLOG_FATAL, "ICU chain definition error");
                 return 0;
-            }            
-        }            
+            }
+        }
         else if (!strcmp((const char *) n->name, "service"))
         {
             char *service_id = (char *)
@@ -966,7 +1049,7 @@ struct conf_config *config_create(const char *fname, int verbose)
     config->database_hosts = database_hosts_create();
 
     config->confdir = wrbuf_alloc();
-    if ((p = strrchr(fname, 
+    if ((p = strrchr(fname,
 #ifdef WIN32
                      '\\'
 #else
@@ -978,7 +1061,7 @@ struct conf_config *config_create(const char *fname, int verbose)
         wrbuf_write(config->confdir, fname, len);
     }
     wrbuf_puts(config->confdir, "");
-    
+
     n = xmlDocGetRootElement(doc);
     r = yaz_xml_include_simple(n, wrbuf_cstr(config->confdir));
     if (r == 0) /* OK */
@@ -1024,7 +1107,7 @@ void config_destroy(struct conf_config *config)
     if (config)
     {
         struct conf_server *server = config->servers;
-        iochan_man_destroy(&config->iochan_man);    
+        iochan_man_destroy(&config->iochan_man);
         while (server)
         {
             struct conf_server *s_next = server->next;
@@ -1047,7 +1130,7 @@ void config_stop_listeners(struct conf_config *conf)
 void config_process_events(struct conf_config *conf)
 {
     struct conf_server *ser;
-    
+
     for (ser = conf->servers; ser; ser = ser->next)
     {
         struct conf_service *s = ser->service;

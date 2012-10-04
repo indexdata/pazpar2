@@ -102,7 +102,7 @@ for f in `cat ${srcdir}/${URLS}`; do
 	if test ! -f $OUT2; then
 	    touch $OUT2
 	fi
-	if test -f $OUT1; then
+	if test -f $OUT1 -a -z "$PAZPAR2_OVERRIDE_TEST"; then
 	    if diff $OUT1 $OUT2 >$DIFF; then
 		rm $DIFF
 	    else

@@ -162,7 +162,7 @@ static void connection_destroy(struct connection *co)
     connection_use(-1);
 }
 
-// Creates a new connection for client, associated with the host of 
+// Creates a new connection for client, associated with the host of
 // client's database
 static struct connection *connection_create(struct client *cl,
                                             struct host *host,
@@ -182,7 +182,7 @@ static struct connection *connection_create(struct client *cl,
     co->state = Conn_Closed;
     co->operation_timeout = operation_timeout;
     co->session_timeout = session_timeout;
-    
+
     if (host->ipport)
         connection_connect(co, iochan_man);
 
@@ -210,11 +210,11 @@ static void non_block_events(struct connection *co)
         if (!cl)
             continue;
         ev = ZOOM_connection_last_event(link);
-        
+
 #if 1
         yaz_log(YLOG_DEBUG, "%p Connection ZOOM_EVENT_%s", co, ZOOM_get_event_str(ev));
 #endif
-        switch (ev) 
+        switch (ev)
         {
         case ZOOM_EVENT_END:
             {
@@ -308,7 +308,7 @@ static void connection_handler(IOCHAN iochan, int event)
 
     yaz_mutex_enter(host->mutex);
     cl = co->client;
-    if (!cl) 
+    if (!cl)
     {
         /* no client associated with it.. We are probably getting
            a closed connection from the target.. Or, perhaps, an unexpected
@@ -345,7 +345,7 @@ static void connection_handler(IOCHAN iochan, int event)
         non_block_events(co);
 
         ZOOM_connection_fire_event_socket(co->link, event);
-        
+
         non_block_events(co);
         client_unlock(cl);
 
@@ -435,10 +435,10 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     ZOOM_options_set(zoptions, "async", "1");
     ZOOM_options_set(zoptions, "implementationName", PACKAGE_NAME);
     ZOOM_options_set(zoptions, "implementationVersion", VERSION);
-	
+
     if ((charset = session_setting_oneval(sdb, PZ_NEGOTIATION_CHARSET)))
         ZOOM_options_set(zoptions, "charset", charset);
-    
+
     assert(host->ipport);
     if (host->proxy)
     {
@@ -450,7 +450,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
         assert(host->tproxy);
         yaz_log(YLOG_LOG, "tproxy=%s", host->ipport);
         ZOOM_options_set(zoptions, "tproxy", host->ipport);
-    }   
+    }
 
     if (apdulog && *apdulog)
         ZOOM_options_set(zoptions, "apdulog", apdulog);
@@ -459,7 +459,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
         ZOOM_options_set(zoptions, "user", auth);
     if ((sru = session_setting_oneval(sdb, PZ_SRU)) && *sru)
         ZOOM_options_set(zoptions, "sru", sru);
-    if ((sru_version = session_setting_oneval(sdb, PZ_SRU_VERSION)) 
+    if ((sru_version = session_setting_oneval(sdb, PZ_SRU_VERSION))
         && *sru_version)
         ZOOM_options_set(zoptions, "sru_version", sru_version);
     if (!(con->link = ZOOM_connection_create(zoptions)))
@@ -541,7 +541,7 @@ int client_prep_connection(struct client *cl,
                                                PZ_MAX_CONNECTIONS);
         if (v && *v)
             max_connections = atoi(v);
-        
+
         v = session_setting_oneval(client_get_database(cl),
                 PZ_REUSE_CONNECTIONS);
         if (v && *v)

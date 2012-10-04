@@ -26,7 +26,7 @@ YAZ_BEGIN_CDECL
 /** \brief select thread handler type */
 typedef struct sel_thread *sel_thread_t;
 
-/** \brief creates select thread 
+/** \brief creates select thread
     \param work_handler handler that does work in worker thread
     \param work_destroy optional destroy handler for work (0 = no handler)
     \param read_fd pointer to readable socket upon completion
@@ -42,7 +42,7 @@ sel_thread_t sel_thread_create(void (*work_handler)(void *work_data),
                                void (*work_destroy)(void *work_data),
                                int *read_fd, int no_of_threads);
 
-/** \brief destorys select thread 
+/** \brief destorys select thread
     \param p select thread handler
 */
 void sel_thread_destroy(sel_thread_t p);
@@ -53,7 +53,7 @@ void sel_thread_destroy(sel_thread_t p);
 */
 void sel_thread_add(sel_thread_t p, void *data);
 
-/** \brief gets result of work 
+/** \brief gets result of work
     \param p select thread handler
     \returns data for work (which work_handler has been working on)
 */

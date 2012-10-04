@@ -102,7 +102,7 @@ void iochan_handler(struct iochan *i, int event)
 static void test_for_real_work(int no_threads)
 {
     int thread_fd;
-    sel_thread_t p = sel_thread_create(work_handler, work_destroy, 
+    sel_thread_t p = sel_thread_create(work_handler, work_destroy,
                                        &thread_fd, no_threads);
     YAZ_CHECK(p);
     if (p)
@@ -122,8 +122,8 @@ static void test_for_real_work(int no_threads)
 
 int main(int argc, char **argv)
 {
-    YAZ_CHECK_INIT(argc, argv); 
-    YAZ_CHECK_LOG(); 
+    YAZ_CHECK_INIT(argc, argv);
+    YAZ_CHECK_LOG();
 
     test_create_destroy();
     test_for_real_work(1);

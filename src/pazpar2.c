@@ -58,7 +58,7 @@ void child_handler(void *data)
 static void show_version(void)
 {
     char yaz_version_str[80];
-    printf("Pazpar2 " PACKAGE_VERSION 
+    printf("Pazpar2 " PACKAGE_VERSION
 #ifdef PAZPAR2_VERSION_SHA1
            " "
            PAZPAR2_VERSION_SHA1
@@ -76,7 +76,7 @@ static void show_version(void)
     printf(" yaz:%s", yaz_version_str);
     printf("\n");
     exit(0);
-}            
+}
 
 #ifdef WIN32
 static int tcpip_init (void)
@@ -93,7 +93,7 @@ static int tcpip_init (void)
 
 
 static int sc_main(
-    yaz_sc_t s, 
+    yaz_sc_t s,
     int argc, char **argv)
 {
     int daemon = 0;
@@ -118,7 +118,7 @@ static int sc_main(
     yaz_log_init_prefix("pazpar2");
     yaz_log_xml_errors(0, YLOG_WARN);
 
-    while ((ret = options("dDf:h:l:p:R:tu:v:VX", argv, argc, &arg)) != -2)
+    while ((ret = options("dDf:h:l:p:R:tu:v:Vw:X", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -164,7 +164,7 @@ static int sc_main(
 #else
               chdir
 #endif
-                (arg)) 
+                (arg))
             {
                 yaz_log(YLOG_FATAL|YLOG_ERRNO, "chdir %s", arg);
                 return 1;
@@ -203,7 +203,7 @@ static int sc_main(
         return 1;
     }
     pazpar2_mutex_init();
-    
+
     config = config_create(config_fname, global_parameters.dump_records);
     if (!config)
         return 1;
@@ -231,9 +231,9 @@ static int sc_main(
         ret = config_start_listeners(config, listener_override, record_fname);
         if (ret)
             return ret; /* error starting http listener */
-        
+
         yaz_sc_running(s);
-        
+
         yaz_daemon("pazpar2",
                    (global_parameters.debug_mode ? YAZ_DAEMON_DEBUG : 0) +
                    (daemon ? YAZ_DAEMON_FORK : 0) + YAZ_DAEMON_KEEPALIVE,
@@ -253,7 +253,7 @@ int main(int argc, char **argv)
 {
     int ret;
     yaz_sc_t s = yaz_sc_create("pazpar2", "Pazpar2");
-    
+
 #ifdef MTRACE
     mtrace();
 #endif

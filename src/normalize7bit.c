@@ -63,7 +63,7 @@ char *normalize7bit_mergekey(char *buf)
             *(pout--) = '\0';
         }
         while (pout > buf && *pout == ' ');
-    
+
     return buf;
 }
 

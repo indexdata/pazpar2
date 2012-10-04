@@ -201,7 +201,7 @@ pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
         //xmlChar *xmlstr = 0;
                 //int size = 0;
                 //xmlDocDumpMemory(icu_doc, size);
-        
+
         yaz_log(YLOG_FATAL, "Could not parse ICU chain config:\n"
                 "<%s>\n ... \n</%s>",
                 xml_node->name, xml_node->name);
@@ -212,7 +212,7 @@ pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
     yaz_log(YLOG_FATAL, "Error: ICU support requested with element:\n"
             "<%s>\n ... \n</%s>",
             xml_node->name, xml_node->name);
-    yaz_log(YLOG_FATAL, 
+    yaz_log(YLOG_FATAL,
             "But no ICU support is compiled into the YAZ library.");
     return 0;
 #endif // YAZ_HAVE_ICU
@@ -286,14 +286,14 @@ pp2_charset_token_t pp2_charset_tokenize(pp2_charset_t pct)
 
 void pp2_charset_token_first(pp2_charset_token_t prt,
                              const char *buf, int skip_article)
-{ 
+{
     if (skip_article)
     {
         const char *p = buf;
         char firstword[64];
         char *pout = firstword;
         char articles[] = "the den der die des an a "; // must end in space
-        
+
         for (; *p && *p != ' ' && pout - firstword < (sizeof(firstword)-2); p++)
             *pout++ = tolower(*(unsigned char *)p);
         *pout++ = ' ';
@@ -322,9 +322,9 @@ void pp2_charset_token_destroy(pp2_charset_token_t prt)
     if (prt->iter)
         icu_iter_destroy(prt->iter);
 #endif
-    if(prt->norm_str) 
+    if(prt->norm_str)
         wrbuf_destroy(prt->norm_str);
-    if(prt->sort_str) 
+    if(prt->sort_str)
         wrbuf_destroy(prt->sort_str);
     xfree(prt);
 }
@@ -385,7 +385,7 @@ static const char *pp2_get_sort_ascii(pp2_charset_token_t prt)
         char *tmp = xstrdup(prt->last_cp);
         char *result = 0;
         result = normalize7bit_mergekey(tmp);
-        
+
         wrbuf_rewind(prt->sort_str);
         wrbuf_puts(prt->sort_str, result);
         xfree(tmp);

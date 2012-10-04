@@ -1,4 +1,5 @@
 *.log
+*.log.xml
 *.dif
 Makefile
 Makefile.in

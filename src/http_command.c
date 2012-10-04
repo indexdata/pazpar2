@@ -49,16 +49,16 @@ void print_meminfo(WRBUF wrbuf)
     struct mallinfo minfo;
     minfo = mallinfo();
     wrbuf_printf(wrbuf, "  <memory>\n"
-                        "   <arena>%d</arena>\n" 
+                        "   <arena>%d</arena>\n"
                         "   <uordblks>%d</uordblks>\n"
                         "   <fordblks>%d</fordblks>\n"
                         "   <ordblks>%d</ordblks>\n"
                         "   <keepcost>%d</keepcost>\n"
-                        "   <hblks>%d</hblks>\n" 
+                        "   <hblks>%d</hblks>\n"
                         "   <hblkhd>%d</hblkhd>\n"
                         "   <virt>%d</virt>\n"
                         "   <virtuse>%d</virtuse>\n"
-                        "  </memory>\n", 
+                        "  </memory>\n",
                  minfo.arena, minfo.uordblks, minfo.fordblks,minfo.ordblks, minfo.keepcost, minfo.hblks, minfo.hblkhd, minfo.arena + minfo.hblkhd, minfo.uordblks + minfo.hblkhd);
 
 }
@@ -253,7 +253,7 @@ static const char *get_msg(enum pazpar2_error_code code)
     return "No error";
 }
 
-static void error(struct http_response *rs, 
+static void error(struct http_response *rs,
                   enum pazpar2_error_code code,
                   const char *addinfo)
 {
@@ -261,7 +261,7 @@ static void error(struct http_response *rs,
     WRBUF text = wrbuf_alloc();
     const char *http_status = "417";
     const char *msg = get_msg(code);
-    
+
     rs->msg = nmem_strdup(c->nmem, msg);
     strcpy(rs->code, http_status);
 
@@ -320,7 +320,7 @@ unsigned int make_sessionid(void)
             yaz_log(YLOG_WARN|YLOG_ERRNO, "gettimeofday");
             exit(1);
         }
-        /* at most 256 sessions per second .. 
+        /* at most 256 sessions per second ..
            (long long would be more appropriate)*/
         res = t.tv_sec;
         res = ((res << 8) | (seq & 0xff)) & ((1U << 31) - 1);
@@ -417,8 +417,8 @@ static void cmd_init(struct http_channel *c)
     struct http_session *s;
     struct http_response *rs = c->response;
     struct conf_service *service = 0; /* no service (yet) */
-    
-    if (r->content_len && content_type && 
+
+    if (r->content_len && content_type &&
         !yaz_strcmp_del("text/xml", content_type, "; "))
     {
         xmlDoc *doc = xmlParseMemory(r->content_buf, r->content_len);
@@ -437,7 +437,7 @@ static void cmd_init(struct http_channel *c)
             return;
         }
     }
-    
+
     if (!service)
     {
         const char *service_name = http_argbyname(c->request, "service");
@@ -450,13 +450,13 @@ static void cmd_init(struct http_channel *c)
     }
     sesid = make_sessionid();
     s = http_session_create(service, c->http_sessions, sesid);
-    
+
     yaz_log(c->http_sessions->log_level, "Session init %u ", sesid);
     if (!clear || *clear == '0')
         session_init_databases(s->psession);
     else
         yaz_log(YLOG_LOG, "Session %u init: No databases preloaded", sesid);
-    
+
     if (process_settings(s->psession, c->request, c->response) < 0)
         return;
 
@@ -469,7 +469,7 @@ static void cmd_init(struct http_channel *c)
     }
     wrbuf_puts(c->wrbuf, "</session>"
                "<protocol>" PAZPAR2_PROTOCOL_VERSION "</protocol>");
-    
+
     wrbuf_printf(c->wrbuf, "<keepAlive>%d</keepAlive>\n", 1000 * ((s->psession->service->session_timeout >= 20) ?
                                                                   (s->psession->service->session_timeout - 10) : 50));
     response_close(c, "init");
@@ -495,7 +495,7 @@ static void cmd_settings(struct http_channel *c)
     if (!s)
         return;
 
-    if (rq->content_len && content_type && 
+    if (rq->content_len && content_type &&
         !yaz_strcmp_del("text/xml", content_type, "; "))
     {
         xmlDoc *doc = xmlParseMemory(rq->content_buf, rq->content_len);
@@ -515,7 +515,7 @@ static void cmd_settings(struct http_channel *c)
             error(rs, PAZPAR2_MALFORMED_SETTING, 0);
             release_session(c,s);
             return;
-        }            
+        }
     }
     if (process_settings(s->psession, rq, rs) < 0)
     {
@@ -715,7 +715,7 @@ static void bytarget_response(struct http_channel *c, struct http_session *s, co
         wrbuf_xmlputs(c->wrbuf, ht[i].id);
         wrbuf_puts(c->wrbuf, "</id>\n");
 
-        if (ht[i].name && ht[i].name[0]) 
+        if (ht[i].name && ht[i].name[0])
         {
             wrbuf_puts(c->wrbuf, "<name>");
             wrbuf_xmlputs(c->wrbuf, ht[i].name);
@@ -826,7 +826,7 @@ static void cmd_bytarget(struct http_channel *c)
 }
 
 static void write_metadata(WRBUF w, struct conf_service *service,
-        struct record_metadata **ml, int full)
+                           struct record_metadata **ml, int full, int indent)
 {
     int imeta;
 
@@ -839,7 +839,10 @@ static void write_metadata(WRBUF w, struct conf_service *service,
         for (md = ml[imeta]; md; md = md->next)
         {
             struct record_metadata_attr *attr = md->attributes;
-            wrbuf_printf(w, "\n<md-%s", cmd->name);
+            int i;
+            for (i = 0; i < indent; i++)
+                wrbuf_putc(w, ' ');
+            wrbuf_printf(w, "<md-%s", cmd->name);
 
             for (; attr; attr = attr->next)
             {
@@ -862,7 +865,7 @@ static void write_metadata(WRBUF w, struct conf_service *service,
                     wrbuf_puts(w, "[can't represent]");
                     break;
             }
-            wrbuf_printf(w, "</md-%s>", cmd->name);
+            wrbuf_printf(w, "</md-%s>\n", cmd->name);
         }
     }
 }
@@ -873,20 +876,20 @@ static void write_subrecord(struct record *r, WRBUF w,
     const char *name = session_setting_oneval(
         client_get_database(r->client), PZ_NAME);
 
-    wrbuf_puts(w, "<location id=\"");
+    wrbuf_puts(w, " <location id=\"");
     wrbuf_xmlputs(w, client_get_id(r->client));
     wrbuf_puts(w, "\"\n");
 
-    wrbuf_puts(w, " name=\"");
+    wrbuf_puts(w, "    name=\"");
     wrbuf_xmlputs(w,  *name ? name : "Unknown");
     wrbuf_puts(w, "\" ");
 
     wrbuf_puts(w, "checksum=\"");
     wrbuf_printf(w,  "%u", r->checksum);
-    wrbuf_puts(w, "\">");
+    wrbuf_puts(w, "\">\n");
 
-    write_metadata(w, service, r->metadata, show_details);
-    wrbuf_puts(w, "</location>\n");
+    write_metadata(w, service, r->metadata, show_details, 2);
+    wrbuf_puts(w, " </location>\n");
 }
 
 static void show_raw_record_error(void *data, const char *addinfo)
@@ -948,7 +951,7 @@ static void show_record(struct http_channel *c, struct http_session *s)
     const char *offsetstr = http_argbyname(rq, "offset");
     const char *binarystr = http_argbyname(rq, "binary");
     const char *checksumstr = http_argbyname(rq, "checksum");
-    
+
     if (!s)
         return;
     service = s->psession->service;
@@ -979,7 +982,7 @@ static void show_record(struct http_channel *c, struct http_session *s)
         struct record*r = rec->records;
         int binary = 0;
         const char *nativesyntax = http_argbyname(rq, "nativesyntax");
-        
+
         if (binarystr && *binarystr != '0')
             binary = 1;
 
@@ -1008,8 +1011,8 @@ static void show_record(struct http_channel *c, struct http_session *s)
                                             syntax, esn,
                                             obs /* data */,
                                             show_raw_record_error,
-                                            (binary ? 
-                                             show_raw_record_ok_binary : 
+                                            (binary ?
+                                             show_raw_record_ok_binary :
                                              show_raw_record_ok),
                                             (binary ? 1 : 0),
                                             nativesyntax);
@@ -1024,26 +1027,26 @@ static void show_record(struct http_channel *c, struct http_session *s)
     {
         struct record *r;
         response_open_no_status(c, "record");
-        wrbuf_puts(c->wrbuf, "\n<recid>");
+        wrbuf_puts(c->wrbuf, "\n <recid>");
         wrbuf_xmlputs(c->wrbuf, rec->recid);
         wrbuf_puts(c->wrbuf, "</recid>\n");
         if (prev_r)
         {
-            wrbuf_puts(c->wrbuf, "<prevrecid>");
+            wrbuf_puts(c->wrbuf, " <prevrecid>");
             wrbuf_xmlputs(c->wrbuf, prev_r->recid);
             wrbuf_puts(c->wrbuf, "</prevrecid>\n");
         }
         if (next_r)
         {
-            wrbuf_puts(c->wrbuf, "<nextrecid>");
+            wrbuf_puts(c->wrbuf, " <nextrecid>");
             wrbuf_xmlputs(c->wrbuf, next_r->recid);
             wrbuf_puts(c->wrbuf, "</nextrecid>\n");
         }
-        wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", 
+        wrbuf_printf(c->wrbuf, " <activeclients>%d</activeclients>\n",
                      session_active_clients(s->psession));
-        write_metadata(c->wrbuf, service, rec->metadata, 1);
+        write_metadata(c->wrbuf, service, rec->metadata, 1, 1);
         for (r = rec->records; r; r = r->next)
-            write_subrecord(r, c->wrbuf, service, 1);
+            write_subrecord(r, c->wrbuf, service, 2);
         response_close(c, "record");
     }
     show_single_stop(s->psession, rec);
@@ -1087,7 +1090,7 @@ static void show_records(struct http_channel *c, struct http_session *s, int act
     Odr_int total_hits;
     Odr_int approx_hits;
     int i;
-
+    struct conf_service *service = 0;
     if (!s)
         return;
 
@@ -1099,15 +1102,18 @@ static void show_records(struct http_channel *c, struct http_session *s, int act
         startn = atoi(start);
     if (num)
         numn = atoi(num);
-    if (!sort)
-        sort = "relevance";
-    if (!(sp = reclist_parse_sortparms(c->nmem, sort, s->psession->service)))
+
+    service = s->psession->service;
+    if (!sort) {
+        sort = service->default_sort;
+    }
+    if (!(sp = reclist_parse_sortparms(c->nmem, sort, service)))
     {
         error(rs, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
         return;
 
     }
-    
+
     rl = show_range_start(s->psession, sp, startn, &numn, &total, &total_hits, &approx_hits);
 
     response_open(c, "show");
@@ -1128,15 +1134,23 @@ static void show_records(struct http_channel *c, struct http_session *s, int act
         struct conf_service *service = s->psession->service;
 
         wrbuf_puts(c->wrbuf, "<hit>\n");
-        write_metadata(c->wrbuf, service, rec->metadata, 0);
+        write_metadata(c->wrbuf, service, rec->metadata, 0, 1);
         for (ccount = 0, p = rl[i]->records; p;  p = p->next, ccount++)
             write_subrecord(p, c->wrbuf, service, 0); // subrecs w/o details
-        if (ccount > 1)
-            wrbuf_printf(c->wrbuf, "<count>%d</count>\n", ccount);
+        wrbuf_printf(c->wrbuf, " <count>%d</count>\n", ccount);
 	if (strstr(sort, "relevance"))
-	    wrbuf_printf(c->wrbuf, "<relevance>%d</relevance>\n",
+        {
+	    wrbuf_printf(c->wrbuf, " <relevance>%d</relevance>\n",
                          rec->relevance_score);
-        wrbuf_puts(c->wrbuf, "<recid>");
+            if (service->rank_debug)
+            {
+                wrbuf_printf(c->wrbuf, " <relevance_info>\n");
+                wrbuf_xmlputs(c->wrbuf, wrbuf_cstr(rec->relevance_explain1));
+                wrbuf_xmlputs(c->wrbuf, wrbuf_cstr(rec->relevance_explain2));
+                wrbuf_printf(c->wrbuf, " </relevance_info>\n");
+            }
+        }
+        wrbuf_puts(c->wrbuf, " <recid>");
         wrbuf_xmlputs(c->wrbuf, rec->recid);
         wrbuf_puts(c->wrbuf, "</recid>\n");
         wrbuf_puts(c->wrbuf, "</hit>\n");
@@ -1169,27 +1183,29 @@ static void cmd_show(struct http_channel *c)
     const char *block = http_argbyname(rq, "block");
     const char *sort = http_argbyname(rq, "sort");
     const char *block_error = http_argbyname(rq, "report");
+    struct conf_service *service = 0;
 
     struct reclist_sortparms *sp;
     int status;
     int report_error = 0;
     if (block_error && !strcmp("1", block_error)) {
         report_error = 1;
-    }    
+    }
     if (!s)
         return;
 
-    if (!sort)
-        sort = "relevance";
-    
-    if (!(sp = reclist_parse_sortparms(c->nmem, sort, s->psession->service)))
+    service = s->psession->service;
+    if (!sort) {
+        sort = service->default_sort;
+    }
+
+    if (!(sp = reclist_parse_sortparms(c->nmem, sort, service)))
     {
         error(c->response, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
         release_session(c, s);
         return;
     }
-    session_sort(s->psession, sp->name, sp->increasing,
-                 sp->type == Metadata_sortkey_position);
+    session_sort(s->psession, sp->name, sp->increasing, sp->type == Metadata_sortkey_position);
 
     status = session_active_clients(s->psession);
 
@@ -1208,7 +1224,7 @@ static void cmd_show(struct http_channel *c)
             }
             else
             {
-                yaz_log(YLOG_WARN, "Session %u: Attempt to block multiple times on show (preferred targets) block. Not supported!", 
+                yaz_log(YLOG_WARN, "Session %u: Attempt to block multiple times on show (preferred targets) block. Not supported!",
                     s->session_id);
                 if (report_error) {
                     error(rs, PAZPAR2_ALREADY_BLOCKED, "show (preferred targets)");
@@ -1269,11 +1285,15 @@ static void cmd_search(struct http_channel *c)
     const char *maxrecs = http_argbyname(rq, "maxrecs");
     const char *startrecs = http_argbyname(rq, "startrecs");
     const char *limit = http_argbyname(rq, "limit");
+    const char *sort = http_argbyname(rq, "sort");
     enum pazpar2_error_code code;
     const char *addinfo = 0;
+    struct reclist_sortparms *sp;
+    struct conf_service *service = 0;
 
     if (!s)
         return;
+
     if (!query)
     {
         error(rs, PAZPAR2_MISSING_PARAMETER, "query");
@@ -1286,8 +1306,19 @@ static void cmd_search(struct http_channel *c)
         release_session(c, s);
         return;
     }
+    service = s->psession->service;
+    if (!sort) {
+        sort = service->default_sort;
+    }
+    if (!(sp = reclist_parse_sortparms(c->nmem, sort, s->psession->service)))
+    {
+        error(c->response, PAZPAR2_MALFORMED_PARAMETER_VALUE, "sort");
+        release_session(c, s);
+        return;
+    }
+
     code = session_search(s->psession, query, startrecs, maxrecs, filter, limit,
-                          &addinfo, "relevance", 0);
+                          &addinfo, sp);
     if (code)
     {
         error(rs, code, addinfo);
@@ -1357,7 +1388,7 @@ static void cmd_info(struct http_channel *c)
     wrbuf_puts(c->wrbuf, "</yaz>\n");
 
     wrbuf_puts(c->wrbuf, " </version>\n");
-    
+
     info_services(c->server, c->wrbuf);
 
     response_close(c, "info");

@@ -42,7 +42,7 @@ struct service_xslt
     xsltStylesheetPtr xsp;
     struct service_xslt *next;
 };
-    
+
 xsltStylesheetPtr service_xslt_get(struct conf_service *service,
                                    const char *id)
 {
@@ -94,12 +94,12 @@ int service_xslt_config(struct conf_service *service, xmlNode *n)
             yaz_log(YLOG_FATAL, "Multiple xslt with id=%s", id);
             return -1;
         }
-    
+
     sx = nmem_malloc(service->nmem, sizeof(*sx));
     sx->id = nmem_strdup(service->nmem, id);
     sx->next = service->xslt_list;
     service->xslt_list = sx;
-    
+
     xsp_doc = xmlNewDoc(BAD_CAST "1.0");
     xmlDocSetRootElement(xsp_doc, xmlCopyNode(root, 1));
     sx->xsp = xsltParseStylesheetDoc(xsp_doc);

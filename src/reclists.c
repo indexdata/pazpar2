@@ -72,7 +72,7 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
 
         if (!(cpp = strchr(parms, ',')))
             cpp = parms + strlen(parms);
-        strncpy(parm, parms, cpp - parms); 
+        strncpy(parm, parms, cpp - parms);
         parm[cpp-parms] = '\0';
 
         if ((pp = strchr(parm, ':')))
@@ -86,7 +86,7 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
                 yaz_log(YLOG_FATAL, "Bad sortkey modifier: %s", parm);
                 return 0;
             }
-           
+
             if (pp[2])
             {
                 if (pp[2] == 'p')
@@ -101,7 +101,7 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
             if (!strcmp(parm, "relevance"))
             {
                 type = Metadata_sortkey_relevance;
-            } 
+            }
             else if (!strcmp(parm, "position"))
             {
                 type = Metadata_sortkey_position;
@@ -143,7 +143,7 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
 
 static int reclist_cmp(const void *p1, const void *p2)
 {
-    struct reclist_sortparms *sortparms = 
+    struct reclist_sortparms *sortparms =
         (*(struct reclist_bucket **) p1)->sort_parms;
     struct record_cluster *r1 = (*(struct reclist_bucket**) p1)->record;
     struct record_cluster *r2 = (*(struct reclist_bucket**) p2)->record;
@@ -202,6 +202,7 @@ static int reclist_cmp(const void *p1, const void *p2)
         default:
             yaz_log(YLOG_WARN, "Bad sort type: %d", s->type);
             res = 0;
+            break;
         }
     }
     if (res == 0)
@@ -275,7 +276,7 @@ struct reclist *reclist_create(NMEM nmem)
 {
     struct reclist *res = nmem_malloc(nmem, sizeof(struct reclist));
     res->hash_size = 399;
-    res->hashtable 
+    res->hashtable
         = nmem_malloc(nmem, res->hash_size * sizeof(struct reclist_bucket*));
     memset(res->hashtable, 0, res->hash_size * sizeof(struct reclist_bucket*));
     res->nmem = nmem;
@@ -293,7 +294,16 @@ struct reclist *reclist_create(NMEM nmem)
 void reclist_destroy(struct reclist *l)
 {
     if (l)
+    {
+        struct reclist_bucket *rb;
+        
+        for (rb = l->sorted_list; rb; rb = rb->snext)
+        {
+            wrbuf_destroy(rb->record->relevance_explain1);
+            wrbuf_destroy(rb->record->relevance_explain2);
+        }
         yaz_mutex_destroy(&l->mutex);
+    }
 }
 
 int reclist_get_num_records(struct reclist *l)
@@ -305,14 +315,14 @@ int reclist_get_num_records(struct reclist *l)
 
 // Insert a record. Return record cluster (newly formed or pre-existing)
 struct record_cluster *reclist_insert(struct reclist *l,
-                                      struct conf_service *service, 
+                                      struct conf_service *service,
                                       struct record *record,
                                       const char *merge_key, int *total)
 {
     unsigned int bucket;
     struct reclist_bucket **p;
     struct record_cluster *cluster = 0;
-    
+
     assert(service);
     assert(l);
     assert(record);
@@ -334,7 +344,7 @@ struct record_cluster *reclist_insert(struct reclist *l,
             {
                 if (re->client == record->client &&
                     record_compare(record, re, service))
-                { 
+                {
                     yaz_mutex_leave(l->mutex);
                     return 0;
                 }
@@ -351,7 +361,7 @@ struct record_cluster *reclist_insert(struct reclist *l,
             nmem_malloc(l->nmem, sizeof(*new));
 
         cluster = nmem_malloc(l->nmem, sizeof(*cluster));
-        
+
         record->next = 0;
         new->record = cluster;
         new->hnext = 0;
@@ -364,15 +374,17 @@ struct record_cluster *reclist_insert(struct reclist *l,
         cluster->metadata =
             nmem_malloc(l->nmem,
                         sizeof(struct record_metadata*) * service->num_metadata);
-        memset(cluster->metadata, 0, 
+        memset(cluster->metadata, 0,
                sizeof(struct record_metadata*) * service->num_metadata);
-        cluster->sortkeys = 
+        cluster->sortkeys =
             nmem_malloc(l->nmem, sizeof(struct record_metadata*) * service->num_sortkeys);
         memset(cluster->sortkeys, 0,
                sizeof(union data_types*) * service->num_sortkeys);
- 
+
+        cluster->relevance_explain1 = wrbuf_alloc();
+        cluster->relevance_explain2 = wrbuf_alloc();
         /* attach to hash list */
-        *p = new; 
+        *p = new;
 
         /* append to sorted_list */
         *l->last = new;

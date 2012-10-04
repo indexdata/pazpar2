@@ -240,6 +240,31 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
 	</para>
       </listitem>
      </varlistentry>
+     <varlistentry>
+      <term>sort</term>
+      <listitem>
+       <para>
+	Specifies sort criteria. The argument is a comma-separated list
+	(no whitespace allowed) of sort fields, with the highest-priority
+	field first. A sort field may be followed by a colon followed by
+	the number '0' (decreasing) or '1' (increasing).  Default
+        sort order is decreasing.
+	Sort field names can be any field name designated as a sort field
+        in the pazpar2.cfg file, or the special names 'relevance' and
+	'position'.
+       </para>
+       <para>
+	If not specified here or as <link linkend="sort-default">sort-default"</link>
+	in pazpar2.cfg, Pazpar2 will default to the built-in 'relevance' ranking. 
+       </para>
+       <para>
+	Having sort criteria at search is important for targets that 
+	supports native sorting in order to get best results. Pazpar2 
+	will trigger a new search if search criteria changes from Pazpar2 
+	to target-based sorting or visa-versa.
+	</para>
+      </listitem>
+     </varlistentry>
     </variablelist>
 
    </para>
@@ -348,12 +373,20 @@ search.pz2?session=2044502273&command=stat
 	Specifies sort criteria. The argument is a comma-separated list
 	(no whitespace allowed) of sort fields, with the highest-priority
 	field first. A sort field may be followed by a colon followed by
-	the number '0' or '1', indicating whether results should be sorted in
-	increasing or decreasing order according to that field. 0==Decreasing is
-	the default.
+	the number '0' (decreasing) or '1' (increasing).  Default
+        sort order is decreasing.
 	Sort field names can be any field name designated as a sort field
         in the pazpar2.cfg file, or the special names 'relevance' and
 	'position'.
+
+	If not specified here or as <link linkend="sort-default">sort-default"</link> 
+	in pazpar2.cfg, pazpar2 will default to the built-in 'relevance' ranking. 
+
+	Having sort criteria at search is important for targets that 
+	supports native sorting in order to get best results. pazpar2 
+	will trigger a new search if search criteria changes from pazpar2 
+	to target-based sorting.
+
        </para>
        <para>
 	For targets where If <link linkend="pz:sortmap">pz:sortmap</link>

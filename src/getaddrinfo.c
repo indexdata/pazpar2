@@ -99,7 +99,7 @@ void perform_getaddrinfo(struct work *w)
     // returns AF_INET address.
     if ((res = getaddrinfo(hostport, port, &hints, &addrinfo)))
     {
-        yaz_log(YLOG_WARN, "Failed to resolve %s %s", 
+        yaz_log(YLOG_WARN, "Failed to resolve %s %s",
                 w->hostport, gai_strerror(res));
     }
     else
@@ -107,7 +107,7 @@ void perform_getaddrinfo(struct work *w)
         char ipport[128];
         unsigned char addrbuf[4];
         assert(addrinfo->ai_family == PF_INET);
-        memcpy(addrbuf, 
+        memcpy(addrbuf,
                &((struct sockaddr_in*)addrinfo->ai_addr)->sin_addr.s_addr, 4);
         sprintf(ipport, "%u.%u.%u.%u:%s",
                 addrbuf[0], addrbuf[1], addrbuf[2], addrbuf[3], port);
@@ -170,7 +170,7 @@ static sel_thread_t resolver_thread = 0;
 static void getaddrinfo_start(iochan_man_t iochan_man)
 {
     int fd;
-    sel_thread_t p = resolver_thread = 
+    sel_thread_t p = resolver_thread =
         sel_thread_create(work_handler, 0 /* work_destroy */, &fd,
                           3 /* no of resolver threads */);
     if (!p)

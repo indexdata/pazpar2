@@ -156,15 +156,14 @@ void session_destroy(struct session *s);
 void session_init_databases(struct session *s);
 void statistics(struct session *s, struct statistics *stat);
 
-void session_sort(struct session *se, const char *field, int increasing,
-                  int clear_set);
+void session_sort(struct session *se, const char *field, int increasing, int clear_set);
 
 enum pazpar2_error_code session_search(struct session *s, const char *query,
                                        const char *startrecs,
                                        const char *maxrecs,
                                        const char *filter, const char *limit,
                                        const char **addinfo,
-                                       const char *sort_field, int increasing);
+                                       struct reclist_sortparms *sort_parm);
 struct record_cluster **show_range_start(struct session *s,
                                          struct reclist_sortparms *sp,
                                          int start,
@@ -197,6 +196,7 @@ void session_log(struct session *s, int level, const char *fmt, ...)
 struct session_sorted_results {
     const char *field;
     int increasing;
+    int position;
     struct session_sorted_results *next;
 };
 

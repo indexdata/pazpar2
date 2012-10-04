@@ -1,3 +1,39 @@
+pazpar2 (1.6.21-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@debian-testing>  Mon, 24 Sep 2012 19:47:58 +0200
+
+pazpar2 (1.6.20-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Fri, 21 Sep 2012 15:11:59 +0200
+
+pazpar2 (1.6.19-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Tue, 18 Sep 2012 14:58:16 +0200
+
+pazpar2 (1.6.18-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Mon, 17 Sep 2012 13:05:14 +0200
+
+pazpar2 (1.6.17-1indexdata) unstable; urgency=low
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Wed, 05 Sep 2012 11:17:31 +0200
+
+pazpar2 (1.6.16-1indexdata) unstable; urgency=low
+
+  * Upstream
+
+ -- Dennis Schafroth <dennis@indexdata.com>  Thu, 23 Aug 2012 16:00:33 +0200
+
 pazpar2 (1.6.15-1indexdata) unstable; urgency=low
 
   * Upstream.
