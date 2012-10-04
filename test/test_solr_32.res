@@ -1,383 +1,407 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <show><status>OK</status>
 <activeclients>0</activeclients>
-<merged>95</merged>
-<total>1995</total>
+<merged>99</merged>
+<total>249403</total>
 <start>0</start>
 <num>20</num>
 <hit>
- <md-title>The vertuose boke of the distyllacyon of all maner of waters of the herbes in this present volume expressed with the fygures of the styllatoryes to that noble worke belongyne</md-title>
- <md-date>1530</md-date>
- <md-author>Brunschwig, Hieronymus</md-author>
- <md-description>&quot;The colophon states that the book was finished in 1527, but this is presumably not meant for the date of printing&quot;--McKerrow</md-description>
+ <md-title>Electric gas lighting;</md-title>
+ <md-title-remainder>how to install electric gas igniting apparatus, including the jump spark and multiple systems, for use in houses, churches, theatres, halls, schools, stores or any large buildings, also the care and selection of suitable batteries, wiring and repairs</md-title-remainder>
+ <md-date>1091</md-date>
+ <md-author>Schneider, Norman H</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1037483384">
-  <md-title>The vertuose boke of the distyllacyon of all maner of waters of the herbes in this present volume expressed with the fygures of the styllatoryes to that noble worke belongyne</md-title>
-  <md-date>1530</md-date>
-  <md-author>Brunschwig, Hieronymus</md-author>
-  <md-description>T.p. in red and black</md-description>
-  <md-description>Translation of Kleines distillierbuch, books 1-2</md-description>
-  <md-description>&quot;The colophon states that the book was finished in 1527, but this is presumably not meant for the date of printing&quot;--McKerrow</md-description>
-  <md-description>Signatures: [para]⁴ a-b⁶ c-d⁴ e-f⁶ A⁴ B-R⁴/⁶ S-T⁴ V⁶ X⁴</md-description>
+    name="LOC Solr Test" checksum="3168968100">
+  <md-title>Electric gas lighting;</md-title>
+  <md-title-remainder>how to install electric gas igniting apparatus, including the jump spark and multiple systems, for use in houses, churches, theatres, halls, schools, stores or any large buildings, also the care and selection of suitable batteries, wiring and repairs</md-title-remainder>
+  <md-date>1091</md-date>
+  <md-author>Schneider, Norman H</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the vertuose boke of the distyllacyon of all maner of waters of the herbes in this present volume expressed with the fygures of the styllatoryes to that noble worke belongyne author brunschwig hieronymus medium book</recid>
+ <recid>content: title electric gas lighting author schneider norman h medium book</recid>
 </hit>
 <hit>
- <md-title>In regias aquarum et silvarum constitutiones, commentarius</md-title>
- <md-date>1561</md-date>
- <md-author>Malleuillaeus, Claudius</md-author>
- <md-description>Commentary in Latin with text of the constitutiones in French</md-description>
+ <md-title>Books in their seasons</md-title>
+ <md-date>1095</md-date>
+ <md-author>Marble, Annie Russell</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="488613273">
+  <md-title>Books in their seasons</md-title>
+  <md-date>1095</md-date>
+  <md-author>Marble, Annie Russell</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title books in their seasons author marble annie russell medium book</recid>
+</hit>
+<hit>
+ <md-title>Pii II Pontificis Maximi d[e] captione vrbis Co[n]stantinopolitane tractatul[us]</md-title>
+ <md-date>1474</md-date>
+ <md-author>Pius</md-author>
+ <md-description>Title from incipit; imprint from Goff; Pellechet attributes it to the press of Johannes Schurener</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2103225742">
+  <md-title>Pii II Pontificis Maximi d[e] captione vrbis Co[n]stantinopolitane tractatul[us]</md-title>
+  <md-date>1474</md-date>
+  <md-author>Pius</md-author>
+  <md-description>Title from incipit; imprint from Goff; Pellechet attributes it to the press of Johannes Schurener</md-description>
+  <md-description>Signatures: [1]⁴</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title pii ii pontificis maximi d e captione vrbis co n stantinopolitane tractatul us author pius medium book</recid>
+</hit>
+<hit>
+ <md-title>Incipit sompnium Enee Siluii poete laureati de fortuna</md-title>
+ <md-date>1475-1476</md-date>
+ <md-author>Pius</md-author>
+ <md-description>LC copy has signed binding: KA [?] 1902.DLC</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="2652095853">
-  <md-title>In regias aquarum et silvarum constitutiones, commentarius</md-title>
-  <md-date>1561</md-date>
-  <md-author>Malleuillaeus, Claudius</md-author>
-  <md-description>Commentary in Latin with text of the constitutiones in French</md-description>
-  <md-description>Signatures: ã⁸ a-o⁸ p⁴</md-description>
-  <md-description>Includes index</md-description>
-  <md-description>Errata on p. [2] at end</md-description>
+  <md-title>Incipit sompnium Enee Siluii poete laureati de fortuna</md-title>
+  <md-date>1475-1476</md-date>
+  <md-author>Pius</md-author>
+  <md-description>Imprint from Goff</md-description>
+  <md-description>Addressed to Procopius de Rabensteyn</md-description>
+  <md-description>Signatures: [1]¹⁰</md-description>
+  <md-description>LC copy has signed binding: KA [?] 1902.DLC</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title in regias aquarum et silvarum constitutiones commentarius author malleuillaeus claudius medium book</recid>
+ <recid>content: title incipit sompnium enee siluii poete laureati de fortuna author pius medium book</recid>
 </hit>
 <hit>
- <md-title>Institutio Christianae religionis</md-title>
- <md-date>1568</md-date>
- <md-author>Calvin, Jean</md-author>
- <md-description>LC copy imperfect: final leaf wanting; ink stain on t.p. and water stains throughout with no loss of text.DLC</md-description>
+ <md-title>Interogatorium, siue, Confessionale</md-title>
+ <md-date>1475</md-date>
+ <md-author>Bartholomaeus</md-author>
+ <md-description>Elegiacs from Valdarfer&apos;s Milan edition of 29 September 1474: p. [199]</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1037483384">
+  <md-title>Interogatorium, siue, Confessionale</md-title>
+  <md-date>1475</md-date>
+  <md-author>Bartholomaeus</md-author>
+  <md-description>Uniform title from Goff; title from incipit; imprint from Goff</md-description>
+  <md-description>Signatures: [1-10]¹⁰</md-description>
+  <md-description>Elegiacs from Valdarfer&apos;s Milan edition of 29 September 1474: p. [199]</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title interogatorium siue confessionale author bartholomaeus medium book</recid>
+</hit>
+<hit>
+ <md-title>Tabula co[m]posita a d[omi]no Alberto de Ferrariis vtriusq[ue] iuris doctor[e] d[e] Placentia super i[n]frascripto opusculo de horis canonicis in modu[m] ut seq[ui]t[ur]</md-title>
+ <md-date>1475</md-date>
+ <md-author>Ferrariis, Albertus de</md-author>
+ <md-description>Attributed by Hain and others to Alberto Trotti; cf. L.A. Sheppard, &quot;Albertus Trottus and Albertus de Ferrariis&quot; in The library, v. 5, no. 2 (Sept./Dec. 1947), p. 158-159</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3717838211">
+  <md-title>Tabula co[m]posita a d[omi]no Alberto de Ferrariis vtriusq[ue] iuris doctor[e] d[e] Placentia super i[n]frascripto opusculo de horis canonicis in modu[m] ut seq[ui]t[ur]</md-title>
+  <md-date>1475</md-date>
+  <md-author>Ferrariis, Albertus de</md-author>
+  <md-description>Caption title; uniform title and imprint from Goff</md-description>
+  <md-description>Attributed by Hain and others to Alberto Trotti; cf. L.A. Sheppard, &quot;Albertus Trottus and Albertus de Ferrariis&quot; in The library, v. 5, no. 2 (Sept./Dec. 1947), p. 158-159</md-description>
+  <md-description>Signatures: [1-4]⁸</md-description>
+  <md-description>LC copy rubricated, with paragraph marks, underlining, and one initial.DLC</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title tabula co m posita a d omi no alberto de ferrariis vtriusq ue iuris doctor e d e placentia super i n frascripto opusculo de horis canonicis in modu m ut seq ui t ur author ferrariis albertus de medium book</recid>
+</hit>
+<hit>
+ <md-title>Epistola Enee Siluii Picolominei iuueni non esse negandum amorem dicit</md-title>
+ <md-date>1485</md-date>
+ <md-author>Pius</md-author>
+ <md-description>LC copy has marginal manuscript annotations.  Text is preceded by [8] p. and followed by [2] p. of manuscript notes in German; signed Barnheim.DLC</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="4266708322">
-  <md-title>Institutio Christianae religionis</md-title>
-  <md-date>1568</md-date>
-  <md-author>Calvin, Jean</md-author>
-  <md-description>Printer&apos;s device of F. Perrin on t.p</md-description>
-  <md-description>Signatures: *⁸ a-z⁸, A-N⁸ O¹⁰, 2A-2B⁶ 2C-2E⁸ 2F²</md-description>
-  <md-description>Includes index</md-description>
-  <md-description>LC copy imperfect: final leaf wanting; ink stain on t.p. and water stains throughout with no loss of text.DLC</md-description>
+  <md-title>Epistola Enee Siluii Picolominei iuueni non esse negandum amorem dicit</md-title>
+  <md-date>1485</md-date>
+  <md-author>Pius</md-author>
+  <md-description>Caption title; imprint from Goff</md-description>
+  <md-description>Addressed to Sigismund, Duke of Austria</md-description>
+  <md-description>Signatures: [1]⁶</md-description>
+  <md-description>Eiusdem Enee epistola amatoria: p. [3-5]</md-description>
+  <md-description>Epistola Enee Siluii poete laureati, siue Pii pape secundi, De amoris remedio incipit feliciter: p. [5-12]</md-description>
+  <md-description>LC copy has marginal manuscript annotations.  Text is preceded by [8] p. and followed by [2] p. of manuscript notes in German; signed Barnheim.DLC</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title institutio christianae religionis author calvin jean medium book</recid>
+ <recid>content: title epistola enee siluii picolominei iuueni non esse negandum amorem dicit author pius medium book</recid>
 </hit>
 <hit>
- <md-title>An invention of engines of motion lately brought to perfection</md-title>
- <md-title-remainder>Whereby may be dispatched any work now done in England or elsewhere, (especially works that require strength and swiftness) either by wind, water, cattel or man</md-title-remainder>
- <md-date>1651</md-date>
- <md-author>Hartlib, Samuel</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1586353495">
-  <md-title>An invention of engines of motion lately brought to perfection</md-title>
-  <md-title-remainder>Whereby may be dispatched any work now done in England or elsewhere, (especially works that require strength and swiftness) either by wind, water, cattel or man</md-title-remainder>
-  <md-date>1651</md-date>
-  <md-author>Hartlib, Samuel</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title an invention of engines of motion lately brought to perfection author hartlib samuel medium book</recid>
-</hit>
-<hit>
- <md-title>Hugonis Grotii De jure belli ac pacis libri tres</md-title>
- <md-title-remainder>in quibus jus naturae &amp; gentium, item juris publici praecipua explicantur : cum commentariis Gulielmi van der Muelen : accedunt et authoris annotata, ex postrema ejus ante obitum cura, nec non Joann. Frid. Gronovii ... notae in totum opus</md-title-remainder>
- <md-date>1696-1703</md-date>
- <md-author>Grotius, Hugo</md-author>
- <md-description>Signatures: v. 1: Engr. t.p., pi1 *⁴ 2*² 3*1, (plate), A-I⁴ K1, ²A-Z⁴ Aa-Pp⁴ Qq², ³A-Y² (³Y2 blank); v. 2: *² 2*² 3*1 A-Z⁴ Aa-Zz⁴ Aaa-Zzz⁴ Aaaa-Zzzz⁴ Aaaaa-Ggggg⁴, ²A-Z² ²Aa-Qq²; v. 3: *² 2*1 A-Z⁴ Aa-Nn⁴, ²A-Z² (²Z2, blank? wanting)</md-description>
+ <md-title>Pij ii Pontificis maximi de captione vrbis Constantinopolitane tractatulus</md-title>
+ <md-date>1488-1490</md-date>
+ <md-author>Pius</md-author>
+ <md-description>Title from incipit; imprint from Goff</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="520611137">
-  <md-title>Hugonis Grotii De jure belli ac pacis libri tres</md-title>
-  <md-title-remainder>in quibus jus naturae &amp; gentium, item juris publici praecipua explicantur : cum commentariis Gulielmi van der Muelen : accedunt et authoris annotata, ex postrema ejus ante obitum cura, nec non Joann. Frid. Gronovii ... notae in totum opus</md-title-remainder>
-  <md-date>1696-1703</md-date>
-  <md-author>Grotius, Hugo</md-author>
-  <md-description>Vol. 1 has also engraved t.p.; in all 3 volumes, engraved device (tree, with motto &quot;Virescit aquis&quot;) on t.p.; in v. 1, engr. portrait of Gulielmus van der Muelen</md-description>
-  <md-description>Vol. 1: Engr. t.p., [16], (plate), 74, 307, [1], 57, [31] p. (the last leaf blank); v. 2 (1700): [10], 792, 115, [41] p.; v. 3: [6], 288, 62, [28] p</md-description>
-  <md-description>Signatures: v. 1: Engr. t.p., pi1 *⁴ 2*² 3*1, (plate), A-I⁴ K1, ²A-Z⁴ Aa-Pp⁴ Qq², ³A-Y² (³Y2 blank); v. 2: *² 2*² 3*1 A-Z⁴ Aa-Zz⁴ Aaa-Zzz⁴ Aaaa-Zzzz⁴ Aaaaa-Ggggg⁴, ²A-Z² ²Aa-Qq²; v. 3: *² 2*1 A-Z⁴ Aa-Nn⁴, ²A-Z² (²Z2, blank? wanting)</md-description>
-  <md-description>Includes indexes</md-description>
+  <md-title>Pij ii Pontificis maximi de captione vrbis Constantinopolitane tractatulus</md-title>
+  <md-date>1488-1490</md-date>
+  <md-author>Pius</md-author>
+  <md-description>Title from incipit; imprint from Goff</md-description>
+  <md-description>Signatures: [1]⁴</md-description>
+  <md-description>LC copy wanting final blank leaf.DLC</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title hugonis grotii de jure belli ac pacis libri tres author grotius hugo medium book</recid>
+ <recid>content: title pij ii pontificis maximi de captione vrbis constantinopolitane tractatulus author pius medium book</recid>
 </hit>
 <hit>
- <md-title>A mechanical account of poisons in several essays</md-title>
- <md-date>1702</md-date>
- <md-author>Mead, Richard</md-author>
- <md-description>Of the viper.--Of the tarantula and mad dog.--Of poisonous minerals and plants.--Of opium.--Of venomous exhalations from the earth, poisonous airs, and waters</md-description>
+ <md-title>Tractatus pulcherrimus Enee Siluij, siue Pij pape ij de curialiu[m] miseria</md-title>
+ <md-date>1488-1490</md-date>
+ <md-author>Pius</md-author>
+ <md-description>Title from incipit; imprint from Goff</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="3200965964">
-  <md-title>A mechanical account of poisons in several essays</md-title>
-  <md-date>1702</md-date>
-  <md-author>Mead, Richard</md-author>
-  <md-description>Of the viper.--Of the tarantula and mad dog.--Of poisonous minerals and plants.--Of opium.--Of venomous exhalations from the earth, poisonous airs, and waters</md-description>
+  <md-title>Tractatus pulcherrimus Enee Siluij, siue Pij pape ij de curialiu[m] miseria</md-title>
+  <md-date>1488-1490</md-date>
+  <md-author>Pius</md-author>
+  <md-description>Title from incipit; imprint from Goff</md-description>
+  <md-description>Signatures: [1-2]⁶ [3]⁴</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title a mechanical account of poisons in several essays author mead richard medium book</recid>
+ <recid>content: title tractatus pulcherrimus enee siluij siue pij pape ij de curialiu m miseria author pius medium book</recid>
 </hit>
 <hit>
- <md-title>The accomplish&apos;d female instructor: or, A very useful companion for ladies, gentlewomen, and others</md-title>
- <md-title-remainder>In two parts. Part I. Treating of generous breeding and behaviour; choice of company, friendship; the art of speaking well [etc.] ... Part II. Treating of making curious confectionaries, or sweet-meats, jellies, syrups, cordial-waters ... to know good provisions, dye curious colours, whiten ivory ... physical and chyrurgical receipts ... and a great number of other useful and profitable things</md-title-remainder>
- <md-date>1704</md-date>
- <md-description>Preface signed: R.G</md-description>
+ <md-title>Enee Siluij Senen[sis] cardinalis S[an]cte Sabine Historia Bohemica, notabilis [et] jocu[n]da</md-title>
+ <md-title-remainder>a principio ge[n]tis vsq[ue] ad Georgiu[m] Poggiebratiu[m], Ladislai Regis successore[m] : porrecta ad illustrissimu[m] D[omi]n[u]m Alfonsum Regem Aragonu[m] co[n]scripta</md-title-remainder>
+ <md-date>1489</md-date>
+ <md-author>Pius</md-author>
+ <md-description>LC copy lacks final blank leaf; some initials supplied in red; rubricated printed leaves in German used on binding.DLC</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2135223606">
-  <md-title>The accomplish&apos;d female instructor: or, A very useful companion for ladies, gentlewomen, and others</md-title>
-  <md-title-remainder>In two parts. Part I. Treating of generous breeding and behaviour; choice of company, friendship; the art of speaking well [etc.] ... Part II. Treating of making curious confectionaries, or sweet-meats, jellies, syrups, cordial-waters ... to know good provisions, dye curious colours, whiten ivory ... physical and chyrurgical receipts ... and a great number of other useful and profitable things</md-title-remainder>
-  <md-date>1704</md-date>
-  <md-description>Preface signed: R.G</md-description>
+    name="LOC Solr Test" checksum="1586353495">
+  <md-title>Enee Siluij Senen[sis] cardinalis S[an]cte Sabine Historia Bohemica, notabilis [et] jocu[n]da</md-title>
+  <md-title-remainder>a principio ge[n]tis vsq[ue] ad Georgiu[m] Poggiebratiu[m], Ladislai Regis successore[m] : porrecta ad illustrissimu[m] D[omi]n[u]m Alfonsum Regem Aragonu[m] co[n]scripta</md-title-remainder>
+  <md-date>1489</md-date>
+  <md-author>Pius</md-author>
+  <md-description>Imprint from Goff</md-description>
+  <md-description>Signatures: a-f⁸ g⁴ h⁸</md-description>
+  <md-description>Guide letters</md-description>
+  <md-description>LC copy lacks final blank leaf; some initials supplied in red; rubricated printed leaves in German used on binding.DLC</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the accomplish d female instructor or a very useful companion for ladies gentlewomen and others medium book</recid>
+ <recid>content: title enee siluij senen sis cardinalis s an cte sabine historia bohemica notabilis et jocu n da author pius medium book</recid>
 </hit>
 <hit>
- <md-title>The curiosities of common water, or, The advantages thereof in preventing and curing many distempers</md-title>
- <md-title-remainder>gather&apos;d from the writings of several eminent physicians, and also from more than forty years experience</md-title-remainder>
- <md-date>1723</md-date>
- <md-author>Smith, John</md-author>
- <md-description>LC copy imperfect: all after p. 46 wanting. Title page clipped at bottom with no loss of text.DLC</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3749836075">
-  <md-title>The curiosities of common water, or, The advantages thereof in preventing and curing many distempers</md-title>
-  <md-title-remainder>gather&apos;d from the writings of several eminent physicians, and also from more than forty years experience</md-title-remainder>
-  <md-date>1723</md-date>
-  <md-author>Smith, John</md-author>
-  <md-description>Signatures: [A]⁴ B-F⁴</md-description>
-  <md-description>LC copy imperfect: all after p. 46 wanting. Title page clipped at bottom with no loss of text.DLC</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title the curiosities of common water or the advantages thereof in preventing and curing many distempers author smith john medium book</recid>
-</hit>
-<hit>
- <md-title>The four years voyages of Capt. George Roberts;</md-title>
- <md-title-remainder>being a series of uncommon events, which befell him in a voyage to the islands of the Canaries, Cape de Verde, and Barbadoes, from whence he was bound to the coast of Guiney ...  Together with observations on the minerals, mineral waters, metals, and salts, and of the nitre with which some of these islands abound</md-title-remainder>
- <md-date>1726</md-date>
- <md-author>Roberts, George</md-author>
- <md-description>Ascribed also to Defoe.  According to the Dict. nat. biog. this ascription &quot;seems unauthorized and unnecessary ... No reason can be alleged for doubting the existence of Roberts or the substantial truth of the narrative.&quot;  According to W.P. Trent (in Camb. hist. of Eng. lit. v. 9, p. 25) though it may be the record of a real seaman, it &quot;bears almost certain traces of Defoe&apos;s hand.&quot;  cf. also Trent&apos;s Defoe, how to know him, p. 263</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1069481248">
-  <md-title>The four years voyages of Capt. George Roberts;</md-title>
-  <md-title-remainder>being a series of uncommon events, which befell him in a voyage to the islands of the Canaries, Cape de Verde, and Barbadoes, from whence he was bound to the coast of Guiney ...  Together with observations on the minerals, mineral waters, metals, and salts, and of the nitre with which some of these islands abound</md-title-remainder>
-  <md-date>1726</md-date>
-  <md-author>Roberts, George</md-author>
-  <md-description>Ascribed also to Defoe.  According to the Dict. nat. biog. this ascription &quot;seems unauthorized and unnecessary ... No reason can be alleged for doubting the existence of Roberts or the substantial truth of the narrative.&quot;  According to W.P. Trent (in Camb. hist. of Eng. lit. v. 9, p. 25) though it may be the record of a real seaman, it &quot;bears almost certain traces of Defoe&apos;s hand.&quot;  cf. also Trent&apos;s Defoe, how to know him, p. 263</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title the four years voyages of capt george roberts author roberts george medium book</recid>
-</hit>
-<hit>
- <md-title>Hippocrates upon air, water, and situation;</md-title>
- <md-title-remainder>upon epidemical diseases; and upon prognosticks, in acute cases especially. To this is added (by way of comparison) Thucydidesʼs account of the plague of Athens, the whole translated, methodisʼd, and illustrated with useful and explanatory notes</md-title-remainder>
- <md-date>1734</md-date>
- <md-author>Hippocrates</md-author>
- <md-description>&quot;The life of Hippocrates from Soranus&quot;: p. [xxxiii]-[xl]</md-description>
+ <md-title>Opuscula Enee Siluij de duobus amantibus ;</md-title>
+ <md-title-remainder>Et de remedio amoris ; cu[m] ep[isto]la retractatoria eiusdem Pij secu[n]di ad quenda[m] Karolum</md-title-remainder>
+ <md-date>1489-1495</md-date>
+ <md-author>Pius</md-author>
+ <md-description>Title from first leaf; imprint from colophon; date from Goff</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="2684093717">
-  <md-title>Hippocrates upon air, water, and situation;</md-title>
-  <md-title-remainder>upon epidemical diseases; and upon prognosticks, in acute cases especially. To this is added (by way of comparison) Thucydidesʼs account of the plague of Athens, the whole translated, methodisʼd, and illustrated with useful and explanatory notes</md-title-remainder>
-  <md-date>1734</md-date>
-  <md-author>Hippocrates</md-author>
-  <md-description>Title in red and black</md-description>
-  <md-description>&quot;The life of Hippocrates from Soranus&quot;: p. [xxxiii]-[xl]</md-description>
+  <md-title>Opuscula Enee Siluij de duobus amantibus ;</md-title>
+  <md-title-remainder>Et de remedio amoris ; cu[m] ep[isto]la retractatoria eiusdem Pij secu[n]di ad quenda[m] Karolum</md-title-remainder>
+  <md-date>1489-1495</md-date>
+  <md-author>Pius</md-author>
+  <md-description>Title from first leaf; imprint from colophon; date from Goff</md-description>
+  <md-description>Signatures: A-C⁸</md-description>
+  <md-description>LC copy imperfect: final (blank) leaf wanting.DLC</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title hippocrates upon air water and situation author hippocrates medium book</recid>
+ <recid>content: title opuscula enee siluij de duobus amantibus author pius medium book</recid>
 </hit>
 <hit>
- <md-title>A continuation of the Reverend Mr. Whitefield&apos;s journal</md-title>
- <md-title-remainder>from his arrival at Savannah, May 7, his stay there till July 25, from thence to Fredrica, at which place he arriv&apos;d August 8, his return to Savannah again August 16, his departure from thence to Charlestown, South Carolina, from which place he took his passage on board Capt. Coc, bound to England ... : with a preface, giving the reason, why he publishes a continuation of his journals</md-title-remainder>
- <md-date>1741</md-date>
- <md-author>Whitefield, George</md-author>
- <md-description>&quot;...  A particular account of his dangerous voyage while he was nine weeks and three days upon the seas, provisions almost gone, the whole ship&apos;s crew in a perishing condition, till their arrival at Ireland (having then but about half a pint of water) there they landed. From thence Mr. Whitefield travelled by land till he arriv&apos;d in London ...&quot;</md-description>
+ <md-title>Repertorium siue tabula generalis auctoritatum Arestotelis cu[m] commento</md-title>
+ <md-title-remainder>per modum alphabeti et philosophorum</md-title-remainder>
+ <md-date>1491</md-date>
+ <md-description>The work named in the title, a florilegium in one alphabet, is wrongly attributed in its introductory paragraph to Venerable Bede. It has brief commentaries after each of the ca. 1100 quotations (translated into Latin) and is followed (leaves kij-n8) by a set of longer selections from Cicero, with an afterword by Petrus Tanhauser addressed to his patron Sebaldus Schreier. The set of quotations from Cicero has the caption title: Marci Tullij Ciceronis ciuis Romani clarissimi ac eloquentie genitoris facundissimi auctoritates p[ro] virtutu[m] capessendaru[m] vberiori lege</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2135223606">
+  <md-title>Repertorium siue tabula generalis auctoritatum Arestotelis cu[m] commento</md-title>
+  <md-title-remainder>per modum alphabeti et philosophorum</md-title-remainder>
+  <md-date>1491</md-date>
+  <md-description>The work named in the title, a florilegium in one alphabet, is wrongly attributed in its introductory paragraph to Venerable Bede. It has brief commentaries after each of the ca. 1100 quotations (translated into Latin) and is followed (leaves kij-n8) by a set of longer selections from Cicero, with an afterword by Petrus Tanhauser addressed to his patron Sebaldus Schreier. The set of quotations from Cicero has the caption title: Marci Tullij Ciceronis ciuis Romani clarissimi ac eloquentie genitoris facundissimi auctoritates p[ro] virtutu[m] capessendaru[m] vberiori lege</md-description>
+  <md-description>Publisher statement from colophon; imprint date from Goff</md-description>
+  <md-description>Signatures: a-m⁸ n¹⁰</md-description>
+  <md-description>Woodcut ill. on t.p.; initial A on aij</md-description>
+  <md-description>Capital spaces, most with guide letters</md-description>
+  <md-description>The afterword is dated (leaf n9): 1490</md-description>
+  <md-description>LC copy bound in wooden boards with blind-stamped leather spine; metal hinges (clasps wanting); fragment of ms. bound in. Has contemporary ms. annotations. Duplicate copies of conjugate leaves d3.6 and d4.5 bound in.DLC</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title repertorium siue tabula generalis auctoritatum arestotelis cu m commento medium book</recid>
+</hit>
+<hit>
+ <md-title>Copulata super libros De anima Arestotelis cu[m] textu</md-title>
+ <md-title-remainder>iuxta doctrina[m] excellentissimi doctoris sa[n]cti Thome de Aquino hic [con]tine[n]t[ur]</md-title-remainder>
+ <md-date>1492</md-date>
+ <md-author>Lambert</md-author>
+ <md-description>Includes typographically distinguished text of a Latin translation of Aristotle&apos;s De anima</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3749836075">
+  <md-title>Copulata super libros De anima Arestotelis cu[m] textu</md-title>
+  <md-title-remainder>iuxta doctrina[m] excellentissimi doctoris sa[n]cti Thome de Aquino hic [con]tine[n]t[ur]</md-title-remainder>
+  <md-date>1492</md-date>
+  <md-author>Lambert</md-author>
+  <md-description>Uniform title and imprint from Goff</md-description>
+  <md-description>Signatures: a-o⁶</md-description>
+  <md-description>Includes typographically distinguished text of a Latin translation of Aristotle&apos;s De anima</md-description>
+  <md-description>Errors in foliation: no leaf numbered iiii or xxxiii; two leaves each numbered vi and xxxi</md-description>
+  <md-description>LC copy has contemporary marginal ms. annotations, in multiple hands.DLC</md-description>
+  <md-description>LC copy wanting final blank.DLC</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title copulata super libros de anima arestotelis cu m textu author lambert medium book</recid>
+</hit>
+<hit>
+ <md-title>In laudem Serenissimi Ferdinandi, Hispania[rum] Regis, Bethicae &amp; regni Granatae obsidio victoria &amp; triu[m]phus</md-title>
+ <md-title-remainder>Et De insulis in Mari Indico nuper inuentis</md-title-remainder>
+ <md-date>1494</md-date>
+ <md-author>Verardi, Carlo</md-author>
+ <md-description>&quot;De insulis nuper in Mari Indico nuper repertis&quot; (Leandro di Cosco&apos;s Latin translation of Columbus&apos;s letter to Raphael Sánchez concerning his discovery of America): leaves [29b-36a]</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1069481248">
+  <md-title>In laudem Serenissimi Ferdinandi, Hispania[rum] Regis, Bethicae &amp; regni Granatae obsidio victoria &amp; triu[m]phus</md-title>
+  <md-title-remainder>Et De insulis in Mari Indico nuper inuentis</md-title-remainder>
+  <md-date>1494</md-date>
+  <md-author>Verardi, Carlo</md-author>
+  <md-description>Woodcut portrait on t.p.: Fernandus Rex Hispania[rum]</md-description>
+  <md-description>&quot;De insulis nuper in Mari Indico nuper repertis&quot; (Leandro di Cosco&apos;s Latin translation of Columbus&apos;s letter to Raphael Sánchez concerning his discovery of America): leaves [29b-36a]</md-description>
+  <md-description>LC Copy 1 in blind-stamped half leather over boards; clasp.DLC</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title in laudem serenissimi ferdinandi hispania rum regis bethicae regni granatae obsidio victoria triu m phus author verardi carlo medium book</recid>
+</hit>
+<hit>
+ <md-title>Kalendarius cum vero motu solis [et] duplici modo inueniendi verum motum lune</md-title>
+ <md-title-remainder>vulgari</md-title-remainder>
+ <md-date>1502</md-date>
+ <md-description>Signatures: a⁸, b⁶, c⁴</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="3738890">
-  <md-title>A continuation of the Reverend Mr. Whitefield&apos;s journal</md-title>
-  <md-title-remainder>from his arrival at Savannah, May 7, his stay there till July 25, from thence to Fredrica, at which place he arriv&apos;d August 8, his return to Savannah again August 16, his departure from thence to Charlestown, South Carolina, from which place he took his passage on board Capt. Coc, bound to England ... : with a preface, giving the reason, why he publishes a continuation of his journals</md-title-remainder>
-  <md-date>1741</md-date>
-  <md-author>Whitefield, George</md-author>
-  <md-description>&quot;...  A particular account of his dangerous voyage while he was nine weeks and three days upon the seas, provisions almost gone, the whole ship&apos;s crew in a perishing condition, till their arrival at Ireland (having then but about half a pint of water) there they landed. From thence Mr. Whitefield travelled by land till he arriv&apos;d in London ...&quot;</md-description>
-  <md-description>Signatures: A-G⁴</md-description>
+  <md-title>Kalendarius cum vero motu solis [et] duplici modo inueniendi verum motum lune</md-title>
+  <md-title-remainder>vulgari</md-title-remainder>
+  <md-date>1502</md-date>
+  <md-description>Signatures: a⁸, b⁶, c⁴</md-description>
+  <md-description>Volvelle on p. [21]</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title a continuation of the reverend mr whitefield s journal author whitefield george medium book</recid>
+ <recid>content: title kalendarius cum vero motu solis et duplici modo inueniendi verum motum lune medium book</recid>
 </hit>
 <hit>
- <md-title>The motion of fluids, natural and artificial;</md-title>
- <md-title-remainder>in particular that of the air and water</md-title-remainder>
- <md-date>1747</md-date>
- <md-author>Clare, M[artin]</md-author>
- <md-medium>book</md-medium>
+ <md-title>[Bandi, decreti, etc</md-title>
+ <md-title-remainder>a made-up collection of Tuscan legal pamphlets]</md-title-remainder>
+ <md-date>1503</md-date>
+ <md-medium>web</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="1618351359">
-  <md-title>The motion of fluids, natural and artificial;</md-title>
-  <md-title-remainder>in particular that of the air and water</md-title-remainder>
-  <md-date>1747</md-date>
-  <md-author>Clare, M[artin]</md-author>
-  <md-medium>book</md-medium>
+  <md-title>[Bandi, decreti, etc</md-title>
+  <md-title-remainder>a made-up collection of Tuscan legal pamphlets]</md-title-remainder>
+  <md-date>1503</md-date>
+  <md-medium>web</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the motion of fluids natural and artificial author clare m artin medium book</recid>
+ <recid>content: title bandi decreti etc medium web</recid>
 </hit>
 <hit>
- <md-title>The natural history of Norway</md-title>
- <md-title-remainder>containing a particular and accurate account of the temperature of the air,the different soils, waters, vegetables, metals, minerals, stones, beasts, birds, and fishes; together with the dispositions, customs, and manner of living of the inhabitants: interspered with physiological notes from eminent writers, and transactions of academics</md-title-remainder>
- <md-date>1755</md-date>
- <md-author>Pontoppidan, Erich</md-author>
+ <md-title>R. Volaterrani Commentariorum urbanorum liber primus</md-title>
+ <md-date>1506</md-date>
+ <md-author>Maffei, Raffaele</md-author>
+ <md-description>Signatures: [maltese cross]⁸, 2[maltese cross]⁶, [par.]⁶, a⁶, b-x⁸, A-V⁸, X-Y⁶, 2A-2P⁸, 2Q¹⁰, 2R⁶, 2S-2T⁸, 2T bis⁶, 2V-2Z⁸, 2&amp;⁸, 2[con]⁸, 2[rum]-3[rum]⁶ 2[tur]⁶</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="3232963828">
-  <md-title>The natural history of Norway</md-title>
-  <md-title-remainder>containing a particular and accurate account of the temperature of the air,the different soils, waters, vegetables, metals, minerals, stones, beasts, birds, and fishes; together with the dispositions, customs, and manner of living of the inhabitants: interspered with physiological notes from eminent writers, and transactions of academics</md-title-remainder>
-  <md-date>1755</md-date>
-  <md-author>Pontoppidan, Erich</md-author>
+  <md-title>R. Volaterrani Commentariorum urbanorum liber primus</md-title>
+  <md-date>1506</md-date>
+  <md-author>Maffei, Raffaele</md-author>
+  <md-description>Caption title fol. [1] verso; work consists of liber I-XXXVIII</md-description>
+  <md-description>Imprint from colophon, which reads: Impressus Rom[a]e per Ioannem Besicken Alemanum Anno D[omi]ni MDVI. XIII. CAL. Martii</md-description>
+  <md-description>Signatures: [maltese cross]⁸, 2[maltese cross]⁶, [par.]⁶, a⁶, b-x⁸, A-V⁸, X-Y⁶, 2A-2P⁸, 2Q¹⁰, 2R⁶, 2S-2T⁸, 2T bis⁶, 2V-2Z⁸, 2&amp;⁸, 2[con]⁸, 2[rum]-3[rum]⁶ 2[tur]⁶</md-description>
+  <md-description>Numerous errors in foliation</md-description>
+  <md-description>Includes Economicum Xenophontis (fol. [1-12]) at end; translated by Raffaele Maffei from the Greek of Xenophon&apos;s Oikonomikos</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the natural history of norway author pontoppidan erich medium book</recid>
+ <recid>content: title r volaterrani commentariorum urbanorum liber primus author maffei raffaele medium book</recid>
 </hit>
 <hit>
- <md-title>A new and accurate system of natural history</md-title>
- <md-date>1763</md-date>
- <md-author>Brookes, Richard</md-author>
- <md-description>v. 1. The natural history of quadrupedes ...--v. 2. The natural history of birds ...--v. 3. The natural history of fishes and serpents ...--v. 4. The natural history of insects ...--v. 5. The natural history of waters, earths, stones, fossiles, and minerals ...--v. 6. The natural history of vegetables</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="552609001">
-  <md-title>A new and accurate system of natural history</md-title>
-  <md-date>1763</md-date>
-  <md-author>Brookes, Richard</md-author>
-  <md-description>v. 1. The natural history of quadrupedes ...--v. 2. The natural history of birds ...--v. 3. The natural history of fishes and serpents ...--v. 4. The natural history of insects ...--v. 5. The natural history of waters, earths, stones, fossiles, and minerals ...--v. 6. The natural history of vegetables</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title a new and accurate system of natural history author brookes richard medium book</recid>
-</hit>
-<hit>
- <md-title>The principles of pump-work</md-title>
- <md-title-remainder>illustrated, and applied in the construction of a new pump without friction, or loss of time, or water, in working : humbly proposed for the service of the British Marine</md-title-remainder>
- <md-date>1766</md-date>
- <md-author>Martin, Benjamin</md-author>
- <md-description>Royal letter patent, p. [3], dated in the sixth year of the reign of George III, i.e. 1766</md-description>
+ <md-title>Repertorium alphabeticum super copiosissimo, gra[n]di ac memorande fertilitatis volumine Speculi iudicialis d[omi]ni Guillelmi Dura[n]ti, natione Galli, Pallacij Apostolici (quod [et] Rotha dicitur) auditoris g[e]n[er]alis ...  materias omnes cuiusq[uam] ponderis ibidem reco[n]ditas opulentissime recolligens feliciter incipit</md-title>
+ <md-date>1514</md-date>
+ <md-author>Frédol, Bérenger</md-author>
+ <md-description>&quot;Repertorium iam nu[n]c alphabetica serie digestum ad omnes ... Speculi iudicialis titulos protinus inueniendos ...&quot;: leaves sig. t4a-t5b; references to &quot;liber primus&quot; fit the 1514 ed. of pt. 1 published jointly by Le Preux and Regnault (LCCN 00515699)</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="2167221470">
-  <md-title>The principles of pump-work</md-title>
-  <md-title-remainder>illustrated, and applied in the construction of a new pump without friction, or loss of time, or water, in working : humbly proposed for the service of the British Marine</md-title-remainder>
-  <md-date>1766</md-date>
-  <md-author>Martin, Benjamin</md-author>
-  <md-description>Royal letter patent, p. [3], dated in the sixth year of the reign of George III, i.e. 1766</md-description>
+  <md-title>Repertorium alphabeticum super copiosissimo, gra[n]di ac memorande fertilitatis volumine Speculi iudicialis d[omi]ni Guillelmi Dura[n]ti, natione Galli, Pallacij Apostolici (quod [et] Rotha dicitur) auditoris g[e]n[er]alis ...  materias omnes cuiusq[uam] ponderis ibidem reco[n]ditas opulentissime recolligens feliciter incipit</md-title>
+  <md-date>1514</md-date>
+  <md-author>Frédol, Bérenger</md-author>
+  <md-description>Apparently a companion volume to a poorly documented edition of the whole (4 pts.) Speculum iudiciale; cf. also Moreau II 822 (with different imprint)</md-description>
+  <md-description>Author (Cardinal Bérenger Frédol) not named; cf. J.F. Schulte. Die Geschichte der Quellen ... des canonischen Rechts, v. 2 (1877) p. 181</md-description>
+  <md-description>Printed in 2 columns; t.p. in red and black</md-description>
+  <md-description>Device (steel engraving) of Poncet Le Preux on t.p. (in front of a tree, 2 griffins support shield with monogram PLP; in bottom compartment of engraving, &quot;PONSET LE PREVX&quot;)</md-description>
+  <md-description>Signatures: a-s⁸ t⁶ (t6 blank)</md-description>
+  <md-description>&quot;Repertorium iam nu[n]c alphabetica serie digestum ad omnes ... Speculi iudicialis titulos protinus inueniendos ...&quot;: leaves sig. t4a-t5b; references to &quot;liber primus&quot; fit the 1514 ed. of pt. 1 published jointly by Le Preux and Regnault (LCCN 00515699)</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the principles of pump work author martin benjamin medium book</recid>
+ <recid>content: title repertorium alphabeticum super copiosissimo gra n di ac memorande fertilitatis volumine speculi iudicialis d omi ni guillelmi dura n ti natione galli pallacij apostolici quod et rotha dicitur auditoris g e n er alis materias omnes cuiusq uam ponderis ibidem reco n ditas opulentissime recolligens feliciter incipit author fre dol be renger medium book</recid>
 </hit>
 <hit>
- <md-title>Experiments and observations on the mineral waters of Philadelphia, Abington, and Bristol, in the province of Pennsylvania</md-title>
- <md-date>1773</md-date>
- <md-author>Rush, Benjamin</md-author>
+ <md-title>Speculu[m] iudiciale domini Guilelmi Dura[n]ti natione Galli, subtilissimo, graui atq[ue] firmo iudicio viri</md-title>
+ <md-title-remainder>cum additionibus eximio[rum] docto[rum] Jo. An. [et] Baldi : vna cum pluribus alijs additame[n]tis pri[us] no[n] visis nec impressioni ma[n]datis</md-title-remainder>
+ <md-date>1514</md-date>
+ <md-author>Durand, Guillaume</md-author>
+ <md-description>T.p., printed in red and black, includes large device of François Regnault (elephant carrying a howdah with monogram FR, full name on a scroll below); also a list of authors of the accumulated additions that flank or surround, gloss-like, Durand&apos;s text printed in two columns (for full list of the 20 annotators see Moreau)</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="552609001">
+  <md-title>Speculu[m] iudiciale domini Guilelmi Dura[n]ti natione Galli, subtilissimo, graui atq[ue] firmo iudicio viri</md-title>
+  <md-title-remainder>cum additionibus eximio[rum] docto[rum] Jo. An. [et] Baldi : vna cum pluribus alijs additame[n]tis pri[us] no[n] visis nec impressioni ma[n]datis</md-title-remainder>
+  <md-date>1514</md-date>
+  <md-author>Durand, Guillaume</md-author>
+  <md-description>T.p., printed in red and black, includes large device of François Regnault (elephant carrying a howdah with monogram FR, full name on a scroll below); also a list of authors of the accumulated additions that flank or surround, gloss-like, Durand&apos;s text printed in two columns (for full list of the 20 annotators see Moreau)</md-description>
+  <md-description>Colophon (f. ccxxvi b): Explicit pri[m]a pars Speculi Guil. Dura[n]ti cu[m] additionibus ... imp[re]ssa Parrhysij per Joanne[m] Barberiu[m] ... impensis ... Francisci Regnault [et] Ponceti Le Preux anno Domini .M. quinge[n]tesimo quartodecimo pridie Nonas Noue[m]bris [4 Nov. 1514]</md-description>
+  <md-description>Signatures: a-z⁸ [et]⁸ [con]⁸ [rum]⁸ A⁸ B¹⁰</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title speculu m iudiciale domini guilelmi dura n ti natione galli subtilissimo graui atq ue firmo iudicio viri author durand guillaume medium book</recid>
+</hit>
+<hit>
+ <md-title>Aymari Riuallii Allobrogis iuris consulti ac oratoris libri de historia iuris ciuilis et pontificii</md-title>
+ <md-date>1515</md-date>
+ <md-author>Du Rivail, Aymar</md-author>
+ <md-description>Du Rivail&apos;s five &quot;books&quot; (here ff. iii-cxxvii) on the history of civil law were later repeatedly published as Civilis historiae iuris sive in XII tabularum leges commentariorum libri quinque; &quot;Aymari Riuallii Allobrogis de historia pontificii iuris liber singularis&quot; occupies ff. cxxvii verso through [cxxx]a</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="3781833939">
-  <md-title>Experiments and observations on the mineral waters of Philadelphia, Abington, and Bristol, in the province of Pennsylvania</md-title>
-  <md-date>1773</md-date>
-  <md-author>Rush, Benjamin</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title experiments and observations on the mineral waters of philadelphia abington and bristol in the province of pennsylvania author rush benjamin medium book</recid>
-</hit>
-<hit>
- <md-title>Observations made during a voyage round the world, on physical geography, natural history, and ethic philosophy</md-title>
- <md-title-remainder>Especially on: 1. The earth and its strata; 2. Water and the ocean; 3. The atmosphere; 4. The changes of the globe; 5. Organic bodies; and 6. The human species</md-title-remainder>
- <md-date>1778</md-date>
- <md-author>Forster, Johann Reinhold</md-author>
- <md-description>&quot;A journal of the voyage round the world in the Resolution&quot;: p. [9]-16</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1101479112">
-  <md-title>Observations made during a voyage round the world, on physical geography, natural history, and ethic philosophy</md-title>
-  <md-title-remainder>Especially on: 1. The earth and its strata; 2. Water and the ocean; 3. The atmosphere; 4. The changes of the globe; 5. Organic bodies; and 6. The human species</md-title-remainder>
-  <md-date>1778</md-date>
-  <md-author>Forster, Johann Reinhold</md-author>
-  <md-description>&quot;A journal of the voyage round the world in the Resolution&quot;: p. [9]-16</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title observations made during a voyage round the world on physical geography natural history and ethic philosophy author forster johann reinhold medium book</recid>
-</hit>
-<hit>
- <md-title>Catalogue raisonné des ouvrages qui ont été publiés sur les eaux minérales en général, et sur celles de la France en particulier</md-title>
- <md-title-remainder>avec une notice de toutes les eaux minérales de ce royaume, &amp; un tableau des différens degrés de température de celles qui sont thermales : publié d&apos;apres le vœu de la Société royale de médecine</md-title-remainder>
- <md-date>1785</md-date>
- <md-author>Carrère, Joseph-Barthélemy-François</md-author>
- <md-description>Signatures: *⁴ A-4A⁴ 4B-4I²</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2716091581">
-  <md-title>Catalogue raisonné des ouvrages qui ont été publiés sur les eaux minérales en général, et sur celles de la France en particulier</md-title>
-  <md-title-remainder>avec une notice de toutes les eaux minérales de ce royaume, &amp; un tableau des différens degrés de température de celles qui sont thermales : publié d&apos;apres le vœu de la Société royale de médecine</md-title-remainder>
-  <md-date>1785</md-date>
-  <md-author>Carrère, Joseph-Barthélemy-François</md-author>
-  <md-description>Signatures: *⁴ A-4A⁴ 4B-4I²</md-description>
+  <md-title>Aymari Riuallii Allobrogis iuris consulti ac oratoris libri de historia iuris ciuilis et pontificii</md-title>
+  <md-date>1515</md-date>
+  <md-author>Du Rivail, Aymar</md-author>
+  <md-description>Du Rivail&apos;s five &quot;books&quot; (here ff. iii-cxxvii) on the history of civil law were later repeatedly published as Civilis historiae iuris sive in XII tabularum leges commentariorum libri quinque; &quot;Aymari Riuallii Allobrogis de historia pontificii iuris liber singularis&quot; occupies ff. cxxvii verso through [cxxx]a</md-description>
+  <md-description>The laws identified (erroneously/questionably) as those of the Twelve tables are included, printed in larger type, each followed by commentary; Du Rivail&apos;s set begins with &quot;In Urbe ne sepelito&quot;</md-description>
+  <md-description>Device of Louis Oliveau on t.p. (in rectangular frame with &quot;Ludovicvs Olivelli&quot; at top, Saint Louis standing among crops; at bottom, motto &quot;Spes alit agricolas,&quot; and the printer/publisher&apos;s chiffre)</md-description>
+  <md-description>Royal privilege for 2 years is dated 8 Aug. 1515</md-description>
+  <md-description>Signatures: a-q⁸ r⁴ A-B⁸. B8, blank? wanting in LC copy</md-description>
+  <md-description>Errata on sig. r3b-r4a</md-description>
   <md-description>Includes index</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title catalogue raisonne des ouvrages qui ont e te publie s sur les eaux mine rales en ge ne ral et sur celles de la france en particulier author carre re joseph barthe lemy franc ois medium book</recid>
-</hit>
-<hit>
- <md-title>The history of Limerick, ecclesiastical, civil and military</md-title>
- <md-title-remainder>from the earliest records, to the year 1787, illustrated by fifteen engravings. To which are added the charter of Limerick, and An essay on Castle Connell Spa, on water in general and cold bathing</md-title-remainder>
- <md-date>1787</md-date>
- <md-author>Ferrar, John</md-author>
- <md-description>The essay on Castle Connell Spa has special t.-p., dated 1787; it was written in 1783</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="35736754">
-  <md-title>The history of Limerick, ecclesiastical, civil and military</md-title>
-  <md-title-remainder>from the earliest records, to the year 1787, illustrated by fifteen engravings. To which are added the charter of Limerick, and An essay on Castle Connell Spa, on water in general and cold bathing</md-title-remainder>
-  <md-date>1787</md-date>
-  <md-author>Ferrar, John</md-author>
-  <md-description>The essay on Castle Connell Spa has special t.-p., dated 1787; it was written in 1783</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title the history of limerick ecclesiastical civil and military author ferrar john medium book</recid>
-</hit>
-<hit>
- <md-title>A plan wherein the power of steam is fully shewn</md-title>
- <md-title-remainder>by a new constructed machine, for propelling boats or vessels, of any burthen, against the most rapid streams or rivers, with great velocity; also, a machine, constructed on similar philosophical principles, by which water may be raised for grist or saw-mills, watering of meadows, &amp;c. &amp;c</md-title-remainder>
- <md-date>1788</md-date>
- <md-author>Rumsey, James</md-author>
- <md-description>Signatures: A-B⁴ C²</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="584606865">
-  <md-title>A plan wherein the power of steam is fully shewn</md-title>
-  <md-title-remainder>by a new constructed machine, for propelling boats or vessels, of any burthen, against the most rapid streams or rivers, with great velocity; also, a machine, constructed on similar philosophical principles, by which water may be raised for grist or saw-mills, watering of meadows, &amp;c. &amp;c</md-title-remainder>
-  <md-date>1788</md-date>
-  <md-author>Rumsey, James</md-author>
-  <md-description>Caption title</md-description>
-  <md-description>Signatures: A-B⁴ C²</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title a plan wherein the power of steam is fully shewn author rumsey james medium book</recid>
+ <recid>content: title aymari riuallii allobrogis iuris consulti ac oratoris libri de historia iuris ciuilis et pontificii author du rivail aymar medium book</recid>
 </hit>
 </show>
