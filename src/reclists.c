@@ -400,11 +400,13 @@ struct record_cluster *reclist_insert(struct reclist *l,
 
 int reclist_sortparms_cmp(struct reclist_sortparms *sort1, struct reclist_sortparms *sort2)
 {
+    int rc;
     if (sort1 == sort2)
         return 0;
     if (sort1 == 0 || sort2 == 0)
         return 1;
-    return strcmp(sort1->name, sort2->name) || sort1->increasing != sort1->increasing || sort1->type != sort2->type;
+    rc = strcmp(sort1->name, sort2->name) || sort1->increasing != sort2->increasing || sort1->type != sort2->type;
+    return rc;
 }
 /*
  * Local variables:
