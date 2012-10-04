@@ -36,4 +36,3 @@ http://localhost:9763/search.pz2?session=1&command=search&query=water&sort=autho
 http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=author:1
 http://localhost:9763/search.pz2?session=1&command=search&query=water&sort=author:0
 http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=author:0
-
