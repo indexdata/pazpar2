@@ -982,6 +982,8 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->session_nmem = nmem;
     session->nmem = nmem_create();
     session->databases = 0;
+    session->sorted_results = 0;
+
     for (i = 0; i <= SESSION_WATCH_MAX; i++)
     {
         session->watchlist[i].data = 0;
