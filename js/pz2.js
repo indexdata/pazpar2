@@ -284,13 +284,17 @@ pz2.prototype =
         else
             var start = 0;
 
-	      var searchParams = { 
+	var searchParams = { 
           "command": "search",
           "query": this.currQuery, 
           "session": this.sessionID,
           "windowid" : window.name
         };
 	
+        if( sort !== undefined ) {
+            this.currentSort = sort;
+	    searchParams["sort"] = sort;
+	}
         if (filter !== undefined)
 	        searchParams["filter"] = filter;
 
