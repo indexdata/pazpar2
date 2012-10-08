@@ -1224,8 +1224,9 @@ static int apply_limit(struct session_database *sdb,
 }
 
 // Parse the query given the settings specific to this client
-// return 0 if query is OK but different from before
-// return 1 if query is OK but same as before
+// client variable same_search is set as below as well as returned:
+// 0 if query is OK but different from before
+// 1 if query is OK but same as before
 // return -1 on query error
 // return -2 on limit error
 int client_parse_query(struct client *cl, const char *query,
@@ -1307,9 +1308,15 @@ int client_parse_query(struct client *cl, const char *query,
     /* Compares query and limit with old one. If different we need to research */
     if (!cl->pquery || strcmp(cl->pquery, wrbuf_cstr(w_pqf)))
     {
+        if (cl->pquery)
+            session_log(se, YLOG_LOG, "Client %s: Re-search due query/limit change: %s to %s", 
+                        client_get_id(cl), cl->pquery, wrbuf_cstr(w_pqf));
         xfree(cl->pquery);
         cl->pquery = xstrdup(wrbuf_cstr(w_pqf));
+        // return value is no longer used.
         ret_value = 0;
+        // Need to (re)search
+        cl->same_search= 0;
     }
     wrbuf_destroy(w_pqf);
 
@@ -1339,6 +1346,9 @@ int client_parse_query(struct client *cl, const char *query,
                 cl->cqlquery = make_cqlquery(cl, zquery);
             if (!cl->cqlquery)
                 ret_value = -1;
+            else
+                session_log(se, YLOG_LOG, "Client %s native query: %s (%s)",
+                            client_get_id(cl), cl->cqlquery, sru);
         }
     }
     odr_destroy(odr_out);
