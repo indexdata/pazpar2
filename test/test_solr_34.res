@@ -1,336 +1,352 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <show><status>OK</status>
 <activeclients>0</activeclients>
-<merged>97</merged>
+<merged>95</merged>
 <total>1995</total>
 <start>0</start>
 <num>20</num>
 <hit>
- <md-title>The water garden design book</md-title>
- <md-date>2001</md-date>
- <md-author>Rees, Yvonne</md-author>
- <md-description>Includes index</md-description>
+ <md-title>Sketch of the civil engineering of North America;</md-title>
+ <md-title-remainder>comprising remarks on the harbours, river and lake navigation, lighthouses, steam-navigation, water-works, canals, roads, railways, bridges, and other works in that country</md-title-remainder>
+ <md-date>1838</md-date>
+ <md-author>Stevenson, David</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3004072357">
-  <md-title>The water garden design book</md-title>
-  <md-date>2001</md-date>
-  <md-author>Rees, Yvonne</md-author>
-  <md-description>Includes index</md-description>
+    name="LOC Solr Test" checksum="2487200110">
+  <md-title>Sketch of the civil engineering of North America;</md-title>
+  <md-title-remainder>comprising remarks on the harbours, river and lake navigation, lighthouses, steam-navigation, water-works, canals, roads, railways, bridges, and other works in that country</md-title-remainder>
+  <md-date>1838</md-date>
+  <md-author>Stevenson, David</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the water garden design book author rees yvonne medium book</recid>
+ <recid>content: title sketch of the civil engineering of north america author stevenson david medium book</recid>
 </hit>
 <hit>
- <md-title>The water hole</md-title>
- <md-date>2001</md-date>
- <md-author>Base, Graeme</md-author>
- <md-description>As ever growing numbers of animals visit a watering hole, introducing the numbers from one to ten, the water dwindles</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3909825395">
-  <md-title>The water hole</md-title>
-  <md-date>2001</md-date>
-  <md-author>Base, Graeme</md-author>
-  <md-description>As ever growing numbers of animals visit a watering hole, introducing the numbers from one to ten, the water dwindles</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title the water hole author base graeme medium book</recid>
-</hit>
-<hit>
- <md-title>Water pollution</md-title>
- <md-date>2001</md-date>
- <md-author>Donald, Rhonda Lucas</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1389459888">
-  <md-title>Water pollution</md-title>
-  <md-date>2001</md-date>
-  <md-author>Donald, Rhonda Lucas</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title water pollution author donald rhonda lucas medium book</recid>
-</hit>
-<hit>
- <md-title>Water technology management</md-title>
- <md-date>2001</md-date>
- <md-description>Collection of articles with reference to India</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3200965964">
-  <md-title>Water technology management</md-title>
-  <md-date>2001</md-date>
-  <md-description>Collection of articles with reference to India</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title water technology management medium book</recid>
-</hit>
-<hit>
- <md-title>Wonderful water</md-title>
- <md-date>2001</md-date>
- <md-author>Glover, David</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2135223606">
-  <md-title>Wonderful water</md-title>
-  <md-date>2001</md-date>
-  <md-author>Glover, David</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title wonderful water author glover david medium book</recid>
-</hit>
-<hit>
- <md-title>A Primer on fresh water</md-title>
- <md-title-remainder>questions and answers</md-title-remainder>
- <md-date>2000</md-date>
- <md-description>Issued also in French under title: Notions élémentaires sur l&apos;eau douce : questions et réponses</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2684093717">
-  <md-title>A Primer on fresh water</md-title>
-  <md-title-remainder>questions and answers</md-title-remainder>
-  <md-date>2000</md-date>
-  <md-description>Issued also in French under title: Notions élémentaires sur l&apos;eau douce : questions et réponses</md-description>
-  <md-description>Includes index</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title a primer on fresh water medium book</recid>
-</hit>
-<hit>
- <md-title>A retrospective analysis on the occurrence of arsenic in ground-water resources of the United States and limitations in drinking-water-supply characterizations</md-title>
- <md-date>2000</md-date>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2972074493">
-  <md-title>A retrospective analysis on the occurrence of arsenic in ground-water resources of the United States and limitations in drinking-water-supply characterizations</md-title>
-  <md-date>2000</md-date>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title a retrospective analysis on the occurrence of arsenic in ground water resources of the united states and limitations in drinking water supply characterizations medium book</recid>
-</hit>
-<hit>
- <md-title>Boundary waters canoe camping</md-title>
- <md-date>2000</md-date>
- <md-author>Jacobson, Cliff</md-author>
- <md-description>Rev. ed. of: Boundary waters. 1995</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1842336407">
-  <md-title>Boundary waters canoe camping</md-title>
-  <md-date>2000</md-date>
-  <md-author>Jacobson, Cliff</md-author>
-  <md-description>Rev. ed. of: Boundary waters. 1995</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title boundary waters canoe camping author jacobson cliff medium book</recid>
-</hit>
-<hit>
- <md-title>District water supply plan</md-title>
- <md-date>2000</md-date>
- <md-description>[1] [No special title] -- [2] Appendixes</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="552609001">
-  <md-title>District water supply plan</md-title>
-  <md-date>2000</md-date>
-  <md-description>[1] [No special title] -- [2] Appendixes</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title district water supply plan medium book</recid>
-</hit>
-<hit>
- <md-title>Dividing the waters</md-title>
- <md-title-remainder>the resolution of interstate water conflicts in the United States</md-title-remainder>
- <md-date>2000</md-date>
- <md-author>Sherk, George William</md-author>
- <md-description>Includes index</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3264961692">
-  <md-title>Dividing the waters</md-title>
-  <md-title-remainder>the resolution of interstate water conflicts in the United States</md-title-remainder>
-  <md-date>2000</md-date>
-  <md-author>Sherk, George William</md-author>
-  <md-description>Includes index</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title dividing the waters author sherk george william medium book</recid>
-</hit>
-<hit>
- <md-title>Fertile ground</md-title>
- <md-title-remainder>nutrient trading&apos;s potential to cost-effectively improve water quality</md-title-remainder>
- <md-date>2000</md-date>
- <md-author>Faeth, Paul</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="584606865">
-  <md-title>Fertile ground</md-title>
-  <md-title-remainder>nutrient trading&apos;s potential to cost-effectively improve water quality</md-title-remainder>
-  <md-date>2000</md-date>
-  <md-author>Faeth, Paul</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title fertile ground author faeth paul medium book</recid>
-</hit>
-<hit>
- <md-title>Ground water levels, western Colorado alluvial and bedrock aquifers, 2000</md-title>
- <md-date>2000</md-date>
- <md-description>Includes statistics</md-description>
+ <md-title>Views of ports and harbours, watering places, fishing villages, and other picturesque objects on the English coast</md-title>
+ <md-date>1838</md-date>
+ <md-author>Finden, W</md-author>
+ <md-description>Added t.p. : Finden&apos;s ports and harbours of Great Britain</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="872587641">
-  <md-title>Ground water levels, western Colorado alluvial and bedrock aquifers, 2000</md-title>
-  <md-date>2000</md-date>
-  <md-description>Cover title</md-description>
-  <md-description>Includes statistics</md-description>
+  <md-title>Views of ports and harbours, watering places, fishing villages, and other picturesque objects on the English coast</md-title>
+  <md-date>1838</md-date>
+  <md-author>Finden, W</md-author>
+  <md-description>Text by W.A. Chatto</md-description>
+  <md-description>Added t.p. : Finden&apos;s ports and harbours of Great Britain</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title ground water levels western colorado alluvial and bedrock aquifers medium book</recid>
+ <recid>content: title views of ports and harbours watering places fishing villages and other picturesque objects on the english coast author finden w medium book</recid>
 </hit>
 <hit>
- <md-title>Joint hearing of the Senate Committee on Agriculture and Water Resources and Assembly Committee on Water, Parks and Wildlife</md-title>
- <md-title-remainder>the State&apos;s year 2000 water supply operations plan</md-title-remainder>
- <md-date>2000</md-date>
- <md-description>&quot;February 1, 2000.&quot;</md-description>
+ <md-title>A glance at New York</md-title>
+ <md-title-remainder>embracing the city government, theatres, hotels, churches, mobs, monopolies, learned professions, newspapers, rogues, dandies, fires and firemen, water and other liquids, &amp; c., &amp; c</md-title-remainder>
+ <md-date>1837</md-date>
+ <md-author>Greene, Asa</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1746342815">
-  <md-title>Joint hearing of the Senate Committee on Agriculture and Water Resources and Assembly Committee on Water, Parks and Wildlife</md-title>
-  <md-title-remainder>the State&apos;s year 2000 water supply operations plan</md-title-remainder>
-  <md-date>2000</md-date>
-  <md-description>Cover title</md-description>
-  <md-description>&quot;February 1, 2000.&quot;</md-description>
+    name="LOC Solr Test" checksum="1389459888">
+  <md-title>A glance at New York</md-title>
+  <md-title-remainder>embracing the city government, theatres, hotels, churches, mobs, monopolies, learned professions, newspapers, rogues, dandies, fires and firemen, water and other liquids, &amp; c., &amp; c</md-title-remainder>
+  <md-date>1837</md-date>
+  <md-author>Greene, Asa</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title joint hearing of the senate committee on agriculture and water resources and assembly committee on water parks and wildlife medium book</recid>
+ <recid>content: title a glance at new york author greene asa medium book</recid>
 </hit>
 <hit>
- <md-title>Occurrence and quality of surface water and ground water within the Yavapai-Prescott Indian Reservation, central Arizona, 1994-98</md-title>
- <md-date>2000</md-date>
+ <md-title>A popular treatise on the warming and ventilation of buildings;</md-title>
+ <md-title-remainder>showing the advantages of the improved system of heated water circulation, &amp;c</md-title-remainder>
+ <md-date>1837</md-date>
+ <md-author>Richardson, C. J</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="323717530">
+  <md-title>A popular treatise on the warming and ventilation of buildings;</md-title>
+  <md-title-remainder>showing the advantages of the improved system of heated water circulation, &amp;c</md-title-remainder>
+  <md-date>1837</md-date>
+  <md-author>Richardson, C. J</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title a popular treatise on the warming and ventilation of buildings author richardson c j medium book</recid>
+</hit>
+<hit>
+ <md-title>Design no. 1 for a marine hospital on the western waters to accommodate 100 patients</md-title>
+ <md-date>1837</md-date>
+ <md-author>Mills, Robert</md-author>
+ <md-description>Imperfect: one plate wanting</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3552942468">
+  <md-title>Design no. 2 for a marine hospital on the western waters to accommodate 50 patients</md-title>
+  <md-date>1837</md-date>
+  <md-author>Mills, Robert</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1938329999">
+  <md-title>Design no. 1 for a marine hospital on the western waters to accommodate 100 patients</md-title>
+  <md-date>1837</md-date>
+  <md-author>Mills, Robert</md-author>
+  <md-description>Imperfect: one plate wanting</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>2</count>
+ <recid>content: title design no for a marine hospital on the western waters to accommodate patients author mills robert medium book</recid>
+</hit>
+<hit>
+ <md-title>Report of the commissioners appointed under an order of the City council, of March 16, 1837, to devise a plan for supplying the city of Boston with pure water</md-title>
+ <md-date>1837</md-date>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3004072357">
+  <md-title>Report of the commissioners appointed under an order of the City council, of March 16, 1837, to devise a plan for supplying the city of Boston with pure water</md-title>
+  <md-date>1837</md-date>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title report of the commissioners appointed under an order of the city council of march to devise a plan for supplying the city of boston with pure water medium book</recid>
+</hit>
+<hit>
+ <md-title>Report on the introduction of soft water into the city of Boston</md-title>
+ <md-date>1836</md-date>
+ <md-author>Eddy, R. H</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="4069814715">
+  <md-title>Report on the introduction of soft water into the city of Boston</md-title>
+  <md-date>1836</md-date>
+  <md-author>Eddy, R. H</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title report on the introduction of soft water into the city of boston author eddy r h medium book</recid>
+</hit>
+<hit>
+ <md-title>Report on the survey for a ship canal from Richmond to Warwick</md-title>
+ <md-title-remainder>being the plan proposed for the connection of the James River and Kanawha improvement with tide water</md-title-remainder>
+ <md-date>1836</md-date>
+ <md-author>Ellet, Charles</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="3520944604">
-  <md-title>Occurrence and quality of surface water and ground water within the Yavapai-Prescott Indian Reservation, central Arizona, 1994-98</md-title>
-  <md-date>2000</md-date>
+  <md-title>Report on the survey for a ship canal from Richmond to Warwick</md-title>
+  <md-title-remainder>being the plan proposed for the connection of the James River and Kanawha improvement with tide water</md-title-remainder>
+  <md-date>1836</md-date>
+  <md-author>Ellet, Charles</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title occurrence and quality of surface water and ground water within the yavapai prescott indian reservation central arizona medium book</recid>
+ <recid>content: title report on the survey for a ship canal from richmond to warwick author ellet charles medium book</recid>
 </hit>
 <hit>
- <md-title>Promoting small water harvesting structures in dryland regions</md-title>
- <md-title-remainder>a case study of the farm ponds scheme in Gujarat</md-title-remainder>
- <md-date>2000</md-date>
- <md-author>Shah, Amita</md-author>
+ <md-title>Scientific tracts, for the diffusion of useful knowledge</md-title>
+ <md-date>1836</md-date>
+ <md-description>Philosophy of self-education, by B. B. Thatcher.--Outline of philosophy, by Lieut. Roswell Park.--Advantages of early rising, by Wm. A. Alcott.--May-flowers, by D. H. Howard.--Natural history of water, by C. T. Jackson.--Pleasures of science, by W. M. Rogers.--History of peace societies, by William Ladd.--Science of human life, by Sylvester Graham.--History of telegraphs, by J. R. Parker.--Combustion, by R. A. Coffin.--Granite rock, by Samuel Fish.--Theory of the earth, by Samuel Fish</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="712598321">
-  <md-title>Promoting small water harvesting structures in dryland regions</md-title>
-  <md-title-remainder>a case study of the farm ponds scheme in Gujarat</md-title-remainder>
-  <md-date>2000</md-date>
-  <md-author>Shah, Amita</md-author>
+    name="LOC Solr Test" checksum="840589777">
+  <md-title>Scientific tracts, for the diffusion of useful knowledge</md-title>
+  <md-date>1836</md-date>
+  <md-description>Philosophy of self-education, by B. B. Thatcher.--Outline of philosophy, by Lieut. Roswell Park.--Advantages of early rising, by Wm. A. Alcott.--May-flowers, by D. H. Howard.--Natural history of water, by C. T. Jackson.--Pleasures of science, by W. M. Rogers.--History of peace societies, by William Ladd.--Science of human life, by Sylvester Graham.--History of telegraphs, by J. R. Parker.--Combustion, by R. A. Coffin.--Granite rock, by Samuel Fish.--Theory of the earth, by Samuel Fish</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title promoting small water harvesting structures in dryland regions author shah amita medium book</recid>
+ <recid>content: title scientific tracts for the diffusion of useful knowledge medium book</recid>
 </hit>
 <hit>
- <md-title>Proposition 13</md-title>
- <md-title-remainder>Safe Drinking Water, Clean Water, Watershed Protection, and Flood Protection Act</md-title-remainder>
- <md-date>2000</md-date>
- <md-description>&quot;March 2000.&quot;</md-description>
+ <md-title>Thirty years ago;</md-title>
+ <md-title-remainder>or, The memoirs of a water drinker</md-title-remainder>
+ <md-date>1836</md-date>
+ <md-author>Dunlap, William</md-author>
+ <md-description>Published in 1837 under the title: Memoirs of a water drinker</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3232963828">
-  <md-title>Proposition 13</md-title>
-  <md-title-remainder>Safe Drinking Water, Clean Water, Watershed Protection, and Flood Protection Act</md-title-remainder>
-  <md-date>2000</md-date>
-  <md-description>&quot;March 2000.&quot;</md-description>
+    name="LOC Solr Test" checksum="2455202246">
+  <md-title>Thirty years ago;</md-title>
+  <md-title-remainder>or, The memoirs of a water drinker</md-title-remainder>
+  <md-date>1836</md-date>
+  <md-author>Dunlap, William</md-author>
+  <md-description>Published in 1837 under the title: Memoirs of a water drinker</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title proposition medium book</recid>
+ <recid>content: title thirty years ago author dunlap william medium book</recid>
 </hit>
 <hit>
- <md-title>Regulations on the disposal of arsenic residuals from drinking water treatment plants</md-title>
- <md-date>2000</md-date>
- <md-description>&quot;EPA Contract 68-C7-0011, work assignment 0-38.&quot;</md-description>
+ <md-title>Tracts on hydraulics</md-title>
+ <md-date>1836</md-date>
+ <md-author>Tredgold, Thomas</md-author>
+ <md-description>Smeaton, J. An experimental inquiry concerning the natural powers of water and wind to turn mills ... An experimental examination of the quantity and proportion of mechanic power necessary to be employed in giving different degrees of velocity to heavy bodies from a state of rest. New fundamental experiments upon the collision of bodies.--Venturi, G. B. Experimental inquiries concerning the principle of the lateral communication of motion in fluids ... tr. from the French by W. Nicholson.--Eytelwein, J. A. A summary of the most useful parts of hydraulics; chiefly extracted and abridged from Eytelwein&apos;s Handbuch der Mechanik und der Hydraulik. By T. Young</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="99732482">
-  <md-title>Regulations on the disposal of arsenic residuals from drinking water treatment plants</md-title>
-  <md-date>2000</md-date>
-  <md-description>&quot;May 2000.&quot;</md-description>
-  <md-description>&quot;EPA/600/R-00/025.&quot;</md-description>
-  <md-description>&quot;EPA Contract 68-C7-0011, work assignment 0-38.&quot;</md-description>
+    name="LOC Solr Test" checksum="1906332135">
+  <md-title>Tracts on hydraulics</md-title>
+  <md-date>1836</md-date>
+  <md-author>Tredgold, Thomas</md-author>
+  <md-description>The three papers by J. Smeaton were read before the Royal Society, May 3 and 10, 1759, April 25, 1776, and April 18, 1782. The translation of Venturi&apos;s work was first published in the Journal of natural philosophy, chemistry and the arts. The &quot;Summary of ... hydraulics&quot; appeared in 1802 in the Journal of the Royal Institution</md-description>
+  <md-description>Smeaton, J. An experimental inquiry concerning the natural powers of water and wind to turn mills ... An experimental examination of the quantity and proportion of mechanic power necessary to be employed in giving different degrees of velocity to heavy bodies from a state of rest. New fundamental experiments upon the collision of bodies.--Venturi, G. B. Experimental inquiries concerning the principle of the lateral communication of motion in fluids ... tr. from the French by W. Nicholson.--Eytelwein, J. A. A summary of the most useful parts of hydraulics; chiefly extracted and abridged from Eytelwein&apos;s Handbuch der Mechanik und der Hydraulik. By T. Young</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title regulations on the disposal of arsenic residuals from drinking water treatment plants medium book</recid>
+ <recid>content: title tracts on hydraulics author tredgold thomas medium book</recid>
 </hit>
 <hit>
- <md-title>Rural drinking water supply in India</md-title>
- <md-title-remainder>issues and strategies</md-title-remainder>
- <md-date>2000</md-date>
- <md-author>Das, Keshab</md-author>
+ <md-title>Two months at Kilkee</md-title>
+ <md-title-remainder>a watering place in the County Clare, near the mouth of the Shannon, with an account of a voyage down that river from Limerick to Kilrush, and sketches of objects of interest in the neighbourhood, which will serve as a guide to the coast scenery</md-title-remainder>
+ <md-date>1836</md-date>
+ <md-author>Knott, Mary John</md-author>
+ <md-description>Added t.-p., engraved</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1778340679">
-  <md-title>Rural drinking water supply in India</md-title>
-  <md-title-remainder>issues and strategies</md-title-remainder>
-  <md-date>2000</md-date>
-  <md-author>Das, Keshab</md-author>
+    name="LOC Solr Test" checksum="291719666">
+  <md-title>Two months at Kilkee</md-title>
+  <md-title-remainder>a watering place in the County Clare, near the mouth of the Shannon, with an account of a voyage down that river from Limerick to Kilrush, and sketches of objects of interest in the neighbourhood, which will serve as a guide to the coast scenery</md-title-remainder>
+  <md-date>1836</md-date>
+  <md-author>Knott, Mary John</md-author>
+  <md-description>Added t.-p., engraved</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title rural drinking water supply in india author das keshab medium book</recid>
+ <recid>content: title two months at kilkee author knott mary john medium book</recid>
 </hit>
 <hit>
- <md-title>Sharing the good</md-title>
- <md-title-remainder>modes of managing water resources in the lower Mekong River Basin</md-title-remainder>
- <md-date>2000</md-date>
- <md-author>Öjendal, Joakim</md-author>
- <md-description>Abstract (2 p.) inserted</md-description>
+ <md-title>A treatise on water-works for conveying and distributing supplies of water;</md-title>
+ <md-title-remainder>with tables and examples</md-title-remainder>
+ <md-date>1835</md-date>
+ <md-author>Storrow, Charles S</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2391206518">
-  <md-title>Sharing the good</md-title>
-  <md-title-remainder>modes of managing water resources in the lower Mekong River Basin</md-title-remainder>
-  <md-date>2000</md-date>
-  <md-author>Öjendal, Joakim</md-author>
-  <md-description>&quot;March 2000.&quot;</md-description>
-  <md-description>Abstract (2 p.) inserted</md-description>
+    name="LOC Solr Test" checksum="1357462024">
+  <md-title>A treatise on water-works for conveying and distributing supplies of water;</md-title>
+  <md-title-remainder>with tables and examples</md-title-remainder>
+  <md-date>1835</md-date>
+  <md-author>Storrow, Charles S</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title sharing the good author o jendal joakim medium book</recid>
+ <recid>content: title a treatise on water works for conveying and distributing supplies of water author storrow charles s medium book</recid>
 </hit>
 <hit>
- <md-title>Sharing water</md-title>
- <md-title-remainder>irrigation and water management in the Hindukush, Karakoram, Himalaya</md-title-remainder>
- <md-date>2000</md-date>
+ <md-title>Bubbles from the brunnens of Nassau;</md-title>
+ <md-date>1835</md-date>
+ <md-author>Head, Francis Bond</md-author>
+ <md-description>Added t.-p., engraved</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1229470568">
-  <md-title>Sharing water</md-title>
-  <md-title-remainder>irrigation and water management in the Hindukush, Karakoram, Himalaya</md-title-remainder>
-  <md-date>2000</md-date>
+    name="LOC Solr Test" checksum="2423204382">
+  <md-title>Bubbles from the brunnens of Nassau;</md-title>
+  <md-date>1835</md-date>
+  <md-author>Head, Francis Bond</md-author>
+  <md-description>Added t.-p., engraved</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title sharing water medium book</recid>
+ <recid>content: title bubbles from the brunnens of nassau author head francis bond medium book</recid>
+</hit>
+<hit>
+ <md-title>Catalogues of the animals and plants of Massachusetts</md-title>
+ <md-title-remainder>with a copious index</md-title-remainder>
+ <md-date>1835</md-date>
+ <md-author>Hitchcock, Edward</md-author>
+ <md-description>I. Mammalia -- II. Birds / by E. Emmons -- III. Reptilia / by D.S.C.H. Smith -- IV. Fishes / by J.V.C. Smith -- V. Testacea : Marine shells / by T.A. Greene. Land and fresh water shells / by J.M. Earle -- VI. Crustacea / by A.A. Gould -- VII. Araneides / by N.M. Hentz -- VIII. Insects / by T.W. Harris -- IX. Radiata -- X. Catalogue of plants</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="4037816851">
+  <md-title>Catalogues of the animals and plants of Massachusetts</md-title>
+  <md-title-remainder>with a copious index</md-title-remainder>
+  <md-date>1835</md-date>
+  <md-author>Hitchcock, Edward</md-author>
+  <md-description>&quot;Copied from the second edition of Professor Hitchcock&apos;s &apos;Report on the geology, botany and zoology of Massachusetts.&apos;&quot;--Note, p. [3]</md-description>
+  <md-description>Includes index</md-description>
+  <md-description>I. Mammalia -- II. Birds / by E. Emmons -- III. Reptilia / by D.S.C.H. Smith -- IV. Fishes / by J.V.C. Smith -- V. Testacea : Marine shells / by T.A. Greene. Land and fresh water shells / by J.M. Earle -- VI. Crustacea / by A.A. Gould -- VII. Araneides / by N.M. Hentz -- VIII. Insects / by T.W. Harris -- IX. Radiata -- X. Catalogue of plants</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title catalogues of the animals and plants of massachusetts author hitchcock edward medium book</recid>
+</hit>
+<hit>
+ <md-title>Second report of Loammi Baldwin, Esq., engineer, made to a committee of the Boston Aqueduct Corporation</md-title>
+ <md-date>1835</md-date>
+ <md-author>Baldwin, Loammi</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="808591913">
+  <md-title>Second report of Loammi Baldwin, Esq., engineer, made to a committee of the Boston Aqueduct Corporation</md-title>
+  <md-date>1835</md-date>
+  <md-author>Baldwin, Loammi</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title second report of loammi baldwin esq engineer made to a committee of the boston aqueduct corporation author baldwin loammi medium book</recid>
+</hit>
+<hit>
+ <md-title>Spring water, versus river water, for supplying the city of New-York</md-title>
+ <md-title-remainder>also an examinination of the Water Commissioners report of Nov. 1833</md-title-remainder>
+ <md-date>1835</md-date>
+ <md-author>Hale, M</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2972074493">
+  <md-title>Spring water, versus river water, for supplying the city of New-York</md-title>
+  <md-title-remainder>also an examinination of the Water Commissioners report of Nov. 1833</md-title-remainder>
+  <md-date>1835</md-date>
+  <md-author>Hale, M</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title spring water versus river water for supplying the city of new york author hale m medium book</recid>
+</hit>
+<hit>
+ <md-title>A manual of the ornithology of the United States and of Canada</md-title>
+ <md-date>1834</md-date>
+ <md-author>Nuttall, Thomas</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="259721802">
+  <md-title>A manual of the ornithology of the United States and of Canada</md-title>
+  <md-date>1834</md-date>
+  <md-author>Nuttall, Thomas</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title a manual of the ornithology of the united states and of canada author nuttall thomas medium book</recid>
+</hit>
+<hit>
+ <md-title>Observations on the mineral waters of Avon, Livingston County, New York</md-title>
+ <md-date>1834</md-date>
+ <md-author>Francis, John W</md-author>
+ <md-description>&quot;From the United States medical and surgical journal.&quot;</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3488946740">
+  <md-title>Observations on the mineral waters of Avon, Livingston County, New York</md-title>
+  <md-date>1834</md-date>
+  <md-author>Francis, John W</md-author>
+  <md-description>Caption title: Avon mineral waters</md-description>
+  <md-description>&quot;From the United States medical and surgical journal.&quot;</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title observations on the mineral waters of avon livingston county new york author francis john w medium book</recid>
+</hit>
+<hit>
+ <md-title>Report on the subject of introducing pure water into the city of Boston</md-title>
+ <md-date>1834</md-date>
+ <md-author>Baldwin, Loammi</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1874334271">
+  <md-title>Report on the subject of introducing pure water into the city of Boston</md-title>
+  <md-date>1834</md-date>
+  <md-author>Baldwin, Loammi</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title report on the subject of introducing pure water into the city of boston author baldwin loammi medium book</recid>
 </hit>
 </show>
