@@ -126,7 +126,8 @@ struct client {
     char *id;
     facet_limits_t facet_limits;
     int same_search;
-    char *sort_spec;
+    char *sort_strategy;
+    char *sort_criteria;
 };
 
 struct suggestions {
@@ -745,6 +746,9 @@ int client_parse_init(struct client *cl, int same_search)
     return 0;
 }
 
+/*
+ * TODO consider how to extend the range
+ * */
 int client_parse_range(struct client *cl, const char *startrecs, const char *maxrecs)
 {
     if (maxrecs && atoi(maxrecs) != cl->maxrecs)
@@ -758,14 +762,15 @@ int client_parse_range(struct client *cl, const char *startrecs, const char *max
         cl->same_search = 0;
         cl->startrecs = atoi(startrecs);
     }
+
     return 0;
 }
 
 int client_start_search(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
-    struct connection *co = client_get_connection(cl);
-    ZOOM_connection link = connection_get_link(co);
+    struct connection *co = 0;
+    ZOOM_connection link = 0;
     struct session *se = client_get_session(cl);
     ZOOM_resultset rs;
     const char *opt_piggyback   = session_setting_oneval(sdb, PZ_PIGGYBACK);
@@ -792,7 +797,6 @@ int client_start_search(struct client *cl)
         present_chunk = atoi(opt_present_chunk);
         yaz_log(YLOG_DEBUG, "Present chunk set to %d", present_chunk);
     }
-    assert(link);
     rc_prep_connection =
         client_prep_connection(cl, se->service->z3950_operation_timeout,
                                se->service->z3950_session_timeout,
@@ -809,6 +813,11 @@ int client_start_search(struct client *cl)
         session_log(se, YLOG_LOG, "client %s FAILED to search: No connection.", client_get_id(cl));
         return -1;
     }
+    co = client_get_connection(cl);
+    assert(cl);
+    link = connection_get_link(co);
+    assert(link);
+
     session_log(se, YLOG_LOG, "client %s NEW search", client_get_id(cl));
 
     cl->diagnostic = 0;
@@ -877,7 +886,11 @@ int client_start_search(struct client *cl)
 
         ZOOM_query_prefix(query, cl->pquery);
     }
-    // TODO check for re-ingest / re-search
+    if (cl->sort_strategy && cl->sort_criteria) {
+        yaz_log(YLOG_LOG, "Client %s: Setting ZOOM sort strategy and criteria: %s %s",
+                client_get_id(cl), cl->sort_strategy, cl->sort_criteria);
+        ZOOM_query_sortby2(query, cl->sort_strategy, cl->sort_criteria);
+    }
 
     yaz_log(YLOG_DEBUG,"Client %s: Starting search", client_get_id(cl));
     client_set_state(cl, Client_Working);
@@ -915,6 +928,8 @@ struct client *client_create(const char *id)
     cl->preferred = 0;
     cl->ref_count = 1;
     cl->facet_limits = 0;
+    cl->sort_strategy = 0;
+    cl->sort_criteria = 0;
     assert(id);
     cl->id = xstrdup(id);
     client_use(1);
@@ -1354,26 +1369,42 @@ int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
         // int type = se->sorted_results->type;
         if (sort_strategy_and_spec && strlen(sort_strategy_and_spec) < 40)
         {
-            char spec[50], *p;
-            strcpy(spec, sort_strategy_and_spec);
-            p = strchr(spec, ':');
+            char strategy[50], *p;
+            strcpy(strategy, sort_strategy_and_spec);
+            p = strchr(strategy, ':');
             if (p)
             {
-                *p++ = '\0'; /* cut the string in two */
+                // Split the string in two
+                *p++ = 0;
                 while (*p == ' ')
                     p++;
                 if (increasing)
                     strcat(p, " <");
                 else
                     strcat(p, " >");
-                yaz_log(YLOG_LOG, "Client %s: applying sorting %s %s", client_get_id(cl), spec, p);
-                if (!cl->sort_spec || strcmp(cl->sort_spec, spec))
+                yaz_log(YLOG_LOG, "Client %s: applying sorting %s %s", client_get_id(cl), strategy, p);
+                if (!cl->sort_strategy || strcmp(cl->sort_strategy, strategy))
                     cl->same_search = 0;
-                cl->sort_spec = nmem_strdup(se->nmem, spec);
+                if (!cl->sort_criteria || strcmp(cl->sort_criteria, p))
+                    cl->same_search = 0;
+                if (cl->same_search == 0) {
+                    cl->sort_strategy  = nmem_strdup(se->nmem, strategy);
+                    cl->sort_criteria = nmem_strdup(se->nmem, p);
+                }
             }
+            else {
+                yaz_log(YLOG_LOG, "Client %s: Invalid sort strategy and spec found %s", client_get_id(cl), sort_strategy_and_spec);
+                cl->sort_strategy  = 0;
+                cl->sort_criteria = 0;
+            }
+        } else {
+            yaz_log(YLOG_LOG, "Client %s: No sort strategy and spec found.", client_get_id(cl));
+            cl->sort_strategy  = 0;
+            cl->sort_criteria = 0;
         }
+
     }
-    return 0;
+    return cl->same_search;
 }
 
 void client_set_session(struct client *cl, struct session *se)
