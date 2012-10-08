@@ -105,6 +105,7 @@ for f in `cat ${srcdir}/${URLS}`; do
 	if test -f $OUT1 -a -z "$PAZPAR2_OVERRIDE_TEST"; then
 	    if diff $OUT1 $OUT2 >$DIFF; then
 		rm $DIFF
+		rm $OUT2
 	    else
 		echo "Test $testno: Failed. See $OUT1, $OUT2 and $DIFF"
 		echo "URL: $f"
