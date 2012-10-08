@@ -17,7 +17,7 @@ by length.
 
 --- 1.6.20 2012/09/21
 
-Rank algorithm details may be printed as part of show reseponse in
+Rank algorithm details may be printed as part of show response in
 element <relevance_info>.. This is only printed if <rank debug="yes"/>
 is used in service.
 

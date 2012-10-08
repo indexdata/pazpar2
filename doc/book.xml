@@ -825,7 +825,77 @@
    
   </section>
   
+  <section id="relevance_ranking">
+   <title>Relevance ranking</title>
+   <para>
+    Pazpar2 uses a variant of the fterm frequency–inverse document frequency
+    (Tf-idf) ranking algorithm.
+   </para>
+   <para>
+    The Tf-part is straightforward to calculate and is based on the
+    documents that Pazpar2 fetches. The idf-part, however, is more tricky
+    since the corpus at hand is ONLY the relevant documents and not
+    irrelevant ones. Pazpar2 does not have the full corpus -- only the
+    documents that match a particular search.
+   </para>
+   <para>
+    Computatation of the Tf-part is based on the normalized documents.
+    The length, the position and terms are thus normalized at this point.
+    Also the computation if performed for each document received from the
+    target - before merging takes place. The result of a TF-compuation is
+    added to the TF-total of a cluster. Thus, if a document occurs twice,
+    then the TF-part is doubled. That, however, can be adjusted, because the
+    TF-part may be divided by the number of documents in a cluster.
+   </para>
+   <para>
+    The algorithm used by Pazpar2 has two phases. In phase one
+    Pazpar2 computes a tf-array .. This is being done as records are
+    fetched form the database. In this case, the rank weigth
+    <literal>w</literal>, the and rank tweaks <literal>lead</literal>,
+    <literal>follow</literal> and <literal>length</literal>.
+    
+   </para>
+   <screen><![CDATA[
+    tf[1,2,..N] = 0;
+    foreach document in a cluster
+       foreach field
+          w[1,2,..N] = 0;
+          for i = 1, .. N:  (each term)
+             foreach pos (where term i occurs in field)
+                // w is configured weight for field
+                // pos is position of term in field
+                w[i] += w / (1 + log2(1+lead*pos))
+                if (d > 0)
+                    w[i] += w[i] * follow / (1+log2(d)
+          // length: length of field (number of terms that is)
+	  if (length strategy is "linear")
+             tf[i] += w[i] / length;
+          else if (length strategy is "log")
+             tf[i] += w[i] / log2(length);
+          else if (length strategy is "none")
+             tf[i] += w[i];
+	  ]]></screen>
+   <para>
+    In phase two, the idf-array is computed and the final score
+    is computed. This is done for each cluster as part of each show command.
+    The rank tweak <literal>cluster</literal> is in use here.
+   </para>
+   <screen><![CDATA[
+    // dococcur[i]: number of records where term occurs
+    // doctotal: number of records
+    for i = 1, .., N (each term)
+      if (dococcur[i] > 0)
+         idf[i] = log(1 + doctotal / dococcur[i])
+      else
+         idf[i] = 0;
 
+    relevance = 0;
+    for i = 1, .., N: (each term)
+       if (cluster is "yes")
+          tf[i] = tf[i] / cluster_size;
+       relevance += 100000 * tf[i] / idf[i];
+       ]]></screen>
+  </section> <!-- relevance_ranking -->
  </chapter> <!-- Using Pazpar2 -->
 
  <reference id="reference">
