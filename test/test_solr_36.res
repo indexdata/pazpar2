@@ -1,364 +1,350 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <show><status>OK</status>
 <activeclients>0</activeclients>
-<merged>97</merged>
+<merged>98</merged>
 <total>201695</total>
 <start>0</start>
 <num>20</num>
 <hit>
- <md-title>I͡A ekhal v dalʹnie krai͡a</md-title>
- <md-date>1999</md-date>
- <md-author>Abbasov, A</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1554355631">
-  <md-title>I͡A ekhal v dalʹnie krai͡a</md-title>
-  <md-date>1999</md-date>
-  <md-author>Abbasov, A</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title i a ekhal v dal nie krai a author abbasov a medium book</recid>
-</hit>
-<hit>
- <md-title>A memorial of divine benefits</md-title>
- <md-title-remainder>in a sermon, delivered at Exeter, on the 15th, and at Haverhill, on the 29th of November, 1798, days of public thanksgiving, in New-Hampshire and Massachusetts</md-title-remainder>
- <md-date>1798</md-date>
- <md-author>Abbot, Abiel</md-author>
- <md-description>Signatures: [A]⁴ B-C⁴ D²</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3749836075">
-  <md-title>A memorial of divine benefits</md-title>
-  <md-title-remainder>in a sermon, delivered at Exeter, on the 15th, and at Haverhill, on the 29th of November, 1798, days of public thanksgiving, in New-Hampshire and Massachusetts</md-title-remainder>
-  <md-date>1798</md-date>
-  <md-author>Abbot, Abiel</md-author>
-  <md-description>Signatures: [A]⁴ B-C⁴ D²</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title a memorial of divine benefits author abbot abiel medium book</recid>
-</hit>
-<hit>
- <md-title>Sermons</md-title>
- <md-date>1831</md-date>
- <md-author>Abbot, Abiel</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1069481248">
-  <md-title>Sermons</md-title>
-  <md-date>1831</md-date>
-  <md-author>Abbot, Abiel</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title sermons author abbot abiel medium book</recid>
-</hit>
-<hit>
- <md-title>Tradisi pembacaan ratibul Haddad di Bekasi</md-title>
- <md-title-remainder>laporan penelitian</md-title-remainder>
- <md-date>1998</md-date>
- <md-author>Abdillah, Aam</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3168968100">
-  <md-title>Tradisi pembacaan ratibul Haddad di Bekasi</md-title>
-  <md-title-remainder>laporan penelitian</md-title-remainder>
-  <md-date>1998</md-date>
-  <md-author>Abdillah, Aam</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title tradisi pembacaan ratibul haddad di bekasi author abdillah aam medium book</recid>
-</hit>
-<hit>
- <md-title>The message -- a tale in song</md-title>
- <md-title-remainder>Addahamāṇa&apos;s Sandeśa rāsaka</md-title-remainder>
- <md-date>1999</md-date>
- <md-author>Abdularahamāna</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="488613273">
-  <md-title>The message -- a tale in song</md-title>
-  <md-title-remainder>Addahamāṇa&apos;s Sandeśa rāsaka</md-title-remainder>
-  <md-date>1999</md-date>
-  <md-author>Abdularahamāna</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title the message a tale in song author abdularahama na medium book</recid>
-</hit>
-<hit>
- <md-title>The message</md-title>
- <md-title-remainder>a tale in song</md-title-remainder>
- <md-date>1999</md-date>
- <md-author>Abdularahamāna</md-author>
- <md-description>Poem; includes a critical study of the grammar</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2103225742">
-  <md-title>The message</md-title>
-  <md-title-remainder>a tale in song</md-title-remainder>
-  <md-date>1999</md-date>
-  <md-author>Abdularahamāna</md-author>
-  <md-description>Poem; includes a critical study of the grammar</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title the message author abdularahama na medium book</recid>
-</hit>
-<hit>
- <md-title>Vklad v mirovui͡u t͡sivilizat͡sii͡u</md-title>
- <md-title-remainder>iz istorii zarozhdenii͡a, stanovlenii͡a i razvitii͡a materialʹnykh i dukhovnykh kulʹtur v Uzbekistane</md-title-remainder>
- <md-date>1998</md-date>
- <md-author>Abdunabiev, A</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3717838211">
-  <md-title>Vklad v mirovui͡u t͡sivilizat͡sii͡u</md-title>
-  <md-title-remainder>iz istorii zarozhdenii͡a, stanovlenii͡a i razvitii͡a materialʹnykh i dukhovnykh kulʹtur v Uzbekistane</md-title-remainder>
-  <md-date>1998</md-date>
-  <md-author>Abdunabiev, A</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title vklad v mirovui u t sivilizat sii u author abdunabiev a medium book</recid>
-</hit>
-<hit>
- <md-title>Efektivitas pelaksanaan pelayanan bimbingan dan konseling di MTS Kotamadya Ujungpandang</md-title>
- <md-title-remainder>laporan hasil penelitian</md-title-remainder>
- <md-date>1997-1998</md-date>
- <md-author>Abdurrahman</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1037483384">
-  <md-title>Efektivitas pelaksanaan pelayanan bimbingan dan konseling di MTS Kotamadya Ujungpandang</md-title>
-  <md-title-remainder>laporan hasil penelitian</md-title-remainder>
-  <md-date>1997-1998</md-date>
-  <md-author>Abdurrahman</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title efektivitas pelaksanaan pelayanan bimbingan dan konseling di mts kotamadya ujungpandang author abdurrahman medium book</recid>
-</hit>
-<hit>
- <md-title>Arabcha-ŭzbekcha-ruscha lughat</md-title>
- <md-title-remainder>vaqtli matbuot tili leksikasi</md-title-remainder>
- <md-date>1998</md-date>
- <md-author>Abduzhabborov, A</md-author>
- <md-description>At head of title: Toshkent davlat sharqshunoslik instituti</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2652095853">
-  <md-title>Arabcha-ŭzbekcha-ruscha lughat</md-title>
-  <md-title-remainder>vaqtli matbuot tili leksikasi</md-title-remainder>
-  <md-date>1998</md-date>
-  <md-author>Abduzhabborov, A</md-author>
-  <md-description>At head of title: Toshkent davlat sharqshunoslik instituti</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title arabcha u zbekcha ruscha lughat author abduzhabborov a medium book</recid>
-</hit>
-<hit>
- <md-title>Poezia upirveles qovlisa</md-title>
- <md-title-remainder>[leksebi]</md-title-remainder>
- <md-date>1991</md-date>
- <md-author>Abesaże, A</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="4266708322">
-  <md-title>Poezia upirveles qovlisa</md-title>
-  <md-title-remainder>[leksebi]</md-title-remainder>
-  <md-date>1991</md-date>
-  <md-author>Abesaże, A</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title poezia upirveles qovlisa author abesaz e a medium book</recid>
-</hit>
-<hit>
- <md-title>Colcha</md-title>
- <md-date>2001</md-date>
- <md-author>Abeyta, Aaron A</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1586353495">
-  <md-title>Colcha</md-title>
-  <md-date>2001</md-date>
-  <md-author>Abeyta, Aaron A</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title colcha author abeyta aaron a medium book</recid>
-</hit>
-<hit>
- <md-title>India and her people</md-title>
- <md-date>1906</md-date>
- <md-author>Abhedânanda</md-author>
- <md-description>The prevailing philosophy of to-day.--The religion of India to-day.--The social status of the Indian people: their system of caste.--Political institutions of India.--Education in India.--The influence of India on western civilization, and the influence of western civilization on India.--Woman&apos;s place in Hindu religion</md-description>
+ <md-title>Mutatus polemo</md-title>
+ <md-title-remainder>the horrible stratagems of the Jesuits, lately practised in England during the civil wars and now discovered by a reclaimed Romanist, imployed before as a workman of the mission from His Holiness : wherein the royalist may see himself out-witted and forlorn, while the Presbyterian is closed with, and all to draw on the holy cause : a relation in particular, and with such exquisite characters of truth stampt upon it, that each of our three grand parties may here feel how each other pulses beat : also, a discovery of a plot laid for a speedy invasion</md-title-remainder>
+ <md-date>1650</md-date>
+ <md-author>A. B</md-author>
+ <md-description>Signatures: A-G⁴</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="2135223606">
-  <md-title>India and her people</md-title>
-  <md-date>1906</md-date>
-  <md-author>Abhedânanda</md-author>
-  <md-description>&quot;The first six lectures contained in this volume were delivered before the Brooklyn institute of arts and sciences.&quot;--Pref</md-description>
-  <md-description>The prevailing philosophy of to-day.--The religion of India to-day.--The social status of the Indian people: their system of caste.--Political institutions of India.--Education in India.--The influence of India on western civilization, and the influence of western civilization on India.--Woman&apos;s place in Hindu religion</md-description>
+  <md-title>Mutatus polemo</md-title>
+  <md-title-remainder>the horrible stratagems of the Jesuits, lately practised in England during the civil wars and now discovered by a reclaimed Romanist, imployed before as a workman of the mission from His Holiness : wherein the royalist may see himself out-witted and forlorn, while the Presbyterian is closed with, and all to draw on the holy cause : a relation in particular, and with such exquisite characters of truth stampt upon it, that each of our three grand parties may here feel how each other pulses beat : also, a discovery of a plot laid for a speedy invasion</md-title-remainder>
+  <md-date>1650</md-date>
+  <md-author>A. B</md-author>
+  <md-description>Signatures: A-G⁴</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title india and her people author abheda nanda medium book</recid>
+ <recid>content: title mutatus polemo author a b medium book</recid>
 </hit>
 <hit>
- <md-title>Vedânta philosophy;</md-title>
- <md-title-remainder>three lectures</md-title-remainder>
- <md-date>1899-1902</md-date>
- <md-author>Abhedânanda</md-author>
- <md-description>Reincarnation.--Evolution and reincarnation.--Which is scientific, resurrection or reincarnation?</md-description>
+ <md-title>Adat istiadat perkawinan Dayak Kanayatn</md-title>
+ <md-date>1999</md-date>
+ <md-author>A. B. Dacing T</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="520611137">
-  <md-title>Vedânta philosophy;</md-title>
-  <md-title-remainder>three lectures</md-title-remainder>
-  <md-date>1899</md-date>
-  <md-author>Abhedânanda</md-author>
-  <md-description>Advertising matter: p. [59]-61</md-description>
-  <md-description>Reincarnation.--Evolution and reincarnation.--Which is scientific, resurrection or reincarnation?</md-description>
+  <md-title>Adat istiadat perkawinan Dayak Kanayatn</md-title>
+  <md-date>1999</md-date>
+  <md-author>A. B. Dacing T</md-author>
   <md-medium>book</md-medium>
  </location>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3200965964">
-  <md-title>Vedânta philosophy</md-title>
-  <md-title-remainder>three lectures</md-title-remainder>
-  <md-date>1902</md-date>
-  <md-author>Abhedânanda</md-author>
-  <md-description>&quot;Delivered under the auspices of the Vedânta Society in Carnegie lyceum, New York.&quot;</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>2</count>
- <recid>content: title veda nta philosophy author abheda nanda medium book</recid>
+ <count>1</count>
+ <recid>content: title adat istiadat perkawinan dayak kanayatn author a b dacing t medium book</recid>
 </hit>
 <hit>
- <md-title>Social England in the fifteenth century</md-title>
- <md-title-remainder>a study of the effects of economic conditions, thesis approval for the degree of doctor of science (economics) in the University of London</md-title-remainder>
- <md-date>1909</md-date>
- <md-author>Abram, A</md-author>
+ <md-title>Homseni</md-title>
+ <md-date>1996</md-date>
+ <md-author>A. C</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3749836075">
+  <md-title>Homseni</md-title>
+  <md-date>1996</md-date>
+  <md-author>A. C</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title homseni author a c medium book</recid>
+</hit>
+<hit>
+ <md-title>The strange story of Ahrinziman</md-title>
+ <md-date>1906</md-date>
+ <md-author>A. F. S</md-author>
+ <md-description>Frontispiece</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1069481248">
+  <md-title>The strange story of Ahrinziman</md-title>
+  <md-date>1906</md-date>
+  <md-author>A. F. S</md-author>
+  <md-description>Frontispiece</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title the strange story of ahrinziman author a f s medium book</recid>
+</hit>
+<hit>
+ <md-title>Our two lives;</md-title>
+ <md-title-remainder>or, Graham and I</md-title-remainder>
+ <md-date>1873</md-date>
+ <md-author>A. H. K</md-author>
+ <md-description>Wright II, 2643</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="2684093717">
-  <md-title>Social England in the fifteenth century</md-title>
-  <md-title-remainder>a study of the effects of economic conditions, thesis approval for the degree of doctor of science (economics) in the University of London</md-title-remainder>
-  <md-date>1909</md-date>
-  <md-author>Abram, A</md-author>
+  <md-title>Our two lives;</md-title>
+  <md-title-remainder>or, Graham and I</md-title-remainder>
+  <md-date>1873</md-date>
+  <md-author>A. H. K</md-author>
+  <md-description>Wright II, 2643</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title social england in the fifteenth century author abram a medium book</recid>
+ <recid>content: title our two lives author a h k medium book</recid>
 </hit>
 <hit>
- <md-title>Man and his poisons;</md-title>
- <md-title-remainder>a practical exposition of the causes, symptoms and treatment of self-poisoning</md-title-remainder>
- <md-date>1906</md-date>
- <md-author>Abrams, Albert</md-author>
- <md-description>Cover-title: Self-poisoning</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="840589777">
-  <md-title>Man and his poisons;</md-title>
-  <md-title-remainder>a practical exposition of the causes, symptoms and treatment of self-poisoning</md-title-remainder>
-  <md-date>1906</md-date>
-  <md-author>Abrams, Albert</md-author>
-  <md-description>Cover-title: Self-poisoning</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title man and his poisons author abrams albert medium book</recid>
-</hit>
-<hit>
- <md-title>Manual of clinical diagnosis</md-title>
- <md-date>1891-1892</md-date>
- <md-author>Abrams, Albert</md-author>
- <md-description>3d ed. has title: Clinical diagnosis</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1389459888">
-  <md-title>Manual of clinical diagnosis</md-title>
-  <md-date>1892</md-date>
-  <md-author>Abrams, Albert</md-author>
-  <md-description>3d ed. has title: Clinical diagnosis</md-description>
-  <md-medium>book</md-medium>
- </location>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="4069814715">
-  <md-title>Manual of clinical diagnosis</md-title>
-  <md-date>1891</md-date>
-  <md-author>Abrams, Albert</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>2</count>
- <recid>content: title manual of clinical diagnosis author abrams albert medium book</recid>
-</hit>
-<hit>
- <md-title>Spondylotherapy; spinal concussion and the application of other methods to the spine in the treatment of disease</md-title>
- <md-date>1910</md-date>
- <md-author>Abrams, Albert</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3004072357">
-  <md-title>Spondylotherapy; spinal concussion and the application of other methods to the spine in the treatment of disease</md-title>
-  <md-date>1910</md-date>
-  <md-author>Abrams, Albert</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title spondylotherapy spinal concussion and the application of other methods to the spine in the treatment of disease author abrams albert medium book</recid>
-</hit>
-<hit>
- <md-title>Transactions of the Antiseptic club</md-title>
- <md-date>1895</md-date>
- <md-author>Abrams, Albert</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3520944604">
-  <md-title>Transactions of the Antiseptic club</md-title>
-  <md-date>1895</md-date>
-  <md-author>Abrams, Albert</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title transactions of the antiseptic club author abrams albert medium book</recid>
-</hit>
-<hit>
- <md-title>Ėkologicheskie aspekty proizvodstva i primenenii͡a nefteproduktov / Abrosimov A.A</md-title>
- <md-date>1999</md-date>
- <md-author>Abrosimov, A. A</md-author>
+ <md-title>Leonardo Rodríguez Alcaine en el movimiento obrero de México</md-title>
+ <md-date>2000</md-date>
+ <md-author>A. P</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="3738890">
-  <md-title>Ėkologicheskie aspekty proizvodstva i primenenii͡a nefteproduktov / Abrosimov A.A</md-title>
-  <md-date>1999</md-date>
-  <md-author>Abrosimov, A. A</md-author>
+  <md-title>Leonardo Rodríguez Alcaine en el movimiento obrero de México</md-title>
+  <md-date>2000</md-date>
+  <md-author>A. P</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title e kologicheskie aspekty proizvodstva i primenenii a nefteproduktov abrosimov a a author abrosimov a a medium book</recid>
+ <recid>content: title leonardo rodri guez alcaine en el movimiento obrero de me xico author a p medium book</recid>
 </hit>
 <hit>
- <md-title>Kehidupan wanita pencari kerang di Dusun IV, Desa Pantai Labu Pekan, Kecamatan Pantai Labu</md-title>
- <md-title-remainder>laporan penelitian</md-title-remainder>
- <md-date>1999</md-date>
- <md-author>Achiriah</md-author>
+ <md-title>X. Y. Z. of Wall Street</md-title>
+ <md-date>1902</md-date>
+ <md-author>A. P. H</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="1618351359">
-  <md-title>Kehidupan wanita pencari kerang di Dusun IV, Desa Pantai Labu Pekan, Kecamatan Pantai Labu</md-title>
-  <md-title-remainder>laporan penelitian</md-title-remainder>
-  <md-date>1999</md-date>
-  <md-author>Achiriah</md-author>
+  <md-title>X. Y. Z. of Wall Street</md-title>
+  <md-date>1902</md-date>
+  <md-author>A. P. H</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title kehidupan wanita pencari kerang di dusun iv desa pantai labu pekan kecamatan pantai labu author achiriah medium book</recid>
+ <recid>content: title x y z of wall street author a p h medium book</recid>
+</hit>
+<hit>
+ <md-title>Side lights on the ʻforty-five&apos; and its heroes</md-title>
+ <md-date>1903</md-date>
+ <md-author>A. Š</md-author>
+ <md-description>John Home, the Scottish volunteer and historian.--Home&apos;s &quot;History of the rebellion in Scotland,&quot; and public opinion.--Ms. materials for Home&apos;s &quot;History.&quot; The Anti-Gallicans.--&quot;The good Lochiel&quot;: a hero of the &quot;forty-five.&quot;--Three Jacobite maps.--James Ray, of Whitehaven: a Hanoverian volunteer of the &quot;forty-five.&quot;--Ray&apos;s experiences in Scotland.--Ray&apos;s journey to the north of Scotland</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3232963828">
+  <md-title>Side lights on the ʻforty-five&apos; and its heroes</md-title>
+  <md-date>1903</md-date>
+  <md-author>A. Š</md-author>
+  <md-description>Preface signed: A. S</md-description>
+  <md-description>John Home, the Scottish volunteer and historian.--Home&apos;s &quot;History of the rebellion in Scotland,&quot; and public opinion.--Ms. materials for Home&apos;s &quot;History.&quot; The Anti-Gallicans.--&quot;The good Lochiel&quot;: a hero of the &quot;forty-five.&quot;--Three Jacobite maps.--James Ray, of Whitehaven: a Hanoverian volunteer of the &quot;forty-five.&quot;--Ray&apos;s experiences in Scotland.--Ray&apos;s journey to the north of Scotland</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title side lights on the forty five and its heroes author a s medium book</recid>
+</hit>
+<hit>
+ <md-title>Overland, inland, and upland</md-title>
+ <md-title-remainder>A lady&apos;s notes of personal observation and adventure</md-title-remainder>
+ <md-date>1873</md-date>
+ <md-author>A. U</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="552609001">
+  <md-title>Overland, inland, and upland</md-title>
+  <md-title-remainder>A lady&apos;s notes of personal observation and adventure</md-title-remainder>
+  <md-date>1873</md-date>
+  <md-author>A. U</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title overland inland and upland author a u medium book</recid>
+</hit>
+<hit>
+ <md-title>Biographisch woordenboek der Nederlanden</md-title>
+ <md-title-remainder>bevattende levensbeschrijvingen van zoodanige personen, die zich op eenigerlei wijze in ons vaderland hebben vermaard gemaakt</md-title-remainder>
+ <md-date>1852</md-date>
+ <md-author>Aa, Abraham Jacob van der</md-author>
+ <md-description>Title varies: v. 3-6, 9, A. J. van der Aa, Biographisch woordenboek der Nederlanden, voortgezet door K. J. R. van Harderwijk; v. 7-8, 10-21, voortgezet door K. J. R. van Harderwijk en Dr. G. D. J. Schotel</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1101479112">
+  <md-title>Biographisch woordenboek der Nederlanden</md-title>
+  <md-title-remainder>bevattende levensbeschrijvingen van zoodanige personen, die zich op eenigerlei wijze in ons vaderland hebben vermaard gemaakt</md-title-remainder>
+  <md-date>1852</md-date>
+  <md-author>Aa, Abraham Jacob van der</md-author>
+  <md-description>Title varies: v. 3-6, 9, A. J. van der Aa, Biographisch woordenboek der Nederlanden, voortgezet door K. J. R. van Harderwijk; v. 7-8, 10-21, voortgezet door K. J. R. van Harderwijk en Dr. G. D. J. Schotel</md-description>
+  <md-description>Vol. 2 is in 4 pts.; v. 8, 12 and 17 in 2 pts. each, with continuous paging</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title biographisch woordenboek der nederlanden author aa abraham jacob van der medium book</recid>
+</hit>
+<hit>
+ <md-title>De geschiedenis der Vereenigde Nederlanden, enderzelver buitenlandsche bezittingen</md-title>
+ <md-title-remainder>geduurende de staatsen erfstadhouderlijke regeerwijze, ten tijde van Willem den Vierden; de vrouwe gouvernante Anna; en Willem den Vijfden</md-title-remainder>
+ <md-date>1804-1810</md-date>
+ <md-author>Aa, Cornelis van der</md-author>
+ <md-description>Vol. 1 has half-title: De lotgewallen van de republiek der Veréénigde Nederlanden. Sints de invoering der staats- en erfstadhouderlijke regeerwijze in het jaar MDCCXLVII. Vol. 2-6: Geschiedenis der Veréénigde Nederlanden, 1747-1794</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2716091581">
+  <md-title>De geschiedenis der Vereenigde Nederlanden, enderzelver buitenlandsche bezittingen</md-title>
+  <md-title-remainder>geduurende de staatsen erfstadhouderlijke regeerwijze, ten tijde van Willem den Vierden; de vrouwe gouvernante Anna; en Willem den Vijfden</md-title-remainder>
+  <md-date>1804-1810</md-date>
+  <md-author>Aa, Cornelis van der</md-author>
+  <md-description>Vol. 1 has half-title: De lotgewallen van de republiek der Veréénigde Nederlanden. Sints de invoering der staats- en erfstadhouderlijke regeerwijze in het jaar MDCCXLVII. Vol. 2-6: Geschiedenis der Veréénigde Nederlanden, 1747-1794</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title de geschiedenis der vereenigde nederlanden enderzelver buitenlandsche bezittingen author aa cornelis van der medium book</recid>
+</hit>
+<hit>
+ <md-title>Sketches from the ranch</md-title>
+ <md-title-remainder>a Montana memoir</md-title-remainder>
+ <md-date>1998</md-date>
+ <md-author>Aadland, Dan</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="35736754">
+  <md-title>Sketches from the ranch</md-title>
+  <md-title-remainder>a Montana memoir</md-title-remainder>
+  <md-date>1998</md-date>
+  <md-author>Aadland, Dan</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title sketches from the ranch author aadland dan medium book</recid>
+</hit>
+<hit>
+ <md-title>Economic value of pro-environmental farming</md-title>
+ <md-title-remainder>a critical and decision-making oriented application of the contingent valuation method</md-title-remainder>
+ <md-date>1999</md-date>
+ <md-author>Aakkula, Jyrki J</md-author>
+ <md-description>Originally presented as the author&apos;s dissertation (University of Helsinki, 1999)</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1650349223">
+  <md-title>Economic value of pro-environmental farming</md-title>
+  <md-title-remainder>a critical and decision-making oriented application of the contingent valuation method</md-title-remainder>
+  <md-date>1999</md-date>
+  <md-author>Aakkula, Jyrki J</md-author>
+  <md-description>Originally presented as the author&apos;s dissertation (University of Helsinki, 1999)</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title economic value of pro environmental farming author aakkula jyrki j medium book</recid>
+</hit>
+<hit>
+ <md-title>Digital signature blindness</md-title>
+ <md-title-remainder>analysis of legislative approaches toward electronic authentication</md-title-remainder>
+ <md-date>2000</md-date>
+ <md-author>Aalberts, Babette</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3264961692">
+  <md-title>Digital signature blindness</md-title>
+  <md-title-remainder>analysis of legislative approaches toward electronic authentication</md-title-remainder>
+  <md-date>2000</md-date>
+  <md-author>Aalberts, Babette</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title digital signature blindness author aalberts babette medium book</recid>
+</hit>
+<hit>
+ <md-title>Roof</md-title>
+ <md-title-remainder>de ontvreemding van joods bezit tijdens de Tweede Wereldoorlog</md-title-remainder>
+ <md-date>1999</md-date>
+ <md-author>Aalders, Gerard</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="584606865">
+  <md-title>Roof</md-title>
+  <md-title-remainder>de ontvreemding van joods bezit tijdens de Tweede Wereldoorlog</md-title-remainder>
+  <md-date>1999</md-date>
+  <md-author>Aalders, Gerard</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title roof author aalders gerard medium book</recid>
+</hit>
+<hit>
+ <md-title>Als ik wil kan ik duiken--</md-title>
+ <md-title-remainder>brieven van Claartje van Aals, verpleegster in de joods psychiatrische inrichting Het Apeldoornsche Bosch, 1940-1943</md-title-remainder>
+ <md-date>1995</md-date>
+ <md-author>Aals, Claartje van</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2199219334">
+  <md-title>Als ik wil kan ik duiken--</md-title>
+  <md-title-remainder>brieven van Claartje van Aals, verpleegster in de joods psychiatrische inrichting Het Apeldoornsche Bosch, 1940-1943</md-title-remainder>
+  <md-date>1995</md-date>
+  <md-author>Aals, Claartje van</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title als ik wil kan ik duiken author aals claartje van medium book</recid>
+</hit>
+<hit>
+ <md-title>Sneeuwbeeld</md-title>
+ <md-date>2000</md-date>
+ <md-author>Aalten, Thomas van</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3813831803">
+  <md-title>Sneeuwbeeld</md-title>
+  <md-date>2000</md-date>
+  <md-author>Aalten, Thomas van</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title sneeuwbeeld author aalten thomas van medium book</recid>
+</hit>
+<hit>
+ <md-title>Murrosikä ja sukupuoli</md-title>
+ <md-title-remainder>julkiset ja yksityiset ikämäärittelyt</md-title-remainder>
+ <md-date>1999</md-date>
+ <md-author>Aapola, Sinikka</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1133476976">
+  <md-title>Murrosikä ja sukupuoli</md-title>
+  <md-title-remainder>julkiset ja yksityiset ikämäärittelyt</md-title-remainder>
+  <md-date>1999</md-date>
+  <md-author>Aapola, Sinikka</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title murrosika ja sukupuoli author aapola sinikka medium book</recid>
+</hit>
+<hit>
+ <md-title>Kunsten å bu i hus</md-title>
+ <md-title-remainder>essay</md-title-remainder>
+ <md-date>1999</md-date>
+ <md-author>Aareskjold, Solveig</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2748089445">
+  <md-title>Kunsten å bu i hus</md-title>
+  <md-title-remainder>essay</md-title-remainder>
+  <md-date>1999</md-date>
+  <md-author>Aareskjold, Solveig</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title kunsten a bu i hus author aareskjold solveig medium book</recid>
+</hit>
+<hit>
+ <md-title>Raimo Pullat</md-title>
+ <md-title-remainder>valikbibliograafia, 1964-2000</md-title-remainder>
+ <md-date>2000</md-date>
+ <md-author>Aarma, Liivi</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="67734618">
+  <md-title>Raimo Pullat</md-title>
+  <md-title-remainder>valikbibliograafia, 1964-2000</md-title-remainder>
+  <md-date>2000</md-date>
+  <md-author>Aarma, Liivi</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title raimo pullat author aarma liivi medium book</recid>
 </hit>
 </show>

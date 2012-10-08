@@ -6,49 +6,13 @@
 <start>0</start>
 <num>20</num>
 <hit>
- <md-title>Phonkrathop khō̜ng sanyān witthayu læ thōrathat khām phromdǣn rawāng Thai-Lao</md-title>
- <md-date>2001-2544</md-date>
- <md-author>Wiphā ʻUtamachan</md-author>
- <md-description>Study on audiences attitudes towards intercultural communication through broadcastings signals spilling cross borders between Thailand and Laos</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="744596185">
-  <md-title>Phonkrathop khō̜ng sanyān witthayu læ thōrathat khām phromdǣn rawāng Thai-Lao</md-title>
-  <md-date>2001-2544</md-date>
-  <md-author>Wiphā ʻUtamachan</md-author>
-  <md-description>Study on audiences attitudes towards intercultural communication through broadcastings signals spilling cross borders between Thailand and Laos</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title phonkrathop kho ng sanya n witthayu l tho rathat kha m phromd n rawa ng thai lao author wipha utamachan medium book</recid>
-</hit>
-<hit>
- <md-title>ʻUtsāhakam singthō̜ Thai =</md-title>
- <md-title-remainder>The Thai textile industries</md-title-remainder>
- <md-date>2001-2544</md-date>
- <md-author>Wīrasak ʻUdomkitdēchā</md-author>
- <md-description>&quot;Sanapsanun dōi Sathāban Phatthanā ʻUtsāhakam Singthō̜; National Metal and Materials Technology Center&quot;--Cover</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1325464160">
-  <md-title>ʻUtsāhakam singthō̜ Thai =</md-title>
-  <md-title-remainder>The Thai textile industries</md-title-remainder>
-  <md-date>2001-2544</md-date>
-  <md-author>Wīrasak ʻUdomkitdēchā</md-author>
-  <md-description>&quot;Sanapsanun dōi Sathāban Phatthanā ʻUtsāhakam Singthō̜; National Metal and Materials Technology Center&quot;--Cover</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title utsa hakam singtho thai author wi rasak udomkitde cha medium book</recid>
-</hit>
-<hit>
  <md-title>The children of Adam</md-title>
  <md-title-remainder>an Islamic perspective on pluralism</md-title-remainder>
  <md-date>1996</md-date>
  <md-author>ʻUthmān, Fatḥī</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1810338543">
+    name="LOC Solr Test" checksum="2167221470">
   <md-title>The children of Adam</md-title>
   <md-title-remainder>an Islamic perspective on pluralism</md-title-remainder>
   <md-date>1996</md-date>
@@ -66,7 +30,7 @@
  <md-description>&quot;Khōngkān lēkthī Lāo/96/019.&quot;</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3424951012">
+    name="LOC Solr Test" checksum="3781833939">
   <md-title>Botbāt nying-sāi nai kānphatthanā =</md-title>
   <md-title-remainder>Gender in development</md-title-remainder>
   <md-date>2000</md-date>
@@ -84,7 +48,7 @@
  <md-description>Royal temples in Bangkok Thailand</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1293466296">
+    name="LOC Solr Test" checksum="1101479112">
   <md-title>ʻĀrām lūang thī samkhan læ wat pračham ratchakān</md-title>
   <md-date>1998-2541</md-date>
   <md-author>ʻUrai Singphaibūnphō̜n</md-author>
@@ -101,7 +65,7 @@
  <md-description>Collection of official letters of Caliph Umar ibn al-Khattab, d. 644</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="227723938">
+    name="LOC Solr Test" checksum="2716091581">
   <md-title>Haẓrat ʻUmar ke sarkārī k̲h̲ut̤ūt̤</md-title>
   <md-date>1999</md-date>
   <md-author>ʻUmar ibn al-Khaṭṭāb</md-author>
@@ -118,7 +82,7 @@
  <md-description>Novel</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1037483384">
+    name="LOC Solr Test" checksum="1554355631">
   <md-title>Krayʻ krve pyakʻ ñña chī suiʹ sā</md-title>
   <md-date>2000</md-date>
   <md-author>ʼUi Mā Chamʻ</md-author>
@@ -136,7 +100,7 @@
  <md-description>Depicts seasonal festivals and customs of Northeastern Thailand</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2940076629">
+    name="LOC Solr Test" checksum="35736754">
   <md-title>Kawīniphon ʻĪsān</md-title>
   <md-title-remainder>hīt sipsō̜ng khō̜ng sipsī</md-title-remainder>
   <md-date>1997-2540</md-date>
@@ -154,7 +118,7 @@
  <md-author>ʻUbonsī ʻAtthaphan</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="259721802">
+    name="LOC Solr Test" checksum="1650349223">
   <md-title>Kānpariwat læ sưksā wikhro̜ wannakam phư̄nbān Phāk Tai praphēt nangsư̄ but rư̄ang Pō̜ngkhrok</md-title>
   <md-date>1999-2542</md-date>
   <md-author>ʻUbonsī ʻAtthaphan</md-author>
@@ -170,7 +134,7 @@
  <md-description>&quot;Khrōngkān tamrā wichākān rātchaphat chalœ̄m phrakīat nư̄ang nai warōkāt Phrabāt Somdet Phračhaoyūhūa song čharœ̄n phrachonmāyu khrop 6 rō̜p&quot;--Cover</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3488946740">
+    name="LOC Solr Test" checksum="3264961692">
   <md-title>Phlēng prakō̜p kānrīan kānsō̜n Phāsā Thai</md-title>
   <md-date>1999</md-date>
   <md-author>ʻUaichai Phakāmāt</md-author>
@@ -182,177 +146,212 @@
  <recid>content: title phle ng prako p ka nri an ka nso n pha sa thai author uaichai phaka ma t medium book</recid>
 </hit>
 <hit>
- <md-title>Voyage au Ouadây</md-title>
- <md-date>1851</md-date>
- <md-author>Tūnisī, Muḥammad ibn ʻUmar</md-author>
- <md-description>Half-title: Voyage au Soudan oriental. Le Ouadây</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="776594049">
-  <md-title>Voyage au Ouadây</md-title>
-  <md-date>1851</md-date>
-  <md-author>Tūnisī, Muḥammad ibn ʻUmar</md-author>
-  <md-description>&quot;Planches&quot; have special t.-p</md-description>
-  <md-description>Half-title: Voyage au Soudan oriental. Le Ouadây</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title voyage au ouada y author tu nisi muh ammad ibn umar medium book</recid>
-</hit>
-<hit>
- <md-title>Senthāng sāi tham</md-title>
+ <md-title>Mranʻ māʹ ruiʺ rā ʼa khā peʺ ʼoṅʻ mhanʻ duiṅʻyārī</md-title>
  <md-date>2000</md-date>
- <md-author>Thō̜ngkham ʻŌ̜nmanīsō̜n</md-author>
- <md-description>Buddhist poetry on the theme related to social aspects</md-description>
+ <md-author>ʼOṅʻ Sanʻʺ</md-author>
+ <md-description>Almanac, 2000</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="840589777">
-  <md-title>Senthāng sāi tham</md-title>
+    name="LOC Solr Test" checksum="3168968100">
+  <md-title>Mranʻ māʹ ruiʺ rā ʼa khā peʺ ʼoṅʻ mhanʻ duiṅʻyārī</md-title>
   <md-date>2000</md-date>
-  <md-author>Thō̜ngkham ʻŌ̜nmanīsō̜n</md-author>
-  <md-description>Poems</md-description>
-  <md-description>Buddhist poetry on the theme related to social aspects</md-description>
+  <md-author>ʼOṅʻ Sanʻʺ</md-author>
+  <md-description>Almanac, 2000</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title sentha ng sa i tham author tho ngkham o nmani so n medium book</recid>
+ <recid>content: title mran ma rui ra a kha pe on mhan duin ya ri author on san medium book</recid>
 </hit>
 <hit>
- <md-title>Mabaqwalen meʻebālan qwanqwa Tegreñā</md-title>
- <md-title-remainder>ṭernuf ṣeḥufāt</md-title-remainder>
+ <md-title>Peʺ chapʻ khraṅʻʺ nhaṅʻʹ ʼa khrāʺ vatthu tui myāʺ</md-title>
  <md-date>2000</md-date>
- <md-author>Taxasta ʼĀḥdarom</md-author>
- <md-description>On the historical growth and development of the Tigrinya language</md-description>
+ <md-author>ʼOṅʻ Sanʻʺ</md-author>
+ <md-description>Short stories</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3360955284">
-  <md-title>Mabaqwalen meʻebālan qwanqwa Tegreñā</md-title>
-  <md-title-remainder>ṭernuf ṣeḥufāt</md-title-remainder>
+    name="LOC Solr Test" checksum="488613273">
+  <md-title>Peʺ chapʻ khraṅʻʺ nhaṅʻʹ ʼa khrāʺ vatthu tui myāʺ</md-title>
   <md-date>2000</md-date>
-  <md-author>Taxasta ʼĀḥdarom</md-author>
-  <md-description>On the historical growth and development of the Tigrinya language</md-description>
+  <md-author>ʼOṅʻ Sanʻʺ</md-author>
+  <md-description>Short stories</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title mabaqwalen me eba lan qwanqwa tegren a author taxasta a h darom medium book</recid>
+ <recid>content: title pe chap khran nhan a khra vatthu tui mya author on san medium book</recid>
 </hit>
 <hit>
- <md-title>Tasfān qwanāten</md-title>
- <md-author>Taxasta ʼĀbāy</md-author>
- <md-description>A novel</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2295212926">
-  <md-title>Tasfān qwanāten</md-title>
-  <md-author>Taxasta ʼĀbāy</md-author>
-  <md-description>A novel</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title tasfa n qwana ten author taxasta a ba y medium book</recid>
-</hit>
-<hit>
- <md-title>Paṭṭhānʻʺ guṇʻ raññʻ</md-title>
+ <md-title>Loka krīʺ mhā dī lui pai</md-title>
  <md-date>2000</md-date>
- <md-author>Takʻ ʼAṅʻʺ</md-author>
- <md-description>On the benefits of reciting Paṭṭāna, Buddhist canon in verses; articles</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3909825395">
-  <md-title>Paṭṭhānʻʺ guṇʻ raññʻ</md-title>
-  <md-date>2000</md-date>
-  <md-author>Takʻ ʼAṅʻʺ</md-author>
-  <md-description>On the benefits of reciting Paṭṭāna, Buddhist canon in verses; articles</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title pat t ha n gun ran n author tak an medium book</recid>
-</hit>
-<hit>
- <md-title>Parvāz-i shāhīn</md-title>
- <md-title-remainder>shiʻrī majmūʻah</md-title-remainder>
- <md-date>1998</md-date>
- <md-author>Shāhīn, ʻUs̲mān</md-author>
- <md-description>Poems</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3973821123">
-  <md-title>Parvāz-i shāhīn</md-title>
-  <md-title-remainder>shiʻrī majmūʻah</md-title-remainder>
-  <md-date>1998</md-date>
-  <md-author>Shāhīn, ʻUs̲mān</md-author>
-  <md-description>Poems</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title parva z i sha hi n author sha hi n us ma n medium book</recid>
-</hit>
-<hit>
- <md-title>rư̄fư̄n nikhahakam phư̄a khrai</md-title>
- <md-date>2000-2543</md-date>
- <md-author>Sawǣng ʻUdomsī</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2391206518">
-  <md-title>rư̄fư̄n nikhahakam phư̄a khrai</md-title>
-  <md-date>2000-2543</md-date>
-  <md-author>Sawǣng ʻUdomsī</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title r f n nikhahakam ph a khrai author saw ng udomsi medium book</recid>
-</hit>
-<hit>
- <md-title>Wikhro̜ nikhahakam Thammakāi</md-title>
- <md-date>2000-2543</md-date>
- <md-author>Sawǣng ʻUdomsī</md-author>
- <md-description>Analysis on controversies of Wat Phrathammakāi, Buddhist temple&apos;s doctrines and monastic orders</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="4005818987">
-  <md-title>Wikhro̜ nikhahakam Thammakāi</md-title>
-  <md-date>2000-2543</md-date>
-  <md-author>Sawǣng ʻUdomsī</md-author>
-  <md-description>Analysis on controversies of Wat Phrathammakāi, Buddhist temple&apos;s doctrines and monastic orders</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title wikhro nikhahakam thammaka i author saw ng udomsi medium book</recid>
-</hit>
-<hit>
- <md-title>Šoreuli vardpʻurcʻloba</md-title>
- <md-title-remainder>[lekʻsebi]</md-title-remainder>
- <md-date>1994</md-date>
- <md-author>Samxaraze-̇Jġamaże, Etʻer</md-author>
+ <md-author>ʼOṅʻ Koṅʻʺ</md-author>
+ <md-description>Satires</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="2103225742">
-  <md-title>Šoreuli vardpʻurcʻloba</md-title>
-  <md-title-remainder>[lekʻsebi]</md-title-remainder>
-  <md-date>1994</md-date>
-  <md-author>Samxaraze-̇Jġamaże, Etʻer</md-author>
+  <md-title>Loka krīʺ mhā dī lui pai</md-title>
+  <md-date>2000</md-date>
+  <md-author>ʼOṅʻ Koṅʻʺ</md-author>
+  <md-description>Satires</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title s oreuli vardp urc loba author samxaraze jg amaz e et er medium book</recid>
+ <recid>content: title loka kri mha di lui pai author on kon medium book</recid>
 </hit>
 <hit>
- <md-title>Guide to Kush</md-title>
- <md-title-remainder>volumes I-XVII, 1953-1996 : table of contents, author index, subject index</md-title-remainder>
- <md-date>1997</md-date>
- <md-author>Ṣādiq, Ṣalāḥ ʻUmar</md-author>
- <md-description>Includes indexes</md-description>
+ <md-title>Dutiya Mranʻ mā Nuiṅʻ ṅaṃ toʻ nhaṅʻʹ Bhu raṅʻʹ noṅʻ Kyoʻ thaṅʻ Noʻrathā</md-title>
+ <md-date>2000</md-date>
+ <md-author>ʼOṅʻ Khaṅʻ Cuiʺ</md-author>
+ <md-description>Life and times of Burmese King Bayinnaung, of Toungoo, fl. 1551-1581</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1842336407">
-  <md-title>Guide to Kush</md-title>
-  <md-title-remainder>volumes I-XVII, 1953-1996 : table of contents, author index, subject index</md-title-remainder>
-  <md-date>1997</md-date>
-  <md-author>Ṣādiq, Ṣalāḥ ʻUmar</md-author>
-  <md-description>Includes indexes</md-description>
+    name="LOC Solr Test" checksum="3717838211">
+  <md-title>Dutiya Mranʻ mā Nuiṅʻ ṅaṃ toʻ nhaṅʻʹ Bhu raṅʻʹ noṅʻ Kyoʻ thaṅʻ Noʻrathā</md-title>
+  <md-date>2000</md-date>
+  <md-author>ʼOṅʻ Khaṅʻ Cuiʺ</md-author>
+  <md-description>Life and times of Burmese King Bayinnaung, of Toungoo, fl. 1551-1581</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title guide to kush author s a diq s ala h umar medium book</recid>
+ <recid>content: title dutiya mran ma nuin n am to nhan bhu ran non kyo than no ratha author on khan cui medium book</recid>
+</hit>
+<hit>
+ <md-title>Natʻ syhaṅʻ noṅʻ nhaṅʻʹ Rājādhātukalyā =</md-title>
+ <md-title-remainder>Natshinnaung and Yaza Dartukalya</md-title-remainder>
+ <md-date>2000</md-date>
+ <md-author>ʼOṅʻ Hinʻʺ Kyoʻ</md-author>
+ <md-description>About Natʻsyhaṅʻnoṅʻ, 1577-1613, prince of Toungoo, and princess of Hanthawaddy Rājadhātukalyā, and their times</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1037483384">
+  <md-title>Natʻ syhaṅʻ noṅʻ nhaṅʻʹ Rājādhātukalyā =</md-title>
+  <md-title-remainder>Natshinnaung and Yaza Dartukalya</md-title-remainder>
+  <md-date>2000</md-date>
+  <md-author>ʼOṅʻ Hinʻʺ Kyoʻ</md-author>
+  <md-description>Cover title</md-description>
+  <md-description>About Natʻsyhaṅʻnoṅʻ, 1577-1613, prince of Toungoo, and princess of Hanthawaddy Rājadhātukalyā, and their times</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title nat syhan non nhan ra ja dha tukalya author on hin kyo medium book</recid>
+</hit>
+<hit>
+ <md-title>Sanʻʺ rhacʻ chayʻ phracʻ lā khaiʹ lyhaṅʻ</md-title>
+ <md-date>2000</md-date>
+ <md-author>ʼOṅʻ Cuiʺ</md-author>
+ <md-description>&quot;1998 khu nhacʻ, Cā pe Bimānʻ cā mū chu, sutapadesā (sippaṃ nhaṅʻʹ ʼa suṃʺ khya paññā rapʻ) pathama chu.&quot;</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2652095853">
+  <md-title>Sanʻʺ rhacʻ chayʻ phracʻ lā khaiʹ lyhaṅʻ</md-title>
+  <md-date>2000</md-date>
+  <md-author>ʼOṅʻ Cuiʺ</md-author>
+  <md-description>&quot;1998 khu nhacʻ, Cā pe Bimānʻ cā mū chu, sutapadesā (sippaṃ nhaṅʻʹ ʼa suṃʺ khya paññā rapʻ) pathama chu.&quot;</md-description>
+  <md-description>Agricultural yields in Burma</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title san rhac chay phrac la khai lyhan author on cui medium book</recid>
+</hit>
+<hit>
+ <md-title>The writings of General Aung San</md-title>
+ <md-date>2000</md-date>
+ <md-author>ʼOṅʻ Chanʻʺ</md-author>
+ <md-description>Writings of the statesman and leader of freedom struggle in Burma</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="4266708322">
+  <md-title>The writings of General Aung San</md-title>
+  <md-date>2000</md-date>
+  <md-author>ʼOṅʻ Chanʻʺ</md-author>
+  <md-description>Writings of the statesman and leader of freedom struggle in Burma</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title the writings of general aung san author on chan medium book</recid>
+</hit>
+<hit>
+ <md-title>Kotmāi pā chumchon thī prachāchon tō̜ngkān læ nǣothāng kānthamngān khō̜ng Khana ʻAnukammakān Pā Chumchon, Khana Kammakān Nayōbāi Pāmai hǣng Chāt</md-title>
+ <md-date>1993-2536</md-date>
+ <md-author>ʻŌ̜rawan Kritbunyarit</md-author>
+ <md-description>Draft of communities demanded forestry law for conservation of forests in Northern Thailand and need for local community assertion in conservation affairs</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="584606865">
+  <md-title>Kotmāi pā chumchon thī prachāchon tō̜ngkān læ nǣothāng kānthamngān khō̜ng Khana ʻAnukammakān Pā Chumchon, Khana Kammakān Nayōbāi Pāmai hǣng Chāt</md-title>
+  <md-date>1993-2536</md-date>
+  <md-author>ʻŌ̜rawan Kritbunyarit</md-author>
+  <md-description>Draft of communities demanded forestry law for conservation of forests in Northern Thailand and need for local community assertion in conservation affairs</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title kotma i pa chumchon thi pracha chon to ngka n l n otha ng ka nthamnga n kho ng khana anukammaka n pa chumchon khana kammaka n nayo ba i pa mai h ng cha t author o rawan kritbunyarit medium book</recid>
+</hit>
+<hit>
+ <md-title>ʻĀtchayākō̜n dek ?</md-title>
+ <md-date>2000-2543</md-date>
+ <md-author>ʻŌ̜rasom Sutthisākhō̜n</md-author>
+ <md-description>&quot;Sanapsanun kānwičhai chœ̄ng sārakhadī dōi Sathāban Wičhai Rabop Sāthāranasuk.&quot;</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2199219334">
+  <md-title>ʻĀtchayākō̜n dek ?</md-title>
+  <md-date>2000-2543</md-date>
+  <md-author>ʻŌ̜rasom Sutthisākhō̜n</md-author>
+  <md-description>&quot;Sanapsanun kānwičhai chœ̄ng sārakhadī dōi Sathāban Wičhai Rabop Sāthāranasuk.&quot;</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title a tchaya ko n dek author o rasom sutthisa kho n medium book</recid>
+</hit>
+<hit>
+ <md-title>Ko̜ Rattanakōsin</md-title>
+ <md-date>1999-2542</md-date>
+ <md-author>ʻŌ̜nsūang Butnāk</md-author>
+ <md-description>Description of Bangkok, Thailand</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1133476976">
+  <md-title>Ko̜ Rattanakōsin</md-title>
+  <md-date>1999-2542</md-date>
+  <md-author>ʻŌ̜nsūang Butnāk</md-author>
+  <md-description>Description of Bangkok, Thailand</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title ko rattanako sin author o nsu ang butna k medium book</recid>
+</hit>
+<hit>
+ <md-title>Panyā sāngsan čhāk rư̄an phư̄nthin</md-title>
+ <md-date>2000</md-date>
+ <md-author>ʻŌ̜nsiri Pānin</md-author>
+ <md-description>Lecture held on September 15, 2000 at Sinlapakorn University on traditional domestic vernacular architecture in Thailand</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="67734618">
+  <md-title>Panyā sāngsan čhāk rư̄an phư̄nthin</md-title>
+  <md-date>2000</md-date>
+  <md-author>ʻŌ̜nsiri Pānin</md-author>
+  <md-description>&quot;15 Kanyāyon 2543.&quot;</md-description>
+  <md-description>Lecture held on September 15, 2000 at Sinlapakorn University on traditional domestic vernacular architecture in Thailand</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title panya sa ngsan c ha k r an ph nthin author o nsiri pa nin medium book</recid>
+</hit>
+<hit>
+ <md-title>Rư̄an phư̄nbān Thai-Mō̜n =</md-title>
+ <md-title-remainder>Thai-Mon vernacular houses</md-title-remainder>
+ <md-date>2000-2543</md-date>
+ <md-author>ʻŌ̜nsiri Pānin</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1682347087">
+  <md-title>Rư̄an phư̄nbān Thai-Mō̜n =</md-title>
+  <md-title-remainder>Thai-Mon vernacular houses</md-title-remainder>
+  <md-date>2000-2543</md-date>
+  <md-author>ʻŌ̜nsiri Pānin</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title r an ph nba n thai mo n author o nsiri pa nin medium book</recid>
 </hit>
 </show>

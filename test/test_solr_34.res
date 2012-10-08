@@ -6,351 +6,340 @@
 <start>0</start>
 <num>20</num>
 <hit>
- <md-title>Constitutions of the ancient and honorable fraternity of Free and Accepted Masons, collected and digested from their old records, faithful traditions, and lodge books</md-title>
- <md-title-remainder>together with the history and general regulations of the Grand Lodge of Massachusetts</md-title-remainder>
- <md-date>1798-5798</md-date>
- <md-description>LC copy has a slip mounted inside the lower board, &quot;Duplicate from the Public Library of the city of Boston,&quot; signed, C.C. Jewett.DLC</md-description>
+ <md-title>Liechtensteinische Betriebszählung 1995</md-title>
+ <md-title-remainder>Industrie, Gewerbe, Dienstleistungen</md-title-remainder>
+ <md-date>1999</md-date>
+ <md-description>&quot;Nr. 312&quot;--Spine</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3941823259">
-  <md-title>Constitutions of the ancient and honorable fraternity of Free and Accepted Masons, collected and digested from their old records, faithful traditions, and lodge books</md-title>
-  <md-title-remainder>together with the history and general regulations of the Grand Lodge of Massachusetts</md-title-remainder>
-  <md-date>1798-5798</md-date>
-  <md-description>Signatures: pi⁴ [A]⁴ B-2N⁴</md-description>
-  <md-description>LC copy has a slip mounted inside the lower board, &quot;Duplicate from the Public Library of the city of Boston,&quot; signed, C.C. Jewett.DLC</md-description>
+    name="LOC Solr Test" checksum="99732482">
+  <md-title>Liechtensteinische Betriebszählung 1995</md-title>
+  <md-title-remainder>Industrie, Gewerbe, Dienstleistungen</md-title-remainder>
+  <md-date>1999</md-date>
+  <md-description>&quot;Nr. 312&quot;--Spine</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title constitutions of the ancient and honorable fraternity of free and accepted masons collected and digested from their old records faithful traditions and lodge books medium book</recid>
+ <recid>content: title liechtensteinische betriebsza hlung medium book</recid>
 </hit>
 <hit>
- <md-title>Masonic</md-title>
- <md-title-remainder>songs, oratorio, odes, anthems, prologues, epilogues, and toasts : adapted to the different degrees of Masonry</md-title-remainder>
- <md-date>1797-5797</md-date>
- <md-description>Without the music; in part with indications of the tunes</md-description>
+ <md-title>New power</md-title>
+ <md-date>1999</md-date>
+ <md-author>Lowther, Christine</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1261468432">
-  <md-title>Masonic</md-title>
-  <md-title-remainder>songs, oratorio, odes, anthems, prologues, epilogues, and toasts : adapted to the different degrees of Masonry</md-title-remainder>
-  <md-date>1797-5797</md-date>
-  <md-description>Without the music; in part with indications of the tunes</md-description>
-  <md-description>Signatures: [A]⁴ [B]⁶ C-M⁶ N²</md-description>
-  <md-description>LC copy imperfect: p. 19-26, 57-60, 115-122 wanting.DLC</md-description>
+    name="LOC Solr Test" checksum="3168968100">
+  <md-title>New power</md-title>
+  <md-date>1999</md-date>
+  <md-author>Lowther, Christine</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title masonic medium book</recid>
+ <recid>content: title new power author lowther christine medium book</recid>
 </hit>
 <hit>
- <md-title>The constitutions of the ancient and honourable fraternity of Free and Accepted Masons</md-title>
- <md-title-remainder>containing their history, charges, addresses, &amp;c., collected and digested from their old records, faithful traditions, and lodge books : for the use of Masons : to which are added, the history of Masonry in the commonwealth of Massachusetts, and the constitution, laws, and regulations of their Grand Lodge : together with a large collection of songs, epilogues, &amp;c</md-title-remainder>
- <md-date>1792-5792</md-date>
- <md-description>Compiled by a &quot;... committee appointed &apos;to consider and compile a book of constitutions, containing all things necessary for the use of the fraternity&apos; ... John Warren, chairman&quot;--P. [iii]</md-description>
+ <md-title>Tres cartas de Serguei Esenin</md-title>
+ <md-date>1995</md-date>
+ <md-author>Esenin, Sergeĭ Aleksandrovich</md-author>
+ <md-description>Three epistolary poems published in the form of letters folded in an envelope. Text is mimeographed on brown paper with mounted dates, initials, signatures, and decorations. Each letter tied with green yarn. Colophon, including reproduction of a Chagall window design, mimeographed on green paper (12 x 21 cm.) and inserted in envelope</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="712598321">
-  <md-title>The constitutions of the ancient and honourable fraternity of Free and Accepted Masons</md-title>
-  <md-title-remainder>containing their history, charges, addresses, &amp;c., collected and digested from their old records, faithful traditions, and lodge books : for the use of Masons : to which are added, the history of Masonry in the commonwealth of Massachusetts, and the constitution, laws, and regulations of their Grand Lodge : together with a large collection of songs, epilogues, &amp;c</md-title-remainder>
-  <md-date>1792-5792</md-date>
-  <md-description>Compiled by a &quot;... committee appointed &apos;to consider and compile a book of constitutions, containing all things necessary for the use of the fraternity&apos; ... John Warren, chairman&quot;--P. [iii]</md-description>
-  <md-description>Signatures: [A]⁴ B-U⁴ W⁴ X-2M⁴</md-description>
+    name="LOC Solr Test" checksum="2135223606">
+  <md-title>Tres cartas de Serguei Esenin</md-title>
+  <md-date>1995</md-date>
+  <md-author>Esenin, Sergeĭ Aleksandrovich</md-author>
+  <md-description>Three epistolary poems published in the form of letters folded in an envelope. Text is mimeographed on brown paper with mounted dates, initials, signatures, and decorations. Each letter tied with green yarn. Colophon, including reproduction of a Chagall window design, mimeographed on green paper (12 x 21 cm.) and inserted in envelope</md-description>
+  <md-description>Part of a collection of handmade chapbooks, most with cords for hanging (literatura de cordel), published by Ediciones Vigía under the auspices of the Cuban Ministry of Culture</md-description>
+  <md-description>&quot;Esta edición ... consta de doscientos ejemplares numerados, iluminados a mano&quot;--Colophon</md-description>
+  <md-description>LC copy unnumbered.DLC</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the constitutions of the ancient and honourable fraternity of free and accepted masons medium book</recid>
+ <recid>content: title tres cartas de serguei esenin author esenin sergei aleksandrovich medium book</recid>
 </hit>
 <hit>
- <md-title>French books before 1601</md-title>
- <md-date>1998</md-date>
- <md-description>Based largely upon titles listed in the Short-title catalogue of books printed in France and of French books printed in other countries from 1470 to 1600, now in the British Museum</md-description>
+ <md-title>The Chamorro language of Guam;</md-title>
+ <md-title-remainder>a grammar of the idiom spoken by the inhabitants of the Marianne, or Ladrones, Islands</md-title-remainder>
+ <md-date>1909</md-date>
+ <md-author>Safford, William Edwin</md-author>
+ <md-description>&quot;Reprinted from the American Anthropologist, 1903-1905.&quot;</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3717838211">
-  <md-title>French books before 1601</md-title>
-  <md-date>1998</md-date>
-  <md-description>Based largely upon titles listed in the Short-title catalogue of books printed in France and of French books printed in other countries from 1470 to 1600, now in the British Museum</md-description>
+    name="LOC Solr Test" checksum="1714344951">
+  <md-title>The Chamorro language of Guam;</md-title>
+  <md-title-remainder>a grammar of the idiom spoken by the inhabitants of the Marianne, or Ladrones, Islands</md-title-remainder>
+  <md-date>1909</md-date>
+  <md-author>Safford, William Edwin</md-author>
+  <md-description>Various pagings</md-description>
+  <md-description>&quot;Reprinted from the American Anthropologist, 1903-1905.&quot;</md-description>
+  <md-description>Issued in five parts</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title french books before medium book</recid>
+ <recid>content: title the chamorro language of guam author safford william edwin medium book</recid>
 </hit>
 <hit>
- <md-title>A dictionary of the English language;</md-title>
- <md-title-remainder>the words and definitions being followed by their Japanese equivalents. To which is added a copious appendix</md-title-remainder>
- <md-date>1904</md-date>
- <md-author>Shimada, Y</md-author>
- <md-description>&quot;May be considered a translation&quot; of Webster&apos;s unabridged dictionary. cf. Prefatory notice by C. S. Eby and J. M. Dixon</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2359208654">
-  <md-title>A dictionary of the English language;</md-title>
-  <md-title-remainder>the words and definitions being followed by their Japanese equivalents. To which is added a copious appendix</md-title-remainder>
-  <md-date>1904</md-date>
-  <md-author>Shimada, Y</md-author>
-  <md-description>&quot;May be considered a translation&quot; of Webster&apos;s unabridged dictionary. cf. Prefatory notice by C. S. Eby and J. M. Dixon</md-description>
-  <md-description>Added t.-p. in Japanese</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title a dictionary of the english language author shimada y medium book</recid>
-</hit>
-<hit>
- <md-title>A monograph on the Rev. Israel Evans, A.M</md-title>
- <md-title-remainder>chaplain in the American army during the entire revolutionary war, 1775-1783, the second settled minister of Concord, New Hampshire 1789-1797</md-title-remainder>
- <md-date>1902</md-date>
- <md-author>Thorne, John Calvin</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3200965964">
-  <md-title>A monograph on the Rev. Israel Evans, A.M</md-title>
-  <md-title-remainder>chaplain in the American army during the entire revolutionary war, 1775-1783, the second settled minister of Concord, New Hampshire 1789-1797</md-title-remainder>
-  <md-date>1902</md-date>
-  <md-author>Thorne, John Calvin</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title a monograph on the rev israel evans a m author thorne john calvin medium book</recid>
-</hit>
-<hit>
- <md-title>Report on the post-bellum financial administration in Japan, 1896-1900</md-title>
- <md-title-remainder>By Count Matsukata Masayoshi ... minister of state for finance</md-title-remainder>
- <md-date>1901</md-date>
- <md-description>Introduction.--pt. 1. The budget and special comptabilité.--pt. II. Taxation and the leaf-tobacco monopoly.--pt. III. Matters connected with  the coinage, the public loan and the indemnity money.--pt. 1V. The condition of monetary circulation and the establishment of the financial organs of the country</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2199219334">
-  <md-title>Report on the post-bellum financial administration in Japan, 1896-1900</md-title>
-  <md-title-remainder>By Count Matsukata Masayoshi ... minister of state for finance</md-title-remainder>
-  <md-date>1901</md-date>
-  <md-description>Corrected issue of the edition of 1900</md-description>
-  <md-description>Introduction.--pt. 1. The budget and special comptabilité.--pt. II. Taxation and the leaf-tobacco monopoly.--pt. III. Matters connected with  the coinage, the public loan and the indemnity money.--pt. 1V. The condition of monetary circulation and the establishment of the financial organs of the country</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title report on the post bellum financial administration in japan medium book</recid>
-</hit>
-<hit>
- <md-title>Pharmacopoea japonica</md-title>
- <md-date>1891</md-date>
- <md-description>Prepared by a committee appointed by the Japanese government and approved by the minister of home affairs. cf. Historical introduction to The pharmacopoeia of Japan. 4th ed. 1922</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2391206518">
-  <md-title>Pharmacopoea japonica</md-title>
-  <md-date>1891</md-date>
-  <md-description>Added t.-p. in Japanese</md-description>
-  <md-description>Prepared by a committee appointed by the Japanese government and approved by the minister of home affairs. cf. Historical introduction to The pharmacopoeia of Japan. 4th ed. 1922</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title pharmacopoea japonica medium book</recid>
-</hit>
-<hit>
- <md-title>The narrative of Colonel David Fanning</md-title>
- <md-title-remainder>a Tory in the revolutionary war with Great Britain, giving an account of his adventures in North Carolina, from 1775 to 1783</md-title-remainder>
- <md-date>1861</md-date>
- <md-author>Fanning, David</md-author>
- <md-description>Introd. signed John H. Wheeler. Edited, from a copy of the original manuscript, by T.H. Wynne. Many of the notes are by D.L. Swain</md-description>
+ <md-title>Felix Mendelssohn Bartholdy en zijne werken</md-title>
+ <md-date>1908</md-date>
+ <md-author>Hartog, Jacques</md-author>
+ <md-description>On cover: Jubilé-uitgave</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="648602593">
-  <md-title>The narrative of Colonel David Fanning</md-title>
-  <md-title-remainder>a Tory in the revolutionary war with Great Britain, giving an account of his adventures in North Carolina, from 1775 to 1783</md-title-remainder>
-  <md-date>1861</md-date>
-  <md-author>Fanning, David</md-author>
-  <md-description>Introd. signed John H. Wheeler. Edited, from a copy of the original manuscript, by T.H. Wynne. Many of the notes are by D.L. Swain</md-description>
-  <md-description>&quot;50 copies 4to.&quot;--P. [ii]</md-description>
-  <md-description>&quot;Fifty copies printed on thin writing paper, and ten on thicker paper.&quot; Cf. Sabin</md-description>
-  <md-description>LC copy is no. 21.DLC</md-description>
+  <md-title>Felix Mendelssohn Bartholdy en zijne werken</md-title>
+  <md-date>1908</md-date>
+  <md-author>Hartog, Jacques</md-author>
+  <md-description>On cover: Jubilé-uitgave</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the narrative of colonel david fanning author fanning david medium book</recid>
+ <recid>content: title felix mendelssohn bartholdy en zijne werken author hartog jacques medium book</recid>
 </hit>
 <hit>
- <md-title>Leaves of grass</md-title>
- <md-date>1860</md-date>
- <md-author>Whitman, Walt</md-author>
- <md-description>Myerson describes 2 authorized printings, with 3 states of frontispiece and 5 states of binding. For unauthorized printings, cf. LC record 45-46794</md-description>
+ <md-title>The small holding</md-title>
+ <md-date>1908</md-date>
+ <md-author>Green, Frederick Ernest</md-author>
+ <md-description>&quot;Much of the matter reprinted in this ... book has appeared in Farm and garden, and some of it in Farm and home.&quot;</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3813831803">
-  <md-title>Leaves of grass</md-title>
-  <md-date>1860</md-date>
-  <md-author>Whitman, Walt</md-author>
-  <md-description>Author&apos;s name, Walt Whitman, appears in copyright statement on t.p. verso</md-description>
-  <md-description>Third edition</md-description>
-  <md-description>Myerson describes 2 authorized printings, with 3 states of frontispiece and 5 states of binding. For unauthorized printings, cf. LC record 45-46794</md-description>
-  <md-description>LC has rebound copy, with frontispiece in Myerson 1st state.DLC</md-description>
+    name="LOC Solr Test" checksum="3328957420">
+  <md-title>The small holding</md-title>
+  <md-date>1908</md-date>
+  <md-author>Green, Frederick Ernest</md-author>
+  <md-description>&quot;Much of the matter reprinted in this ... book has appeared in Farm and garden, and some of it in Farm and home.&quot;</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title leaves of grass author whitman walt medium book</recid>
+ <recid>content: title the small holding author green frederick ernest medium book</recid>
 </hit>
 <hit>
- <md-title>Broad advice to the United Netherland provinces</md-title>
- <md-date>1857</md-date>
- <md-description>Attributed to Cornelis Melyn</md-description>
- <md-medium>web</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="4266708322">
-  <md-title>Broad advice to the United Netherland provinces</md-title>
-  <md-date>1857</md-date>
-  <md-description>Attributed to Cornelis Melyn</md-description>
-  <md-medium>web</md-medium>
- </location>
- <count>1</count>
- <recid>content: title broad advice to the united netherland provinces medium web</recid>
-</hit>
-<hit>
- <md-title>A discourse delivered before the Pilgrim Society, at Plymouth, on the twenty second day of December, 1829</md-title>
- <md-date>1830</md-date>
- <md-author>Sullivan, William</md-author>
- <md-description>Buff printed paper cover has title: &quot;Mr. Sullivan&apos;s discourse, delivered at Plymouth.&quot;</md-description>
+ <md-title>Essai sur les emprunts d&apos;états, et la protection des droits des porteurs de fonds d&apos;états étrangers</md-title>
+ <md-date>1907</md-date>
+ <md-author>Wuarin, Albert</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1293466296">
-  <md-title>A discourse delivered before the Pilgrim Society, at Plymouth, on the twenty second day of December, 1829</md-title>
-  <md-date>1830</md-date>
-  <md-author>Sullivan, William</md-author>
-  <md-description>Printer from verso of title page</md-description>
-  <md-description>Buff printed paper cover has title: &quot;Mr. Sullivan&apos;s discourse, delivered at Plymouth.&quot;</md-description>
+    name="LOC Solr Test" checksum="1197472704">
+  <md-title>Essai sur les emprunts d&apos;états, et la protection des droits des porteurs de fonds d&apos;états étrangers</md-title>
+  <md-date>1907</md-date>
+  <md-author>Wuarin, Albert</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title a discourse delivered before the pilgrim society at plymouth on the twenty second day of december author sullivan william medium book</recid>
+ <recid>content: title essai sur les emprunts d e tats et la protection des droits des porteurs de fonds d e tats e trangers author wuarin albert medium book</recid>
 </hit>
 <hit>
- <md-title>Histoire naturelle des tangaras, des manakins et des todiers</md-title>
- <md-date>1805</md-date>
- <md-author>Desmarest, A.-G</md-author>
+ <md-title>Lancasterian schools in Philadelphia</md-title>
+ <md-date>1907</md-date>
+ <md-author>Ellis, Charles Calvert</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="4069814715">
-  <md-title>Histoire naturelle des tangaras, des manakins et des todiers</md-title>
-  <md-date>1805</md-date>
-  <md-author>Desmarest, A.-G</md-author>
+    name="LOC Solr Test" checksum="131730346">
+  <md-title>Lancasterian schools in Philadelphia</md-title>
+  <md-date>1907</md-date>
+  <md-author>Ellis, Charles Calvert</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title histoire naturelle des tangaras des manakins et des todiers author desmarest a g medium book</recid>
+ <recid>content: title lancasterian schools in philadelphia author ellis charles calvert medium book</recid>
 </hit>
 <hit>
- <md-title>Leçons d&apos;anatomie comparée de G. Cuvier</md-title>
- <md-date>1800-1805</md-date>
- <md-author>Cuvier, Georges</md-author>
- <md-description>t. I. Les organes du mouvement.--t. II. Les organes des sensations.--t. III-IV. Les organes de la digestion et ceux de la circulation, de la respiration et de la voix.--t. V. Les organes de la génération et ceux des sécrétions excrémentitielles ou des excrétions</md-description>
+ <md-title>On fermentation</md-title>
+ <md-date>1907</md-date>
+ <md-author>Taylor, Alonzo Englebert</md-author>
+ <md-description>Source: Gift of A.W. Bitting, presented in memory of Katherine Golden Bitting, Oct. 6, 1939.DLC</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2972074493">
-  <md-title>Leçons d&apos;anatomie comparée de G. Cuvier</md-title>
-  <md-date>1800-1805</md-date>
-  <md-author>Cuvier, Georges</md-author>
-  <md-description>Imprint of v. 3-5: Paris, Crochard [etc.] an XIV.--1805</md-description>
-  <md-description>Vol. 3-5 ed. by G. L. Duvernoy</md-description>
-  <md-description>t. I. Les organes du mouvement.--t. II. Les organes des sensations.--t. III-IV. Les organes de la digestion et ceux de la circulation, de la respiration et de la voix.--t. V. Les organes de la génération et ceux des sécrétions excrémentitielles ou des excrétions</md-description>
+    name="LOC Solr Test" checksum="3877827531">
+  <md-title>On fermentation</md-title>
+  <md-date>1907</md-date>
+  <md-author>Taylor, Alonzo Englebert</md-author>
+  <md-description>LC copy has bookplate of Katherine Golden Bitting.DLC</md-description>
+  <md-description>Source: Gift of A.W. Bitting, presented in memory of Katherine Golden Bitting, Oct. 6, 1939.DLC</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title lec ons d anatomie compare e de g cuvier author cuvier georges medium book</recid>
+ <recid>content: title on fermentation author taylor alonzo englebert medium book</recid>
 </hit>
 <hit>
- <md-title>Manuel pour la concordance des calendriers républicain et grégorien; ou, Recueil complet de tous les annuaires depuis la première année républicaine</md-title>
- <md-date>1805</md-date>
- <md-author>Renouard, Ant. Aug</md-author>
- <md-description>Published anonymously</md-description>
+ <md-title>The last siege of Louisburg</md-title>
+ <md-date>1907</md-date>
+ <md-author>Macdonald, C. Ochiltree</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1357462024">
-  <md-title>Manuel pour la concordance des calendriers républicain et grégorien; ou, Recueil complet de tous les annuaires depuis la première année républicaine</md-title>
-  <md-date>1805</md-date>
-  <md-author>Renouard, Ant. Aug</md-author>
-  <md-description>Published anonymously</md-description>
+    name="LOC Solr Test" checksum="2812085173">
+  <md-title>The last siege of Louisburg</md-title>
+  <md-date>1907</md-date>
+  <md-author>Macdonald, C. Ochiltree</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title manuel pour la concordance des calendriers re publicain et gre gorien ou recueil complet de tous les annuaires depuis la premie re anne e re publicaine author renouard ant aug medium book</recid>
+ <recid>content: title the last siege of louisburg author macdonald c ochiltree medium book</recid>
 </hit>
 <hit>
- <md-title>Mémoire statistique du Département de la Meurthe</md-title>
- <md-date>1805</md-date>
+ <md-title>The standard financial dictionary;</md-title>
+ <md-title-remainder>an encyclopedia covering the entire field of finance, words, terms, phrases</md-title-remainder>
+ <md-date>1906-1907</md-date>
+ <md-author>Shea, Christopher Ambrose</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1906332135">
-  <md-title>Mémoire statistique du Département de la Meurthe</md-title>
-  <md-date>1805</md-date>
+    name="LOC Solr Test" checksum="2263215062">
+  <md-title>The standard financial dictionary;</md-title>
+  <md-title-remainder>an encyclopedia covering the entire field of finance, words, terms, phrases</md-title-remainder>
+  <md-date>1906-1907</md-date>
+  <md-author>Shea, Christopher Ambrose</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title me moire statistique du de partement de la meurthe medium book</recid>
+ <recid>content: title the standard financial dictionary author shea christopher ambrose medium book</recid>
 </hit>
 <hit>
- <md-title>Mémoires historiques sur les Templiers</md-title>
- <md-title-remainder>ou, Éclaircissemens nouveaux sur leur histoire, leur procès, les accusations intentées contr&apos;eux, et les causes secrètes de leur ruine; puisés, en grande partie, dans plusieurs monumens ou écrits publiés en Allemagne;</md-title-remainder>
- <md-date>1805</md-date>
- <md-author>Grouvelle, Philippe-Antoine</md-author>
+ <md-title>Die Musik in Böhmen</md-title>
+ <md-date>1906</md-date>
+ <md-author>Batka, Richard</md-author>
+ <md-description>The frontispiece is a mounted photograph</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1874334271">
-  <md-title>Mémoires historiques sur les Templiers</md-title>
-  <md-title-remainder>ou, Éclaircissemens nouveaux sur leur histoire, leur procès, les accusations intentées contr&apos;eux, et les causes secrètes de leur ruine; puisés, en grande partie, dans plusieurs monumens ou écrits publiés en Allemagne;</md-title-remainder>
-  <md-date>1805</md-date>
-  <md-author>Grouvelle, Philippe-Antoine</md-author>
+    name="LOC Solr Test" checksum="1746342815">
+  <md-title>Die Musik in Böhmen</md-title>
+  <md-date>1906</md-date>
+  <md-author>Batka, Richard</md-author>
+  <md-description>Series title also at head of t.-p</md-description>
+  <md-description>The frontispiece is a mounted photograph</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title me moires historiques sur les templiers author grouvelle philippe antoine medium book</recid>
+ <recid>content: title die musik in bo hmen author batka richard medium book</recid>
 </hit>
 <hit>
- <md-title>Plans, coupes et élévations de diverses productions de l&apos;art de la charpente exécutées tant en France que dans les pays étrangers;</md-title>
- <md-date>1805</md-date>
- <md-author>Krafft, J. Ch</md-author>
- <md-description>Several errors in numbering of plates</md-description>
+ <md-title>Baku</md-title>
+ <md-title-remainder>an eventful history</md-title-remainder>
+ <md-date>1905</md-date>
+ <md-author>Henry, James Dodds</md-author>
+ <md-description>pt. I. The origin, progress and present position of the Russian petroleum industry.--pt. II. The rising in the Caucasus.--pt. III. Batoum, Baku&apos;s chief oil port</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1389459888">
-  <md-title>Plans, coupes et élévations de diverses productions de l&apos;art de la charpente exécutées tant en France que dans les pays étrangers;</md-title>
-  <md-date>1805</md-date>
-  <md-author>Krafft, J. Ch</md-author>
-  <md-description>Several errors in numbering of plates</md-description>
+    name="LOC Solr Test" checksum="3360955284">
+  <md-title>Baku</md-title>
+  <md-title-remainder>an eventful history</md-title-remainder>
+  <md-date>1905</md-date>
+  <md-author>Henry, James Dodds</md-author>
+  <md-description>pt. I. The origin, progress and present position of the Russian petroleum industry.--pt. II. The rising in the Caucasus.--pt. III. Batoum, Baku&apos;s chief oil port</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title plans coupes et e le vations de diverses productions de l art de la charpente exe cute es tant en france que dans les pays e trangers author krafft j ch medium book</recid>
+ <recid>content: title baku author henry james dodds medium book</recid>
 </hit>
 <hit>
- <md-title>Œuvres de Vicq-d&apos;Azyr</md-title>
- <md-title-remainder>recueillies et publiées avec des notes et un discours sur sa vie et ses ouvrages</md-title-remainder>
- <md-date>1805</md-date>
- <md-author>Vicq-d&apos;Azyr</md-author>
- <md-description>Vol. 1-3, Éloges historiques des membres de la Société royale de médécine; v. 4-6, Sciences physiologiques et médicales</md-description>
+ <md-title>The life of Froude</md-title>
+ <md-date>1905</md-date>
+ <md-author>Paul, Herbert W</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3520944604">
-  <md-title>Œuvres de Vicq-d&apos;Azyr</md-title>
-  <md-title-remainder>recueillies et publiées avec des notes et un discours sur sa vie et ses ouvrages</md-title-remainder>
-  <md-date>1805</md-date>
-  <md-author>Vicq-d&apos;Azyr</md-author>
-  <md-description>Vol. 1-3, Éloges historiques des membres de la Société royale de médécine; v. 4-6, Sciences physiologiques et médicales</md-description>
+    name="LOC Solr Test" checksum="1682347087">
+  <md-title>The life of Froude</md-title>
+  <md-date>1905</md-date>
+  <md-author>Paul, Herbert W</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title uvres de vicq d azyr author vicq d azyr medium book</recid>
+ <recid>content: title the life of froude author paul herbert w medium book</recid>
 </hit>
 <hit>
- <md-title>Coup d&apos;oeil sur les révolutions et sur la réforme de la médecine</md-title>
- <md-date>1804</md-date>
- <md-author>Cabanis, P. J. G</md-author>
+ <md-title>Dějiny české hudby</md-title>
+ <md-date>1903</md-date>
+ <md-author>Nejedlý, Zdeněk</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="872587641">
-  <md-title>Coup d&apos;oeil sur les révolutions et sur la réforme de la médecine</md-title>
-  <md-date>1804</md-date>
-  <md-author>Cabanis, P. J. G</md-author>
+    name="LOC Solr Test" checksum="680600457">
+  <md-title>Dějiny české hudby</md-title>
+  <md-date>1903</md-date>
+  <md-author>Nejedlý, Zdeněk</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title coup d oeil sur les re volutions et sur la re forme de la me decine author cabanis p j g medium book</recid>
+ <recid>content: title de jiny c eske hudby author nejedly zdene k medium book</recid>
+</hit>
+<hit>
+ <md-title>The geological structure of Monzoni and Fassa</md-title>
+ <md-date>1903</md-date>
+ <md-author>Gordon, Maria M. Ogilvie</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2295212926">
+  <md-title>The geological structure of Monzoni and Fassa</md-title>
+  <md-date>1903</md-date>
+  <md-author>Gordon, Maria M. Ogilvie</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title the geological structure of monzoni and fassa author gordon maria m ogilvie medium book</recid>
+</hit>
+<hit>
+ <md-title>Four southern magazines</md-title>
+ <md-date>1902</md-date>
+ <md-author>Rogers, Edward Reinhold</md-author>
+ <md-description>&quot;The four chapters of this brief discussion are limited to four of the principal ante-bellum southern magazines--namely, De Bow&apos;s review, of New Orleans; The Southern review, of Charleston, S. C.; The Southern quarterly review, also of Charleston, S. C.; The Southern literary messenger, of Richmond, Virginia.&quot;--Pref</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1229470568">
+  <md-title>Four southern magazines</md-title>
+  <md-date>1902</md-date>
+  <md-author>Rogers, Edward Reinhold</md-author>
+  <md-description>&quot;The four chapters of this brief discussion are limited to four of the principal ante-bellum southern magazines--namely, De Bow&apos;s review, of New Orleans; The Southern review, of Charleston, S. C.; The Southern quarterly review, also of Charleston, S. C.; The Southern literary messenger, of Richmond, Virginia.&quot;--Pref</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title four southern magazines author rogers edward reinhold medium book</recid>
+</hit>
+<hit>
+ <md-title>Frederick Chopin</md-title>
+ <md-title-remainder>as a man and musician;</md-title-remainder>
+ <md-date>1902</md-date>
+ <md-author>Niecks, Frederick</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3909825395">
+  <md-title>Frederick Chopin</md-title>
+  <md-title-remainder>as a man and musician;</md-title-remainder>
+  <md-date>1902</md-date>
+  <md-author>Niecks, Frederick</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title frederick chopin author niecks frederick medium book</recid>
+</hit>
+<hit>
+ <md-title>What I saw in South Africa, September and October, 1902</md-title>
+ <md-date>1902</md-date>
+ <md-author>MacDonald, James Ramsay</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2844083037">
+  <md-title>What I saw in South Africa, September and October, 1902</md-title>
+  <md-date>1902</md-date>
+  <md-author>MacDonald, James Ramsay</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title what i saw in south africa september and october author macdonald james ramsay medium book</recid>
+</hit>
+<hit>
+ <md-title>History of the First Light Battery Connecticut Volunteers, 1861-1865</md-title>
+ <md-title-remainder>Personal records and reminiscences. The story of the battery from its organization to the present time</md-title-remainder>
+ <md-date>1901</md-date>
+ <md-author>Beecher, Herbert W</md-author>
+ <md-description>Edited by John De Morgan</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="163728210">
+  <md-title>History of the First Light Battery Connecticut Volunteers, 1861-1865</md-title>
+  <md-title-remainder>Personal records and reminiscences. The story of the battery from its organization to the present time</md-title-remainder>
+  <md-date>1901</md-date>
+  <md-author>Beecher, Herbert W</md-author>
+  <md-description>Edited by John De Morgan</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title history of the first light battery connecticut volunteers author beecher herbert w medium book</recid>
 </hit>
 </show>
