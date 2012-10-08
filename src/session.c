@@ -56,7 +56,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/querytowrbuf.h>
 #include <yaz/oid_db.h>
 #include <yaz/snprintf.h>
-#include <yaz/gettimeofday.h>
 
 #define USE_TIMING 0
 #if USE_TIMING
@@ -677,10 +676,12 @@ void session_sort(struct session *se, struct reclist_sortparms *sp)
     for (l = se->clients_active; l; l = l->next)
     {
         struct client *cl = l->client;
-        clients_research += client_test_sort_order(cl, sp);
+        // Assume no re-search is required.
+        client_parse_init(cl, 1);
+        clients_research += client_parse_sort(cl, sp);
     }
     if (clients_research) {
-        yaz_log(YLOG_DEBUG, "Reset results due to %d clients researching");
+        yaz_log(YLOG_DEBUG, "Reset results due to %d clients researching", clients_research);
         session_clear_set(se, sp);
     }
     else {
@@ -700,15 +701,13 @@ void session_sort(struct session *se, struct reclist_sortparms *sp)
         if (client_get_state(cl) == Client_Connecting ||
             client_get_state(cl) == Client_Idle ||
             client_get_state(cl) == Client_Working) {
-            if (client_test_sort_order(cl, sp)) {
-                yaz_log(YLOG_DEBUG, "Client %s: Restarting search due to change in sort order", client_get_id(cl));
-                client_start_search(cl);
-            }
-            else {
-                yaz_log(YLOG_DEBUG, "Client %s: Reingesting due to change in sort order", client_get_id(cl));
-                client_reingest(cl);
-            }
+            client_start_search(cl);
         }
+        else {
+            yaz_log(YLOG_DEBUG, "Client %s: Not re-start/ingest in show. Wrong client state: %d",
+                        client_get_id(cl), client_get_state(cl));
+        }
+
     }
     session_leave(se);
 }
@@ -727,7 +726,6 @@ enum pazpar2_error_code session_search(struct session *se,
     int no_failed_query = 0;
     int no_failed_limit = 0;
     struct client_list *l, *l0;
-    struct timeval tval;
     facet_limits_t facet_limits;
     int same_sort_order = 0;
 
@@ -757,10 +755,6 @@ enum pazpar2_error_code session_search(struct session *se,
         return PAZPAR2_NO_TARGETS;
     }
 
-    yaz_gettimeofday(&tval);
-
-    tval.tv_sec += 5;
-
     facet_limits = facet_limits_create(limit);
     if (!facet_limits)
     {
@@ -777,12 +771,11 @@ enum pazpar2_error_code session_search(struct session *se,
     {
         int parse_ret;
         struct client *cl = l->client;
-
+        client_parse_init(cl, 1);
         if (prepare_map(se, client_get_database(cl)) < 0)
             continue;
 
-        parse_ret = client_parse_query(cl, query, facet_limits, startrecs,
-                                       maxrecs, se->service->ccl_bibset);
+        parse_ret = client_parse_query(cl, query, facet_limits, se->service->ccl_bibset);
         if (parse_ret == -1)
             no_failed_query++;
         else if (parse_ret == -2)
@@ -791,21 +784,9 @@ enum pazpar2_error_code session_search(struct session *se,
             no_working++; /* other error, such as bad CCL map */
         else
         {
-            int r =
-                client_prep_connection(cl, se->service->z3950_operation_timeout,
-                                       se->service->z3950_session_timeout,
-                                       se->service->server->iochan_man,
-                                       &tval);
-            if (parse_ret == 1 && r == 2 && same_sort_order)
-            {
-                session_log(se, YLOG_LOG, "client %s REUSE result", client_get_id(cl));
-                client_reingest(cl);
-            }
-            else if (r)
-            {
-                session_log(se, YLOG_LOG, "client %s NEW search", client_get_id(cl));
-                client_start_search(cl);
-            }
+            client_parse_range(cl, startrecs, maxrecs);
+            client_parse_sort(cl, sp);
+            client_start_search(cl);
             no_working++;
         }
     }
