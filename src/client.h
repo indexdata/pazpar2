@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define CLIENT_H
 
 #include "facet_limit.h"
+#include "reclists.h"
 
 struct client;
 struct connection;
@@ -79,7 +80,9 @@ int client_prep_connection(struct client *cl,
                            iochan_man_t iochan,
                            const struct timeval *abstime);
 int client_start_search(struct client *cl);
+int client_parse_init(struct client *cl, int same_search);
 int client_parse_range(struct client *cl, const char *startrecs, const char *maxrecs);
+int client_parse_sort(struct client *cl, struct reclist_sortparms *sp);
 void client_set_session(struct client *cl, struct session *se);
 int client_is_active(struct client *cl);
 int client_is_active_preferred(struct client *cl);
