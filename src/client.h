@@ -78,15 +78,16 @@ int client_prep_connection(struct client *cl,
                            int operation_timeout, int session_timeout,
                            iochan_man_t iochan,
                            const struct timeval *abstime);
-void client_start_search(struct client *cl);
+int client_start_search(struct client *cl);
+int client_parse_range(struct client *cl, const char *startrecs, const char *maxrecs);
 void client_set_session(struct client *cl, struct session *se);
 int client_is_active(struct client *cl);
 int client_is_active_preferred(struct client *cl);
 struct client *client_next_in_session(struct client *cl);
 
 int client_parse_query(struct client *cl, const char *query,
-                       facet_limits_t facet_limits, const char *startrecs,
-                       const char *maxrecs,
+                       facet_limits_t facet_limits,
+                       //const char *startrecs, const char *maxrecs,
                        CCL_bibset bibset);
 Odr_int client_get_hits(struct client *cl);
 Odr_int client_get_approximation(struct client *cl);
@@ -106,7 +107,7 @@ void client_unlock(struct client *c);
 
 int client_has_facet(struct client *cl, const char *name);
 void client_check_preferred_watch(struct client *cl);
-void client_reingest(struct client *cl);
+int client_reingest(struct client *cl);
 const char *client_get_facet_limit_local(struct client *cl,
                                          struct session_database *sdb,
                                          int *l,
