@@ -1268,7 +1268,7 @@ int client_parse_query(struct client *cl, const char *query,
     facet_limits_destroy(cl->facet_limits);
     cl->facet_limits = facet_limits_dup(facet_limits);
 
-    yaz_log(YLOG_LOG, "Client %s: CCL query: %s", client_get_id(cl), wrbuf_cstr(w_ccl));
+    yaz_log(YLOG_LOG, "Client %s: CCL query: %s limit: %s", client_get_id(cl), wrbuf_cstr(w_ccl), wrbuf_cstr(w_pdf));
     cn = ccl_find_str(ccl_map, wrbuf_cstr(w_ccl), &cerror, &cpos);
     ccl_qual_rm(&ccl_map);
     if (!cn)
