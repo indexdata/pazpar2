@@ -148,14 +148,18 @@ static void log_xml_doc(xmlDoc *doc)
     xmlFree(result);
 }
 
-static void session_enter(struct session *s)
+static void session_enter(struct session *s, const char *caller)
 {
+    if (caller)
+        session_log(s, YLOG_DEBUG, "Session lock by %s", caller);
     yaz_mutex_enter(s->session_mutex);
 }
 
-static void session_leave(struct session *s)
+static void session_leave(struct session *s, const char *caller)
 {
     yaz_mutex_leave(s->session_mutex);
+    if (caller)
+        session_log(s, YLOG_DEBUG, "Session unlock by %s", caller);
 }
 
 static void session_normalize_facet(struct session *s, const char *type,
@@ -462,7 +466,7 @@ int session_set_watch(struct session *s, int what,
                       struct http_channel *chan)
 {
     int ret;
-    session_enter(s);
+    session_enter(s, "session_set_watch");
     if (s->watchlist[what].fun)
         ret = -1;
     else
@@ -474,14 +478,14 @@ int session_set_watch(struct session *s, int what,
                                                    session_watch_cancel);
         ret = 0;
     }
-    session_leave(s);
+    session_leave(s, "session_set_watch");
     return ret;
 }
 
 void session_alert_watch(struct session *s, int what)
 {
     assert(s);
-    session_enter(s);
+    session_enter(s, "session_alert_watch");
     if (s->watchlist[what].fun)
     {
         /* our watch is no longer associated with http_channel */
@@ -498,13 +502,13 @@ void session_alert_watch(struct session *s, int what)
         s->watchlist[what].data = 0;
         s->watchlist[what].obs = 0;
 
-        session_leave(s);
+        session_leave(s, "session_alert_watch");
         session_log(s, YLOG_DEBUG,
                     "Alert Watch: %d calling function: %p", what, fun);
         fun(data);
     }
     else
-        session_leave(s);
+        session_leave(s,"session_alert_watch");
 }
 
 //callback for grep_databases
@@ -544,10 +548,10 @@ static void session_reset_active_clients(struct session *se,
 {
     struct client_list *l;
 
-    session_enter(se);
+    session_enter(se, "session_reset_active_clients");
     l = se->clients_active;
     se->clients_active = new_list;
-    session_leave(se);
+    session_leave(se, "session_reset_active_clients");
 
     while (l)
     {
@@ -568,10 +572,10 @@ static void session_remove_cached_clients(struct session *se)
 
     session_reset_active_clients(se, 0);
 
-    session_enter(se);
+    session_enter(se, "session_remove_cached_clients");
     l = se->clients_cached;
     se->clients_cached = 0;
-    session_leave(se);
+    session_leave(se, "session_remove_cached_clients");
 
     while (l)
     {
@@ -642,7 +646,7 @@ static void session_clear_set(struct session *se, struct reclist_sortparms *sp)
     se->reclist = reclist_create(se->nmem);
 }
 
-void session_sort(struct session *se, struct reclist_sortparms *sp)
+static void session_sort_unlocked(struct session *se, struct reclist_sortparms *sp)
 {
     struct reclist_sortparms *sr;
     struct client_list *l;
@@ -650,7 +654,6 @@ void session_sort(struct session *se, struct reclist_sortparms *sp)
     int increasing = sp->increasing;
     int type  = sp->type;
     int clients_research = 0;
-    session_enter(se);
 
     yaz_log(YLOG_LOG, "session_sort field=%s increasing=%d type=%d", field, increasing, type);
     /* see if we already have sorted for this criteria */
@@ -663,7 +666,6 @@ void session_sort(struct session *se, struct reclist_sortparms *sp)
     {
         session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d already fetched",
                     field, increasing, type);
-        session_leave(se);
         return;
     }
     session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d must fetch",
@@ -709,8 +711,14 @@ void session_sort(struct session *se, struct reclist_sortparms *sp)
         }
 
     }
-    session_leave(se);
 }
+
+void session_sort(struct session *se, struct reclist_sortparms *sp) {
+    //session_enter(se, "session_sort");
+    session_sort_unlocked(se, sp);
+    //session_leave(se, "session_sort");
+}
+
 
 enum pazpar2_error_code session_search(struct session *se,
                                        const char *query,
@@ -733,12 +741,13 @@ enum pazpar2_error_code session_search(struct session *se,
 
     *addinfo = 0;
 
-    if (se->settings_modified)
+    if (se->settings_modified) {
         session_remove_cached_clients(se);
+    }
     else
         session_reset_active_clients(se, 0);
 
-    session_enter(se);
+    session_enter(se, "session_search");
     se->settings_modified = 0;
 
     if (se->sorted_results) {
@@ -751,7 +760,7 @@ enum pazpar2_error_code session_search(struct session *se,
     live_channels = select_targets(se, filter);
     if (!live_channels)
     {
-        session_leave(se);
+        session_leave(se, "session_search");
         return PAZPAR2_NO_TARGETS;
     }
 
@@ -759,13 +768,13 @@ enum pazpar2_error_code session_search(struct session *se,
     if (!facet_limits)
     {
         *addinfo = "limit";
-        session_leave(se);
+        session_leave(se, "session_search");
         return PAZPAR2_MALFORMED_PARAMETER_VALUE;
     }
 
     l0 = se->clients_active;
     se->clients_active = 0;
-    session_leave(se);
+    session_leave(se, "session_search");
 
     for (l = l0; l; l = l->next)
     {
@@ -931,9 +940,9 @@ size_t session_get_memory_status(struct session *session) {
     size_t session_nmem;
     if (session == 0)
         return 0;
-    session_enter(session);
+    session_enter(session, "session_get_memory_status");
     session_nmem = nmem_total(session->nmem);
-    session_leave(session);
+    session_leave(session, "session_get_memory_status");
     return session_nmem;
 }
 
@@ -1022,9 +1031,9 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
 struct hitsbytarget *get_hitsbytarget(struct session *se, int *count, NMEM nmem)
 {
     struct hitsbytarget *p;
-    session_enter(se);
+    session_enter(se, "get_hitsbytarget");
     p = hitsbytarget_nb(se, count, nmem);
-    session_leave(se);
+    session_leave(se, "get_hitsbytarget");
     return p;
 }
 
@@ -1107,7 +1116,7 @@ void perform_termlist(struct http_channel *c, struct session *se,
 
     nmem_strsplit(nmem_tmp, ",", name, &names, &num_names);
 
-    session_enter(se);
+    session_enter(se, "perform_termlist");
 
     for (j = 0; j < num_names; j++)
     {
@@ -1170,7 +1179,7 @@ void perform_termlist(struct http_channel *c, struct session *se,
             wrbuf_puts(c->wrbuf, "\"/>\n");
         }
     }
-    session_leave(se);
+    session_leave(se, "perform_termlist");
     nmem_destroy(nmem_tmp);
 }
 
@@ -1193,7 +1202,7 @@ struct record_cluster *show_single_start(struct session *se, const char *id,
 {
     struct record_cluster *r = 0;
 
-    session_enter(se);
+    session_enter(se, "show_single_start");
     *prev_r = 0;
     *next_r = 0;
     if (se->reclist)
@@ -1211,13 +1220,13 @@ struct record_cluster *show_single_start(struct session *se, const char *id,
         reclist_leave(se->reclist);
     }
     if (!r)
-        session_leave(se);
+        session_leave(se, "show_single_start");
     return r;
 }
 
 void show_single_stop(struct session *se, struct record_cluster *rec)
 {
-    session_leave(se);
+    session_leave(se, "show_single_stop");
 }
 
 struct record_cluster **show_range_start(struct session *se,
@@ -1230,7 +1239,7 @@ struct record_cluster **show_range_start(struct session *se,
 #if USE_TIMING
     yaz_timing_t t = yaz_timing_create();
 #endif
-    session_enter(se);
+    session_enter(se, "show_range_start");
     recs = nmem_malloc(se->nmem, *num * sizeof(struct record_cluster *));
     if (!se->relevance)
     {
@@ -1293,7 +1302,7 @@ struct record_cluster **show_range_start(struct session *se,
 
 void show_range_stop(struct session *se, struct record_cluster **recs)
 {
-    session_leave(se);
+    session_leave(se, "show_range_stop");
 }
 
 void statistics(struct session *se, struct statistics *stat)
@@ -1600,10 +1609,10 @@ int ingest_record(struct client *cl, const char *rec,
         xmlFreeDoc(xdoc);
         return -1;
     }
-    session_enter(se);
+    session_enter(se, "ingest_record");
     if (client_get_session(cl) == se)
         ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
-    session_leave(se);
+    session_leave(se, "ingest_record");
 
     xmlFreeDoc(xdoc);
     return ret;
