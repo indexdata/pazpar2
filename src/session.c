@@ -694,8 +694,10 @@ static void session_sort_unlocked(struct session *se, struct reclist_sortparms *
         sr->type = type;
         sr->next = se->sorted_results;
         se->sorted_results = sr;
+        session_log(se, YLOG_DEBUG, "No research/ingesting done");
+        return ;
     }
-    // yaz_log(YLOG_DEBUG, "Restarting search or re-ingesting for clients due to change in sort order");
+    session_log(se, YLOG_DEBUG, "Re- search/ingesting for clients due to change in sort order");
 
     for (l = se->clients_active; l; l = l->next)
     {
@@ -706,7 +708,7 @@ static void session_sort_unlocked(struct session *se, struct reclist_sortparms *
             client_start_search(cl);
         }
         else {
-            yaz_log(YLOG_DEBUG, "Client %s: Not re-start/ingest in show. Wrong client state: %d",
+            yaz_log(YLOG_DEBUG, "Client %s: No re-start/ingest in show. Wrong client state: %d",
                         client_get_id(cl), client_get_state(cl));
         }
 
