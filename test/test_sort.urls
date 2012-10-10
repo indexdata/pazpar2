@@ -8,3 +8,7 @@ http://localhost:9763/search.pz2?session=1&command=search&query=water&sort=posit
 http://localhost:9763/search.pz2?session=1&command=show&block=prefered&sort=position:1
 http://localhost:9763/search.pz2?session=1&command=show&start=20&block=prefered&sort=position:1
 http://localhost:9763/search.pz2?session=1&command=show&start=40&block=prefered&sort=position:1
+http://localhost:9763/search.pz2?session=2&command=init
+test_sort_settings.xml http://localhost:9763/search.pz2?session=2&command=settings
+http://localhost:9763/search.pz2?session=2&command=search&query=water
+http://localhost:9763/search.pz2?session=1&command=show&start=60&block=prefered&sort=date
