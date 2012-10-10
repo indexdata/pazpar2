@@ -8,6 +8,14 @@
       <xsl:apply-templates></xsl:apply-templates>
   </xsl:template>
 
+  <xsl:template  match="response">
+      <xsl:apply-templates></xsl:apply-templates>
+  </xsl:template>
+
+  <xsl:template  match="records">
+      <xsl:apply-templates></xsl:apply-templates>
+  </xsl:template>
+
   <xsl:template match="doc">
     <pz:record>
       <xsl:apply-templates></xsl:apply-templates>

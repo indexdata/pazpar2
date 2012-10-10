@@ -268,7 +268,7 @@
 	      M [F N]
 	     </literallayout>
 	     where M is an integer, used as a
-	     multiplier against the basic TF*IDF score. A value of
+	     weight against the basic TF*IDF score. A value of
 	     1 is the base, higher values give additional weight to
 	     elements of this type. The default is '0', which
 	     excludes this element from the rank calculation.
@@ -289,6 +289,8 @@
 	     The per field rank was introduced in Pazpar2 1.6.15. Earlier
 	     releases only allowed a rank value M (simple integer).
 	    </para>
+	    See <xref linkend="relevance_ranking"/> for more
+	    about ranking.
 	   </listitem>
 	  </varlistentry>
 	  
@@ -585,18 +587,85 @@
 	<term>rank</term>
 	<listitem>
 	 <para>
-	  Customizes the ranking (relevance) algorithm.
-	  Attribute 'cluster' is a boolean
-	  that controls whether Pazpar2 should boost ranking for merged
-	  records. Is 'yes' by default. A value of 'no' will make
-	  Pazpar2 average ranking of each record in a cluster.
+	  Customizes the ranking (relevance) algorithm. Also known as
+	  rank tweaks. The rank element
+	  accepts the following attributes - all being optional:
+	 </para>
+	 <variablelist>
+	  <varlistentry>
+	   <term>cluster</term>
+	   <listitem>
+	    <para>
+	     Attribute 'cluster' is a boolean
+	     that controls whether Pazpar2 should boost ranking for merged
+	     records. Is 'yes' by default. A value of 'no' will make
+	     Pazpar2 average ranking of each record in a cluster.
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	   <term>debug</term>
+	   <listitem>
+	    <para>
+	     Attribute 'debug' is a boolean
+	     that controls whether Pazpar2 should include details
+	     about ranking for each document in the show command's
+	     response. Enable by using value "yes", disable by using
+	     value "no" (default).
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	   <term>follow</term>
+	   <listitem>
+	    <para>
+	     Attribute 'follow' is a a floating point number greater than
+	     or equal to 0. A positive number will boost weight for terms
+	     that occur close to each other (proximity, distance).
+	     A value of 1, will double the weight if two terms are in
+	     proximity distance of 1 (next to each other). The default
+	     value of 'follow' is 0 (order will not affect weight).
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	   <term>lead</term>
+	   <listitem>
+	    <para>
+	     Attribute 'lead' is a floating point number.
+	     It controls if term weight should be reduced by position
+	     from start in a metadata field. A positive value of 'lead'
+	     will reduce weight as it apperas further away from the lead
+	     of the field. Default value is 0 (no reduction of weight by
+	     position).
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	  <varlistentry>
+	   <term>length</term>
+	   <listitem>
+	    <para>
+	     Attribute 'length' determines how/if term weight should be
+	     divided by lenght of metadata field. A value of "linear"
+	     divide by length. A value of "log" will divide by log2(length).
+	     A value of "none" will leave term weight as is (no division).
+	     Default value is "linear".
+	    </para>
+	   </listitem>
+	  </varlistentry>
+	 </variablelist>
+	 <para>
+	  Refer to <xref linkend="relevance_ranking"/> to see how
+	  these tweaks are used in computation of score.
 	 </para>
 	 <para>
-	  This configuration was added in pazpar2 1.6.18.
+	  Customization of ranking algorithm was introduced with
+	  Pazpar2 1.6.18. The semantics of some of the fields changed
+	  in versions up to 1.6.21.
 	 </para>
 	</listitem>
        </varlistentry>
-
+       
        <varlistentry id="sort-default">
 	<term>sort-default</term>
 	<listitem>
