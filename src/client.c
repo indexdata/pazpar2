@@ -1414,7 +1414,7 @@ int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
         }
 
     }
-    return cl->same_search;
+    return !cl->same_search;
 }
 
 void client_set_session(struct client *cl, struct session *se)
