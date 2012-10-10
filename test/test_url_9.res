@@ -6,39 +6,39 @@
 <start>0</start>
 <num>3</num>
 <hit>
- <md-title>BIBLIOGRAPHY OF MAINE GEOLOGY</md-title>
- <md-description>This data base is a computer based bibliography of marine geology.  It allows searching by topic and geographic location, similar to GEOREF.  It is currently under development to replace the printed Bibliography of Marine Geology</md-description>
- <location id="my"
-    name="marcserver" checksum="4291493253">
-  <md-title>BIBLIOGRAPHY OF MAINE GEOLOGY</md-title>
-  <md-description tag="520">This data base is a computer based bibliography of marine geology.  It allows searching by topic and geographic location, similar to GEOREF.  It is currently under development to replace the printed Bibliography of Marine Geology</md-description>
-  <md-description tag="513">1692-PRESENT</md-description>
- </location>
- <count>1</count>
- <recid>content: title bibliography of maine geology author medium book</recid>
-</hit>
-<hit>
- <md-title>AUTOMATED FLOOD WARNING NETWORK</md-title>
- <md-description>The new system will collect rainfall, temperature, soil moisture, wind speed and direction, humidity, and streamflow (above certain values)</md-description>
- <location id="my"
-    name="marcserver" checksum="64172">
-  <md-title>AUTOMATED FLOOD WARNING NETWORK</md-title>
-  <md-description tag="520">The new system will collect rainfall, temperature, soil moisture, wind speed and direction, humidity, and streamflow (above certain values)</md-description>
-  <md-description tag="513">1982-PRESENT</md-description>
- </location>
- <count>1</count>
- <recid>content: title automated flood warning network author medium book</recid>
-</hit>
-<hit>
- <md-title>APPLIED GEOLOGY FILE</md-title>
- <md-description>Reports and memorandums completed by the Site Investigation Section comprise this data set.  Subjects include geotechnical appraisal of public facility sites before and during construction and evaluations of hazardous waste problems</md-description>
+ <md-title>WATER WELL DATA</md-title>
+ <md-description>This database contains the following information on water wells in Nevada: driller&apos;s name, owner&apos;s name, location, formations encountered, lithologic descriptions, water level, and water quality</md-description>
  <location id="my"
     name="marcserver" checksum="3602387">
-  <md-title>APPLIED GEOLOGY FILE</md-title>
-  <md-description tag="520">Reports and memorandums completed by the Site Investigation Section comprise this data set.  Subjects include geotechnical appraisal of public facility sites before and during construction and evaluations of hazardous waste problems</md-description>
-  <md-description tag="513">1970-PRESENT</md-description>
+  <md-title>WATER WELL DATA</md-title>
+  <md-description tag="520">This database contains the following information on water wells in Nevada: driller&apos;s name, owner&apos;s name, location, formations encountered, lithologic descriptions, water level, and water quality</md-description>
+  <md-description tag="513">1930-PRESENT</md-description>
  </location>
  <count>1</count>
- <recid>content: title applied geology file author medium book</recid>
+ <recid>content: title water well data author medium book</recid>
+</hit>
+<hit>
+ <md-title>UTAH GEOLOGIC MAP BIBLIOGRAPHY</md-title>
+ <md-description>This collection consists of theses, dissertations, and other unpublished maps as well as published maps of the geology of Utah.  Some maps of the collection are xeroxed from limited collections.  Cross-sections are included in set.  Data file consists of map bibliography</md-description>
+ <location id="my"
+    name="marcserver" checksum="4291493253">
+  <md-title>UTAH GEOLOGIC MAP BIBLIOGRAPHY</md-title>
+  <md-description tag="520">This collection consists of theses, dissertations, and other unpublished maps as well as published maps of the geology of Utah.  Some maps of the collection are xeroxed from limited collections.  Cross-sections are included in set.  Data file consists of map bibliography</md-description>
+  <md-description tag="513">-PRESENT</md-description>
+ </location>
+ <count>1</count>
+ <recid>content: title utah geologic map bibliography author medium book</recid>
+</hit>
+<hit>
+ <md-title>UTAH GEOLOGICAL AND MINERAL SURVEY PUBLICATIONS</md-title>
+ <md-description>Publications of the Utah Geological and Mineral Survey include reports of investigation, special studies, bulletins, open-file reports, geologic map of Utah, publications of geological societies, geologic and oil and mineral maps, coal monographs, circulars, water resource bulletins, and reprints of articles</md-description>
+ <location id="my"
+    name="marcserver" checksum="64172">
+  <md-title>UTAH GEOLOGICAL AND MINERAL SURVEY PUBLICATIONS</md-title>
+  <md-description tag="520">Publications of the Utah Geological and Mineral Survey include reports of investigation, special studies, bulletins, open-file reports, geologic map of Utah, publications of geological societies, geologic and oil and mineral maps, coal monographs, circulars, water resource bulletins, and reprints of articles</md-description>
+  <md-description tag="513">-PRESENT</md-description>
+ </location>
+ <count>1</count>
+ <recid>content: title utah geological and mineral survey publications author medium book</recid>
 </hit>
 </show>
