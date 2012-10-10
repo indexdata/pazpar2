@@ -1371,12 +1371,10 @@ int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
 {
     struct session *se = client_get_session(cl);
     if (sp)
-    {   /* first entry is current sorting ! */
+    {
         const char *sort_strategy_and_spec =
-            get_strategy_plus_sort(cl, se->sorted_results->name);
-
-        int increasing = se->sorted_results->increasing;
-        // int type = se->sorted_results->type;
+            get_strategy_plus_sort(cl, sp->name);
+        int increasing = sp->increasing;
         if (sort_strategy_and_spec && strlen(sort_strategy_and_spec) < 40)
         {
             char strategy[50], *p;
