@@ -1,4 +1,4 @@
---- 1.6.22 2012/10/10
+--- 1.6.22 2012/10/11
 
 Requires YAZ-4.2.40 to support native solr support. 
 
@@ -15,6 +15,8 @@ Connection sharing between session has broken since version 1.6.8 with
 introduction of logic that would minimize searching if pazpar2 could 
 detect this based on same query and limits and partly sort order. 
 This could lead to segementations violations.
+
+Added a chapter in the manaul about relevance ranking.
 
 --- 1.6.21 2012/09/24
 
