@@ -1,10 +1,22 @@
---- 1.6.22 2012/10/05
+--- 1.6.22 2012/10/11
 
 Requires YAZ-4.2.40 to support native solr support. 
 
-Fix logic handling whether or not to re-do search. A new sort order 
-whould not trigger a new search, which is required for targets with
-native sorting capabilities.
+Fix and improve logic handling whether or not to re-do search on sort 
+order changes. A sort order with change in ascending/descending only 
+whould not trigger a new search, which is required for targets with 
+native sorting capabilities. Each client is now checked if instructions
+(sortmap) exist for native sorting and only client that does requires 
+it is researched. Other clients is just re-ingesting the records, 
+they already have. The resultset is now cleared if any researching 
+is done. 
+
+Connection sharing between session has broken since version 1.6.8 with 
+introduction of logic that would minimize searching if pazpar2 could 
+detect this based on same query and limits and partly sort order. 
+This could lead to segementations violations.
+
+Added a chapter in the manaul about relevance ranking.
 
 --- 1.6.21 2012/09/24
 

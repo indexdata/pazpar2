@@ -969,6 +969,8 @@ int client_destroy(struct client *c)
             xfree(c->addinfo);
             c->addinfo = 0;
             xfree(c->id);
+            xfree(c->sort_strategy);
+            xfree(c->sort_criteria);
             assert(!c->connection);
             facet_limits_destroy(c->facet_limits);
 
@@ -1369,7 +1371,6 @@ int client_parse_query(struct client *cl, const char *query,
 
 int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
 {
-    struct session *se = client_get_session(cl);
     if (sp)
     {
         const char *sort_strategy_and_spec =
@@ -1396,18 +1397,24 @@ int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
                 if (!cl->sort_criteria || strcmp(cl->sort_criteria, p))
                     cl->same_search = 0;
                 if (cl->same_search == 0) {
-                    cl->sort_strategy  = nmem_strdup(se->nmem, strategy);
-                    cl->sort_criteria = nmem_strdup(se->nmem, p);
+                    xfree(cl->sort_strategy);
+                    cl->sort_strategy = xstrdup(strategy);
+                    xfree(cl->sort_criteria);
+                    cl->sort_criteria = xstrdup(p);
                 }
             }
             else {
                 yaz_log(YLOG_LOG, "Client %s: Invalid sort strategy and spec found %s", client_get_id(cl), sort_strategy_and_spec);
+                xfree(cl->sort_strategy);
                 cl->sort_strategy  = 0;
+                xfree(cl->sort_criteria);
                 cl->sort_criteria = 0;
             }
         } else {
             yaz_log(YLOG_LOG, "Client %s: No sort strategy and spec found.", client_get_id(cl));
+            xfree(cl->sort_strategy);
             cl->sort_strategy  = 0;
+            xfree(cl->sort_criteria);
             cl->sort_criteria = 0;
         }
 
