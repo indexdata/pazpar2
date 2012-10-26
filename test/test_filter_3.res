@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <show><status>OK</status>
-<activeclients>1</activeclients>
+<activeclients>0</activeclients>
 <merged>12</merged>
 <total>12</total>
 <start>0</start>
