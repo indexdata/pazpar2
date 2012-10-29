@@ -28,11 +28,11 @@ http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Csubj
 http://localhost:9763/search.pz2?session=1&command=search&query=water&limit=subject%3DN.Y
 3 http://localhost:9763/search.pz2?session=1&command=show
 test_solr_settings_6.xml http://localhost:9763/search.pz2?session=1&command=settings
-http://localhost:9763/search.pz2?session=1&command=search&query=water&sort=date:1
+http://localhost:9763/search.pz2?session=1&command=search&query=date%3D%3F&sort=date:1
 http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=date:1
-http://localhost:9763/search.pz2?session=1&command=search&query=water&sort=date:0
+http://localhost:9763/search.pz2?session=1&command=search&query=date%3D%3F&sort=date:0
 http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=date:0
-http://localhost:9763/search.pz2?session=1&command=search&query=water&sort=author:1
+http://localhost:9763/search.pz2?session=1&command=search&query=au%3D%3F&sort=author:1
 http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=author:1
-http://localhost:9763/search.pz2?session=1&command=search&query=water&sort=author:0
+http://localhost:9763/search.pz2?session=1&command=search&query=au%3D%3F&sort=author:0
 http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=author:0

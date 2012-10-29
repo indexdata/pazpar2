@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Adam Dickmeiss <adam@indexdata.dk>
 Build-Depends: debhelper (>= 5),
 	autotools-dev,
-	libyaz4-dev (>= 4.2.39),
+	libyaz4-dev (>= 4.2.40),
 	docbook-xsl,
 	libgnutls-dev
 Standards-Version: 3.7.2
@@ -41,7 +41,7 @@ Description: Documentation for Pazpar2 metasearcher
  model-independent metasearching middleware featuring merging, relevance
  ranking, record sorting, and faceted results.
  .
- This packages includes HTML documentation for Pazpar2.
+ This package includes HTML documentation for Pazpar2.
 
 Package: pazpar2-apache2
 Architecture: all

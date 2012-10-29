@@ -1,352 +1,345 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <show><status>OK</status>
 <activeclients>0</activeclients>
-<merged>95</merged>
-<total>1995</total>
+<merged>99</merged>
+<total>249403</total>
 <start>0</start>
 <num>20</num>
 <hit>
- <md-title>Sketch of the civil engineering of North America;</md-title>
- <md-title-remainder>comprising remarks on the harbours, river and lake navigation, lighthouses, steam-navigation, water-works, canals, roads, railways, bridges, and other works in that country</md-title-remainder>
- <md-date>1838</md-date>
- <md-author>Stevenson, David</md-author>
+ <md-title>Liechtensteinische Betriebszählung 1995</md-title>
+ <md-title-remainder>Industrie, Gewerbe, Dienstleistungen</md-title-remainder>
+ <md-date>1999</md-date>
+ <md-description>&quot;Nr. 312&quot;--Spine</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2487200110">
-  <md-title>Sketch of the civil engineering of North America;</md-title>
-  <md-title-remainder>comprising remarks on the harbours, river and lake navigation, lighthouses, steam-navigation, water-works, canals, roads, railways, bridges, and other works in that country</md-title-remainder>
-  <md-date>1838</md-date>
-  <md-author>Stevenson, David</md-author>
+    name="LOC Solr Test" checksum="99732482">
+  <md-title>Liechtensteinische Betriebszählung 1995</md-title>
+  <md-title-remainder>Industrie, Gewerbe, Dienstleistungen</md-title-remainder>
+  <md-date>1999</md-date>
+  <md-description>&quot;Nr. 312&quot;--Spine</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title sketch of the civil engineering of north america author stevenson david medium book</recid>
+ <recid>content: title liechtensteinische betriebsza hlung medium book</recid>
 </hit>
 <hit>
- <md-title>Views of ports and harbours, watering places, fishing villages, and other picturesque objects on the English coast</md-title>
- <md-date>1838</md-date>
- <md-author>Finden, W</md-author>
- <md-description>Added t.p. : Finden&apos;s ports and harbours of Great Britain</md-description>
+ <md-title>New power</md-title>
+ <md-date>1999</md-date>
+ <md-author>Lowther, Christine</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="872587641">
-  <md-title>Views of ports and harbours, watering places, fishing villages, and other picturesque objects on the English coast</md-title>
-  <md-date>1838</md-date>
-  <md-author>Finden, W</md-author>
-  <md-description>Text by W.A. Chatto</md-description>
-  <md-description>Added t.p. : Finden&apos;s ports and harbours of Great Britain</md-description>
+    name="LOC Solr Test" checksum="3168968100">
+  <md-title>New power</md-title>
+  <md-date>1999</md-date>
+  <md-author>Lowther, Christine</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title views of ports and harbours watering places fishing villages and other picturesque objects on the english coast author finden w medium book</recid>
+ <recid>content: title new power author lowther christine medium book</recid>
 </hit>
 <hit>
- <md-title>A glance at New York</md-title>
- <md-title-remainder>embracing the city government, theatres, hotels, churches, mobs, monopolies, learned professions, newspapers, rogues, dandies, fires and firemen, water and other liquids, &amp; c., &amp; c</md-title-remainder>
- <md-date>1837</md-date>
- <md-author>Greene, Asa</md-author>
+ <md-title>Tres cartas de Serguei Esenin</md-title>
+ <md-date>1995</md-date>
+ <md-author>Esenin, Sergeĭ Aleksandrovich</md-author>
+ <md-description>Three epistolary poems published in the form of letters folded in an envelope. Text is mimeographed on brown paper with mounted dates, initials, signatures, and decorations. Each letter tied with green yarn. Colophon, including reproduction of a Chagall window design, mimeographed on green paper (12 x 21 cm.) and inserted in envelope</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1389459888">
-  <md-title>A glance at New York</md-title>
-  <md-title-remainder>embracing the city government, theatres, hotels, churches, mobs, monopolies, learned professions, newspapers, rogues, dandies, fires and firemen, water and other liquids, &amp; c., &amp; c</md-title-remainder>
-  <md-date>1837</md-date>
-  <md-author>Greene, Asa</md-author>
+    name="LOC Solr Test" checksum="2135223606">
+  <md-title>Tres cartas de Serguei Esenin</md-title>
+  <md-date>1995</md-date>
+  <md-author>Esenin, Sergeĭ Aleksandrovich</md-author>
+  <md-description>Three epistolary poems published in the form of letters folded in an envelope. Text is mimeographed on brown paper with mounted dates, initials, signatures, and decorations. Each letter tied with green yarn. Colophon, including reproduction of a Chagall window design, mimeographed on green paper (12 x 21 cm.) and inserted in envelope</md-description>
+  <md-description>Part of a collection of handmade chapbooks, most with cords for hanging (literatura de cordel), published by Ediciones Vigía under the auspices of the Cuban Ministry of Culture</md-description>
+  <md-description>&quot;Esta edición ... consta de doscientos ejemplares numerados, iluminados a mano&quot;--Colophon</md-description>
+  <md-description>LC copy unnumbered.DLC</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title a glance at new york author greene asa medium book</recid>
+ <recid>content: title tres cartas de serguei esenin author esenin sergei aleksandrovich medium book</recid>
 </hit>
 <hit>
- <md-title>A popular treatise on the warming and ventilation of buildings;</md-title>
- <md-title-remainder>showing the advantages of the improved system of heated water circulation, &amp;c</md-title-remainder>
- <md-date>1837</md-date>
- <md-author>Richardson, C. J</md-author>
+ <md-title>The Chamorro language of Guam;</md-title>
+ <md-title-remainder>a grammar of the idiom spoken by the inhabitants of the Marianne, or Ladrones, Islands</md-title-remainder>
+ <md-date>1909</md-date>
+ <md-author>Safford, William Edwin</md-author>
+ <md-description>&quot;Reprinted from the American Anthropologist, 1903-1905.&quot;</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="323717530">
-  <md-title>A popular treatise on the warming and ventilation of buildings;</md-title>
-  <md-title-remainder>showing the advantages of the improved system of heated water circulation, &amp;c</md-title-remainder>
-  <md-date>1837</md-date>
-  <md-author>Richardson, C. J</md-author>
+    name="LOC Solr Test" checksum="1714344951">
+  <md-title>The Chamorro language of Guam;</md-title>
+  <md-title-remainder>a grammar of the idiom spoken by the inhabitants of the Marianne, or Ladrones, Islands</md-title-remainder>
+  <md-date>1909</md-date>
+  <md-author>Safford, William Edwin</md-author>
+  <md-description>Various pagings</md-description>
+  <md-description>&quot;Reprinted from the American Anthropologist, 1903-1905.&quot;</md-description>
+  <md-description>Issued in five parts</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title a popular treatise on the warming and ventilation of buildings author richardson c j medium book</recid>
+ <recid>content: title the chamorro language of guam author safford william edwin medium book</recid>
 </hit>
 <hit>
- <md-title>Design no. 1 for a marine hospital on the western waters to accommodate 100 patients</md-title>
- <md-date>1837</md-date>
- <md-author>Mills, Robert</md-author>
- <md-description>Imperfect: one plate wanting</md-description>
+ <md-title>Felix Mendelssohn Bartholdy en zijne werken</md-title>
+ <md-date>1908</md-date>
+ <md-author>Hartog, Jacques</md-author>
+ <md-description>On cover: Jubilé-uitgave</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3552942468">
-  <md-title>Design no. 2 for a marine hospital on the western waters to accommodate 50 patients</md-title>
-  <md-date>1837</md-date>
-  <md-author>Mills, Robert</md-author>
-  <md-medium>book</md-medium>
- </location>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1938329999">
-  <md-title>Design no. 1 for a marine hospital on the western waters to accommodate 100 patients</md-title>
-  <md-date>1837</md-date>
-  <md-author>Mills, Robert</md-author>
-  <md-description>Imperfect: one plate wanting</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>2</count>
- <recid>content: title design no for a marine hospital on the western waters to accommodate patients author mills robert medium book</recid>
-</hit>
-<hit>
- <md-title>Report of the commissioners appointed under an order of the City council, of March 16, 1837, to devise a plan for supplying the city of Boston with pure water</md-title>
- <md-date>1837</md-date>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3004072357">
-  <md-title>Report of the commissioners appointed under an order of the City council, of March 16, 1837, to devise a plan for supplying the city of Boston with pure water</md-title>
-  <md-date>1837</md-date>
+    name="LOC Solr Test" checksum="648602593">
+  <md-title>Felix Mendelssohn Bartholdy en zijne werken</md-title>
+  <md-date>1908</md-date>
+  <md-author>Hartog, Jacques</md-author>
+  <md-description>On cover: Jubilé-uitgave</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title report of the commissioners appointed under an order of the city council of march to devise a plan for supplying the city of boston with pure water medium book</recid>
+ <recid>content: title felix mendelssohn bartholdy en zijne werken author hartog jacques medium book</recid>
 </hit>
 <hit>
- <md-title>Report on the introduction of soft water into the city of Boston</md-title>
- <md-date>1836</md-date>
- <md-author>Eddy, R. H</md-author>
+ <md-title>The small holding</md-title>
+ <md-date>1908</md-date>
+ <md-author>Green, Frederick Ernest</md-author>
+ <md-description>&quot;Much of the matter reprinted in this ... book has appeared in Farm and garden, and some of it in Farm and home.&quot;</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="4069814715">
-  <md-title>Report on the introduction of soft water into the city of Boston</md-title>
-  <md-date>1836</md-date>
-  <md-author>Eddy, R. H</md-author>
+    name="LOC Solr Test" checksum="3328957420">
+  <md-title>The small holding</md-title>
+  <md-date>1908</md-date>
+  <md-author>Green, Frederick Ernest</md-author>
+  <md-description>&quot;Much of the matter reprinted in this ... book has appeared in Farm and garden, and some of it in Farm and home.&quot;</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title report on the introduction of soft water into the city of boston author eddy r h medium book</recid>
+ <recid>content: title the small holding author green frederick ernest medium book</recid>
 </hit>
 <hit>
- <md-title>Report on the survey for a ship canal from Richmond to Warwick</md-title>
- <md-title-remainder>being the plan proposed for the connection of the James River and Kanawha improvement with tide water</md-title-remainder>
- <md-date>1836</md-date>
- <md-author>Ellet, Charles</md-author>
+ <md-title>Essai sur les emprunts d&apos;états, et la protection des droits des porteurs de fonds d&apos;états étrangers</md-title>
+ <md-date>1907</md-date>
+ <md-author>Wuarin, Albert</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3520944604">
-  <md-title>Report on the survey for a ship canal from Richmond to Warwick</md-title>
-  <md-title-remainder>being the plan proposed for the connection of the James River and Kanawha improvement with tide water</md-title-remainder>
-  <md-date>1836</md-date>
-  <md-author>Ellet, Charles</md-author>
+    name="LOC Solr Test" checksum="1197472704">
+  <md-title>Essai sur les emprunts d&apos;états, et la protection des droits des porteurs de fonds d&apos;états étrangers</md-title>
+  <md-date>1907</md-date>
+  <md-author>Wuarin, Albert</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title report on the survey for a ship canal from richmond to warwick author ellet charles medium book</recid>
+ <recid>content: title essai sur les emprunts d e tats et la protection des droits des porteurs de fonds d e tats e trangers author wuarin albert medium book</recid>
 </hit>
 <hit>
- <md-title>Scientific tracts, for the diffusion of useful knowledge</md-title>
- <md-date>1836</md-date>
- <md-description>Philosophy of self-education, by B. B. Thatcher.--Outline of philosophy, by Lieut. Roswell Park.--Advantages of early rising, by Wm. A. Alcott.--May-flowers, by D. H. Howard.--Natural history of water, by C. T. Jackson.--Pleasures of science, by W. M. Rogers.--History of peace societies, by William Ladd.--Science of human life, by Sylvester Graham.--History of telegraphs, by J. R. Parker.--Combustion, by R. A. Coffin.--Granite rock, by Samuel Fish.--Theory of the earth, by Samuel Fish</md-description>
+ <md-title>Lancasterian schools in Philadelphia</md-title>
+ <md-date>1907</md-date>
+ <md-author>Ellis, Charles Calvert</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="840589777">
-  <md-title>Scientific tracts, for the diffusion of useful knowledge</md-title>
-  <md-date>1836</md-date>
-  <md-description>Philosophy of self-education, by B. B. Thatcher.--Outline of philosophy, by Lieut. Roswell Park.--Advantages of early rising, by Wm. A. Alcott.--May-flowers, by D. H. Howard.--Natural history of water, by C. T. Jackson.--Pleasures of science, by W. M. Rogers.--History of peace societies, by William Ladd.--Science of human life, by Sylvester Graham.--History of telegraphs, by J. R. Parker.--Combustion, by R. A. Coffin.--Granite rock, by Samuel Fish.--Theory of the earth, by Samuel Fish</md-description>
+    name="LOC Solr Test" checksum="131730346">
+  <md-title>Lancasterian schools in Philadelphia</md-title>
+  <md-date>1907</md-date>
+  <md-author>Ellis, Charles Calvert</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title scientific tracts for the diffusion of useful knowledge medium book</recid>
+ <recid>content: title lancasterian schools in philadelphia author ellis charles calvert medium book</recid>
 </hit>
 <hit>
- <md-title>Thirty years ago;</md-title>
- <md-title-remainder>or, The memoirs of a water drinker</md-title-remainder>
- <md-date>1836</md-date>
- <md-author>Dunlap, William</md-author>
- <md-description>Published in 1837 under the title: Memoirs of a water drinker</md-description>
+ <md-title>On fermentation</md-title>
+ <md-date>1907</md-date>
+ <md-author>Taylor, Alonzo Englebert</md-author>
+ <md-description>Source: Gift of A.W. Bitting, presented in memory of Katherine Golden Bitting, Oct. 6, 1939.DLC</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2455202246">
-  <md-title>Thirty years ago;</md-title>
-  <md-title-remainder>or, The memoirs of a water drinker</md-title-remainder>
-  <md-date>1836</md-date>
-  <md-author>Dunlap, William</md-author>
-  <md-description>Published in 1837 under the title: Memoirs of a water drinker</md-description>
+    name="LOC Solr Test" checksum="3877827531">
+  <md-title>On fermentation</md-title>
+  <md-date>1907</md-date>
+  <md-author>Taylor, Alonzo Englebert</md-author>
+  <md-description>LC copy has bookplate of Katherine Golden Bitting.DLC</md-description>
+  <md-description>Source: Gift of A.W. Bitting, presented in memory of Katherine Golden Bitting, Oct. 6, 1939.DLC</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title thirty years ago author dunlap william medium book</recid>
+ <recid>content: title on fermentation author taylor alonzo englebert medium book</recid>
 </hit>
 <hit>
- <md-title>Tracts on hydraulics</md-title>
- <md-date>1836</md-date>
- <md-author>Tredgold, Thomas</md-author>
- <md-description>Smeaton, J. An experimental inquiry concerning the natural powers of water and wind to turn mills ... An experimental examination of the quantity and proportion of mechanic power necessary to be employed in giving different degrees of velocity to heavy bodies from a state of rest. New fundamental experiments upon the collision of bodies.--Venturi, G. B. Experimental inquiries concerning the principle of the lateral communication of motion in fluids ... tr. from the French by W. Nicholson.--Eytelwein, J. A. A summary of the most useful parts of hydraulics; chiefly extracted and abridged from Eytelwein&apos;s Handbuch der Mechanik und der Hydraulik. By T. Young</md-description>
+ <md-title>The last siege of Louisburg</md-title>
+ <md-date>1907</md-date>
+ <md-author>Macdonald, C. Ochiltree</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1906332135">
-  <md-title>Tracts on hydraulics</md-title>
-  <md-date>1836</md-date>
-  <md-author>Tredgold, Thomas</md-author>
-  <md-description>The three papers by J. Smeaton were read before the Royal Society, May 3 and 10, 1759, April 25, 1776, and April 18, 1782. The translation of Venturi&apos;s work was first published in the Journal of natural philosophy, chemistry and the arts. The &quot;Summary of ... hydraulics&quot; appeared in 1802 in the Journal of the Royal Institution</md-description>
-  <md-description>Smeaton, J. An experimental inquiry concerning the natural powers of water and wind to turn mills ... An experimental examination of the quantity and proportion of mechanic power necessary to be employed in giving different degrees of velocity to heavy bodies from a state of rest. New fundamental experiments upon the collision of bodies.--Venturi, G. B. Experimental inquiries concerning the principle of the lateral communication of motion in fluids ... tr. from the French by W. Nicholson.--Eytelwein, J. A. A summary of the most useful parts of hydraulics; chiefly extracted and abridged from Eytelwein&apos;s Handbuch der Mechanik und der Hydraulik. By T. Young</md-description>
+    name="LOC Solr Test" checksum="2812085173">
+  <md-title>The last siege of Louisburg</md-title>
+  <md-date>1907</md-date>
+  <md-author>Macdonald, C. Ochiltree</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title tracts on hydraulics author tredgold thomas medium book</recid>
+ <recid>content: title the last siege of louisburg author macdonald c ochiltree medium book</recid>
 </hit>
 <hit>
- <md-title>Two months at Kilkee</md-title>
- <md-title-remainder>a watering place in the County Clare, near the mouth of the Shannon, with an account of a voyage down that river from Limerick to Kilrush, and sketches of objects of interest in the neighbourhood, which will serve as a guide to the coast scenery</md-title-remainder>
- <md-date>1836</md-date>
- <md-author>Knott, Mary John</md-author>
- <md-description>Added t.-p., engraved</md-description>
+ <md-title>The standard financial dictionary;</md-title>
+ <md-title-remainder>an encyclopedia covering the entire field of finance, words, terms, phrases</md-title-remainder>
+ <md-date>1906-1907</md-date>
+ <md-author>Shea, Christopher Ambrose</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="291719666">
-  <md-title>Two months at Kilkee</md-title>
-  <md-title-remainder>a watering place in the County Clare, near the mouth of the Shannon, with an account of a voyage down that river from Limerick to Kilrush, and sketches of objects of interest in the neighbourhood, which will serve as a guide to the coast scenery</md-title-remainder>
-  <md-date>1836</md-date>
-  <md-author>Knott, Mary John</md-author>
-  <md-description>Added t.-p., engraved</md-description>
+    name="LOC Solr Test" checksum="2263215062">
+  <md-title>The standard financial dictionary;</md-title>
+  <md-title-remainder>an encyclopedia covering the entire field of finance, words, terms, phrases</md-title-remainder>
+  <md-date>1906-1907</md-date>
+  <md-author>Shea, Christopher Ambrose</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title two months at kilkee author knott mary john medium book</recid>
+ <recid>content: title the standard financial dictionary author shea christopher ambrose medium book</recid>
 </hit>
 <hit>
- <md-title>A treatise on water-works for conveying and distributing supplies of water;</md-title>
- <md-title-remainder>with tables and examples</md-title-remainder>
- <md-date>1835</md-date>
- <md-author>Storrow, Charles S</md-author>
+ <md-title>Die Musik in Böhmen</md-title>
+ <md-date>1906</md-date>
+ <md-author>Batka, Richard</md-author>
+ <md-description>The frontispiece is a mounted photograph</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1357462024">
-  <md-title>A treatise on water-works for conveying and distributing supplies of water;</md-title>
-  <md-title-remainder>with tables and examples</md-title-remainder>
-  <md-date>1835</md-date>
-  <md-author>Storrow, Charles S</md-author>
+    name="LOC Solr Test" checksum="1746342815">
+  <md-title>Die Musik in Böhmen</md-title>
+  <md-date>1906</md-date>
+  <md-author>Batka, Richard</md-author>
+  <md-description>Series title also at head of t.-p</md-description>
+  <md-description>The frontispiece is a mounted photograph</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title a treatise on water works for conveying and distributing supplies of water author storrow charles s medium book</recid>
+ <recid>content: title die musik in bo hmen author batka richard medium book</recid>
 </hit>
 <hit>
- <md-title>Bubbles from the brunnens of Nassau;</md-title>
- <md-date>1835</md-date>
- <md-author>Head, Francis Bond</md-author>
- <md-description>Added t.-p., engraved</md-description>
+ <md-title>Baku</md-title>
+ <md-title-remainder>an eventful history</md-title-remainder>
+ <md-date>1905</md-date>
+ <md-author>Henry, James Dodds</md-author>
+ <md-description>pt. I. The origin, progress and present position of the Russian petroleum industry.--pt. II. The rising in the Caucasus.--pt. III. Batoum, Baku&apos;s chief oil port</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2423204382">
-  <md-title>Bubbles from the brunnens of Nassau;</md-title>
-  <md-date>1835</md-date>
-  <md-author>Head, Francis Bond</md-author>
-  <md-description>Added t.-p., engraved</md-description>
+    name="LOC Solr Test" checksum="3360955284">
+  <md-title>Baku</md-title>
+  <md-title-remainder>an eventful history</md-title-remainder>
+  <md-date>1905</md-date>
+  <md-author>Henry, James Dodds</md-author>
+  <md-description>pt. I. The origin, progress and present position of the Russian petroleum industry.--pt. II. The rising in the Caucasus.--pt. III. Batoum, Baku&apos;s chief oil port</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title bubbles from the brunnens of nassau author head francis bond medium book</recid>
+ <recid>content: title baku author henry james dodds medium book</recid>
 </hit>
 <hit>
- <md-title>Catalogues of the animals and plants of Massachusetts</md-title>
- <md-title-remainder>with a copious index</md-title-remainder>
- <md-date>1835</md-date>
- <md-author>Hitchcock, Edward</md-author>
- <md-description>I. Mammalia -- II. Birds / by E. Emmons -- III. Reptilia / by D.S.C.H. Smith -- IV. Fishes / by J.V.C. Smith -- V. Testacea : Marine shells / by T.A. Greene. Land and fresh water shells / by J.M. Earle -- VI. Crustacea / by A.A. Gould -- VII. Araneides / by N.M. Hentz -- VIII. Insects / by T.W. Harris -- IX. Radiata -- X. Catalogue of plants</md-description>
+ <md-title>The life of Froude</md-title>
+ <md-date>1905</md-date>
+ <md-author>Paul, Herbert W</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="4037816851">
-  <md-title>Catalogues of the animals and plants of Massachusetts</md-title>
-  <md-title-remainder>with a copious index</md-title-remainder>
-  <md-date>1835</md-date>
-  <md-author>Hitchcock, Edward</md-author>
-  <md-description>&quot;Copied from the second edition of Professor Hitchcock&apos;s &apos;Report on the geology, botany and zoology of Massachusetts.&apos;&quot;--Note, p. [3]</md-description>
-  <md-description>Includes index</md-description>
-  <md-description>I. Mammalia -- II. Birds / by E. Emmons -- III. Reptilia / by D.S.C.H. Smith -- IV. Fishes / by J.V.C. Smith -- V. Testacea : Marine shells / by T.A. Greene. Land and fresh water shells / by J.M. Earle -- VI. Crustacea / by A.A. Gould -- VII. Araneides / by N.M. Hentz -- VIII. Insects / by T.W. Harris -- IX. Radiata -- X. Catalogue of plants</md-description>
+    name="LOC Solr Test" checksum="1682347087">
+  <md-title>The life of Froude</md-title>
+  <md-date>1905</md-date>
+  <md-author>Paul, Herbert W</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title catalogues of the animals and plants of massachusetts author hitchcock edward medium book</recid>
+ <recid>content: title the life of froude author paul herbert w medium book</recid>
 </hit>
 <hit>
- <md-title>Second report of Loammi Baldwin, Esq., engineer, made to a committee of the Boston Aqueduct Corporation</md-title>
- <md-date>1835</md-date>
- <md-author>Baldwin, Loammi</md-author>
+ <md-title>Dějiny české hudby</md-title>
+ <md-date>1903</md-date>
+ <md-author>Nejedlý, Zdeněk</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="808591913">
-  <md-title>Second report of Loammi Baldwin, Esq., engineer, made to a committee of the Boston Aqueduct Corporation</md-title>
-  <md-date>1835</md-date>
-  <md-author>Baldwin, Loammi</md-author>
+    name="LOC Solr Test" checksum="680600457">
+  <md-title>Dějiny české hudby</md-title>
+  <md-date>1903</md-date>
+  <md-author>Nejedlý, Zdeněk</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title second report of loammi baldwin esq engineer made to a committee of the boston aqueduct corporation author baldwin loammi medium book</recid>
+ <recid>content: title de jiny c eske hudby author nejedly zdene k medium book</recid>
 </hit>
 <hit>
- <md-title>Spring water, versus river water, for supplying the city of New-York</md-title>
- <md-title-remainder>also an examinination of the Water Commissioners report of Nov. 1833</md-title-remainder>
- <md-date>1835</md-date>
- <md-author>Hale, M</md-author>
+ <md-title>The geological structure of Monzoni and Fassa</md-title>
+ <md-date>1903</md-date>
+ <md-author>Gordon, Maria M. Ogilvie</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2972074493">
-  <md-title>Spring water, versus river water, for supplying the city of New-York</md-title>
-  <md-title-remainder>also an examinination of the Water Commissioners report of Nov. 1833</md-title-remainder>
-  <md-date>1835</md-date>
-  <md-author>Hale, M</md-author>
+    name="LOC Solr Test" checksum="2295212926">
+  <md-title>The geological structure of Monzoni and Fassa</md-title>
+  <md-date>1903</md-date>
+  <md-author>Gordon, Maria M. Ogilvie</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title spring water versus river water for supplying the city of new york author hale m medium book</recid>
+ <recid>content: title the geological structure of monzoni and fassa author gordon maria m ogilvie medium book</recid>
 </hit>
 <hit>
- <md-title>A manual of the ornithology of the United States and of Canada</md-title>
- <md-date>1834</md-date>
- <md-author>Nuttall, Thomas</md-author>
+ <md-title>Four southern magazines</md-title>
+ <md-date>1902</md-date>
+ <md-author>Rogers, Edward Reinhold</md-author>
+ <md-description>&quot;The four chapters of this brief discussion are limited to four of the principal ante-bellum southern magazines--namely, De Bow&apos;s review, of New Orleans; The Southern review, of Charleston, S. C.; The Southern quarterly review, also of Charleston, S. C.; The Southern literary messenger, of Richmond, Virginia.&quot;--Pref</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="259721802">
-  <md-title>A manual of the ornithology of the United States and of Canada</md-title>
-  <md-date>1834</md-date>
-  <md-author>Nuttall, Thomas</md-author>
+    name="LOC Solr Test" checksum="1229470568">
+  <md-title>Four southern magazines</md-title>
+  <md-date>1902</md-date>
+  <md-author>Rogers, Edward Reinhold</md-author>
+  <md-description>&quot;The four chapters of this brief discussion are limited to four of the principal ante-bellum southern magazines--namely, De Bow&apos;s review, of New Orleans; The Southern review, of Charleston, S. C.; The Southern quarterly review, also of Charleston, S. C.; The Southern literary messenger, of Richmond, Virginia.&quot;--Pref</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title a manual of the ornithology of the united states and of canada author nuttall thomas medium book</recid>
+ <recid>content: title four southern magazines author rogers edward reinhold medium book</recid>
 </hit>
 <hit>
- <md-title>Observations on the mineral waters of Avon, Livingston County, New York</md-title>
- <md-date>1834</md-date>
- <md-author>Francis, John W</md-author>
- <md-description>&quot;From the United States medical and surgical journal.&quot;</md-description>
+ <md-title>Frederick Chopin</md-title>
+ <md-title-remainder>as a man and musician;</md-title-remainder>
+ <md-date>1902</md-date>
+ <md-author>Niecks, Frederick</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3488946740">
-  <md-title>Observations on the mineral waters of Avon, Livingston County, New York</md-title>
-  <md-date>1834</md-date>
-  <md-author>Francis, John W</md-author>
-  <md-description>Caption title: Avon mineral waters</md-description>
-  <md-description>&quot;From the United States medical and surgical journal.&quot;</md-description>
+    name="LOC Solr Test" checksum="3909825395">
+  <md-title>Frederick Chopin</md-title>
+  <md-title-remainder>as a man and musician;</md-title-remainder>
+  <md-date>1902</md-date>
+  <md-author>Niecks, Frederick</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title observations on the mineral waters of avon livingston county new york author francis john w medium book</recid>
+ <recid>content: title frederick chopin author niecks frederick medium book</recid>
 </hit>
 <hit>
- <md-title>Report on the subject of introducing pure water into the city of Boston</md-title>
- <md-date>1834</md-date>
- <md-author>Baldwin, Loammi</md-author>
+ <md-title>What I saw in South Africa, September and October, 1902</md-title>
+ <md-date>1902</md-date>
+ <md-author>MacDonald, James Ramsay</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1874334271">
-  <md-title>Report on the subject of introducing pure water into the city of Boston</md-title>
-  <md-date>1834</md-date>
-  <md-author>Baldwin, Loammi</md-author>
+    name="LOC Solr Test" checksum="2844083037">
+  <md-title>What I saw in South Africa, September and October, 1902</md-title>
+  <md-date>1902</md-date>
+  <md-author>MacDonald, James Ramsay</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title report on the subject of introducing pure water into the city of boston author baldwin loammi medium book</recid>
+ <recid>content: title what i saw in south africa september and october author macdonald james ramsay medium book</recid>
+</hit>
+<hit>
+ <md-title>History of the First Light Battery Connecticut Volunteers, 1861-1865</md-title>
+ <md-title-remainder>Personal records and reminiscences. The story of the battery from its organization to the present time</md-title-remainder>
+ <md-date>1901</md-date>
+ <md-author>Beecher, Herbert W</md-author>
+ <md-description>Edited by John De Morgan</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="163728210">
+  <md-title>History of the First Light Battery Connecticut Volunteers, 1861-1865</md-title>
+  <md-title-remainder>Personal records and reminiscences. The story of the battery from its organization to the present time</md-title-remainder>
+  <md-date>1901</md-date>
+  <md-author>Beecher, Herbert W</md-author>
+  <md-description>Edited by John De Morgan</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title history of the first light battery connecticut volunteers author beecher herbert w medium book</recid>
 </hit>
 </show>

@@ -1,330 +1,350 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <show><status>OK</status>
 <activeclients>0</activeclients>
-<merged>95</merged>
-<total>1995</total>
+<merged>98</merged>
+<total>201695</total>
 <start>0</start>
 <num>20</num>
 <hit>
- <md-title>Address of the Committee of the Delaware and Schuylkill Canal Company, to the committees of the Senate and House of Representatives on the memorial of said company</md-title>
- <md-date>1799</md-date>
- <md-description>Signatures: [A]⁴ B-C⁴ D-E²</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1714344951">
-  <md-title>Address of the Committee of the Delaware and Schuylkill Canal Company, to the committees of the Senate and House of Representatives on the memorial of said company</md-title>
-  <md-date>1799</md-date>
-  <md-description>Signatures: [A]⁴ B-C⁴ D-E²</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title address of the committee of the delaware and schuylkill canal company to the committees of the senate and house of representatives on the memorial of said company medium book</recid>
-</hit>
-<hit>
- <md-title>An historical account of the rise, progress, and present state of the canal navigation in Pennsylvania</md-title>
- <md-title-remainder>with an appendix containing abstracts of the acts of the legislature since the year 1790, and their grants of money for improving roads and navigable waters throughout the state, to which is annexed an explanatory map</md-title-remainder>
- <md-date>1795</md-date>
- <md-description>Signatures: pi1 [a]² b-d² A-T² [U]²</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="616604729">
-  <md-title>An historical account of the rise, progress, and present state of the canal navigation in Pennsylvania</md-title>
-  <md-title-remainder>with an appendix containing abstracts of the acts of the legislature since the year 1790, and their grants of money for improving roads and navigable waters throughout the state, to which is annexed an explanatory map</md-title-remainder>
-  <md-date>1795</md-date>
-  <md-description>Signatures: pi1 [a]² b-d² A-T² [U]²</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title an historical account of the rise progress and present state of the canal navigation in pennsylvania medium book</recid>
-</hit>
-<hit>
- <md-title>An ordinance providing for the raising of a sum of money for supplying the city of Philadelphia with wholesome water</md-title>
- <md-date>1799</md-date>
- <md-description>&quot;Printed by order of the Corporation of Philadelphia.&quot;</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2263215062">
-  <md-title>An ordinance providing for the raising of a sum of money for supplying the city of Philadelphia with wholesome water</md-title>
-  <md-date>1799</md-date>
-  <md-description>Signatures: [A]⁴</md-description>
-  <md-description>&quot;Printed by order of the Corporation of Philadelphia.&quot;</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title an ordinance providing for the raising of a sum of money for supplying the city of philadelphia with wholesome water medium book</recid>
-</hit>
-<hit>
- <md-title>Flux and sources of nutrients in the Mississippi-Atchafalaya River Basin</md-title>
- <md-title-remainder>topic 3, report for the integrated assessment on hypoxia in the Gulf of Mexico</md-title-remainder>
- <md-description>&quot;May 1999.&quot;</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3168968100">
-  <md-title>Flux and sources of nutrients in the Mississippi-Atchafalaya River Basin</md-title>
-  <md-title-remainder>topic 3, report for the integrated assessment on hypoxia in the Gulf of Mexico</md-title-remainder>
-  <md-description>&quot;May 1999.&quot;</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title flux and sources of nutrients in the mississippi atchafalaya river basin medium book</recid>
-</hit>
-<hit>
- <md-title>Lights and shadows of American life</md-title>
- <md-date>1832</md-date>
- <md-description>v. 1. The politician. Elizabeth Latimer. The squatter. Pinchon. The devil&apos;s pulpit. The binnacle -- v. 2. The young backwoodsman. Major Egerton. An adventure at sea. The Green Mountain boy. Cobus Yerks. The wag-water -- v. 3. The azure hose. Weenokhenchah Wandeeteekah. The three Indians. Modern chivalry. The isle of flowers. The last of the boatmen</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1325464160">
-  <md-title>Lights and shadows of American life</md-title>
-  <md-date>1832</md-date>
-  <md-description>v. 1. The politician. Elizabeth Latimer. The squatter. Pinchon. The devil&apos;s pulpit. The binnacle -- v. 2. The young backwoodsman. Major Egerton. An adventure at sea. The Green Mountain boy. Cobus Yerks. The wag-water -- v. 3. The azure hose. Weenokhenchah Wandeeteekah. The three Indians. Modern chivalry. The isle of flowers. The last of the boatmen</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title lights and shadows of american life medium book</recid>
-</hit>
-<hit>
- <md-title>Proposals by the Propietors of the locks and canals on Merrimack River</md-title>
- <md-title-remainder>for the sale of their mill power and land at Lowell, in the county of Middlesex, in Massachusetts</md-title-remainder>
- <md-date>1826</md-date>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2908078765">
-  <md-title>Proposals by the Propietors of the locks and canals on Merrimack River</md-title>
-  <md-title-remainder>for the sale of their mill power and land at Lowell, in the county of Middlesex, in Massachusetts</md-title-remainder>
-  <md-date>1826</md-date>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title proposals by the propietors of the locks and canals on merrimack river medium book</recid>
-</hit>
-<hit>
- <md-title>Report of the commissioners appointed under an order of the City council, of March 16, 1837, to devise a plan for supplying the city of Boston with pure water</md-title>
- <md-date>1837</md-date>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3004072357">
-  <md-title>Report of the commissioners appointed under an order of the City council, of March 16, 1837, to devise a plan for supplying the city of Boston with pure water</md-title>
-  <md-date>1837</md-date>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title report of the commissioners appointed under an order of the city council of march to devise a plan for supplying the city of boston with pure water medium book</recid>
-</hit>
-<hit>
- <md-title>Report of the Watering Committee</md-title>
- <md-title-remainder>to the select &amp; common councils of the city of Philadelphia, relative to the Fair Mount water works. Read January 9, 1823</md-title-remainder>
- <md-date>1823</md-date>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3424951012">
-  <md-title>Report of the Watering Committee</md-title>
-  <md-title-remainder>to the select &amp; common councils of the city of Philadelphia, relative to the Fair Mount water works. Read January 9, 1823</md-title-remainder>
-  <md-date>1823</md-date>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title report of the watering committee medium book</recid>
-</hit>
-<hit>
- <md-title>Scientific tracts, for the diffusion of useful knowledge</md-title>
- <md-date>1836</md-date>
- <md-description>Philosophy of self-education, by B. B. Thatcher.--Outline of philosophy, by Lieut. Roswell Park.--Advantages of early rising, by Wm. A. Alcott.--May-flowers, by D. H. Howard.--Natural history of water, by C. T. Jackson.--Pleasures of science, by W. M. Rogers.--History of peace societies, by William Ladd.--Science of human life, by Sylvester Graham.--History of telegraphs, by J. R. Parker.--Combustion, by R. A. Coffin.--Granite rock, by Samuel Fish.--Theory of the earth, by Samuel Fish</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="840589777">
-  <md-title>Scientific tracts, for the diffusion of useful knowledge</md-title>
-  <md-date>1836</md-date>
-  <md-description>Philosophy of self-education, by B. B. Thatcher.--Outline of philosophy, by Lieut. Roswell Park.--Advantages of early rising, by Wm. A. Alcott.--May-flowers, by D. H. Howard.--Natural history of water, by C. T. Jackson.--Pleasures of science, by W. M. Rogers.--History of peace societies, by William Ladd.--Science of human life, by Sylvester Graham.--History of telegraphs, by J. R. Parker.--Combustion, by R. A. Coffin.--Granite rock, by Samuel Fish.--Theory of the earth, by Samuel Fish</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title scientific tracts for the diffusion of useful knowledge medium book</recid>
-</hit>
-<hit>
- <md-title>The accomplish&apos;d female instructor: or, A very useful companion for ladies, gentlewomen, and others</md-title>
- <md-title-remainder>In two parts. Part I. Treating of generous breeding and behaviour; choice of company, friendship; the art of speaking well [etc.] ... Part II. Treating of making curious confectionaries, or sweet-meats, jellies, syrups, cordial-waters ... to know good provisions, dye curious colours, whiten ivory ... physical and chyrurgical receipts ... and a great number of other useful and profitable things</md-title-remainder>
- <md-date>1704</md-date>
- <md-description>Preface signed: R.G</md-description>
+ <md-title>Mutatus polemo</md-title>
+ <md-title-remainder>the horrible stratagems of the Jesuits, lately practised in England during the civil wars and now discovered by a reclaimed Romanist, imployed before as a workman of the mission from His Holiness : wherein the royalist may see himself out-witted and forlorn, while the Presbyterian is closed with, and all to draw on the holy cause : a relation in particular, and with such exquisite characters of truth stampt upon it, that each of our three grand parties may here feel how each other pulses beat : also, a discovery of a plot laid for a speedy invasion</md-title-remainder>
+ <md-date>1650</md-date>
+ <md-author>A. B</md-author>
+ <md-description>Signatures: A-G⁴</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="2135223606">
-  <md-title>The accomplish&apos;d female instructor: or, A very useful companion for ladies, gentlewomen, and others</md-title>
-  <md-title-remainder>In two parts. Part I. Treating of generous breeding and behaviour; choice of company, friendship; the art of speaking well [etc.] ... Part II. Treating of making curious confectionaries, or sweet-meats, jellies, syrups, cordial-waters ... to know good provisions, dye curious colours, whiten ivory ... physical and chyrurgical receipts ... and a great number of other useful and profitable things</md-title-remainder>
-  <md-date>1704</md-date>
-  <md-description>Preface signed: R.G</md-description>
+  <md-title>Mutatus polemo</md-title>
+  <md-title-remainder>the horrible stratagems of the Jesuits, lately practised in England during the civil wars and now discovered by a reclaimed Romanist, imployed before as a workman of the mission from His Holiness : wherein the royalist may see himself out-witted and forlorn, while the Presbyterian is closed with, and all to draw on the holy cause : a relation in particular, and with such exquisite characters of truth stampt upon it, that each of our three grand parties may here feel how each other pulses beat : also, a discovery of a plot laid for a speedy invasion</md-title-remainder>
+  <md-date>1650</md-date>
+  <md-author>A. B</md-author>
+  <md-description>Signatures: A-G⁴</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the accomplish d female instructor or a very useful companion for ladies gentlewomen and others medium book</recid>
+ <recid>content: title mutatus polemo author a b medium book</recid>
 </hit>
 <hit>
- <md-title>The charter of the City of New-York</md-title>
- <md-date>1801</md-date>
- <md-description>Signatures: [A]⁴B-H⁴(-H4)</md-description>
+ <md-title>Adat istiadat perkawinan Dayak Kanayatn</md-title>
+ <md-date>1999</md-date>
+ <md-author>A. B. Dacing T</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2812085173">
-  <md-title>The charter of the City of New-York</md-title>
-  <md-date>1801</md-date>
-  <md-description>Signatures: [A]⁴B-H⁴(-H4)</md-description>
+    name="LOC Solr Test" checksum="520611137">
+  <md-title>Adat istiadat perkawinan Dayak Kanayatn</md-title>
+  <md-date>1999</md-date>
+  <md-author>A. B. Dacing T</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the charter of the city of new york medium book</recid>
+ <recid>content: title adat istiadat perkawinan dayak kanayatn author a b dacing t medium book</recid>
 </hit>
 <hit>
- <md-title>The report of the Committee for conducting the experiments of the Society for the Improvement of Naval Architecture</md-title>
- <md-date>1800</md-date>
- <md-description>Experiments to ascertain the laws respecting bodies moving through the water with different velocities, 1793-1798</md-description>
+ <md-title>Homseni</md-title>
+ <md-date>1996</md-date>
+ <md-author>A. C</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3877827531">
-  <md-title>The report of the Committee for conducting the experiments of the Society for the Improvement of Naval Architecture</md-title>
-  <md-date>1800</md-date>
-  <md-description>Experiments to ascertain the laws respecting bodies moving through the water with different velocities, 1793-1798</md-description>
-  <md-description>Reissued in &quot;Nautical and hydraulic experiments. By Colonel Mark Beaufoy,&quot; v. 1, 1834</md-description>
+    name="LOC Solr Test" checksum="3749836075">
+  <md-title>Homseni</md-title>
+  <md-date>1996</md-date>
+  <md-author>A. C</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the report of the committee for conducting the experiments of the society for the improvement of naval architecture medium book</recid>
+ <recid>content: title homseni author a c medium book</recid>
 </hit>
 <hit>
- <md-title>The right of a state to grant exclusive privileges, in roads, bridges, canals, navigable waters, &amp;c. vindicated;</md-title>
- <md-title-remainder>by a candid examination of the grant from the state of New-York to, and contract with Robert R. Livingston and Robert Fulton, for the exclusive navigation of vessels, by steam or fire, for a limited time, on the waters of said state, and within the jurisdiction thereof</md-title-remainder>
- <md-date>1811</md-date>
+ <md-title>The strange story of Ahrinziman</md-title>
+ <md-date>1906</md-date>
+ <md-author>A. F. S</md-author>
+ <md-description>Frontispiece</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1229470568">
-  <md-title>The right of a state to grant exclusive privileges, in roads, bridges, canals, navigable waters, &amp;c. vindicated;</md-title>
-  <md-title-remainder>by a candid examination of the grant from the state of New-York to, and contract with Robert R. Livingston and Robert Fulton, for the exclusive navigation of vessels, by steam or fire, for a limited time, on the waters of said state, and within the jurisdiction thereof</md-title-remainder>
-  <md-date>1811</md-date>
+    name="LOC Solr Test" checksum="1069481248">
+  <md-title>The strange story of Ahrinziman</md-title>
+  <md-date>1906</md-date>
+  <md-author>A. F. S</md-author>
+  <md-description>Frontispiece</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the right of a state to grant exclusive privileges in roads bridges canals navigable waters c vindicated medium book</recid>
+ <recid>content: title the strange story of ahrinziman author a f s medium book</recid>
 </hit>
 <hit>
- <md-title>The Watering places of Great Britain and fashionable directory</md-title>
- <md-date>1831</md-date>
+ <md-title>Our two lives;</md-title>
+ <md-title-remainder>or, Graham and I</md-title-remainder>
+ <md-date>1873</md-date>
+ <md-author>A. H. K</md-author>
+ <md-description>Wright II, 2643</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2391206518">
-  <md-title>The Watering places of Great Britain and fashionable directory</md-title>
-  <md-date>1831</md-date>
+    name="LOC Solr Test" checksum="2684093717">
+  <md-title>Our two lives;</md-title>
+  <md-title-remainder>or, Graham and I</md-title-remainder>
+  <md-date>1873</md-date>
+  <md-author>A. H. K</md-author>
+  <md-description>Wright II, 2643</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the watering places of great britain and fashionable directory medium book</recid>
+ <recid>content: title our two lives author a h k medium book</recid>
 </hit>
 <hit>
- <md-title>Nouveaux élémens de thérapeutique et de matière médicale</md-title>
- <md-title-remainder>suivis d&apos;un essai françois et latin sur l&apos;art de formuler, et d&apos;un précis sur les eaux minérales les plus usitées</md-title-remainder>
- <md-date>1817</md-date>
- <md-author>Alibert, Jean-Louis-Marie</md-author>
- <md-description>Title-page of v. 2 wanting.DLC</md-description>
+ <md-title>Leonardo Rodríguez Alcaine en el movimiento obrero de México</md-title>
+ <md-date>2000</md-date>
+ <md-author>A. P</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2876080901">
-  <md-title>Nouveaux élémens de thérapeutique et de matière médicale</md-title>
-  <md-title-remainder>suivis d&apos;un essai françois et latin sur l&apos;art de formuler, et d&apos;un précis sur les eaux minérales les plus usitées</md-title-remainder>
-  <md-date>1817</md-date>
-  <md-author>Alibert, Jean-Louis-Marie</md-author>
-  <md-description>Title-page of v. 2 wanting</md-description>
-  <md-description>Title-page of v. 2 wanting.DLC</md-description>
+    name="LOC Solr Test" checksum="3738890">
+  <md-title>Leonardo Rodríguez Alcaine en el movimiento obrero de México</md-title>
+  <md-date>2000</md-date>
+  <md-author>A. P</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title nouveaux e le mens de the rapeutique et de matie re me dicale author alibert jean louis marie medium book</recid>
+ <recid>content: title leonardo rodri guez alcaine en el movimiento obrero de me xico author a p medium book</recid>
 </hit>
 <hit>
- <md-title>A great faith described and inculcated</md-title>
- <md-title-remainder>a sermon, on Luke VII. 9</md-title-remainder>
- <md-date>1805</md-date>
- <md-author>Backus, Isaac</md-author>
- <md-description>No. 10 in a volume lettered: Tracts. Isaac Backus. 1770-1865</md-description>
+ <md-title>X. Y. Z. of Wall Street</md-title>
+ <md-date>1902</md-date>
+ <md-author>A. P. H</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="131730346">
-  <md-title>A great faith described and inculcated</md-title>
-  <md-title-remainder>a sermon, on Luke VII. 9</md-title-remainder>
-  <md-date>1805</md-date>
-  <md-author>Backus, Isaac</md-author>
-  <md-description>No. 10 in a volume lettered: Tracts. Isaac Backus. 1770-1865</md-description>
+    name="LOC Solr Test" checksum="1618351359">
+  <md-title>X. Y. Z. of Wall Street</md-title>
+  <md-date>1902</md-date>
+  <md-author>A. P. H</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title a great faith described and inculcated author backus isaac medium book</recid>
+ <recid>content: title x y z of wall street author a p h medium book</recid>
 </hit>
 <hit>
- <md-title>Report on the subject of introducing pure water into the city of Boston</md-title>
- <md-date>1834</md-date>
- <md-author>Baldwin, Loammi</md-author>
+ <md-title>Side lights on the ʻforty-five&apos; and its heroes</md-title>
+ <md-date>1903</md-date>
+ <md-author>A. Š</md-author>
+ <md-description>John Home, the Scottish volunteer and historian.--Home&apos;s &quot;History of the rebellion in Scotland,&quot; and public opinion.--Ms. materials for Home&apos;s &quot;History.&quot; The Anti-Gallicans.--&quot;The good Lochiel&quot;: a hero of the &quot;forty-five.&quot;--Three Jacobite maps.--James Ray, of Whitehaven: a Hanoverian volunteer of the &quot;forty-five.&quot;--Ray&apos;s experiences in Scotland.--Ray&apos;s journey to the north of Scotland</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1874334271">
-  <md-title>Report on the subject of introducing pure water into the city of Boston</md-title>
-  <md-date>1834</md-date>
-  <md-author>Baldwin, Loammi</md-author>
+    name="LOC Solr Test" checksum="3232963828">
+  <md-title>Side lights on the ʻforty-five&apos; and its heroes</md-title>
+  <md-date>1903</md-date>
+  <md-author>A. Š</md-author>
+  <md-description>Preface signed: A. S</md-description>
+  <md-description>John Home, the Scottish volunteer and historian.--Home&apos;s &quot;History of the rebellion in Scotland,&quot; and public opinion.--Ms. materials for Home&apos;s &quot;History.&quot; The Anti-Gallicans.--&quot;The good Lochiel&quot;: a hero of the &quot;forty-five.&quot;--Three Jacobite maps.--James Ray, of Whitehaven: a Hanoverian volunteer of the &quot;forty-five.&quot;--Ray&apos;s experiences in Scotland.--Ray&apos;s journey to the north of Scotland</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title report on the subject of introducing pure water into the city of boston author baldwin loammi medium book</recid>
+ <recid>content: title side lights on the forty five and its heroes author a s medium book</recid>
 </hit>
 <hit>
- <md-title>Second report of Loammi Baldwin, Esq., engineer, made to a committee of the Boston Aqueduct Corporation</md-title>
- <md-date>1835</md-date>
- <md-author>Baldwin, Loammi</md-author>
+ <md-title>Overland, inland, and upland</md-title>
+ <md-title-remainder>A lady&apos;s notes of personal observation and adventure</md-title-remainder>
+ <md-date>1873</md-date>
+ <md-author>A. U</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="808591913">
-  <md-title>Second report of Loammi Baldwin, Esq., engineer, made to a committee of the Boston Aqueduct Corporation</md-title>
-  <md-date>1835</md-date>
-  <md-author>Baldwin, Loammi</md-author>
+    name="LOC Solr Test" checksum="552609001">
+  <md-title>Overland, inland, and upland</md-title>
+  <md-title-remainder>A lady&apos;s notes of personal observation and adventure</md-title-remainder>
+  <md-date>1873</md-date>
+  <md-author>A. U</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title second report of loammi baldwin esq engineer made to a committee of the boston aqueduct corporation author baldwin loammi medium book</recid>
+ <recid>content: title overland inland and upland author a u medium book</recid>
 </hit>
 <hit>
- <md-title>Memoirs illustrating the history of Jacobinism</md-title>
- <md-date>1799</md-date>
- <md-author>Barruel</md-author>
- <md-description>Pagination: v. 1: xviii, 226 p.; v. 2: viii, v,[1], 264 p.; v. 3: xii, 256 p., [1] leaf of plates; v. 4: xi, [2], 14-400 p., [1] folded leaf of plates; pages 193 and 361, v. 4, misnumbered 173 and 363 respectively</md-description>
+ <md-title>Biographisch woordenboek der Nederlanden</md-title>
+ <md-title-remainder>bevattende levensbeschrijvingen van zoodanige personen, die zich op eenigerlei wijze in ons vaderland hebben vermaard gemaakt</md-title-remainder>
+ <md-date>1852</md-date>
+ <md-author>Aa, Abraham Jacob van der</md-author>
+ <md-description>Title varies: v. 3-6, 9, A. J. van der Aa, Biographisch woordenboek der Nederlanden, voortgezet door K. J. R. van Harderwijk; v. 7-8, 10-21, voortgezet door K. J. R. van Harderwijk en Dr. G. D. J. Schotel</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="99732482">
-  <md-title>Memoirs illustrating the history of Jacobinism</md-title>
-  <md-date>1799</md-date>
-  <md-author>Barruel</md-author>
-  <md-description>&quot;Translated into English by the Hon. Robert Clifford, F.R.S. &amp; A.S.&quot;-- t.p., v. 4.; only v. 4 has edition statement</md-description>
-  <md-description>Vol. 3 has imprint: New-York: Printed by Isaac Collins, for Cornelius Davis, No. 94, Water-Street, 1799; v. 4: Elizabeth-Town: Printed by Samuel Kollock for Cornelius Davis, No. 94, Water-Street, New-York, 1799</md-description>
-  <md-description>Signatures: v. 1: [A]⁴ B-U⁴ W⁴ X-2F⁴ 2G²; v. 2: [A]⁴ B-U⁴ W⁴ X-2K⁴ 2L⁴(-2L4); v. 3: [A]² B-2L⁴; v. 4: [A]⁴ B-3D⁴</md-description>
-  <md-description>Pagination: v. 1: xviii, 226 p.; v. 2: viii, v,[1], 264 p.; v. 3: xii, 256 p., [1] leaf of plates; v. 4: xi, [2], 14-400 p., [1] folded leaf of plates; pages 193 and 361, v. 4, misnumbered 173 and 363 respectively</md-description>
-  <md-description>LC copy v. 1 lacks gathering H, p. 39-46; v. 4 lacks gathering 2K (p. 257-264) but has extra copy of gathering K (p.73-80) bound in its place.DLC</md-description>
-  <md-description>v. 1. The antichristian conspiracy -- v. 2. The anti-monarchical conspiracy -- v. 3-4. The antisocial conspiracy</md-description>
+    name="LOC Solr Test" checksum="1101479112">
+  <md-title>Biographisch woordenboek der Nederlanden</md-title>
+  <md-title-remainder>bevattende levensbeschrijvingen van zoodanige personen, die zich op eenigerlei wijze in ons vaderland hebben vermaard gemaakt</md-title-remainder>
+  <md-date>1852</md-date>
+  <md-author>Aa, Abraham Jacob van der</md-author>
+  <md-description>Title varies: v. 3-6, 9, A. J. van der Aa, Biographisch woordenboek der Nederlanden, voortgezet door K. J. R. van Harderwijk; v. 7-8, 10-21, voortgezet door K. J. R. van Harderwijk en Dr. G. D. J. Schotel</md-description>
+  <md-description>Vol. 2 is in 4 pts.; v. 8, 12 and 17 in 2 pts. each, with continuous paging</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title memoirs illustrating the history of jacobinism author barruel medium book</recid>
+ <recid>content: title biographisch woordenboek der nederlanden author aa abraham jacob van der medium book</recid>
 </hit>
 <hit>
- <md-title>Essays, physical and chemical</md-title>
- <md-date>1791</md-date>
- <md-author>Bergman, Torbern</md-author>
- <md-description>I. Of the origin of chemistry.--II. History of chemistry during the middle age.--III. Analysis of lithomarge.--IV. Of asbestine earth.--V. Thoughts on a natural system of fossils.--VI. Of the combination of mercury with the marine acid.--VII. Process for burning bricks.--VIII. Of the acidulated waters of Medvi.--IX. Of the medicinal springs of Lokarne.--X. Of cobalt, nickel, platina, and manganese.--XI. Observations on urinary calculi</md-description>
+ <md-title>De geschiedenis der Vereenigde Nederlanden, enderzelver buitenlandsche bezittingen</md-title>
+ <md-title-remainder>geduurende de staatsen erfstadhouderlijke regeerwijze, ten tijde van Willem den Vierden; de vrouwe gouvernante Anna; en Willem den Vijfden</md-title-remainder>
+ <md-date>1804-1810</md-date>
+ <md-author>Aa, Cornelis van der</md-author>
+ <md-description>Vol. 1 has half-title: De lotgewallen van de republiek der Veréénigde Nederlanden. Sints de invoering der staats- en erfstadhouderlijke regeerwijze in het jaar MDCCXLVII. Vol. 2-6: Geschiedenis der Veréénigde Nederlanden, 1747-1794</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2716091581">
+  <md-title>De geschiedenis der Vereenigde Nederlanden, enderzelver buitenlandsche bezittingen</md-title>
+  <md-title-remainder>geduurende de staatsen erfstadhouderlijke regeerwijze, ten tijde van Willem den Vierden; de vrouwe gouvernante Anna; en Willem den Vijfden</md-title-remainder>
+  <md-date>1804-1810</md-date>
+  <md-author>Aa, Cornelis van der</md-author>
+  <md-description>Vol. 1 has half-title: De lotgewallen van de republiek der Veréénigde Nederlanden. Sints de invoering der staats- en erfstadhouderlijke regeerwijze in het jaar MDCCXLVII. Vol. 2-6: Geschiedenis der Veréénigde Nederlanden, 1747-1794</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title de geschiedenis der vereenigde nederlanden enderzelver buitenlandsche bezittingen author aa cornelis van der medium book</recid>
+</hit>
+<hit>
+ <md-title>Sketches from the ranch</md-title>
+ <md-title-remainder>a Montana memoir</md-title-remainder>
+ <md-date>1998</md-date>
+ <md-author>Aadland, Dan</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="35736754">
+  <md-title>Sketches from the ranch</md-title>
+  <md-title-remainder>a Montana memoir</md-title-remainder>
+  <md-date>1998</md-date>
+  <md-author>Aadland, Dan</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title sketches from the ranch author aadland dan medium book</recid>
+</hit>
+<hit>
+ <md-title>Economic value of pro-environmental farming</md-title>
+ <md-title-remainder>a critical and decision-making oriented application of the contingent valuation method</md-title-remainder>
+ <md-date>1999</md-date>
+ <md-author>Aakkula, Jyrki J</md-author>
+ <md-description>Originally presented as the author&apos;s dissertation (University of Helsinki, 1999)</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1650349223">
+  <md-title>Economic value of pro-environmental farming</md-title>
+  <md-title-remainder>a critical and decision-making oriented application of the contingent valuation method</md-title-remainder>
+  <md-date>1999</md-date>
+  <md-author>Aakkula, Jyrki J</md-author>
+  <md-description>Originally presented as the author&apos;s dissertation (University of Helsinki, 1999)</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title economic value of pro environmental farming author aakkula jyrki j medium book</recid>
+</hit>
+<hit>
+ <md-title>Digital signature blindness</md-title>
+ <md-title-remainder>analysis of legislative approaches toward electronic authentication</md-title-remainder>
+ <md-date>2000</md-date>
+ <md-author>Aalberts, Babette</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3264961692">
+  <md-title>Digital signature blindness</md-title>
+  <md-title-remainder>analysis of legislative approaches toward electronic authentication</md-title-remainder>
+  <md-date>2000</md-date>
+  <md-author>Aalberts, Babette</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title digital signature blindness author aalberts babette medium book</recid>
+</hit>
+<hit>
+ <md-title>Roof</md-title>
+ <md-title-remainder>de ontvreemding van joods bezit tijdens de Tweede Wereldoorlog</md-title-remainder>
+ <md-date>1999</md-date>
+ <md-author>Aalders, Gerard</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="584606865">
+  <md-title>Roof</md-title>
+  <md-title-remainder>de ontvreemding van joods bezit tijdens de Tweede Wereldoorlog</md-title-remainder>
+  <md-date>1999</md-date>
+  <md-author>Aalders, Gerard</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title roof author aalders gerard medium book</recid>
+</hit>
+<hit>
+ <md-title>Als ik wil kan ik duiken--</md-title>
+ <md-title-remainder>brieven van Claartje van Aals, verpleegster in de joods psychiatrische inrichting Het Apeldoornsche Bosch, 1940-1943</md-title-remainder>
+ <md-date>1995</md-date>
+ <md-author>Aals, Claartje van</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2199219334">
+  <md-title>Als ik wil kan ik duiken--</md-title>
+  <md-title-remainder>brieven van Claartje van Aals, verpleegster in de joods psychiatrische inrichting Het Apeldoornsche Bosch, 1940-1943</md-title-remainder>
+  <md-date>1995</md-date>
+  <md-author>Aals, Claartje van</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title als ik wil kan ik duiken author aals claartje van medium book</recid>
+</hit>
+<hit>
+ <md-title>Sneeuwbeeld</md-title>
+ <md-date>2000</md-date>
+ <md-author>Aalten, Thomas van</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3813831803">
+  <md-title>Sneeuwbeeld</md-title>
+  <md-date>2000</md-date>
+  <md-author>Aalten, Thomas van</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title sneeuwbeeld author aalten thomas van medium book</recid>
+</hit>
+<hit>
+ <md-title>Murrosikä ja sukupuoli</md-title>
+ <md-title-remainder>julkiset ja yksityiset ikämäärittelyt</md-title-remainder>
+ <md-date>1999</md-date>
+ <md-author>Aapola, Sinikka</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="1133476976">
-  <md-title>Essays, physical and chemical</md-title>
-  <md-date>1791</md-date>
-  <md-author>Bergman, Torbern</md-author>
-  <md-description>Binder&apos;s title: Physical and chemical essays. 3</md-description>
-  <md-description>Issued also with t.-p.: Physical and chemical essays: translated from the original Latin of Sir Torbern Bergman... To which are added, notes and illustrations, by the translator.  Vol. III. Edinburgh, Printed for G. Mudie; [etc., etc.] 1791</md-description>
-  <md-description>I. Of the origin of chemistry.--II. History of chemistry during the middle age.--III. Analysis of lithomarge.--IV. Of asbestine earth.--V. Thoughts on a natural system of fossils.--VI. Of the combination of mercury with the marine acid.--VII. Process for burning bricks.--VIII. Of the acidulated waters of Medvi.--IX. Of the medicinal springs of Lokarne.--X. Of cobalt, nickel, platina, and manganese.--XI. Observations on urinary calculi</md-description>
+  <md-title>Murrosikä ja sukupuoli</md-title>
+  <md-title-remainder>julkiset ja yksityiset ikämäärittelyt</md-title-remainder>
+  <md-date>1999</md-date>
+  <md-author>Aapola, Sinikka</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title essays physical and chemical author bergman torbern medium book</recid>
+ <recid>content: title murrosika ja sukupuoli author aapola sinikka medium book</recid>
+</hit>
+<hit>
+ <md-title>Kunsten å bu i hus</md-title>
+ <md-title-remainder>essay</md-title-remainder>
+ <md-date>1999</md-date>
+ <md-author>Aareskjold, Solveig</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2748089445">
+  <md-title>Kunsten å bu i hus</md-title>
+  <md-title-remainder>essay</md-title-remainder>
+  <md-date>1999</md-date>
+  <md-author>Aareskjold, Solveig</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title kunsten a bu i hus author aareskjold solveig medium book</recid>
+</hit>
+<hit>
+ <md-title>Raimo Pullat</md-title>
+ <md-title-remainder>valikbibliograafia, 1964-2000</md-title-remainder>
+ <md-date>2000</md-date>
+ <md-author>Aarma, Liivi</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="67734618">
+  <md-title>Raimo Pullat</md-title>
+  <md-title-remainder>valikbibliograafia, 1964-2000</md-title-remainder>
+  <md-date>2000</md-date>
+  <md-author>Aarma, Liivi</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title raimo pullat author aarma liivi medium book</recid>
 </hit>
 </show>

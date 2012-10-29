@@ -23,7 +23,7 @@
 </list>
 <list name="xtargets">
 <term>
-<id>localhost:9999/Slow</id>
+<id>localhost:9999</id>
 <name>ztest slow</name>
 <frequency>7</frequency>
 <state>Client_Idle</state>

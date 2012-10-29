@@ -392,7 +392,7 @@ void expand_settings_array2(struct settings_array *settings, int offset, NMEM nm
 static void update_settings(struct setting *set, struct settings_array *settings, int offset, NMEM nmem)
 {
     struct setting **sp;
-    yaz_log(YLOG_LOG, "update service settings offset %d with %s=%s", offset, set->name, set->value);
+    yaz_log(YLOG_DEBUG, "update service settings offset %d with %s=%s", offset, set->name, set->value);
     expand_settings_array2(settings, offset, nmem);
 
     // First we determine if this setting is overriding any existing settings

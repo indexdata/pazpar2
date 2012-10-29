@@ -33,6 +33,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if HAVE_UNISTD_H
 #include <unistd.h>
 #endif
+#ifdef WIN32
+#include <windows.h>
+#endif
 #include <signal.h>
 #include <assert.h>
 
@@ -52,6 +55,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/snprintf.h>
 #include <yaz/rpn2cql.h>
 #include <yaz/rpn2solr.h>
+#include <yaz/gettimeofday.h>
 
 #define USE_TIMING 0
 #if USE_TIMING
@@ -124,6 +128,9 @@ struct client {
     int ref_count;
     char *id;
     facet_limits_t facet_limits;
+    int same_search;
+    char *sort_strategy;
+    char *sort_criteria;
 };
 
 struct suggestions {
@@ -615,8 +622,7 @@ static void client_record_ingest(struct client *cl)
     }
     else
     {
-        yaz_log(YLOG_WARN, "Expected record, but got NULL, offset=%d",
-                offset);
+        yaz_log(YLOG_WARN, "Expected record, but got NULL, offset=%d", offset);
     }
 }
 
@@ -657,7 +663,7 @@ void client_record_response(struct client *cl)
     }
 }
 
-void client_reingest(struct client *cl)
+int client_reingest(struct client *cl)
 {
     int i = cl->startrecs;
     int to = cl->record_offset;
@@ -666,6 +672,7 @@ void client_reingest(struct client *cl)
     cl->record_offset = i;
     for (; i < to; i++)
         client_record_ingest(cl);
+    return 0;
 }
 
 static void client_set_facets_request(struct client *cl, ZOOM_connection link)
@@ -736,11 +743,37 @@ static const char *get_strategy_plus_sort(struct client *l, const char *field)
     return strategy_plus_sort;
 }
 
-void client_start_search(struct client *cl)
+int client_parse_init(struct client *cl, int same_search)
+{
+    cl->same_search = same_search;
+    return 0;
+}
+
+/*
+ * TODO consider how to extend the range
+ * */
+int client_parse_range(struct client *cl, const char *startrecs, const char *maxrecs)
+{
+    if (maxrecs && atoi(maxrecs) != cl->maxrecs)
+    {
+        cl->same_search = 0;
+        cl->maxrecs = atoi(maxrecs);
+    }
+
+    if (startrecs && atoi(startrecs) != cl->startrecs)
+    {
+        cl->same_search = 0;
+        cl->startrecs = atoi(startrecs);
+    }
+
+    return 0;
+}
+
+int client_start_search(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
-    struct connection *co = client_get_connection(cl);
-    ZOOM_connection link = connection_get_link(co);
+    struct connection *co = 0;
+    ZOOM_connection link = 0;
     struct session *se = client_get_session(cl);
     ZOOM_resultset rs;
     const char *opt_piggyback   = session_setting_oneval(sdb, PZ_PIGGYBACK);
@@ -753,14 +786,42 @@ void client_start_search(struct client *cl)
     const char *opt_preferred   = session_setting_oneval(sdb, PZ_PREFERRED);
     const char *extra_args      = session_setting_oneval(sdb, PZ_EXTRA_ARGS);
     const char *opt_present_chunk = session_setting_oneval(sdb, PZ_PRESENT_CHUNK);
-    ZOOM_query q;
+    ZOOM_query query;
     char maxrecs_str[24], startrecs_str[24], present_chunk_str[24];
+    struct timeval tval;
     int present_chunk = 20; // Default chunk size
+    int rc_prep_connection;
+
+
+    yaz_gettimeofday(&tval);
+    tval.tv_sec += 5;
+
     if (opt_present_chunk && strcmp(opt_present_chunk,"")) {
         present_chunk = atoi(opt_present_chunk);
         yaz_log(YLOG_DEBUG, "Present chunk set to %d", present_chunk);
     }
+    rc_prep_connection =
+        client_prep_connection(cl, se->service->z3950_operation_timeout,
+                               se->service->z3950_session_timeout,
+                               se->service->server->iochan_man,
+                               &tval);
+    /* Nothing has changed and we already have a result */
+    if (cl->same_search == 1 && rc_prep_connection == 2)
+    {
+        session_log(se, YLOG_LOG, "client %s REUSE result", client_get_id(cl));
+        return client_reingest(cl);
+    }
+    else if (!rc_prep_connection)
+    {
+        session_log(se, YLOG_LOG, "client %s FAILED to search: No connection.", client_get_id(cl));
+        return -1;
+    }
+    co = client_get_connection(cl);
+    assert(cl);
+    link = connection_get_link(co);
     assert(link);
+
+    session_log(se, YLOG_LOG, "client %s NEW search", client_get_id(cl));
 
     cl->diagnostic = 0;
     cl->filtered = 0;
@@ -814,65 +875,36 @@ void client_start_search(struct client *cl)
     /* facets definition is in PQF */
     client_set_facets_request(cl, link);
 
-    q = ZOOM_query_create();
+    query = ZOOM_query_create();
     if (cl->cqlquery)
     {
         yaz_log(YLOG_LOG, "Client %s: Search CQL: %s", client_get_id(cl), cl->cqlquery);
-        ZOOM_query_cql(q, cl->cqlquery);
+        ZOOM_query_cql(query, cl->cqlquery);
         if (*opt_sort)
-            ZOOM_query_sortby(q, opt_sort);
+            ZOOM_query_sortby(query, opt_sort);
     }
     else
     {
         yaz_log(YLOG_LOG, "Client %s: Search PQF: %s", client_get_id(cl), cl->pquery);
 
-        ZOOM_query_prefix(q, cl->pquery);
+        ZOOM_query_prefix(query, cl->pquery);
     }
-    if (se->sorted_results)
-    {   /* first entry is current sorting ! */
-        const char *sort_strategy_and_spec =
-            get_strategy_plus_sort(cl, se->sorted_results->field);
-        int increasing = se->sorted_results->increasing;
-        // int position = se->sorted_results->position;
-        if (sort_strategy_and_spec && strlen(sort_strategy_and_spec) < 40)
-        {
-            char spec[50], *p;
-            strcpy(spec, sort_strategy_and_spec);
-            p = strchr(spec, ':');
-            if (p)
-            {
-                *p++ = '\0'; /* cut the string in two */
-                while (*p == ' ')
-                    p++;
-                if (increasing)
-                    strcat(p, " <");
-                else
-                    strcat(p, " >");
-                yaz_log(YLOG_LOG, "Client %s: applying sorting %s %s", client_get_id(cl), spec, p);
-                ZOOM_query_sortby2(q, spec, p);
-            }
-        }
-        else
-        {
-            /* no native sorting.. If this is not the first search, then
-               skip it entirely */
-            if (se->sorted_results->next)
-            {
-                yaz_log(YLOG_DEBUG,"Client %s: Do not (re)search anyway", client_get_id(cl));
-                ZOOM_query_destroy(q);
-                return;
-            }
-        }
+    if (cl->sort_strategy && cl->sort_criteria) {
+        yaz_log(YLOG_LOG, "Client %s: Setting ZOOM sort strategy and criteria: %s %s",
+                client_get_id(cl), cl->sort_strategy, cl->sort_criteria);
+        ZOOM_query_sortby2(query, cl->sort_strategy, cl->sort_criteria);
     }
+
     yaz_log(YLOG_DEBUG,"Client %s: Starting search", client_get_id(cl));
     client_set_state(cl, Client_Working);
     cl->hits = 0;
     cl->record_offset = 0;
-    rs = ZOOM_connection_search(link, q);
-    ZOOM_query_destroy(q);
+    rs = ZOOM_connection_search(link, query);
+    ZOOM_query_destroy(query);
     ZOOM_resultset_destroy(cl->resultset);
     cl->resultset = rs;
     connection_continue(co);
+    return 0;
 }
 
 struct client *client_create(const char *id)
@@ -899,6 +931,8 @@ struct client *client_create(const char *id)
     cl->preferred = 0;
     cl->ref_count = 1;
     cl->facet_limits = 0;
+    cl->sort_strategy = 0;
+    cl->sort_criteria = 0;
     assert(id);
     cl->id = xstrdup(id);
     client_use(1);
@@ -938,6 +972,8 @@ int client_destroy(struct client *c)
             xfree(c->addinfo);
             c->addinfo = 0;
             xfree(c->id);
+            xfree(c->sort_strategy);
+            xfree(c->sort_criteria);
             assert(!c->connection);
             facet_limits_destroy(c->facet_limits);
 
@@ -1193,13 +1229,13 @@ static int apply_limit(struct session_database *sdb,
 }
 
 // Parse the query given the settings specific to this client
-// return 0 if query is OK but different from before
-// return 1 if query is OK but same as before
+// client variable same_search is set as below as well as returned:
+// 0 if query is OK but different from before
+// 1 if query is OK but same as before
 // return -1 on query error
 // return -2 on limit error
 int client_parse_query(struct client *cl, const char *query,
                        facet_limits_t facet_limits,
-                       const char *startrecs, const char *maxrecs,
                        CCL_bibset bibset)
 {
     struct session *se = client_get_session(cl);
@@ -1218,18 +1254,6 @@ int client_parse_query(struct client *cl, const char *query,
 
     if (!ccl_map)
         return -3;
-
-    if (maxrecs && atoi(maxrecs) != cl->maxrecs)
-    {
-        ret_value = 0;
-        cl->maxrecs = atoi(maxrecs);
-    }
-
-    if (startrecs && atoi(startrecs) != cl->startrecs)
-    {
-        ret_value = 0;
-        cl->startrecs = atoi(startrecs);
-    }
 
     w_ccl = wrbuf_alloc();
     wrbuf_puts(w_ccl, query);
@@ -1250,7 +1274,7 @@ int client_parse_query(struct client *cl, const char *query,
     facet_limits_destroy(cl->facet_limits);
     cl->facet_limits = facet_limits_dup(facet_limits);
 
-    yaz_log(YLOG_LOG, "Client %s: CCL query: %s", client_get_id(cl), wrbuf_cstr(w_ccl));
+    yaz_log(YLOG_LOG, "Client %s: CCL query: %s limit: %s", client_get_id(cl), wrbuf_cstr(w_ccl), wrbuf_cstr(w_pqf));
     cn = ccl_find_str(ccl_map, wrbuf_cstr(w_ccl), &cerror, &cpos);
     ccl_qual_rm(&ccl_map);
     if (!cn)
@@ -1286,11 +1310,18 @@ int client_parse_query(struct client *cl, const char *query,
         }
     }
 
+    /* Compares query and limit with old one. If different we need to research */
     if (!cl->pquery || strcmp(cl->pquery, wrbuf_cstr(w_pqf)))
     {
+        if (cl->pquery)
+            session_log(se, YLOG_LOG, "Client %s: Re-search due query/limit change: %s to %s", 
+                        client_get_id(cl), cl->pquery, wrbuf_cstr(w_pqf));
         xfree(cl->pquery);
         cl->pquery = xstrdup(wrbuf_cstr(w_pqf));
+        // return value is no longer used.
         ret_value = 0;
+        // Need to (re)search
+        cl->same_search= 0;
     }
     wrbuf_destroy(w_pqf);
 
@@ -1320,6 +1351,9 @@ int client_parse_query(struct client *cl, const char *query,
                 cl->cqlquery = make_cqlquery(cl, zquery);
             if (!cl->cqlquery)
                 ret_value = -1;
+            else
+                session_log(se, YLOG_LOG, "Client %s native query: %s (%s)",
+                            client_get_id(cl), cl->cqlquery, sru);
         }
     }
     odr_destroy(odr_out);
@@ -1336,6 +1370,59 @@ int client_parse_query(struct client *cl, const char *query,
     }
     ccl_rpn_delete(cn);
     return ret_value;
+}
+
+int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
+{
+    if (sp)
+    {
+        const char *sort_strategy_and_spec =
+            get_strategy_plus_sort(cl, sp->name);
+        int increasing = sp->increasing;
+        if (sort_strategy_and_spec && strlen(sort_strategy_and_spec) < 40)
+        {
+            char strategy[50], *p;
+            strcpy(strategy, sort_strategy_and_spec);
+            p = strchr(strategy, ':');
+            if (p)
+            {
+                // Split the string in two
+                *p++ = 0;
+                while (*p == ' ')
+                    p++;
+                if (increasing)
+                    strcat(p, " <");
+                else
+                    strcat(p, " >");
+                yaz_log(YLOG_LOG, "Client %s: applying sorting %s %s", client_get_id(cl), strategy, p);
+                if (!cl->sort_strategy || strcmp(cl->sort_strategy, strategy))
+                    cl->same_search = 0;
+                if (!cl->sort_criteria || strcmp(cl->sort_criteria, p))
+                    cl->same_search = 0;
+                if (cl->same_search == 0) {
+                    xfree(cl->sort_strategy);
+                    cl->sort_strategy = xstrdup(strategy);
+                    xfree(cl->sort_criteria);
+                    cl->sort_criteria = xstrdup(p);
+                }
+            }
+            else {
+                yaz_log(YLOG_LOG, "Client %s: Invalid sort strategy and spec found %s", client_get_id(cl), sort_strategy_and_spec);
+                xfree(cl->sort_strategy);
+                cl->sort_strategy  = 0;
+                xfree(cl->sort_criteria);
+                cl->sort_criteria = 0;
+            }
+        } else {
+            yaz_log(YLOG_LOG, "Client %s: No sort strategy and spec found.", client_get_id(cl));
+            xfree(cl->sort_strategy);
+            cl->sort_strategy  = 0;
+            xfree(cl->sort_criteria);
+            cl->sort_criteria = 0;
+        }
+
+    }
+    return !cl->same_search;
 }
 
 void client_set_session(struct client *cl, struct session *se)
@@ -1498,6 +1585,11 @@ static void client_suggestions_destroy(struct client *cl)
     nmem_destroy(nmem);
 }
 
+int client_test_sort_order(struct client *cl, struct reclist_sortparms *sp)
+{
+    //TODO implement correctly.
+    return 1;
+}
 /*
  * Local variables:
  * c-basic-offset: 4

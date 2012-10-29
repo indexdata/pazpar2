@@ -661,7 +661,7 @@
 	 <para>
 	  Customization of ranking algorithm was introduced with
 	  Pazpar2 1.6.18. The semantics of some of the fields changed
-	  in versions up to 1.6.21.
+	  in versions up to 1.6.22.
 	 </para>
 	</listitem>
        </varlistentry>
