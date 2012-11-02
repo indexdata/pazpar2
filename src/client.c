@@ -1414,7 +1414,7 @@ int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
                 cl->sort_criteria = 0;
             }
         } else {
-            yaz_log(YLOG_LOG, "Client %s: No sort strategy and spec found.", client_get_id(cl));
+            yaz_log(YLOG_DEBUG, "Client %s: No sort strategy and spec found.", client_get_id(cl));
             xfree(cl->sort_strategy);
             cl->sort_strategy  = 0;
             xfree(cl->sort_criteria);
