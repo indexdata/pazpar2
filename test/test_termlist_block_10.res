@@ -2,11 +2,10 @@
 <bytarget><status>OK</status>
 <target><id>localhost:9999/db1</id>
 <name>db1</name>
-<hits>0</hits>
-<diagnostic>10000</diagnostic>
-<addinfo>localhost:9999/db1</addinfo>
-<records>0</records>
-<state>Client_Error</state>
+<hits>22</hits>
+<diagnostic>0</diagnostic>
+<records>22</records>
+<state>Client_Idle</state>
 </target>
 <target><id>id_solr</id>
 <name>LOC (SOLR)</name>

@@ -2,9 +2,8 @@
 <bytarget><status>OK</status>
 <target><id>localhost:9999/db1</id>
 <name>db1</name>
-<hits>0</hits>
-<diagnostic>10000</diagnostic>
-<addinfo>localhost:9999/db1</addinfo>
-<records>0</records>
-<state>Client_Error</state>
+<hits>7</hits>
+<diagnostic>0</diagnostic>
+<records>7</records>
+<state>Client_Idle</state>
 </target></bytarget>
