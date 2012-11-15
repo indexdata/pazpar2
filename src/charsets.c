@@ -36,16 +36,17 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "charsets.h"
 #include "normalize7bit.h"
 
-#if YAZ_HAVE_ICU
-#include <yaz/icu.h>
-#endif
-
 typedef struct pp2_charset_s *pp2_charset_t;
 static pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node);
-static pp2_charset_t pp2_charset_create(struct icu_chain * icu_chn);
+static pp2_charset_t pp2_charset_create(void);
 static pp2_charset_t pp2_charset_create_a_to_z(void);
 static void pp2_charset_destroy(pp2_charset_t pct);
 static pp2_charset_token_t pp2_charset_tokenize(pp2_charset_t pct);
+
+#if YAZ_HAVE_ICU
+#include <yaz/icu.h>
+static pp2_charset_t pp2_charset_create_icu(struct icu_chain *icu_chn);
+#endif
 
 /* charset handle */
 struct pp2_charset_s {
@@ -105,7 +106,7 @@ pp2_charset_fact_t pp2_charset_fact_create(void)
     pp2_charset_fact_add(pft, pp2_charset_create_a_to_z(), "relevance");
     pp2_charset_fact_add(pft, pp2_charset_create_a_to_z(), "sort");
     pp2_charset_fact_add(pft, pp2_charset_create_a_to_z(), "mergekey");
-    pp2_charset_fact_add(pft, pp2_charset_create(0), "facet");
+    pp2_charset_fact_add(pft, pp2_charset_create(), "facet");
     return pft;
 }
 
@@ -207,7 +208,7 @@ pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
                 xml_node->name, xml_node->name);
         return 0;
     }
-    return pp2_charset_create(chain);
+    return pp2_charset_create_icu(chain);
 #else // YAZ_HAVE_ICU
     yaz_log(YLOG_FATAL, "Error: ICU support requested with element:\n"
             "<%s>\n ... \n</%s>",
@@ -218,14 +219,7 @@ pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
 #endif // YAZ_HAVE_ICU
 }
 
-pp2_charset_t pp2_charset_create_a_to_z(void)
-{
-    pp2_charset_t pct = pp2_charset_create(0);
-    pct->token_next_handler = pp2_charset_token_a_to_z;
-    return pct;
-}
-
-pp2_charset_t pp2_charset_create(struct icu_chain *icu_chn)
+pp2_charset_t pp2_charset_create(void)
 {
     pp2_charset_t pct = xmalloc(sizeof(*pct));
 
@@ -234,6 +228,21 @@ pp2_charset_t pp2_charset_create(struct icu_chain *icu_chn)
     pct->get_display_handler  = pp2_get_display_ascii;
 #if YAZ_HAVE_ICU
     pct->icu_chn = 0;
+#endif // YAZ_HAVE_ICU
+    return pct;
+}
+
+pp2_charset_t pp2_charset_create_a_to_z(void)
+{
+    pp2_charset_t pct = pp2_charset_create();
+    pct->token_next_handler = pp2_charset_token_a_to_z;
+    return pct;
+}
+
+#if YAZ_HAVE_ICU
+pp2_charset_t pp2_charset_create_icu(struct icu_chain *icu_chn)
+{
+    pp2_charset_t pct = pp2_charset_create();
     if (icu_chn)
     {
         pct->icu_chn = icu_chn;
@@ -242,9 +251,9 @@ pp2_charset_t pp2_charset_create(struct icu_chain *icu_chn)
         pct->get_sort_handler = pp2_get_sort_icu;
         pct->get_display_handler = pp2_get_display_icu;
     }
-#endif // YAZ_HAVE_ICU
     return pct;
 }
+#endif // YAZ_HAVE_ICU
 
 void pp2_charset_destroy(pp2_charset_t pct)
 {
