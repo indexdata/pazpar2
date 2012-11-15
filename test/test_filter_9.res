@@ -11,8 +11,8 @@
  <md-subject>Bible. O.T</md-subject>
  <md-subject>Bible</md-subject>
  <md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
- <location id="localhost:9999/Slow"
-    name="ztest slow" checksum="2524395371">
+ <location id="localhost:9999"
+    name="ztest slow" checksum="459409883">
   <md-title>The Computer Bible</md-title>
   <md-date>1973-1980</md-date>
   <md-subject>Bible. O.T</md-subject>
@@ -32,8 +32,8 @@
  <md-subject>Cartography</md-subject>
  <md-subject>Puget Sound region (Wash.)</md-subject>
  <md-description>Scale of maps ca. 1:1,000,000</md-description>
- <location id="localhost:9999/Slow"
-    name="ztest slow" checksum="3271115080">
+ <location id="localhost:9999"
+    name="ztest slow" checksum="4243010308">
   <md-title>The Puget Sound Region</md-title>
   <md-title-remainder>a portfolio of thematic computer maps</md-title-remainder>
   <md-date>1974</md-date>
@@ -53,8 +53,8 @@
  <md-date>1977</md-date>
  <md-subject>Tomography</md-subject>
  <md-description>Includes bibliographical references and index</md-description>
- <location id="localhost:9999/Slow"
-    name="ztest slow" checksum="4017834789">
+ <location id="localhost:9999"
+    name="ztest slow" checksum="3731643437">
   <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
   <md-title-remainder>proceedings of the workshop</md-title-remainder>
   <md-date>1977</md-date>
@@ -73,8 +73,8 @@
  <md-subject>Scintillation cameras</md-subject>
  <md-subject>Imaging systems in medicine</md-subject>
  <md-description>Includes bibliographical references and index</md-description>
- <location id="localhost:9999/Slow"
-    name="ztest slow" checksum="1777675662">
+ <location id="localhost:9999"
+    name="ztest slow" checksum="970776754">
   <md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
   <md-title-remainder>the proceedings of a workshop</md-title-remainder>
   <md-date>1974</md-date>
@@ -92,8 +92,8 @@
  <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
  <md-date>1977</md-date>
  <md-subject>Optical pattern recognition</md-subject>
- <location id="localhost:9999/Slow"
-    name="ztest slow" checksum="469587202">
+ <location id="localhost:9999"
+    name="ztest slow" checksum="3220276566">
   <md-title>Computer science &amp; technology</md-title>
   <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
   <md-date>1977</md-date>
@@ -106,13 +106,13 @@
 <hit>
  <md-title>How to program a computer</md-title>
  <md-author>Jack Collins</md-author>
- <location id="localhost:9999/Slow"
-    name="ztest slow" checksum="1030955953">
+ <location id="localhost:9999"
+    name="ztest slow" checksum="1482143625">
   <md-title>How to program a computer</md-title>
   <md-author>Jack Collins</md-author>
  </location>
- <location id="localhost:9999/Slow"
-    name="ztest slow" checksum="284236244">
+ <location id="localhost:9999"
+    name="ztest slow" checksum="1993510496">
   <md-title>How to program a computer</md-title>
   <md-author>Jack Collins</md-author>
  </location>

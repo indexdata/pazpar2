@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<termlist><activeclients>1</activeclients>
+<termlist><activeclients>0</activeclients>
 <list name="author">
 <term><name>Adam, James</name><frequency>1</frequency></term>
 <term><name>Carter, Bill</name><frequency>1</frequency></term>
