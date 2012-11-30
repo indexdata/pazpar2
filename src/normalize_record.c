@@ -178,6 +178,12 @@ int normalize_record_transform(normalize_record_t nt, xmlDoc **doc,
                 *doc = ndoc;
             else
 	    {
+                if (!ndoc)
+                    yaz_log(YLOG_WARN, "XSLT produced no document");
+                else if (!root)
+                    yaz_log(YLOG_WARN, "XSLT produced XML with no root node");
+                else if (!root->children)
+                    yaz_log(YLOG_WARN, "XSLT produced XML with no root children nodes");
 		if (ndoc)
 		    xmlFreeDoc(ndoc);
 		return -1;

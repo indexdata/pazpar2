@@ -256,8 +256,7 @@ static xmlDoc *record_to_xml(struct session *se,
 
     if (!rdoc)
     {
-        session_log(se, YLOG_FATAL, "Non-wellformed XML received from %s",
-                    db->id);
+        session_log(se, YLOG_WARN, "Non-wellformed XML");
         return 0;
     }
 
@@ -350,8 +349,7 @@ static xmlDoc *normalize_record(struct session *se,
 
         if (normalize_record_transform(sdb->map, &rdoc, (const char **)parms))
         {
-            session_log(se, YLOG_WARN, "Normalize failed from %s",
-                        sdb->database->id);
+            session_log(se, YLOG_WARN, "Normalize failed");
         }
         else
         {

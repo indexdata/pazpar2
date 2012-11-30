@@ -582,17 +582,18 @@ static void client_record_ingest(struct client *cl)
     const char *msg, *addinfo;
     ZOOM_record rec = 0;
     ZOOM_resultset resultset = cl->resultset;
-    int offset = cl->record_offset;
-    if ((rec = ZOOM_resultset_record_immediate(resultset, offset)))
+    struct session *se = client_get_session(cl);
+
+    if ((rec = ZOOM_resultset_record_immediate(resultset, cl->record_offset)))
     {
-        cl->record_offset++;
+        int offset = ++cl->record_offset;
         if (cl->session == 0) {
             /* no operation */
         }
         else if (ZOOM_record_error(rec, &msg, &addinfo, 0))
         {
-            yaz_log(YLOG_WARN, "Record error %s (%s): %s (rec #%d)",
-                    msg, addinfo, client_get_id(cl), cl->record_offset);
+            session_log(se, YLOG_WARN, "Record error %s (%s): %s #%d",
+                        msg, addinfo, client_get_id(cl), offset);
         }
         else
         {
@@ -603,17 +604,33 @@ static void client_record_ingest(struct client *cl)
 
             const char *s = session_setting_oneval(sdb, PZ_NATIVESYNTAX);
             if (nativesyntax_to_type(s, type, rec))
-                yaz_log(YLOG_WARN, "Failed to determine record type");
+                session_log(se, YLOG_WARN, "Failed to determine record type");
             xmlrec = ZOOM_record_get(rec, type, NULL);
             if (!xmlrec)
-                yaz_log(YLOG_WARN, "ZOOM_record_get failed from %s",
-                        client_get_id(cl));
+            {
+                const char *rec_syn =  ZOOM_record_get(rec, "syntax", NULL);
+                session_log(se, YLOG_WARN, "ZOOM_record_get failed from %s #%d",
+                            client_get_id(cl), offset);
+                session_log(se, YLOG_LOG, "pz:nativesyntax=%s . "
+                            "ZOOM record type=%s . Actual record syntax=%s",
+                            s ? s : "null", type,
+                            rec_syn ? rec_syn : "null");
+            }
             else
             {
                 /* OK = 0, -1 = failure, -2 = Filtered */
                 int rc = ingest_record(cl, xmlrec, cl->record_offset, nmem);
                 if (rc == -1)
-                    yaz_log(YLOG_WARN, "Failed to ingest from %s", client_get_id(cl));
+                {
+                    const char *rec_syn =  ZOOM_record_get(rec, "syntax", NULL);
+                    session_log(se, YLOG_WARN,
+                                "Failed to ingest record from %s #%d",
+                                client_get_id(cl), offset);
+                    session_log(se, YLOG_LOG, "pz:nativesyntax=%s . "
+                                "ZOOM record type=%s . Actual record syntax=%s",
+                                s ? s : "null", type,
+                                rec_syn ? rec_syn : "null");
+                }
                 if (rc == -2)
                     cl->filtered += 1;
             }
@@ -622,7 +639,8 @@ static void client_record_ingest(struct client *cl)
     }
     else
     {
-        yaz_log(YLOG_WARN, "Expected record, but got NULL, offset=%d", offset);
+        session_log(se, YLOG_WARN, "Got NULL record from %s #%d",
+                    client_get_id(cl), cl->record_offset);
     }
 }
 
