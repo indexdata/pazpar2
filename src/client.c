@@ -119,6 +119,7 @@ struct client {
     int maxrecs;
     int startrecs;
     int diagnostic;
+    char *message;
     int preferred;
     struct suggestions *suggestions;
     enum client_state state;
@@ -933,6 +934,7 @@ struct client *client_create(const char *id)
     cl->pquery = 0;
     cl->cqlquery = 0;
     cl->addinfo = 0;
+    cl->message = 0;
     cl->database = 0;
     cl->connection = 0;
     cl->session = 0;
@@ -989,6 +991,8 @@ int client_destroy(struct client *c)
             c->cqlquery = 0;
             xfree(c->addinfo);
             c->addinfo = 0;
+            xfree(c->message);
+            c->message = 0;
             xfree(c->id);
             xfree(c->sort_strategy);
             xfree(c->sort_criteria);
@@ -1055,7 +1059,9 @@ static CCL_bibset prepare_cclmap(struct client *cl, CCL_bibset base_bibset)
             WRBUF w = wrbuf_alloc();
             wrbuf_printf(w, "Malformed cclmap. name=%s", s->name);
             yaz_log(YLOG_WARN, "%s: %s", client_get_id(cl), wrbuf_cstr(w));
-            client_set_diagnostic(cl, ZOOM_ERROR_CCL_CONFIG, wrbuf_cstr(w));
+            client_set_diagnostic(cl, ZOOM_ERROR_CCL_CONFIG,
+                                  ZOOM_diag_str(ZOOM_ERROR_CCL_CONFIG),
+                                  wrbuf_cstr(w));
             client_set_state_nb(cl, Client_Error);
             ccl_qual_rm(&res);
             wrbuf_destroy(w);
@@ -1069,7 +1075,9 @@ static CCL_bibset prepare_cclmap(struct client *cl, CCL_bibset base_bibset)
             wrbuf_printf(w, "Malformed cclmap. name=%s: value=%s (%s)",
                          s->name, p, addinfo);
             yaz_log(YLOG_WARN, "%s: %s", client_get_id(cl), wrbuf_cstr(w));
-            client_set_diagnostic(cl, ZOOM_ERROR_CCL_CONFIG, wrbuf_cstr(w));
+            client_set_diagnostic(cl, ZOOM_ERROR_CCL_CONFIG,
+                                  ZOOM_diag_str(ZOOM_ERROR_CCL_CONFIG),
+                                  wrbuf_cstr(w));
             client_set_state_nb(cl, Client_Error);
             ccl_qual_rm(&res);
             wrbuf_destroy(w);
@@ -1494,17 +1502,22 @@ int client_get_num_records_filtered(struct client *cl)
 }
 
 void client_set_diagnostic(struct client *cl, int diagnostic,
-                           const char *addinfo)
+                           const char *message, const char *addinfo)
 {
     cl->diagnostic = diagnostic;
+    xfree(cl->message);
+    cl->message = xstrdup(message);
     xfree(cl->addinfo);
     cl->addinfo = 0;
     if (addinfo)
         cl->addinfo = xstrdup(addinfo);
 }
 
-int client_get_diagnostic(struct client *cl, const char **addinfo)
+int client_get_diagnostic(struct client *cl, const char **message,
+                          const char **addinfo)
 {
+    if (message)
+        *message = cl->message;
     if (addinfo)
         *addinfo = cl->addinfo;
     return cl->diagnostic;

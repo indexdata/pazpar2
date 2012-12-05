@@ -96,9 +96,10 @@ Odr_int client_get_hits(struct client *cl);
 Odr_int client_get_approximation(struct client *cl);
 int client_get_num_records(struct client *cl);
 int client_get_num_records_filtered(struct client *cl);
-int client_get_diagnostic(struct client *cl, const char **addinfo);
+int client_get_diagnostic(struct client *cl,
+                          const char **message, const char **addinfo);
 void client_set_diagnostic(struct client *cl, int diagnostic,
-                           const char *addinfo);
+                           const char *message, const char *addinfo);
 void client_set_database(struct client *cl, struct session_database *db);
 const char *client_get_id(struct client *cl);
 int  client_get_maxrecs(struct client *cl);

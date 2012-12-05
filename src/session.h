@@ -140,6 +140,7 @@ struct hitsbytarget {
     Odr_int hits;
     Odr_int approximation;
     int diagnostic;
+    const char *message;
     const char *addinfo;
     int records;
     int filtered;

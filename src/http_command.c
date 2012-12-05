@@ -726,6 +726,9 @@ static void bytarget_response(struct http_channel *c, struct http_session *s, co
         wrbuf_printf(c->wrbuf, "<diagnostic>%d</diagnostic>\n", ht[i].diagnostic);
         if (ht[i].diagnostic)
         {
+            wrbuf_puts(c->wrbuf, "<message>");
+            wrbuf_xmlputs(c->wrbuf, ht[i].message);
+            wrbuf_puts(c->wrbuf, "</message>\n");
             wrbuf_puts(c->wrbuf, "<addinfo>");
             if (ht[i].addinfo)
                 wrbuf_xmlputs(c->wrbuf, ht[i].addinfo);

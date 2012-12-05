@@ -1014,7 +1014,8 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
         res[*count].records = client_get_num_records(cl);
         res[*count].filtered = client_get_num_records_filtered(cl);
         res[*count].diagnostic =
-            client_get_diagnostic(cl, &res[*count].addinfo);
+            client_get_diagnostic(cl, &res[*count].message,
+                                  &res[*count].addinfo);
         res[*count].state = client_get_state_str(cl);
         res[*count].connected  = client_get_connection(cl) ? 1 : 0;
         session_settings_dump(se, client_get_database(cl), w);

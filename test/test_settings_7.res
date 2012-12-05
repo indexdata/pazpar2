@@ -4,6 +4,7 @@
 <name>Target name</name>
 <hits>0</hits>
 <diagnostic>114</diagnostic>
+<message>Unsupported Use attribute</message>
 <addinfo>host_wildcard</addinfo>
 <records>0</records>
 <state>Client_Error</state>

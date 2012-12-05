@@ -224,7 +224,7 @@ static void non_block_events(struct connection *co)
                 {
                     yaz_log(YLOG_LOG, "Error %s from %s",
                             error, client_get_id(cl));
-                    client_set_diagnostic(cl, err, addinfo);
+                    client_set_diagnostic(cl, err, error, addinfo);
                     client_set_state(cl, Client_Error);
                 }
                 else
@@ -288,7 +288,7 @@ void connection_continue(struct connection *co)
             {
                 yaz_log(YLOG_LOG, "Error %s from %s",
                         error, client_get_id(co->client));
-                client_set_diagnostic(co->client, err, addinfo);
+                client_set_diagnostic(co->client, err, error, addinfo);
                 client_set_state_nb(co->client, Client_Error);
             }
         }
