@@ -1474,6 +1474,12 @@
        by a field a metadata field (default is to use the name of the 
        limitmap itself).
       </para>
+      <para>
+       For Pazpar2 version 1.6.23 and later the limitmap may include multiple
+       specifications, separated by <literal>,</literal> (comma).
+       For example:
+       <literal>ccl:title,local:ltitle,rpn:@attr 1=4</literal>.
+      </para>
       <note>
        <para>
 	The limitmap facility is supported for Pazpar2 version 1.6.0.

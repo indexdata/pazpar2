@@ -1144,17 +1144,28 @@ const char *client_get_facet_limit_local(struct client *cl,
         for (s = sdb->settings[PZ_LIMITMAP]; s; s = s->next)
         {
             const char *p = strchr(s->name + 3, ':');
-            if (p && !strcmp(p + 1, name) && s->value &&
-                !strncmp(s->value, "local:", 6))
+            if (p && !strcmp(p + 1, name) && s->value)
             {
-                const char *cp = s->value + 6;
-                while (*cp == ' ')
-                    cp++;
-
-                nmem_strsplit_escape2(nmem, "|", value, values,
-                                      num, 1, '\\', 1);
-                (*l)++;
-                return *cp ? cp : name;
+                int j, cnum;
+                char **cvalues;
+                nmem_strsplit_escape2(nmem, ",", s->value, &cvalues,
+                                      &cnum, 1, '\\', 1);
+                for (j = 0; j < cnum; j++)
+                {
+                    const char *cvalue = cvalues[j];
+                    while (*cvalue == ' ')
+                        cvalue++;
+                    if (!strncmp(cvalue, "local:", 6))
+                    {
+                        const char *cp = cvalue + 6;
+                        while (*cp == ' ')
+                            cp++;
+                        nmem_strsplit_escape2(nmem, "|", value, values,
+                                              num, 1, '\\', 1);
+                        (*l)++;
+                        return *cp ? cp : name;
+                    }
+                }
             }
         }
     }
@@ -1175,6 +1186,7 @@ static int apply_limit(struct session_database *sdb,
     {
         struct setting *s = 0;
         nmem_reset(nmem_tmp);
+        /* name="pz:limitmap:author" value="rpn:@attr 1=4|local:other" */
         for (s = sdb->settings[PZ_LIMITMAP]; s; s = s->next)
         {
             const char *p = strchr(s->name + 3, ':');
@@ -1182,66 +1194,76 @@ static int apply_limit(struct session_database *sdb,
             {
                 char **values = 0;
                 int i, num = 0;
+                char **cvalues = 0;
+                int j, cnum = 0;
                 nmem_strsplit_escape2(nmem_tmp, "|", value, &values,
                                       &num, 1, '\\', 1);
 
-                if (!strncmp(s->value, "rpn:", 4))
+                nmem_strsplit_escape2(nmem_tmp, ",", s->value, &cvalues,
+                                      &cnum, 1, '\\', 1);
+
+                for (j = 0; ret == 0 && j < cnum; j++)
                 {
-                    const char *pqf = s->value + 4;
-
-                    wrbuf_puts(w_pqf, "@and ");
-                    wrbuf_puts(w_pqf, pqf);
-                    wrbuf_puts(w_pqf, " ");
-                    for (i = 0; i < num; i++)
+                    const char *cvalue = cvalues[j];
+                    while (*cvalue == ' ')
+                        cvalue++;
+                    if (!strncmp(cvalue, "rpn:", 4))
                     {
-                        if (i < num - 1)
-                            wrbuf_puts(w_pqf, "@or ");
-                        yaz_encode_pqf_term(w_pqf, values[i],
-                                            strlen(values[i]));
-                    }
-                }
-                else if (!strncmp(s->value, "ccl:", 4))
-                {
-                    const char *ccl = s->value + 4;
-                    WRBUF ccl_w = wrbuf_alloc();
-                    for (i = 0; i < num; i++)
-                    {
-                        int cerror, cpos;
-                        struct ccl_rpn_node *cn;
-
-                        wrbuf_rewind(ccl_w);
-                        wrbuf_puts(ccl_w, ccl);
-                        wrbuf_puts(ccl_w, "=\"");
-                        wrbuf_puts(ccl_w, values[i]);
-                        wrbuf_puts(ccl_w, "\"");
-
-                        cn = ccl_find_str(ccl_map, wrbuf_cstr(ccl_w),
-                                          &cerror, &cpos);
-                        if (cn)
+                        const char *pqf = cvalue + 4;
+                        wrbuf_puts(w_pqf, "@and ");
+                        wrbuf_puts(w_pqf, pqf);
+                        wrbuf_puts(w_pqf, " ");
+                        for (i = 0; i < num; i++)
                         {
-                            if (i == 0)
-                                wrbuf_printf(w_pqf, "@and ");
-
-                            /* or multiple values.. could be bad if last CCL
-                               parse fails, but this is unlikely to happen */
                             if (i < num - 1)
-                                wrbuf_printf(w_pqf, "@or ");
-                            ccl_pquery(w_pqf, cn);
-                            ccl_rpn_delete(cn);
+                                wrbuf_puts(w_pqf, "@or ");
+                            yaz_encode_pqf_term(w_pqf, values[i],
+                                                strlen(values[i]));
                         }
                     }
-                    wrbuf_destroy(ccl_w);
+                    else if (!strncmp(cvalue, "ccl:", 4))
+                    {
+                        const char *ccl = cvalue + 4;
+                        WRBUF ccl_w = wrbuf_alloc();
+                        for (i = 0; i < num; i++)
+                        {
+                            int cerror, cpos;
+                            struct ccl_rpn_node *cn;
+                            wrbuf_rewind(ccl_w);
+                            wrbuf_puts(ccl_w, ccl);
+                            wrbuf_puts(ccl_w, "=\"");
+                            wrbuf_puts(ccl_w, values[i]);
+                            wrbuf_puts(ccl_w, "\"");
+
+                            cn = ccl_find_str(ccl_map, wrbuf_cstr(ccl_w),
+                                              &cerror, &cpos);
+                            if (cn)
+                            {
+                                if (i == 0)
+                                    wrbuf_printf(w_pqf, "@and ");
+
+                                /* or multiple values.. could be bad if last
+                                   CCL parse fails, but this is unlikely to
+                                   happen */
+                                if (i < num - 1)
+                                    wrbuf_printf(w_pqf, "@or ");
+                                ccl_pquery(w_pqf, cn);
+                                ccl_rpn_delete(cn);
+                            }
+                        }
+                        wrbuf_destroy(ccl_w);
+                    }
+                    else if (!strncmp(cvalue, "local:", 6)) {
+                        /* no operation */
+                    }
+                    else
+                    {
+                        yaz_log(YLOG_WARN, "Target %s: Bad limitmap '%s'",
+                                sdb->database->id, cvalue);
+                        ret = -1; /* bad limitmap */
+                    }
+                    break;
                 }
-                else if (!strncmp(s->value, "local:", 6)) {
-                    /* no operation */
-                }
-                else
-                {
-                    yaz_log(YLOG_WARN, "Target %s: Bad limitmap '%s'",
-                            sdb->database->id, s->value);
-                    ret = -1; /* bad limitmap */
-                }
-                break;
             }
         }
         if (!s)
