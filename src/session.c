@@ -1619,6 +1619,46 @@ int ingest_record(struct client *cl, const char *rec,
     return ret;
 }
 
+static int match_metadata_local(struct record *record,
+                                struct conf_service *service,
+                                int md_field_id,
+                                char **values, int num_v)
+{
+    int i;
+    struct conf_metadata *ser_md = &service->metadata[md_field_id];
+    struct record_metadata *rec_md = record->metadata[md_field_id];
+    for (i = 0; i < num_v; )
+    {
+        if (rec_md)
+        {
+            if (ser_md->type == Metadata_type_year
+                || ser_md->type == Metadata_type_date)
+            {
+                int y = atoi(values[i]);
+                if (y >= rec_md->data.number.min
+                    && y <= rec_md->data.number.max)
+                    break;
+            }
+            else
+            {
+                yaz_log(YLOG_DEBUG, "cmp: '%s' '%s'", rec_md->data.text.disp, values[i]);
+                if (!strcmp(rec_md->data.text.disp, values[i]))
+                {
+                    // Value equals, should not be filtered.
+                    break;
+                }
+            }
+            rec_md = rec_md->next;
+        }
+        else
+        {
+            rec_md = record->metadata[md_field_id];
+            i++;
+        }
+    }
+    return i < num_v ? 1 : 0;
+}
+
 // Skip record on non-zero
 static int check_limit_local(struct client *cl,
                              struct record *record,
@@ -1632,13 +1672,12 @@ static int check_limit_local(struct client *cl,
     int l = 0;
     while (!skip_record)
     {
-        struct conf_metadata *ser_md = 0;
-        struct record_metadata *rec_md = 0;
         int md_field_id;
         char **values = 0;
-        int i, num_v = 0;
-
-        const char *name = client_get_facet_limit_local(cl, sdb, &l, nmem_tmp, &num_v, &values);
+        int num_v = 0;
+        const char *name =
+            client_get_facet_limit_local(cl, sdb, &l, nmem_tmp,
+                                         &num_v, &values);
         if (!name)
             break;
 
@@ -1648,40 +1687,8 @@ static int check_limit_local(struct client *cl,
             skip_record = 1;
             break;
         }
-        ser_md = &service->metadata[md_field_id];
-        rec_md = record->metadata[md_field_id];
-        yaz_log(YLOG_DEBUG, "check limit local %s", name);
-        for (i = 0; i < num_v; )
-        {
-            if (rec_md)
-            {
-                if (ser_md->type == Metadata_type_year
-                    || ser_md->type == Metadata_type_date)
-                {
-                    int y = atoi(values[i]);
-                    if (y >= rec_md->data.number.min
-                        && y <= rec_md->data.number.max)
-                        break;
-                }
-                else
-                {
-                    yaz_log(YLOG_DEBUG, "cmp: '%s' '%s'", rec_md->data.text.disp, values[i]);
-                    if (!strcmp(rec_md->data.text.disp, values[i]))
-                    {
-                        // Value equals, should not be filtered.
-                        break;
-                    }
-                }
-                rec_md = rec_md->next;
-            }
-            else
-            {
-                rec_md = record->metadata[md_field_id];
-                i++;
-            }
-        }
-        // At end , not match
-        if (i == num_v)
+        if (!match_metadata_local(record, service, md_field_id,
+                                  values, num_v))
         {
             skip_record = 1;
             break;
