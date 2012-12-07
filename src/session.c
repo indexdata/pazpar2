@@ -1681,17 +1681,31 @@ static int check_limit_local(struct client *cl,
         if (!name)
             break;
 
-        md_field_id = conf_service_metadata_field_id(service, name);
-        if (md_field_id < 0)
+        if (!strcmp(name, "*"))
         {
-            skip_record = 1;
-            break;
+            for (md_field_id = 0; md_field_id < service->num_metadata;
+                 md_field_id++)
+            {
+                if (match_metadata_local(record, service, md_field_id,
+                                         values, num_v))
+                    break;
+            }
+            if (md_field_id == service->num_metadata)
+                skip_record = 1;
         }
-        if (!match_metadata_local(record, service, md_field_id,
-                                  values, num_v))
+        else
         {
-            skip_record = 1;
-            break;
+            md_field_id = conf_service_metadata_field_id(service, name);
+            if (md_field_id < 0)
+            {
+                skip_record = 1;
+                break;
+            }
+            if (!match_metadata_local(record, service, md_field_id,
+                                      values, num_v))
+            {
+                skip_record = 1;
+            }
         }
     }
     nmem_destroy(nmem_tmp);
