@@ -405,7 +405,8 @@ static void cmd_exit(struct http_channel *c)
 
     response_open(c, "exit");
     response_close(c, "exit");
-    http_close_server(c->server);
+    if (global_parameters.debug_mode)
+        http_close_server(c->server);
 }
 
 static void cmd_init(struct http_channel *c)
