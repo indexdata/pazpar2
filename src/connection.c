@@ -216,6 +216,8 @@ static void non_block_events(struct connection *co)
 #endif
         switch (ev)
         {
+        case ZOOM_EVENT_TIMEOUT:
+            break;
         case ZOOM_EVENT_END:
             {
                 const char *error, *addinfo;
@@ -320,22 +322,14 @@ static void connection_handler(IOCHAN iochan, int event)
     }
     else if (event & EVENT_TIMEOUT)
     {
-        if (co->state == Conn_Connecting)
-        {
-            yaz_log(YLOG_WARN, "%p connect timeout %s", co, client_get_id(cl));
+        ZOOM_connection_fire_event_timeout(co->link);
+        client_lock(cl);
+        non_block_events(co);
+        client_unlock(cl);
 
-            client_set_state(cl, Client_Error);
-            remove_connection_from_host(co);
-            yaz_mutex_leave(host->mutex);
-            connection_destroy(co);
-        }
-        else
-        {
-            yaz_log(YLOG_LOG,  "%p Connection idle timeout %s", co, client_get_id(cl));
-            remove_connection_from_host(co);
-            yaz_mutex_leave(host->mutex);
-            connection_destroy(co);
-        }
+        remove_connection_from_host(co);
+        yaz_mutex_leave(host->mutex);
+        connection_destroy(co);
     }
     else
     {
