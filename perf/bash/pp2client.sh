@@ -93,6 +93,7 @@ if [ "$TIME" != "" ] ; then
 else
     wget -q -O ${TMP_DIR}$OF.show.xml "$H?command=show&session=$S&sort=relevance&start=0&num=100&block=1"
 fi
+wget -q -O ${TMP_DIR}$OF.bytarget.xml "$H?command=bytarget&session=$S"
 exit 0
 
 # Local Variables:
