@@ -1,3 +1,9 @@
+pazpar2 (1.6.22-2indexdata) unstabl; urgency=low
+
+  * Testing diagnostics for timeout
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Tue, 11 Dec 2012 12:56:15 +0100
+
 pazpar2 (1.6.22-1indexdata) unstable; urgency=low
 
   * Upstream.
