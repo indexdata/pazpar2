@@ -1,4 +1,10 @@
-pazpar2 (1.6.22-2indexdata) unstabl; urgency=low
+pazpar2 (1.6.22-3indexdata) unstable; urgency=low
+
+  * Testing filter on merged metadata.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Fri, 14 Dec 2012 17:23:39 +0100
+
+pazpar2 (1.6.22-2indexdata) unstable; urgency=low
 
   * Testing diagnostics for timeout
 
