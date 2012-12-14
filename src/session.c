@@ -734,7 +734,6 @@ enum pazpar2_error_code session_search(struct session *se,
     int no_failed_query = 0;
     int no_failed_limit = 0;
     struct client_list *l, *l0;
-    facet_limits_t facet_limits;
     int same_sort_order = 0;
 
     session_log(se, YLOG_DEBUG, "Search");
@@ -764,8 +763,9 @@ enum pazpar2_error_code session_search(struct session *se,
         return PAZPAR2_NO_TARGETS;
     }
 
-    facet_limits = facet_limits_create(limit);
-    if (!facet_limits)
+    facet_limits_destroy(se->facet_limits);
+    se->facet_limits = facet_limits_create(limit);
+    if (!se->facet_limits)
     {
         *addinfo = "limit";
         session_leave(se, "session_search");
@@ -784,7 +784,7 @@ enum pazpar2_error_code session_search(struct session *se,
         if (prepare_map(se, client_get_database(cl)) < 0)
             continue;
 
-        parse_ret = client_parse_query(cl, query, facet_limits, se->service->ccl_bibset);
+        parse_ret = client_parse_query(cl, query, se->facet_limits);
         if (parse_ret == -1)
             no_failed_query++;
         else if (parse_ret == -2)
@@ -799,7 +799,6 @@ enum pazpar2_error_code session_search(struct session *se,
             no_working++;
         }
     }
-    facet_limits_destroy(facet_limits);
     session_reset_active_clients(se, l0);
 
     if (no_working == 0)
@@ -931,6 +930,7 @@ void session_destroy(struct session *se)
         session_log(se, YLOG_DEBUG, "NMEN operation usage %zd", nmem_total(se->nmem));
     if (nmem_total(se->session_nmem))
         session_log(se, YLOG_DEBUG, "NMEN session usage %zd", nmem_total(se->session_nmem));
+    facet_limits_destroy(se->facet_limits);
     nmem_destroy(se->nmem);
     service_destroy(se->service);
     yaz_mutex_destroy(&se->session_mutex);
@@ -973,6 +973,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->nmem = nmem_create();
     session->databases = 0;
     session->sorted_results = 0;
+    session->facet_limits = 0;
 
     for (i = 0; i <= SESSION_WATCH_MAX; i++)
     {
@@ -1208,6 +1209,8 @@ struct record_cluster *show_single_start(struct session *se, const char *id,
     *next_r = 0;
     if (se->reclist)
     {
+        reclist_limit(se->reclist, se);
+
         reclist_enter(se->reclist);
         while ((r = reclist_read_record(se->reclist)))
         {
@@ -1229,6 +1232,7 @@ void show_single_stop(struct session *se, struct record_cluster *rec)
 {
     session_leave(se, "show_single_stop");
 }
+
 
 struct record_cluster **show_range_start(struct session *se,
                                          struct reclist_sortparms *sp,
@@ -1253,6 +1257,8 @@ struct record_cluster **show_range_start(struct session *se,
     else
     {
         struct client_list *l;
+
+        reclist_limit(se->reclist, se);
 
         for (spp = sp; spp; spp = spp->next)
             if (spp->type == Metadata_sortkey_relevance)
@@ -1619,14 +1625,14 @@ int ingest_record(struct client *cl, const char *rec,
     return ret;
 }
 
-static int match_metadata_local(struct record *record,
-                                struct conf_service *service,
-                                int md_field_id,
+//    struct conf_metadata *ser_md = &service->metadata[md_field_id];
+//    struct record_metadata *rec_md = record->metadata[md_field_id];
+static int match_metadata_local(struct conf_metadata *ser_md,
+                                struct record_metadata *rec_md0,
                                 char **values, int num_v)
 {
     int i;
-    struct conf_metadata *ser_md = &service->metadata[md_field_id];
-    struct record_metadata *rec_md = record->metadata[md_field_id];
+    struct record_metadata *rec_md = rec_md0;
     for (i = 0; i < num_v; )
     {
         if (rec_md)
@@ -1652,11 +1658,57 @@ static int match_metadata_local(struct record *record,
         }
         else
         {
-            rec_md = record->metadata[md_field_id];
+            rec_md = rec_md0;
             i++;
         }
     }
     return i < num_v ? 1 : 0;
+}
+
+int session_check_cluster_limit(struct session *se, struct record_cluster *rec)
+{
+    int i;
+    struct conf_service *service = se->service;
+    int ret = 1;
+    const char *name;
+    const char *value;
+    NMEM nmem_tmp = nmem_create();
+
+    for (i = 0; (name = facet_limits_get(se->facet_limits, i, &value)); i++)
+    {
+        int j;
+        for (j = 0; j < service->num_metadata; j++)
+        {
+            struct conf_metadata *md = service->metadata + j;
+            if (!strcmp(md->name, name) && md->limitcluster)
+            {
+                char **values = 0;
+                int num = 0;
+                int md_field_id =
+                    conf_service_metadata_field_id(service,
+                                                   md->limitcluster);
+
+                if (md_field_id < 0)
+                {
+                    ret = 0;
+                    break;
+                }
+
+                nmem_strsplit_escape2(nmem_tmp, "|", value, &values,
+                                      &num, 1, '\\', 1);
+
+                if (!match_metadata_local(&service->metadata[md_field_id],
+                                          rec->metadata[md_field_id],
+                                          values, num))
+                {
+                    ret = 0;
+                    break;
+                }
+            }
+        }
+    }
+    nmem_destroy(nmem_tmp);
+    return ret;
 }
 
 // Skip record on non-zero
@@ -1686,8 +1738,10 @@ static int check_limit_local(struct client *cl,
             for (md_field_id = 0; md_field_id < service->num_metadata;
                  md_field_id++)
             {
-                if (match_metadata_local(record, service, md_field_id,
-                                         values, num_v))
+                if (match_metadata_local(
+                        &service->metadata[md_field_id],
+                        record->metadata[md_field_id],
+                        values, num_v))
                     break;
             }
             if (md_field_id == service->num_metadata)
@@ -1701,8 +1755,10 @@ static int check_limit_local(struct client *cl,
                 skip_record = 1;
                 break;
             }
-            if (!match_metadata_local(record, service, md_field_id,
-                                      values, num_v))
+            if (!match_metadata_local(
+                    &service->metadata[md_field_id],
+                    record->metadata[md_field_id],
+                    values, num_v))
             {
                 skip_record = 1;
             }

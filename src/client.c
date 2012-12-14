@@ -1174,7 +1174,8 @@ const char *client_get_facet_limit_local(struct client *cl,
 
 static int apply_limit(struct session_database *sdb,
                        facet_limits_t facet_limits,
-                       WRBUF w_pqf, CCL_bibset ccl_map)
+                       WRBUF w_pqf, CCL_bibset ccl_map,
+                       struct conf_service *service)
 {
     int ret = 0;
     int i = 0;
@@ -1268,8 +1269,22 @@ static int apply_limit(struct session_database *sdb,
         }
         if (!s)
         {
-            yaz_log(YLOG_WARN, "Target %s: limit %s used, but no limitmap defined",
-                    (sdb->database ? sdb->database->id : "<no id>"), name);
+            int i;
+            for (i = 0; i < service->num_metadata; i++)
+            {
+                struct conf_metadata *md = service->metadata + i;
+                if (!strcmp(md->name, name) && md->limitcluster)
+                {
+                    yaz_log(YLOG_LOG, "limitcluster in use for %s",
+                            md->name);
+                    break;
+                }
+            }
+            if (i == service->num_metadata)
+            {
+                yaz_log(YLOG_WARN, "Target %s: limit %s used, but no limitmap defined",
+                        (sdb->database ? sdb->database->id : "<no id>"), name);
+            }
         }
     }
     nmem_destroy(nmem_tmp);
@@ -1283,15 +1298,15 @@ static int apply_limit(struct session_database *sdb,
 // return -1 on query error
 // return -2 on limit error
 int client_parse_query(struct client *cl, const char *query,
-                       facet_limits_t facet_limits,
-                       CCL_bibset bibset)
+                       facet_limits_t facet_limits)
 {
     struct session *se = client_get_session(cl);
+    struct conf_service *service = se->service;
     struct session_database *sdb = client_get_database(cl);
     struct ccl_rpn_node *cn;
     int cerror, cpos;
     ODR odr_out;
-    CCL_bibset ccl_map = prepare_cclmap(cl, bibset);
+    CCL_bibset ccl_map = prepare_cclmap(cl, service->ccl_bibset);
     const char *sru = session_setting_oneval(sdb, PZ_SRU);
     const char *pqf_prefix = session_setting_oneval(sdb, PZ_PQF_PREFIX);
     const char *pqf_strftime = session_setting_oneval(sdb, PZ_PQF_STRFTIME);
@@ -1313,7 +1328,7 @@ int client_parse_query(struct client *cl, const char *query,
         wrbuf_puts(w_pqf, " ");
     }
 
-    if (apply_limit(sdb, facet_limits, w_pqf, ccl_map))
+    if (apply_limit(sdb, facet_limits, w_pqf, ccl_map, service))
     {
         ccl_qual_rm(&ccl_map);
         return -2;

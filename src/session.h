@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/ccl.h>
 #include <yaz/yaz-ccl.h>
 
+#include "facet_limit.h"
 #include "termlists.h"
 #include "reclists.h"
 #include "http.h"
@@ -119,6 +120,7 @@ struct session {
     YAZ_MUTEX session_mutex;
     unsigned session_id;
     int settings_modified;
+    facet_limits_t facet_limits;
     struct reclist_sortparms *sorted_results;
 };
 
@@ -185,6 +187,7 @@ int ingest_record(struct client *cl, const char *rec, int record_no, NMEM nmem);
 void session_alert_watch(struct session *s, int what);
 void add_facet(struct session *s, const char *type, const char *value, int count);
 
+int session_check_cluster_limit(struct session *se, struct record_cluster *rec);
 
 void perform_termlist(struct http_channel *c, struct session *se, const char *name, int num, int version);
 void session_log(struct session *s, int level, const char *fmt, ...)

@@ -38,7 +38,6 @@ struct reclist
     int num_records;
     struct reclist_bucket *sorted_list;
     struct reclist_bucket *sorted_ptr;
-    struct reclist_bucket **last;
     NMEM nmem;
     YAZ_MUTEX mutex;
 };
@@ -46,8 +45,8 @@ struct reclist
 struct reclist_bucket
 {
     struct record_cluster *record;
-    struct reclist_bucket *hnext;
-    struct reclist_bucket *snext;
+    struct reclist_bucket *hash_next;
+    struct reclist_bucket *sorted_next;
     struct reclist_sortparms *sort_parms;
 };
 
@@ -210,6 +209,35 @@ static int reclist_cmp(const void *p1, const void *p2)
     return res;
 }
 
+void reclist_limit(struct reclist *l, struct session *se)
+{
+    unsigned i;
+    int num = 0;
+    struct reclist_bucket **pp = &l->sorted_list;
+
+    reclist_enter(l);
+    for (i = 0; i < l->hash_size; i++)
+    {
+        struct reclist_bucket *p;
+        for (p = l->hashtable[i]; p; p = p->hash_next)
+        {
+            if (session_check_cluster_limit(se, p->record))
+            {
+                *pp = p;
+                pp = &p->sorted_next;
+                num++;
+            }
+            else
+            {
+                yaz_log(YLOG_LOG, "session_check_cluster returned false");
+            }
+        }
+    }
+    *pp = 0;
+    l->num_records = num;
+    reclist_leave(l);
+}
+
 void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
 {
     struct reclist_bucket **flatlist = xmalloc(sizeof(*flatlist) * l->num_records);
@@ -225,7 +253,7 @@ void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
     {
         ptr->sort_parms = parms;
         flatlist[i] = ptr;
-        ptr = ptr->snext;
+        ptr = ptr->sorted_next;
         i++;
     }
     assert(i == l->num_records);
@@ -234,10 +262,9 @@ void reclist_sort(struct reclist *l, struct reclist_sortparms *parms)
     for (i = 0; i < l->num_records; i++)
     {
         *prev = flatlist[i];
-        prev = &flatlist[i]->snext;
+        prev = &flatlist[i]->sorted_next;
     }
     *prev = 0;
-    l->last = prev;
 
     xfree(flatlist);
 
@@ -249,7 +276,7 @@ struct record_cluster *reclist_read_record(struct reclist *l)
     if (l && l->sorted_ptr)
     {
         struct record_cluster *t = l->sorted_ptr->record;
-        l->sorted_ptr = l->sorted_ptr->snext;
+        l->sorted_ptr = l->sorted_ptr->sorted_next;
         return t;
     }
     else
@@ -283,7 +310,6 @@ struct reclist *reclist_create(NMEM nmem)
 
     res->sorted_ptr = 0;
     res->sorted_list = 0;
-    res->last = &res->sorted_list;
 
     res->num_records = 0;
     res->mutex = 0;
@@ -295,12 +321,15 @@ void reclist_destroy(struct reclist *l)
 {
     if (l)
     {
-        struct reclist_bucket *rb;
-        
-        for (rb = l->sorted_list; rb; rb = rb->snext)
+        unsigned i;
+        for (i = 0; i < l->hash_size; i++)
         {
-            wrbuf_destroy(rb->record->relevance_explain1);
-            wrbuf_destroy(rb->record->relevance_explain2);
+            struct reclist_bucket *p;
+            for (p = l->hashtable[i]; p; p = p->hash_next)
+            {
+                wrbuf_destroy(p->record->relevance_explain1);
+                wrbuf_destroy(p->record->relevance_explain2);
+            }
         }
         yaz_mutex_destroy(&l->mutex);
     }
@@ -332,7 +361,7 @@ struct record_cluster *reclist_insert(struct reclist *l,
     bucket = jenkins_hash((unsigned char*) merge_key) % l->hash_size;
 
     yaz_mutex_enter(l->mutex);
-    for (p = &l->hashtable[bucket]; *p; p = &(*p)->hnext)
+    for (p = &l->hashtable[bucket]; *p; p = &(*p)->hash_next)
     {
         // We found a matching record. Merge them
         if (!strcmp(merge_key, (*p)->record->merge_key))
@@ -364,7 +393,7 @@ struct record_cluster *reclist_insert(struct reclist *l,
 
         record->next = 0;
         new->record = cluster;
-        new->hnext = 0;
+        new->hash_next = 0;
         cluster->records = record;
         cluster->merge_key = nmem_strdup(l->nmem, merge_key);
         cluster->relevance_score = 0;
@@ -385,14 +414,6 @@ struct record_cluster *reclist_insert(struct reclist *l,
         cluster->relevance_explain2 = wrbuf_alloc();
         /* attach to hash list */
         *p = new;
-
-        /* append to sorted_list */
-        *l->last = new;
-        l->last = &new->snext;
-        l->sorted_ptr = l->sorted_list;
-        new->snext = 0;
-
-        l->num_records++;
     }
     yaz_mutex_leave(l->mutex);
     return cluster;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <record>
  <recid>content: title how to program a computer author jack collins medium book</recid>
- <nextrecid>content: title computer science technology author medium book</nextrecid>
+ <nextrecid>content: title the computer bible author medium book</nextrecid>
  <activeclients>0</activeclients>
  <md-title>How to program a computer</md-title>
  <md-author>Jack Collins</md-author>

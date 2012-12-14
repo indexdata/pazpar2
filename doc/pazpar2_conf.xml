@@ -361,6 +361,22 @@
 	  </varlistentry>
 	  
 	  <varlistentry>
+	   <term id="limitcluster">limitcluster</term>
+	   <listitem>
+	    <para>
+	     Allow a limit on merged metadata. The value of this attribute
+	     is the name of actual metadata content to be used for matching
+	     (most often same name as metadata name).
+	    </para>
+	    <note>
+	     <para>
+	      Requires Pazpar2 1.6.23 or later.
+	     </para>
+	    </note>
+	   </listitem>
+	  </varlistentry>
+	  
+	  <varlistentry>
 	   <term id="metadata_limitmap">limitmap</term>
 	   <listitem>
 	    <para>

@@ -64,54 +64,6 @@ struct service_xslt
     struct service_xslt *next;
 };
 
-static void conf_metadata_assign(NMEM nmem,
-                                 struct conf_metadata * metadata,
-                                 const char *name,
-                                 enum conf_metadata_type type,
-                                 enum conf_metadata_merge merge,
-                                 enum conf_setting_type setting,
-                                 int brief,
-                                 int termlist,
-                                 const char *rank,
-                                 int sortkey_offset,
-                                 enum conf_metadata_mergekey mt,
-                                 const char *facetrule,
-                                 const char *limitmap)
-{
-    assert(nmem && metadata && name);
-
-    metadata->name = nmem_strdup(nmem, name);
-
-    metadata->type = type;
-
-    // enforcing that type_year is always range_merge
-    if (metadata->type == Metadata_type_year)
-        metadata->merge = Metadata_merge_range;
-    else
-        metadata->merge = merge;
-
-    metadata->setting = setting;
-    metadata->brief = brief;
-    metadata->termlist = termlist;
-    metadata->rank = nmem_strdup_null(nmem, rank);
-    metadata->sortkey_offset = sortkey_offset;
-    metadata->mergekey = mt;
-    metadata->facetrule = nmem_strdup_null(nmem, facetrule);
-    metadata->limitmap = nmem_strdup_null(nmem, limitmap);
-}
-
-
-static void conf_sortkey_assign(NMEM nmem,
-                                struct conf_sortkey * sortkey,
-                                const char *name,
-                                enum conf_sortkey_type type)
-{
-    assert(nmem && sortkey && name);
-
-    sortkey->name = nmem_strdup(nmem, name);
-    sortkey->type = type;
-}
-
 struct conf_service *service_init(struct conf_server *server,
                                          int num_metadata, int num_sortkeys,
                                          const char *service_id)
@@ -186,38 +138,61 @@ static struct conf_metadata* conf_service_add_metadata(
     int sortkey_offset,
     enum conf_metadata_mergekey mt,
     const char *facetrule,
-    const char *limitmap
+    const char *limitmap,
+    const char *limitcluster
     )
 {
     struct conf_metadata * md = 0;
+    NMEM nmem = service->nmem;
 
-    if (!service || !service->metadata || !service->num_metadata
+    if (!service->metadata || !service->num_metadata
         || field_id < 0  || !(field_id < service->num_metadata))
         return 0;
 
     md = service->metadata + field_id;
-    conf_metadata_assign(service->nmem, md, name, type, merge, setting,
-                         brief, termlist, rank, sortkey_offset,
-                         mt, facetrule, limitmap);
+    assert(nmem && md && name);
+
+    md->name = nmem_strdup(nmem, name);
+
+    md->type = type;
+
+    // enforcing that type_year is always range_merge
+    if (md->type == Metadata_type_year)
+        md->merge = Metadata_merge_range;
+    else
+        md->merge = merge;
+
+    md->setting = setting;
+    md->brief = brief;
+    md->termlist = termlist;
+    md->rank = nmem_strdup_null(nmem, rank);
+    md->sortkey_offset = sortkey_offset;
+    md->mergekey = mt;
+    md->facetrule = nmem_strdup_null(nmem, facetrule);
+    md->limitmap = nmem_strdup_null(nmem, limitmap);
+    md->limitcluster = nmem_strdup_null(nmem, limitcluster);
     return md;
 }
 
-static struct conf_sortkey * conf_service_add_sortkey(
+static struct conf_sortkey *conf_service_add_sortkey(
     struct conf_service *service,
     int field_id,
     const char *name,
     enum conf_sortkey_type type)
 {
-    struct conf_sortkey * sk = 0;
+    struct conf_sortkey *sk = 0;
+    NMEM nmem = service->nmem;
 
-    if (!service || !service->sortkeys || !service->num_sortkeys
+    if (!service->sortkeys || !service->num_sortkeys
         || field_id < 0 || !(field_id < service->num_sortkeys))
         return 0;
 
-    //sk = &((service->sortkeys)[field_id]);
     sk = service->sortkeys + field_id;
-    conf_sortkey_assign(service->nmem, sk, name, type);
 
+    assert(nmem && sk && name);
+
+    sk->name = nmem_strdup(nmem, name);
+    sk->type = type;
     return sk;
 }
 
@@ -302,9 +277,13 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     xmlChar *xml_setting = 0;
     xmlChar *xml_mergekey = 0;
     xmlChar *xml_limitmap = 0;
+    xmlChar *xml_limitcluster = 0;
     xmlChar *xml_icu_chain = 0;
 
     struct _xmlAttr *attr;
+
+    assert(service);
+
     for (attr = n->properties; attr; attr = attr->next)
     {
         if (!xmlStrcmp(attr->name, BAD_CAST "name") &&
@@ -340,6 +319,9 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
         else if (!xmlStrcmp(attr->name, BAD_CAST "limitmap") &&
                  attr->children && attr->children->type == XML_TEXT_NODE)
             xml_limitmap = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "limitcluster") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_limitcluster = attr->children->content;
         else
         {
             yaz_log(YLOG_FATAL, "Unknown metadata attribute '%s'", attr->name);
@@ -480,7 +462,8 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
                               (const char *) xml_rank, sortkey_offset,
                               mergekey_type,
                               (const char *) xml_icu_chain,
-                              (const char *) xml_limitmap);
+                              (const char *) xml_limitmap,
+                              (const char *) xml_limitcluster);
     (*md_node)++;
     return 0;
 }

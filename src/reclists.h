@@ -37,6 +37,7 @@ struct reclist_sortparms
 
 struct reclist *reclist_create(NMEM);
 void reclist_destroy(struct reclist *l);
+void reclist_limit(struct reclist *l, struct session *session);
 struct record_cluster *reclist_insert(struct reclist *tl,
                                       struct conf_service *service,
                                       struct record  *record,
