@@ -1,3 +1,9 @@
+pazpar2 (1.6.22-4indexdata) unstable; urgency=low
+
+  * Patch for blocked show problem.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Mon, 24 Dec 2012 11:36:31 +0100
+
 pazpar2 (1.6.22-3indexdata) unstable; urgency=low
 
   * Testing filter on merged metadata.
