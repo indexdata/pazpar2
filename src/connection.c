@@ -463,12 +463,11 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
         return -1;
     }
 
-    if (sru && *sru)
+    if (sru && *sru && !strstr(host->url, "://"))
     {
         char http_hostport[512];
         strcpy(http_hostport, "http://");
         strcat(http_hostport, host->url);
-        yaz_log(YLOG_LOG, "SRU connect to : %s", http_hostport);
         ZOOM_connection_connect(con->link, http_hostport, 0);
     }
     else
