@@ -227,10 +227,6 @@ void reclist_limit(struct reclist *l, struct session *se)
                 pp = &p->sorted_next;
                 num++;
             }
-            else
-            {
-                yaz_log(YLOG_LOG, "session_check_cluster returned false");
-            }
         }
     }
     *pp = 0;
