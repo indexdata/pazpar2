@@ -465,10 +465,11 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
 
     if (sru && *sru && !strstr(host->url, "://"))
     {
-        char http_hostport[512];
-        strcpy(http_hostport, "http://");
-        strcat(http_hostport, host->url);
-        ZOOM_connection_connect(con->link, http_hostport, 0);
+        WRBUF w = wrbuf_alloc();
+        wrbuf_puts(w, "http://");
+        wrbuf_puts(w, host->url);
+        ZOOM_connection_connect(con->link, wrbuf_cstr(w), 0);
+        wrbuf_destroy(w);
     }
     else
     {
