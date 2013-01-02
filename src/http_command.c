@@ -1355,17 +1355,17 @@ static void cmd_stat(struct http_channel *c)
     }
 
     response_open_no_status(c, "stat");
-    wrbuf_printf(c->wrbuf, "<activeclients>%d</activeclients>\n", clients);
-    wrbuf_printf(c->wrbuf, "<hits>" ODR_INT_PRINTF "</hits>\n", stat.num_hits);
-    wrbuf_printf(c->wrbuf, "<records>%d</records>\n", stat.num_records);
-    wrbuf_printf(c->wrbuf, "<clients>%d</clients>\n", stat.num_clients);
-    wrbuf_printf(c->wrbuf, "<unconnected>%d</unconnected>\n", stat.num_no_connection);
-    wrbuf_printf(c->wrbuf, "<connecting>%d</connecting>\n", stat.num_connecting);
-    wrbuf_printf(c->wrbuf, "<working>%d</working>\n", stat.num_working);
-    wrbuf_printf(c->wrbuf, "<idle>%d</idle>\n", stat.num_idle);
-    wrbuf_printf(c->wrbuf, "<failed>%d</failed>\n", stat.num_failed);
-    wrbuf_printf(c->wrbuf, "<error>%d</error>\n", stat.num_error);
-    wrbuf_printf(c->wrbuf, "<progress>%.2f</progress>\n", progress);
+    wrbuf_printf(c->wrbuf, "\n <activeclients>%d</activeclients>\n", clients);
+    wrbuf_printf(c->wrbuf, " <hits>" ODR_INT_PRINTF "</hits>\n", stat.num_hits);
+    wrbuf_printf(c->wrbuf, " <records>%d</records>\n", stat.num_records);
+    wrbuf_printf(c->wrbuf, " <clients>%d</clients>\n", stat.num_clients);
+    wrbuf_printf(c->wrbuf, " <unconnected>%d</unconnected>\n", stat.num_no_connection);
+    wrbuf_printf(c->wrbuf, " <connecting>%d</connecting>\n", stat.num_connecting);
+    wrbuf_printf(c->wrbuf, " <working>%d</working>\n", stat.num_working);
+    wrbuf_printf(c->wrbuf, " <idle>%d</idle>\n", stat.num_idle);
+    wrbuf_printf(c->wrbuf, " <failed>%d</failed>\n", stat.num_failed);
+    wrbuf_printf(c->wrbuf, " <error>%d</error>\n", stat.num_error);
+    wrbuf_printf(c->wrbuf, " <progress>%.2f</progress>\n", progress);
     response_close(c, "stat");
     release_session(c, s);
 }
@@ -1373,26 +1373,39 @@ static void cmd_stat(struct http_channel *c)
 static void cmd_info(struct http_channel *c)
 {
     char yaz_version_str[20];
+    char yaz_sha1_str[42];
 
     response_open_no_status(c, "info");
-    wrbuf_puts(c->wrbuf, " <version>\n");
+    wrbuf_puts(c->wrbuf, "\n <version>\n");
     wrbuf_puts(c->wrbuf, "  <pazpar2");
 #ifdef PAZPAR2_VERSION_SHA1
     wrbuf_printf(c->wrbuf, " sha1=\"%s\"", PAZPAR2_VERSION_SHA1);
 #endif
     wrbuf_puts(c->wrbuf, ">");
     wrbuf_xmlputs(c->wrbuf, VERSION);
-    wrbuf_puts(c->wrbuf, "</pazpar2>");
+    wrbuf_puts(c->wrbuf, "</pazpar2>\n");
 
-    yaz_version(yaz_version_str, 0);
+    yaz_version(yaz_version_str, yaz_sha1_str);
     wrbuf_puts(c->wrbuf, "  <yaz compiled=\"");
     wrbuf_xmlputs(c->wrbuf, YAZ_VERSION);
+    wrbuf_puts(c->wrbuf, "\" sha1=\"");
+    wrbuf_xmlputs(c->wrbuf, yaz_sha1_str);
     wrbuf_puts(c->wrbuf, "\">");
     wrbuf_xmlputs(c->wrbuf, yaz_version_str);
     wrbuf_puts(c->wrbuf, "</yaz>\n");
 
     wrbuf_puts(c->wrbuf, " </version>\n");
-
+#if HAVE_UNISTD_H
+    {
+        char hostname_str[64];
+        if (gethostname(hostname_str, sizeof(hostname_str)) == 0)
+        {
+            wrbuf_puts(c->wrbuf, " <host>");
+            wrbuf_xmlputs(c->wrbuf, hostname_str);
+            wrbuf_puts(c->wrbuf, "</host>\n");
+        }
+    }
+#endif
     info_services(c->server, c->wrbuf);
 
     response_close(c, "info");
