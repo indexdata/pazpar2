@@ -1,3 +1,24 @@
+Extend info command with hostname and YAZ SHA1
+Indent results for both command stat and info.
+
+Allow limit on merged content. The new configuration metadata
+element, limitcluster, configures that a metadata element (name) be used
+as limit name for search. Applies to the whole service (ie all targets),
+unlike pz:limitmap which is configured per-target (database).
+
+New feature: limitmap local:* matches against all metadata fields.
+
+Allow repeated list in limitmap spec . Separated by comma. For
+example: value="local:title,rpn:@attr 1=4".
+
+New element <message> in bytarget response. Holds diagnostic message
+of code (say 'Unsupported Use Attribute' for Bib-1 114).
+
+Improved logging for record ingestion failures.
+
+Avoid using struct icu_chain in non-YAZ_HAVE_ICU mode. In the rare case,
+when YAZ is compiled without ICU support.
+
 --- 1.6.22 2012/10/11
 
 Requires YAZ-4.2.40 to support native solr support. 
