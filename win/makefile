@@ -1,5 +1,5 @@
 # This file is part of Pazpar2.
-# Copyright (C) 2006-2012 Index Data
+# Copyright (C) 2006-2013 Index Data
 
 DEBUG=0   # 0 for release, 1 for debug
 USE_MANIFEST = 1 # Can be enabled Visual Studio 2005/2008
