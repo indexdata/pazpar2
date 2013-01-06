@@ -2,7 +2,7 @@ Pazpar2 is a high-performance, user interface-independent, data
 model-independent metasearching middleware featuring merging, relevance
 ranking, record sorting, and faceted results.
 
-Copyright (C) 2006-2012 Index Data. See the file LICENSE for details.
+Copyright (C) 2006-2013 Index Data. See the file LICENSE for details.
 
 Installation instructions and documentation is found in directory 'doc' and
 on-line at http://www.indexdata.com/pazpar2/ .
