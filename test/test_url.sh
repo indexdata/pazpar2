@@ -1,11 +1,15 @@
 #!/bin/sh
 #
 
+TEST=`basename $0 .sh`
 # srcdir might be set by make
 srcdir=${srcdir:-"."}
 
-# Test using test_http.cfg
-exec ${srcdir}/run_pazpar2.sh test_url
+if test -x ../src/pazpar2; then
+    if ../src/pazpar2 -V |grep icu:enabled >/dev/null; then
+	exec ${srcdir}/run_pazpar2.sh $TEST
+    fi
+fi
 
 # Local Variables:
 # mode:shell-script

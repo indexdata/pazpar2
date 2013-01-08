@@ -1,5 +1,6 @@
 #!/bin/sh
 
+TEST=`basename $0 .sh`
 # srcdir might be set by make
 srcdir=${srcdir:-"."}
 
@@ -31,8 +32,13 @@ if test ! -f ztest.pid; then
     exit 0
 fi
 
-${srcdir}/run_pazpar2.sh test_facets
-E=$?
+E=0
+if test -x ../src/pazpar2; then
+    if ../src/pazpar2 -V |grep icu:enabled >/dev/null; then
+	${srcdir}/run_pazpar2.sh $TEST
+	E=$?
+    fi
+fi
 
 kill `cat ztest.pid`
 rm ztest.pid

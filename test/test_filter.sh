@@ -4,7 +4,7 @@
 # srcdir might be set by make
 srcdir=${srcdir:-"."}
 
-TEST=test_filter_
+TEST=`basename $0 .sh`
 
 # look for yaz-ztest in PATH
 oIFS=$IFS
@@ -27,17 +27,22 @@ if test -z "$F"; then
 fi
 
 rm -f ztest.pid
-rm -f ${TEST}ztest.log
-$F -l ${TEST}ztest.log -p ztest.pid -D tcp:localhost:9999
+rm -f ${TEST}_ztest.log
+$F -l ${TEST}_ztest.log -p ztest.pid -D tcp:localhost:9999
 sleep 1
 if test ! -f ztest.pid; then
     echo "yaz-ztest could not be started"
     exit 0
 fi
 
-# Test using test_http.cfg
-${srcdir}/run_pazpar2.sh test_filter
-E=$?
+E=0
+if test -x ../src/pazpar2; then
+    if ../src/pazpar2 -V |grep icu:enabled >/dev/null; then
+	${srcdir}/run_pazpar2.sh $TEST
+	E=$?
+    fi
+fi
+
 kill `cat ztest.pid`
 rm ztest.pid
 exit $E

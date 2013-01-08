@@ -3,6 +3,8 @@
 # srcdir might be set by make
 srcdir=${srcdir:-"."}
 
+TEST=`basename $0 .sh`
+
 #TODO set up solr target. For now use donut 
 #F=../solr/client.sh 
 #
@@ -14,11 +16,13 @@ srcdir=${srcdir:-"."}
 #    exit 0
 #fi
 
-${srcdir}/run_pazpar2.sh test_solr
-E=$?
-
-#kill `cat ztest.pid`
-#rm ztest.pid
+E=0
+if test -x ../src/pazpar2; then
+    if ../src/pazpar2 -V |grep icu:enabled >/dev/null; then
+	${srcdir}/run_pazpar2.sh $TEST
+	E=$?
+    fi
+fi
 exit $E
 
 # Local Variables:
