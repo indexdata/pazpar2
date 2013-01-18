@@ -1,3 +1,6 @@
+New merge attribute type: 'first', which takes all metadata fields
+from first target that returns the particular field.
+
 --- 1.6.23 2013/01/02
 
 Extend info command with hostname and YAZ SHA1
