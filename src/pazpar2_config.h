@@ -41,7 +41,8 @@ enum conf_metadata_merge {
     Metadata_merge_unique,    // Include unique elements in merged block
     Metadata_merge_longest,   // Include the longest (strlen) value
     Metadata_merge_range,     // Store value as a range of lowest-highest
-    Metadata_merge_all        // Just include all elements found
+    Metadata_merge_all,       // Just include all elements found
+    Metadata_merge_first      // All from first target
 };
 
 enum conf_sortkey_type {

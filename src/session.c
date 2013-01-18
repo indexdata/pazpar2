@@ -1781,6 +1781,7 @@ static int ingest_to_cluster(struct client *cl,
     struct conf_service *service = se->service;
     int term_factor = 1;
     struct record_cluster *cluster;
+    struct record_metadata **metadata0;
     struct session_database *sdb = client_get_database(cl);
     struct record *record = record_create(se->nmem,
                                           service->num_metadata,
@@ -1876,6 +1877,11 @@ static int ingest_to_cluster(struct client *cl,
 
     relevance_newrec(se->relevance, cluster);
 
+    // original metadata, to check if first existence of a field
+    metadata0 = xmalloc(sizeof(*metadata0) * service->num_metadata);
+    memcpy(metadata0, cluster->metadata,
+           sizeof(*metadata0) * service->num_metadata);
+
     // now parsing XML record and adding data to cluster or record metadata
     for (n = root->children; n; n = n->next)
     {
@@ -1921,6 +1927,9 @@ static int ingest_to_cluster(struct client *cl,
             // merged metadata
             rec_md = record_metadata_init(se->nmem, (const char *) value,
                                           ser_md->type, 0);
+
+            // see if the field was not in cluster already (from beginning)
+
             if (!rec_md)
                 continue;
 
@@ -1929,9 +1938,16 @@ static int ingest_to_cluster(struct client *cl,
 
             wheretoput = &cluster->metadata[md_field_id];
 
-            // and polulate with data:
-            // assign cluster or record based on merge action
-            if (ser_md->merge == Metadata_merge_unique)
+            if (ser_md->merge == Metadata_merge_first)
+            {
+                if (!metadata0[md_field_id])
+                {
+                    while (*wheretoput)
+                        wheretoput = &(*wheretoput)->next;
+                    *wheretoput = rec_md;
+                }
+            }
+            else if (ser_md->merge == Metadata_merge_unique)
             {
                 while (*wheretoput)
                 {
@@ -2057,6 +2073,7 @@ static int ingest_to_cluster(struct client *cl,
     if (value)
         xmlFree(value);
 
+    xfree(metadata0);
     relevance_donerecord(se->relevance, cluster);
     se->total_records++;
 

@@ -322,6 +322,11 @@
 	     all elements), or 'no' (don't merge; this is the
 	     default);
 	    </para>
+	    <para>
+	     Pazpar 1.6.24 also offers a new value for merge, 'first', which
+	     is like 'all' but only takes all from first database that returns
+	     the particular metadata field.
+	    </para>
 	   </listitem>
 	  </varlistentry>
 	  

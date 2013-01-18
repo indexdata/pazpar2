@@ -385,6 +385,8 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             merge = Metadata_merge_range;
         else if (!strcmp((const char *) xml_merge, "all"))
             merge = Metadata_merge_all;
+        else if (!strcmp((const char *) xml_merge, "first"))
+            merge = Metadata_merge_first;
         else
         {
             yaz_log(YLOG_FATAL,
