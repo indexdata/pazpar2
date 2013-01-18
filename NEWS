@@ -1,3 +1,5 @@
+--- 1.6.24 2013/01/18
+
 New merge attribute type: 'first', which takes all metadata fields
 from first target that returns the particular field.
 
