@@ -1236,67 +1236,60 @@ void show_single_stop(struct session *se, struct record_cluster *rec)
 
 struct record_cluster **show_range_start(struct session *se,
                                          struct reclist_sortparms *sp,
-                                         int start, int *num, int *total, Odr_int *sumhits, Odr_int *approx_hits)
+                                         int start, int *num, int *total,
+                                         Odr_int *sumhits, Odr_int *approx_hits)
 {
-    struct record_cluster **recs;
+    struct record_cluster **recs = 0;
     struct reclist_sortparms *spp;
+    struct client_list *l;
     int i;
 #if USE_TIMING
     yaz_timing_t t = yaz_timing_create();
 #endif
     session_enter(se, "show_range_start");
-    recs = nmem_malloc(se->nmem, *num * sizeof(struct record_cluster *));
-    if (!se->relevance)
+    *sumhits = 0;
+    *approx_hits = 0;
+    *total = 0;
+    reclist_limit(se->reclist, se);
+    if (se->relevance)
     {
-        *num = 0;
-        *total = 0;
-        *sumhits = 0;
-        *approx_hits = 0;
-        recs = 0;
-    }
-    else
-    {
-        struct client_list *l;
-
-        reclist_limit(se->reclist, se);
-
         for (spp = sp; spp; spp = spp->next)
             if (spp->type == Metadata_sortkey_relevance)
             {
                 relevance_prepare_read(se->relevance, se->reclist);
                 break;
             }
-        reclist_sort(se->reclist, sp);
-
-        reclist_enter(se->reclist);
-        *total = reclist_get_num_records(se->reclist);
-
-        *sumhits = 0;
-        *approx_hits = 0;
         for (l = se->clients_active; l; l = l->next) {
             *sumhits += client_get_hits(l->client);
             *approx_hits += client_get_approximation(l->client);
         }
-        for (i = 0; i < start; i++)
-            if (!reclist_read_record(se->reclist))
-            {
-                *num = 0;
-                recs = 0;
-                break;
-            }
-
-        for (i = 0; i < *num; i++)
-        {
-            struct record_cluster *r = reclist_read_record(se->reclist);
-            if (!r)
-            {
-                *num = i;
-                break;
-            }
-            recs[i] = r;
-        }
-        reclist_leave(se->reclist);
     }
+    reclist_sort(se->reclist, sp);
+
+    reclist_enter(se->reclist);
+    *total = reclist_get_num_records(se->reclist);
+
+    for (i = 0; i < start; i++)
+        if (!reclist_read_record(se->reclist))
+        {
+            *num = 0;
+            break;
+        }
+
+    if (*num > 0)
+        recs =
+            nmem_malloc(se->nmem, *num * sizeof(struct record_cluster *));
+    for (i = 0; i < *num; i++)
+    {
+        struct record_cluster *r = reclist_read_record(se->reclist);
+        if (!r)
+        {
+            *num = i;
+            break;
+        }
+        recs[i] = r;
+    }
+    reclist_leave(se->reclist);
 #if USE_TIMING
     yaz_timing_stop(t);
     yaz_log(YLOG_LOG, "show %6.5f %3.2f %3.2f",
