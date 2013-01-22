@@ -762,6 +762,24 @@ static const char *get_strategy_plus_sort(struct client *l, const char *field)
     return strategy_plus_sort;
 }
 
+int client_fetch_more(struct client *cl)
+{
+    int extra = cl->hits - cl->record_offset;
+    if (extra > 0)
+    {
+        ZOOM_resultset set = cl->resultset;
+        int max_extra = 10;
+
+        if (extra > max_extra)
+            extra = max_extra;
+
+        ZOOM_resultset_records(set, 0, cl->record_offset, extra);
+        client_set_state(cl, Client_Working);
+        return 1;
+    }
+    return 0;
+}
+
 int client_parse_init(struct client *cl, int same_search)
 {
     cl->same_search = same_search;

@@ -1234,6 +1234,38 @@ void show_single_stop(struct session *se, struct record_cluster *rec)
 }
 
 
+int session_fetch_more(struct session *se)
+{
+    struct client_list *l;
+    int ret = 0;
+
+    for (l = se->clients_active; l; l = l->next)
+    {
+        struct client *cl = l->client;
+        if (client_get_state(cl) == Client_Idle)
+        {
+            if (client_fetch_more(cl))
+            {
+                session_log(se, YLOG_LOG, "%s: more to fetch",
+                            client_get_id(cl));
+                ret = 1;
+            }
+            else
+            {
+                session_log(se, YLOG_LOG, "%s: no more to fetch",
+                            client_get_id(cl));
+            }
+        }
+        else
+        {
+            session_log(se, YLOG_LOG, "%s: no fetch due to state=%s",
+                        client_get_id(cl), client_get_state_str(cl));
+        }
+
+    }
+    return ret;
+}
+
 struct record_cluster **show_range_start(struct session *se,
                                          struct reclist_sortparms *sp,
                                          int start, int *num, int *total,

@@ -93,6 +93,8 @@ struct http_sessions {
 static YAZ_MUTEX g_http_session_mutex = 0;
 static int g_http_sessions = 0;
 
+static void show_records_ready(void *data);
+
 int get_version(struct http_request *rq) {
     const char *version = http_argbyname(rq, "version");
     int version_no = 0;
@@ -1118,7 +1120,31 @@ static void show_records(struct http_channel *c, struct http_session *s, int act
 
     }
 
-    rl = show_range_start(s->psession, sp, startn, &numn, &total, &total_hits, &approx_hits);
+    i = numn;
+    rl = show_range_start(s->psession, sp, startn, &numn, &total,
+                          &total_hits, &approx_hits);
+    if (i > numn)
+    {
+        show_range_stop(s->psession, rl);
+        session_log(s->psession, YLOG_LOG,
+                    "Subset %d < %d retrieved for show", numn, i);
+        if (!session_fetch_more(s->psession))
+            session_log(s->psession, YLOG_LOG, "can not fetch more");
+        else
+        {
+            session_log(s->psession, YLOG_LOG, "fetching more in progress");
+            if (session_set_watch(s->psession, SESSION_WATCH_SHOW,
+                                  show_records_ready, c, c))
+                session_log(s->psession, YLOG_WARN, "Ignoring show block");
+            else
+            {
+                session_log(s->psession, YLOG_LOG, "session watch OK");
+                return;
+            }
+        }
+        rl = show_range_start(s->psession, sp, startn, &numn, &total,
+                              &total_hits, &approx_hits);
+    }
 
     response_open(c, "show");
     wrbuf_printf(c->wrbuf, "\n<activeclients>%d</activeclients>\n", active);

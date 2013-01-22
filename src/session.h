@@ -170,7 +170,11 @@ enum pazpar2_error_code session_search(struct session *s, const char *query,
 struct record_cluster **show_range_start(struct session *s,
                                          struct reclist_sortparms *sp,
                                          int start,
-                                         int *num, int *total, Odr_int *sumhits, Odr_int *approximation);
+                                         int *num, int *total,
+                                         Odr_int *sumhits,
+                                         Odr_int *approximation);
+
+int session_fetch_more(struct session *s);
 void show_range_stop(struct session *s, struct record_cluster **recs);
 
 struct record_cluster *show_single_start(struct session *s, const char *id,
