@@ -764,17 +764,28 @@ static const char *get_strategy_plus_sort(struct client *l, const char *field)
 
 int client_fetch_more(struct client *cl)
 {
+    struct session_database *sdb = client_get_database(cl);
+    const char *str;
     int extra = cl->hits - cl->record_offset;
+
     if (extra > 0)
     {
         ZOOM_resultset set = cl->resultset;
+        struct connection *co = client_get_connection(cl);
         int max_extra = 10;
 
         if (extra > max_extra)
             extra = max_extra;
 
+        str = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
+        ZOOM_resultset_option_set(set, "preferredRecordSyntax", str);
+        str = session_setting_oneval(sdb, PZ_ELEMENTS);
+        if (str && *str)
+            ZOOM_resultset_option_set(set, "elementSetName", str);
+
         ZOOM_resultset_records(set, 0, cl->record_offset, extra);
         client_set_state(cl, Client_Working);
+        connection_continue(co);
         return 1;
     }
     return 0;
