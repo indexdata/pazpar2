@@ -23,6 +23,7 @@
 	<set name="pz:apdulog" value="1"/>
 
 	<set name="pz:maxrecs" value="3" />
+	<set name="pz:extendrecs" value="6" />
       </settings>
 
       <metadata name="url" merge="unique"/>
