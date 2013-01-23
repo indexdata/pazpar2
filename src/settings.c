@@ -81,6 +81,7 @@ static char *hard_settings[] = {
     "pz:sortmap:",
     "pz:present_chunk",
     "pz:block_timeout",
+    "pz:extendrecs",
     0
 };
 

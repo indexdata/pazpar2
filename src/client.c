@@ -766,16 +766,21 @@ int client_fetch_more(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
     const char *str;
-    int extra = cl->hits - cl->record_offset;
+    int extend_recs = 0;
+    int number;
 
-    if (extra > 0)
+    str = session_setting_oneval(sdb, PZ_EXTENDRECS);
+    if (str && *str)
+        extend_recs = atoi(str);
+
+    if (extend_recs > cl->hits)
+        extend_recs = cl->hits;
+
+    number = extend_recs - cl->record_offset;
+    if (number > 0)
     {
         ZOOM_resultset set = cl->resultset;
         struct connection *co = client_get_connection(cl);
-        int max_extra = 10;
-
-        if (extra > max_extra)
-            extra = max_extra;
 
         str = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
         ZOOM_resultset_option_set(set, "preferredRecordSyntax", str);
@@ -783,7 +788,7 @@ int client_fetch_more(struct client *cl)
         if (str && *str)
             ZOOM_resultset_option_set(set, "elementSetName", str);
 
-        ZOOM_resultset_records(set, 0, cl->record_offset, extra);
+        ZOOM_resultset_records(set, 0, cl->record_offset, number);
         client_set_state(cl, Client_Working);
         connection_continue(co);
         return 1;
