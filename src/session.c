@@ -1843,7 +1843,7 @@ static int ingest_to_cluster(struct client *cl,
     cluster = reclist_insert(se->reclist, service, record,
                              mergekey_norm, &se->total_merged);
     if (!cluster)
-        return -1;
+        return 0; // complete match with existing record
 
     {
         const char *use_term_factor_str =
