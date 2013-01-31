@@ -734,7 +734,6 @@ enum pazpar2_error_code session_search(struct session *se,
     int no_failed_query = 0;
     int no_failed_limit = 0;
     struct client_list *l, *l0;
-    int same_sort_order = 0;
 
     session_log(se, YLOG_DEBUG, "Search");
 
@@ -749,10 +748,6 @@ enum pazpar2_error_code session_search(struct session *se,
     session_enter(se, "session_search");
     se->settings_modified = 0;
 
-    if (se->sorted_results) {
-        if (!reclist_sortparms_cmp(se->sorted_results, sp))
-            same_sort_order = 1;
-    }
     session_clear_set(se, sp);
     relevance_destroy(&se->relevance);
 
