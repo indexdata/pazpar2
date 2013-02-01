@@ -51,6 +51,8 @@
   <metadata name="title-dates" brief="yes" merge="longest"/>
   <metadata name="title-medium" brief="yes" merge="longest"/>
   <metadata name="title-number-section" brief="yes" merge="longest"/>
+  <metadata name="title-complete"/>
+  <metadata name="title-uniform"/>
   <metadata name="medium" brief="yes" merge="longest" mergekey="optional" limitmap="local:" />
   <metadata name="iii-id" brief="yes" merge="no"/>
   <metadata name="edition"/>
@@ -79,6 +81,9 @@
   <metadata name="citation"/>
   <metadata name="holding"/>
   <metadata name="fulltext"/>
+  <metadata name="has-fulltext"/>
+  <metadata name="oclc-number"/>
+  <metadata name="system-control-nr"/>
   <metadata name="locallocation" brief="yes"/>
   <metadata name="callnumber" brief="yes"/>
   <metadata name="publicnote" brief="yes"/>
