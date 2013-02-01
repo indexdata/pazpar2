@@ -653,7 +653,7 @@ static void session_sort_unlocked(struct session *se, struct reclist_sortparms *
     int type  = sp->type;
     int clients_research = 0;
 
-    yaz_log(YLOG_LOG, "session_sort field=%s increasing=%d type=%d", field, increasing, type);
+    yaz_log(YLOG_DEBUG, "session_sort field=%s increasing=%d type=%d", field, increasing, type);
     /* see if we already have sorted for this criteria */
     for (sr = se->sorted_results; sr; sr = sr->next)
     {
