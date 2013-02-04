@@ -653,7 +653,7 @@ static void session_sort_unlocked(struct session *se, struct reclist_sortparms *
     int type  = sp->type;
     int clients_research = 0;
 
-    yaz_log(YLOG_LOG, "session_sort field=%s increasing=%d type=%d", field, increasing, type);
+    yaz_log(YLOG_DEBUG, "session_sort field=%s increasing=%d type=%d", field, increasing, type);
     /* see if we already have sorted for this criteria */
     for (sr = se->sorted_results; sr; sr = sr->next)
     {
@@ -734,7 +734,6 @@ enum pazpar2_error_code session_search(struct session *se,
     int no_failed_query = 0;
     int no_failed_limit = 0;
     struct client_list *l, *l0;
-    int same_sort_order = 0;
 
     session_log(se, YLOG_DEBUG, "Search");
 
@@ -749,10 +748,6 @@ enum pazpar2_error_code session_search(struct session *se,
     session_enter(se, "session_search");
     se->settings_modified = 0;
 
-    if (se->sorted_results) {
-        if (!reclist_sortparms_cmp(se->sorted_results, sp))
-            same_sort_order = 1;
-    }
     session_clear_set(se, sp);
     relevance_destroy(&se->relevance);
 
@@ -1880,7 +1875,7 @@ static int ingest_to_cluster(struct client *cl,
     cluster = reclist_insert(se->reclist, service, record,
                              mergekey_norm, &se->total_merged);
     if (!cluster)
-        return -1;
+        return 0; // complete match with existing record
 
     {
         const char *use_term_factor_str =
