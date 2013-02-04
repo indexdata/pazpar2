@@ -172,8 +172,9 @@ struct record_cluster **show_range_start(struct session *s,
                                          int start,
                                          int *num, int *total,
                                          Odr_int *sumhits,
-                                         Odr_int *approximation);
-
+                                         Odr_int *approximation,
+                                         void (*ready)(void *data),
+                                         struct http_channel *chan);
 int session_fetch_more(struct session *s);
 void show_range_stop(struct session *s, struct record_cluster **recs);
 
