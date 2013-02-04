@@ -115,6 +115,7 @@ struct client {
     char *addinfo; // diagnostic info for most resent error
     Odr_int hits;
     int record_offset;
+    int show_stat_no;
     int filtered; // When using local:, this will count the number of filtered records.
     int maxrecs;
     int startrecs;
@@ -762,12 +763,26 @@ static const char *get_strategy_plus_sort(struct client *l, const char *field)
     return strategy_plus_sort;
 }
 
+void client_update_show_stat(struct client *cl, int cmd)
+{
+    if (cmd == 0)
+        cl->show_stat_no = 0;
+    else if (cmd == 1)
+        cl->show_stat_no++;
+}
+
 int client_fetch_more(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
     const char *str;
     int extend_recs = 0;
     int number;
+
+    yaz_log(YLOG_LOG, "cl=%s show_stat_no=%d got=%d",
+            client_get_id(cl), cl->show_stat_no, cl->record_offset);
+    if (cl->show_stat_no < cl->record_offset)
+        return 0;
+    yaz_log(YLOG_LOG, "cl=%s Trying to get more", client_get_id(cl));
 
     str = session_setting_oneval(sdb, PZ_EXTENDRECS);
     if (str && *str)
@@ -792,6 +807,10 @@ int client_fetch_more(struct client *cl)
         client_set_state(cl, Client_Working);
         connection_continue(co);
         return 1;
+    }
+    else
+    {
+        yaz_log(YLOG_LOG, "cl=%s. OK no more in total set", client_get_id(cl));
     }
     return 0;
 }

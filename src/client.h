@@ -117,6 +117,7 @@ const char *client_get_facet_limit_local(struct client *cl,
                                          NMEM nmem, int *num, char ***values);
 
 int client_test_sort_order(struct client *cl, struct reclist_sortparms *sp);
+void client_update_show_stat(struct client *cl, int cmd);
 
 #endif
 

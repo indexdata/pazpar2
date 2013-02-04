@@ -1271,7 +1271,6 @@ struct record_cluster **show_range_start(struct session *se,
     struct record_cluster **recs = 0;
     struct reclist_sortparms *spp;
     struct client_list *l;
-    int num0 = *num;
     int i;
 #if USE_TIMING
     yaz_timing_t t = yaz_timing_create();
@@ -1299,13 +1298,24 @@ struct record_cluster **show_range_start(struct session *se,
     reclist_enter(se->reclist);
     *total = reclist_get_num_records(se->reclist);
 
+    for (l = se->clients_active; l; l = l->next)
+        client_update_show_stat(l->client, 0);
+
     for (i = 0; i < start; i++)
-        if (!reclist_read_record(se->reclist))
+    {
+        struct record_cluster *r = reclist_read_record(se->reclist);
+        if (!r)
         {
             *num = 0;
             break;
         }
-
+        else
+        {
+            struct record *rec = r->records;
+            for (;rec; rec = rec->next)
+                client_update_show_stat(rec->client, 1);
+        }
+    }
     if (*num > 0)
         recs =
             nmem_malloc(se->nmem, *num * sizeof(struct record_cluster *));
@@ -1317,7 +1327,13 @@ struct record_cluster **show_range_start(struct session *se,
             *num = i;
             break;
         }
-        recs[i] = r;
+        else
+        {
+            struct record *rec = r->records;
+            for (;rec; rec = rec->next)
+                client_update_show_stat(rec->client, 1);
+            recs[i] = r;
+        }
     }
     reclist_leave(se->reclist);
 #if USE_TIMING
@@ -1327,27 +1343,23 @@ struct record_cluster **show_range_start(struct session *se,
             yaz_timing_get_sys(t));
     yaz_timing_destroy(&t);
 #endif
-    if (*num < num0)
+
+    if (!session_fetch_more(se))
+        session_log(se, YLOG_LOG, "can not fetch more");
+    else
     {
-        session_log(se, YLOG_LOG,
-                    "Subset %d < %d retrieved for show", *num, num0);
-        if (!session_fetch_more(se))
-            session_log(se, YLOG_LOG, "can not fetch more");
+        show_range_stop(se, recs);
+        session_log(se, YLOG_LOG, "fetching more in progress");
+        if (session_set_watch(se, SESSION_WATCH_SHOW,
+                              show_records_ready, chan, chan))
+        {
+            session_log(se, YLOG_WARN, "Ignoring show block");
+            session_enter(se, "show_range_start");
+        }
         else
         {
-            show_range_stop(se, recs);
-            session_log(se, YLOG_LOG, "fetching more in progress");
-            if (session_set_watch(se, SESSION_WATCH_SHOW,
-                                  show_records_ready, chan, chan))
-            {
-                session_log(se, YLOG_WARN, "Ignoring show block");
-                session_enter(se, "show_range_start");
-            }
-            else
-            {
-                session_log(se, YLOG_LOG, "session watch OK");
-                return 0;
-            }
+            session_log(se, YLOG_LOG, "session watch OK");
+            return 0;
         }
     }
     return recs;
