@@ -1,3 +1,7 @@
+--- 1.6.25 2013/02/07
+
+Fix hang of 2nd command=show with esn/syntax given.
+
 --- 1.6.24 2013/01/18
 
 New merge attribute type: 'first', which takes all metadata fields
