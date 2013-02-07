@@ -82,3 +82,5 @@ http://localhost:9763/search.pz2?session=10&command=show&block=1
 http://localhost:9763/search.pz2?session=10&command=termlist
 http://localhost:9763/search.pz2?session=10&command=search&query=teachers&limit=subject%3DGreece
 http://localhost:9763/search.pz2?session=10&command=show&block=1
+http://localhost:9763/search.pz2?session=10&command=record&id=content%3A+title+the+religious+teachers+of+greece+author+adam+james+medium+book&offset=0&esn=F&r=1
+http://localhost:9763/search.pz2?session=10&command=record&id=content%3A+title+the+religious+teachers+of+greece+author+adam+james+medium+book&offset=0&esn=F&r=2

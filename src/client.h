@@ -63,7 +63,7 @@ const char *client_get_pquery(struct client *cl);
 
 void client_init_response(struct client *cl, Z_APDU *a);
 void client_search_response(struct client *cl);
-void client_record_response(struct client *cl);
+void client_record_response(struct client *cl, int *got_records);
 void client_close_response(struct client *cl, Z_APDU *a);
 
 int client_is_our_response(struct client *cl);

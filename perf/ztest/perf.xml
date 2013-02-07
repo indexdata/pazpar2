@@ -8,10 +8,10 @@
   <timeout session="60" z3950_operation="30" z3950_session="180"/>
   <settings target="*">
     <set target="localhost:9999/db01&parm;" name="pz:name" value="db01"/>
-    <set target="localhost:9999/db02" name="pz:name" value="db02"/>
-    <set target="localhost:9999/db03" name="pz:name" value="db03"/>
-    <set target="localhost:9999/db04" name="pz:name" value="db04"/>
-    <set target="localhost:9999/db05" name="pz:name" value="db05"/>
+    <set target="localhost:9999/db02&parm;" name="pz:name" value="db02"/>
+    <set target="localhost:9999/db03&parm;" name="pz:name" value="db03"/>
+    <set target="localhost:9999/db04&parm;" name="pz:name" value="db04"/>
+    <set target="localhost:9999/db05&parm;" name="pz:name" value="db05"/>
     <set target="localhost:9999/db06" name="pz:name" value="db06"/>
     <set target="localhost:9999/db07" name="pz:name" value="db07"/>
     <set target="localhost:9999/db08" name="pz:name" value="db08"/>
@@ -86,6 +86,7 @@
   <metadata name="corporate-name"/>
   <metadata name="corporate-location"/>
   <metadata name="corporate-date"/>
+  <metadata name="has-fulltext"/>
   <metadata name="meeting-name"/>
   <metadata name="meeting-location"/>
   <metadata name="meeting-date"/>
@@ -98,6 +99,8 @@
   <metadata name="title-dates" brief="yes" merge="longest"/>
   <metadata name="title-medium" brief="yes" merge="longest"/>
   <metadata name="title-number-section" brief="yes" merge="longest"/>
+  <metadata name="title-complete"/>
+  <metadata name="title-uniform"/>
   <metadata name="medium" brief="yes" merge="no" mergekey="optional"/>
   <metadata name="iii-id" brief="yes" merge="no"/>
   <metadata name="edition"/>
@@ -130,6 +133,7 @@
   <metadata name="locallocation" brief="yes"/>
   <metadata name="callnumber" brief="yes"/>
   <metadata name="publicnote" brief="yes"/>
+  <metadata name="system-control-nr"/>
   
   <!-- journals -->
   <metadata name="journal-title"/>
@@ -139,6 +143,7 @@
   <metadata name="issue-number"/>
   
   <metadata name="url_recipe" setting="postproc" brief="yes" merge="no"/>
+  <metadata name="oclc-number"/>
   <metadata name="open_url_resolver" setting="parameter" merge="no"/>
   <metadata name="open-url" merge="longest"/>
   <metadata name="use_url_proxy" setting="postproc" brief="yes" merge="no"/>

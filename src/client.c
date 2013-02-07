@@ -646,7 +646,7 @@ static void client_record_ingest(struct client *cl)
     }
 }
 
-void client_record_response(struct client *cl)
+void client_record_response(struct client *cl, int *got_records)
 {
     struct connection *co = cl->connection;
     ZOOM_connection link = connection_get_link(co);
@@ -679,6 +679,7 @@ void client_record_response(struct client *cl)
         else
         {
             client_record_ingest(cl);
+            *got_records = 1;
         }
     }
 }
