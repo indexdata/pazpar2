@@ -257,8 +257,7 @@ static void non_block_events(struct connection *co)
             client_search_response(cl);
             break;
         case ZOOM_EVENT_RECV_RECORD:
-            client_record_response(cl);
-            got_records = 1;
+            client_record_response(cl, &got_records);
             break;
         default:
             yaz_log(YLOG_LOG, "Unhandled event (%d) from %s",
@@ -281,20 +280,7 @@ void connection_continue(struct connection *co)
 {
     int r = ZOOM_connection_exec_task(co->link);
     if (!r)
-    {
-        const char *error, *addinfo;
-        int err;
-        if ((err = ZOOM_connection_error(co->link, &error, &addinfo)))
-        {
-            if (co->client)
-            {
-                yaz_log(YLOG_LOG, "Error %s from %s",
-                        error, client_get_id(co->client));
-                client_set_diagnostic(co->client, err, error, addinfo);
-                client_set_state_nb(co->client, Client_Error);
-            }
-        }
-    }
+        non_block_events(co);
     else
     {
         iochan_setflags(co->iochan, ZOOM_connection_get_mask(co->link));
