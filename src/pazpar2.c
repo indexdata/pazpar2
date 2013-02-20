@@ -215,30 +215,34 @@ static int sc_main(
     }
     else
     {
-        yaz_log(YLOG_LOG, "Pazpar2 " VERSION  " "
+        yaz_log(YLOG_LOG, "Pazpar2 start " VERSION  " "
 #ifdef PAZPAR2_VERSION_SHA1
                 PAZPAR2_VERSION_SHA1
 #else
                 "-"
 #endif
-                " started");
+                );
+        ret = 0;
         if (daemon && !log_file_in_use)
         {
             yaz_log(YLOG_FATAL, "Logfile must be given (option -l) for daemon "
                     "mode");
-            return 1;
+            ret = 1;
         }
-        ret = config_start_listeners(config, listener_override, record_fname);
-        if (ret)
-            return ret; /* error starting http listener */
-
-        yaz_sc_running(s);
-
-        yaz_daemon("pazpar2",
-                   (global_parameters.debug_mode ? YAZ_DAEMON_DEBUG : 0) +
-                   (daemon ? YAZ_DAEMON_FORK : 0) + YAZ_DAEMON_KEEPALIVE,
-                   child_handler, config /* child_data */,
-                   pidfile, uid);
+        if (!ret)
+            ret = config_start_listeners(config, listener_override,
+                                         record_fname);
+        if (!ret)
+        {
+            yaz_sc_running(s);
+            yaz_daemon("pazpar2",
+                       (global_parameters.debug_mode ? YAZ_DAEMON_DEBUG : 0) +
+                       (daemon ? YAZ_DAEMON_FORK : 0) + YAZ_DAEMON_KEEPALIVE,
+                       child_handler, config /* child_data */,
+                       pidfile, uid);
+        }
+        yaz_log(YLOG_LOG, "Pazpar2 stop");
+        return ret;
     }
     return 0;
 }
