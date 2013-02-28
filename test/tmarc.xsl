@@ -169,34 +169,44 @@
         </pz:metadata>
       </xsl:for-each>
 
-      <pz:metadata type="oclc-number">
-        <xsl:value-of select="$oclc_number" />
-      </pz:metadata>
+      <xsl:if test="string-length($oclc_number) &gt; 0">
+	<pz:metadata type="oclc-number">
+	  <xsl:value-of select="$oclc_number" />
+	</pz:metadata>
+      </xsl:if>
 
       <xsl:for-each select="tmarc:d010">
-        <pz:metadata type="lccn">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="lccn">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d020">
-        <pz:metadata type="isbn">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="isbn">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d022">
-        <pz:metadata type="issn">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="issn">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
-
+      
       <xsl:for-each select="tmarc:d027">
-        <pz:metadata type="tech-rep-nr">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="tech-rep-nr">
+	    <xsl:value-of select="tmarc:sa" />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
-
+      
       <xsl:for-each select="tmarc:d035"> 
         <pz:metadata type="system-control-nr">
           <xsl:choose>
@@ -211,48 +221,68 @@
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d100">
-        <pz:metadata type="author">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="author-title">
-          <xsl:value-of select="tmarc:sc" />
-        </pz:metadata>
-        <pz:metadata type="author-date">
-          <xsl:value-of select="tmarc:sd" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="author">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sc">
+	  <pz:metadata type="author-title">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sd">
+	  <pz:metadata type="author-date">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d110">
-        <pz:metadata type="corporate-name">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="corporate-location">
-          <xsl:value-of select="tmarc:sc" />
-        </pz:metadata>
-        <pz:metadata type="corporate-date">
-          <xsl:value-of select="tmarc:sd" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="corporate-name">
+          <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sc">
+	  <pz:metadata type="corporate-location">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sd">
+	  <pz:metadata type="corporate-date">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
-
+      
       <xsl:for-each select="tmarc:d111">
-        <pz:metadata type="meeting-name">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="meeting-location">
-          <xsl:value-of select="tmarc:sc" />
-        </pz:metadata>
-        <pz:metadata type="meeting-date">
-          <xsl:value-of select="tmarc:sd" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="meeting-name">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sc">
+	  <pz:metadata type="meeting-location">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sd">
+	  <pz:metadata type="meeting-date">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d260">
-        <pz:metadata type="date">
-          <xsl:value-of select="translate(tmarc:sc, 'cp[].', '')" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sc">
+	  <pz:metadata type="date">
+	    <xsl:value-of select="translate(., 'cp[].', '')" />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
 
-      <xsl:if test="$date_008 and not(tmarc:d260)">
+      <xsl:if test="string-length($date_008) &gt; 0 and not(tmarc:d260)">
         <pz:metadata type="date">
           <xsl:choose>
             <xsl:when test="$date_end_008">
@@ -265,96 +295,143 @@
         </pz:metadata>
       </xsl:if>
 
-
       <xsl:for-each select="tmarc:d130">
-        <pz:metadata type="title-uniform">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="title-uniform-media">
-          <xsl:value-of select="tmarc:sm" />
-        </pz:metadata>
-        <pz:metadata type="title-uniform-parts">
-          <xsl:value-of select="tmarc:sn" />
-        </pz:metadata>
-        <pz:metadata type="title-uniform-partname">
-          <xsl:value-of select="tmarc:sp" />
-        </pz:metadata>
-        <pz:metadata type="title-uniform-key">
-          <xsl:value-of select="tmarc:sr" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="title-uniform">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sm">
+	  <pz:metadata type="title-uniform-media">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sn">
+	  <pz:metadata type="title-uniform-parts">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sp">
+	  <pz:metadata type="title-uniform-partname">
+	    <xsl:value-of select="." />	    
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sr">
+	  <pz:metadata type="title-uniform-key">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
-
+      
       <xsl:for-each select="tmarc:d245">
-        <pz:metadata type="title">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="title-remainder">
-          <xsl:value-of select="tmarc:sb" />
-        </pz:metadata>
-        <pz:metadata type="title-responsibility">
-          <xsl:value-of select="tmarc:sc" />
-        </pz:metadata>
-        <pz:metadata type="title-dates">
-          <xsl:value-of select="tmarc:sf" />
-        </pz:metadata>
-        <pz:metadata type="title-medium">
-          <xsl:value-of select="tmarc:sh" />
-        </pz:metadata>
-        <pz:metadata type="title-number-section">
-          <xsl:value-of select="tmarc:sn" />
-        </pz:metadata>
-        <pz:metadata type="title-complete">
-          <xsl:value-of select="tmarc:sa" />
-          <xsl:if test="tmarc:sb" ><xsl:value-of select="concat(' ', tmarc:sb)" /></xsl:if>
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="title">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sb">
+	  <pz:metadata type="title-remainder">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sc">
+	  <pz:metadata type="title-responsibility">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sf">
+	  <pz:metadata type="title-dates">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sh">
+	  <pz:metadata type="title-medium">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sn">
+	  <pz:metadata type="title-number-section">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:if test="tmarc:sa">
+	  <pz:metadata type="title-complete">
+	    <xsl:value-of select="tmarc:sa" />
+	    <xsl:if test="tmarc:sb" ><xsl:value-of select="concat(' ', tmarc:sb)" /></xsl:if>
+	  </pz:metadata>
+	</xsl:if>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d250">
-        <pz:metadata type="edition">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="edition">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d260">
-        <pz:metadata type="publication-place">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="publication-name">
-          <xsl:value-of select="tmarc:sb" />
-        </pz:metadata>
-        <pz:metadata type="publication-date">
-          <xsl:value-of select="tmarc:sc" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="publication-place">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sb">
+	  <pz:metadata type="publication-name">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sc">
+	  <pz:metadata type="publication-date">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d300">
-        <pz:metadata type="physical-extent">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="physical-format">
-          <xsl:value-of select="tmarc:sb" />
-        </pz:metadata>
-        <pz:metadata type="physical-dimensions">
-          <xsl:value-of select="tmarc:sc" />
-        </pz:metadata>
-        <pz:metadata type="physical-accomp">
-          <xsl:value-of select="tmarc:se" />
-        </pz:metadata>
-        <pz:metadata type="physical-unittype">
-          <xsl:value-of select="tmarc:sf" />
-        </pz:metadata>
-        <pz:metadata type="physical-unitsize">
-          <xsl:value-of select="tmarc:sg" />
-        </pz:metadata>
-        <pz:metadata type="physical-specified">
-          <xsl:value-of select="tmarc:s3" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="physical-extent">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sb">
+	  <pz:metadata type="physical-format">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sc">
+	  <pz:metadata type="physical-dimensions">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:se">
+	  <pz:metadata type="physical-accomp">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sf">
+	  <pz:metadata type="physical-unittype">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sg">
+	  <pz:metadata type="physical-unitsize">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:s3">
+	  <pz:metadata type="physical-specified">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d440">
-        <pz:metadata type="series-title">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="series-title">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d500">
@@ -405,259 +482,70 @@
         </pz:metadata>
       </xsl:for-each>
 
-      <xsl:for-each select="tmarc:d600">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-	    <xsl:variable name='value'>
-	      <xsl:value-of select='normalize-space(.)'/>
-	    </xsl:variable>
-	    <xsl:choose>
-	      <xsl:when test="substring($value,string-length($value)) = ','">
-		<xsl:value-of select="substring($value,0,string-length($value))"/>
-	      </xsl:when>
-	      <xsl:otherwise>
-		<xsl:value-of select="$value"/>
-	      </xsl:otherwise>
-	    </xsl:choose> 
-         </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d610">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
+      <xsl:for-each select="tmarc:d600 | tmarc:d610 | tmarc:d611 | tmarc:d630 |
+                            tmarc:d648 | tmarc:d650 | tmarc:d651 | tmarc:d653 |
+                            tmarc:d654 | tmarc:d655 | tmarc:d656 | tmarc:d657 |
+                            tmarc:d658 | tmarc:d662 | tmarc:d69X">
+	<xsl:for-each select="tmarc:sa">
+	  <pz:metadata type="subject">
+	    <xsl:value-of select="."/>
+	  </pz:metadata>
+	</xsl:for-each>
+	<pz:metadata type="subject-long">
+           <xsl:for-each select="node()/text()">
+             <xsl:if test="position() &gt; 1">
+               <xsl:text>, </xsl:text>
+             </xsl:if>
+            <xsl:variable name='value'>
+              <xsl:value-of select='normalize-space(.)'/>
+            </xsl:variable>
+            <xsl:choose>
+              <xsl:when test="substring($value, string-length($value)) = ','">
+                <xsl:value-of select="substring($value, 1, string-length($value)-1)"/>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="$value"/>
+              </xsl:otherwise>
+            </xsl:choose> 
           </xsl:for-each>
-        </pz:metadata>
+         </pz:metadata>
       </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d611">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d630">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d648">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d650">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d651">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d653">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d654">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d655">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d656">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d657">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d658">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d662">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <xsl:for-each select="tmarc:d69X">
-        <pz:metadata type="subject">
-          <xsl:value-of select="tmarc:sa" />
-        </pz:metadata>
-        <pz:metadata type="subject-long">
-          <xsl:for-each select="node()/text()">
-            <xsl:if test="position() > 1">
-              <xsl:text>, </xsl:text>
-            </xsl:if>
-            <xsl:value-of select="." />
-          </xsl:for-each>
-        </pz:metadata>
-      </xsl:for-each>
-
-      <!-- or tmarc:d651 or tmarc:d653 or tmarc:d654 or tmarc:d655 or tmarc:d656 
-        or tmarc:d657 or tmarc:d658 or tmarc:d662 or tmarc:d69X"> -->
-
-      <!-- <xsl:for-each select="tmarc:d600" > <pz:metadata type="subject"> 
-        <xsl:value-of select="tmarc:sa"/> </pz:metadata> <pz:metadata type="subject-long"> 
-        <xsl:for-each select="tmarc:sa tmarc:sb tmarc:sc tmarc:sd "> <xsl:if test="position() 
-        > 1"> <xsl:text>, </xsl:text> </xsl:if> <xsl:value-of select="."/> </xsl:for-each> 
-        </pz:metadata> </xsl:for-each> -->
 
       <xsl:for-each select="tmarc:d856">
-        <pz:metadata type="electronic-url">
-          <xsl:value-of select="tmarc:su" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:su">
+	  <pz:metadata type="electronic-url">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
         <pz:metadata type="electronic-text">
-          <xsl:choose>
+	  <xsl:choose>
 	    <xsl:when test="tmarc:sy">
 	      <xsl:value-of select="tmarc:sy/text()" />
 	    </xsl:when>
 	    <xsl:when test="tmarc:s3">
 	      <xsl:value-of select="tmarc:s3/text()" />
 	    </xsl:when>
-	     <xsl:otherwise>Get resource</xsl:otherwise>
-	   </xsl:choose>
+	    <xsl:when test="tmarc:sa">
+	      <xsl:value-of select="tmarc:sa/text()" />
+	    </xsl:when>
+	    <xsl:otherwise>Get resource</xsl:otherwise>
+	  </xsl:choose>
         </pz:metadata>
-        <pz:metadata type="electronic-note">
-          <xsl:value-of select="tmarc:sz" />
-        </pz:metadata>
-        <pz:metadata type="electronic-format-instruction">
-          <xsl:value-of select="tmarc:si" />
-        </pz:metadata>
-        <pz:metadata type="electronic-format-type">
-          <xsl:value-of select="tmarc:sq" />
-        </pz:metadata>
+	<xsl:for-each select="tmarc:sz">
+	  <pz:metadata type="electronic-note">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:si">
+	  <pz:metadata type="electronic-format-instruction">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
+	<xsl:for-each select="tmarc:sq">
+	  <pz:metadata type="electronic-format-type">
+	    <xsl:value-of select="." />
+	  </pz:metadata>
+	</xsl:for-each>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d773">
@@ -667,11 +555,11 @@
             <xsl:text> </xsl:text>
           </xsl:for-each>
         </pz:metadata>
-        <xsl:if test="tmarc:st">
+        <xsl:for-each select="tmarc:st">
           <pz:metadata type="journal-title">
-            <xsl:value-of select="tmarc:st"/>
+            <xsl:value-of select="."/>
           </pz:metadata>
-        </xsl:if>
+        </xsl:for-each>
         <xsl:if test="tmarc:sg">
 	  <xsl:variable name="value">
             <xsl:for-each select="tmarc:sg">
@@ -731,7 +619,7 @@
 	      <xsl:value-of select="$pages"/>
 	    </pz:metadata>
 	  </xsl:if>
-	  
+
 	  <!-- season -->
         </xsl:if>
         <xsl:if test="tmarc:sp">
@@ -742,16 +630,16 @@
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d852">
-        <xsl:if test="tmarc:sy">
+        <xsl:for-each select="tmarc:sy">
           <pz:metadata type="publicnote">
-            <xsl:value-of select="tmarc:sy" />
+            <xsl:value-of select="." />
           </pz:metadata>
-        </xsl:if>
-        <xsl:if test="tmarc:sh">
+        </xsl:for-each>
+        <xsl:for-each select="tmarc:sh">
           <pz:metadata type="callnumber">
-            <xsl:value-of select="tmarc:sh" />
+            <xsl:value-of select="." />
           </pz:metadata>
-        </xsl:if>
+        </xsl:for-each>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d876">
@@ -832,6 +720,16 @@
         </pz:metadata>
       </xsl:for-each>
 
+      <xsl:for-each select="tmarc:d903">
+        <xsl:if test="tmarc:sa">
+          <pz:metadata type="publication-date">
+            <xsl:value-of select="substring(tmarc:sa,1,4)"/>
+          </pz:metadata>
+          <pz:metadata type="date">
+            <xsl:value-of select="substring(tmarc:sa,1,4)"/>
+          </pz:metadata>
+        </xsl:if>
+      </xsl:for-each>
 
       <!-- <xsl:if test="$fulltext_b"> <pz:metadata type="fulltext"> <xsl:value-of 
         select="$fulltext_b"/> </pz:metadata> </xsl:if> -->
@@ -847,69 +745,36 @@
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d926">
-        <pz:metadata type="locallocation">
-	  <xsl:choose><xsl:when test="tmarc:sa">
-	    <xsl:value-of select="tmarc:sa"/>
-	  </xsl:when><xsl:otherwise>
-	    <xsl:text>PAZPAR2_NULL_VALUE</xsl:text>
-	  </xsl:otherwise></xsl:choose>
+        <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">
+	  <xsl:value-of select="tmarc:sa"/>
 	</pz:metadata>
-        <pz:metadata type="callnumber">
-	  <xsl:choose><xsl:when test="tmarc:sc">
-	    <xsl:value-of select="tmarc:sc"/>
-	  </xsl:when><xsl:otherwise>
-	    <xsl:text>PAZPAR2_NULL_VALUE</xsl:text>
-	  </xsl:otherwise></xsl:choose>
+        <pz:metadata type="callnumber" empty="PAZPAR2_NULL_VALUE">
+	  <xsl:value-of select="tmarc:sc"/>
 	</pz:metadata>
-        <pz:metadata type="available">
-	  <xsl:choose><xsl:when test="tmarc:se">
-	    <xsl:value-of select="tmarc:se"/>
-	  </xsl:when><xsl:otherwise>
-	    <xsl:text>PAZPAR2_NULL_VALUE</xsl:text>
-	  </xsl:otherwise></xsl:choose>
+        <pz:metadata type="available" empty="PAZPAR2_NULL_VALUE">
+	  <xsl:value-of select="tmarc:se"/>
 	</pz:metadata>
       </xsl:for-each>
 
       <!-- OhioLINK holdings -->
       <xsl:for-each select="tmarc:d945">
-	<pz:metadata type="locallocation">
-          <xsl:choose>
-            <xsl:when test="tmarc:sa">
-              <xsl:value-of select="tmarc:sa"/>
-            </xsl:when>
-            <xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
-          </xsl:choose>
+	<pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">
+	  <xsl:value-of select="tmarc:sa"/>
 	</pz:metadata>
-	<pz:metadata type="callnumber">
-          <xsl:choose>
-	    <xsl:when test="tmarc:sb">
-              <xsl:value-of select="tmarc:sb"/>
-            </xsl:when>
-            <xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
-          </xsl:choose>
+	<pz:metadata type="callnumber" empty="PAZPAR2_NULL_VALUE">
+	  <xsl:value-of select="tmarc:sb"/>
 	</pz:metadata>
-	<pz:metadata type="publicnote">
-          <xsl:choose>
-            <xsl:when test="tmarc:sc">
-              <xsl:value-of select="tmarc:sc"/>
-            </xsl:when>
-            <xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
-          </xsl:choose>
+	<pz:metadata type="publicnote" empty="PAZPAR2_NULL_VALUE">
+	  <xsl:value-of select="tmarc:sc"/>
 	</pz:metadata>
-	<pz:metadata type="available">
+	<pz:metadata type="available" empty="PAZPAR2_NULL_VALUE">
           <xsl:choose>
             <xsl:when test="tmarc:ss = 'N'">Available</xsl:when>
-            <xsl:when test="tmarc:ss != 'N'">
-              <xsl:choose>
-		<xsl:when test="tmarc:sd">
-                  <xsl:value-of select="tmarc:sd"/>
-		</xsl:when>
-		<xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
-              </xsl:choose>
-            </xsl:when>
-            <xsl:otherwise>PAZPAR2_NULL_VALUE</xsl:otherwise>
-          </xsl:choose>
-	</pz:metadata>      
+            <xsl:otherwise>
+	      <xsl:value-of select="tmarc:sd"/>
+	    </xsl:otherwise>
+	  </xsl:choose>
+	</pz:metadata>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d948">
