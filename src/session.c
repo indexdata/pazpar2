@@ -1410,10 +1410,11 @@ static struct record_metadata *record_metadata_init(
     {
         if (attr->children && attr->children->content)
         {
-            if (strcmp((const char *) attr->name, "type"))
-            {  /* skip the "type" attribute.. Its value is already part of
-                  the element in output (md-%s) and so repeating it here
-                  is redundant */
+            if (strcmp((const char *) attr->name, "type")
+                && strcmp((const char *) attr->name, "empty"))
+            {  /* skip the "type" + "empty" attribute..
+                  The "Type" is already part of the element in output
+                  (md-%s) and so repeating it here is redundant */
                 *attrp = nmem_malloc(nmem, sizeof(**attrp));
                 (*attrp)->name =
                     nmem_strdup(nmem, (const char *) attr->name);
@@ -1865,10 +1866,17 @@ static int ingest_to_cluster(struct client *cl,
 
             type = xmlGetProp(n, (xmlChar *) "type");
             value = xmlNodeListGetString(xdoc, n->children, 1);
-
-            if (!type || !value || !*value)
+            if (!type)
                 continue;
-
+            if (!value || !*value)
+            {
+                xmlChar *empty = xmlGetProp(n, (xmlChar *) "empty");
+                if (!empty)
+                    continue;
+                if (value)
+                    xmlFree(value);
+                value = empty;
+            }
             md_field_id
                 = conf_service_metadata_field_id(service, (const char *) type);
             if (md_field_id < 0)
