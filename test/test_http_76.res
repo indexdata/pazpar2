@@ -19,6 +19,9 @@
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
+  <md-subjects>Optical pattern recognition</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>102165</relevance>
@@ -78,6 +81,9 @@ score = relevance(102165);
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
+  <md-subjects>Computers</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>30649</relevance>
@@ -108,6 +114,9 @@ score = relevance(30649);
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
+  <md-subjects>Tomography</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>0</relevance>

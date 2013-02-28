@@ -23,6 +23,9 @@
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
+  <md-subjects>Railroads</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <recid>content: title washington metropolitan area rail computer feasibility study author englund carl r medium book</recid>
@@ -41,6 +44,9 @@
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
+  <md-subjects>Computers</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
@@ -61,6 +67,9 @@
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
+  <md-subjects>Tomography</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
@@ -86,6 +95,9 @@
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
+  <md-subjects>Cartography</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <recid>content: title the puget sound region author mairs john w medium book</recid>
@@ -106,6 +118,12 @@
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
+  <md-subjects>Universities and colleges</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
+  <md-subjects>Community colleges</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <recid>content: title a plan for community college computer development author medium book</recid>
@@ -146,6 +164,9 @@
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
+  <md-subjects>Optical pattern recognition</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <recid>content: title computer science technology author medium book</recid>
@@ -170,6 +191,15 @@
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
+  <md-subjects>Radioisotope scanning</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
+  <md-subjects>Scintillation cameras</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
+  <md-subjects>Imaging systems in medicine</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>

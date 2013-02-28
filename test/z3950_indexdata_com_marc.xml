@@ -243,7 +243,19 @@
 	  <xsl:value-of select="marc:subfield[@code='z']"/>
 	</pz:metadata>
       </xsl:for-each>
-
+      
+      <xsl:for-each select="marc:datafield[@tag='650']">
+	<pz:metadata type="subjects" empty="PAZPAR2_NULL_a">
+          <xsl:value-of select="marc:subfield[@code='a']"/>
+	</pz:metadata>
+	<pz:metadata type="subjects" empty="PAZPAR2_NULL_b">
+	  <xsl:value-of select="marc:subfield[@code='b']"/>
+	</pz:metadata>
+	<pz:metadata type="subjects" empty="PAZPAR2_NULL_c">
+	  <xsl:value-of select="marc:subfield[@code='c']"/>
+	</pz:metadata>
+      </xsl:for-each>
+      
       <xsl:for-each select="marc:datafield[@tag='773']">
 	<pz:metadata type="citation">
 	  <xsl:for-each select="*">

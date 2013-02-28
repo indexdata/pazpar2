@@ -26,6 +26,12 @@
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
+  <md-subjects>Greek literature</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
+  <md-subjects>Philosophy, Ancient</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>291121</relevance>
