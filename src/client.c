@@ -1317,8 +1317,8 @@ static int apply_limit(struct session_database *sdb,
                                 sdb->database->id, cvalue);
                         ret = -1; /* bad limitmap */
                     }
-                    break;
                 }
+                break;
             }
         }
         if (!s)
