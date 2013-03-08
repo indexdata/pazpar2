@@ -46,20 +46,20 @@ when YAZ is compiled without ICU support.
 
 --- 1.6.22 2012/10/11
 
-Requires YAZ-4.2.40 to support native solr support. 
+Requires YAZ-4.2.40 to support native solr support.
 
-Fix and improve logic handling whether or not to re-do search on sort 
-order changes. A sort order with change in ascending/descending only 
-whould not trigger a new search, which is required for targets with 
+Fix and improve logic handling whether or not to re-do search on sort
+order changes. A sort order with change in ascending/descending only
+whould not trigger a new search, which is required for targets with
 native sorting capabilities. Each client is now checked if instructions
-(sortmap) exist for native sorting and only client that does requires 
-it is researched. Other clients is just re-ingesting the records, 
-they already have. The resultset is now cleared if any researching 
-is done. 
+(sortmap) exist for native sorting and only client that does requires
+it is researched. Other clients is just re-ingesting the records,
+they already have. The resultset is now cleared if any researching
+is done.
 
-Connection sharing between session has broken since version 1.6.8 with 
-introduction of logic that would minimize searching if pazpar2 could 
-detect this based on same query and limits and partly sort order. 
+Connection sharing between session has broken since version 1.6.8 with
+introduction of logic that would minimize searching if pazpar2 could
+detect this based on same query and limits and partly sort order.
 This could lead to segementations violations.
 
 Added a chapter in the manaul about relevance ranking.
@@ -77,7 +77,7 @@ term occurs (l=0 for first term, l=1 for second term, ..). Default
 value of k is 0.0.
 
 Rank tweak: length=strategy. length="linear" if mult is to be divided
-by length (existing, default behavior), length="log" if mult is to be 
+by length (existing, default behavior), length="log" if mult is to be
 divided by log2(1+length), length="none" if mult is not to be affected
 by length.
 
@@ -90,11 +90,11 @@ is used in service.
 Record as returned by show/record command have a minimal indentation
 which makes things human-readable.
 
-New configuration of default sorting criteria (sort-default) in 
+New configuration of default sorting criteria (sort-default) in
 service definition. If no criteria is defined it will be as before
-'relevance'. 
+'relevance'.
 
-Search command now supports sort parameter just as the show command. 
+Search command now supports sort parameter just as the show command.
 If no parameter is give, it will use the service sort-default value.
 
 --- 1.6.19 2012/09/18
@@ -123,14 +123,14 @@ be reused).
 
 --- 1.6.16 2012/08/22
 
-Fix a bug introduce in 1.6.15 around the position sorting. It resetted the 
+Fix a bug introduce in 1.6.15 around the position sorting. It resetted the
 resultset and sorting when the sort order is position. However this will be done on
-every client poll, which will make pazpar2 continuing reset and fetching. 
-It should only be done on FIRST request where the sort order change. 
+every client poll, which will make pazpar2 continuing reset and fetching.
+It should only be done on FIRST request where the sort order change.
 
-Fix an issue on suggestion option: Also disable suggestions on empty string. 
+Fix an issue on suggestion option: Also disable suggestions on empty string.
 
-Clean up in turbo marc stylesheet. 
+Clean up in turbo marc stylesheet.
 
 Remove the hardcoded size of termlists.
 
@@ -151,17 +151,17 @@ M is default rank and N is rank for CCL terms from field F.
 
 Fix for IE7/8 in pz.js
 
-Applied patch from Giannis Kosmas on keepAlive, which also adds keepAlive to init response. 
+Applied patch from Giannis Kosmas on keepAlive, which also adds keepAlive to init response.
 
 Lower log level some places.
 
-Remove some invalid test results. 
+Remove some invalid test results.
 
 --- 1.6.13 2012/05/23
 
 Introducing a version=2 parameter for show, termlist and bytarget commands.
-This enables pazpar2 to return approximation on hit and count count when 
-doing record filtering using the limit parameter on search and a 
+This enables pazpar2 to return approximation on hit and count count when
+doing record filtering using the limit parameter on search and a
 limitmap with a value of "local:"
 
 Setting pz:xslt may embed local XSLT as an alternative to referring
@@ -181,13 +181,13 @@ Metadata field rank may given by XML internal document (pz:xslt
 result). If rank is not given, the rank from service description is
 used - as before.
 
-Metadata field can now configured a default limitmap and facetmap. 
+Metadata field can now configured a default limitmap and facetmap.
 Setting limitmap to "local:" would work for all kind of targets, but would
-prob. not be the optimal solution. But at least better than the default behavior 
-of pazpar2 where no filtering is done. 
+prob. not be the optimal solution. But at least better than the default behavior
+of pazpar2 where no filtering is done.
 
 A service definition can now also contains <set/> that defines service-wide
-settings. These will override server-wide sets and will be overridded by 
+settings. These will override server-wide sets and will be overridded by
 settings.
 
 New setting, pz:present_chunk, that specifies number of records to fetch
@@ -195,31 +195,31 @@ at a time. Zero will disable chunkation; will fetch max_records at once.
 
 --- 1.6.12 2012/03/14
 
-Revert the format change in termlist response, that could break 
-some clients / UIs since they were expecting an (empty) element 
-if no facet values was found. 
+Revert the format change in termlist response, that could break
+some clients / UIs since they were expecting an (empty) element
+if no facet values was found.
 
 --- 1.6.11 2012/03/07
 
-Revert the behavior of returning errors when unable to block 
-on termlist, bytarget and search, when unable to block due to 
-other block. The client will now receive a regular response, 
+Revert the behavior of returning errors when unable to block
+on termlist, bytarget and search, when unable to block due to
+other block. The client will now receive a regular response,
 but it will be logged in the server. A parameter (report) is
-added to change behavior to return error response or WARNING 
-status message. Consider this "API" as private, as it is mostly 
-untested and could be changed in future releases. 
+added to change behavior to return error response or WARNING
+status message. Consider this "API" as private, as it is mostly
+untested and could be changed in future releases.
 
 Fix spell error in pz2.js fix in 1.6.10.
 
-New Marc2TurboMarc.xsl (contribution from Sven Porst). 
-Can solve the missing marc21.xsl updates in some cases. 
+New Marc2TurboMarc.xsl (contribution from Sven Porst).
+Can solve the missing marc21.xsl updates in some cases.
 
-tmarc.xsl: Simplify the 6xx to subject-long and fix 1-based 
+tmarc.xsl: Simplify the 6xx to subject-long and fix 1-based
 substring (contribtion from Sven Porst)
 
 marc21.xsl: fix 1-based substring call
 
-tmarc.xsl and marc21.xsl: use 856$a as last option for electronic-text. 
+tmarc.xsl and marc21.xsl: use 856$a as last option for electronic-text.
 
 Add test_termlist_block to test suite
 
@@ -230,14 +230,14 @@ Also refactor a bit the code that converts from PQF to SRU/SOLR queries.
 
 Fix pz2.js: "null object" due to change in in bytarget result XML.
 
-Fixes in tmarc.xsl: Subject-long shorten for extra commas only. 
-Added this normalization to the other subject-long fields (d6xx), 
+Fixes in tmarc.xsl: Subject-long shorten for extra commas only.
+Added this normalization to the other subject-long fields (d6xx),
 where it was missing.
 
-Fixes in marc21.xsl: Updated with most of the new tmarc.xsl. 
-Still differences around medium and holdings. marc21.xsl is not 
+Fixes in marc21.xsl: Updated with most of the new tmarc.xsl.
+Still differences around medium and holdings. marc21.xsl is not
 longer active used by Index Data, and should be considered unsupported.
-Use tmarc.xsl instead. 
+Use tmarc.xsl instead.
 
 --- 1.6.9 2012/01/19
 
@@ -271,9 +271,9 @@ for a limitmap.
 --- 1.6.5 2011/11/01
 
 Updated bytarget command to contain a suggestions element with misspelled
-words and suggestions to these. pz2.js has been updated to deliver this 
-onwards as well. Only target that currently delivers this is the solr 
-client in YAZ 4.2.18. 
+words and suggestions to these. pz2.js has been updated to deliver this
+onwards as well. Only target that currently delivers this is the solr
+client in YAZ 4.2.18.
 
 --- 1.6.4 2011/10/28
 
@@ -370,7 +370,7 @@ Pazpar2 may save HTTP requests. Enabled by option -R.
 
 Experimental support for DTIC DADS target. New dads-pz2.xsl.
 
-Support for query_syntax (overrides the default for SRU | Z39.50) 
+Support for query_syntax (overrides the default for SRU | Z39.50)
 
 Support for extraArgs (ZOOM "extraArgs" option) for targets
 
@@ -378,11 +378,11 @@ New commands: status-server and status-session
 
 --- 1.5.3 2011/02/18
 
-Fix for threaded runs: Client now have a copy of the database URL, 
-which can used after the database has been release from the client. 
-This makes the logging in the connection idle timeout of the client nicer (no NOURL) and should be thread-safe.  
+Fix for threaded runs: Client now have a copy of the database URL,
+which can used after the database has been release from the client.
+This makes the logging in the connection idle timeout of the client nicer (no NOURL) and should be thread-safe.
 
-tmarc.xsl: Add journal-title-abbrev and full text. 
+tmarc.xsl: Add journal-title-abbrev and full text.
 
 cf.xsl: new fields: isbn, issn, journaltitle, volume, issue
 
@@ -478,7 +478,7 @@ and a symlink to it is created from services-enabled. The default.xml
 service is unnamed and, thus, will be used by jsdemo and test1.
 
 New setting pz:negotiation_charset. Patch from Andrei V. Toutoukine. The
-new setting pz:negotiation_charset specifies character set for Z39.50 Init.  
+new setting pz:negotiation_charset specifies character set for Z39.50 Init.
 
 --- 1.2.4 2010/01/15
 
@@ -535,7 +535,7 @@ is now ordered in the same way as metadata in the service definition.
 Older Pazpar2 version use the order in which metadata appeared in a
 record instance.
 
-The search argument 'filter' now offers a new operator ~ which does a 
+The search argument 'filter' now offers a new operator ~ which does a
 substring match. The = operator works as before: string match for
 anything but pz:id, or target match for pz:id.
 
@@ -562,7 +562,7 @@ during the session. The service may have its own target settings,
 ICU config, timeout, etc. In order to be recognized, the POST request
 must use Content-Type=text/xml.
 
-Timeout values may be given per-service. That's element 'timeout' 
+Timeout values may be given per-service. That's element 'timeout'
 which takes three attribute values (a subset may be given): 'session',
 'z3950_operation', 'z3950_session'. Option -T is no longer supported
 - used to specify session timeout.
@@ -609,7 +609,7 @@ Session timeout may be specified on the command-line as option -T.
 
 Pazpar2 may now be operated in a no-merged mode for records.. All records
 will be considered unique. This mode is enabled if no mergekey is
-generated by the normalization stylesheet (pz:xslt). 
+generated by the normalization stylesheet (pz:xslt).
 
 Pazpar2 caches original records from each target and the 'record' command
 with offset returns the original record if 'syntax' and 'esn' are NOT
@@ -726,7 +726,7 @@ not support some fields are ignored in a search.
 
 --- 1.0.1 2007/07/03
 
-Improved handling of socket timeout for Z39.50 connections. 
+Improved handling of socket timeout for Z39.50 connections.
 
 Misc documentation updates and spell fixes.
 
