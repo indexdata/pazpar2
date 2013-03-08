@@ -1,3 +1,17 @@
+--- 1.6.26 2013/03/08
+
+New pz:metadata attribute, empty="empty-value" for Pazpar2's
+internal representation. With this attribute, Pazpar2 treates an empty
+pz:metadata type as having the value for "empty"  - if empty.
+
+New setting, pz:extendrecs, which triggers extended fetch of records
+for a database beyond pz:maxrecs for a show command.
+
+Fix warning that was falsely issued for "missing limitmap".
+
+Log message for Pazpart start/stop changed. Now using same style as
+Metaproxy, ie Pazpar2 start SHA1 / Pazpar2 stop .
+
 --- 1.6.25 2013/02/07
 
 Fix hang of 2nd command=show with esn/syntax given.
