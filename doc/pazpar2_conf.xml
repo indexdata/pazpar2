@@ -1274,6 +1274,24 @@
      </listitem>
     </varlistentry>
     <varlistentry>
+     <term>pz:extendrecs</term>
+     <listitem>
+      <para>
+       If a show command goes to the boundary of a result set for a
+       database - depends on sorting - and pz:extendrecs is set to a larger
+       value of pz:maxrecs, then Pazpar2 wait for show to fetch remaining
+       records - up to pz:extendrecs. This setting is best used if a
+       database does native sorting, because the result set otherwise may
+       be completely re-sorted during extended fetch.
+      </para>
+      <note>
+       <para>
+	The pz:extendrecs setting is supported in Pazpar2 version 1.6.26.
+       </para>
+      </note>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
      <term>pz:presentchunk</term>
      <listitem>
       <para>
