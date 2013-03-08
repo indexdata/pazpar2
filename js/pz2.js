@@ -1,5 +1,5 @@
 /*
- * Mine
+ * $Id$
 ** pz2.js - pazpar2's javascript client library.
 */
 
@@ -1065,35 +1065,43 @@ Element_parseChildNodes = function (node)
 {
     var parsed = {};
     var hasChildElems = false;
+    var textContent = '';
 
     if (node.hasChildNodes()) {
         var children = node.childNodes;
         for (var i = 0; i < children.length; i++) {
             var child = children[i];
-            if (child.nodeType == Node.ELEMENT_NODE) {
+            switch (child.nodeType) {
+              case Node.ELEMENT_NODE:
                 hasChildElems = true;
                 var nodeName = child.nodeName; 
                 if (!(nodeName in parsed))
                     parsed[nodeName] = [];
                 parsed[nodeName].push(Element_parseChildNodes(child));
+                break;
+              case Node.TEXT_NODE:
+                textContent += child.nodeValue;
+                break;
+              case Node.CDATA_SECTION_NODE:
+                textContent += child.nodeValue;
+                break;
             }
         }
     }
 
     var attrs = node.attributes;
     for (var i = 0; i < attrs.length; i++) {
+        hasChildElems = true;
         var attrName = '@' + attrs[i].nodeName;
         var attrValue = attrs[i].nodeValue;
         parsed[attrName] = attrValue;
     }
 
-    // if no nested elements, get text content
-    if (node.hasChildNodes() && !hasChildElems) {
-        if (node.attributes.length) 
-            parsed['#text'] = node.firstChild.nodeValue;
-        else
-            parsed = node.firstChild.nodeValue;
-    }
+    // if no nested elements/attrs set value to text
+    if (hasChildElems)
+      parsed['#text'] = textContent;
+    else
+      parsed = textContent;
     
     return parsed;
 }
