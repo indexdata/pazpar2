@@ -1,3 +1,8 @@
+--- 1.6.27 2013/03/08
+
+pz2.js: Element_parseChildNodes concatenates all Text/CDATA nodes, instead
+of the first child.
+
 --- 1.6.26 2013/03/08
 
 New pz:metadata attribute, empty="empty-value" for Pazpar2's
