@@ -624,7 +624,6 @@ int session_is_preferred_clients_ready(struct session *s)
 static void session_clear_set(struct session *se, struct reclist_sortparms *sp)
 {
     reclist_destroy(se->reclist);
-    se->reclist = 0;
     if (nmem_total(se->nmem))
         session_log(se, YLOG_DEBUG, "NMEN operation usage %zd",
                     nmem_total(se->nmem));
@@ -965,7 +964,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->number_of_warnings_unknown_elements = 0;
     session->number_of_warnings_unknown_metadata = 0;
     session->num_termlists = 0;
-    session->reclist = 0;
+    session->reclist = reclist_create(nmem);
     session->clients_active = 0;
     session->clients_cached = 0;
     session->settings_modified = 0;
@@ -1207,22 +1206,19 @@ struct record_cluster *show_single_start(struct session *se, const char *id,
     session_enter(se, "show_single_start");
     *prev_r = 0;
     *next_r = 0;
-    if (se->reclist)
-    {
-        reclist_limit(se->reclist, se);
+    reclist_limit(se->reclist, se);
 
-        reclist_enter(se->reclist);
-        while ((r = reclist_read_record(se->reclist)))
+    reclist_enter(se->reclist);
+    while ((r = reclist_read_record(se->reclist)))
+    {
+        if (!strcmp(r->recid, id))
         {
-            if (!strcmp(r->recid, id))
-            {
-                *next_r = reclist_read_record(se->reclist);
-                break;
-            }
-            *prev_r = r;
+            *next_r = reclist_read_record(se->reclist);
+            break;
         }
-        reclist_leave(se->reclist);
+        *prev_r = r;
     }
+    reclist_leave(se->reclist);
     if (!r)
         session_leave(se, "show_single_start");
     return r;
