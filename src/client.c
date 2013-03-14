@@ -779,15 +779,17 @@ int client_fetch_more(struct client *cl)
     int extend_recs = 0;
     int number;
 
+    str = session_setting_oneval(sdb, PZ_EXTENDRECS);
+    if (!str && !*str)
+        return 0;
+
+    extend_recs = atoi(str);
+
     yaz_log(YLOG_LOG, "cl=%s show_stat_no=%d got=%d",
             client_get_id(cl), cl->show_stat_no, cl->record_offset);
     if (cl->show_stat_no < cl->record_offset)
         return 0;
-    yaz_log(YLOG_LOG, "cl=%s Trying to get more", client_get_id(cl));
-
-    str = session_setting_oneval(sdb, PZ_EXTENDRECS);
-    if (str && *str)
-        extend_recs = atoi(str);
+    yaz_log(YLOG_LOG, "cl=%s Trying to fetch more", client_get_id(cl));
 
     if (extend_recs > cl->hits)
         extend_recs = cl->hits;
