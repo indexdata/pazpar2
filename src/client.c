@@ -780,7 +780,7 @@ int client_fetch_more(struct client *cl)
     int number;
 
     str = session_setting_oneval(sdb, PZ_EXTENDRECS);
-    if (!str && !*str)
+    if (!str || !*str)
         return 0;
 
     extend_recs = atoi(str);
