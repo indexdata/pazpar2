@@ -71,8 +71,7 @@ make CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -fr ${RPM_BUILD_ROOT}
-make prefix=${RPM_BUILD_ROOT}/%{_prefix} mandir=${RPM_BUILD_ROOT}/%{_mandir} \
-	libdir=${RPM_BUILD_ROOT}/%{_libdir} install
+make install DESTDIR=${RPM_BUILD_ROOT}
 mkdir -p ${RPM_BUILD_ROOT}/etc/pazpar2
 mkdir -p ${RPM_BUILD_ROOT}/etc/pazpar2/settings
 mkdir -p ${RPM_BUILD_ROOT}/etc/pazpar2/services-enabled
