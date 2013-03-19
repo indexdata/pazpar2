@@ -1703,7 +1703,7 @@ struct suggestions* client_suggestions_create(const char* suggestions_string)
                               &suggestions->num, 1, '\\', 0);
     /* Set up misspelled array */
     suggestions->misspelled = (char **)
-        nmem_malloc(nmem, suggestions->num * sizeof(**suggestions->misspelled));
+        nmem_malloc(nmem, suggestions->num * sizeof(*suggestions->misspelled));
     /* replace = with \0 .. for each item */
     for (i = 0; i < suggestions->num; i++)
     {
