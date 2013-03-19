@@ -59,16 +59,9 @@ struct connection *client_get_connection(struct client *cl);
 struct session_database *client_get_database(struct client *cl);
 void client_set_database(struct client *cl, struct session_database *db);
 struct session *client_get_session(struct client *cl);
-const char *client_get_pquery(struct client *cl);
 
-void client_init_response(struct client *cl, Z_APDU *a);
 void client_search_response(struct client *cl);
 void client_record_response(struct client *cl, int *got_records);
-void client_close_response(struct client *cl, Z_APDU *a);
-
-int client_is_our_response(struct client *cl);
-
-void client_continue(struct client *cl);
 
 struct client *client_create(const char *url);
 int client_destroy(struct client *c);
@@ -116,7 +109,6 @@ const char *client_get_facet_limit_local(struct client *cl,
                                          int *l,
                                          NMEM nmem, int *num, char ***values);
 
-int client_test_sort_order(struct client *cl, struct reclist_sortparms *sp);
 void client_update_show_stat(struct client *cl, int cmd);
 
 #endif

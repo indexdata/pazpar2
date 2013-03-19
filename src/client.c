@@ -221,11 +221,6 @@ struct session *client_get_session(struct client *cl)
     return cl->session;
 }
 
-const char *client_get_pquery(struct client *cl)
-{
-    return cl->pquery;
-}
-
 static void client_send_raw_present(struct client *cl);
 static int nativesyntax_to_type(const char *s, char *type, ZOOM_record rec);
 
@@ -359,7 +354,7 @@ void client_show_raw_remove(struct client *cl, void *data)
     }
 }
 
-void client_show_raw_dequeue(struct client *cl)
+static void client_show_raw_dequeue(struct client *cl)
 {
     struct show_raw *rr = cl->show_raw;
 
@@ -455,7 +450,7 @@ static int nativesyntax_to_type(const char *s, char *type,
  * TODO Consider thread safety!!!
  *
  */
-void client_report_facets(struct client *cl, ZOOM_resultset rs)
+static void client_report_facets(struct client *cl, ZOOM_resultset rs)
 {
     struct session_database *sdb = client_get_database(cl);
     ZOOM_facet_field *facets = ZOOM_resultset_facets(rs);
@@ -1709,11 +1704,6 @@ static void client_suggestions_destroy(struct client *cl)
     nmem_destroy(nmem);
 }
 
-int client_test_sort_order(struct client *cl, struct reclist_sortparms *sp)
-{
-    //TODO implement correctly.
-    return 1;
-}
 /*
  * Local variables:
  * c-basic-offset: 4
