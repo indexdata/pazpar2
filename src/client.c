@@ -1396,7 +1396,8 @@ int client_parse_query(struct client *cl, const char *query,
     facet_limits_destroy(cl->facet_limits);
     cl->facet_limits = facet_limits_dup(facet_limits);
 
-    yaz_log(YLOG_LOG, "Client %s: CCL query: %s limit: %s", client_get_id(cl), wrbuf_cstr(w_ccl), wrbuf_cstr(w_pqf));
+    yaz_log(YLOG_LOG, "Client %s: CCL query: %s limit: %s",
+            client_get_id(cl), wrbuf_cstr(w_ccl), wrbuf_cstr(w_pqf));
     cn = ccl_find_str(ccl_map, wrbuf_cstr(w_ccl), &cerror, &cpos);
     ccl_qual_rm(&ccl_map);
     if (!cn)
@@ -1436,7 +1437,8 @@ int client_parse_query(struct client *cl, const char *query,
     if (!cl->pquery || strcmp(cl->pquery, wrbuf_cstr(w_pqf)))
     {
         if (cl->pquery)
-            session_log(se, YLOG_LOG, "Client %s: Re-search due query/limit change: %s to %s", 
+            session_log(se, YLOG_LOG, "Client %s: "
+                        "Re-search due query/limit change: %s to %s", 
                         client_get_id(cl), cl->pquery, wrbuf_cstr(w_pqf));
         xfree(cl->pquery);
         cl->pquery = xstrdup(wrbuf_cstr(w_pqf));
