@@ -86,15 +86,18 @@ static int client_use(int delta)
         no_clients_total += delta;
     clients = no_clients;
     yaz_mutex_leave(g_mutex);
-    yaz_log(YLOG_DEBUG, "%s clients=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), clients);
+    yaz_log(YLOG_DEBUG, "%s clients=%d",
+            delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), clients);
     return clients;
 }
 
-int  clients_count(void) {
+int clients_count(void)
+{
     return client_use(0);
 }
 
-int  clients_count_total(void) {
+int clients_count_total(void)
+{
     int total = 0;
     if (!g_mutex)
         return 0;
@@ -550,10 +553,13 @@ void client_search_response(struct client *cl)
         client_report_facets(cl, resultset);
         cl->record_offset = cl->startrecs;
         cl->hits = ZOOM_resultset_size(resultset);
-        yaz_log(YLOG_DEBUG, "client_search_response: hits " ODR_INT_PRINTF, cl->hits);
+        yaz_log(YLOG_DEBUG, "client_search_response: hits " ODR_INT_PRINTF,
+                cl->hits);
         if (cl->suggestions)
             client_suggestions_destroy(cl);
-        cl->suggestions = client_suggestions_create(ZOOM_resultset_option_get(resultset, "suggestions"));
+        cl->suggestions =
+            client_suggestions_create(ZOOM_resultset_option_get(
+                                          resultset, "suggestions"));
     }
 }
 
@@ -584,9 +590,8 @@ static void client_record_ingest(struct client *cl)
     if ((rec = ZOOM_resultset_record_immediate(resultset, cl->record_offset)))
     {
         int offset = ++cl->record_offset;
-        if (cl->session == 0) {
-            /* no operation */
-        }
+        if (cl->session == 0)
+            ;  /* no operation */
         else if (ZOOM_record_error(rec, &msg, &addinfo, 0))
         {
             session_log(se, YLOG_WARN, "Record error %s (%s): %s #%d",
@@ -822,7 +827,8 @@ int client_parse_init(struct client *cl, int same_search)
 /*
  * TODO consider how to extend the range
  * */
-int client_parse_range(struct client *cl, const char *startrecs, const char *maxrecs)
+int client_parse_range(struct client *cl, const char *startrecs,
+                       const char *maxrecs)
 {
     if (maxrecs && atoi(maxrecs) != cl->maxrecs)
     {
@@ -948,19 +954,22 @@ int client_start_search(struct client *cl)
     query = ZOOM_query_create();
     if (cl->cqlquery)
     {
-        yaz_log(YLOG_LOG, "Client %s: Search CQL: %s", client_get_id(cl), cl->cqlquery);
+        yaz_log(YLOG_LOG, "Client %s: Search CQL: %s", client_get_id(cl),
+                cl->cqlquery);
         ZOOM_query_cql(query, cl->cqlquery);
         if (*opt_sort)
             ZOOM_query_sortby(query, opt_sort);
     }
     else
     {
-        yaz_log(YLOG_LOG, "Client %s: Search PQF: %s", client_get_id(cl), cl->pquery);
+        yaz_log(YLOG_LOG, "Client %s: Search PQF: %s", client_get_id(cl),
+                cl->pquery);
 
         ZOOM_query_prefix(query, cl->pquery);
     }
     if (cl->sort_strategy && cl->sort_criteria) {
-        yaz_log(YLOG_LOG, "Client %s: Setting ZOOM sort strategy and criteria: %s %s",
+        yaz_log(YLOG_LOG, "Client %s: "
+                "Set ZOOM sort strategy and criteria: %s %s",
                 client_get_id(cl), cl->sort_strategy, cl->sort_criteria);
         ZOOM_query_sortby2(query, cl->sort_strategy, cl->sort_criteria);
     }
@@ -1086,7 +1095,6 @@ void client_disconnect(struct client *cl)
         client_set_state(cl, Client_Disconnected);
     client_set_connection(cl, 0);
 }
-
 
 // Initialize CCL map for a target
 static CCL_bibset prepare_cclmap(struct client *cl, CCL_bibset base_bibset)
@@ -1508,7 +1516,9 @@ int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
                     strcat(p, " <");
                 else
                     strcat(p, " >");
-                yaz_log(YLOG_LOG, "Client %s: applying sorting %s %s", client_get_id(cl), strategy, p);
+                yaz_log(YLOG_LOG, "Client %s: "
+                        "applying sorting %s %s", client_get_id(cl),
+                        strategy, p);
                 if (!cl->sort_strategy || strcmp(cl->sort_strategy, strategy))
                     cl->same_search = 0;
                 if (!cl->sort_criteria || strcmp(cl->sort_criteria, p))
@@ -1521,14 +1531,19 @@ int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
                 }
             }
             else {
-                yaz_log(YLOG_LOG, "Client %s: Invalid sort strategy and spec found %s", client_get_id(cl), sort_strategy_and_spec);
+                yaz_log(YLOG_LOG, "Client %s: "
+                        "Invalid sort strategy and spec found %s",
+                        client_get_id(cl), sort_strategy_and_spec);
                 xfree(cl->sort_strategy);
                 cl->sort_strategy  = 0;
                 xfree(cl->sort_criteria);
                 cl->sort_criteria = 0;
             }
-        } else {
-            yaz_log(YLOG_DEBUG, "Client %s: No sort strategy and spec found.", client_get_id(cl));
+        }
+        else
+        {
+            yaz_log(YLOG_DEBUG, "Client %s: "
+                    "No sort strategy and spec found.", client_get_id(cl));
             xfree(cl->sort_strategy);
             cl->sort_strategy  = 0;
             xfree(cl->sort_criteria);
@@ -1571,9 +1586,13 @@ Odr_int client_get_hits(struct client *cl)
 
 Odr_int client_get_approximation(struct client *cl)
 {
-    if (cl->record_offset > 0) {
-        Odr_int approx = ((10 * cl->hits * (cl->record_offset - cl->filtered)) / cl->record_offset + 5) /10;
-        yaz_log(YLOG_DEBUG, "%s: Approx: %lld * %d / %d = %lld ", client_get_id(cl), cl->hits, cl->record_offset - cl->filtered, cl->record_offset, approx);
+    if (cl->record_offset > 0)
+    {
+        Odr_int approx = ((10 * cl->hits * (cl->record_offset - cl->filtered))
+                          / cl->record_offset + 5) /10;
+        yaz_log(YLOG_DEBUG, "%s: Approx: %lld * %d / %d = %lld ",
+                client_get_id(cl), cl->hits,
+                cl->record_offset - cl->filtered, cl->record_offset, approx);
         return approx;
     }
     return cl->hits;
@@ -1616,17 +1635,16 @@ const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
     /* int idx; */
     struct suggestions *suggestions = cl->suggestions;
 
-    if (!suggestions) {
-        //yaz_log(YLOG_DEBUG, "No suggestions found");
+    if (!suggestions) 
         return "";
-    }
-    if (suggestions->passthrough) {
-        yaz_log(YLOG_DEBUG, "Passthrough Suggestions: \n%s\n", suggestions->passthrough);
+    if (suggestions->passthrough)
+    {
+        yaz_log(YLOG_DEBUG, "Passthrough Suggestions: \n%s\n",
+                suggestions->passthrough);
         return suggestions->passthrough;
     }
-    if (suggestions->num == 0) {
+    if (suggestions->num == 0)
         return "";
-    }
     /*
     for (idx = 0; idx < suggestions->num; idx++) {
         wrbuf_printf(wrbuf, "<suggest term=\"%s\"", suggestions->suggest[idx]);
@@ -1684,7 +1702,8 @@ struct suggestions* client_suggestions_create(const char* suggestions_string)
         nmem_strsplit_escape2(suggestions->nmem, "\n", suggestions_string, &suggestions->suggest,
                               &suggestions->num, 1, '\\', 0);
     /* Set up misspelled array */
-    suggestions->misspelled = (char **) nmem_malloc(nmem, suggestions->num * sizeof(**suggestions->misspelled));
+    suggestions->misspelled = (char **)
+        nmem_malloc(nmem, suggestions->num * sizeof(**suggestions->misspelled));
     /* replace = with \0 .. for each item */
     for (i = 0; i < suggestions->num; i++)
     {
