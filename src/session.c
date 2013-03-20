@@ -1317,9 +1317,7 @@ struct record_cluster **show_range_start(struct session *se,
                 client_update_show_stat(rec->client, 1);
         }
     }
-    if (*num > 0)
-        recs =
-            nmem_malloc(se->nmem, *num * sizeof(struct record_cluster *));
+    recs = nmem_malloc(se->nmem, (*num > 0 ? *num : 1) * sizeof(*recs));
     for (i = 0; i < *num; i++)
     {
         struct record_cluster *r = reclist_read_record(se->reclist);
