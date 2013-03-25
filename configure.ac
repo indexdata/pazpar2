@@ -28,6 +28,11 @@ YAZ_INIT([static icu],[4.2.40])
 if test -z "$YAZLIB"; then
 	AC_MSG_ERROR([YAZ development libraries missing])
 fi
+case $YAZINC in
+  *YAZ_HAVE_XSLT=1*) ;;
+  *) AC_MSG_ERROR([YAZ not compiled with Libxslt support]) ;;
+esac
+
 YAZ_DOC
 
 AC_SEARCH_LIBS([log],[m])
