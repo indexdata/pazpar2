@@ -57,21 +57,21 @@ else
 fi
 AC_DEFINE_UNQUOTED([PAZPAR2_VERSION_SHA1], ["$sha"], [Git SHA1])
 
-AC_CONFIG_FILES([
+AC_OUTPUT([
 	Doxyfile
 	Makefile
 	src/Makefile
 	test/Makefile
 	js/Makefile
 	doc/Makefile
-	doc/local.ent
+	doc/local0.ent
 	doc/common/Makefile
 	doc/common/print.dsl
 	win/version.nsi
+],[
+	diff doc/local.ent doc/local0.ent >/dev/null 2>/dev/null \
+	|| cp doc/local0.ent doc/local.ent
 ])
-
-AC_OUTPUT
-
 
 echo \
 "------------------------------------------------------------------------

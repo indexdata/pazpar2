@@ -3,13 +3,13 @@ SUBDIRS = common
 
 SUFFIXES=.1 .5 .7 .8 .pdf .esp .xml 
 
-XMLFILES = book.xml manref.xml gpl-2.0.xml
+XMLFILES = book.xml manref.xml gpl-2.0.xml local.ent
 
 MAINXML = $(srcdir)/book.xml
 
 XMLMAN = pazpar2.xml pazpar2_protocol.xml pazpar2_conf.xml
 
-SUPPORTFILES = entities.ent local.ent.in
+SUPPORTFILES = entities.ent
 
 MANFILES = pazpar2.8 pazpar2_protocol.7 pazpar2_conf.5
 
@@ -20,11 +20,13 @@ PNGFILES =
 doc_DATA = $(HTMLFILES) $(PNGFILES)
 man_MANS = $(MANFILES)
 
-EXTRA_DIST = $(XMLFILES) $(XMLMAN) $(doc_DATA) $(man_MANS)
+EXTRA_DIST = $(XMLFILES) $(XMLMAN) $(doc_DATA) $(man_MANS) $(SUPPORTFILES)
 
 $(HTMLFILES): $(XMLFILES) $(PNGFILES)
 	rm -f *.html
 	$(HTML_COMPILE) $(MAINXML)
+
+$(MANFILES): local.ent
 
 .xml.1:
 	$(MAN_COMPILE) $<
