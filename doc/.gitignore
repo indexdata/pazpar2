@@ -11,6 +11,7 @@ manpage.links
 manpage.refs
 *.[0-8]
 local.ent
+local0.ent
 htmlhelp.hhp
 toc.hhc
 manref.xml
