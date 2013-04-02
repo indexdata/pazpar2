@@ -1,3 +1,2 @@
 <!-- Modified by configure. Do not edit. Use entities.ent instead -->
 <!ENTITY version "@VERSION@">
-<!ENTITY prefix "@prefix@">

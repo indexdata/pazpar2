@@ -54,10 +54,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /* Only use a threaded resolver on Unix that offers getaddrinfo.
    gethostbyname is NOT reentrant.
  */
-#if HAVE_GETADDRINFO
 #ifndef WIN32
 #define USE_THREADED_RESOLVER 1
-#endif
 #endif
 
 struct work {
@@ -71,69 +69,56 @@ static int log_level = YLOG_LOG;
 
 void perform_getaddrinfo(struct work *w)
 {
-    int res = 0;
-    char *port;
-#if HAVE_GETADDRINFO
-    struct addrinfo *addrinfo, hints;
-#else
-    struct hostent *hp;
-#endif
-    char *hostport = xstrdup(w->hostport);
-    if ((port = strchr(hostport, ':')))
-        *(port++) = '\0';
-    else
-    {
-        port = "210";
-    }
+    struct addrinfo hints, *res;
+    char host[512], *cp;
+    const char *port = 0;
+    int error;
 
-#if HAVE_GETADDRINFO
     hints.ai_flags = 0;
-    hints.ai_family = PF_INET;
+    hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
-    hints.ai_protocol = IPPROTO_TCP;
-    hints.ai_addrlen = 0;
-    hints.ai_addr = 0;
-    hints.ai_canonname = 0;
-    hints.ai_next = 0;
-    // This is not robust code. It assumes that getaddrinfo always
-    // returns AF_INET address.
-    if ((res = getaddrinfo(hostport, port, &hints, &addrinfo)))
-    {
-        yaz_log(YLOG_WARN, "Failed to resolve %s %s",
-                w->hostport, gai_strerror(res));
-    }
-    else
-    {
-        char ipport[128];
-        unsigned char addrbuf[4];
-        assert(addrinfo->ai_family == PF_INET);
-        memcpy(addrbuf,
-               &((struct sockaddr_in*)addrinfo->ai_addr)->sin_addr.s_addr, 4);
-        sprintf(ipport, "%u.%u.%u.%u:%s",
-                addrbuf[0], addrbuf[1], addrbuf[2], addrbuf[3], port);
-        freeaddrinfo(addrinfo);
-        w->ipport = xstrdup(ipport);
-        yaz_log(log_level, "Resolved %s -> %s", hostport, ipport);
-    }
-#else
-    hp = gethostbyname(hostport);
-    if (!hp)
-    {
-        yaz_log(YLOG_WARN|YLOG_ERRNO, "Failed to resolve %s", hostport);
-    }
-    else
-    {
-        char ipport[128];
-        unsigned char addrbuf[4];
+    hints.ai_protocol = 0;
+    hints.ai_addrlen        = 0;
+    hints.ai_addr           = NULL;
+    hints.ai_canonname      = NULL;
+    hints.ai_next           = NULL;
 
-        memcpy(addrbuf, *hp->h_addr_list, 4 * sizeof(unsigned char));
-        sprintf(ipport, "%u.%u.%u.%u:%s",
-                addrbuf[0], addrbuf[1], addrbuf[2], addrbuf[3], port);
-        w->ipport = xstrdup(ipport);
-        yaz_log(log_level, "Resolved %s -> %s", hostport, ipport);
+    strncpy(host, w->hostport, sizeof(host)-1);
+    host[sizeof(host)-1] = 0;
+    if ((cp = strrchr(host, ':')))
+    {
+        *cp = '\0';
+        port = cp + 1;
     }
-#endif
-    xfree(hostport);
+    error = getaddrinfo(host, port ? port : "210", &hints, &res);
+    if (error)
+    {
+        yaz_log(YLOG_WARN, "Failed to resolve %s: %s",
+                w->hostport, gai_strerror(error));
+    }
+    else
+    {
+        if (getnameinfo((struct sockaddr *) res->ai_addr, res->ai_addrlen,
+                        host, sizeof(host)-1,
+                        0, 0,
+                        NI_NUMERICHOST) == 0)
+        {
+            w->ipport = xmalloc(strlen(host) + (port ? strlen(port) : 0) + 2);
+            strcpy(w->ipport, host);
+            if (port)
+            {
+                strcat(w->ipport, ":");
+                strcat(w->ipport, port);
+            }
+            yaz_log(log_level, "Resolved %s -> %s", w->hostport, w->ipport);
+        }
+        else
+        {
+            yaz_log(YLOG_LOG|YLOG_ERRNO, "getnameinfo failed for %s",
+                    w->hostport);
+        }
+        freeaddrinfo(res);
+    }
 }
 
 static void work_handler(void *vp)
