@@ -801,7 +801,7 @@
   <para>
    The XML configuration may be partitioned into multiple files by using
    the <literal>include</literal> element which takes a single attribute,
-   <literal>src</literal>. The of the <literal>src</literal> attribute is
+   <literal>src</literal>. The <literal>src</literal> attribute is
    regular Shell like glob-pattern. For example,
    <screen><![CDATA[
    <include src="/etc/pazpar2/conf.d/*.xml"/>
@@ -1280,9 +1280,10 @@
        If a show command goes to the boundary of a result set for a
        database - depends on sorting - and pz:extendrecs is set to a positive
        value. then Pazpar2 wait for show to fetch pz:extendrecs more
-       records. This setting is best used if a
-       database does native sorting, because the result set otherwise may
-       be completely re-sorted during extended fetch.
+       records. This setting is best used if a database does native
+       sorting, because the result set otherwise may be completely
+       re-sorted during extended fetch.
+       The default value of pz:extendrecs is 0 (no extended fetch).
       </para>
       <warning>
        <para>
