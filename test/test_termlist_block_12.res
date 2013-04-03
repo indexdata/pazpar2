@@ -12,7 +12,7 @@
 <term>
 <id>localhost:9999/db1</id>
 <name>db1</name>
-<frequency>22</frequency>
+<frequency>23</frequency>
 <state>Client_Idle</state>
 <diagnostic>0</diagnostic>
 </term>
@@ -61,11 +61,11 @@
 <term><name>1974</name><frequency>2</frequency></term>
 <term><name>1980</name><frequency>2</frequency></term>
 <term><name>1987</name><frequency>2</frequency></term>
+<term><name>1991</name><frequency>2</frequency></term>
 <term><name>1992</name><frequency>2</frequency></term>
 <term><name>1993</name><frequency>2</frequency></term>
 <term><name>1997</name><frequency>2</frequency></term>
 <term><name>1968</name><frequency>1</frequency></term>
 <term><name>1972</name><frequency>1</frequency></term>
-<term><name>1973</name><frequency>1</frequency></term>
 </list>
 </termlist>

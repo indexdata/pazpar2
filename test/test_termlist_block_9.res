@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <show><status>OK</status>
 <activeclients>0</activeclients>
-<merged>121</merged>
-<total>2037</total>
+<merged>122</merged>
+<total>2038</total>
 <start>0</start>
 <num>20</num>
 <hit>
@@ -18,7 +18,7 @@
   <md-author>Woodward, C. Michael</md-author>
  </location>
  <count>1</count>
- <relevance>100676</relevance>
+ <relevance>105534</relevance>
  <recid>content: title adobe illustrator for the mac author woodward c michael</recid>
 </hit>
 <hit>
@@ -30,7 +30,7 @@
   <md-date>1998</md-date>
  </location>
  <count>1</count>
- <relevance>100676</relevance>
+ <relevance>105534</relevance>
  <recid>content: title advanced computer performance modeling and simulation</recid>
 </hit>
 <hit>
@@ -48,7 +48,7 @@
   <md-description>&quot;April 2000.&quot;</md-description>
  </location>
  <count>1</count>
- <relevance>100676</relevance>
+ <relevance>105534</relevance>
  <recid>content: title cyberterrorism and computer crimes author aldrich richard w</recid>
 </hit>
 <hit>
@@ -64,7 +64,7 @@
   <md-author>Kaasgaard, Klaus</md-author>
  </location>
  <count>1</count>
- <relevance>92286</relevance>
+ <relevance>96739</relevance>
  <recid>content: title software design and usability author kaasgaard klaus</recid>
 </hit>
 <hit>
@@ -80,7 +80,7 @@
   <md-description>Explains what computer hacking is, who does it, and how dangerous it can be</md-description>
  </location>
  <count>1</count>
- <relevance>88255</relevance>
+ <relevance>92513</relevance>
  <recid>content: title everything you need to know about the dangers of computer hacking author knittel john</recid>
 </hit>
 <hit>
@@ -94,7 +94,7 @@
   <md-author>Cook, Barry M</md-author>
  </location>
  <count>1</count>
- <relevance>88091</relevance>
+ <relevance>92342</relevance>
  <recid>content: title computer peripherals author cook barry m</recid>
 </hit>
 <hit>
@@ -109,7 +109,7 @@
   <md-description>Discusses a variety of educational and game software for children  with suggestions for setting up a computer system. Includes a 3 1/2 in. disk with 6 shareware programs for children</md-description>
  </location>
  <count>1</count>
- <relevance>77371</relevance>
+ <relevance>81105</relevance>
  <recid>content: title kids computer book</recid>
 </hit>
 <hit>
@@ -123,7 +123,7 @@
   <md-author>Steinbacher, Raymond</md-author>
  </location>
  <count>1</count>
- <relevance>75507</relevance>
+ <relevance>79150</relevance>
  <recid>content: title computer friendly author steinbacher raymond</recid>
 </hit>
 <hit>
@@ -139,7 +139,7 @@
   <md-description>&quot;Also published as Parliamentary Paper E 31AO&quot;--T.p. verso</md-description>
  </location>
  <count>1</count>
- <relevance>75507</relevance>
+ <relevance>79150</relevance>
  <recid>content: title computer misuse</recid>
 </hit>
 <hit>
@@ -155,7 +155,7 @@
   <md-author>Ross, Keith W</md-author>
  </location>
  <count>1</count>
- <relevance>75507</relevance>
+ <relevance>79150</relevance>
  <recid>content: title computer networking author ross keith w</recid>
 </hit>
 <hit>
@@ -171,7 +171,7 @@
   <md-description>Includes index</md-description>
  </location>
  <count>1</count>
- <relevance>75507</relevance>
+ <relevance>79150</relevance>
  <recid>content: title coreldraw for windows author davis phyllis</recid>
 </hit>
 <hit>
@@ -190,7 +190,7 @@
   <md-description>&quot;Covers Quicken deluxe 2000 for the Mac&quot;--Cover</md-description>
  </location>
  <count>1</count>
- <relevance>75507</relevance>
+ <relevance>79150</relevance>
  <recid>content: title quicken for the mac author langer maria</recid>
 </hit>
 <hit>
@@ -202,7 +202,7 @@
   <md-date>1998</md-date>
  </location>
  <count>1</count>
- <relevance>75507</relevance>
+ <relevance>79150</relevance>
  <recid>content: title sicherheit und schutz im netz</recid>
 </hit>
 <hit>
@@ -218,7 +218,7 @@
   <md-description>Includes index</md-description>
  </location>
  <count>1</count>
- <relevance>75507</relevance>
+ <relevance>79150</relevance>
  <recid>content: title unix secure shell author carasik anne h</recid>
 </hit>
 <hit>
@@ -234,7 +234,7 @@
   <md-description>&quot;IEEE catalog number 99EX370&quot;--T.p. verso</md-description>
  </location>
  <count>1</count>
- <relevance>71312</relevance>
+ <relevance>74753</relevance>
  <recid>content: title eight international conference on computer communications and networks</recid>
 </hit>
 <hit>
@@ -250,7 +250,7 @@
   <md-description>Includes index</md-description>
  </location>
  <count>1</count>
- <relevance>67117</relevance>
+ <relevance>70356</relevance>
  <recid>content: title building storage networks author farley marc</recid>
 </hit>
 <hit>
@@ -268,7 +268,7 @@
   <md-description>Includes index</md-description>
  </location>
  <count>1</count>
- <relevance>67117</relevance>
+ <relevance>70356</relevance>
  <recid>content: title complete cl author malaga ernie</recid>
 </hit>
 <hit>
@@ -284,7 +284,7 @@
   <md-author>Watt, Alan H</md-author>
  </location>
  <count>1</count>
- <relevance>67117</relevance>
+ <relevance>70356</relevance>
  <recid>content: title d games author watt alan h</recid>
 </hit>
 <hit>
@@ -298,7 +298,7 @@
   <md-description>Title from caption</md-description>
  </location>
  <count>1</count>
- <relevance>67117</relevance>
+ <relevance>70356</relevance>
  <recid>content: title internet world</recid>
 </hit>
 <hit>
@@ -312,7 +312,7 @@
   <md-author>Denoncourt, Don</md-author>
  </location>
  <count>1</count>
- <relevance>67117</relevance>
+ <relevance>70356</relevance>
  <recid>content: title java applications strategies for the as author denoncourt don</recid>
 </hit>
 </show>
