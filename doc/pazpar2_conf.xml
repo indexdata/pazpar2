@@ -1278,17 +1278,18 @@
      <listitem>
       <para>
        If a show command goes to the boundary of a result set for a
-       database - depends on sorting - and pz:extendrecs is set to a larger
-       value of pz:maxrecs, then Pazpar2 wait for show to fetch remaining
-       records - up to pz:extendrecs. This setting is best used if a
+       database - depends on sorting - and pz:extendrecs is set to a positive
+       value. then Pazpar2 wait for show to fetch pz:extendrecs more
+       records. This setting is best used if a
        database does native sorting, because the result set otherwise may
        be completely re-sorted during extended fetch.
       </para>
-      <note>
+      <warning>
        <para>
-	The pz:extendrecs setting is supported in Pazpar2 version 1.6.26.
+	The pz:extendrecs setting appeared in Pazpar2 version 1.6.26.
+	But the bahavior changed with the release of Pazpar2 1.6.29.
        </para>
-      </note>
+      </warning>
      </listitem>
     </varlistentry>
     <varlistentry>

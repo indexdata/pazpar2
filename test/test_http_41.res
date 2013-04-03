@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <show><status>OK</status>
-<activeclients>0</activeclients>
-<merged>8</merged>
+<activeclients>1</activeclients>
+<merged>11</merged>
 <total>31</total>
 <start>0</start>
-<num>8</num>
+<num>11</num>
 <hit>
  <md-title>APPLIED GEOLOGY FILE</md-title>
  <location id="z3950.indexdata.com/gils"
@@ -15,11 +15,27 @@
  <relevance>0</relevance>
  <relevance_info>
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(0));
+idf[1] = log(((1 + total(11))/termoccur(0));
 the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title applied geology file author medium book</recid>
+</hit>
+<hit>
+ <md-title>CORE AND CUTTINGS IN NBMG &apos;LIBRARY&apos;</md-title>
+ <location id="z3950.indexdata.com/gils"
+    name="Index Data GILS test server" checksum="3293507132">
+  <md-title>CORE AND CUTTINGS IN NBMG &apos;LIBRARY&apos;</md-title>
+ </location>
+ <count>1</count>
+ <relevance>0</relevance>
+ <relevance_info>
+relevance = 0;
+idf[1] = log(((1 + total(11))/termoccur(0));
+the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
+score = relevance(0);
+ </relevance_info>
+ <recid>content: title core and cuttings in nbmg library author medium book</recid>
 </hit>
 <hit>
  <md-title>ELECTRIC LOG LIBRARY</md-title>
@@ -31,7 +47,7 @@ score = relevance(0);
  <relevance>0</relevance>
  <relevance_info>
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(0));
+idf[1] = log(((1 + total(11))/termoccur(0));
 the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
@@ -47,7 +63,7 @@ score = relevance(0);
  <relevance>0</relevance>
  <relevance_info>
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(0));
+idf[1] = log(((1 + total(11))/termoccur(0));
 the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
@@ -63,11 +79,43 @@ score = relevance(0);
  <relevance>0</relevance>
  <relevance_info>
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(0));
+idf[1] = log(((1 + total(11))/termoccur(0));
 the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title mine map index author medium book</recid>
+</hit>
+<hit>
+ <md-title>MINERAL OCCURRENCES, DEPOSITS, PROSPECTS, AND MINES</md-title>
+ <location id="z3950.indexdata.com/gils"
+    name="Index Data GILS test server" checksum="3119314843">
+  <md-title>MINERAL OCCURRENCES, DEPOSITS, PROSPECTS, AND MINES</md-title>
+ </location>
+ <count>1</count>
+ <relevance>0</relevance>
+ <relevance_info>
+relevance = 0;
+idf[1] = log(((1 + total(11))/termoccur(0));
+the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
+score = relevance(0);
+ </relevance_info>
+ <recid>content: title mineral occurrences deposits prospects and mines author medium book</recid>
+</hit>
+<hit>
+ <md-title>THESES ON NEVADA GEOLOGY</md-title>
+ <location id="z3950.indexdata.com/gils"
+    name="Index Data GILS test server" checksum="3467699421">
+  <md-title>THESES ON NEVADA GEOLOGY</md-title>
+ </location>
+ <count>1</count>
+ <relevance>0</relevance>
+ <relevance_info>
+relevance = 0;
+idf[1] = log(((1 + total(11))/termoccur(0));
+the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
+score = relevance(0);
+ </relevance_info>
+ <recid>content: title theses on nevada geology author medium book</recid>
 </hit>
 <hit>
  <md-title>UTAH CRIB FILE</md-title>
@@ -79,7 +127,7 @@ score = relevance(0);
  <relevance>0</relevance>
  <relevance_info>
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(0));
+idf[1] = log(((1 + total(11))/termoccur(0));
 the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
@@ -95,7 +143,7 @@ score = relevance(0);
  <relevance>0</relevance>
  <relevance_info>
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(0));
+idf[1] = log(((1 + total(11))/termoccur(0));
 the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
@@ -111,7 +159,7 @@ score = relevance(0);
  <relevance>0</relevance>
  <relevance_info>
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(0));
+idf[1] = log(((1 + total(11))/termoccur(0));
 the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>
@@ -127,7 +175,7 @@ score = relevance(0);
  <relevance>0</relevance>
  <relevance_info>
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(0));
+idf[1] = log(((1 + total(11))/termoccur(0));
 the: relevance += 100000 * tf[1](0.000000) * idf[1](0.000000) (0);
 score = relevance(0);
  </relevance_info>

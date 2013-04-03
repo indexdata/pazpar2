@@ -777,7 +777,7 @@ int client_fetch_more(struct client *cl)
     struct session_database *sdb = client_get_database(cl);
     const char *str;
     int extend_recs = 0;
-    int number;
+    int number = cl->hits - cl->record_offset;
 
     str = session_setting_oneval(sdb, PZ_EXTENDRECS);
     if (!str || !*str)
@@ -791,10 +791,8 @@ int client_fetch_more(struct client *cl)
         return 0;
     yaz_log(YLOG_LOG, "cl=%s Trying to fetch more", client_get_id(cl));
 
-    if (extend_recs > cl->hits)
-        extend_recs = cl->hits;
-
-    number = extend_recs - cl->record_offset;
+    if (number > extend_recs)
+        number = extend_recs;
     if (number > 0)
     {
         ZOOM_resultset set = cl->resultset;
