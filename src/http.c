@@ -27,7 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include <stdio.h>
 #ifdef WIN32
-#include <winsock.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 typedef int socklen_t;
 #endif
 
@@ -53,14 +54,6 @@ typedef int socklen_t;
 #include <errno.h>
 #include <assert.h>
 #include <string.h>
-
-#if HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
-
-#if HAVE_ARPA_INET_H
-#include <arpa/inet.h>
-#endif
 
 #include <yaz/yaz-util.h>
 #include <yaz/comstack.h>
@@ -96,6 +89,12 @@ static struct http_channel *http_channel_create(http_server_t http_server,
 static void http_channel_destroy(IOCHAN i);
 static http_server_t http_server_create(void);
 static void http_server_incref(http_server_t hs);
+
+#ifdef WIN32
+#define CLOSESOCKET(x) closesocket(x)
+#else
+#define CLOSESOCKET(x) close(x)
+#endif
 
 struct http_server
 {
@@ -622,6 +621,7 @@ static struct http_buf *http_serialize_response(struct http_channel *c,
     struct http_header *h;
 
     wrbuf_rewind(c->wrbuf);
+
     wrbuf_printf(c->wrbuf, "HTTP/%s %s %s\r\n", c->version, r->code, r->msg);
     for (h = r->headers; h; h = h->next)
         wrbuf_printf(c->wrbuf, "%s: %s\r\n", h->name, h->value);
@@ -1047,11 +1047,7 @@ static void proxy_io(IOCHAN pi, int event)
                     yaz_log(YLOG_WARN, "Proxy read came up short");
                     // Close channel and alert client HTTP channel that we're gone
                     http_buf_destroy(hc->http_server, htbuf);
-#ifdef WIN32
-                    closesocket(iochan_getfd(pi));
-#else
-                    close(iochan_getfd(pi));
-#endif
+                    CLOSESOCKET(iochan_getfd(pi));
                     iochan_destroy(pi);
                     pc->iochan = 0;
                 }
@@ -1121,11 +1117,7 @@ static void http_channel_destroy(IOCHAN i)
     {
         if (s->proxy->iochan)
         {
-#ifdef WIN32
-            closesocket(iochan_getfd(s->proxy->iochan));
-#else
-            close(iochan_getfd(s->proxy->iochan));
-#endif
+            CLOSESOCKET(iochan_getfd(s->proxy->iochan));
             iochan_destroy(s->proxy->iochan);
         }
         http_buf_destroy_queue(s->http_server, s->proxy->oqueue);
@@ -1140,11 +1132,8 @@ static void http_channel_destroy(IOCHAN i)
 
     http_server_destroy(http_server);
 
-#ifdef WIN32
-    closesocket(iochan_getfd(i));
-#else
-    close(iochan_getfd(i));
-#endif
+    CLOSESOCKET(iochan_getfd(i));
+
     iochan_destroy(i);
     nmem_destroy(s->nmem);
     wrbuf_destroy(s->wrbuf);
@@ -1173,6 +1162,7 @@ static struct http_channel *http_channel_create(http_server_t hs,
     r->keep_alive = 0;
     r->request = 0;
     r->response = 0;
+    strcpy(r->version, "1.0");
     if (!addr)
     {
         yaz_log(YLOG_WARN, "Invalid HTTP forward address");
@@ -1187,7 +1177,8 @@ static struct http_channel *http_channel_create(http_server_t hs,
 /* Accept a new command connection */
 static void http_accept(IOCHAN i, int event)
 {
-    struct sockaddr_in addr;
+    char host[256];
+    struct sockaddr addr;
     int fd = iochan_getfd(i);
     socklen_t len;
     int s;
@@ -1196,18 +1187,25 @@ static void http_accept(IOCHAN i, int event)
     struct conf_server *server = iochan_getdata(i);
 
     len = sizeof addr;
-    if ((s = accept(fd, (struct sockaddr *) &addr, &len)) < 0)
+    if ((s = accept(fd, &addr, &len)) < 0)
     {
         yaz_log(YLOG_WARN|YLOG_ERRNO, "accept");
+        return;
+    }
+    if (getnameinfo(&addr, len, host, sizeof(host)-1, 0, 0, NI_NUMERICHOST))
+    {
+        yaz_log(YLOG_WARN|YLOG_ERRNO, "getnameinfo");
+        CLOSESOCKET(s);
         return;
     }
     enable_nonblock(s);
 
     yaz_log(YLOG_DEBUG, "New command connection");
-    c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT, "http_session_socket");
+    c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT,
+                      "http_session_socket");
 
-    ch = http_channel_create(server->http_server, inet_ntoa(addr.sin_addr),
-                             server);
+
+    ch = http_channel_create(server->http_server, host, server);
     ch->iochan = c;
     iochan_setdata(c, ch);
     iochan_add(server->iochan_man, c);
@@ -1219,15 +1217,90 @@ int http_init(const char *addr, struct conf_server *server,
 {
     IOCHAN c;
     int l;
-    struct protoent *p;
-    struct sockaddr_in myaddr;
     int one = 1;
     const char *pp;
-    short port;
     FILE *record_file = 0;
+    struct addrinfo hints, *ai = 0;
+    int error;
+    int ipv6_only = -1;
 
     yaz_log(YLOG_LOG, "HTTP listener %s", addr);
 
+    hints.ai_flags = 0;
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_protocol = 0;
+    hints.ai_addrlen        = 0;
+    hints.ai_addr           = NULL;
+    hints.ai_canonname      = NULL;
+    hints.ai_next           = NULL;
+
+    pp = strchr(addr, ':');
+    if (pp)
+    {
+        WRBUF w = wrbuf_alloc();
+        wrbuf_write(w, addr, pp - addr);
+        if (!strcmp(wrbuf_cstr(w), "@"))
+        {   /* IPV4 + IPV6 .. same as YAZ */
+            ipv6_only = 0;
+            hints.ai_flags = AI_PASSIVE;
+            hints.ai_family = AF_INET6;
+            error = getaddrinfo(0, pp + 1, &hints, &ai);
+        }
+        else
+            error = getaddrinfo(wrbuf_cstr(w), pp + 1, &hints, &ai);
+        wrbuf_destroy(w);
+    }
+    else
+    {
+        /* default for no host given is IPV4 */
+        hints.ai_flags = AI_PASSIVE;
+        hints.ai_family = AF_INET;
+        error = getaddrinfo(0, addr, &hints, &ai);
+    }
+    if (error)
+    {
+        yaz_log(YLOG_FATAL, "Failed to resolve %s: %s", addr,
+                gai_strerror(error));
+        return 1;
+    }
+    l = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+    if (l < 0)
+    {
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "socket");
+        freeaddrinfo(ai);
+        return 1;
+    }
+    if (ipv6_only >= 0 &&
+        setsockopt(l, IPPROTO_IPV6, IPV6_V6ONLY, &ipv6_only, sizeof(ipv6_only)))
+    {
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "setsockopt IPV6_V6ONLY %s %d", addr,
+            ipv6_only);
+        freeaddrinfo(ai);
+        CLOSESOCKET(l);
+        return 1;
+    }
+    if (setsockopt(l, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)))
+    {
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "setsockopt SO_REUSEADDR %s", addr);
+        freeaddrinfo(ai);
+        CLOSESOCKET(l);
+        return 1;
+    }
+    if (bind(l, ai->ai_addr, ai->ai_addrlen) < 0)
+    {
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "bind %s", addr);
+        freeaddrinfo(ai);
+        CLOSESOCKET(l);
+        return 1;
+    }
+    freeaddrinfo(ai);
+    if (listen(l, SOMAXCONN) < 0)
+    {
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "listen %s", addr);
+        CLOSESOCKET(l);
+        return 1;
+    }
 
     if (record_fname)
     {
@@ -1235,59 +1308,10 @@ int http_init(const char *addr, struct conf_server *server,
         if (!record_file)
         {
             yaz_log(YLOG_FATAL|YLOG_ERRNO, "fopen %s", record_fname);
+            CLOSESOCKET(l);
             return 1;
         }
     }
-
-    memset(&myaddr, 0, sizeof myaddr);
-    myaddr.sin_family = AF_INET;
-    pp = strchr(addr, ':');
-    if (pp)
-    {
-        WRBUF w = wrbuf_alloc();
-        struct hostent *he;
-
-        wrbuf_write(w, addr, pp - addr);
-        wrbuf_puts(w, "");
-
-        he = gethostbyname(wrbuf_cstr(w));
-        wrbuf_destroy(w);
-        if (!he)
-        {
-            yaz_log(YLOG_FATAL, "Unable to resolve '%s'", addr);
-            return 1;
-        }
-        memcpy(&myaddr.sin_addr.s_addr, he->h_addr_list[0], he->h_length);
-        port = atoi(pp + 1);
-    }
-    else
-    {
-        port = atoi(addr);
-        myaddr.sin_addr.s_addr = INADDR_ANY;
-    }
-
-    myaddr.sin_port = htons(port);
-
-    if (!(p = getprotobyname("tcp"))) {
-        return 1;
-    }
-    if ((l = socket(PF_INET, SOCK_STREAM, p->p_proto)) < 0)
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "socket");
-    if (setsockopt(l, SOL_SOCKET, SO_REUSEADDR, (char*)
-                    &one, sizeof(one)) < 0)
-        return 1;
-
-    if (bind(l, (struct sockaddr *) &myaddr, sizeof myaddr) < 0)
-    {
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "bind");
-        return 1;
-    }
-    if (listen(l, SOMAXCONN) < 0)
-    {
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "listen");
-        return 1;
-    }
-
     server->http_server = http_server_create();
 
     server->http_server->record_file = record_file;

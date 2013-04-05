@@ -40,9 +40,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #if HAVE_NETDB_H
 #include <netdb.h>
 #endif
-#if HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
 
 #include <yaz/log.h>
 #include <yaz/nmem.h>
