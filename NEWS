@@ -1,3 +1,13 @@
+--- 1.6.29 2013/04/05
+
+IPV6 updates. Allow IPv6 addresses for database hosts and IPv6 address
+for HTTP server. By default the HTTP server uses IPv4 only, but that can be
+changed by setting "host" attribute for the "listen" element.
+
+Change semantics of pz:extendrecs. Allow for repeated fetches .
+pz:extendrecs is now the number of extra records to fetch (was total
+count before).
+
 --- 1.6.28 2013/03/21
 
 Fix hang or memory violation if show occurred before a search. (not that

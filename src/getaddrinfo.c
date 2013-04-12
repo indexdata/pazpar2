@@ -34,13 +34,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <sys/socket.h>
 #endif
 #ifdef WIN32
-#include <winsock.h>
+#include <winsock2.h>
+#include <ws2tcpip.h>
 #endif
 #if HAVE_NETDB_H
 #include <netdb.h>
-#endif
-#if HAVE_NETINET_IN_H
-#include <netinet/in.h>
 #endif
 
 #include <yaz/log.h>
