@@ -1,6 +1,6 @@
-<settings target="ocs-loc.indexdata.com/solr/select">
+<settings target="ocs-loc.indexdata.com/solr">
   <set name="pz:name"                value="LOC (SOLR)" />
-  <set name="pz:url"                 value="ocs-loc.indexdata.com/solr/select"/>
+  <set name="pz:url"                 value="ocs-loc.indexdata.com/solr"/>
   <set name="pz:sru"                 value="solr" />
   <set name="full_text_target"       value="NO" />
   <set name="pz:termlist_term_count" value="10" />

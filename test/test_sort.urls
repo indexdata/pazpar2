@@ -11,4 +11,7 @@ http://localhost:9763/search.pz2?session=1&command=show&start=40&block=prefered&
 http://localhost:9763/search.pz2?session=2&command=init
 test_sort_settings.xml http://localhost:9763/search.pz2?session=2&command=settings
 http://localhost:9763/search.pz2?session=2&command=search&query=water
-http://localhost:9763/search.pz2?session=1&command=show&start=60&block=prefered&sort=date
+http://localhost:9763/search.pz2?session=1&command=show&start=1&block=prefered&sort=date
+http://localhost:9763/search.pz2?session=1&command=show&start=20&block=prefered&sort=date
+4 http://localhost:9763/search.pz2?session=1&command=show&start=200&block=prefered&sort=date
+4 http://localhost:9763/search.pz2?session=1&command=show&start=200&block=prefered&sort=date
