@@ -1675,7 +1675,7 @@ int ingest_record(struct client *cl, const char *rec,
         return -1;
     }
     session_enter(se, "ingest_record");
-    if (client_get_session(cl) == se)
+    if (client_get_session(cl) == se && se->relevance)
         ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
     session_leave(se, "ingest_record");
 
