@@ -163,7 +163,7 @@
     </varlistentry>
     
     <varlistentry>
-     <term>service</term>
+     <term id="service_conf">service</term>
      <listitem>
       <para>
        This nested element controls the behavior of Pazpar2 with

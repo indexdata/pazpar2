@@ -37,7 +37,7 @@
    This way, a regular webserver can host the user interface (itself dynamic
    or static HTML), and Ajax-style calls can be used from JS (or any other
    client-based scripting environment) to interact with the search logic
-   in Pazpar2. 
+   in Pazpar2.
   </para>
   <para>
    Each command is described in sub sections to follow.
@@ -48,7 +48,20 @@
     Initializes a session.
     Returns session ID to be used in subsequent requests. If
     a server ID is given in the Pazpar2 server section, then a
-    period (.) and the server ID is appended to the session ID.
+    that is included in the session ID as suffix after a period (.).
+   </para>
+   <para>
+    If the init command is performed as a HTTP GET request, service
+    and settings from local files are used. The service parameter
+    may chose a particular local service.
+   </para>
+   <para>
+    If the init command is performed as a HTTP POST request and
+    the content-type is text/xml, then the content is XML parsed
+    and treated as service for the session. The root element should be
+    service. Refer to descripton of the
+    <link linkend="service_conf">service</link> format.
+    The posting of a service appeared in Pazpar2 version 1.2.1.
    </para>
    <para>
     Example:
@@ -124,8 +137,10 @@
     The settings command applies session-specific settings to one or more
     databases. A typical function of this is to enable access to
     restricted resources for registered users, or to set a user- or
-    library-specific username/password to use against a target. Each
-    setting parameter has the form name[target]=value, where name is the
+    library-specific username/password to use against a target.
+   </para>
+   <para>
+    Each setting parameter has the form name[target]=value, where name is the
     name of the setting (e.g. pz:authentication), target is a target ID,
     or possibly a wildcard, and value is the desired value for the
     setting.
@@ -145,7 +160,15 @@
      the init command.
     </para>
    </note>
-   
+
+   <para>
+    If the settings command is performed as HTTP POST and the content-type
+    is text/xml, then the content is XML parsed and treated as settings -
+    with a format identical to local
+    <link linkend="target_settings">settings files</link>.
+    The posting of settings appeared in Pazpar version 1.2.1.
+   </para>
+
    <para>
     Example:
     <screen><![CDATA[
