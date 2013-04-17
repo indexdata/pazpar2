@@ -7,6 +7,7 @@
 >
 
   <xs:element name="collection" type="pz:collection" />
+  <xs:element name="record" type="pz:record" />
 
   <xs:complexType name="collection">
     <xs:sequence>

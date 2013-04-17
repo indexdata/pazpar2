@@ -1,10 +1,14 @@
-<settings target="ocs-test.indexdata.com/solr/select">
+<settings target="ocs-test.indexdata.com/solr">
   <set name="pz:name" value="opencontent-solr"/>
   
   <set name="pz:apdulog" value="1"/>
   <!-- mapping for unqualified search -->
-  <set name="pz:cclmap:term" value="1=title"/>
-  
+<!-- It should not be nessesary to have a term mapping 
+     if the solr setup has a default field for searching.
+     On Index Data we use the text field to contain all
+     and has this as default field
+  <set name="pz:cclmap:term" value="1=text"/>
+--> 
   <!-- field-specific mappings -->
   <set name="pz:cclmap:au"   value="1=author" />
   <set name="pz:cclmap:ti"   value="1=title"  />
