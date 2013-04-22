@@ -25,7 +25,7 @@ Package: pazpar2-dbg
 Section: debug
 Architecture: any
 Depends:  pazpar2 (= ${binary:Version}), ${misc:Depends}
-Description: High-performance metaseacher
+Description: debugging symbols for Pazpar2
  Pazpar2 is a high-performance, user interface-independent, data
  model-independent metasearching middleware featuring merging, relevance
  ranking, record sorting, and faceted results.
