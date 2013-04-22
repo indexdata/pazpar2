@@ -21,6 +21,17 @@ Description: High-performance metaseacher
  service which, by default, makes Pazpar2 operate as HTTP server on port
  8004.
 
+Package: pazpar2-dbg
+Section: debug
+Architecture: any
+Depends:  pazpar2 (= ${binary:Version}), ${misc:Depends}
+Description: High-performance metaseacher
+ Pazpar2 is a high-performance, user interface-independent, data
+ model-independent metasearching middleware featuring merging, relevance
+ ranking, record sorting, and faceted results.
+ .
+ This package includes the debugging symbols for Pazpar2.
+
 Package: pazpar2-js
 Architecture: all
 Depends: apache2.2-common
