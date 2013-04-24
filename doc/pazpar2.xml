@@ -34,6 +34,7 @@
    <arg choice="opt"><option>-f <replaceable>config</replaceable></option></arg>
    <arg choice="opt"><option>-h <replaceable>ip:port</replaceable></option></arg>
    <arg choice="opt"><option>-l <replaceable>logfile</replaceable></option></arg>
+   <arg choice="opt"><option>-m <replaceable>timeformat</replaceable></option></arg>
    <arg choice="opt"><option>-p <replaceable>pidfile</replaceable></option></arg>
    <arg choice="opt"><option>-R <replaceable>recfile</replaceable></option></arg>
    <arg choice="opt"><option>-t</option></arg>
@@ -115,6 +116,17 @@
       is running in the background (-D).
      </para>
     </listitem>
+   </varlistentry>
+   <varlistentry>
+    <term>-m <replaceable>timeformat</replaceable></term>
+    <listitem><para>
+     Sets the format of time-stamps for logging.
+     Refer to the
+       <ulink
+	   url="http://pubs.opengroup.org/onlinepubs/009695399/functions/strftime.html">
+       strftime(3)</ulink>
+       man page for the format.
+    </para></listitem>
    </varlistentry>
    <varlistentry>
     <term><option>-p <replaceable>pidfile</replaceable></option></term>

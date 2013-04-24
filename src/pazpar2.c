@@ -118,7 +118,7 @@ static int sc_main(
     yaz_log_init_prefix("pazpar2");
     yaz_log_xml_errors(0, YLOG_WARN);
 
-    while ((ret = options("dDf:h:l:p:R:tu:v:Vw:X", argv, argc, &arg)) != -2)
+    while ((ret = options("dDf:h:l:m:p:R:tu:v:Vw:X", argv, argc, &arg)) != -2)
     {
 	switch (ret)
         {
@@ -137,6 +137,9 @@ static int sc_main(
         case 'l':
             yaz_log_init_file(arg);
             log_file_in_use = 1;
+            break;
+        case 'm':
+            yaz_log_time_format(arg);
             break;
         case 'p':
             pidfile = arg;
@@ -181,6 +184,7 @@ static int sc_main(
                     "    -f configfile           Configuration\n"
                     "    -h [host:]port          Listener port\n"
                     "    -l file                 Log to file\n"
+                    "    -m logformat            log time format (strftime)\n"
                     "    -p pidfile              PID file\n"
                     "    -R recfile              HTTP recording file\n"
                     "    -t                      Test configuration\n"
