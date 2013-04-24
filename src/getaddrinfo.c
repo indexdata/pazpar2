@@ -69,7 +69,6 @@ void perform_getaddrinfo(struct work *w)
 {
     struct addrinfo hints, *res;
     char host[512], *cp;
-    char portbuf[512]; // very big ports
     char *port = 0;
     int error;
 
@@ -87,8 +86,7 @@ void perform_getaddrinfo(struct work *w)
     if ((cp = strrchr(host, ':')))
     {
         *cp = '\0';
-        port = portbuf;
-        strncpy(port, cp + 1, sizeof(port));
+        port = cp + 1;
     }
     error = getaddrinfo(host, port ? port : "210", &hints, &res);
     if (error)
@@ -98,13 +96,14 @@ void perform_getaddrinfo(struct work *w)
     }
     else
     {
+        char n_host[512];
         if (getnameinfo((struct sockaddr *) res->ai_addr, res->ai_addrlen,
-                        host, sizeof(host)-1,
+                        n_host, sizeof(n_host)-1,
                         0, 0,
                         NI_NUMERICHOST) == 0)
         {
-            w->ipport = xmalloc(strlen(host) + (port ? strlen(port) : 0) + 2);
-            strcpy(w->ipport, host);
+            w->ipport = xmalloc(strlen(n_host) + (port ? strlen(port) : 0) + 2);
+            strcpy(w->ipport, n_host);
             if (port)
             {
                 strcat(w->ipport, ":");
