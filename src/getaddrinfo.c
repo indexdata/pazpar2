@@ -69,7 +69,8 @@ void perform_getaddrinfo(struct work *w)
 {
     struct addrinfo hints, *res;
     char host[512], *cp;
-    const char *port = 0;
+    char portbuf[512]; // very big ports
+    char *port = 0;
     int error;
 
     hints.ai_flags = 0;
@@ -86,7 +87,8 @@ void perform_getaddrinfo(struct work *w)
     if ((cp = strrchr(host, ':')))
     {
         *cp = '\0';
-        port = cp + 1;
+        port = portbuf;
+        strncpy(port, cp + 1, sizeof(port));
     }
     error = getaddrinfo(host, port ? port : "210", &hints, &res);
     if (error)
