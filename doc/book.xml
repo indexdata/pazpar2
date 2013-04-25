@@ -156,16 +156,25 @@
   <section id="connectors">
    <title>Connectors to non-standard databases</title>
    <para>
-    If you wish to connect to commercial or other databases which do not
-    support open standards, please contact Index Data on
-    <email>info@indexdata.com</email>. We have a
-    proprietary framework for building connectors that enable Pazpar2
-    to access
-    thousands of online databases, in addition to the vast number of catalogs
-    and online services that support the Z39.50/SRU/SRW/SOLR protocols.
+    If you need to access commercial or open access resources that don't support
+    Z39.50 or SRU, one approach would be to use a tool like <ulink
+    url="http://www.indexdata.com/simpleserver">SimpleServer</ulink> to build a
+    gateway. An easier option is to use Index Data's <ulink
+    url="http://www.indexdata.com/masterkey-connect">MasterKey Connect</ulink>
+    service, which will expose virtually <emphasis>any</emphasis> resource
+    through Z39.50/SRU, dead easy to integrate with Pazpar2.
+    The service is hosted, so all you have to do is to let us
+    know which resources you are interested in, and we operate the gateways,
+    or Connectors for you for a low annual charge.
+    Types of resources supported include
+    commercial databases, free online resources, and even local resources;
+    almost anything that can be accessed through a web-facing user
+    interface can be accessed in this way.
+    Contact <email>info@indexdata.com</email> for more information.
+    See <xref linkend="masterkey_connect"/> for an example.
    </para>
   </section>
-  
+
   <section id="name">
    <title>A note on the name Pazpar2</title>
    <para>
@@ -896,6 +905,41 @@
        relevance += 100000 * tf[i] / idf[i];
        ]]></screen>
   </section> <!-- relevance_ranking -->
+
+  <section id="masterkey_connect">
+   <title>Pazpar2 and MasterKey Connect</title>
+   <para>
+    MasterKey Connect is a hosted connector, or gateway, service that exposes
+    whatever searchable resources you need. Since the service exposes all
+    resources using Z39.50 (or SRU), it is easy to set up Pazpar2 to use the
+    service. In particular, since all connectors expose basically the same core
+    behavior, it is a good use of Pazpar2's mechanism for managing default
+    behaviors across similar databases.
+   </para>
+   <para>
+    After installation of Pazpar2, the directory
+    <filename>/etc/pazpar2/settings/mkc</filename> (location may
+    vary depending on installation preferences) contains an example setup that
+    searches two different resources through a MasterKey Connect demo account.
+    The file mkc.xml contains default parameters that will work for all
+    MasterKey Connect resources (if you decide to become a customer of the
+    service, you will substitute your own account credentials for
+    the guest/guest). The other files contain specific information about
+    a couple of demonstration resources.
+   </para>
+
+   <para>
+    To play with the demo, just create a symlink from
+    <filename>/etc/pazpar2/services-enabled/default.xml</filename>
+    to <filename>/etc/pazpar2/services-available/mkc.xml</filename>.
+    And restart Pazpar2. You should now be able to search the two demo
+    resources using JSDemo or any user interface of your choice.
+    If you are interested in learning more about MasterKey Connect, or to
+    try out the service for free against your favorite online resource, just
+    contact us at <email>info@indexdata.com</email>.
+   </para>
+  </section>
+
  </chapter> <!-- Using Pazpar2 -->
 
  <reference id="reference">
