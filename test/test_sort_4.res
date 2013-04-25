@@ -18,7 +18,7 @@
   <md-date>2000</md-date>
   <md-author>Dinesh Kumar, M</md-author>
   <md-medium>book</md-medium>
-  <md-score>2.3047338</md-score>
+  <md-score>2.3046346</md-score>
  </location>
  <count>1</count>
  <recid>content: title water management problems and challenges in india author dinesh kumar m medium book</recid>
@@ -36,7 +36,7 @@
   <md-date>2000</md-date>
   <md-author>Hochschwender, Ted</md-author>
   <md-medium>book</md-medium>
-  <md-score>2.2315488</md-score>
+  <md-score>2.231453</md-score>
  </location>
  <count>1</count>
  <recid>content: title the magic of water author hochschwender ted medium book</recid>
@@ -52,7 +52,7 @@
   <md-date>1999</md-date>
   <md-author>De Villiers, Marq</md-author>
   <md-medium>book</md-medium>
-  <md-score>2.1864624</md-score>
+  <md-score>2.1863685</md-score>
  </location>
  <count>1</count>
  <recid>content: title water author de villiers marq medium book</recid>
@@ -68,7 +68,7 @@
   <md-date>2000</md-date>
   <md-description>&quot;January 3, 2000.&quot;</md-description>
   <md-medium>book</md-medium>
-  <md-score>2.1864624</md-score>
+  <md-score>2.1863685</md-score>
  </location>
  <count>1</count>
  <recid>content: title water use for public water supply in michigan medium book</recid>
@@ -84,7 +84,7 @@
   <md-title-remainder>Namibia</md-title-remainder>
   <md-date>1999</md-date>
   <md-medium>book</md-medium>
-  <md-score>2.115072</md-score>
+  <md-score>2.114981</md-score>
  </location>
  <count>1</count>
  <recid>content: title report to the iucn on water demand management country study medium book</recid>
@@ -102,7 +102,7 @@
   <md-author>Majeed, Abdul</md-author>
   <md-description>&quot;Balochistan conservation strategy background paper&quot;--T.p</md-description>
   <md-medium>book</md-medium>
-  <md-score>2.0614164</md-score>
+  <md-score>2.0613277</md-score>
  </location>
  <count>1</count>
  <recid>content: title water author majeed abdul medium book</recid>
@@ -120,7 +120,7 @@
   <md-author>Fisher, D. E</md-author>
   <md-description>Includes index</md-description>
   <md-medium>book</md-medium>
-  <md-score>2.0614164</md-score>
+  <md-score>2.0613277</md-score>
  </location>
  <count>1</count>
  <recid>content: title water law author fisher d e medium book</recid>
@@ -139,7 +139,7 @@
   <md-description>&quot;Funded by Institute for water Studies, Water Resources Organisation (PWD).&quot;</md-description>
   <md-description>With reference to India</md-description>
   <md-medium>book</md-medium>
-  <md-score>2.0614164</md-score>
+  <md-score>2.0613277</md-score>
  </location>
  <count>1</count>
  <recid>content: title evaluation and control of water pollution in bhavani basin medium book</recid>
@@ -157,7 +157,7 @@
   <md-date>2000</md-date>
   <md-description>&quot;United Nations System-wide Initiative on Africa (UNSIA).&quot;</md-description>
   <md-medium>book</md-medium>
-  <md-score>2.0614164</md-score>
+  <md-score>2.0613277</md-score>
  </location>
  <count>1</count>
  <recid>content: title unsia water cluster medium book</recid>
@@ -173,7 +173,7 @@
   <md-date>2001</md-date>
   <md-description>Collection of articles with reference to India</md-description>
   <md-medium>book</md-medium>
-  <md-score>2.0614164</md-score>
+  <md-score>2.0613277</md-score>
  </location>
  <count>1</count>
  <recid>content: title water technology management medium book</recid>
@@ -189,7 +189,7 @@
   <md-date>1901</md-date>
   <md-author>Thresh, John Clough</md-author>
   <md-medium>book</md-medium>
-  <md-score>2.0614164</md-score>
+  <md-score>2.0613277</md-score>
  </location>
  <count>1</count>
  <recid>content: title water and water supplies author thresh john clough medium book</recid>
@@ -205,7 +205,7 @@
   <md-date>2001</md-date>
   <md-author>Glover, David</md-author>
   <md-medium>book</md-medium>
-  <md-score>2.037116</md-score>
+  <md-score>2.0370286</md-score>
  </location>
  <count>1</count>
  <recid>content: title wonderful water author glover david medium book</recid>
@@ -222,7 +222,7 @@
   <md-description>Cover title</md-description>
   <md-description>&quot;July 2000.&quot;</md-description>
   <md-medium>book</md-medium>
-  <md-score>2.016642</md-score>
+  <md-score>2.0165553</md-score>
  </location>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="3749836075">
@@ -231,7 +231,7 @@
   <md-description>Cover title</md-description>
   <md-description>&quot;September 1999.&quot;</md-description>
   <md-medium>book</md-medium>
-  <md-score>2.016642</md-score>
+  <md-score>2.0165553</md-score>
  </location>
  <count>2</count>
  <recid>content: title water quality assessment of the state water project medium book</recid>
@@ -250,7 +250,7 @@
   <md-description>Issued also in French under title: Notions élémentaires sur l&apos;eau douce : questions et réponses</md-description>
   <md-description>Includes index</md-description>
   <md-medium>book</md-medium>
-  <md-score>2.016642</md-score>
+  <md-score>2.0165553</md-score>
  </location>
  <count>1</count>
  <recid>content: title a primer on fresh water medium book</recid>
@@ -268,7 +268,7 @@
   <md-date>1999</md-date>
   <md-author>Frey, Hans</md-author>
   <md-medium>book</md-medium>
-  <md-score>1.9282786</md-score>
+  <md-score>1.9281956</md-score>
  </location>
  <count>1</count>
  <recid>content: title who governs water author frey hans medium book</recid>
@@ -285,7 +285,7 @@
   <md-description>Cover title</md-description>
   <md-description>&quot;December, 1999.&quot;</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.9282786</md-score>
+  <md-score>1.9281956</md-score>
  </location>
  <count>1</count>
  <recid>content: title wastewater and drinking water user charge survey medium book</recid>
@@ -303,7 +303,7 @@
   <md-date>2000</md-date>
   <md-description>&quot;March 2000.&quot;</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.9282786</md-score>
+  <md-score>1.9281956</md-score>
  </location>
  <count>1</count>
  <recid>content: title proposition medium book</recid>
@@ -319,7 +319,7 @@
   <md-date>2000</md-date>
   <md-description>[1] [No special title] -- [2] Appendixes</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.9282786</md-score>
+  <md-score>1.9281956</md-score>
  </location>
  <count>1</count>
  <recid>content: title district water supply plan medium book</recid>
@@ -337,7 +337,7 @@
   <md-date>1999</md-date>
   <md-description>Includes index</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.6872437</md-score>
+  <md-score>1.6871711</md-score>
  </location>
  <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="2167221470">
@@ -347,7 +347,7 @@
   <md-description>Includes index</md-description>
   <md-description>With reference to India</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.9282786</md-score>
+  <md-score>1.9281956</md-score>
  </location>
  <count>2</count>
  <recid>content: title water in press medium book</recid>
@@ -365,7 +365,7 @@
   <md-author>Ravi, Rājeśa</md-author>
   <md-description>On the effort of conserving rain water for drinking and harvesting; case study of selected villages in Rajasthan, India</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.9282786</md-score>
+  <md-score>1.9281956</md-score>
  </location>
  <count>1</count>
  <recid>content: title paha r a para pa ni author ravi ra jes a medium book</recid>

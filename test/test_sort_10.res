@@ -16,7 +16,7 @@
   <md-date>1980</md-date>
   <md-description>&quot;Published by Education and Extension Division for Centre for Water Resources Development and Management&quot;--T.p. verso</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.8129189</md-score>
+  <md-score>1.8128409</md-score>
  </location>
  <count>1</count>
  <recid>content: title proceedings seminar on water management practices in kerala held on october at calicut medium book</recid>
@@ -35,7 +35,7 @@
   <md-description>Includes index</md-description>
   <md-description>Examines major environmental issues surrounding water, giving examples of attempts to solve global problems and sources for more information</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.8037393</md-score>
+  <md-score>1.8036617</md-score>
  </location>
  <count>1</count>
  <recid>content: title water author grant pamela medium book</recid>
@@ -53,7 +53,7 @@
   <md-author>Ambrose, David</md-author>
   <md-description>&quot;The original of this bibliography was published as Annex Q ... as one of the seven volumes of the Water resources management : policy and strategies study.&quot;</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.8037393</md-score>
+  <md-score>1.8036617</md-score>
  </location>
  <count>1</count>
  <recid>content: title annotated bibliography for lesotho water resources management author ambrose david medium book</recid>
@@ -71,7 +71,7 @@
   <md-author>Trottier, Julie</md-author>
   <md-description>Translation of thesis (Ph.D.)--Université catholique de Louvain, 1999</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.8037393</md-score>
+  <md-score>1.8036617</md-score>
  </location>
  <count>1</count>
  <recid>content: title hydropolitics in the west bank and gaza strip author trottier julie medium book</recid>
@@ -88,7 +88,7 @@
   <md-description>Cover title</md-description>
   <md-description>&quot;June, 1999.&quot;</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.8037393</md-score>
+  <md-score>1.8036617</md-score>
  </location>
  <count>1</count>
  <recid>content: title water management conservation assistance programs directory medium book</recid>
@@ -105,7 +105,7 @@
   <md-description>&quot;May 1999.&quot;</md-description>
   <md-description>&quot;Water use and hydrology&quot;--Cover</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.8037393</md-score>
+  <md-score>1.8036617</md-score>
  </location>
  <count>1</count>
  <recid>content: title water resources of the housatonic river basin medium book</recid>
@@ -123,7 +123,7 @@
   <md-date>2000</md-date>
   <md-description>&quot;March 2000.&quot;</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.8037393</md-score>
+  <md-score>1.8036617</md-score>
  </location>
  <count>1</count>
  <recid>content: title water conservation field services program medium book</recid>
@@ -142,7 +142,7 @@
   <md-description>Cover title</md-description>
   <md-description>&quot;February 1, 2000.&quot;</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.8037393</md-score>
+  <md-score>1.8036617</md-score>
  </location>
  <count>1</count>
  <recid>content: title joint hearing of the senate committee on agriculture and water resources and assembly committee on water parks and wildlife medium book</recid>
@@ -158,7 +158,7 @@
   <md-date>1998</md-date>
   <md-author>Jones, Michelle</md-author>
   <md-medium>book</md-medium>
-  <md-score>1.8037393</md-score>
+  <md-score>1.8036617</md-score>
  </location>
  <count>1</count>
  <recid>content: title advanced potable water treatment technology author jones michelle medium book</recid>
@@ -174,7 +174,7 @@
   <md-title-remainder>the Latin American experience</md-title-remainder>
   <md-date>2000</md-date>
   <md-medium>book</md-medium>
-  <md-score>1.8037393</md-score>
+  <md-score>1.8036617</md-score>
  </location>
  <count>1</count>
  <recid>content: title women and water management medium book</recid>
@@ -194,7 +194,7 @@
   <md-author>Fuller, George Warrren</md-author>
   <md-description>Published under agreement with the directors</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.8037393</md-score>
+  <md-score>1.8036617</md-score>
  </location>
  <count>1</count>
  <recid>content: title report on the investigations into the purification of the ohio river water author fuller george warrren medium book</recid>
@@ -212,7 +212,7 @@
   <md-author>Base, Graeme</md-author>
   <md-description>As ever growing numbers of animals visit a watering hole, introducing the numbers from one to ten, the water dwindles</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.7852391</md-score>
+  <md-score>1.7851623</md-score>
  </location>
  <count>1</count>
  <recid>content: title the water hole author base graeme medium book</recid>
@@ -228,7 +228,7 @@
   <md-title-remainder>irrigation and water management in the Hindukush, Karakoram, Himalaya</md-title-remainder>
   <md-date>2000</md-date>
   <md-medium>book</md-medium>
-  <md-score>1.7852391</md-score>
+  <md-score>1.7851623</md-score>
  </location>
  <count>1</count>
  <recid>content: title sharing water medium book</recid>
@@ -247,7 +247,7 @@
   <md-description>Cover title</md-description>
   <md-description>&quot;July 31, 1997.&quot;</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.7852391</md-score>
+  <md-score>1.7851623</md-score>
  </location>
  <count>1</count>
  <recid>content: title wading into montana water rights author westesen gerald l medium book</recid>
@@ -265,7 +265,7 @@
   <md-date>1996</md-date>
   <md-description>&quot;Funded by: Department of Science, Technology, and Environment, Government of Kerala.&quot;</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.7852391</md-score>
+  <md-score>1.7851623</md-score>
  </location>
  <count>1</count>
  <recid>content: title assessment of water pollution in calicut city with special reference to cannoly canal medium book</recid>
@@ -283,7 +283,7 @@
   <md-date>2000</md-date>
   <md-author>Das, Keshab</md-author>
   <md-medium>book</md-medium>
-  <md-score>1.7852391</md-score>
+  <md-score>1.7851623</md-score>
  </location>
  <count>1</count>
  <recid>content: title rural drinking water supply in india author das keshab medium book</recid>
@@ -303,7 +303,7 @@
   <md-author>Pushpangadan, K</md-author>
   <md-description>With reference to India</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.7852391</md-score>
+  <md-score>1.7851623</md-score>
  </location>
  <count>1</count>
  <recid>content: title travel time user rate cost of supply author pushpangadan k medium book</recid>
@@ -321,7 +321,7 @@
   <md-date>2000</md-date>
   <md-author>Shah, Amita</md-author>
   <md-medium>book</md-medium>
-  <md-score>1.7852391</md-score>
+  <md-score>1.7851623</md-score>
  </location>
  <count>1</count>
  <recid>content: title promoting small water harvesting structures in dryland regions author shah amita medium book</recid>
@@ -339,7 +339,7 @@
   <md-date>1903</md-date>
   <md-author>Middleton, Reginald Empson</md-author>
   <md-medium>book</md-medium>
-  <md-score>1.7852391</md-score>
+  <md-score>1.7851623</md-score>
  </location>
  <count>1</count>
  <recid>content: title water supply author middleton reginald empson medium book</recid>
@@ -357,7 +357,7 @@
   <md-author>Hill, John Willmuth</md-author>
   <md-description>Microfilmed for preservationDNLM</md-description>
   <md-medium>book</md-medium>
-  <md-score>1.7852391</md-score>
+  <md-score>1.7851623</md-score>
  </location>
  <count>1</count>
  <recid>content: title the purification of public water supplies author hill john willmuth medium book</recid>
