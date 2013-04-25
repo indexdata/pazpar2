@@ -1,0 +1,31 @@
+<settings target="mkc.indexdata.com:9008/*">
+
+  <!-- This file introduces default settings for pazpar2 -->
+
+  <!-- authentication for the MKC service -->
+  <set name="pz:authentication" value="guest/guest"/>
+
+  <!-- mapping for unqualified search -->
+  <set name="pz:cclmap:term" value="t=l,r s=al"/>
+
+  <!-- field-specific mappings FIXME -->
+  
+  <set name="pz:cclmap:au" value="u=author s=al"/>
+  <set name="pz:cclmap:ti" value="u=title s=al"/>
+  <set name="pz:cclmap:su" value="u=subject s=al"/>
+  <set name="pz:cclmap:date" value="u=year r=r"/>
+  <set name="pz:cclmap:jt" value="u=journaltitle r=r"/>
+
+  <!-- Retrieval settings -->
+
+  <set name="pz:requestsyntax" value="xml"/>
+
+  <!-- Result normalization settings -->
+
+  <set name="pz:nativesyntax" value="xml"/>
+  <set name="pz:xslt" value="dc.xsl"/>
+
+  <!-- APDU log, use value="1" to enable -->
+  <set name="pz:apdulog" value="0"/>
+
+</settings>

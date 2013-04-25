@@ -76,8 +76,10 @@ binary-arch: build install
 	# pazpar2 package
 	cp $(CURDIR)/etc/server.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/server.xml
 	cp $(CURDIR)/etc/default.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/services-available/
+	cp $(CURDIR)/etc/mkc.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/services-available/
 	cp $(CURDIR)/etc/services/*.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/services-available
 	cp $(CURDIR)/etc/settings/*.xml $(CURDIR)/debian/pazpar2/etc/pazpar2/settings/
+	cp -r $(CURDIR)/etc/settings/mkc $(CURDIR)/debian/pazpar2/etc/pazpar2/settings
 	cp $(CURDIR)/etc/*.xsl $(CURDIR)/debian/pazpar2/etc/pazpar2/
 	# pazpar2-apache2 package
 	cp $(CURDIR)/debian/ap2pazpar2.cfg $(CURDIR)/debian/pazpar2-apache2/etc/pazpar2
