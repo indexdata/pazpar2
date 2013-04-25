@@ -158,9 +158,9 @@
    <para>
     If you need to access commercial or open access resources that don't support
     Z39.50 or SRU, one approach would be to use a tool like <ulink
-    url="http://www.indexdata.com/simpleserver">SimpleServer</ulink> to build a
+    url="&url.simpleserver;">SimpleServer</ulink> to build a
     gateway. An easier option is to use Index Data's <ulink
-    url="http://www.indexdata.com/masterkey-connect">MasterKey Connect</ulink>
+    url="&url.mkc;">MasterKey Connect</ulink>
     service, which will expose virtually <emphasis>any</emphasis> resource
     through Z39.50/SRU, dead easy to integrate with Pazpar2.
     The service is hosted, so all you have to do is to let us
