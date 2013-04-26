@@ -1,3 +1,19 @@
+--- 1.6.30 2013/04/26
+
+Add MasterKey Connect configuration. Refer to section "non-standard
+databases" for more information.
+
+Allow timeformat for log to be specified with option -m (as Metaproxy
+and YAZ GFS).
+
+New Debian package pazpar2-dbg.
+
+Fix NULL ptr reference of se->relevance. If a new search is initiated
+and a CCL query fails to parse, Pazpar2 could crash.
+
+Fix problem with host/port mangling in Pazpar2 HTTP server. Problem
+existed in 1.6.29 only.
+
 --- 1.6.29 2013/04/05
 
 IPV6 updates. Allow IPv6 addresses for database hosts and IPv6 address
