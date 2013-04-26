@@ -97,11 +97,13 @@ rm -fr ${RPM_BUILD_ROOT}
 %{_sbindir}/pazpar2
 %dir %{_sysconfdir}/pazpar2
 %dir %{_sysconfdir}/pazpar2/settings
+%dir %{_sysconfdir}/pazpar2/settings/mkc
 %dir %{_sysconfdir}/pazpar2/services-enabled
 %dir %{_sysconfdir}/pazpar2/services-available
 %config %{_sysconfdir}/pazpar2/*.xml
 %config %{_sysconfdir}/pazpar2/*.xsl
 %config %{_sysconfdir}/pazpar2/settings/*.xml
+%config %{_sysconfdir}/pazpar2/settings/*/*.xml
 %config %{_sysconfdir}/pazpar2/services-available/*.xml
 %config %{_sysconfdir}/rc.d/init.d/pazpar2
 %config(noreplace) /etc/logrotate.d/pazpar2
