@@ -631,6 +631,8 @@ static void session_clear_set(struct session *se, struct reclist_sortparms *sp)
     se->total_records = se->total_merged = 0;
     se->num_termlists = 0;
 
+    relevance_clear(se->relevance);
+
     /* reset list of sorted results and clear to relevance search */
     se->sorted_results = nmem_malloc(se->nmem, sizeof(*se->sorted_results));
     se->sorted_results->name = nmem_strdup(se->nmem, sp->name);

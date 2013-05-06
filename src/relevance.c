@@ -215,6 +215,15 @@ static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
         break;
     }
 }
+void relevance_clear(struct relevance *r)
+{
+    if (r)
+    {
+        int i;
+        for (i = 0; i < r->vec_len; i++)
+            r->doc_frequency_vec[i] = 0;
+    }
+}
 
 struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
                                        struct ccl_rpn_node *query,
@@ -224,7 +233,6 @@ struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
 {
     NMEM nmem = nmem_create();
     struct relevance *res = nmem_malloc(nmem, sizeof(*res));
-    int i;
 
     res->nmem = nmem;
     res->entries = 0;
@@ -238,8 +246,6 @@ struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
     pull_terms(res, query);
 
     res->doc_frequency_vec = nmem_malloc(nmem, res->vec_len * sizeof(int));
-    for (i = 0; i < res->vec_len; i++)
-        res->doc_frequency_vec[i] = 0;
 
     // worker array
     res->term_frequency_vec_tmp =
@@ -249,6 +255,7 @@ struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
     res->term_pos =
         nmem_malloc(res->nmem, res->vec_len * sizeof(*res->term_pos));
 
+    relevance_clear(res);
     return res;
 }
 

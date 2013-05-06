@@ -75,7 +75,7 @@
   <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>4</count>
- <relevance>43178</relevance>
+ <relevance>41119</relevance>
  <relevance_info>
 field=title content=Computer science &amp;amp; technology :;
 computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
@@ -90,9 +90,9 @@ field=title content=A plan for community college computer development.;
 computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(5)));
 computer: tf[1] += w[1](6) / length(7) (4.314286);
 relevance = 0;
-idf[1] = log(((1 + total(20))/termoccur(19));
-computer: relevance += 100000 * tf[1](4.314286) * idf[1](0.100083) (43178);
-score = relevance(43178);
+idf[1] = log(((1 + total(10))/termoccur(10));
+computer: relevance += 100000 * tf[1](4.314286) * idf[1](0.095310) (41119);
+score = relevance(41119);
  </relevance_info>
  <recid>content: date</recid>
 </hit>
@@ -176,7 +176,7 @@ score = relevance(43178);
   <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>4</count>
- <relevance>34361</relevance>
+ <relevance>32723</relevance>
  <relevance_info>
 field=title content=Computer processing of dynamic images from an Ang ...;
 computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
@@ -188,9 +188,9 @@ field=title-remainder content=a portfolio of thematic computer maps /;
 computer: w[1] += w(5) / (1+log2(1+lead_decay(0.000000) * length(4)));
 computer: tf[1] += w[1](5) / length(6) (3.433333);
 relevance = 0;
-idf[1] = log(((1 + total(20))/termoccur(19));
-computer: relevance += 100000 * tf[1](3.433333) * idf[1](0.100083) (34361);
-score = relevance(34361);
+idf[1] = log(((1 + total(10))/termoccur(10));
+computer: relevance += 100000 * tf[1](3.433333) * idf[1](0.095310) (32723);
+score = relevance(32723);
  </relevance_info>
  <recid>content: date c</recid>
 </hit>
@@ -206,15 +206,15 @@ score = relevance(34361);
         YYYYYYYYY</md-test-usersetting-2>
  </location>
  <count>1</count>
- <relevance>12010</relevance>
+ <relevance>11437</relevance>
  <relevance_info>
 field=title content=How to program a computer;
 computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
 computer: tf[1] += w[1](6) / length(5) (1.200000);
 relevance = 0;
-idf[1] = log(((1 + total(20))/termoccur(19));
-computer: relevance += 100000 * tf[1](1.200000) * idf[1](0.100083) (12010);
-score = relevance(12010);
+idf[1] = log(((1 + total(10))/termoccur(10));
+computer: relevance += 100000 * tf[1](1.200000) * idf[1](0.095310) (11437);
+score = relevance(11437);
  </relevance_info>
  <recid>position: z3950.indexdata.com/marc-1</recid>
 </hit>
@@ -230,15 +230,15 @@ score = relevance(12010);
         YYYYYYYYY</md-test-usersetting-2>
  </location>
  <count>1</count>
- <relevance>12010</relevance>
+ <relevance>11437</relevance>
  <relevance_info>
 field=title content=How to program a computer;
 computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
 computer: tf[1] += w[1](6) / length(5) (1.200000);
 relevance = 0;
-idf[1] = log(((1 + total(20))/termoccur(19));
-computer: relevance += 100000 * tf[1](1.200000) * idf[1](0.100083) (12010);
-score = relevance(12010);
+idf[1] = log(((1 + total(10))/termoccur(10));
+computer: relevance += 100000 * tf[1](1.200000) * idf[1](0.095310) (11437);
+score = relevance(11437);
  </relevance_info>
  <recid>position: z3950.indexdata.com/marc-2</recid>
 </hit>
