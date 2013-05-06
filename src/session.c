@@ -644,7 +644,9 @@ static void session_clear_set(struct session *se, struct reclist_sortparms *sp)
     se->reclist = reclist_create(se->nmem);
 }
 
-static void session_sort_unlocked(struct session *se, struct reclist_sortparms *sp)
+static void session_sort_unlocked(struct session *se,
+                                  struct reclist_sortparms *sp,
+                                  const char *mergekey)
 {
     struct reclist_sortparms *sr;
     struct client_list *l;
@@ -655,20 +657,37 @@ static void session_sort_unlocked(struct session *se, struct reclist_sortparms *
 
     session_log(se, YLOG_DEBUG, "session_sort field=%s increasing=%d type=%d",
                 field, increasing, type);
-    /* see if we already have sorted for this criteria */
-    for (sr = se->sorted_results; sr; sr = sr->next)
+
+    if (!mergekey ||
+        (se->mergekey && !strcmp(se->mergekey, mergekey)))
     {
-        if (!reclist_sortparms_cmp(sr, sp))
-            break;
+        /* mergekey unchanged.. */
+        /* see if we already have sorted for this criteria */
+        for (sr = se->sorted_results; sr; sr = sr->next)
+        {
+            if (!reclist_sortparms_cmp(sr, sp))
+                break;
+        }
+        if (sr)
+        {
+            session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d already fetched",
+                        field, increasing, type);
+            return;
+        }
+        session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d must fetch",
+                    field, increasing, type);
     }
-    if (sr)
+    else
     {
-        session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d already fetched",
-                    field, increasing, type);
-        return;
+        /* new mergekey must research/reingest anyway */
+        assert(mergekey);
+        xfree(se->mergekey);
+        se->mergekey = *mergekey ? xstrdup(mergekey) : 0;
+        clients_research = 1;
+
+        session_log(se, YLOG_DEBUG, "search_sort: new mergekey = %s",
+                    mergekey);
     }
-    session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d must fetch",
-                    field, increasing, type);
 
     // We need to reset reclist on every sort that changes the records, not just for position
     // So if just one client requires new searching, we need to clear set.
@@ -717,9 +736,11 @@ static void session_sort_unlocked(struct session *se, struct reclist_sortparms *
     }
 }
 
-void session_sort(struct session *se, struct reclist_sortparms *sp) {
+void session_sort(struct session *se, struct reclist_sortparms *sp,
+                  const char *mergekey)
+{
     //session_enter(se, "session_sort");
-    session_sort_unlocked(se, sp);
+    session_sort_unlocked(se, sp, mergekey);
     //session_leave(se, "session_sort");
 }
 
@@ -925,6 +946,7 @@ void session_destroy(struct session *se)
     normalize_cache_destroy(se->normalize_cache);
     relevance_destroy(&se->relevance);
     reclist_destroy(se->reclist);
+    xfree(se->mergekey);
     if (nmem_total(se->nmem))
         session_log(se, YLOG_DEBUG, "NMEN operation usage %zd", nmem_total(se->nmem));
     if (nmem_total(se->session_nmem))
@@ -973,6 +995,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->databases = 0;
     session->sorted_results = 0;
     session->facet_limits = 0;
+    session->mergekey = 0;
 
     for (i = 0; i <= SESSION_WATCH_MAX; i++)
     {
@@ -1501,15 +1524,25 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
 }
 
 static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
-                                struct conf_service *service, NMEM nmem)
+                                struct conf_service *service, NMEM nmem,
+                                const char *session_mergekey)
 {
     char *mergekey_norm = 0;
     xmlNode *root = xmlDocGetRootElement(doc);
     WRBUF norm_wr = wrbuf_alloc();
+    xmlChar *mergekey;
 
-    /* consider mergekey from XSL first */
-    xmlChar *mergekey = xmlGetProp(root, (xmlChar *) "mergekey");
-    if (mergekey)
+    if (session_mergekey)
+    {
+        int i, num = 0;
+        char **values = 0;
+        nmem_strsplit_escape2(nmem, ",", session_mergekey, &values,
+                              &num, 1, '\\', 1);
+
+        for (i = 0; i < num; i++)
+            get_mergekey_from_doc(doc, root, values[i], service, norm_wr);
+    }
+    else if ((mergekey = xmlGetProp(root, (xmlChar *) "mergekey")))
     {
         const char *norm_str;
         pp2_charset_token_t prt =
@@ -1667,7 +1700,8 @@ int ingest_record(struct client *cl, const char *rec,
         return -2;
     }
 
-    mergekey_norm = get_mergekey(xdoc, cl, record_no, service, nmem);
+    mergekey_norm = get_mergekey(xdoc, cl, record_no, service, nmem,
+        se->mergekey);
     if (!mergekey_norm)
     {
         session_log(se, YLOG_WARN, "Got no mergekey");

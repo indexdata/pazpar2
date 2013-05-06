@@ -418,7 +418,27 @@ search.pz2?session=2044502273&command=stat
        </para>
       </listitem>
      </varlistentry>
-     
+
+     <varlistentry>
+      <term>mergekey</term>
+      <listitem>
+       <para>
+	Sets mergekey for this show and rest of session, or until
+	another mergekey is given for show. The mergekey value is a
+	comma separated list with one or more names as they appear
+	in the service description  equivalent to
+	<literal>mergekey="optional"</literal> inside a metadata element.
+	If the empty string is given for mergekey it is disabled
+	and rest of session will use the default mergekey from service
+	or stylesheet.
+       </para>
+       <para>
+	This facility, "dynamic mergekey", appeared in Pazpar2 version
+	1.6.31.
+       </para>
+      </listitem>
+     </varlistentry>
+
     </variablelist>
    </para>
    <para>

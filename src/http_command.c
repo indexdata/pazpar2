@@ -1211,6 +1211,7 @@ static void cmd_show(struct http_channel *c)
     const char *block = http_argbyname(rq, "block");
     const char *sort = http_argbyname(rq, "sort");
     const char *block_error = http_argbyname(rq, "report");
+    const char *mergekey = http_argbyname(rq, "mergekey");
     struct conf_service *service = 0;
 
     struct reclist_sortparms *sp;
@@ -1233,7 +1234,7 @@ static void cmd_show(struct http_channel *c)
         release_session(c, s);
         return;
     }
-    session_sort(s->psession, sp);
+    session_sort(s->psession, sp, mergekey);
 
     status = session_active_clients(s->psession);
 

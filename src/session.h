@@ -111,6 +111,7 @@ struct session {
     struct named_termlist termlists[SESSION_MAX_TERMLISTS];
     struct relevance *relevance;
     struct reclist *reclist;
+    char *mergekey;
     struct session_watchentry watchlist[SESSION_WATCH_MAX + 1];
     int total_records;
     int total_merged;
@@ -159,7 +160,8 @@ void session_destroy(struct session *s);
 void session_init_databases(struct session *s);
 void statistics(struct session *s, struct statistics *stat);
 
-void session_sort(struct session *se, struct reclist_sortparms *sp);
+void session_sort(struct session *se, struct reclist_sortparms *sp,
+                  const char *mergekey);
 
 enum pazpar2_error_code session_search(struct session *s, const char *query,
                                        const char *startrecs,
