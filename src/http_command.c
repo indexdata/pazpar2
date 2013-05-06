@@ -1322,6 +1322,7 @@ static void cmd_search(struct http_channel *c)
     const char *startrecs = http_argbyname(rq, "startrecs");
     const char *limit = http_argbyname(rq, "limit");
     const char *sort = http_argbyname(rq, "sort");
+    const char *mergekey = http_argbyname(rq, "mergekey");
     enum pazpar2_error_code code;
     const char *addinfo = 0;
     struct reclist_sortparms *sp;
@@ -1354,7 +1355,7 @@ static void cmd_search(struct http_channel *c)
     }
 
     code = session_search(s->psession, query, startrecs, maxrecs, filter, limit,
-                          &addinfo, sp);
+                          &addinfo, sp, mergekey);
     if (code)
     {
         error(rs, code, addinfo);

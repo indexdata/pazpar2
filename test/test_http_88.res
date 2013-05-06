@@ -38,7 +38,7 @@ idf[1] = log(((1 + total(10))/termoccur(9));
 computer: relevance += 100000 * tf[1](2.400000) * idf[1](0.200671) (48160);
 score = relevance(48160);
  </relevance_info>
- <recid>content: title how to program a computer author jack collins medium book</recid>
+ <recid>content: title how to program a computer author jack collins</recid>
 </hit>
 <hit>
  <md-title>Computer science &amp; technology</md-title>
@@ -69,7 +69,7 @@ idf[1] = log(((1 + total(10))/termoccur(9));
 computer: relevance += 100000 * tf[1](2.000000) * idf[1](0.200671) (40134);
 score = relevance(40134);
  </relevance_info>
- <recid>content: title computer science technology author medium book</recid>
+ <recid>content: title computer science technology</recid>
 </hit>
 <hit>
  <md-title>The Computer Bible</md-title>
@@ -100,7 +100,7 @@ idf[1] = log(((1 + total(10))/termoccur(9));
 computer: relevance += 100000 * tf[1](2.000000) * idf[1](0.200671) (40134);
 score = relevance(40134);
  </relevance_info>
- <recid>content: title the computer bible author medium book</recid>
+ <recid>content: title the computer bible</recid>
 </hit>
 <hit>
  <md-title>A plan for community college computer development</md-title>
@@ -136,7 +136,7 @@ idf[1] = log(((1 + total(10))/termoccur(9));
 computer: relevance += 100000 * tf[1](0.857143) * idf[1](0.200671) (17200);
 score = relevance(17200);
  </relevance_info>
- <recid>content: title a plan for community college computer development author medium book</recid>
+ <recid>content: title a plan for community college computer development</recid>
 </hit>
 <hit>
  <md-title>Washington metropolitan area rail computer feasibility study;</md-title>
@@ -171,7 +171,7 @@ idf[1] = log(((1 + total(10))/termoccur(9));
 computer: relevance += 100000 * tf[1](0.857143) * idf[1](0.200671) (17200);
 score = relevance(17200);
  </relevance_info>
- <recid>content: title washington metropolitan area rail computer feasibility study author englund carl r medium book</recid>
+ <recid>content: title washington metropolitan area rail computer feasibility study author englund carl r</recid>
 </hit>
 <hit>
  <md-title>The Puget Sound Region</md-title>
@@ -209,7 +209,7 @@ idf[1] = log(((1 + total(10))/termoccur(9));
 computer: relevance += 100000 * tf[1](0.833333) * idf[1](0.200671) (16722);
 score = relevance(16722);
  </relevance_info>
- <recid>content: title the puget sound region author mairs john w medium book</recid>
+ <recid>content: title the puget sound region author mairs john w</recid>
 </hit>
 <hit>
  <md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
@@ -252,7 +252,7 @@ idf[1] = log(((1 + total(10))/termoccur(9));
 computer: relevance += 100000 * tf[1](0.600000) * idf[1](0.200671) (12040);
 score = relevance(12040);
  </relevance_info>
- <recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
+ <recid>content: title computer processing of dynamic images from an anger scintillation camera</recid>
 </hit>
 <hit>
  <md-title>The use of passwords for controlled access to computer resources</md-title>
@@ -283,7 +283,7 @@ idf[1] = log(((1 + total(10))/termoccur(9));
 computer: relevance += 100000 * tf[1](0.600000) * idf[1](0.200671) (12040);
 score = relevance(12040);
  </relevance_info>
- <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
+ <recid>content: title the use of passwords for controlled access to computer resources author wood helen m</recid>
 </hit>
 <hit>
  <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
@@ -313,6 +313,6 @@ idf[1] = log(((1 + total(10))/termoccur(9));
 computer: relevance += 100000 * tf[1](0.000000) * idf[1](0.200671) (0);
 score = relevance(0);
  </relevance_info>
- <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
+ <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine</recid>
 </hit>
 </show>

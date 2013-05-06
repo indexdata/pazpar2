@@ -752,7 +752,8 @@ enum pazpar2_error_code session_search(struct session *se,
                                        const char *filter,
                                        const char *limit,
                                        const char **addinfo,
-                                       struct reclist_sortparms *sp)
+                                       struct reclist_sortparms *sp,
+                                       const char *mergekey)
 {
     int live_channels = 0;
     int no_working = 0;
@@ -772,6 +773,12 @@ enum pazpar2_error_code session_search(struct session *se,
 
     session_enter(se, "session_search");
     se->settings_modified = 0;
+
+    if (mergekey)
+    {
+        xfree(se->mergekey);
+        se->mergekey = *mergekey ? xstrdup(mergekey) : 0;
+    }
 
     session_clear_set(se, sp);
     relevance_destroy(&se->relevance);
