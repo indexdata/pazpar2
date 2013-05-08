@@ -1502,7 +1502,7 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
             else if (!strcmp(name, (const char *) type))
             {
                 xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
-                if (value)
+                if (value && *value)
                 {
                     const char *norm_str;
                     pp2_charset_token_t prt =
@@ -1521,10 +1521,11 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
                             wrbuf_puts(norm_wr, norm_str);
                         }
                     }
-                    xmlFree(value);
                     pp2_charset_token_destroy(prt);
                     no_found++;
                 }
+                if (value)
+                    xmlFree(value);
             }
             xmlFree(type);
         }
