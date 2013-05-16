@@ -104,8 +104,7 @@ void http_mutex_init(struct conf_server *server);
 void http_server_destroy(http_server_t hs);
 
 void http_set_proxyaddr(const char *url, struct conf_server *ser);
-int http_init(const char *addr, struct conf_server *ser,
-              const char *record_fname);
+int http_init(struct conf_server *ser, const char *record_fname);
 void http_close_server(struct conf_server *ser);
 void http_addheader(struct http_response *r,
                     const char *name, const char *value);

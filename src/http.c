@@ -758,7 +758,6 @@ static int http_proxy(struct http_request *rq)
     struct http_proxy *p = c->proxy;
     struct http_header *hp;
     struct http_buf *requestbuf;
-    char server_port[16] = "";
     struct conf_server *ser = c->server;
 
     if (!p) // This is a new connection. Create a proxy channel
@@ -818,13 +817,12 @@ static int http_proxy(struct http_request *rq)
                                 "X-Pazpar2-Version", PACKAGE_VERSION);
         hp = http_header_append(c, hp,
                                 "X-Pazpar2-Server-Host", ser->host);
-        sprintf(server_port, "%d",  ser->port);
         hp = http_header_append(c, hp,
-                                "X-Pazpar2-Server-Port", server_port);
+                                "X-Pazpar2-Server-Port", ser->port);
         yaz_snprintf(server_via, sizeof(server_via),
                      "1.1 %s:%s (%s/%s)",
-                     ser->host ? ser->host : "@",
-                     server_port, PACKAGE_NAME, PACKAGE_VERSION);
+                     ser->host, ser->port,
+                     PACKAGE_NAME, PACKAGE_VERSION);
         hp = http_header_append(c, hp, "Via" , server_via);
         hp = http_header_append(c, hp, "X-Forwarded-For", c->addr);
     }
@@ -1212,19 +1210,17 @@ static void http_accept(IOCHAN i, int event)
 }
 
 /* Create a http-channel listener, syntax [host:]port */
-int http_init(const char *addr, struct conf_server *server,
-              const char *record_fname)
+int http_init(struct conf_server *server, const char *record_fname)
 {
     IOCHAN c;
-    int l;
+    int s = -1;
     int one = 1;
-    const char *pp;
     FILE *record_file = 0;
-    struct addrinfo hints, *ai = 0;
+    struct addrinfo hints, *af = 0, *ai;
     int error;
     int ipv6_only = -1;
 
-    yaz_log(YLOG_LOG, "HTTP listener %s", addr);
+    yaz_log(YLOG_LOG, "HTTP listener %s:%s", server->host, server->port);
 
     hints.ai_flags = 0;
     hints.ai_family = AF_UNSPEC;
@@ -1235,70 +1231,76 @@ int http_init(const char *addr, struct conf_server *server,
     hints.ai_canonname      = NULL;
     hints.ai_next           = NULL;
 
-    pp = strchr(addr, ':');
-    if (pp)
+    if (!strcmp(server->host, "@"))
     {
-        WRBUF w = wrbuf_alloc();
-        wrbuf_write(w, addr, pp - addr);
-        if (!strcmp(wrbuf_cstr(w), "@"))
-        {   /* IPV4 + IPV6 .. same as YAZ */
-            ipv6_only = 0;
-            hints.ai_flags = AI_PASSIVE;
-            hints.ai_family = AF_INET6;
-            error = getaddrinfo(0, pp + 1, &hints, &ai);
-        }
-        else
-            error = getaddrinfo(wrbuf_cstr(w), pp + 1, &hints, &ai);
-        wrbuf_destroy(w);
+        ipv6_only = 0;
+        hints.ai_flags = AI_PASSIVE;
+        error = getaddrinfo(0, server->port, &hints, &af);
     }
     else
-    {
-        /* default for no host given is IPV4 */
-        hints.ai_flags = AI_PASSIVE;
-        hints.ai_family = AF_INET;
-        error = getaddrinfo(0, addr, &hints, &ai);
-    }
+        error = getaddrinfo(server->host, server->port, &hints, &af);
+
     if (error)
     {
-        yaz_log(YLOG_FATAL, "Failed to resolve %s: %s", addr,
+        yaz_log(YLOG_FATAL, "Failed to resolve %s: %s", server->host,
                 gai_strerror(error));
         return 1;
     }
-    l = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
-    if (l < 0)
+    for (ai = af; ai; ai = ai->ai_next)
+    {
+        if (ai->ai_family == AF_INET6)
+        {
+            s = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+            if (s != -1)
+                break;
+        }
+    }
+    if (s == -1)
+    {
+        for (ai = af; ai; ai = ai->ai_next)
+        {
+            s = socket(ai->ai_family, ai->ai_socktype, ai->ai_protocol);
+            if (s != -1)
+                break;
+        }
+    }
+    if (s == -1)
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "socket");
         freeaddrinfo(ai);
         return 1;
     }
-    if (ipv6_only >= 0 &&
-        setsockopt(l, IPPROTO_IPV6, IPV6_V6ONLY, &ipv6_only, sizeof(ipv6_only)))
+    if (ipv6_only >= 0 && ai->ai_family == AF_INET6 &&
+        setsockopt(s, IPPROTO_IPV6, IPV6_V6ONLY, &ipv6_only, sizeof(ipv6_only)))
     {
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "setsockopt IPV6_V6ONLY %s %d", addr,
-            ipv6_only);
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "setsockopt IPV6_V6ONLY %s:%s %d",
+                server->host, server->port, ipv6_only);
         freeaddrinfo(ai);
-        CLOSESOCKET(l);
+        CLOSESOCKET(s);
         return 1;
     }
-    if (setsockopt(l, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)))
+    if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one)))
     {
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "setsockopt SO_REUSEADDR %s", addr);
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "setsockopt SO_REUSEADDR %s:%s",
+                server->host, server->port);
         freeaddrinfo(ai);
-        CLOSESOCKET(l);
+        CLOSESOCKET(s);
         return 1;
     }
-    if (bind(l, ai->ai_addr, ai->ai_addrlen) < 0)
+    if (bind(s, ai->ai_addr, ai->ai_addrlen) < 0)
     {
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "bind %s", addr);
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "bind %s:%s",
+                server->host, server->port);
         freeaddrinfo(ai);
-        CLOSESOCKET(l);
+        CLOSESOCKET(s);
         return 1;
     }
     freeaddrinfo(ai);
-    if (listen(l, SOMAXCONN) < 0)
+    if (listen(s, SOMAXCONN) < 0)
     {
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "listen %s", addr);
-        CLOSESOCKET(l);
+        yaz_log(YLOG_FATAL|YLOG_ERRNO, "listen %s:%s",
+                server->host, server->port);
+        CLOSESOCKET(s);
         return 1;
     }
 
@@ -1308,16 +1310,16 @@ int http_init(const char *addr, struct conf_server *server,
         if (!record_file)
         {
             yaz_log(YLOG_FATAL|YLOG_ERRNO, "fopen %s", record_fname);
-            CLOSESOCKET(l);
+            CLOSESOCKET(s);
             return 1;
         }
     }
     server->http_server = http_server_create();
 
     server->http_server->record_file = record_file;
-    server->http_server->listener_socket = l;
+    server->http_server->listener_socket = s;
 
-    c = iochan_create(l, http_accept, EVENT_INPUT | EVENT_EXCEPT, "http_server");
+    c = iochan_create(s, http_accept, EVENT_INPUT | EVENT_EXCEPT, "http_server");
     iochan_setdata(c, server);
 
     iochan_add(server->iochan_man, c);
