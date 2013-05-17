@@ -54,6 +54,8 @@ struct marcmap *marcmap_load(const char *filename, NMEM nmem)
     mm = NULL;
     mmhead = NULL;
     fp = fopen(filename, "r");
+    if (!fp)
+        return mmhead;
 
     while ((c = getc(fp) ) != EOF)
     {
