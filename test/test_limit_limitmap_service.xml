@@ -7,8 +7,6 @@
     <set name="pz:limitmap:subject" value="rpn: @attr 1=21 @attr 6=3" />
   </settings>
 
-  <set name="service" value="from-service" />
-
   <metadata name="id"/>
   <metadata name="url" merge="unique"/>
   <metadata name="title" brief="yes" sortkey="skiparticle" merge="longest" rank="6" mergekey="required" />

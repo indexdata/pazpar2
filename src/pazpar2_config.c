@@ -64,6 +64,25 @@ struct service_xslt
     struct service_xslt *next;
 };
 
+static char *xml_context(const xmlNode *ptr, char *res, size_t len)
+{
+    size_t off = len - 1;
+    res[off] = '\0';
+    while (ptr && ptr->type == XML_ELEMENT_NODE)
+    {
+        size_t l = strlen((const char *) ptr->name);
+        if (off <= l + 1)
+            break;
+
+        off = off - l;
+        memcpy(res + off, ptr->name, l);
+        res[--off] = '/';
+
+        ptr = ptr->parent;
+    }
+    return res + off;
+}
+
 struct conf_service *service_init(struct conf_server *server,
                                          int num_metadata, int num_sortkeys,
                                          const char *service_id)
@@ -597,15 +616,6 @@ static struct conf_service *service_create_static(struct conf_server *server,
             if (service_xslt_config(service, n))
                 return 0;
         }
-        else if (!strcmp((const char *) n->name, (const char *) "set"))
-        {
-            xmlChar *name= xmlGetProp(n, (xmlChar *) "name");
-            xmlChar *value = xmlGetProp(n, (xmlChar *) "value");
-            if (service->dictionary && name && value) {
-                yaz_log(YLOG_DEBUG, "service set: %s=%s (Not implemented)", (char *) name, (char *) value);
-                //service_aply_setting(service, name, value);
-            }
-        }
         else if (!strcmp((const char *) n->name, "rank"))
         {
             char *rank_cluster = (char *) xmlGetProp(n, (xmlChar *) "cluster");
@@ -683,7 +693,9 @@ static struct conf_service *service_create_static(struct conf_server *server,
         }
         else
         {
-            yaz_log(YLOG_FATAL, "Bad element: %s", n->name);
+            char tmp[80];
+            yaz_log(YLOG_FATAL, "Bad element: %s . Context: %s", n->name,
+                    xml_context(n, tmp, sizeof tmp));
             return 0;
         }
     }
