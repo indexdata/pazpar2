@@ -57,17 +57,25 @@ CFG=${PREFIX}.cfg
 URLS=${PREFIX}.urls
 VALGRINDLOG=${PREFIX}_valgrind.log
 
+if test `uname` = "Linux"; then
+    sec=0.3
+    maxrounds=20
+else
+    sec=1
+    maxrounds=10
+fi
+
 if test -n "$PAZPAR2_USE_VALGRIND"; then
     valgrind --num-callers=30 --show-reachable=yes --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -X -l ${PREFIX}_pazpar2.log -f ${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
-elif test -n "$SKIP_PAZPAR2"; then 
-    echo "Skipping pazpar2. Must already be running with correct config!!! " 
+elif test -n "$SKIP_PAZPAR2"; then
+    echo "Skipping pazpar2. Must already be running with correct config!!! "
 else
     YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -v loglevel,fatal,warn,log,debug,notime,zoom,zoomdetails -d -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
 fi
 
 PP2PID=$!
 
-if [ -z "$SKIP_PAZPAR2" ] ; then 
+if [ -z "$SKIP_PAZPAR2" ] ; then
     if ps -p $PP2PID >/dev/null 2>&1; then
 	(sleep $WAIT; kill_pazpar2 >/dev/null) &
 	SLEEP_PID=$!
@@ -85,44 +93,54 @@ code=0
 
 # We can start test for real
 testno=1
+rounds=1
 for f in `cat ${srcdir}/${URLS}`; do
     if echo $f | grep '^http' >/dev/null; then
 	OUT1=${srcdir}/${PREFIX}_${testno}.res
 	OUT2=${PREFIX}_${testno}.log
 	DIFF=${PREFIX}_${testno}.dif
 	rm -f $OUT2 $DIFF
-	if [ -n "$DEBUG" ] ; then 
-	    echo "test $testno: $f" 
+	if [ -n "$DEBUG" ] ; then
+	    echo "test $testno: $f"
 	fi
-	if test -n "${postfile}"; then
-	    eval $POST
-	else
-	    eval $GET
-	fi
-	if test ! -f $OUT2; then
-	    touch $OUT2
-	fi
-	if test -f $OUT1 -a -z "$PAZPAR2_OVERRIDE_TEST"; then
-	    if diff $OUT1 $OUT2 >$DIFF; then
-		rm $DIFF
-		rm $OUT2
+	while test $rounds -gt 0; do
+	    if test -n "${postfile}"; then
+		eval $POST
 	    else
-		echo "Test $testno: Failed. See $OUT1, $OUT2 and $DIFF"
-		echo "URL: $f"
-		code=1
+		eval $GET
 	    fi
-	else
-	    echo "Test $testno: Making for the first time"
-	    mv $OUT2 $OUT1
-	    code=1
-	fi
+	    if test ! -f $OUT2; then
+		touch $OUT2
+	    fi
+	    rounds=`expr $rounds - 1`
+	    if test -f $OUT1 -a -z "$PAZPAR2_OVERRIDE_TEST"; then
+		if diff $OUT1 $OUT2 >$DIFF; then
+		    rm $DIFF
+		    rm $OUT2
+		    rounds=0
+		else
+		    if test $rounds -eq 0; then
+			echo "Test $testno: Failed. See $OUT1, $OUT2 and $DIFF"
+			echo "URL: $f"
+			code=1
+		    fi
+		fi
+	    else
+		if test $rounds -eq 0; then
+		    echo "Test $testno: Making for the first time"
+		    mv $OUT2 $OUT1
+		    code=1
+		fi
+	    fi
+	    if test $rounds -gt 0; then
+		sleep $sec
+	    fi
+	done
 	testno=`expr $testno + 1`
 	postfile=
+	rounds=1
     elif echo $f | grep '^[0-9]' >/dev/null; then
-	if [ -n "$DEBUG" ] ; then 
-	    echo "Sleeping $f"
-	fi
-	sleep $f
+	rounds=$maxrounds
     else
 	if test -f $srcdir/$f; then
 	    postfile=$srcdir/$f
@@ -131,7 +149,7 @@ for f in `cat ${srcdir}/${URLS}`; do
 	    code=1
 	fi
     fi
-    if [ -z "$SKIP_PAZPAR2" ] ; then  
+    if [ -z "$SKIP_PAZPAR2" ] ; then
 	if ps -p $PP2PID >/dev/null 2>&1; then
 	    :
 	else
@@ -148,7 +166,7 @@ done
 
 # Kill programs
 
-if [ -z "$SKIP_PAZPAR2" ] ; then 
+if [ -z "$SKIP_PAZPAR2" ] ; then
     kill_pazpar2
     sleep 2
 fi
