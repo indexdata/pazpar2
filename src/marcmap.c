@@ -42,7 +42,7 @@ struct marcmap *marcmap_load(const char *filename, NMEM nmem)
     struct marcmap *mm;
     struct marcmap *mmhead;
     FILE *fp;
-    char c;
+    int c;
     char buf[256];
     int len;
     int field;
