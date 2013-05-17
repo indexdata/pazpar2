@@ -1009,7 +1009,7 @@ static void show_record(struct http_channel *c, struct http_session *s)
 
         if (checksumstr)
         {
-            long v = atol(checksumstr);
+            unsigned v = strtoul(checksumstr, 0, 10);
             for (i = 0; r; r = r->next)
                 if (v == r->checksum)
                     break;
