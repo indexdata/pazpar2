@@ -1176,21 +1176,21 @@ static struct http_channel *http_channel_create(http_server_t hs,
 static void http_accept(IOCHAN i, int event)
 {
     char host[256];
-    struct sockaddr addr;
+    struct sockaddr_storage addr;
     int fd = iochan_getfd(i);
-    socklen_t len;
+    socklen_t len = sizeof addr;
     int s;
     IOCHAN c;
     struct http_channel *ch;
     struct conf_server *server = iochan_getdata(i);
 
-    len = sizeof addr;
-    if ((s = accept(fd, &addr, &len)) < 0)
+    if ((s = accept(fd, (struct sockaddr *) &addr, &len)) < 0)
     {
         yaz_log(YLOG_WARN|YLOG_ERRNO, "accept");
         return;
     }
-    if (getnameinfo(&addr, len, host, sizeof(host)-1, 0, 0, NI_NUMERICHOST))
+    if (getnameinfo((struct sockaddr *) &addr, len, host, sizeof(host)-1, 0, 0,
+        NI_NUMERICHOST))
     {
         yaz_log(YLOG_WARN|YLOG_ERRNO, "getnameinfo");
         CLOSESOCKET(s);
