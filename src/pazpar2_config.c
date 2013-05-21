@@ -66,8 +66,19 @@ struct service_xslt
 
 static char *xml_context(const xmlNode *ptr, char *res, size_t len)
 {
+    xmlAttr *attr = ptr->properties;
     size_t off = len - 1;
+
     res[off] = '\0';
+    for (; attr; attr = attr->next)
+    {
+        size_t l = strlen((const char *) attr->name);
+        if (off <= l + 1)
+            break;
+        off = off - l;
+        memcpy(res + off, attr->name, l);
+        res[--off] = '@';
+    } 
     while (ptr && ptr->type == XML_ELEMENT_NODE)
     {
         size_t l = strlen((const char *) ptr->name);
