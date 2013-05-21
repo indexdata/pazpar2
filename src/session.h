@@ -112,6 +112,7 @@ struct session {
     struct relevance *relevance;
     struct reclist *reclist;
     char *mergekey;
+    char *rank;
     struct session_watchentry watchlist[SESSION_WATCH_MAX + 1];
     int total_records;
     int total_merged;
@@ -161,7 +162,7 @@ void session_init_databases(struct session *s);
 void statistics(struct session *s, struct statistics *stat);
 
 void session_sort(struct session *se, struct reclist_sortparms *sp,
-                  const char *mergekey);
+                  const char *mergekey, const char *rank);
 
 enum pazpar2_error_code session_search(struct session *s, const char *query,
                                        const char *startrecs,
@@ -169,7 +170,8 @@ enum pazpar2_error_code session_search(struct session *s, const char *query,
                                        const char *filter, const char *limit,
                                        const char **addinfo,
                                        struct reclist_sortparms *sort_parm,
-                                       const char *mergekey);
+                                       const char *mergekey,
+                                       const char *rank);
 struct record_cluster **show_range_start(struct session *s,
                                          struct reclist_sortparms *sp,
                                          int start,

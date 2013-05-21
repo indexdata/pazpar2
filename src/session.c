@@ -648,7 +648,8 @@ static void session_clear_set(struct session *se, struct reclist_sortparms *sp)
 
 static void session_sort_unlocked(struct session *se,
                                   struct reclist_sortparms *sp,
-                                  const char *mergekey)
+                                  const char *mergekey,
+                                  const char *rank)
 {
     struct client_list *l;
     const char *field = sp->name;
@@ -659,7 +660,17 @@ static void session_sort_unlocked(struct session *se,
     session_log(se, YLOG_DEBUG, "session_sort field=%s increasing=%d type=%d",
                 field, increasing, type);
 
-    if (mergekey && strcmp(se->mergekey, mergekey))
+    if (rank && (!se->rank || strcmp(se->rank, rank)))
+    {
+        /* new rank must research/reingest anyway */
+        assert(rank);
+        xfree(se->rank);
+        se->rank = *rank ? xstrdup(rank) : 0;
+        clients_research = 1;
+        session_log(se, YLOG_DEBUG, "session_sort: new rank = %s",
+                    rank);
+    }
+    if (mergekey && (!se->mergekey || strcmp(se->mergekey, mergekey)))
     {
         /* new mergekey must research/reingest anyway */
         assert(mergekey);
@@ -736,10 +747,10 @@ static void session_sort_unlocked(struct session *se,
 }
 
 void session_sort(struct session *se, struct reclist_sortparms *sp,
-                  const char *mergekey)
+                  const char *mergekey, const char *rank)
 {
     //session_enter(se, "session_sort");
-    session_sort_unlocked(se, sp, mergekey);
+    session_sort_unlocked(se, sp, mergekey, rank);
     //session_leave(se, "session_sort");
 }
 
@@ -752,7 +763,8 @@ enum pazpar2_error_code session_search(struct session *se,
                                        const char *limit,
                                        const char **addinfo,
                                        struct reclist_sortparms *sp,
-                                       const char *mergekey)
+                                       const char *mergekey,
+                                       const char *rank)
 {
     int live_channels = 0;
     int no_working = 0;
@@ -777,6 +789,11 @@ enum pazpar2_error_code session_search(struct session *se,
     {
         xfree(se->mergekey);
         se->mergekey = *mergekey ? xstrdup(mergekey) : 0;
+    }
+    if (rank)
+    {
+        xfree(se->rank);
+        se->rank = *rank ? xstrdup(rank) : 0;
     }
 
     session_clear_set(se, sp);
@@ -953,6 +970,7 @@ void session_destroy(struct session *se)
     relevance_destroy(&se->relevance);
     reclist_destroy(se->reclist);
     xfree(se->mergekey);
+    xfree(se->rank);
     if (nmem_total(se->nmem))
         session_log(se, YLOG_DEBUG, "NMEN operation usage %zd", nmem_total(se->nmem));
     if (nmem_total(se->session_nmem))
@@ -1002,6 +1020,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->sorted_results = 0;
     session->facet_limits = 0;
     session->mergekey = 0;
+    session->rank = 0;
 
     for (i = 0; i <= SESSION_WATCH_MAX; i++)
     {
@@ -1882,6 +1901,9 @@ static int ingest_to_cluster(struct client *cl,
     struct record_cluster *cluster;
     struct record_metadata **metadata0;
     struct session_database *sdb = client_get_database(cl);
+    NMEM ingest_nmem = 0;
+    char **rank_values = 0;
+    int rank_num = 0;
     struct record *record = record_create(se->nmem,
                                           service->num_metadata,
                                           service->num_sortkeys, cl,
@@ -1989,6 +2011,14 @@ static int ingest_to_cluster(struct client *cl,
     memcpy(metadata0, cluster->metadata,
            sizeof(*metadata0) * service->num_metadata);
 
+    ingest_nmem = nmem_create();
+    if (se->rank)
+    {
+        yaz_log(YLOG_LOG, "local in sort : %s", se->rank);
+        nmem_strsplit_escape2(ingest_nmem, ",", se->rank, &rank_values,
+                              &rank_num, 1, '\\', 1);
+    }
+
     // now parsing XML record and adding data to cluster or record metadata
     for (n = root->children; n; n = n->next)
     {
@@ -2009,8 +2039,8 @@ static int ingest_to_cluster(struct client *cl,
             struct record_metadata *rec_md = 0;
             int md_field_id = -1;
             int sk_field_id = -1;
-            const char *rank;
-            xmlChar *xml_rank;
+            const char *rank = 0;
+            xmlChar *xml_rank = 0;
 
             type = xmlGetProp(n, (xmlChar *) "type");
             value = xmlNodeListGetString(xdoc, n->children, 1);
@@ -2040,8 +2070,28 @@ static int ingest_to_cluster(struct client *cl,
             if (!rec_md)
                 continue;
 
-            xml_rank = xmlGetProp(n, (xmlChar *) "rank");
-            rank = xml_rank ? (const char *) xml_rank : ser_md->rank;
+            if (rank_num)
+            {
+                int i;
+                for (i = 0; i < rank_num; i++)
+                {
+                    const char *val = rank_values[i];
+                    const char *cp = strchr(val, '=');
+                    if (!cp)
+                        continue;
+                    if ((cp - val) == strlen((const char *) type)
+                        && !memcmp(val, type, cp - val))
+                    {
+                        rank = cp + 1;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                xml_rank = xmlGetProp(n, (xmlChar *) "rank");
+                rank = xml_rank ? (const char *) xml_rank : ser_md->rank;
+            }
 
             wheretoput = &cluster->metadata[md_field_id];
 
@@ -2180,6 +2230,7 @@ static int ingest_to_cluster(struct client *cl,
     if (value)
         xmlFree(value);
 
+    nmem_destroy(ingest_nmem);
     xfree(metadata0);
     relevance_donerecord(se->relevance, cluster);
     se->total_records++;

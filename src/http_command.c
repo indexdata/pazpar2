@@ -1212,6 +1212,7 @@ static void cmd_show(struct http_channel *c)
     const char *sort = http_argbyname(rq, "sort");
     const char *block_error = http_argbyname(rq, "report");
     const char *mergekey = http_argbyname(rq, "mergekey");
+    const char *rank = http_argbyname(rq, "rank");
     struct conf_service *service = 0;
 
     struct reclist_sortparms *sp;
@@ -1234,7 +1235,7 @@ static void cmd_show(struct http_channel *c)
         release_session(c, s);
         return;
     }
-    session_sort(s->psession, sp, mergekey);
+    session_sort(s->psession, sp, mergekey, rank);
 
     status = session_active_clients(s->psession);
 
@@ -1323,6 +1324,7 @@ static void cmd_search(struct http_channel *c)
     const char *limit = http_argbyname(rq, "limit");
     const char *sort = http_argbyname(rq, "sort");
     const char *mergekey = http_argbyname(rq, "mergekey");
+    const char *rank = http_argbyname(rq, "rank");
     enum pazpar2_error_code code;
     const char *addinfo = 0;
     struct reclist_sortparms *sp;
@@ -1355,7 +1357,7 @@ static void cmd_search(struct http_channel *c)
     }
 
     code = session_search(s->psession, query, startrecs, maxrecs, filter, limit,
-                          &addinfo, sp, mergekey);
+                          &addinfo, sp, mergekey, rank);
     if (code)
     {
         error(rs, code, addinfo);
