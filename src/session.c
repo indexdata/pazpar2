@@ -650,7 +650,6 @@ static void session_sort_unlocked(struct session *se,
                                   struct reclist_sortparms *sp,
                                   const char *mergekey)
 {
-    struct reclist_sortparms *sr;
     struct client_list *l;
     const char *field = sp->name;
     int increasing = sp->increasing;
@@ -660,36 +659,31 @@ static void session_sort_unlocked(struct session *se,
     session_log(se, YLOG_DEBUG, "session_sort field=%s increasing=%d type=%d",
                 field, increasing, type);
 
-    if (!mergekey ||
-        (se->mergekey && !strcmp(se->mergekey, mergekey)))
-    {
-        /* mergekey unchanged.. */
-        /* see if we already have sorted for this criteria */
-        for (sr = se->sorted_results; sr; sr = sr->next)
-        {
-            if (!reclist_sortparms_cmp(sr, sp))
-                break;
-        }
-        if (sr)
-        {
-            session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d already fetched",
-                        field, increasing, type);
-            return;
-        }
-        session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d must fetch",
-                    field, increasing, type);
-    }
-    else
+    if (mergekey && strcmp(se->mergekey, mergekey))
     {
         /* new mergekey must research/reingest anyway */
         assert(mergekey);
         xfree(se->mergekey);
         se->mergekey = *mergekey ? xstrdup(mergekey) : 0;
         clients_research = 1;
-
         session_log(se, YLOG_DEBUG, "search_sort: new mergekey = %s",
                     mergekey);
     }
+    if (clients_research == 0)
+    {
+        struct reclist_sortparms *sr;
+        for (sr = se->sorted_results; sr; sr = sr->next)
+            if (!reclist_sortparms_cmp(sr, sp))
+                break;
+        if (sr)
+        {
+            session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d already fetched",
+                        field, increasing, type);
+            return;
+        }
+    }
+    session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d must fetch",
+                field, increasing, type);
 
     // We need to reset reclist on every sort that changes the records, not just for position
     // So if just one client requires new searching, we need to clear set.
@@ -702,15 +696,17 @@ static void session_sort_unlocked(struct session *se,
         client_parse_init(cl, 1);
         clients_research += client_parse_sort(cl, sp);
     }
-    if (clients_research) {
+    if (clients_research)
+    {
         session_log(se, YLOG_DEBUG,
                     "Reset results due to %d clients researching",
                     clients_research);
         session_clear_set(se, sp);
     }
-    else {
+    else
+    {
         // A new sorting based on same record set
-        sr = nmem_malloc(se->nmem, sizeof(*sr));
+        struct reclist_sortparms *sr = nmem_malloc(se->nmem, sizeof(*sr));
         sr->name = nmem_strdup(se->nmem, field);
         sr->increasing = increasing;
         sr->type = type;
