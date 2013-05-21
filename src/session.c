@@ -666,7 +666,7 @@ static void session_sort_unlocked(struct session *se,
         xfree(se->mergekey);
         se->mergekey = *mergekey ? xstrdup(mergekey) : 0;
         clients_research = 1;
-        session_log(se, YLOG_DEBUG, "search_sort: new mergekey = %s",
+        session_log(se, YLOG_DEBUG, "session_sort: new mergekey = %s",
                     mergekey);
     }
     if (clients_research == 0)
@@ -677,12 +677,12 @@ static void session_sort_unlocked(struct session *se,
                 break;
         if (sr)
         {
-            session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d already fetched",
+            session_log(se, YLOG_DEBUG, "session_sort: field=%s increasing=%d type=%d already fetched",
                         field, increasing, type);
             return;
         }
     }
-    session_log(se, YLOG_DEBUG, "search_sort: field=%s increasing=%d type=%d must fetch",
+    session_log(se, YLOG_DEBUG, "session_sort: field=%s increasing=%d type=%d must fetch",
                 field, increasing, type);
 
     // We need to reset reclist on every sort that changes the records, not just for position
@@ -699,7 +699,7 @@ static void session_sort_unlocked(struct session *se,
     if (clients_research)
     {
         session_log(se, YLOG_DEBUG,
-                    "Reset results due to %d clients researching",
+                    "session_sort: reset results due to %d clients researching",
                     clients_research);
         session_clear_set(se, sp);
     }
@@ -712,7 +712,7 @@ static void session_sort_unlocked(struct session *se,
         sr->type = type;
         sr->next = se->sorted_results;
         se->sorted_results = sr;
-        session_log(se, YLOG_DEBUG, "No research/ingesting done");
+        session_log(se, YLOG_DEBUG, "session_sort: no research/ingesting done");
         return ;
     }
     session_log(se, YLOG_DEBUG, "Re- search/ingesting for clients due to change in sort order");
@@ -725,12 +725,13 @@ static void session_sort_unlocked(struct session *se,
             client_get_state(cl) == Client_Working) {
             client_start_search(cl);
         }
-        else {
+        else
+        {
             session_log(se, YLOG_DEBUG,
-                        "Client %s: No re-start/ingest in show. Wrong client state: %d",
+                        "session_sort: %s: No re-start/ingest in show. "
+                        "Wrong client state: %d",
                         client_get_id(cl), client_get_state(cl));
         }
-
     }
 }
 
