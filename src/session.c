@@ -1500,6 +1500,26 @@ static struct record_metadata *record_metadata_init(
     return rec_md;
 }
 
+static void mergekey_norm_wr(pp2_charset_fact_t charsets,
+                             WRBUF norm_wr, const char *value)
+{
+    const char *norm_str;
+    pp2_charset_token_t prt =
+        pp2_charset_token_create(charsets, "mergekey");
+
+    pp2_charset_token_first(prt, value, 0);
+    while ((norm_str = pp2_charset_token_next(prt)))
+    {
+        if (*norm_str)
+        {
+            if (wrbuf_len(norm_wr))
+                wrbuf_puts(norm_wr, " ");
+            wrbuf_puts(norm_wr, norm_str);
+        }
+    }
+    pp2_charset_token_destroy(prt);
+}
+
 static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
                                  struct conf_service *service, WRBUF norm_wr)
 {
@@ -1520,24 +1540,11 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
                 xmlChar *value = xmlNodeListGetString(doc, n->children, 1);
                 if (value && *value)
                 {
-                    const char *norm_str;
-                    pp2_charset_token_t prt =
-                        pp2_charset_token_create(service->charsets, "mergekey");
-
-                    pp2_charset_token_first(prt, (const char *) value, 0);
                     if (wrbuf_len(norm_wr) > 0)
                         wrbuf_puts(norm_wr, " ");
                     wrbuf_puts(norm_wr, name);
-                    while ((norm_str =
-                            pp2_charset_token_next(prt)))
-                    {
-                        if (*norm_str)
-                        {
-                            wrbuf_puts(norm_wr, " ");
-                            wrbuf_puts(norm_wr, norm_str);
-                        }
-                    }
-                    pp2_charset_token_destroy(prt);
+                    mergekey_norm_wr(service->charsets, norm_wr,
+                                     (const char *) value);
                     no_found++;
                 }
                 if (value)
@@ -1570,21 +1577,7 @@ static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
     }
     else if ((mergekey = xmlGetProp(root, (xmlChar *) "mergekey")))
     {
-        const char *norm_str;
-        pp2_charset_token_t prt =
-            pp2_charset_token_create(service->charsets, "mergekey");
-
-        pp2_charset_token_first(prt, (const char *) mergekey, 0);
-        while ((norm_str = pp2_charset_token_next(prt)))
-        {
-            if (*norm_str)
-            {
-                if (wrbuf_len(norm_wr))
-                    wrbuf_puts(norm_wr, " ");
-                wrbuf_puts(norm_wr, norm_str);
-            }
-        }
-        pp2_charset_token_destroy(prt);
+        mergekey_norm_wr(service->charsets, norm_wr, (const char *) mergekey);
         xmlFree(mergekey);
     }
     else
@@ -1745,12 +1738,15 @@ int ingest_record(struct client *cl, const char *rec,
 
 //    struct conf_metadata *ser_md = &service->metadata[md_field_id];
 //    struct record_metadata *rec_md = record->metadata[md_field_id];
-static int match_metadata_local(struct conf_metadata *ser_md,
+static int match_metadata_local(struct conf_service *service,
+                                struct conf_metadata *ser_md,
                                 struct record_metadata *rec_md0,
                                 char **values, int num_v)
 {
     int i;
     struct record_metadata *rec_md = rec_md0;
+    WRBUF val_wr = 0;
+    WRBUF text_wr = wrbuf_alloc();
     for (i = 0; i < num_v; )
     {
         if (rec_md)
@@ -1765,21 +1761,29 @@ static int match_metadata_local(struct conf_metadata *ser_md,
             }
             else
             {
-                yaz_log(YLOG_DEBUG, "cmp: '%s' '%s'", rec_md->data.text.disp, values[i]);
-                if (!strcmp(rec_md->data.text.disp, values[i]))
+                if (!val_wr)
                 {
-                    // Value equals, should not be filtered.
-                    break;
+                    val_wr = wrbuf_alloc();
+                    mergekey_norm_wr(service->charsets, val_wr, values[i]);
                 }
+                wrbuf_rewind(text_wr);
+                mergekey_norm_wr(service->charsets, text_wr,
+                                 rec_md->data.text.disp);
+                if (!strcmp(wrbuf_cstr(val_wr), wrbuf_cstr(text_wr)))
+                    break;
             }
             rec_md = rec_md->next;
         }
         else
         {
             rec_md = rec_md0;
+            wrbuf_destroy(val_wr);
+            val_wr = 0;
             i++;
         }
     }
+    wrbuf_destroy(val_wr);
+    wrbuf_destroy(text_wr);
     return i < num_v ? 1 : 0;
 }
 
@@ -1815,7 +1819,8 @@ int session_check_cluster_limit(struct session *se, struct record_cluster *rec)
                 nmem_strsplit_escape2(nmem_tmp, "|", value, &values,
                                       &num, 1, '\\', 1);
 
-                if (!match_metadata_local(&service->metadata[md_field_id],
+                if (!match_metadata_local(service,
+                                          &service->metadata[md_field_id],
                                           rec->metadata[md_field_id],
                                           values, num))
                 {
@@ -1857,6 +1862,7 @@ static int check_limit_local(struct client *cl,
                  md_field_id++)
             {
                 if (match_metadata_local(
+                        service,
                         &service->metadata[md_field_id],
                         record->metadata[md_field_id],
                         values, num_v))
@@ -1874,6 +1880,7 @@ static int check_limit_local(struct client *cl,
                 break;
             }
             if (!match_metadata_local(
+                    service,
                     &service->metadata[md_field_id],
                     record->metadata[md_field_id],
                     values, num_v))
