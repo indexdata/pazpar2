@@ -256,7 +256,7 @@
 	  </varlistentry>
 	  
 	  <varlistentry>
-	   <term>rank</term>
+	   <term id="metadata-rank">rank</term>
 	   <listitem>
 	    <para>
 	     Specifies that this element is to be used to

@@ -288,6 +288,47 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
 	</para>
       </listitem>
      </varlistentry>
+
+     <varlistentry>
+      <term>mergekey</term>
+      <listitem>
+       <para>
+	Sets mergekey for this search and rest of session, or until
+	another mergekey is given for show/search. The mergekey value is a
+	comma separated list with one or more names as they appear
+	in the service description  equivalent to
+	<literal>mergekey="optional"</literal> inside a metadata element.
+	If the empty string is given for mergekey it is disabled
+	and rest of session will use the default mergekey from service
+	or stylesheet.
+       </para>
+       <para>
+	This facility, "dynamic mergekey", appeared in Pazpar2 version
+	1.6.31.
+       </para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term>rank</term>
+      <listitem>
+       <para>
+	Sets rank method this search and rest of session, or until
+	another rank is given for show/search. The rank value is a
+	comma separated list of pairs field=value pairs. The
+	format is the same as
+	<xref linkend="metadata-rank">rank</xref> for a metadata element.
+	If the empty string is given for rank it is disabled
+	and rest of session will use the default rank from metadata or
+	stylesheet.
+       </para>
+       <para>
+	This facility, "dynamic ranking", appeared in Pazpar2 version
+	1.6.31.
+       </para>
+      </listitem>
+     </varlistentry>
+
     </variablelist>
 
    </para>
@@ -390,26 +431,6 @@ search.pz2?session=2044502273&command=stat
      </varlistentry>
 
      <varlistentry>
-      <term>mergekey</term>
-      <listitem>
-       <para>
-	Sets mergekey for this search and rest of session, or until
-	another mergekey is given for show/search. The mergekey value is a
-	comma separated list with one or more names as they appear
-	in the service description  equivalent to
-	<literal>mergekey="optional"</literal> inside a metadata element.
-	If the empty string is given for mergekey it is disabled
-	and rest of session will use the default mergekey from service
-	or stylesheet.
-       </para>
-       <para>
-	This facility, "dynamic mergekey", appeared in Pazpar2 version
-	1.6.31.
-       </para>
-      </listitem>
-     </varlistentry>
-
-     <varlistentry>
       <term>sort</term>
       <listitem>
        <para>
@@ -454,6 +475,26 @@ search.pz2?session=2044502273&command=stat
        </para>
        <para>
 	This facility, "dynamic mergekey", appeared in Pazpar2 version
+	1.6.31.
+       </para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term>rank</term>
+      <listitem>
+       <para>
+	Sets rank method this show and rest of session, or until
+	another rank is given for show/search. The rank value is a
+	comma separated list of pairs field=value pairs. The
+	format is the same as
+	<xref linkend="metadata-rank">rank</xref> for a metadata element.
+	If the empty string is given for rank it is disabled
+	and rest of session will use the default rank from metadata or
+	stylesheet.
+       </para>
+       <para>
+	This facility, "dynamic ranking", appeared in Pazpar2 version
 	1.6.31.
        </para>
       </listitem>
