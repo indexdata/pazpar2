@@ -1,3 +1,20 @@
+Local limit for fields of type "generic" (ie text fields) are
+now normalized by mergekey rule before comparison takes place.
+Before, no normalization took place and comparsion was, thus, exact.
+
+New facility: dynamic rank , which allows ranking to be changed
+for an existing result set. The rank can be set for search or
+show. This overrides the rank for metadata elements (which fields
+to rank and weight).
+
+New facility:dynamic mergekey , which allows mergekey to be changed
+for an existing result set. The mergekey can be set for search or
+show.
+
+HTTP server: host=@ listens on IPV6 and IPV4 if possible.
+Also, allow ports to be given as names (not just integers).
+Fix @-notation on systems that don't support IPV6 sockets.
+
 --- 1.6.30 2013/04/26
 
 Add MasterKey Connect configuration. Refer to section "non-standard
