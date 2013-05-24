@@ -29,7 +29,7 @@ var pz2 = function ( paramArray )
     
     // at least one callback required
     if ( !paramArray )
-        throw new Error("Pz2.js: Array with parameters has to be suplied."); 
+        throw new Error("Pz2.js: Array with parameters has to be supplied."); 
 
     //supported pazpar2's protocol version
     this.suppProtoVer = '1';

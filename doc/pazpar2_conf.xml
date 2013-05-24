@@ -1344,7 +1344,7 @@
        It has four possible settings.
        'get', enables SRU access through GET requests. 'post' enables SRU/POST
        support, less commonly supported, but useful if very large requests are
-       to be submitted. 'srw' enables the SRW (SRU over SOAP) variation of
+       to be submitted. 'soap' enables the SRW (SRU over SOAP) variation of
        the protocol.
       </para>
       <para>
