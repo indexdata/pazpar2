@@ -648,6 +648,17 @@ static void session_status(struct http_channel *c, struct http_session *s)
     wrbuf_printf(c->wrbuf, "<session_nmem>%zu</session_nmem>\n", session_nmem);
 }
 
+static void cmd_service(struct http_channel *c)
+{
+    struct http_session *s = locate_session(c);
+    if (!s)
+        return;
+
+    response_open(c, "service");
+    response_close(c, "service");
+    release_session(c, s);
+}
+
 static void cmd_session_status(struct http_channel *c)
 {
     struct http_session *s = locate_session(c);
@@ -1460,6 +1471,7 @@ struct {
     { "exit", cmd_exit },
     { "session-status", cmd_session_status },
     { "server-status", cmd_server_status },
+    { "service", cmd_service },
     { "ping", cmd_ping },
     { "record", cmd_record },
     { "info", cmd_info },

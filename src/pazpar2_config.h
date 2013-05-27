@@ -134,6 +134,7 @@ struct conf_service
     CCL_bibset ccl_bibset;
     struct database *databases;
     struct conf_server *server;
+    xmlNode *xml_node;
 };
 
 int conf_service_metadata_field_id(struct conf_service *service, const char * name);
