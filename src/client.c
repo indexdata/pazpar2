@@ -73,7 +73,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 static YAZ_MUTEX g_mutex = 0;
 static int no_clients = 0;
-static int no_clients_total = 0;
 
 static int client_use(int delta)
 {
@@ -82,8 +81,6 @@ static int client_use(int delta)
         yaz_mutex_create(&g_mutex);
     yaz_mutex_enter(g_mutex);
     no_clients += delta;
-    if (delta > 0)
-        no_clients_total += delta;
     clients = no_clients;
     yaz_mutex_leave(g_mutex);
     yaz_log(YLOG_DEBUG, "%s clients=%d",
@@ -93,20 +90,15 @@ static int client_use(int delta)
 
 int clients_count(void)
 {
-    return client_use(0);
-}
-
-int clients_count_total(void)
-{
     int total = 0;
-    if (!g_mutex)
-        return 0;
-    yaz_mutex_enter(g_mutex);
-    total = no_clients_total;
-    yaz_mutex_leave(g_mutex);
+    if (g_mutex)
+    {
+        yaz_mutex_enter(g_mutex);
+        total = no_clients;
+        yaz_mutex_leave(g_mutex);
+    }
     return total;
 }
-
 
 /** \brief Represents client state for a connection to one search target */
 struct client {
@@ -1015,6 +1007,7 @@ struct client *client_create(const char *id)
     cl->id = xstrdup(id);
     client_use(1);
 
+    yaz_log(YLOG_DEBUG, "client_create c=%p %s", cl, id);
     return cl;
 }
 
