@@ -802,6 +802,25 @@ search.pz2?session=605047297&command=bytarget&id=3
    </para>
   </refsect2>
 
+  <refsect2 id="command-service">
+   <title>service</title>
+   <para>
+    Returns service definition (XML). Parameters:
+    <variablelist>
+     <varlistentry>
+      <term>session</term>
+      <listitem>
+       <para>
+	Session ID
+	</para>
+      </listitem>
+     </varlistentry>
+    </variablelist>
+   </para>
+   <para>
+    The service command appeared in Pazpar2 version 1.6.32
+   </para>
+  </refsect2>
  </refsect1>
  <refsect1>
   <title>SEE ALSO</title>
