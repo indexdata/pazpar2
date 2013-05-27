@@ -64,24 +64,25 @@ else
     sec=1
     maxrounds=10
 fi
-
+LEVELS=loglevel,fatal,warn,log,debug,notime,zoom,zoomdetails
 if test -n "$PAZPAR2_USE_VALGRIND"; then
-    valgrind --num-callers=30 --show-reachable=yes --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -X -l ${PREFIX}_pazpar2.log -f ${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
+    valgrind --num-callers=30 --show-reachable=yes --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -v $LEVELS -X -l ${PREFIX}_pazpar2.log -f ${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
+    PP2PID=$!
+    sleep 6
 elif test -n "$SKIP_PAZPAR2"; then
     echo "Skipping pazpar2. Must already be running with correct config!!! "
 else
-    YAZ_LOG=zoom,zoomdetails,debug,log,fatal ../src/pazpar2 -v loglevel,fatal,warn,log,debug,notime,zoom,zoomdetails -d -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
+    ../src/pazpar2 -v $LEVELS -d -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
+    PP2PID=$!
+    sleep 2
 fi
 
-PP2PID=$!
-
-if [ -z "$SKIP_PAZPAR2" ] ; then
+if [ -z "$SKIP_PAZPAR2" -a -z "$WAIT_PAZPAR2" ] ; then
     if ps -p $PP2PID >/dev/null 2>&1; then
 	(sleep $WAIT; kill_pazpar2 >/dev/null) &
 	SLEEP_PID=$!
 	trap kill_pazpar2 INT
 	trap kill_pazpar2 HUP
-	sleep 3
     else
 	echo "pazpar2 failed to start"
 	exit 1
@@ -163,6 +164,16 @@ for f in `cat ${srcdir}/${URLS}`; do
 	fi
     fi
 done
+
+if [ "$WAIT_PAZPAR2" ] ; then
+    i=0
+    while test $i -lt $WAIT_PAZPAR2; do
+	i=`expr $i + 1`
+	echo -n "$i."
+	sleep 60
+    done
+    echo "done"
+fi
 
 # Kill programs
 
