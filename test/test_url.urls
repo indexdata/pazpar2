@@ -16,3 +16,4 @@ test_url_settings.xml http://localhost:9763/search.pz2?session=1&command=setting
 http://localhost:9763/search.pz2?session=1&command=search&query=water
 2 http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=title:1p
 2 http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=date:0p
+http://localhost:9763/search.pz2?session=1&command=service

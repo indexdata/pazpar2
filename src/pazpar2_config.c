@@ -273,6 +273,8 @@ void service_destroy(struct conf_service *service)
         if (!pazpar2_decref(&service->ref_count, service->mutex))
         {
             service_xslt_destroy(service);
+            if (service->xml_node)
+                xmlFreeNode(service->xml_node);
             pp2_charset_fact_destroy(service->charsets);
             ccl_qual_rm(&service->ccl_bibset);
             yaz_mutex_destroy(&service->mutex);
@@ -744,6 +746,7 @@ static struct conf_service *service_create_static(struct conf_server *server,
             }
         }
     }
+    service->xml_node = xmlCopyNode(node, 1);
     return service;
 }
 
