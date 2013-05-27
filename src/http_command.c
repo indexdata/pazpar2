@@ -668,6 +668,7 @@ static void cmd_service(struct http_channel *c)
 
         wrbuf_write(c->wrbuf, (const char *) buf->content, buf->use);
         xmlBufferFree(buf);
+        xmlFreeNode(tmp);
     }
 
     response_close(c, 0);
