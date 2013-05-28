@@ -839,6 +839,10 @@ void http_send_response(struct http_channel *ch)
     struct http_response *rs = ch->response;
     struct http_buf *hb;
 
+    yaz_timing_stop(ch->yt);
+    yaz_log(YLOG_LOG, "Response: %6.5f %3.2f %3.2f",
+            yaz_timing_get_real(ch->yt), yaz_timing_get_user(ch->yt),
+            yaz_timing_get_sys(ch->yt));
     assert(rs);
     hb = http_serialize_response(ch, rs);
     if (!hb)
@@ -934,6 +938,7 @@ static void http_io(IOCHAN i, int event)
                     fflush(hc->http_server->record_file);
                 }
  #endif
+                yaz_timing_start(hc->yt);
                 if (!(hc->request = http_parse_request(hc, &hc->iqueue, reqlen)))
                 {
                     yaz_log(YLOG_WARN, "Failed to parse request");
@@ -1121,6 +1126,7 @@ static void http_channel_destroy(IOCHAN i)
         http_buf_destroy_queue(s->http_server, s->proxy->oqueue);
         xfree(s->proxy);
     }
+    yaz_timing_destroy(&s->yt);
     http_buf_destroy_queue(s->http_server, s->iqueue);
     http_buf_destroy_queue(s->http_server, s->oqueue);
     http_fire_observers(s);
@@ -1168,6 +1174,7 @@ static struct http_channel *http_channel_create(http_server_t hs,
     }
     strcpy(r->addr, addr);
     r->observers = 0;
+    r->yt = yaz_timing_create();
     return r;
 }
 

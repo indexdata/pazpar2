@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define HTTP_H
 
 #include <yaz/wrbuf.h>
+#include <yaz/timing.h>
 
 #include "eventl.h"
 // Generic I/O buffer
@@ -45,6 +46,7 @@ struct http_channel
     int keep_alive;
     NMEM nmem;
     WRBUF wrbuf;
+    yaz_timing_t yt;
     struct http_request *request;
     struct http_response *response;
     struct http_channel *next; // for freelist
