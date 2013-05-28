@@ -107,7 +107,8 @@ static int session_use(int delta)
     no_sessions += delta;
     sessions = no_sessions;
     yaz_mutex_leave(g_session_mutex);
-    yaz_log(YLOG_DEBUG, "%s sessions=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), no_sessions);
+    yaz_log(YLOG_DEBUG, "%s sessions=%d", delta == 0 ? "" :
+            (delta > 0 ? "INC" : "DEC"), no_sessions);
     return sessions;
 }
 
@@ -148,10 +149,9 @@ static void session_leave(struct session *s, const char *caller)
         session_log(s, YLOG_DEBUG, "Session unlock by %s", caller);
 }
 
-static void session_normalize_facet(struct session *s, const char *type,
-                                    const char *value,
-                                    WRBUF display_wrbuf,
-                                    WRBUF facet_wrbuf)
+static void session_normalize_facet(struct session *s,
+                                    const char *type, const char *value,
+                                    WRBUF display_wrbuf, WRBUF facet_wrbuf)
 {
     struct conf_service *service = s->service;
     pp2_charset_token_t prt;
