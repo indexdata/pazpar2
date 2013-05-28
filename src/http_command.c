@@ -687,8 +687,6 @@ static void cmd_session_status(struct http_channel *c)
     release_session(c, s);
 }
 
-int sessions_count(void);
-int clients_count(void);
 #ifdef HAVE_RESULTSETS_COUNT
 int resultsets_count(void);
 #else

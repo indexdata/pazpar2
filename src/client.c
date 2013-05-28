@@ -90,14 +90,7 @@ static int client_use(int delta)
 
 int clients_count(void)
 {
-    int total = 0;
-    if (g_mutex)
-    {
-        yaz_mutex_enter(g_mutex);
-        total = no_clients;
-        yaz_mutex_leave(g_mutex);
-    }
-    return total;
+    return client_use(0);
 }
 
 /** \brief Represents client state for a connection to one search target */

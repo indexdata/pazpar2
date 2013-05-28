@@ -40,6 +40,7 @@ enum client_state
     Client_Disconnected
 };
 
+int clients_count(void);
 int client_show_raw_begin(struct client *cl, int position,
                           const char *syntax, const char *esn,
                           void *data,

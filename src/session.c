@@ -97,7 +97,6 @@ struct client_list {
 /* session counting (1) , disable client counting (0) */
 static YAZ_MUTEX g_session_mutex = 0;
 static int no_sessions = 0;
-static int no_session_total = 0;
 
 static int session_use(int delta)
 {
@@ -106,8 +105,6 @@ static int session_use(int delta)
         yaz_mutex_create(&g_session_mutex);
     yaz_mutex_enter(g_session_mutex);
     no_sessions += delta;
-    if (delta > 0)
-        no_session_total += delta;
     sessions = no_sessions;
     yaz_mutex_leave(g_session_mutex);
     yaz_log(YLOG_DEBUG, "%s sessions=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), no_sessions);
@@ -117,17 +114,6 @@ static int session_use(int delta)
 int sessions_count(void)
 {
     return session_use(0);
-}
-
-int session_count_total(void)
-{
-    int total = 0;
-    if (!g_session_mutex)
-        return 0;
-    yaz_mutex_enter(g_session_mutex);
-    total = no_session_total;
-    yaz_mutex_leave(g_session_mutex);
-    return total;
 }
 
 static void log_xml_doc(xmlDoc *doc)
