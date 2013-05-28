@@ -114,7 +114,7 @@ int http_session_use(int delta)
     g_http_sessions += delta;
     sessions = g_http_sessions;
     yaz_mutex_leave(g_http_session_mutex);
-    yaz_log(YLOG_DEBUG, "%s sessions=%d", delta == 0 ? "" :
+    yaz_log(YLOG_DEBUG, "%s http_sessions=%d", delta == 0 ? "" :
             (delta > 0 ? "INC" : "DEC"), sessions);
     return sessions;
 
