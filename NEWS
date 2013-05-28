@@ -1,3 +1,10 @@
+Fix memory leak WRT client structures (incorrect inc ref count).
+
+Log when a HTTP response is serialized and the time elapsed.
+
+New command, service, which returns current service XML in use for
+session.
+
 --- 1.6.31 2013/05/24
 
 Local limit for fields of type "generic" (ie text fields) are
