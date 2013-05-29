@@ -150,9 +150,7 @@ struct conf_service *service_init(struct conf_server *server,
         service->sortkeys
             = nmem_malloc(nmem,
                           sizeof(struct conf_sortkey) * service->num_sortkeys);
-
     service->xml_node = 0;
-
     return service;
 }
 
@@ -273,8 +271,6 @@ void service_destroy(struct conf_service *service)
         if (!pazpar2_decref(&service->ref_count, service->mutex))
         {
             service_xslt_destroy(service);
-            if (service->xml_node)
-                xmlFreeNode(service->xml_node);
             pp2_charset_fact_destroy(service->charsets);
             ccl_qual_rm(&service->ccl_bibset);
             yaz_mutex_destroy(&service->mutex);
@@ -746,7 +742,14 @@ static struct conf_service *service_create_static(struct conf_server *server,
             }
         }
     }
-    service->xml_node = xmlCopyNode(node, 1);
+
+    {
+        xmlBufferPtr buf = xmlBufferCreate();
+        xmlNodeDump(buf, node->doc, node, 0, 0);
+        service->xml_node =
+            nmem_strdupn(service->nmem, (const char *) buf->content, buf->use);
+        xmlBufferFree(buf);
+    }
     return service;
 }
 

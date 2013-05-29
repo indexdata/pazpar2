@@ -658,24 +658,12 @@ static void session_status(struct http_channel *c, struct http_session *s)
 static void cmd_service(struct http_channel *c)
 {
     struct http_session *s = locate_session(c);
-    xmlNode *xml_node;
     if (!s)
         return;
 
     response_open_command(c, 0);
-    xml_node = s->psession->service->xml_node;
-    if (xml_node)
-    {
-        xmlNode *tmp = xmlCopyNode(xml_node, 1);
-        xmlBufferPtr buf = xmlBufferCreate();
-
-        xmlNodeDump(buf, tmp->doc, tmp, 0, 0);
-
-        wrbuf_write(c->wrbuf, (const char *) buf->content, buf->use);
-        xmlBufferFree(buf);
-        xmlFreeNode(tmp);
-    }
-
+    if (s->psession->service->xml_node)
+        wrbuf_puts(c->wrbuf, s->psession->service->xml_node);
     response_close(c, 0);
     release_session(c, s);
 }

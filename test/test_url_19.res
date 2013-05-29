@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<service xmlns="http://www.indexdata.com/pazpar2/1.0">
+<service>
       <icu_chain id="relevance" locale="en">
 	<transform rule="[:Control:] Any-Remove"/>
 	<tokenize rule="l"/>
