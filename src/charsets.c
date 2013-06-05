@@ -53,6 +53,8 @@ struct pp2_charset_s {
     const char *(*token_next_handler)(pp2_charset_token_t prt);
     const char *(*get_sort_handler)(pp2_charset_token_t prt);
     const char *(*get_display_handler)(pp2_charset_token_t prt);
+    void (*get_org_handler)(pp2_charset_token_t ptr,
+                            size_t *start, size_t *len);
 #if YAZ_HAVE_ICU
     struct icu_chain * icu_chn;
     UErrorCode icu_sts;
@@ -63,11 +65,15 @@ static const char *pp2_charset_token_null(pp2_charset_token_t prt);
 static const char *pp2_charset_token_a_to_z(pp2_charset_token_t prt);
 static const char *pp2_get_sort_ascii(pp2_charset_token_t prt);
 static const char *pp2_get_display_ascii(pp2_charset_token_t prt);
+static void pp2_get_org_ascii(pp2_charset_token_t prt,
+                              size_t *start, size_t *len);
 
 #if YAZ_HAVE_ICU
 static const char *pp2_charset_token_icu(pp2_charset_token_t prt);
 static const char *pp2_get_sort_icu(pp2_charset_token_t prt);
 static const char *pp2_get_display_icu(pp2_charset_token_t prt);
+static void pp2_get_org_icu(pp2_charset_token_t prt,
+                            size_t *start, size_t *len);
 #endif
 
 /* tokenzier handle */
@@ -80,6 +86,9 @@ struct pp2_charset_token_s {
 #if YAZ_HAVE_ICU
     yaz_icu_iter_t iter;
 #endif
+    const char *cp0;
+    size_t start;
+    size_t len;
 };
 
 struct pp2_charset_fact_s {
@@ -226,6 +235,7 @@ pp2_charset_t pp2_charset_create(void)
     pct->token_next_handler = pp2_charset_token_null;
     pct->get_sort_handler  = pp2_get_sort_ascii;
     pct->get_display_handler  = pp2_get_display_ascii;
+    pct->get_org_handler = pp2_get_org_ascii;
 #if YAZ_HAVE_ICU
     pct->icu_chn = 0;
 #endif // YAZ_HAVE_ICU
@@ -250,6 +260,7 @@ pp2_charset_t pp2_charset_create_icu(struct icu_chain *icu_chn)
         pct->token_next_handler = pp2_charset_token_icu;
         pct->get_sort_handler = pp2_get_sort_icu;
         pct->get_display_handler = pp2_get_display_icu;
+        pct->get_org_handler = pp2_get_org_icu;
     }
     return pct;
 }
@@ -290,6 +301,8 @@ pp2_charset_token_t pp2_charset_tokenize(pp2_charset_t pct)
     if (pct->icu_chn)
         prt->iter = icu_iter_create(pct->icu_chn);
 #endif
+    prt->start = 0;
+    prt->len = 0;
     return prt;
 }
 
@@ -313,6 +326,7 @@ void pp2_charset_token_first(pp2_charset_token_t prt,
 
     wrbuf_rewind(prt->norm_str);
     wrbuf_rewind(prt->sort_str);
+    prt->cp0 = buf;
     prt->cp = buf;
     prt->last_cp = 0;
 
@@ -354,6 +368,12 @@ const char *pp2_get_display(pp2_charset_token_t prt)
     return prt->pct->get_display_handler(prt);
 }
 
+void pp2_get_org(pp2_charset_token_t prt, size_t *start, size_t *len)
+{
+    prt->pct->get_org_handler(prt, start, len);
+}
+
+
 #define raw_char(c) (((c) >= 'a' && (c) <= 'z') ? (c) : -1)
 /* original tokenizer with our tokenize interface, but we
    add +1 to ensure no '\0' are in our string (except for EOF)
@@ -363,6 +383,7 @@ static const char *pp2_charset_token_a_to_z(pp2_charset_token_t prt)
     const char *cp = prt->cp;
     int c;
 
+    prt->start = cp - prt->cp0;
     /* skip white space */
     while (*cp && (c = raw_char(tolower(*(const unsigned char *)cp))) < 0)
         cp++;
@@ -381,6 +402,7 @@ static const char *pp2_charset_token_a_to_z(pp2_charset_token_t prt)
         wrbuf_putc(prt->norm_str, c);
         cp++;
     }
+    prt->len = (cp - prt->cp0) - prt->start;
     prt->cp = cp;
     return wrbuf_cstr(prt->norm_str);
 }
@@ -412,6 +434,13 @@ static const char *pp2_get_display_ascii(pp2_charset_token_t prt)
     }
 }
 
+static void pp2_get_org_ascii(pp2_charset_token_t prt,
+                              size_t *start, size_t *len)
+{
+    *start = prt->start;
+    *len = prt->len;
+}
+
 static const char *pp2_charset_token_null(pp2_charset_token_t prt)
 {
     const char *cp = prt->cp;
@@ -420,6 +449,7 @@ static const char *pp2_charset_token_null(pp2_charset_token_t prt)
     while (*cp)
         cp++;
     prt->cp = cp;
+    prt->len = cp - prt->cp0;
     return prt->last_cp;
 }
 
@@ -441,6 +471,11 @@ static const char *pp2_get_sort_icu(pp2_charset_token_t prt)
 static const char *pp2_get_display_icu(pp2_charset_token_t prt)
 {
     return icu_iter_get_display(prt->iter);
+}
+
+static void pp2_get_org_icu(pp2_charset_token_t prt, size_t *start, size_t *len)
+{
+    icu_iter_get_org_info(prt->iter, start, len);
 }
 
 #endif // YAZ_HAVE_ICU

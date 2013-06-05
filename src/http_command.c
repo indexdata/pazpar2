@@ -872,7 +872,8 @@ static void cmd_bytarget(struct http_channel *c)
 }
 
 static void write_metadata(WRBUF w, struct conf_service *service,
-                           struct record_metadata **ml, int full, int indent)
+                           struct record_metadata **ml, unsigned flags,
+                           int indent)
 {
     int imeta;
 
@@ -880,7 +881,7 @@ static void write_metadata(WRBUF w, struct conf_service *service,
     {
         struct conf_metadata *cmd = &service->metadata[imeta];
         struct record_metadata *md;
-        if (!cmd->brief && !full)
+        if (!cmd->brief && !(flags & 1))
             continue;
         for (md = ml[imeta]; md; md = md->next)
         {
@@ -900,7 +901,10 @@ static void write_metadata(WRBUF w, struct conf_service *service,
             switch (cmd->type)
             {
                 case Metadata_type_generic:
-                    wrbuf_xmlputs(w, md->data.text.disp);
+                    if (md->data.text.snippet && (flags & 2))
+                        wrbuf_puts(w, md->data.text.snippet);
+                    else
+                        wrbuf_xmlputs(w, md->data.text.disp);
                     break;
                 case Metadata_type_year:
                     wrbuf_printf(w, "%d", md->data.number.min);
@@ -917,7 +921,8 @@ static void write_metadata(WRBUF w, struct conf_service *service,
 }
 
 static void write_subrecord(struct record *r, WRBUF w,
-        struct conf_service *service, int show_details)
+                            struct conf_service *service, unsigned flags,
+                            int indent)
 {
     const char *name = session_setting_oneval(
         client_get_database(r->client), PZ_NAME);
@@ -934,7 +939,7 @@ static void write_subrecord(struct record *r, WRBUF w,
     wrbuf_printf(w,  "%u", r->checksum);
     wrbuf_puts(w, "\">\n");
 
-    write_metadata(w, service, r->metadata, show_details, 2);
+    write_metadata(w, service, r->metadata, flags, indent);
     wrbuf_puts(w, " </location>\n");
 }
 
@@ -997,6 +1002,8 @@ static void show_record(struct http_channel *c, struct http_session *s)
     const char *offsetstr = http_argbyname(rq, "offset");
     const char *binarystr = http_argbyname(rq, "binary");
     const char *checksumstr = http_argbyname(rq, "checksum");
+    const char *snippets = http_argbyname(rq, "snippets");
+    unsigned flags = (snippets && *snippets == '1') ? 3 : 1;
 
     if (!s)
         return;
@@ -1090,9 +1097,9 @@ static void show_record(struct http_channel *c, struct http_session *s)
         }
         wrbuf_printf(c->wrbuf, " <activeclients>%d</activeclients>\n",
                      session_active_clients(s->psession));
-        write_metadata(c->wrbuf, service, rec->metadata, 1, 1);
+        write_metadata(c->wrbuf, service, rec->metadata, flags, 1);
         for (r = rec->records; r; r = r->next)
-            write_subrecord(r, c->wrbuf, service, 2);
+            write_subrecord(r, c->wrbuf, service, flags, 2);
         response_close(c, "record");
     }
     show_single_stop(s->psession, rec);
@@ -1133,6 +1140,8 @@ static void show_records(struct http_channel *c, struct http_session *s,
     const char *num = http_argbyname(rq, "num");
     const char *sort = http_argbyname(rq, "sort");
     int version = get_version(rq);
+    const char *snippets = http_argbyname(rq, "snippets");
+    unsigned flags = (snippets && *snippets == '1') ? 2 : 0;
 
     int startn = 0;
     int numn = 20;
@@ -1187,9 +1196,9 @@ static void show_records(struct http_channel *c, struct http_session *s,
         struct conf_service *service = s->psession->service;
 
         wrbuf_puts(c->wrbuf, "<hit>\n");
-        write_metadata(c->wrbuf, service, rec->metadata, 0, 1);
+        write_metadata(c->wrbuf, service, rec->metadata, flags, 1);
         for (ccount = 0, p = rl[i]->records; p;  p = p->next, ccount++)
-            write_subrecord(p, c->wrbuf, service, 0); // subrecs w/o details
+            write_subrecord(p, c->wrbuf, service, flags, 2);
         wrbuf_printf(c->wrbuf, " <count>%d</count>\n", ccount);
 	if (strstr(sort, "relevance"))
         {

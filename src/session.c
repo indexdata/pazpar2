@@ -1467,6 +1467,7 @@ static struct record_metadata *record_metadata_init(
 
         rec_md->data.text.disp = p;
         rec_md->data.text.sort = 0;
+        rec_md->data.text.snippet = 0;
     }
     else if (type == Metadata_type_year || type == Metadata_type_date)
     {
@@ -1956,6 +1957,18 @@ static int ingest_to_cluster(struct client *cl,
                             "for element '%s'", value, type);
                 continue;
             }
+
+            if (ser_md->type == Metadata_type_generic)
+            {
+                WRBUF w = wrbuf_alloc();
+                if (relevance_snippet(se->relevance,
+                                      (char*) value, ser_md->name, w))
+                    rec_md->data.text.snippet = nmem_strdup(se->nmem,
+                                                            wrbuf_cstr(w));
+                wrbuf_destroy(w);
+            }
+
+
             wheretoput = &record->metadata[md_field_id];
             while (*wheretoput)
                 wheretoput = &(*wheretoput)->next;
@@ -2183,7 +2196,6 @@ static int ingest_to_cluster(struct client *cl,
                 relevance_countwords(se->relevance, cluster,
                                      (char *) value, rank, ser_md->name);
             }
-
             // construct facets ... unless the client already has reported them
             if (ser_md->termlist && !client_has_facet(cl, (char *) type))
             {

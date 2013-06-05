@@ -38,6 +38,10 @@ void relevance_newrec(struct relevance *r, struct record_cluster *cluster);
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
                           const char *words, const char *multiplier,
                           const char *name);
+int relevance_snippet(struct relevance *r,
+                      const char *words, const char *name,
+                      WRBUF w_snippet);
+
 void relevance_donerecord(struct relevance *r, struct record_cluster *cluster);
 
 void relevance_prepare_read(struct relevance *rel, struct reclist *rec);

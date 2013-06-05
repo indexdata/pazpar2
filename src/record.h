@@ -28,6 +28,7 @@ union data_types {
     struct {
         const char *disp;
         const char *sort;
+        const char *snippet;
     } text;
     struct {
         int min;

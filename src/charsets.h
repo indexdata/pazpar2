@@ -45,6 +45,7 @@ void pp2_charset_token_destroy(pp2_charset_token_t prt);
 const char *pp2_charset_token_next(pp2_charset_token_t prt);
 const char *pp2_get_sort(pp2_charset_token_t prt);
 const char *pp2_get_display(pp2_charset_token_t prt);
+void pp2_get_org(pp2_charset_token_t prt, size_t *start, size_t *len);
 
 #endif
 

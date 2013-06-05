@@ -83,6 +83,47 @@ static struct word_entry *word_entry_match(struct relevance *r,
     return 0;
 }
 
+int relevance_snippet(struct relevance *r,
+                      const char *words, const char *name,
+                      WRBUF w_snippet)
+{
+    int no = 0;
+    const char *norm_str;
+#if 1
+    yaz_log(YLOG_LOG, "relevance_snippet for field=%s content=%s",
+            name, words);
+#endif
+    pp2_charset_token_first(r->prt, words, 0);
+
+    while ((norm_str = pp2_charset_token_next(r->prt)))
+    {
+        size_t org_start, org_len;
+        struct word_entry *entries = r->entries;
+        int highlight = 0;
+        int i;
+
+        pp2_get_org(r->prt, &org_start, &org_len);
+        for (; entries; entries = entries->next, i++)
+        {
+            yaz_log(YLOG_LOG, "Compare: %s %s", norm_str, entries->norm_str);
+            if (*norm_str && !strcmp(norm_str, entries->norm_str))
+                highlight = 1;
+        }
+        if (highlight)
+            wrbuf_puts(w_snippet, "<match>");
+
+        wrbuf_xmlputs_n(w_snippet, words + org_start, org_len);
+        if (highlight)
+            wrbuf_puts(w_snippet, "</match>");
+        no += highlight;
+    }
+    if (no)
+    {
+        yaz_log(YLOG_LOG, "SNIPPET match: %s", wrbuf_cstr(w_snippet));
+    }
+    return no;
+}
+
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
                           const char *words, const char *rank,
                           const char *name)
