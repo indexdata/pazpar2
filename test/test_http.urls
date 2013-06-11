@@ -2,8 +2,8 @@ http://localhost:9763/search.pz2?command=init&pz:elements%5Bz3950.indexdata.com%
 http://localhost:9763/search.pz2?session=1&command=stat
 http://localhost:9763/search.pz2?session=1&command=ping
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
-2 http://localhost:9763/search.pz2?session=1&command=show&block=1
-http://localhost:9763/search.pz2?session=1&command=record&id=content%3A+title+how+to+program+a+computer+author+jack+collins+medium+book
+2 http://localhost:9763/search.pz2?session=1&command=show&block=1&snippets=1
+http://localhost:9763/search.pz2?session=1&command=record&id=content%3A+title+how+to+program+a+computer+author+jack+collins+medium+book&snippets=1
 http://localhost:9763/search.pz2?session=1&command=record&id=content%3A+title+how+to+program+a+computer+author+jack+collins+medium+book&offset=0
 http://localhost:9763/search.pz2?session=1&command=show&start=0&number=1&sort=title:0
 http://localhost:9763/search.pz2?session=1&command=show&start=0&number=1&sort=title:1

@@ -9,7 +9,7 @@
  <md-lccn>11224467</md-lccn>
  <location id="z3950.indexdata.com/marc"
     name="Index Data MARC test server" checksum="2788512872">
-  <md-title>How to program a computer</md-title>
+  <md-title>How to program a<match> computer</match></md-title>
   <md-author>Jack Collins</md-author>
   <md-id>11224467</md-id>
   <md-lccn>11224467</md-lccn>
@@ -19,7 +19,7 @@
  </location>
  <location id="z3950.indexdata.com/marc"
     name="Index Data MARC test server" checksum="2614320583">
-  <md-title>How to program a computer</md-title>
+  <md-title>How to program a<match> computer</match></md-title>
   <md-author>Jack Collins</md-author>
   <md-id>11224466</md-id>
   <md-lccn>11224466</md-lccn>
