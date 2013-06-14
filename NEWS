@@ -1,3 +1,9 @@
+--- 1.6.32 2013/06/14
+
+Experimental support for snippets. If argument snippets=1 is given
+for command record or show, the text will include <match>-tags for
+those area that matches.
+
 Fix memory leak WRT client structures (incorrect inc ref count).
 
 Log when a HTTP response is serialized and the time elapsed.
