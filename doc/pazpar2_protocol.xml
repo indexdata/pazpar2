@@ -500,6 +500,20 @@ search.pz2?session=2044502273&command=stat
       </listitem>
      </varlistentry>
 
+     <varlistentry>
+      <term>snippets</term>
+      <listitem>
+       <para>
+	If specified and set to 1 data will include snippets marked
+	with &lt;match&gt; tags. Otherwise snippets will not be included.
+       </para>
+       <para>
+	This facility, "snippets", appeared in Pazpar2 version
+	1.6.32.
+       </para>
+      </listitem>
+     </varlistentry>
+
     </variablelist>
    </para>
    <para>
@@ -646,6 +660,20 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
 	of a original record (i.e. when offset is specified). For binary
 	response the record by default is fetched from ZOOM C using
 	the "raw" option or by parameter nativesyntax if given.
+       </para>
+      </listitem>
+     </varlistentry>
+
+     <varlistentry>
+      <term>snippets</term>
+      <listitem>
+       <para>
+	If specified and set to 1 data will include snippets marked
+	with &lt;match&gt; tags. Otherwise snippets will not be included.
+       </para>
+       <para>
+	This facility, "snippets", appeared in Pazpar2 version
+	1.6.32.
        </para>
       </listitem>
      </varlistentry>
