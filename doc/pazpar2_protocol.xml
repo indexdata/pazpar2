@@ -107,7 +107,7 @@
     </variablelist>
    </para>
   </refsect2>
-  
+
   <refsect2 id="command-ping">
    <title>ping</title>
    <para>
@@ -145,7 +145,7 @@
     or possibly a wildcard, and value is the desired value for the
     setting.
    </para>
-   
+
    <para>
     Because the settings command manipulates potentially sensitive
     information, it is possible to configure Pazpar2 to only allow access
@@ -153,7 +153,7 @@
     scripting, which in turn is responsible for authenticating the user,
     and possibly determining which resources he has access to, etc.
    </para>
-   
+
    <note>
     <para>
      As a shortcut, it is also possible to override settings directly in
@@ -181,7 +181,7 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
 </settings>
 ]]></screen>
    </para>
-   
+
   </refsect2>
   <refsect2 id="command-search">
    <title>search</title>
@@ -277,13 +277,15 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
 	'position'.
        </para>
        <para>
-	If not specified here or as <link linkend="sort-default">sort-default"</link>
-	in pazpar2.cfg, Pazpar2 will default to the built-in 'relevance' ranking. 
+	If not specified here or as
+	<link linkend="sort-default">sort-default"</link>
+	in pazpar2.cfg, Pazpar2 will default to the built-in
+	'relevance' ranking.
        </para>
        <para>
-	Having sort criteria at search is important for targets that 
-	supports native sorting in order to get best results. Pazpar2 
-	will trigger a new search if search criteria changes from Pazpar2 
+	Having sort criteria at search is important for targets that
+	supports native sorting in order to get best results. Pazpar2
+	will trigger a new search if search criteria changes from Pazpar2
 	to target-based sorting or visa-versa.
 	</para>
       </listitem>
@@ -346,7 +348,7 @@ search.pz2?session=2044502273&command=search&query=computer+science
      ]]></screen>
    </para>
   </refsect2>
- 
+
   <refsect2 id="command-stat">
    <title>stat</title>
    <para>
@@ -388,7 +390,7 @@ search.pz2?session=2044502273&command=stat
      ]]></screen>
   </para>
   </refsect2>
-  
+
   <refsect2 id="command-show">
    <title>show</title>
    <para>
@@ -402,14 +404,14 @@ search.pz2?session=2044502273&command=stat
        </para>
       </listitem>
      </varlistentry>
-     
+
      <varlistentry>
       <term>start</term>
       <listitem>
        <para>First record to show - 0-indexed.</para>
       </listitem>
      </varlistentry>
-     
+
      <varlistentry>
       <term>num</term>
       <listitem>
@@ -442,15 +444,18 @@ search.pz2?session=2044502273&command=stat
 	Sort field names can be any field name designated as a sort field
         in the pazpar2.cfg file, or the special names 'relevance' and
 	'position'.
-
-	If not specified here or as <link linkend="sort-default">sort-default"</link> 
-	in pazpar2.cfg, pazpar2 will default to the built-in 'relevance' ranking. 
-
-	Having sort criteria at search is important for targets that 
-	supports native sorting in order to get best results. pazpar2 
-	will trigger a new search if search criteria changes from pazpar2 
+       </para>
+       <para>
+	If not specified here or as
+	<link linkend="sort-default">sort-default"</link>
+	in pazpar2.cfg, pazpar2 will default to the built-in
+	'relevance' ranking.
+       </para>
+       <para>
+	Having sort criteria at search is important for targets that
+	supports native sorting in order to get best results. pazpar2
+	will trigger a new search if search criteria changes from pazpar2
 	to target-based sorting.
-
        </para>
        <para>
 	For targets where If <link linkend="pzsortmap">pz:sortmap</link>
@@ -532,7 +537,7 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
   <num>2</num>                         -- Number of records retrieved
   <hit>
     <md-title>How to program a computer, by Jack Collins</md-title>
-    <count>2</count>                   -- Number of merged records 
+    <count>2</count>                   -- Number of merged records
     <recid>6</recid>                   -- Record ID for this record
   </hit>
   <hit>
@@ -550,10 +555,10 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
   <refsect2 id="command-record">
    <title>record</title>
    <para>
-    Retrieves a detailed record. Unlike the 
-    <link linkend="command-show">show</link> command, this command 
+    Retrieves a detailed record. Unlike the
+    <link linkend="command-show">show</link> command, this command
     returns metadata records before merging takes place. Parameters:
-    
+
     <variablelist>
      <varlistentry>
       <term>session</term>
@@ -633,7 +638,7 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
       <term>syntax</term>
       <listitem>
        <para>
-	This optional parameter is the record syntax used for raw 
+	This optional parameter is the record syntax used for raw
 	transfer (i.e. when offset is specified). If syntax is not given,
 	but offset is used, the value of pz:requestsyntax is used.
        </para>
@@ -680,14 +685,14 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
 
     </variablelist>
    </para>
-   <para> 
+   <para>
     Example:
     <screen><![CDATA[
 search.pz2?session=605047297&command=record&id=3
 ]]></screen>
 
     Example output:
-    
+
     <screen><![CDATA[
 <record>
   <md-title>
@@ -705,7 +710,7 @@ search.pz2?session=605047297&command=record&id=3
    <title>termlist</title>
    <para>
     Retrieves term list(s). Parameters:
-    
+
     <variablelist>
      <varlistentry>
       <term>session</term>
@@ -762,7 +767,7 @@ search.pz2?session=2044502273&command=termlist&name=author,subject
 </termlist>
 ]]></screen>
    </para>
-   
+
    <para>
     For the special termlist name "xtargets", results
     are returned about the targets which have returned the most hits.
@@ -783,7 +788,7 @@ search.pz2?session=2044502273&command=termlist&name=author,subject
 ]]></screen>
    </para>
   </refsect2>
-  
+
 
   <refsect2 id="command-bytarget">
    <title>bytarget</title>
@@ -801,14 +806,14 @@ search.pz2?session=2044502273&command=termlist&name=author,subject
      </varlistentry>
     </variablelist>
    </para>
-   <para> 
+   <para>
     Example:
     <screen><![CDATA[
 search.pz2?session=605047297&command=bytarget&id=3
 ]]></screen>
-    
+
     Example output:
-    
+
     <screen><![CDATA[
 <bytarget>
   <status>OK</status>
@@ -822,7 +827,7 @@ search.pz2?session=605047297&command=bytarget&id=3
   <!-- ... more target nodes below as necessary -->
 </bytarget>
 ]]></screen>
-    
+
     The following client states are defined: Client_Connecting,
     Client_Connected, Client_Idle, Client_Initializing, Client_Searching,
     Client_Searching, Client_Presenting, Client_Error, Client_Failed,

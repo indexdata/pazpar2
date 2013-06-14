@@ -15,24 +15,24 @@
   <productnumber>&version;</productnumber>
   <info><orgname>Index Data</orgname></info>
  </refentryinfo>
- 
+
  <refmeta>
   <refentrytitle>Pazpar2 conf</refentrytitle>
   <manvolnum>5</manvolnum>
   <refmiscinfo class="manual">File formats and conventions</refmiscinfo>
  </refmeta>
- 
+
  <refnamediv>
   <refname>pazpar2_conf</refname>
   <refpurpose>Pazpar2 Configuration</refpurpose>
  </refnamediv>
- 
+
  <refsynopsisdiv>
   <cmdsynopsis>
    <command>pazpar2.conf</command>
   </cmdsynopsis>
  </refsynopsisdiv>
- 
+
  <refsect1>
   <title>DESCRIPTION</title>
   <para>
@@ -41,7 +41,7 @@
    extraction of data elements from incoming result records, for the
    purposes of merging, sorting, facet analysis, and display.
   </para>
-  
+
   <para>
    The file is specified using the option -f on the Pazpar2 command line.
    There is not presently a way to reload the configuration file without
@@ -49,19 +49,19 @@
    in the future.
   </para>
  </refsect1>
- 
+
  <refsect1>
   <title>FORMAT</title>
   <para>
    The configuration file is XML-structured. It must be well-formed XML. All
    elements specific to Pazpar2 should belong to the namespace
-   <literal>http://www.indexdata.com/pazpar2/1.0</literal> 
+   <literal>http://www.indexdata.com/pazpar2/1.0</literal>
    (this is assumed in the
    following examples). The root element is named "<literal>pazpar2</literal>".
    Under the  root element are a number of elements which group categories of
    information. The categories are described below.
   </para>
-  
+
   <refsect2 id="config-threads">
    <title>threads</title>
    <para>
@@ -101,7 +101,7 @@
       </para>
      </listitem>
     </varlistentry>
-    
+
     <varlistentry>
      <term>proxy</term>
      <listitem>
@@ -137,7 +137,7 @@
       </para>
      </listitem>
     </varlistentry>
-    
+
     <varlistentry>
      <term>relevance / sort / mergekey / facet</term>
      <listitem>
@@ -146,7 +146,7 @@
       </para>
      </listitem>
     </varlistentry>
-    
+
     <varlistentry>
      <term>settings</term>
      <listitem>
@@ -156,12 +156,12 @@
        The settings element requires one attribute 'src' which specifies
        a settings file or a directory . If a directory is given all
        files with suffix <filename>.xml</filename> is read from this
-       directory. Refer to 
+       directory. Refer to
        <xref linkend="target_settings"/> for more information.
       </para>
      </listitem>
     </varlistentry>
-    
+
     <varlistentry>
      <term id="service_conf">service</term>
      <listitem>
@@ -195,7 +195,7 @@
 	  ranking, merging, and display of data elements. It supports
 	  the following attributes:
 	 </para>
-	 
+
 	 <variablelist> <!-- level 3 -->
 	  <varlistentry>
 	   <term>name</term>
@@ -203,19 +203,19 @@
 	    <para>
 	     This is the name of the data element. It is matched
 	     against the 'type' attribute of the
-	     'metadata' element 
+	     'metadata' element
 	     in the normalized record. A warning is produced if
 	     metadata elements with an unknown name are
-	     found in the 
+	     found in the
 	     normalized record. This name is also used to
-	     represent 
+	     represent
 	     data elements in the records returned by the
 	     webservice API, and to name sort lists and browse
 	     facets.
 	    </para>
 	   </listitem>
 	  </varlistentry>
-	  
+
 	  <varlistentry>
 	   <term>type</term>
 	   <listitem>
@@ -229,7 +229,7 @@
 	    </para>
 	   </listitem>
 	  </varlistentry>
-	  
+
 	  <varlistentry>
 	   <term>brief</term>
 	   <listitem>
@@ -241,7 +241,7 @@
 	    </para>
 	   </listitem>
 	  </varlistentry>
-	  
+
 	  <varlistentry>
 	   <term>sortkey</term>
 	   <listitem>
@@ -254,16 +254,16 @@
 	    </para>
 	   </listitem>
 	  </varlistentry>
-	  
+
 	  <varlistentry>
 	   <term id="metadata-rank">rank</term>
 	   <listitem>
 	    <para>
 	     Specifies that this element is to be used to
-	     help rank 
+	     help rank
 	     records against the user's query (when ranking is
-	     requested). 
-	     The valus is of the form 
+	     requested).
+	     The valus is of the form
 	     <literallayout>
 	      M [F N]
 	     </literallayout>
@@ -283,7 +283,7 @@
 	    </para>
 	    <para>
 	     For Pazpar2 1.6.13 and later, the rank may also defined
-	     "per-document", by the normalization stylesheet. 
+	     "per-document", by the normalization stylesheet.
 	    </para>
 	    <para>
 	     The per field rank was introduced in Pazpar2 1.6.15. Earlier
@@ -293,7 +293,7 @@
 	    about ranking.
 	   </listitem>
 	  </varlistentry>
-	  
+
 	  <varlistentry>
 	   <term>termlist</term>
 	   <listitem>
@@ -302,13 +302,13 @@
 	     termlist, or browse facet. Values are tabulated from
 	     incoming records, and a highscore of values (with
 	     their associated frequency) is made available to the
-	     client through the webservice API. 
+	     client through the webservice API.
 	     The possible values
 	     are 'yes' and 'no' (default).
 	    </para>
 	   </listitem>
 	  </varlistentry>
-	  
+
 	  <varlistentry>
 	   <term>merge</term>
 	   <listitem>
@@ -329,7 +329,7 @@
 	    </para>
 	   </listitem>
 	  </varlistentry>
-	  
+
 	  <varlistentry>
 	   <term>mergekey</term>
 	   <listitem>
@@ -364,7 +364,7 @@
 	    </para>
 	   </listitem>
 	  </varlistentry>
-	  
+
 	  <varlistentry>
 	   <term id="limitcluster">limitcluster</term>
 	   <listitem>
@@ -380,29 +380,31 @@
 	    </note>
 	   </listitem>
 	  </varlistentry>
-	  
+
 	  <varlistentry>
 	   <term id="metadata_limitmap">limitmap</term>
 	   <listitem>
 	    <para>
-	     Specifies a default limitmap for this field. This is to avoid mass 
-	     configuring of targets. However it is important to review/do this on a per
-	     target since it is usually target-specific. See limitmap for format. 
+	     Specifies a default limitmap for this field. This is to avoid mass
+	     configuring of targets. However it is important to review/do
+	     this on a per target since it is usually target-specific.
+	     See limitmap for format.
 	    </para>
 	   </listitem>
 	  </varlistentry>
-	  
+
 	  <varlistentry>
 	   <term id="metadata_facetmap">facetmap</term>
 	   <listitem>
 	    <para>
-	     Specifies a default facetmap for this field. This is to avoid mass 
-	     configuring of targets. However it is important to review/do this on a per
-	     target since it is usually target-specific. See facetmap for format. 
+	     Specifies a default facetmap for this field. This is to avoid mass
+	     configuring of targets. However it is important to review/do
+	     this on a per target since it is usually target-specific.
+	     See facetmap for format.
 	    </para>
 	   </listitem>
 	  </varlistentry>
-	  
+
 	  <varlistentry>
 	   <term>setting</term>
 	   <listitem>
@@ -412,7 +414,7 @@
 	     are allowed. 'no' is the default and doesn't do anything.
 	     'postproc' copies the value of a setting with the same name
 	     into the output of the normalization stylesheet(s). 'parameter'
-	     makes the value of a setting with the same name available 
+	     makes the value of a setting with the same name available
 	     as a parameter to the normalization stylesheet, so you
 	     can further process the value inside of the stylesheet, or use
 	     the value to decide how to deal with other data values.
@@ -427,9 +429,9 @@
 	    </para>
 	   </listitem>
 	  </varlistentry>
-	  
+
 	 </variablelist> <!-- attributes to metadata -->
-	 
+
 	</listitem>
        </varlistentry>
 
@@ -456,7 +458,7 @@
 	  rule set.
 	  Pazpar2 uses the particular rule sets for particular purposes.
 	  Rule set 'relevance' is used to normalize
-	  terms for relevance ranking. Rule set 'sort' is used to 
+	  terms for relevance ranking. Rule set 'sort' is used to
 	  normalize terms for sorting. Rule set 'mergekey' is used to
 	  normalize terms for making a mergekey and, finally. Rule set 'facet'
 	  is normally used to normalize facet terms, unless
@@ -470,7 +472,7 @@
 	  in any order, except the 'index' element which logically
 	  belongs to the end of the list. The stated tokenization,
 	  transformation and charmapping instructions are performed
-	  in order from top to bottom. 
+	  in order from top to bottom.
 	 </para>
 	 <variablelist> <!-- Level 2 -->
 	  <varlistentry>
@@ -479,7 +481,7 @@
 	    <para>
 	     The attribute 'rule' defines the direction of the
 	     per-character casemapping, allowed values are "l"
-	     (lower), "u" (upper), "t" (title).  
+	     (lower), "u" (upper), "t" (title).
 	    </para>
 	   </listitem>
 	  </varlistentry>
@@ -490,10 +492,10 @@
 	     Normalization and transformation of tokens follows
 	     the rules defined in the 'rule' attribute. For
 	     possible values we refer to the extensive ICU
-	     documentation found at the 
+	     documentation found at the
 	     <ulink url="&url.icu.transform;">ICU
 	     transformation</ulink> home page. Set filtering
-	     principles are explained at the 
+	     principles are explained at the
 	     <ulink url="&url.icu.unicode.set;">ICU set and
 	     filtering</ulink> page.
 	    </para>
@@ -508,7 +510,7 @@
 	     'rule' attribute may have the following values:
 	     "s" (sentence), "l" (line-break), "w" (word), and
 	     "c" (character), the later probably not being
-	     very useful in a pruning Pazpar2 installation. 
+	     very useful in a pruning Pazpar2 installation.
 	    </para>
 	   </listitem>
 	  </varlistentry>
@@ -520,7 +522,7 @@
 	 </para>
 	</listitem>
        </varlistentry>
-       
+
        <varlistentry>
 	<term>relevance</term>
 	<listitem>
@@ -536,7 +538,7 @@
 	 </para>
 	</listitem>
        </varlistentry>
-       
+
        <varlistentry>
 	<term>sort</term>
 	<listitem>
@@ -552,13 +554,13 @@
 	 </para>
 	</listitem>
        </varlistentry>
-       
+
        <varlistentry>
 	<term>mergekey</term>
 	<listitem>
 	 <para>
 	  Specifies ICU tokenization and transformation rules
-	  for tokens that are used in Pazpar2's mergekey. 
+	  for tokens that are used in Pazpar2's mergekey.
 	  The child element of 'mergekey' must be 'icu_chain' and the
 	  'id' attribute of the icu_chain is ignored. This
 	  definition is obsolete and should be replaced by the equivalent
@@ -596,7 +598,7 @@
 	  The name and value of the CCL directive is gigen by attributes
 	  'name' and 'value' respectively. Refer to possible list of names
 	  in the
-	  <ulink 
+	  <ulink
 	      url="http://www.indexdata.com/yaz/doc/tools.html#ccl.directives.table">
 	   YAZ manual
 	   </ulink>.
@@ -686,16 +688,16 @@
 	 </para>
 	</listitem>
        </varlistentry>
-       
+
        <varlistentry id="sort-default">
 	<term>sort-default</term>
 	<listitem>
 	 <para>
 	  Specifies the default sort criteria (default 'relevance'),
-	  which previous was hard-coded as default criteria in search. 
-	  This is a fix/work-around to avoid re-searching when using 
-	  target-based sorting. In order for this to work efficient, 
-	  the search must also have the sort critera parameter; otherwise 
+	  which previous was hard-coded as default criteria in search.
+	  This is a fix/work-around to avoid re-searching when using
+	  target-based sorting. In order for this to work efficient,
+	  the search must also have the sort critera parameter; otherwise
 	  pazpar2 will do re-searching on search criteria changes, if
 	  changed between search and show command.
 	 </para>
@@ -705,7 +707,7 @@
 	</listitem>
        </varlistentry>
 
-<!--       
+<!--
        <varlistentry>
 	<term>set</term>
 	<listitem>
@@ -717,7 +719,7 @@
 	 </para>
 	</listitem>
        </varlistentry>
--->   
+-->
        <varlistentry>
 	<term>settings</term>
 	<listitem>
@@ -734,7 +736,7 @@
 	 <para>
 	  Specifies timeout parameters for this service.
 	  The <literal>timeout</literal>
-	  element supports the following attributes: 
+	  element supports the following attributes:
 	  <literal>session</literal>, <literal>z3950_operation</literal>,
 	  <literal>z3950_session</literal> which specifies
 	  'session timeout', 'Z39.50 operation timeout',
@@ -794,7 +796,7 @@
 </pazpar2>
    ]]>
   </screen>
- </refsect1> 
+ </refsect1>
 
  <refsect1 id="config-include">
   <title>INCLUDE FACILITY</title>
@@ -819,8 +821,8 @@
    kinds of attributes, or settings with search targets. This can be done
    through XML files which are read at startup; each file can associate
    one or more settings with one or more targets. The file format is generic
-   in nature, designed to support a wide range of application requirements. The
-   settings can be purely technical things, like, how to perform a title
+   in nature, designed to support a wide range of application requirements.
+   The settings can be purely technical things, like, how to perform a title
    search against a given target, or it can associate arbitrary name=value
    pairs with groups of targets -- for instance, if you would like to
    place all commercial full-text bases in one group for selection
@@ -829,13 +831,13 @@
    to drive sorting, facet/termlist generation, or end-user interface display
    logic.
   </para>
-  
+
   <para>
    During startup, Pazpar2 will recursively read a specified directory
    (can be identified in the pazpar2.cfg file or on the command line), and
    process any settings files found therein.
   </para>
-  
+
   <para>
    Clients of the Pazpar2 webservice interface can selectively override
    settings for individual targets within the scope of one session. This
@@ -849,16 +851,17 @@
    some search targets in different ways. This, again, can be managed
    using an external database or other lookup mechanism. Setting overrides
    can be performed either using the
-   <link linkend="command-init">init</link> or the 
+   <link linkend="command-init">init</link> or the
    <link linkend="command-settings">settings</link> webservice
    command.
   </para>
-  
+
   <para>
    In fact, every setting that applies to a database (except pz:id, which
    can only be used for filtering targets to use for a search) can be overridden
-   on a per-session basis. This allows the client to override specific CCL fields
-   for searching, etc., to meet the needs of a session or user.
+   on a per-session basis.
+   This allows the client to override specific CCL fields for
+   searching, etc., to meet the needs of a session or user.
   </para>
 
   <para>
@@ -936,7 +939,7 @@
     target, name, and value.
    </para>
 
-   <variablelist> 
+   <variablelist>
     <varlistentry>
      <term>target</term>
      <listitem>
@@ -1040,7 +1043,7 @@
     <set name="pz:cclmap:isbn" value="u=7"/>
     <set name="pz:cclmap:issn" value="u=8"/>
     <set name="pz:cclmap:date" value="u=30 r=r"/>
-    
+
     <set name="pz:limitmap:title" value="rpn:@attr 1=4 @attr 6=3"/>
     <set name="pz:limitmap:date" value="ccl:date"/>
 
@@ -1097,7 +1100,7 @@
     The following setting names are reserved by Pazpar2 to control the
     behavior of the client function.
    </para>
-   
+
    <variablelist>
     <varlistentry>
      <term>pz:cclmap:xxx</term>
@@ -1160,7 +1163,7 @@
        The value <literal>iso2709</literal> makes Pazpar2 convert retrieved
        MARC records to MARCXML. In order to convert to XML, the exact
        chacater set of the MARC must be known (if not, the resulting
-       XML is probably not well-formed). The character set may be 
+       XML is probably not well-formed). The character set may be
        specified by adding:
        <literal>;charset=</literal><replaceable>charset</replaceable> to
        <literal>iso2709</literal>. If omitted, a charset of
@@ -1227,7 +1230,7 @@
        <literal>'.xsl'</literal>.
       </para>
       <para>
-       When mapping MARC records, XSLT can be bypassed for increased 
+       When mapping MARC records, XSLT can be bypassed for increased
        performance with the alternate "MARC map" format.  Provide the
        path of a file with extension ".mmap" containing on each line:
        <programlisting>
@@ -1238,7 +1241,7 @@
 	500 $ description
         773 * citation
        </programlisting>
-       To map the field value specify a subfield of '$'.  To store a 
+       To map the field value specify a subfield of '$'.  To store a
        concatenation of all subfields, specify a subfield of '*'.
       </para>
      </listitem>
@@ -1297,7 +1300,7 @@
      <term>pz:presentchunk</term>
      <listitem>
       <para>
-       Controls the chunk size in present requests. Pazpar2 will 
+       Controls the chunk size in present requests. Pazpar2 will
        make (maxrecs / chunk) request(s). The default is 20.
       </para>
      </listitem>
@@ -1317,13 +1320,13 @@
      <term>pz:zproxy</term>
      <listitem>
       <para>
-       The 'pz:zproxy' setting has the value syntax 
+       The 'pz:zproxy' setting has the value syntax
        'host.internet.adress:port', it is used to tunnel Z39.50
        requests through the named Z39.50 proxy.
       </para>
      </listitem>
     </varlistentry>
-    
+
     <varlistentry>
      <term>pz:apdulog</term>
      <listitem>
@@ -1333,7 +1336,7 @@
       </para>
      </listitem>
     </varlistentry>
-    
+
     <varlistentry>
      <term>pz:sru</term>
      <listitem>
@@ -1353,18 +1356,19 @@
       </para>
      </listitem>
     </varlistentry>
-    
+
     <varlistentry>
      <term>pz:sru_version</term>
      <listitem>
       <para>
        This allows SRU version to be specified. If unset Pazpar2
        will the default of YAZ (currently 1.2). Should be set
-       to 1.1 or 1.2. For Solr, the current supported/tested version is 1.4 and 3.x.
+       to 1.1 or 1.2. For Solr, the current supported/tested version
+       is 1.4 and 3.x.
       </para>
      </listitem>
     </varlistentry>
-    
+
     <varlistentry>
      <term>pz:pqf_prefix</term>
      <listitem>
@@ -1378,7 +1382,7 @@
       </para>
      </listitem>
     </varlistentry>
-    
+
     <varlistentry>
      <term>pz:pqf_strftime</term>
      <listitem>
@@ -1406,7 +1410,7 @@
       </para>
      </listitem>
     </varlistentry>
-    
+
     <varlistentry>
      <term>pz:sort</term>
      <listitem>
@@ -1432,7 +1436,7 @@
       </para>
      </listitem>
     </varlistentry>
-    
+
     <varlistentry>
      <term>pz:preferred</term>
      <listitem>
@@ -1441,7 +1445,7 @@
        target. Using block=pref on show command will wait for all these
        targets to return records before releasing the block.
        If no target is preferred, the block=pref will identical to block=1,
-       which release when one target has returned records.     
+       which release when one target has returned records.
       </para>
      </listitem>
     </varlistentry>
@@ -1450,7 +1454,7 @@
      <listitem>
       <para>
        (Not yet implemented).
-       Specifies the time for which a block should be released anyway.      
+       Specifies the time for which a block should be released anyway.
       </para>
      </listitem>
     </varlistentry>
@@ -1458,7 +1462,7 @@
      <term>pz:termlist_term_count</term>
      <listitem>
       <para>
-       Specifies number of facet terms to be requested from the target. 
+       Specifies number of facet terms to be requested from the target.
        The default is unspecified e.g. server-decided. Also see pz:facetmap.
       </para>
      </listitem>
@@ -1467,13 +1471,16 @@
      <term>pz:termlist_term_factor</term>
      <listitem>
       <para>
-       Specifies whether to use a factor for pazpar2 generated facets (1) or not (0). 
-       When mixing locallly generated (by the downloaded (pz:maxrecs) samples) 
-       facet with native (target-generated) facets, the later will dominated the dominate the facet list
-       since they are generated based on the complete result set. 
-       By scaling up the facet count using the ratio between total hit count and the sample size, 
-       the total facet count can be approximated and thus better compared with native facets. 
-       This is not enabled by default.
+       Specifies whether to use a factor for pazpar2 generated facets (1)
+       or not (0).
+       When mixing locally generated (by the downloaded (pz:maxrecs) samples)
+       facet with native (target-generated) facets, the later will
+       dominated the dominate the facet list since they are generated
+       based on the complete result set.
+       By scaling up the facet count using the ratio between total hit
+       count and the sample size,
+       the total facet count can be approximated and thus better compared
+       with native facets. This is not enabled by default.
       </para>
      </listitem>
     </varlistentry>
@@ -1501,7 +1508,7 @@
       <para>
        Specifies attributes for limiting a search to a field - using
        the limit parameter for search. It can be used to filter locally
-       or remotely (search in a target). In some cases the mapping of 
+       or remotely (search in a target). In some cases the mapping of
        a field to a value is identical to an existing cclmap field; in
        other cases the field must be specified in a different way - for
        example to match a complete field (rather than parts of a subfield).
@@ -1509,10 +1516,10 @@
       <para>
        The value of limitmap may have one of three forms: referral to
        an existing CCL field, a raw PQF string or a local limit. Leading string
-       determines type; either <literal>ccl:</literal> for CCL field, 
+       determines type; either <literal>ccl:</literal> for CCL field,
        <literal>rpn:</literal> for PQF/RPN, or <literal>local:</literal>
        for filtering in Pazpar2. The local filtering may be followed
-       by a field a metadata field (default is to use the name of the 
+       by a field a metadata field (default is to use the name of the
        limitmap itself).
       </para>
       <para>
@@ -1565,9 +1572,9 @@
       </note>
      </listitem>
     </varlistentry>
-    
+
    </variablelist>
-   
+
   </refsect2>
 
  </refsect1>
