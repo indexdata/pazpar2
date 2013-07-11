@@ -840,8 +840,9 @@ void http_send_response(struct http_channel *ch)
     struct http_buf *hb;
 
     yaz_timing_stop(ch->yt);
-    yaz_log(YLOG_LOG, "Response: %6.5f %s%s%s",
+    yaz_log(YLOG_LOG, "Response: %6.5f %d %s%s%s ",
             yaz_timing_get_real(ch->yt),
+            iochan_getfd(ch->iochan),
             ch->request->path,
             *ch->request->search ? "?" : "",
             ch->request->search);
@@ -949,7 +950,9 @@ static void http_io(IOCHAN i, int event)
                     return;
                 }
                 hc->response = 0;
-                yaz_log(YLOG_LOG, "Request: %s %s%s%s", hc->request->method,
+                yaz_log(YLOG_LOG, "Request: - %d %s %s%s%s",
+                        iochan_getfd(i),
+                        hc->request->method,
                         hc->request->path,
                         *hc->request->search ? "?" : "",
                         hc->request->search);
