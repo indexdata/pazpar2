@@ -76,6 +76,9 @@
   -->
 
   <xsl:template match="item">
+    <pz:metadata type="due" empty="PAZPAR2_NULL_VALUE">
+      <xsl:value-of select="due"/>
+    </pz:metadata>
     <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">
       <xsl:value-of select="location"/>
     </pz:metadata>
