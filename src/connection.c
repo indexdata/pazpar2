@@ -353,36 +353,37 @@ void connect_resolver_host(struct host *host, iochan_man_t iochan_man)
 {
     struct connection *con;
 
-start:
     yaz_mutex_enter(host->mutex);
     con = host->connections;
     while (con)
     {
         if (con->state == Conn_Closed)
         {
-            if (!host->ipport) /* unresolved */
+            if (!host->ipport || !con->client) /* unresolved or no client */
             {
                 remove_connection_from_host(con);
                 yaz_mutex_leave(host->mutex);
                 connection_destroy(con);
-                goto start;
-                /* start all over .. at some point it will be NULL */
-            }
-            else if (!con->client)
-            {
-                remove_connection_from_host(con);
-                yaz_mutex_leave(host->mutex);
-                connection_destroy(con);
-                /* start all over .. at some point it will be NULL */
-                goto start;
             }
             else
             {
-                yaz_mutex_leave(host->mutex);
-                connection_connect(con, iochan_man);
-                client_start_search(con->client);
-                goto start;
+                struct session_database *sdb = client_get_database(con->client);
+                if (sdb)
+                {
+                    yaz_mutex_leave(host->mutex);
+                    connection_connect(con, iochan_man);
+                    client_start_search(con->client);
+                }
+                else
+                {
+                    remove_connection_from_host(con);
+                    yaz_mutex_leave(host->mutex);
+                    connection_destroy(con);
+                }
             }
+            /* start all over .. at some point it will be NULL */
+            yaz_mutex_enter(host->mutex);
+            con = host->connections;
         }
         else
         {
@@ -501,7 +502,6 @@ int client_prep_connection(struct client *cl,
         return 0;
 
     co = client_get_connection(cl);
-
     if (co)
     {
         assert(co->host);
