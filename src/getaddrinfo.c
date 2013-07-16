@@ -65,7 +65,7 @@ struct work {
 
 static int log_level = YLOG_LOG;
 
-void perform_getaddrinfo(struct work *w)
+static void perform_getaddrinfo(struct work *w)
 {
     struct addrinfo hints, *res;
     char host[512], *cp;
