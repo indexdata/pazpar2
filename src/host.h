@@ -26,7 +26,6 @@ typedef struct database_hosts *database_hosts_t;
 
 /** \brief Represents a host (irrespective of databases) */
 struct host {
-    char *url;      // logical host/database?args ..
     char *tproxy;   // tproxy address (no Z39.50 UI)
     char *proxy;    // logical proxy address
     char *ipport;   // tproxy or proxy resolved

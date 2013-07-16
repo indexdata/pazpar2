@@ -92,6 +92,7 @@ struct connection {
     struct host *host;
     struct client *client;
     char *zproxy;
+    char *url;
     enum {
         Conn_Closed,
         Conn_Connecting,
@@ -150,7 +151,7 @@ static void connection_destroy(struct connection *co)
         ZOOM_connection_destroy(co->link);
         iochan_destroy(co->iochan);
     }
-    yaz_log(YLOG_DEBUG, "%p Connection destroy %s", co, co->host->url);
+    yaz_log(YLOG_DEBUG, "%p Connection destroy %s", co, co->url);
 
     if (co->client)
     {
@@ -158,6 +159,7 @@ static void connection_destroy(struct connection *co)
     }
 
     xfree(co->zproxy);
+    xfree(co->url);
     xfree(co);
     connection_use(-1);
 }
@@ -165,6 +167,7 @@ static void connection_destroy(struct connection *co)
 // Creates a new connection for client, associated with the host of
 // client's database
 static struct connection *connection_create(struct client *cl,
+                                            const char *url,
                                             struct host *host,
                                             int operation_timeout,
                                             int session_timeout,
@@ -176,6 +179,7 @@ static struct connection *connection_create(struct client *cl,
     co->host = host;
 
     co->client = cl;
+    co->url = xstrdup(url);
     co->zproxy = 0;
     client_set_connection(cl, co);
     co->link = 0;
@@ -450,17 +454,25 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
         return -1;
     }
 
-    if (sru && *sru && !strstr(host->url, "://"))
+    if (sru && *sru && !strstr(con->url, "://"))
     {
         WRBUF w = wrbuf_alloc();
         wrbuf_puts(w, "http://");
-        wrbuf_puts(w, host->url);
+        wrbuf_puts(w, con->url);
+        ZOOM_connection_connect(con->link, wrbuf_cstr(w), 0);
+        wrbuf_destroy(w);
+    }
+    else if (strchr(con->url, '#'))
+    {
+        const char *cp = strchr(con->url, '#');
+        WRBUF w = wrbuf_alloc();
+        wrbuf_write(w, con->url, cp - con->url);
         ZOOM_connection_connect(con->link, wrbuf_cstr(w), 0);
         wrbuf_destroy(w);
     }
     else
     {
-        ZOOM_connection_connect(con->link, host->url, 0);
+        ZOOM_connection_connect(con->link, con->url, 0);
     }
     con->iochan = iochan_create(-1, connection_handler, 0, "connection_socket");
     con->state = Conn_Connecting;
@@ -539,6 +551,7 @@ int client_prep_connection(struct client *cl,
                 for (co = host->connections; co; co = co->next)
                 {
                     if (connection_is_idle(co) &&
+                        !strcmp(url, co->url) &&
                         (!co->client || client_get_state(co->client) == Client_Idle) &&
                         !strcmp(ZOOM_connection_option_get(co->link, "user"),
                                 session_setting_oneval(client_get_database(cl),
@@ -591,7 +604,8 @@ int client_prep_connection(struct client *cl,
         else
         {
             yaz_mutex_leave(host->mutex);
-            co = connection_create(cl, host, operation_timeout, session_timeout,
+            co = connection_create(cl, url, host,
+                                   operation_timeout, session_timeout,
                                    iochan_man);
         }
         assert(co->host);

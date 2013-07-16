@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <sys/stat.h>
 #include <yaz/log.h>
 #include <yaz/nmem.h>
+#include <yaz/matchstr.h>
 
 #include "ppmutex.h"
 #include "session.h"
@@ -38,39 +39,43 @@ struct database_hosts {
     YAZ_MUTEX mutex;
 };
 
+#if YAZ_VERSIONL > 0x4023e
+#define strcmp_null(x, y) yaz_strcmp_null(x, y)
+#else
+#define strcmp_null(x, y) local_strcmp_null(x, y)
+
+static int local_strcmp_null(const char *v1, const char *v2)
+{
+    if (v1)
+    {
+        if (v2)
+            return strcmp(v1, v2);
+        else
+            return 1;
+    }
+    else if (v2)
+        return -1;
+    return 0;
+}
+#endif
+
 // Create a new host structure for hostport
-static struct host *create_host(const char *url, const char *proxy,
-                                int default_port,
+static struct host *create_host(const char *proxy,
+                                const char *tproxy,
                                 iochan_man_t iochan_man)
 {
     struct host *host;
-    char *db_comment;
 
     host = xmalloc(sizeof(struct host));
-    host->url = xstrdup(url);
     host->proxy = 0;
     host->tproxy = 0;
     if (proxy && *proxy)
         host->proxy = xstrdup(proxy);
     else
     {
-        char *cp;
-
-        host->tproxy = xmalloc (strlen(url) + 10); /* so we can add :port */
-        strcpy(host->tproxy, url);
-        for (cp = host->tproxy; *cp; cp++)
-            if (strchr("/?#~", *cp))
-            {
-                *cp = '\0';
-                break;
-            }
-        if (!strchr(host->tproxy, ':'))
-            sprintf(cp, ":%d", default_port); /* no port given, add it */
+        assert(tproxy);
+        host->tproxy = xstrdup(tproxy);
     }
-
-    db_comment = strchr(host->url, '#');
-    if (db_comment)
-        *db_comment = '\0';
     host->connections = 0;
     host->ipport = 0;
     host->mutex = 0;
@@ -80,7 +85,6 @@ static struct host *create_host(const char *url, const char *proxy,
         xfree(host->ipport);
         xfree(host->tproxy);
         xfree(host->proxy);
-        xfree(host->url);
         xfree(host);
         return 0;
     }
@@ -96,18 +100,35 @@ struct host *find_host(database_hosts_t hosts, const char *url,
                        iochan_man_t iochan_man)
 {
     struct host *p;
+    char *tproxy = 0;
+
+    if (!proxy || !*proxy)
+    {
+        char *cp;
+
+        tproxy = xmalloc (strlen(url) + 10); /* so we can add :port */
+        strcpy(tproxy, url);
+        for (cp = tproxy; *cp; cp++)
+            if (strchr("/?#~", *cp))
+            {
+                *cp = '\0';
+                break;
+            }
+        if (!strchr(tproxy, ':'))
+            sprintf(cp, ":%d", port); /* no port given, add it */
+    }
     yaz_mutex_enter(hosts->mutex);
     for (p = hosts->hosts; p; p = p->next)
-        if (!strcmp(p->url, url))
+    {
+        if (!strcmp_null(p->tproxy, tproxy) &&
+            !strcmp_null(p->proxy, proxy))
         {
-            if (p->proxy && proxy && !strcmp(p->proxy, proxy))
-                break;
-            if (!p->proxy && !proxy)
-                break;
+            break;
         }
+    }
     if (!p)
     {
-        p = create_host(url, proxy, port, iochan_man);
+        p = create_host(proxy, tproxy, iochan_man);
         if (p)
         {
             p->next = hosts->hosts;
@@ -115,6 +136,7 @@ struct host *find_host(database_hosts_t hosts, const char *url,
         }
     }
     yaz_mutex_leave(hosts->mutex);
+    xfree(tproxy);
     return p;
 }
 
@@ -137,7 +159,6 @@ void database_hosts_destroy(database_hosts_t *pp)
             struct host *p_next = p->next;
             yaz_mutex_destroy(&p->mutex);
             yaz_cond_destroy(&p->cond_ready);
-            xfree(p->url);
             xfree(p->ipport);
             xfree(p);
             p = p_next;
