@@ -195,16 +195,14 @@ static void work_handler(void *work_data) {
 }
 
 static void run_fun(iochan_man_t man, IOCHAN p) {
-    if (p->this_event) {
-        if (man->sel_thread) {
-            yaz_log(man->log_level,
-                    "eventl: work add chan=%p name=%s event=%d", p,
-                    p->name ? p->name : "", p->this_event);
-            p->thread_users++;
-            sel_thread_add(man->sel_thread, p);
-        } else
-            work_handler(p);
-    }
+    if (man->sel_thread) {
+        yaz_log(man->log_level,
+                "eventl: work add chan=%p name=%s event=%d", p,
+                p->name ? p->name : "", p->this_event);
+        p->thread_users++;
+        sel_thread_add(man->sel_thread, p);
+    } else
+        work_handler(p);
 }
 
 static int event_loop(iochan_man_t man, IOCHAN *iochans) {
@@ -219,7 +217,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         struct timeval *timeout;
 
 //        struct yaz_poll_fd *fds;
-        int no_fds = 0;
+        int i, no_fds = 0;
         FD_ZERO(&in);
         FD_ZERO(&out);
         FD_ZERO(&except);
@@ -294,6 +292,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
             }
             yaz_log(man->log_level, "%d channels", no);
         }
+        i = 0;
         for (p = start; p; p = p->next) {
             time_t now = time(0);
 
@@ -329,7 +328,17 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
                     p->this_event |= EVENT_EXCEPT;
                 }
             }
-            run_fun(man, p);
+            /* only fire one Z39.50/SRU socket event.. except for timeout */
+            if (p->this_event) {
+                if (!(p->this_event & EVENT_TIMEOUT) &&
+                    !strcmp(p->name, "connection_socket")) {
+                    /* not a timeout and we have a Z39.50/SRU socket */
+                    if (i == 0)
+                        run_fun(man, p);
+                    i++;
+                } else
+                    run_fun(man, p);
+            }
         }
         assert(inv_start == start);
         yaz_mutex_enter(man->iochan_mutex);
