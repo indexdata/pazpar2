@@ -45,6 +45,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "settings.h"
 #include "eventl.h"
 #include "http.h"
+#include "session.h"
 
 struct conf_config
 {
@@ -986,9 +987,148 @@ struct conf_service *locate_service(struct conf_server *server,
     return s;
 }
 
+void info_service_metadata(struct conf_service *service, WRBUF w)
+{
+    int i;
+    struct conf_metadata *md;
+
+    if (service->num_metadata)
+    {
+        for (i = 0; i < service->num_metadata; i++)
+        {
+            md = &(service->metadata[i]);
+            wrbuf_puts(w, "   <metadata");
+            if (md->name) {
+                wrbuf_puts(w, " name=\"");
+                wrbuf_xmlputs(w, md->name);
+                wrbuf_puts(w, "\"");
+            }
+            if (md->brief) {
+                wrbuf_puts(w, " brief=\"yes\"");
+            }
+            if (md->termlist) {
+                wrbuf_puts(w, " termlist=\"yes\"");
+            }
+            if (md->rank) {
+                wrbuf_puts(w, " rank=\"");
+                wrbuf_xmlputs(w, md->rank);
+                wrbuf_puts(w, "\"");
+            }
+            if (md->sortkey_offset > 0) {
+                wrbuf_puts(w, " sortkey=\"");
+                switch (service->sortkeys[md->sortkey_offset].type) {
+                    case Metadata_sortkey_relevance:
+                        wrbuf_puts(w, "relevance");
+                        break;
+                    case Metadata_sortkey_numeric:
+                        wrbuf_puts(w, "numeric");
+                        break;
+                    case Metadata_sortkey_skiparticle:
+                        wrbuf_puts(w, "skiparticle");
+                        break;
+                    case Metadata_sortkey_string:
+                        wrbuf_puts(w, "string");
+                        break;
+                    case Metadata_sortkey_position:
+                        wrbuf_puts(w, "position");
+                        break;
+                }
+                wrbuf_puts(w, "\"");
+            }
+
+            switch (md->type) {
+                case Metadata_type_generic:
+                    break;
+                case Metadata_type_year:
+                    wrbuf_puts(w, " type=\"year\"");
+                    break;
+                case Metadata_type_date:
+                    wrbuf_puts(w, " type=\"date\"");
+                    break;
+            }
+
+            switch (md->merge) {
+                case Metadata_merge_no:
+                    break;
+                case Metadata_merge_unique:
+                    wrbuf_puts(w, " merge=\"unique\"");
+                    break;
+                case Metadata_merge_longest:
+                    wrbuf_puts(w, " merge=\"longest\"");
+                    break;
+                case Metadata_merge_range:
+                    wrbuf_puts(w, " merge=\"range\"");
+                    break;
+                case Metadata_merge_all:
+                    wrbuf_puts(w, " merge=\"all\"");
+                    break;
+                case Metadata_merge_first:
+                    wrbuf_puts(w, " merge=\"first\"");
+                    break;
+            }
+
+            switch (md->mergekey) {
+                case Metadata_mergekey_no:
+                    break;
+                case Metadata_mergekey_optional:
+                    wrbuf_puts(w, " mergekey=\"optional\"");
+                    break;
+                case Metadata_mergekey_required:
+                    wrbuf_puts(w, " mergekey=\"required\"");
+                    break;
+            }
+            wrbuf_puts(w, " />\n");
+        }
+    }
+}
+
+void info_service_databases(struct conf_service *service, WRBUF w)
+{
+    struct database *db;
+    struct setting *s;
+    int i;
+
+    if (service->databases)
+    {
+        wrbuf_puts(w, "   <databases>\n");
+        for(db = service->databases; db; db = db->next)
+        {
+            wrbuf_puts(w, "    <database");
+            if (db->id) {
+                    wrbuf_puts(w, " id=\"");
+                    wrbuf_printf(w, "%s", db->id);
+                    wrbuf_puts(w, "\"");
+            }
+            wrbuf_puts(w, ">\n");
+            for (i = 0; i < db->num_settings; i++)
+            {
+                s = db->settings[i];
+                while (s != NULL) {
+                    wrbuf_puts(w, "     <setting");
+                    wrbuf_puts(w, " name=\"");
+                    wrbuf_xmlputs(w, s->name);
+                    wrbuf_puts(w, "\"");
+                    wrbuf_puts(w, " value=\"");
+                    wrbuf_xmlputs(w, s->value);
+                    wrbuf_puts(w, "\"");
+                    wrbuf_puts(w, " />\n");
+                    s = s->next;
+                }
+            }
+            wrbuf_puts(w, "    </database>\n");
+        }
+
+        wrbuf_puts(w, "   </databases>\n");
+    }
+}
+
 void info_services(struct conf_server *server, WRBUF w)
 {
     struct conf_service *s = server->service;
+    int i;
+    struct setting *S;
+    struct database *db;
+
     wrbuf_puts(w, " <services>\n");
     for (; s; s = s->next)
     {
@@ -999,7 +1139,35 @@ void info_services(struct conf_server *server, WRBUF w)
             wrbuf_xmlputs(w, s->id);
             wrbuf_puts(w, "\"");
         }
-        wrbuf_puts(w, "/>");
+        wrbuf_puts(w, ">\n");
+        if (s->settings)
+        {
+            for (i=0; i<s->settings->num_settings; i++)
+            {
+                S = s->settings->settings[i];
+                while (S != NULL) {
+                    wrbuf_puts(w, "   <setting");
+                    wrbuf_puts(w, " name=\"");
+                    wrbuf_xmlputs(w,  S->name);
+                    wrbuf_puts(w, "\"");
+                    wrbuf_puts(w, " value=\"");
+                    wrbuf_xmlputs(w, S->value);
+                    wrbuf_puts(w, "\"");
+                    if (S->target) {
+                        wrbuf_puts(w, " target=\"");
+                        wrbuf_xmlputs(w, S->target);
+                        wrbuf_puts(w, "\"");
+                    }
+
+                    wrbuf_puts(w, " />\n");
+
+                    S = S->next;
+                }
+            }
+        }
+        info_service_metadata(s, w);
+        info_service_databases(s, w);
+        wrbuf_puts(w, "  </service>");
 
         wrbuf_puts(w, "\n");
     }
