@@ -45,7 +45,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "settings.h"
 #include "eventl.h"
 #include "http.h"
-#include "session.h"
 
 struct conf_config
 {

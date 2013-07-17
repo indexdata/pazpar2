@@ -26,9 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/yaz-ccl.h>
 
 #include "facet_limit.h"
-#include "termlists.h"
 #include "reclists.h"
-#include "http.h"
 
 struct record;
 struct client;
@@ -53,15 +51,6 @@ enum pazpar2_error_code {
 
     PAZPAR2_LAST_ERROR
 };
-
-// Represents a database
-struct database {
-    char *id;
-    int num_settings;
-    struct setting **settings;
-    struct database *next;
-};
-
 
 // Represents a database as viewed from one session, possibly with settings overriden
 // for that session

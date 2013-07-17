@@ -66,6 +66,14 @@ struct setting
     struct setting *next;
 };
 
+// Represents a database
+struct database {
+    char *id;
+    int num_settings;
+    struct setting **settings;
+    struct database *next;
+};
+
 struct settings_array
 {
     // Array of pointer setting, index is looked up in setting_dictionary
