@@ -1127,7 +1127,6 @@ void info_services(struct conf_server *server, WRBUF w)
     struct conf_service *s = server->service;
     int i;
     struct setting *S;
-    struct database *db;
 
     wrbuf_puts(w, " <services>\n");
     for (; s; s = s->next)

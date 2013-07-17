@@ -1,6 +1,12 @@
-pazpar2 (1.6.32-1indexdata) unstable; urgency=low
+pazpar2 (1.6.32-3indexdata) unstable; urgency=low
 
-  * Upstream.
+  * More logging for HTTP activity.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Fri, 12 Jul 2013 11:43:51 +0200
+
+pazpar2 (1.6.32-2indexdata) unstable; urgency=low
+
+  * Log socket ID for HTTP request/response.
 
  -- Adam Dickmeiss <adam@indexdata.dk>  Fri, 14 Jun 2013 10:50:14 +0200
 
