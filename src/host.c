@@ -39,26 +39,6 @@ struct database_hosts {
     YAZ_MUTEX mutex;
 };
 
-#if YAZ_VERSIONL > 0x4023e
-#define strcmp_null(x, y) yaz_strcmp_null(x, y)
-#else
-#define strcmp_null(x, y) local_strcmp_null(x, y)
-
-static int local_strcmp_null(const char *v1, const char *v2)
-{
-    if (v1)
-    {
-        if (v2)
-            return strcmp(v1, v2);
-        else
-            return 1;
-    }
-    else if (v2)
-        return -1;
-    return 0;
-}
-#endif
-
 // Create a new host structure for hostport
 static struct host *create_host(const char *proxy,
                                 const char *tproxy,
@@ -120,8 +100,8 @@ struct host *find_host(database_hosts_t hosts, const char *url,
     yaz_mutex_enter(hosts->mutex);
     for (p = hosts->hosts; p; p = p->next)
     {
-        if (!strcmp_null(p->tproxy, tproxy) &&
-            !strcmp_null(p->proxy, proxy))
+        if (!yaz_strcmp_null(p->tproxy, tproxy) &&
+            !yaz_strcmp_null(p->proxy, proxy))
         {
             break;
         }
