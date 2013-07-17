@@ -986,7 +986,7 @@ struct conf_service *locate_service(struct conf_server *server,
     return s;
 }
 
-void info_service_metadata(struct conf_service *service, WRBUF w)
+static void info_service_metadata(struct conf_service *service, WRBUF w)
 {
     int i;
     struct conf_metadata *md;
@@ -1081,7 +1081,7 @@ void info_service_metadata(struct conf_service *service, WRBUF w)
     }
 }
 
-void info_service_databases(struct conf_service *service, WRBUF w)
+static void info_service_databases(struct conf_service *service, WRBUF w)
 {
     struct database *db;
     struct setting *s;
