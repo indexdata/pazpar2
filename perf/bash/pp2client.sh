@@ -82,15 +82,20 @@ if [ -n "$SETTINGS" ] ; then
     fi
 fi
 
-/usr/bin/time --format "$OF, search, %e" wget -q -O ${TMP_DIR}$OF.search.xml "$H?command=search&query=$QUERY&session=$S" 2> ${TMP_DIR}$OF.search.time
-
-i=1
-while test $i -lt 20; do
-    sleep 3
-    /usr/bin/time --format "$OF, show, %e" wget -q -O ${TMP_DIR}$OF.show$i.xml "$H?command=show&session=$S&sort=relevance&start=0&num=100&block=1&round=$i" 2> ${TMP_DIR}$OF.show$i.time
-    i=`expr $i + 1`
-done
-wget -q -O exit.xml "$H?command=exit"
+if [ "$TIME" != "" ] ; then
+    /usr/bin/time --format "$OF, search, %e" wget -q -O ${TMP_DIR}$OF.search.xml "$H?command=search&query=$QUERY&session=$S" 2> ${TMP_DIR}$OF.search.time
+else
+    wget -q -O ${TMP_DIR}$OF.search.xml "$H?command=search&query=$QUERY&session=$S"
+fi
+sleep 1
+if [ "$TIME" != "" ] ; then
+    /usr/bin/time --format "$OF, show, %e" wget -q -O ${TMP_DIR}$OF.show.xml "$H?command=show&session=$S&sort=relevance&start=0&num=100&block=1" 2> ${TMP_DIR}$OF.show.time
+else
+    wget -q -O ${TMP_DIR}$OF.show.xml "$H?command=show&session=$S&sort=relevance&start=0&num=100&block=1"
+fi
+wget -q -O ${TMP_DIR}$OF.bytarget.xml "$H?command=bytarget&session=$S"
+wget -q -O ${TMP_DIR}$OF.stat.xml "$H?command=stat&session=$S"
+wget -q -O ${TMP_DIR}$OF.info.xml "$H?command=info"
 exit 0
 
 # Local Variables:
