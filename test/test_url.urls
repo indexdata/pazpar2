@@ -17,3 +17,7 @@ http://localhost:9763/search.pz2?session=1&command=search&query=water
 2 http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=title:1p
 2 http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=date:0p
 http://localhost:9763/search.pz2?session=1&command=service
+http://localhost:9763/search.pz2?session=1&command=show&sort=relevance
+http://localhost:9763/search.pz2?session=1&command=record&id=content%3A+title+coal+sample+bank+author+medium+book
+http://localhost:9763/search.pz2?session=1&command=show&block=1&sort=title:1
+http://localhost:9763/search.pz2?session=1&command=record&id=content%3A+title+coal+sample+bank+author+medium+book
