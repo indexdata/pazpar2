@@ -1240,7 +1240,6 @@ struct record_cluster *show_single_start(struct session *se, const char *id,
     session_enter(se, "show_single_start");
     *prev_r = 0;
     *next_r = 0;
-    reclist_limit(se->reclist, se);
 
     reclist_enter(se->reclist);
     while ((r = reclist_read_record(se->reclist)))
