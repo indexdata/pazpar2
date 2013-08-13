@@ -441,7 +441,24 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
         ZOOM_options_set(zoptions, "apdulog", apdulog);
 
     if ((auth = session_setting_oneval(sdb, PZ_AUTHENTICATION)))
-        ZOOM_options_set(zoptions, "user", auth);
+    {
+        const char *cp1 = strchr(auth, ' ');
+        if (!cp1)
+            ZOOM_options_set(zoptions, "user", auth);
+        else
+        {
+            const char *cp2 = strchr(cp1 + 1, ' ');
+
+            ZOOM_options_setl(zoptions, "user", auth, cp1 - auth);
+            if (!cp2)
+                ZOOM_options_set(zoptions, "password", cp1 + 1);
+            else
+            {
+                ZOOM_options_setl(zoptions, "group", cp1 + 1, cp2 - cp1 - 1);
+                ZOOM_options_set(zoptions, "password", cp2 + 1);
+            }
+        }
+    }
     if ((sru = session_setting_oneval(sdb, PZ_SRU)) && *sru)
         ZOOM_options_set(zoptions, "sru", sru);
     if ((sru_version = session_setting_oneval(sdb, PZ_SRU_VERSION))
