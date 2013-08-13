@@ -1,3 +1,15 @@
+--- 1.6.33 2013/08/13
+
+pz:authentication may carry user group password. If pz:authentication
+has at least one blank in it, that forces Pazpar2 to use idPass Z39.50
+authentication. Two forms are allowed
+    user password
+    user group password
+If no blanks are present, open authentication is in use (as before).
+
+Fix {prev,next}recid elements that are returned by record
+command. These were incorrect in versions 1.6.23 thru 1.6.32.
+
 --- 1.6.32 2013/06/14
 
 Experimental support for snippets. If argument snippets=1 is given
