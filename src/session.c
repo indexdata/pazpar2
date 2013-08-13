@@ -1240,6 +1240,7 @@ struct record_cluster *show_single_start(struct session *se, const char *id,
     session_enter(se, "show_single_start");
     *prev_r = 0;
     *next_r = 0;
+    reclist_limit(se->reclist, se, 1);
 
     reclist_enter(se->reclist);
     while ((r = reclist_read_record(se->reclist)))
@@ -1313,7 +1314,7 @@ struct record_cluster **show_range_start(struct session *se,
     *sumhits = 0;
     *approx_hits = 0;
     *total = 0;
-    reclist_limit(se->reclist, se);
+    reclist_limit(se->reclist, se, 0);
     if (se->relevance)
     {
         for (spp = sp; spp; spp = spp->next)

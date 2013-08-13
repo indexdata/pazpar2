@@ -209,27 +209,31 @@ static int reclist_cmp(const void *p1, const void *p2)
     return res;
 }
 
-void reclist_limit(struct reclist *l, struct session *se)
+void reclist_limit(struct reclist *l, struct session *se, int lazy)
 {
     unsigned i;
     int num = 0;
     struct reclist_bucket **pp = &l->sorted_list;
 
     reclist_enter(l);
-    for (i = 0; i < l->hash_size; i++)
+
+    if (!lazy || !*pp)
     {
-        struct reclist_bucket *p;
-        for (p = l->hashtable[i]; p; p = p->hash_next)
+        for (i = 0; i < l->hash_size; i++)
         {
-            if (session_check_cluster_limit(se, p->record))
+            struct reclist_bucket *p;
+            for (p = l->hashtable[i]; p; p = p->hash_next)
             {
-                *pp = p;
-                pp = &p->sorted_next;
-                num++;
+                if (session_check_cluster_limit(se, p->record))
+                {
+                    *pp = p;
+                    pp = &p->sorted_next;
+                    num++;
+                }
             }
         }
+        *pp = 0;
     }
-    *pp = 0;
     l->num_records = num;
     reclist_leave(l);
 }
