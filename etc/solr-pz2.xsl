@@ -40,6 +40,15 @@
     </pz:metadata>
   </xsl:template>
 
+  <xsl:template match="date[@name]">
+    <pz:metadata>
+	<xsl:attribute  name="type">
+	  <xsl:value-of select="@name"/>
+	</xsl:attribute>
+	<xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
   <xsl:template match="arr">
     <xsl:for-each select="str">
       <xsl:call-template name="string"/>
