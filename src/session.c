@@ -758,6 +758,11 @@ enum pazpar2_error_code session_search(struct session *se,
     int no_failed_limit = 0;
     struct client_list *l, *l0;
 
+    session_alert_watch(se, SESSION_WATCH_SHOW);
+    session_alert_watch(se, SESSION_WATCH_BYTARGET);
+    session_alert_watch(se, SESSION_WATCH_TERMLIST);
+    session_alert_watch(se, SESSION_WATCH_SHOW_PREF);
+
     session_log(se, YLOG_DEBUG, "Search");
 
     *addinfo = 0;
