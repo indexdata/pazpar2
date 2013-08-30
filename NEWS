@@ -1,3 +1,10 @@
+--- 1.6.34 2013/08/30
+
+Fix issue with hanging show/bytarget. Could happen if new search was
+fired with filter before show from previous show completed.
+
+Add 'date' handling for solr-pz2.xsl.
+
 --- 1.6.33 2013/08/13
 
 pz:authentication may carry user group password. If pz:authentication
