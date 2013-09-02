@@ -867,12 +867,13 @@ int client_start_search(struct client *cl)
     /* Nothing has changed and we already have a result */
     if (cl->same_search == 1 && rc_prep_connection == 2)
     {
-        session_log(se, YLOG_LOG, "client %s REUSE result", client_get_id(cl));
+        session_log(se, YLOG_LOG, "client %s resuse result", client_get_id(cl));
         return client_reingest(cl);
     }
     else if (!rc_prep_connection)
     {
-        session_log(se, YLOG_LOG, "client %s FAILED to search: No connection.", client_get_id(cl));
+        session_log(se, YLOG_LOG, "client %s postponing search: No connection",
+                    client_get_id(cl));
         return -1;
     }
     co = client_get_connection(cl);
@@ -880,7 +881,7 @@ int client_start_search(struct client *cl)
     link = connection_get_link(co);
     assert(link);
 
-    session_log(se, YLOG_LOG, "client %s NEW search", client_get_id(cl));
+    session_log(se, YLOG_LOG, "client %s new search", client_get_id(cl));
 
     cl->diagnostic = 0;
     cl->filtered = 0;
