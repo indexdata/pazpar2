@@ -375,7 +375,6 @@ void connect_resolver_host(struct host *host, iochan_man_t iochan_man)
                 if (sdb)
                 {
                     yaz_mutex_leave(host->mutex);
-                    connection_connect(con, iochan_man);
                     client_start_search(con->client);
                 }
                 else
