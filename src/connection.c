@@ -411,6 +411,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     const char *charset;
     const char *sru;
     const char *sru_version = 0;
+    WRBUF w;
 
     struct session_database *sdb = client_get_database(con->client);
     const char *apdulog = session_setting_oneval(sdb, PZ_APDULOG);
@@ -471,26 +472,19 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
         return -1;
     }
 
+    w = wrbuf_alloc();
     if (sru && *sru && !strstr(con->url, "://"))
-    {
-        WRBUF w = wrbuf_alloc();
         wrbuf_puts(w, "http://");
-        wrbuf_puts(w, con->url);
-        ZOOM_connection_connect(con->link, wrbuf_cstr(w), 0);
-        wrbuf_destroy(w);
-    }
-    else if (strchr(con->url, '#'))
+    if (strchr(con->url, '#'))
     {
         const char *cp = strchr(con->url, '#');
-        WRBUF w = wrbuf_alloc();
         wrbuf_write(w, con->url, cp - con->url);
-        ZOOM_connection_connect(con->link, wrbuf_cstr(w), 0);
-        wrbuf_destroy(w);
     }
     else
-    {
-        ZOOM_connection_connect(con->link, con->url, 0);
-    }
+        wrbuf_puts(w, con->url);
+
+    ZOOM_connection_connect(con->link, wrbuf_cstr(w), 0);
+
     con->iochan = iochan_create(-1, connection_handler, 0, "connection_socket");
     con->state = Conn_Connecting;
     iochan_settimeout(con->iochan, con->operation_timeout);
@@ -499,6 +493,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
 
     client_set_state(con->client, Client_Connecting);
     ZOOM_options_destroy(zoptions);
+    wrbuf_destroy(w);
     return 0;
 }
 
