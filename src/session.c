@@ -850,7 +850,6 @@ enum pazpar2_error_code session_search(struct session *se,
         else
             return PAZPAR2_NO_TARGETS;
     }
-    session_log(se, YLOG_LOG, "session_start_search done");
     return PAZPAR2_NO_ERROR;
 }
 
