@@ -10,7 +10,7 @@
 # pidfile: /var/run/pazpar2.pid
 
 # Source function library.
-OPTIONS="-l /var/log/pazpar2.log -f /etc/pazpar2/server.xml"
+OPTIONS="-u nobody -l /var/log/pazpar2.log -f /etc/pazpar2/server.xml"
 . /etc/rc.d/init.d/functions
 
 if [ -f /etc/sysconfig/pazpar2 ]; then
