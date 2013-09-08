@@ -7,5 +7,5 @@ z3950_indexdata_com_marc.xml http://localhost:9763/search.pz2?session=3&command=
 http://localhost:9763/search.pz2?session=3&command=search&query=computer
 2 http://localhost:9763/search.pz2?session=1&command=show
 http://localhost:9763/search.pz2?session=2&command=show
-http://localhost:9763/search.pz2?session=3&command=show
+1 http://localhost:9763/search.pz2?session=3&command=show
 http://localhost:9763/search.pz2?session=3&command=bytarget
