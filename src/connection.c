@@ -410,6 +410,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     const char *charset;
     const char *sru;
     const char *sru_version = 0;
+    const char *value;
     WRBUF w;
 
     struct session_database *sdb = client_get_database(con->client);
@@ -440,13 +441,27 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     if (apdulog && *apdulog)
         ZOOM_options_set(zoptions, "apdulog", apdulog);
 
+
+    if ((sru = session_setting_oneval(sdb, PZ_SRU)) && *sru)
+        ZOOM_options_set(zoptions, "sru", sru);
+    if ((sru_version = session_setting_oneval(sdb, PZ_SRU_VERSION))
+        && *sru_version)
+        ZOOM_options_set(zoptions, "sru_version", sru_version);
+
     if ((auth = session_setting_oneval(sdb, PZ_AUTHENTICATION)))
     {
+        /* allow splitting user and reset with a blank always */
         const char *cp1 = strchr(auth, ' ');
+        if (!cp1 && sru && *sru_version)
+            cp1 =  strchr(auth, '/');
         if (!cp1)
+        {
+            /* Z39.50 user/password style, or no password for SRU */
             ZOOM_options_set(zoptions, "user", auth);
+        }
         else
         {
+            /* now consider group as well */
             const char *cp2 = strchr(cp1 + 1, ' ');
 
             ZOOM_options_setl(zoptions, "user", auth, cp1 - auth);
@@ -459,11 +474,11 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
             }
         }
     }
-    if ((sru = session_setting_oneval(sdb, PZ_SRU)) && *sru)
-        ZOOM_options_set(zoptions, "sru", sru);
-    if ((sru_version = session_setting_oneval(sdb, PZ_SRU_VERSION))
-        && *sru_version)
-        ZOOM_options_set(zoptions, "sru_version", sru_version);
+
+    value = session_setting_oneval(sdb, PZ_AUTHENTICATION_MODE);
+    if (value && *value)
+        ZOOM_options_set(zoptions, "authenticationMode", value);
+
     if (!(con->link = ZOOM_connection_create(zoptions)))
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to create ZOOM Connection");

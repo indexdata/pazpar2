@@ -82,6 +82,7 @@ static char *hard_settings[] = {
     "pz:present_chunk",
     "pz:block_timeout",
     "pz:extendrecs",
+    "pz:authentication_mode",
     0
 };
 

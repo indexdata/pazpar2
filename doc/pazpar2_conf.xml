@@ -1250,8 +1250,35 @@
      <term>pz:authentication</term>
      <listitem>
       <para>
-       Sets an authentication string for a given server. See the section on
-       authorization and authentication for discussion.
+       Sets an authentication string for a given database. For Z39.50,
+       this is carried as part of the Initialize Request. In order to carry
+       the information in the "open" elements, separate
+       username and password with a slash (In Z39.50 it is a VisibleString).
+       In order to carry the information in the idPass  elements, separate
+       username term, password term and,  optionally, a group term with a
+       single blank.
+       If three terms are given, the order is
+       <emphasis>user, group, password</emphasis>.
+       If only two terms are given, the order is
+       <emphasis>user, password</emphasis>.
+      </para>
+      <para>
+       For HTTP based procotols, such as SRU and Solr, the authentication
+       string includes a username term and, optionally, a password term.
+       Each term is separated by a single blank. The
+       authentication information is passed either by HTTP basic
+       authentication or via URL parameters. The mode is operation is
+       determined by <literal>pz:authentication_mode</literal> setting.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:authentication_mode</term>
+     <listitem>
+      <para>
+       Determines how authentication is carried in HTTP based protocols.
+       Value may be "<literal>basic</literal>" or "<literal>url</literal>".
       </para>
      </listitem>
     </varlistentry>
@@ -1262,8 +1289,6 @@
        Allows or denies access to the resources it is applied to. Possible
        values are '0' and '1'.
        The default is '1' (allow access to this resource).
-       See the manual section on authorization and authentication for
-       discussion about how to use this setting.
       </para>
      </listitem>
     </varlistentry>
