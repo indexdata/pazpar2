@@ -1,3 +1,11 @@
+--- 1.6.35 2013/09/23
+
+New target setting: pz:authentication_mode. PAZ-896
+
+pazpar2 PRM: pazpar2 runs as user nobody. PAZ-893
+
+Strip #-suffix for ZOOM URLs. PAZ-892
+
 --- 1.6.34 2013/08/30
 
 Fix issue with hanging show/bytarget. Could happen if new search was
