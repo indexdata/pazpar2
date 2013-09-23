@@ -24,7 +24,7 @@ AC_LANG(C)
 
 AC_C_INLINE
 
-YAZ_INIT([static icu],[4.2.63])
+YAZ_INIT([static icu],[4.2.68])
 if test -z "$YAZLIB"; then
 	AC_MSG_ERROR([YAZ development libraries missing])
 fi
