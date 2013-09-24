@@ -16,11 +16,13 @@ dist-hook:
 	mkdir $(distdir)/rpm
 	-cp $(srcdir)/rpm/* $(distdir)/rpm
 
+JSDISTDIR = pazpar2-js-$(VERSION)
 js-dist:
-	mkdir -p pazpar2-js-$(VERSION)
-	cp LICENSE js/*js pazpar2-js-$(VERSION)
-	tar cvf pazpar2-js-$(VERSION).tar pazpar2-js-$(VERSION)
-	rm -fr pazpar2-js-$(VERSION)
+	mkdir -p $(JSDISTDIR)
+	cp LICENSE js/*js $(JSDISTDIR)
+	echo $(VERSION) > $(JSDISTDIR)/VERSION
+	tar cvfz pazpar2-js-$(VERSION).tar.gz $(JSDISTDIR)
+	rm -fr $(JSDISTDIR)
 
 .PHONY:debian
 debian:
