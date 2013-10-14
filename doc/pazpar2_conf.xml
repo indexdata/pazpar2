@@ -1165,7 +1165,7 @@
        chacater set of the MARC must be known (if not, the resulting
        XML is probably not well-formed). The character set may be
        specified by adding:
-       <literal>;charset=</literal><replaceable>charset</replaceable> to
+       <literal>;</literal><replaceable>charset</replaceable> to
        <literal>iso2709</literal>. If omitted, a charset of
        MARC-8 is assumed. This is correct for most MARC21/USMARC records.
       </para>
