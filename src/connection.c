@@ -452,7 +452,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     {
         /* allow splitting user and reset with a blank always */
         const char *cp1 = strchr(auth, ' ');
-        if (!cp1 && sru && *sru_version)
+        if (!cp1 && sru && *sru)
             cp1 =  strchr(auth, '/');
         if (!cp1)
         {
