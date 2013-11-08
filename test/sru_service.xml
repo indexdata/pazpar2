@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service id="sru">
+  <rank debug="no"/>
+  <settings target="localhost:9999/db1">
+    <set name="pz:name"  value="db1" />
+    <set name="pz:sru" value="get"/>
+    <set name="pz:url"   value="localhost:9999/db1" />
+    <set name="pz:nativesyntax" value="xml" />
+    <set name="pz:xslt" value="marc21_test.xsl" />
+    <set name="pz:authentication" value="a/b"/>
+    <set name="pz:authentication_mode" value="url"/>
+  </settings>
+  <metadata name="url" merge="unique"/>
+  <metadata name="title" brief="yes" sortkey="skiparticle" merge="longest" rank="6"/>
+  <metadata name="title-remainder" brief="yes" merge="longest" rank="5"/>
+  <metadata name="isbn"/>
+  <metadata name="date" brief="yes" sortkey="numeric" type="year" merge="range"
+	    termlist="yes"/>
+  <metadata name="author" brief="yes" termlist="yes" merge="longest" rank="2"/>
+  <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
+  <metadata name="id"/>
+</service>
