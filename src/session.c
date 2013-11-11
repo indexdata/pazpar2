@@ -1672,37 +1672,20 @@ static int check_record_filter(xmlNode *root, struct session_database *sdb)
     return match;
 }
 
-
 static int ingest_to_cluster(struct client *cl,
                              xmlDoc *xdoc,
                              xmlNode *root,
                              int record_no,
                              const char *mergekey_norm);
 
-/** \brief ingest XML record
-    \param cl client holds the result set for record
-    \param rec record buffer (0 terminated)
-    \param record_no record position (1, 2, ..)
-    \param nmem working NMEM
-    \retval 0 OK
-    \retval -1 failure
-    \retval -2 Filtered
-*/
-int ingest_record(struct client *cl, const char *rec,
-                  int record_no, NMEM nmem)
+static int ingest_sub_record(struct client *cl, xmlDoc *xdoc, xmlNode *root,
+                             int record_no, NMEM nmem,
+                             struct session_database *sdb)
 {
-    struct session *se = client_get_session(cl);
     int ret = 0;
-    struct session_database *sdb = client_get_database(cl);
-    struct conf_service *service = se->service;
-    xmlDoc *xdoc = normalize_record(se, sdb, service, rec, nmem);
-    xmlNode *root;
     const char *mergekey_norm;
-
-    if (!xdoc)
-        return -1;
-
-    root = xmlDocGetRootElement(xdoc);
+    struct session *se = client_get_session(cl);
+    struct conf_service *service = se->service;
 
     if (!check_record_filter(root, sdb))
     {
@@ -1719,14 +1702,55 @@ int ingest_record(struct client *cl, const char *rec,
         xmlFreeDoc(xdoc);
         return -1;
     }
-    session_enter(se, "ingest_record");
+    session_enter(se, "ingest_sub_record");
     if (client_get_session(cl) == se && se->relevance)
         ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
-    session_leave(se, "ingest_record");
+    session_leave(se, "ingest_sub_record");
 
     xmlFreeDoc(xdoc);
     return ret;
 }
+
+/** \brief ingest XML record
+    \param cl client holds the result set for record
+    \param rec record buffer (0 terminated)
+    \param record_no record position (1, 2, ..)
+    \param nmem working NMEM
+    \retval 0 OK
+    \retval -1 failure
+    \retval -2 Filtered
+*/
+int ingest_record(struct client *cl, const char *rec,
+                  int record_no, NMEM nmem)
+{
+    struct session *se = client_get_session(cl);
+    struct session_database *sdb = client_get_database(cl);
+    struct conf_service *service = se->service;
+    xmlDoc *xdoc = normalize_record(se, sdb, service, rec, nmem);
+    xmlNode *root;
+
+    if (!xdoc)
+        return -1;
+
+    root = xmlDocGetRootElement(xdoc);
+
+    if (!strcmp((const char *) root->name, "cluster"))
+    {
+        root = root->children;
+        return ingest_sub_record(cl, xdoc, root, record_no, nmem, sdb);
+    }
+    else if (!strcmp((const char *) root->name, "record"))
+    {
+        return ingest_sub_record(cl, xdoc, root, record_no, nmem, sdb);
+    }
+    else
+    {
+        session_log(se, YLOG_WARN, "Bad pz root element: %s",
+                    (const char *) root->name);
+        return -1;
+    }
+}
+
 
 //    struct conf_metadata *ser_md = &service->metadata[md_field_id];
 //    struct record_metadata *rec_md = record->metadata[md_field_id];
