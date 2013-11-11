@@ -159,6 +159,7 @@ enum pazpar2_error_code session_search(struct session *s, const char *query,
                                        const char *maxrecs,
                                        const char *filter, const char *limit,
                                        const char **addinfo,
+                                       const char **addinfo2,
                                        struct reclist_sortparms *sort_parm,
                                        const char *mergekey,
                                        const char *rank);

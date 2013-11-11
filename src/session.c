@@ -748,6 +748,7 @@ enum pazpar2_error_code session_search(struct session *se,
                                        const char *filter,
                                        const char *limit,
                                        const char **addinfo,
+                                       const char **addinfo2,
                                        struct reclist_sortparms *sp,
                                        const char *mergekey,
                                        const char *rank)
@@ -818,7 +819,7 @@ enum pazpar2_error_code session_search(struct session *se,
         if (prepare_map(se, client_get_database(cl)) < 0)
             continue;
 
-        parse_ret = client_parse_query(cl, query, se->facet_limits);
+        parse_ret = client_parse_query(cl, query, se->facet_limits, addinfo2);
         if (parse_ret == -1)
             no_failed_query++;
         else if (parse_ret == -2)

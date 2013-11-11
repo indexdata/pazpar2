@@ -1342,7 +1342,7 @@ static int apply_limit(struct session_database *sdb,
 // return -1 on query error
 // return -2 on limit error
 int client_parse_query(struct client *cl, const char *query,
-                       facet_limits_t facet_limits)
+                       facet_limits_t facet_limits, const char **error_msg)
 {
     struct session *se = client_get_session(cl);
     struct conf_service *service = se->service;
@@ -1387,6 +1387,8 @@ int client_parse_query(struct client *cl, const char *query,
     ccl_qual_rm(&ccl_map);
     if (!cn)
     {
+        if (error_msg)
+            *error_msg = ccl_err_msg(cerror);
         client_set_state(cl, Client_Error);
         session_log(se, YLOG_WARN, "Client %s: Failed to parse CCL query '%s'",
                     client_get_id(cl),
@@ -1445,6 +1447,7 @@ int client_parse_query(struct client *cl, const char *query,
         session_log(se, YLOG_WARN, "Invalid PQF query for Client %s: %s",
                     client_get_id(cl), cl->pquery);
         ret_value = -1;
+        *error_msg = "Invalid PQF after CCL to PQF conversion";
     }
     else
     {
@@ -1459,7 +1462,10 @@ int client_parse_query(struct client *cl, const char *query,
             else
                 cl->cqlquery = make_cqlquery(cl, zquery);
             if (!cl->cqlquery)
+            {
+                *error_msg = "Cannot convert PQF to Solr/CQL";
                 ret_value = -1;
+            }
             else
                 session_log(se, YLOG_LOG, "Client %s native query: %s (%s)",
                             client_get_id(cl), cl->cqlquery, sru);

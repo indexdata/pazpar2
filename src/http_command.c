@@ -263,9 +263,9 @@ static const char *get_msg(enum pazpar2_error_code code)
     return "No error";
 }
 
-static void error(struct http_response *rs,
-                  enum pazpar2_error_code code,
-                  const char *addinfo)
+static void error2(struct http_response *rs,
+                   enum pazpar2_error_code code,
+                   const char *addinfo, const char *addinfo2)
 {
     struct http_channel *c = rs->channel;
     WRBUF text = wrbuf_alloc();
@@ -278,7 +278,14 @@ static void error(struct http_response *rs,
     wrbuf_printf(text, HTTP_COMMAND_RESPONSE_PREFIX
                  "<error code=\"%d\" msg=\"%s\">", (int) code, msg);
     if (addinfo)
+    {
         wrbuf_xmlputs(text, addinfo);
+        if (addinfo2)
+        {
+            wrbuf_xmlputs(text, ": ");
+            wrbuf_xmlputs(text, addinfo2);
+        }
+    }
     wrbuf_puts(text, "</error>");
 
     yaz_log(YLOG_WARN, "HTTP %s %s%s%s", http_status,
@@ -286,6 +293,13 @@ static void error(struct http_response *rs,
     rs->payload = nmem_strdup(c->nmem, wrbuf_cstr(text));
     wrbuf_destroy(text);
     http_send_response(c);
+}
+
+static void error(struct http_response *rs,
+                  enum pazpar2_error_code code,
+                  const char *addinfo)
+{
+    return error2(rs, code, addinfo, 0);
 }
 
 static void response_open_command(struct http_channel *c, const char *command)
@@ -1361,6 +1375,7 @@ static void cmd_search(struct http_channel *c)
     const char *rank = http_argbyname(rq, "rank");
     enum pazpar2_error_code code;
     const char *addinfo = 0;
+    const char *addinfo2 = 0;
     struct reclist_sortparms *sp;
     struct conf_service *service = 0;
 
@@ -1391,10 +1406,10 @@ static void cmd_search(struct http_channel *c)
     }
 
     code = session_search(s->psession, query, startrecs, maxrecs, filter, limit,
-                          &addinfo, sp, mergekey, rank);
+                          &addinfo, &addinfo2, sp, mergekey, rank);
     if (code)
     {
-        error(rs, code, addinfo);
+        error2(rs, code, addinfo, addinfo2);
         release_session(c, s);
         return;
     }
