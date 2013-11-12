@@ -625,6 +625,31 @@
     in the retrieval record ultimately drives merging, sorting, ranking,
     the extraction of browse facets, and display, all configurable.
    </para>
+
+   <para>
+    Pazpar2 1.6.37 and later also allows already clustered records to
+    be ingested. Suppose a database already clusters for us and we would like
+    to keep that cluster for Pazpar2. In that case we can generate a
+    pz:cluster wrapper element that holds individual pz:record elements.
+   </para>
+   <para>
+    Cluster record example:
+    <screen><![CDATA[
+     <cluster  xmlns="http://www.indexdata.com/pazpar2/1.0">
+       <record>
+         <metadata type="title" rank="2">The Shining</metadata>
+	 <metadata type="author">King, Stephen</metadata>
+	 <metadata type="kind">ebook</metadata>
+       </record>
+       <record>
+         <metadata type="title" rank="2">The Shining</metadata>
+	 <metadata type="author">King, Stephen</metadata>
+	 <metadata type="kind">audio</metadata>
+       </record>
+       <!-- ... and so on -->
+    </record>
+     ]]></screen>
+   </para>
   </section>
 
   <section id="client">
@@ -651,7 +676,7 @@
     search. You start a new search using the 'search' command. Once the
     search has been started, you can follow its progress using the
     'stat', 'bytarget', 'termlist', or 'show' commands. Detailed records
-    can be fetched using the 'record' command.
+    can be fetched using the 'record' command. 
    </para>
   </section>
 

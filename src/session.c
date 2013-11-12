@@ -297,7 +297,8 @@ static void insert_settings_parameters(struct session_database *sdb,
 
 // Add static values from session database settings if applicable
 static void insert_settings_values(struct session_database *sdb, xmlDoc *doc,
-    struct conf_service *service)
+                                   xmlNode *root,
+                                   struct conf_service *service)
 {
     int i;
 
@@ -312,8 +313,7 @@ static void insert_settings_values(struct session_database *sdb, xmlDoc *doc,
             const char *val = session_setting_oneval(sdb, offset);
             if (val)
             {
-                xmlNode *r = xmlDocGetRootElement(doc);
-                xmlNode *n = xmlNewTextChild(r, 0, (xmlChar *) "metadata",
+                xmlNode *n = xmlNewTextChild(root, 0, (xmlChar *) "metadata",
                                              (xmlChar *) val);
                 xmlSetProp(n, (xmlChar *) "type", (xmlChar *) md->name);
             }
@@ -337,17 +337,6 @@ static xmlDoc *normalize_record(struct session *se,
         if (normalize_record_transform(sdb->map, &rdoc, (const char **)parms))
         {
             session_log(se, YLOG_WARN, "Normalize failed");
-        }
-        else
-        {
-            insert_settings_values(sdb, rdoc, service);
-
-            if (global_parameters.dump_records)
-            {
-                session_log(se, YLOG_LOG, "Normalized record from %s",
-                            sdb->database->id);
-                log_xml_doc(rdoc);
-            }
         }
     }
     return rdoc;
@@ -1548,12 +1537,12 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
     return no_found;
 }
 
-static const char *get_mergekey(xmlDoc *doc, struct client *cl, int record_no,
+static const char *get_mergekey(xmlDoc *doc, xmlNode *root, 
+                                struct client *cl, int record_no,
                                 struct conf_service *service, NMEM nmem,
                                 const char *session_mergekey)
 {
     char *mergekey_norm = 0;
-    xmlNode *root = xmlDocGetRootElement(doc);
     WRBUF norm_wr = wrbuf_alloc();
     xmlChar *mergekey;
 
@@ -1680,34 +1669,38 @@ static int ingest_to_cluster(struct client *cl,
 
 static int ingest_sub_record(struct client *cl, xmlDoc *xdoc, xmlNode *root,
                              int record_no, NMEM nmem,
-                             struct session_database *sdb)
+                             struct session_database *sdb,
+                             const char **mergekey_norm)
 {
     int ret = 0;
-    const char *mergekey_norm;
     struct session *se = client_get_session(cl);
     struct conf_service *service = se->service;
 
+    insert_settings_values(sdb, xdoc, root, service);
+
     if (!check_record_filter(root, sdb))
     {
-        session_log(se, YLOG_LOG, "Filtered out record no %d from %s", record_no, sdb->database->id);
-        xmlFreeDoc(xdoc);
-        return -2;
+        session_log(se, YLOG_LOG,
+                    "Filtered out record no %d from %s",
+                    record_no, sdb->database->id);
+        return 0;
     }
-
-    mergekey_norm = get_mergekey(xdoc, cl, record_no, service, nmem,
-        se->mergekey);
-    if (!mergekey_norm)
+    if (!*mergekey_norm)
     {
-        session_log(se, YLOG_WARN, "Got no mergekey");
-        xmlFreeDoc(xdoc);
+        *mergekey_norm = get_mergekey(xdoc, root, cl, record_no, service, nmem,
+                                      se->mergekey);
+    }
+    if (!*mergekey_norm)
+    {
+        session_log(se, YLOG_WARN, "Got no mergekey for record no %d from %s",
+                    record_no, sdb->database->id);
         return -1;
     }
     session_enter(se, "ingest_sub_record");
     if (client_get_session(cl) == se && se->relevance)
-        ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekey_norm);
+        ret = ingest_to_cluster(cl, xdoc, root, record_no, *mergekey_norm);
     session_leave(se, "ingest_sub_record");
 
-    xmlFreeDoc(xdoc);
     return ret;
 }
 
@@ -1727,28 +1720,46 @@ int ingest_record(struct client *cl, const char *rec,
     struct session_database *sdb = client_get_database(cl);
     struct conf_service *service = se->service;
     xmlDoc *xdoc = normalize_record(se, sdb, service, rec, nmem);
+    int r = 0;
     xmlNode *root;
+    const char *mergekey_norm = 0;
 
     if (!xdoc)
         return -1;
+
+    if (global_parameters.dump_records)
+    {
+        session_log(se, YLOG_LOG, "Normalized record from %s",
+                    sdb->database->id);
+        log_xml_doc(xdoc);
+    }
 
     root = xmlDocGetRootElement(xdoc);
 
     if (!strcmp((const char *) root->name, "cluster"))
     {
-        root = root->children;
-        return ingest_sub_record(cl, xdoc, root, record_no, nmem, sdb);
+        for (root = root->children; root; root = root->next)
+            if (root->type == XML_ELEMENT_NODE)
+            {
+                r = ingest_sub_record(cl, xdoc, root, record_no, nmem, sdb,
+                    &mergekey_norm);
+                if (r)
+                    break;
+            }
     }
     else if (!strcmp((const char *) root->name, "record"))
     {
-        return ingest_sub_record(cl, xdoc, root, record_no, nmem, sdb);
+        r = ingest_sub_record(cl, xdoc, root, record_no, nmem, sdb,
+                              &mergekey_norm);
     }
     else
     {
         session_log(se, YLOG_WARN, "Bad pz root element: %s",
                     (const char *) root->name);
-        return -1;
+        r = -1;
     }
+    xmlFreeDoc(xdoc);
+    return r;
 }
 
 
