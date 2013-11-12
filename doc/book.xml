@@ -585,18 +585,17 @@
     The intermediate, internal representation of the record looks like
     this:
     <screen><![CDATA[
-     <record   xmlns="http://www.indexdata.com/pazpar2/1.0"
-     mergekey="title The Shining author King, Stephen">
+     <record xmlns="http://www.indexdata.com/pazpar2/1.0"
+       mergekey="title The Shining author King, Stephen">
 
-     <metadata type="title" rank="2">The Shining</metadata>
+       <metadata type="title" rank="2">The Shining</metadata>
 
-     <metadata type="author">King, Stephen</metadata>
+       <metadata type="author">King, Stephen</metadata>
 
-     <metadata type="kind">ebook</metadata>
-
-     <!-- ... and so on -->
-    </record>
-     ]]></screen>
+       <metadata type="kind">ebook</metadata>
+       <!-- ... and so on -->
+     </record>
+]]></screen>
 
     As you can see, there isn't much to it. There are really only a few
     important elements to this file.
@@ -630,12 +629,13 @@
     Pazpar2 1.6.37 and later also allows already clustered records to
     be ingested. Suppose a database already clusters for us and we would like
     to keep that cluster for Pazpar2. In that case we can generate a
-    pz:cluster wrapper element that holds individual pz:record elements.
+    <literal>cluster</literal> wrapper element that holds individual
+    <literal>record</literal> elements.
    </para>
    <para>
     Cluster record example:
     <screen><![CDATA[
-     <cluster  xmlns="http://www.indexdata.com/pazpar2/1.0">
+     <cluster xmlns="http://www.indexdata.com/pazpar2/1.0">
        <record>
          <metadata type="title" rank="2">The Shining</metadata>
 	 <metadata type="author">King, Stephen</metadata>
@@ -646,8 +646,7 @@
 	 <metadata type="author">King, Stephen</metadata>
 	 <metadata type="kind">audio</metadata>
        </record>
-       <!-- ... and so on -->
-    </record>
+    </cluster>
      ]]></screen>
    </para>
   </section>
