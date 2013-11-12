@@ -23,7 +23,31 @@ kill_pazpar2()
     fi
 }
 
-PREFIX=$1
+ztest=false
+icu=false
+while test $# -gt 0; do
+    case "$1" in
+        -*=*) optarg=`echo "$1" | sed 's/[-_a-zA-Z0-9]*=//'` ;;
+        *) optarg= ;;
+    esac
+    case $1 in
+        --ztest)
+            ztest=true
+            ;;
+        --icu)
+            icu=true
+            ;;
+        -*)
+	    echo "Bad option $1"
+	    exit 1
+            ;;
+	*)
+	    PREFIX=$1
+	    ;;
+    esac
+    shift
+done
+
 if test "x${PREFIX}" = "x"; then
     echo Missing prefix for run_pazpar2.sh
     exit 1
@@ -45,11 +69,48 @@ if test -z $curl; then
     echo "curl not found. $PREFIX can not be tested"
     exit 1
 fi
+
+if test "$ztest" = "true" ; then
+    oIFS=$IFS
+    IFS=:
+    F=''
+    for p in $PATH; do
+	if test -x $p/yaz-ztest -a -x $p/yaz-client; then
+	    VERSION=`$p/yaz-client -V|awk '{print $3;}'|awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
+            if test $VERSION -ge 4002052; then
+		F=$p/yaz-ztest
+		break
+            fi
+	fi
+    done
+    IFS=$oIFS
+    if test -z "$F"; then
+	echo "yaz-ztest not found"
+	exit 0
+    fi
+    rm -f ztest.pid
+    rm -f ${PREFIX}_ztest.log
+    $F -l ${PREFIX}_ztest.log -p ztest.pid -D tcp:localhost:9999
+    sleep 1
+    if test ! -f ztest.pid; then
+	echo "yaz-ztest could not be started"
+	exit 0
+    fi
+fi
+
 GET='$curl --silent --output $OUT2 "$f"'
 POST='$curl --silent --header "Content-Type: text/xml" --data-binary "@$postfile" --output $OUT2  "$f"'
 
-if [ -z "$SKIP_PAZPAR2" ] ; then
+if test "$icu" = "true"; then
+    if ../src/pazpar2 -V |grep icu:enabled >/dev/null; then
+	:
+    else
+	SKIP_PAZPAR2=true
+    fi
+fi
+
 # remove log if starting pazpar2
+if [ -z "$SKIP_PAZPAR2" ] ; then
     rm -f ${PREFIX}_pazpar2.log
 fi
 
@@ -85,6 +146,10 @@ if [ -z "$SKIP_PAZPAR2" -a -z "$WAIT_PAZPAR2" ] ; then
 	trap kill_pazpar2 HUP
     else
 	echo "pazpar2 failed to start"
+	if test -f ztest.pid; then
+	    kill `cat ztest.pid`
+	    rm ztest.pid
+	fi
 	exit 1
     fi
 fi
@@ -174,14 +239,16 @@ if [ "$WAIT_PAZPAR2" ] ; then
     done
     echo "done"
 fi
-
 # Kill programs
+if test -f ztest.pid; then
+    kill `cat ztest.pid`
+    rm ztest.pid
+fi
 
 if [ -z "$SKIP_PAZPAR2" ] ; then
     kill_pazpar2
     sleep 2
 fi
-
 exit $code
 
 # Local Variables:

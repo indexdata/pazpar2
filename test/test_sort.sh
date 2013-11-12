@@ -1,22 +1,10 @@
 #!/bin/sh
 
+TEST=`basename $0 .sh`
 # srcdir might be set by make
 srcdir=${srcdir:-"."}
 
-TEST=`basename $0 .sh`
-
-# Using test solr target opencontent-solr
-E=0
-if test -x ../src/pazpar2; then
-    if ../src/pazpar2 -V |grep icu:enabled >/dev/null; then
-	${srcdir}/run_pazpar2.sh $TEST
-	E=$?
-    fi
-fi
-
-#kill `cat ztest.pid`
-#rm ztest.pid
-exit $E
+exec ${srcdir}/run_pazpar2.sh --icu $TEST
 
 # Local Variables:
 # mode:shell-script
