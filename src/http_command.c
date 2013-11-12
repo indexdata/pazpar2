@@ -299,7 +299,7 @@ static void error(struct http_response *rs,
                   enum pazpar2_error_code code,
                   const char *addinfo)
 {
-    return error2(rs, code, addinfo, 0);
+    error2(rs, code, addinfo, 0);
 }
 
 static void response_open_command(struct http_channel *c, const char *command)
