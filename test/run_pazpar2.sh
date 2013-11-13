@@ -17,13 +17,13 @@ kill_pazpar2()
     if test -n "$PP2PID"; then
 	kill $PP2PID
     fi
-    if test -n "$SLEEP_PID"; then
-	kill $SLEEP_PID
-	SLEEP_PID=""
-    fi
     if test -f ztest.pid; then
 	kill `cat ztest.pid`
 	rm -f ztest.pid
+    fi
+    if test -n "$SLEEP_PID"; then
+	kill $SLEEP_PID
+	SLEEP_PID=""
     fi
 }
 
@@ -132,6 +132,7 @@ if test -n "$PAZPAR2_USE_VALGRIND"; then
     valgrind --num-callers=30 --show-reachable=yes --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -v $LEVELS -X -l ${PREFIX}_pazpar2.log -f ${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
     PP2PID=$!
     sleep 6
+    WAIT=400
 elif test -n "$SKIP_PAZPAR2"; then
     echo "Test ${PREFIX}: not starting Pazpar2 (should be running already)"
 else
@@ -185,7 +186,7 @@ for f in `cat ${srcdir}/${URLS}`; do
 	    fi
 	    rounds=`expr $rounds - 1`
 	    if test -f $OUT1 -a -z "$PAZPAR2_OVERRIDE_TEST"; then
-		if diff $OUT1 $OUT2 >$DIFF; then
+		if diff $OUT1 $OUT2 >$DIFF 2>/dev/null; then
 		    rm $DIFF
 		    rm $OUT2
 		    rounds=0
