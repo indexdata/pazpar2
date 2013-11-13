@@ -89,20 +89,24 @@ if test "$ztest" = "true" ; then
     F=''
     for p in $PATH; do
 	if test -x $p/yaz-ztest -a -x $p/yaz-client; then
-	    VERSION=`$p/yaz-client -V|awk '{print $3;}'|awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
-            if test $VERSION -ge 4002052; then
-		F=$p/yaz-ztest
-		break
-            fi
+	    VERSION=`$p/yaz-client -V 2>/dev/null|awk '{print $3;}'|awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
+	    if test -n "$VERSION"; then
+		if test $VERSION -ge 4002052; then
+		    F=$p/yaz-ztest
+		    break
+		fi
+	    fi
 	fi
     done
     if test -z "$F"; then
 	for p in ${srcdir}/../../yaz ${srcdir}/../../yaz-*; do
-	    if test -x $p/ztest/yaz-ztest -a -x $p/client/yaz-client; then
-		VERSION=`$p/client/yaz-client -V|awk '{print $3;}'|awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
-		if test $VERSION -ge 4002052; then
-		    F=$p/ztest/yaz-ztest
-		    break
+	    if test -x $p/ztest/yaz-ztest; then
+		VERSION=`$p/ztest/yaz-ztest -V 2>/dev/null|awk '{print $3;}'|awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
+		if test -n "$VERSION"; then
+		    if "$VERSION" -ge 4002052; then
+			F=$p/ztest/yaz-ztest
+			break
+		    fi
 		fi
 	    fi
 	done
