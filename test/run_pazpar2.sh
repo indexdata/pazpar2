@@ -70,7 +70,7 @@ done
 IFS=$oIFS
 
 if test -z $curl; then
-    echo "Test $PREFIX: curl not found"
+    echo "$PREFIX: curl not found"
     exit 1
 fi
 
@@ -78,7 +78,7 @@ if test "$icu" = "true"; then
     if ../src/pazpar2 -V |grep icu:enabled >/dev/null; then
 	:
     else
-	echo "Skipping test ${PREFIX}: ICU support unavailable"
+	echo "Skipping ${PREFIX}: ICU support unavailable"
 	exit 0
     fi
 fi
@@ -98,7 +98,7 @@ if test "$ztest" = "true" ; then
     done
     IFS=$oIFS
     if test -z "$F"; then
-	echo "Skipping test ${PREFIX}: recent yaz-ztest not found"
+	echo "Skipping ${PREFIX}: recent yaz-ztest not found"
 	exit 0
     fi
     rm -f ztest.pid
@@ -134,7 +134,7 @@ if test -n "$PAZPAR2_USE_VALGRIND"; then
     sleep 6
     WAIT=400
 elif test -n "$SKIP_PAZPAR2"; then
-    echo "Test ${PREFIX}: not starting Pazpar2 (should be running already)"
+    echo "${PREFIX}: not starting Pazpar2 (should be running already)"
 else
     ../src/pazpar2 -v $LEVELS -d -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
     PP2PID=$!
@@ -148,7 +148,7 @@ if [ -z "$SKIP_PAZPAR2" -a -z "$WAIT_PAZPAR2" ] ; then
 	trap kill_pazpar2 INT
 	trap kill_pazpar2 HUP
     else
-	echo "Test ${PREFIX}: pazpar2 failed to start"
+	echo "${PREFIX}: pazpar2 failed to start"
 	if test -f ztest.pid; then
 	    kill `cat ztest.pid`
 	    rm -f ztest.pid
@@ -192,14 +192,14 @@ for f in `cat ${srcdir}/${URLS}`; do
 		    rounds=0
 		else
 		    if test $rounds -eq 0; then
-			echo "Test $testno: Failed. See $OUT1, $OUT2 and $DIFF"
+			echo "${PREFIX} $testno: Failed. See $OUT1, $OUT2 and $DIFF"
 			echo "URL: $f"
 			code=1
 		    fi
 		fi
 	    else
 		if test $rounds -eq 0; then
-		    echo "Test $testno: Making for the first time"
+		    echo "${PREFIX} $testno: Making for the first time"
 		    mv $OUT2 $OUT1
 		    code=1
 		fi
@@ -227,9 +227,9 @@ for f in `cat ${srcdir}/${URLS}`; do
 	else
 	    IFS="$oIFS"
 	    if test -n "$SLEEP_PID"; then
-		echo "Test $testno: pazpar2 terminated (timeout, probably)"
+		echo "${PREFIX} $testno: pazpar2 terminated (timeout, probably)"
 	    else
-		echo "Test $testno: pazpar2 died"
+		echo "${PREFIX} $testno: pazpar2 died"
 	    fi
 	    exit 1
 	fi
