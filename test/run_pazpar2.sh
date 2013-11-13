@@ -96,6 +96,17 @@ if test "$ztest" = "true" ; then
             fi
 	fi
     done
+    if test -z "$F"; then
+	for p in ${srcdir}/../../yaz ${srcdir}/../../yaz-*; do
+	    if test -x $p/ztest/yaz-ztest -a -x $p/client/yaz-client; then
+		VERSION=`$p/client/yaz-client -V|awk '{print $3;}'|awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
+		if test $VERSION -ge 4002052; then
+		    F=$p/ztest/yaz-ztest
+		    break
+		fi
+	    fi
+	done
+    fi
     IFS=$oIFS
     if test -z "$F"; then
 	echo "Skipping ${PREFIX}: recent yaz-ztest not found"
