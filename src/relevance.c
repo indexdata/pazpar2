@@ -102,15 +102,7 @@ int relevance_snippet(struct relevance *r,
         for (; entries; entries = entries->next, i++)
         {
             if (*norm_str && !strcmp(norm_str, entries->norm_str))
-            {
                 break;
-                if (!highlight)
-                {
-                    highlight = 1;
-                    wrbuf_puts(w_snippet, "<match>");
-                }
-                break;
-            }
         }
         if (entries)
         {
