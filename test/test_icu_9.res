@@ -38,7 +38,7 @@ score = relevance(72241);
  <md-title>How to program a computer</md-title>
  <md-author>Jack Collins</md-author>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="2788512872">
+    name="Index Data MARC test server" checksum="2614320583">
   <md-title>How to program a computer</md-title>
   <md-author>Jack Collins</md-author>
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
@@ -46,7 +46,7 @@ score = relevance(72241);
         YYYYYYYYY</md-test-usersetting-2>
  </location>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="2614320583">
+    name="Index Data MARC test server" checksum="2788512872">
   <md-title>How to program a computer</md-title>
   <md-author>Jack Collins</md-author>
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>

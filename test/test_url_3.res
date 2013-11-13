@@ -9,12 +9,12 @@
  <md-title>How to program a computer</md-title>
  <md-author>Jack Collins</md-author>
  <location id="my"
-    name="marcserver" checksum="64172">
+    name="marcserver" checksum="3602387">
   <md-title>How to program a computer</md-title>
   <md-author>Jack Collins</md-author>
  </location>
  <location id="my"
-    name="marcserver" checksum="3602387">
+    name="marcserver" checksum="64172">
   <md-title>How to program a computer</md-title>
   <md-author>Jack Collins</md-author>
  </location>

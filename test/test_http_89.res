@@ -17,19 +17,28 @@
  <md-subject>Community colleges</md-subject>
  <md-description>&quot;Contract DOT-UT-10003.&quot;</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="4182051184">
-  <md-title>A plan for community college computer development</md-title>
-  <md-date>1971</md-date>
-  <md-subject>Universities and colleges</md-subject>
-  <md-subject>Community colleges</md-subject>
-  <md-description tag="500">Cover title</md-description>
+    name="Index Data MARC test server" checksum="3659474317">
+  <md-title>Computer science &amp; technology</md-title>
+  <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
+  <md-date>1977</md-date>
+  <md-subject>Optical pattern recognition</md-subject>
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Universities and colleges</md-subjects>
+  <md-subjects>Optical pattern recognition</md-subjects>
   <md-subjects>PAZPAR2_NULL_b</md-subjects>
   <md-subjects>PAZPAR2_NULL_c</md-subjects>
-  <md-subjects>Community colleges</md-subjects>
+ </location>
+ <location id="z3950.indexdata.com/marc"
+    name="Index Data MARC test server" checksum="3833666606">
+  <md-title>The use of passwords for controlled access to computer resources</md-title>
+  <md-date>1977</md-date>
+  <md-author>Wood, Helen M</md-author>
+  <md-subject>Computers</md-subject>
+  <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
+  <md-test-usersetting-2>test-usersetting-2 data: 
+        YYYYYYYYY</md-test-usersetting-2>
+  <md-subjects>Computers</md-subjects>
   <md-subjects>PAZPAR2_NULL_b</md-subjects>
   <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
@@ -49,28 +58,19 @@
   <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="3833666606">
-  <md-title>The use of passwords for controlled access to computer resources</md-title>
-  <md-date>1977</md-date>
-  <md-author>Wood, Helen M</md-author>
-  <md-subject>Computers</md-subject>
+    name="Index Data MARC test server" checksum="4182051184">
+  <md-title>A plan for community college computer development</md-title>
+  <md-date>1971</md-date>
+  <md-subject>Universities and colleges</md-subject>
+  <md-subject>Community colleges</md-subject>
+  <md-description tag="500">Cover title</md-description>
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Computers</md-subjects>
+  <md-subjects>Universities and colleges</md-subjects>
   <md-subjects>PAZPAR2_NULL_b</md-subjects>
   <md-subjects>PAZPAR2_NULL_c</md-subjects>
- </location>
- <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="3659474317">
-  <md-title>Computer science &amp; technology</md-title>
-  <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
-  <md-date>1977</md-date>
-  <md-subject>Optical pattern recognition</md-subject>
-  <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
-  <md-test-usersetting-2>test-usersetting-2 data: 
-        YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Optical pattern recognition</md-subjects>
+  <md-subjects>Community colleges</md-subjects>
   <md-subjects>PAZPAR2_NULL_b</md-subjects>
   <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
@@ -111,18 +111,38 @@ score = relevance(41119);
  <md-subject>Tomography</md-subject>
  <md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="3485282028">
-  <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
-  <md-title-remainder>proceedings of the workshop</md-title-remainder>
-  <md-date>1977</md-date>
-  <md-subject>Tomography</md-subject>
+    name="Index Data MARC test server" checksum="2962705161">
+  <md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
+  <md-title-remainder>the proceedings of a workshop</md-title-remainder>
+  <md-date>1974</md-date>
+  <md-subject>Radioisotope scanning</md-subject>
+  <md-subject>Scintillation cameras</md-subject>
+  <md-subject>Imaging systems in medicine</md-subject>
   <md-description tag="504">Includes bibliographical references and index</md-description>
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Tomography</md-subjects>
+  <md-subjects>Radioisotope scanning</md-subjects>
   <md-subjects>PAZPAR2_NULL_b</md-subjects>
   <md-subjects>PAZPAR2_NULL_c</md-subjects>
+  <md-subjects>Scintillation cameras</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
+  <md-subjects>Imaging systems in medicine</md-subjects>
+  <md-subjects>PAZPAR2_NULL_b</md-subjects>
+  <md-subjects>PAZPAR2_NULL_c</md-subjects>
+ </location>
+ <location id="z3950.indexdata.com/marc"
+    name="Index Data MARC test server" checksum="3136897450">
+  <md-title>The Computer Bible</md-title>
+  <md-date>1973-1980</md-date>
+  <md-subject>Bible. O.T</md-subject>
+  <md-subject>Bible</md-subject>
+  <md-description tag="500">Hebrew and Greek; introductions in English</md-description>
+  <md-description tag="500">Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
+  <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
+  <md-test-usersetting-2>test-usersetting-2 data: 
+        YYYYYYYYY</md-test-usersetting-2>
  </location>
  <location id="z3950.indexdata.com/marc"
     name="Index Data MARC test server" checksum="3311089739">
@@ -142,36 +162,16 @@ score = relevance(41119);
   <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="3136897450">
-  <md-title>The Computer Bible</md-title>
-  <md-date>1973-1980</md-date>
-  <md-subject>Bible. O.T</md-subject>
-  <md-subject>Bible</md-subject>
-  <md-description tag="500">Hebrew and Greek; introductions in English</md-description>
-  <md-description tag="500">Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
-  <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
-  <md-test-usersetting-2>test-usersetting-2 data: 
-        YYYYYYYYY</md-test-usersetting-2>
- </location>
- <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="2962705161">
-  <md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
-  <md-title-remainder>the proceedings of a workshop</md-title-remainder>
-  <md-date>1974</md-date>
-  <md-subject>Radioisotope scanning</md-subject>
-  <md-subject>Scintillation cameras</md-subject>
-  <md-subject>Imaging systems in medicine</md-subject>
+    name="Index Data MARC test server" checksum="3485282028">
+  <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
+  <md-title-remainder>proceedings of the workshop</md-title-remainder>
+  <md-date>1977</md-date>
+  <md-subject>Tomography</md-subject>
   <md-description tag="504">Includes bibliographical references and index</md-description>
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Radioisotope scanning</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
-  <md-subjects>Scintillation cameras</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
-  <md-subjects>Imaging systems in medicine</md-subjects>
+  <md-subjects>Tomography</md-subjects>
   <md-subjects>PAZPAR2_NULL_b</md-subjects>
   <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>

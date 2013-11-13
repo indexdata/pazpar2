@@ -107,12 +107,12 @@
  <md-title>How to program a computer</md-title>
  <md-author>Jack Collins</md-author>
  <location id="localhost:9999"
-    name="ztest slow" checksum="1482143625">
+    name="ztest slow" checksum="1993510496">
   <md-title>How to program a computer</md-title>
   <md-author>Jack Collins</md-author>
  </location>
  <location id="localhost:9999"
-    name="ztest slow" checksum="1993510496">
+    name="ztest slow" checksum="1482143625">
   <md-title>How to program a computer</md-title>
   <md-author>Jack Collins</md-author>
  </location>

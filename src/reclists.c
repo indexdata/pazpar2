@@ -366,21 +366,20 @@ struct record_cluster *reclist_insert(struct reclist *l,
         // We found a matching record. Merge them
         if (!strcmp(merge_key, (*p)->record->merge_key))
         {
-            struct record_cluster *existing = (*p)->record;
-            struct record *re = existing->records;
+            struct record **re;
 
-            for (; re; re = re->next)
+            cluster = (*p)->record;
+            for (re = &cluster->records; *re; re = &(*re)->next)
             {
-                if (re->client == record->client &&
-                    record_compare(record, re, service))
+                if ((*re)->client == record->client &&
+                    record_compare(record, *re, service))
                 {
                     yaz_mutex_leave(l->mutex);
                     return 0;
                 }
             }
-            record->next = existing->records;
-            existing->records = record;
-            cluster = existing;
+            *re = record;
+            record->next = 0;
             break;
         }
     }
