@@ -21,6 +21,10 @@ kill_pazpar2()
 	kill $SLEEP_PID
 	SLEEP_PID=""
     fi
+    if test -f ztest.pid; then
+	kill `cat ztest.pid`
+	rm -f ztest.pid
+    fi
 }
 
 ztest=false
@@ -66,8 +70,17 @@ done
 IFS=$oIFS
 
 if test -z $curl; then
-    echo "curl not found. $PREFIX can not be tested"
+    echo "Test $PREFIX: curl not found"
     exit 1
+fi
+
+if test "$icu" = "true"; then
+    if ../src/pazpar2 -V |grep icu:enabled >/dev/null; then
+	:
+    else
+	echo "Skipping test ${PREFIX}: ICU support unavailable"
+	exit 0
+    fi
 fi
 
 if test "$ztest" = "true" ; then
@@ -85,7 +98,7 @@ if test "$ztest" = "true" ; then
     done
     IFS=$oIFS
     if test -z "$F"; then
-	echo "yaz-ztest not found"
+	echo "Skipping test ${PREFIX}: recent yaz-ztest not found"
 	exit 0
     fi
     rm -f ztest.pid
@@ -95,17 +108,6 @@ if test "$ztest" = "true" ; then
     if test ! -f ztest.pid; then
 	echo "yaz-ztest could not be started"
 	exit 0
-    fi
-fi
-
-GET='$curl --silent --output $OUT2 "$f"'
-POST='$curl --silent --header "Content-Type: text/xml" --data-binary "@$postfile" --output $OUT2  "$f"'
-
-if test "$icu" = "true"; then
-    if ../src/pazpar2 -V |grep icu:enabled >/dev/null; then
-	:
-    else
-	SKIP_PAZPAR2=true
     fi
 fi
 
@@ -131,7 +133,7 @@ if test -n "$PAZPAR2_USE_VALGRIND"; then
     PP2PID=$!
     sleep 6
 elif test -n "$SKIP_PAZPAR2"; then
-    echo "Skipping pazpar2. Must already be running with correct config!!! "
+    echo "Test ${PREFIX}: not starting Pazpar2 (should be running already)"
 else
     ../src/pazpar2 -v $LEVELS -d -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
     PP2PID=$!
@@ -145,14 +147,17 @@ if [ -z "$SKIP_PAZPAR2" -a -z "$WAIT_PAZPAR2" ] ; then
 	trap kill_pazpar2 INT
 	trap kill_pazpar2 HUP
     else
-	echo "pazpar2 failed to start"
+	echo "Test ${PREFIX}: pazpar2 failed to start"
 	if test -f ztest.pid; then
 	    kill `cat ztest.pid`
-	    rm ztest.pid
+	    rm -f ztest.pid
 	fi
 	exit 1
     fi
 fi
+
+GET='$curl --silent --output $OUT2 "$f"'
+POST='$curl --silent --header "Content-Type: text/xml" --data-binary "@$postfile" --output $OUT2  "$f"'
 
 # Set to success by default.. Will be set to non-zero in case of failure
 code=0
@@ -242,7 +247,7 @@ fi
 # Kill programs
 if test -f ztest.pid; then
     kill `cat ztest.pid`
-    rm ztest.pid
+    rm -f ztest.pid
 fi
 
 if [ -z "$SKIP_PAZPAR2" ] ; then
