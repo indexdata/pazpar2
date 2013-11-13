@@ -103,7 +103,7 @@ if test "$ztest" = "true" ; then
 	    if test -x $p/ztest/yaz-ztest; then
 		VERSION=`$p/ztest/yaz-ztest -V 2>/dev/null|awk '{print $3;}'|awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
 		if test -n "$VERSION"; then
-		    if "$VERSION" -ge 4002052; then
+		    if test "$VERSION" -ge 4002052; then
 			F=$p/ztest/yaz-ztest
 			break
 		    fi
