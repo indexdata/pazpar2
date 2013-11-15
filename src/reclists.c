@@ -414,6 +414,7 @@ struct record_cluster *reclist_insert(struct reclist *l,
         /* attach to hash list */
         *p = new;
         l->num_records++;
+        l->sorted_list = l->sorted_ptr = 0;
     }
     yaz_mutex_leave(l->mutex);
     return cluster;
