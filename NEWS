@@ -1,3 +1,16 @@
+--- 1.6.37 2013/11/18
+
+Fix 'Record Missing' for command=show PAZ-903
+
+Preserve order of records within cluster PAZ-902
+
+testing: use yaz-ztest -V if possible and use YAZ in sibling directory
+if present.
+
+Allow clustered records to be ingested during retrieval. PAZ-900
+
+Fix void function error which cannot return a value.
+
 --- 1.6.36 2013/11/11
 
 SRU pz:authentication="a/b" may end up as x-username=a%2Fb PAZ-899
