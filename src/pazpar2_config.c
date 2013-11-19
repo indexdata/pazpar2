@@ -281,8 +281,6 @@ void service_destroy(struct conf_service *service)
 
 void service_incref(struct conf_service *service)
 {
-    yaz_log(YLOG_LOG, "service_incref. p=%p cnt=%d", service,
-            service->ref_count);
     pazpar2_incref(&service->ref_count, service->mutex);
 }
 
@@ -1286,7 +1284,6 @@ void server_destroy(struct conf_server *server)
         s = s_next;
     }
     pp2_charset_fact_destroy(server->charsets);
-    yaz_log(YLOG_LOG, "server_destroy server=%p", server);
     http_server_destroy(server->http_server);
 }
 

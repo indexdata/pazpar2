@@ -940,7 +940,7 @@ void session_apply_setting(struct session *se, char *dbname, char *setting,
 void session_destroy(struct session *se)
 {
     struct session_database *sdb;
-    session_log(se, YLOG_DEBUG, "Destroying");
+    session_log(se, YLOG_LOG, "destroy");
     session_use(-1);
     session_remove_cached_clients(se);
 
@@ -1010,6 +1010,8 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->normalize_cache = normalize_cache_create();
     session->session_mutex = 0;
     pazpar2_mutex_create(&session->session_mutex, tmp_str);
+    session_log(session, YLOG_LOG, "create");
+
     session_use(1);
     return session;
 }

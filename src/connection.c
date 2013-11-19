@@ -390,7 +390,6 @@ void connect_resolver_host(struct host *host, iochan_man_t iochan_man)
         }
         else
         {
-            yaz_log(YLOG_LOG, "connect_resolver_host: state=%d", con->state);
             con = con->next;
         }
     }
