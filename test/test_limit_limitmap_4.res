@@ -9,13 +9,13 @@
  <md-title>How to program a computer</md-title>
  <md-author>Jack Collins</md-author>
  <location id="Target-1"
-    name="ztest-db1" checksum="2047776311">
+    name="ztest-db1" checksum="1300880726">
   <md-title>How to program a computer</md-title>
   <md-author>Jack Collins</md-author>
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
  </location>
  <location id="Target-1"
-    name="ztest-db1" checksum="1300880726">
+    name="ztest-db1" checksum="2047776311">
   <md-title>How to program a computer</md-title>
   <md-author>Jack Collins</md-author>
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>

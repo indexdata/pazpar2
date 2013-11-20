@@ -27,16 +27,16 @@
  <md-author>Baker, M. N</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1810338543">
+    name="LOC Solr Test" checksum="1261468432">
   <md-title>Potable water and methods of detecting impurities</md-title>
-  <md-date>1906</md-date>
+  <md-date>1899</md-date>
   <md-author>Baker, M. N</md-author>
   <md-medium>book</md-medium>
  </location>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1261468432">
+    name="LOC Solr Test" checksum="1810338543">
   <md-title>Potable water and methods of detecting impurities</md-title>
-  <md-date>1899</md-date>
+  <md-date>1906</md-date>
   <md-author>Baker, M. N</md-author>
   <md-medium>book</md-medium>
  </location>
@@ -140,19 +140,19 @@
  <md-description>&quot;September 1999.&quot;</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1069481248">
-  <md-title>Water quality assessment of the State Water Project, 1998-99</md-title>
-  <md-date>2000</md-date>
-  <md-description>Cover title</md-description>
-  <md-description>&quot;July 2000.&quot;</md-description>
-  <md-medium>book</md-medium>
- </location>
- <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="3749836075">
   <md-title>Water quality assessment of the State Water Project, 1996-97</md-title>
   <md-date>1999</md-date>
   <md-description>Cover title</md-description>
   <md-description>&quot;September 1999.&quot;</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1069481248">
+  <md-title>Water quality assessment of the State Water Project, 1998-99</md-title>
+  <md-date>2000</md-date>
+  <md-description>Cover title</md-description>
+  <md-description>&quot;July 2000.&quot;</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>2</count>
@@ -202,20 +202,20 @@
  <md-description>With reference to India</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1325464160">
-  <md-title>Water, in press, 1998</md-title>
-  <md-title-remainder>an index to news items on water resources selected from leading news papers</md-title-remainder>
-  <md-date>1999</md-date>
-  <md-description>Includes index</md-description>
-  <md-medium>book</md-medium>
- </location>
- <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="2167221470">
   <md-title>Water in press, 1997</md-title>
   <md-title-remainder>an index of news items on water resources selected from leading news papers</md-title-remainder>
   <md-date>1998</md-date>
   <md-description>Includes index</md-description>
   <md-description>With reference to India</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1325464160">
+  <md-title>Water, in press, 1998</md-title>
+  <md-title-remainder>an index to news items on water resources selected from leading news papers</md-title-remainder>
+  <md-date>1999</md-date>
+  <md-description>Includes index</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>2</count>

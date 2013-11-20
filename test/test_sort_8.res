@@ -216,20 +216,20 @@
  <md-description>&quot;September 1999.&quot;</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1069481248">
-  <md-title>Water quality assessment of the State Water Project, 1998-99</md-title>
-  <md-date>2000</md-date>
-  <md-description>Cover title</md-description>
-  <md-description>&quot;July 2000.&quot;</md-description>
-  <md-medium>book</md-medium>
-  <md-score>2.0165553</md-score>
- </location>
- <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="3749836075">
   <md-title>Water quality assessment of the State Water Project, 1996-97</md-title>
   <md-date>1999</md-date>
   <md-description>Cover title</md-description>
   <md-description>&quot;September 1999.&quot;</md-description>
+  <md-medium>book</md-medium>
+  <md-score>2.0165553</md-score>
+ </location>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1069481248">
+  <md-title>Water quality assessment of the State Water Project, 1998-99</md-title>
+  <md-date>2000</md-date>
+  <md-description>Cover title</md-description>
+  <md-description>&quot;July 2000.&quot;</md-description>
   <md-medium>book</md-medium>
   <md-score>2.0165553</md-score>
  </location>
@@ -331,15 +331,6 @@
  <md-description>With reference to India</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1325464160">
-  <md-title>Water, in press, 1998</md-title>
-  <md-title-remainder>an index to news items on water resources selected from leading news papers</md-title-remainder>
-  <md-date>1999</md-date>
-  <md-description>Includes index</md-description>
-  <md-medium>book</md-medium>
-  <md-score>1.6871711</md-score>
- </location>
- <location id="LOC Solr Test"
     name="LOC Solr Test" checksum="2167221470">
   <md-title>Water in press, 1997</md-title>
   <md-title-remainder>an index of news items on water resources selected from leading news papers</md-title-remainder>
@@ -348,6 +339,15 @@
   <md-description>With reference to India</md-description>
   <md-medium>book</md-medium>
   <md-score>1.9281956</md-score>
+ </location>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1325464160">
+  <md-title>Water, in press, 1998</md-title>
+  <md-title-remainder>an index to news items on water resources selected from leading news papers</md-title-remainder>
+  <md-date>1999</md-date>
+  <md-description>Includes index</md-description>
+  <md-medium>book</md-medium>
+  <md-score>1.6871711</md-score>
  </location>
  <count>2</count>
  <recid>content: title water in press medium book</recid>
