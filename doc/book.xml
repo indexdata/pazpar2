@@ -858,6 +858,14 @@
           tf[i] = tf[i] / cluster_size;
        relevance += 100000 * tf[i] / idf[i];
        ]]></screen>
+   <para>
+    For controlling the ranking parameters, refer to the
+    <link linkend="service-rank">rank</link> element of the 
+    service definition.
+    Refer to the <link linkend="metadata-rank">rank</link> attribute
+    of the metadata element for how to control ranking for individual
+    metadata fields.
+   </para>
   </section> <!-- relevance_ranking -->
 
   <section id="masterkey_connect">

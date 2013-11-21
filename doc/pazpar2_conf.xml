@@ -606,7 +606,7 @@
 	</listitem>
        </varlistentry>
 
-       <varlistentry>
+       <varlistentry id="service-rank">
 	<term>rank</term>
 	<listitem>
 	 <para>
@@ -774,6 +774,7 @@
  <server>
   <listen port="9004"/>
   <service>
+   <rank debug="yes"/>
    <metadata name="title" brief="yes" sortkey="skiparticle"
              merge="longest" rank="6"/>
    <metadata name="isbn" merge="unique"/>
