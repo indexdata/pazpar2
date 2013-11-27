@@ -1667,12 +1667,12 @@ static int ingest_to_cluster(struct client *cl,
                              xmlDoc *xdoc,
                              xmlNode *root,
                              int record_no,
-                             const char *mergekey_norm);
+                             struct record_metadata_attr *mergekey);
 
 static int ingest_sub_record(struct client *cl, xmlDoc *xdoc, xmlNode *root,
                              int record_no, NMEM nmem,
                              struct session_database *sdb,
-                             const char **mergekey_norm)
+                             struct record_metadata_attr *mergekeys)
 {
     int ret = 0;
     struct session *se = client_get_session(cl);
@@ -1687,20 +1687,9 @@ static int ingest_sub_record(struct client *cl, xmlDoc *xdoc, xmlNode *root,
                     record_no, sdb->database->id);
         return 0;
     }
-    if (!*mergekey_norm)
-    {
-        *mergekey_norm = get_mergekey(xdoc, root, cl, record_no, service, nmem,
-                                      se->mergekey);
-    }
-    if (!*mergekey_norm)
-    {
-        session_log(se, YLOG_WARN, "Got no mergekey for record no %d from %s",
-                    record_no, sdb->database->id);
-        return -1;
-    }
     session_enter(se, "ingest_sub_record");
     if (client_get_session(cl) == se && se->relevance)
-        ret = ingest_to_cluster(cl, xdoc, root, record_no, *mergekey_norm);
+        ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekeys);
     session_leave(se, "ingest_sub_record");
 
     return ret;
@@ -1724,7 +1713,6 @@ int ingest_record(struct client *cl, const char *rec,
     xmlDoc *xdoc = normalize_record(se, sdb, service, rec, nmem);
     int r = 0;
     xmlNode *root;
-    const char *mergekey_norm = 0;
 
     if (!xdoc)
         return -1;
@@ -1740,19 +1728,41 @@ int ingest_record(struct client *cl, const char *rec,
 
     if (!strcmp((const char *) root->name, "cluster"))
     {
-        for (root = root->children; root; root = root->next)
-            if (root->type == XML_ELEMENT_NODE)
+        xmlNode *sroot;
+        for (sroot = root->children; sroot; sroot = sroot->next)
+            if (sroot->type == XML_ELEMENT_NODE)
             {
-                r = ingest_sub_record(cl, xdoc, root, record_no, nmem, sdb,
-                    &mergekey_norm);
+                const char *mergekey_norm =
+                    get_mergekey(xdoc, sroot, cl, record_no, service, nmem,
+                         se->mergekey);
+
+                struct record_metadata_attr *mk = (struct record_metadata_attr*)
+                    nmem_malloc(nmem, sizeof(*mk));
+                mk->name = 0;
+                mk->value = nmem_strdup(nmem, mergekey_norm);
+                mk->next = 0;
+
+                r = ingest_sub_record(cl, xdoc, sroot, record_no, nmem, sdb,
+                                      mk);
                 if (r)
                     break;
             }
     }
     else if (!strcmp((const char *) root->name, "record"))
     {
-        r = ingest_sub_record(cl, xdoc, root, record_no, nmem, sdb,
-                              &mergekey_norm);
+        const char *mergekey_norm =
+            get_mergekey(xdoc, root, cl, record_no, service, nmem,
+                         se->mergekey);
+        if (mergekey_norm)
+        {
+            struct record_metadata_attr *mk = (struct record_metadata_attr*)
+                nmem_malloc(nmem, sizeof(*mk));
+            mk->name = 0;
+            mk->value = nmem_strdup(nmem, mergekey_norm);
+            mk->next = 0;
+
+            r = ingest_sub_record(cl, xdoc, root, record_no, nmem, sdb, mk);
+        }
     }
     else
     {
@@ -1926,7 +1936,7 @@ static int ingest_to_cluster(struct client *cl,
                              xmlDoc *xdoc,
                              xmlNode *root,
                              int record_no,
-                             const char *mergekey_norm)
+                             struct record_metadata_attr *merge_keys)
 {
     xmlNode *n;
     xmlChar *type = 0;
@@ -2029,7 +2039,7 @@ static int ingest_to_cluster(struct client *cl,
         return -2;
     }
     cluster = reclist_insert(se->reclist, service, record,
-                             mergekey_norm, &se->total_merged);
+                             merge_keys, &se->total_merged);
     if (!cluster)
         return 0; // complete match with existing record
 

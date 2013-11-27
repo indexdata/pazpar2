@@ -82,7 +82,9 @@ struct record_cluster
     // Array mirrors list of metadata fields in config
     struct record_metadata **metadata;
     union data_types **sortkeys;
-    char *merge_key;
+    // char *merge_key;
+    struct record_metadata_attr *merge_keys;
+
     int relevance_score;
     int *term_frequency_vec;
     float *term_frequency_vecf;

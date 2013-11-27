@@ -50,6 +50,22 @@ struct reclist_bucket
     struct reclist_sortparms *sort_parms;
 };
 
+static void append_merge_keys(struct record_metadata_attr **p,
+                              struct record_metadata_attr *a,
+                              NMEM nmem)
+{
+    while (*p)
+        p = &(*p)->next;
+    for (; a; a = a->next)
+    {
+        *p = (struct record_metadata_attr *) nmem_malloc(nmem, sizeof(**p));
+        (*p)->name = nmem_strdup_null(nmem, a->name);
+        (*p)->value = nmem_strdup_null(nmem, a->value);
+        p = &(*p)->next;
+    }
+    *p = 0;
+}
+
 struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
                                                   struct conf_service *service)
 {
@@ -346,43 +362,55 @@ int reclist_get_num_records(struct reclist *l)
 struct record_cluster *reclist_insert(struct reclist *l,
                                       struct conf_service *service,
                                       struct record *record,
-                                      const char *merge_key, int *total)
+                                      struct record_metadata_attr *merge_keys,
+                                      int *total)
 {
-    unsigned int bucket;
-    struct reclist_bucket **p;
     struct record_cluster *cluster = 0;
+    struct record_metadata_attr *mkl = merge_keys;
+    struct reclist_bucket **p;
 
     assert(service);
     assert(l);
     assert(record);
-    assert(merge_key);
+    assert(merge_keys);
     assert(total);
 
-    bucket = jenkins_hash((unsigned char*) merge_key) % l->hash_size;
-
     yaz_mutex_enter(l->mutex);
-    for (p = &l->hashtable[bucket]; *p; p = &(*p)->hash_next)
-    {
-        // We found a matching record. Merge them
-        if (!strcmp(merge_key, (*p)->record->merge_key))
-        {
-            struct record **re;
 
-            cluster = (*p)->record;
-            for (re = &cluster->records; *re; re = &(*re)->next)
+    for (; mkl; mkl = mkl->next)
+    {
+        const char *merge_key = mkl->value;
+        unsigned int bucket =
+            jenkins_hash((unsigned char*) merge_key) % l->hash_size;
+
+        for (p = &l->hashtable[bucket]; *p; p = &(*p)->hash_next)
+        {
+            struct record_metadata_attr *mkr = (*p)->record->merge_keys;
+            for (; mkr; mkr = mkr->next)
             {
-                if ((*re)->client == record->client &&
-                    record_compare(record, *re, service))
+                // We found a matching record. Merge them
+                if (!strcmp(merge_key, mkr->value))
                 {
-                    yaz_mutex_leave(l->mutex);
-                    return 0;
+                    struct record **re;
+
+                    cluster = (*p)->record;
+                    for (re = &cluster->records; *re; re = &(*re)->next)
+                    {
+                        if ((*re)->client == record->client &&
+                            record_compare(record, *re, service))
+                        {
+                            yaz_mutex_leave(l->mutex);
+                            return 0;
+                        }
+                    }
+                    *re = record;
+                    record->next = 0;
+                    goto out;
                 }
             }
-            *re = record;
-            record->next = 0;
-            break;
         }
     }
+out:
     if (!cluster)
     {
         struct reclist_bucket *new =
@@ -394,10 +422,13 @@ struct record_cluster *reclist_insert(struct reclist *l,
         new->record = cluster;
         new->hash_next = 0;
         cluster->records = record;
-        cluster->merge_key = nmem_strdup(l->nmem, merge_key);
+
+        cluster->merge_keys = 0;
+        append_merge_keys(&cluster->merge_keys, merge_keys, l->nmem);
+
         cluster->relevance_score = 0;
         cluster->term_frequency_vec = 0;
-        cluster->recid = nmem_strdup(l->nmem, merge_key);
+        cluster->recid = merge_keys->value;
         (*total)++;
         cluster->metadata =
             nmem_malloc(l->nmem,
