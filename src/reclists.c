@@ -428,7 +428,7 @@ out:
 
         cluster->relevance_score = 0;
         cluster->term_frequency_vec = 0;
-        cluster->recid = merge_keys->value;
+        cluster->recid = cluster->merge_keys->value;
         (*total)++;
         cluster->metadata =
             nmem_malloc(l->nmem,
