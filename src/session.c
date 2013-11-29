@@ -1728,24 +1728,50 @@ int ingest_record(struct client *cl, const char *rec,
 
     if (!strcmp((const char *) root->name, "cluster"))
     {
+        int no_merge_keys = 0;
+        int no_merge_dups = 0;
         xmlNode *sroot;
+        struct record_metadata_attr *mk = 0;
+
         for (sroot = root->children; sroot; sroot = sroot->next)
-            if (sroot->type == XML_ELEMENT_NODE)
+            if (sroot->type == XML_ELEMENT_NODE &&
+                !strcmp((const char *) sroot->name, "record"))
             {
+                struct record_metadata_attr **mkp;
                 const char *mergekey_norm =
                     get_mergekey(xdoc, sroot, cl, record_no, service, nmem,
-                         se->mergekey);
-
-                struct record_metadata_attr *mk = (struct record_metadata_attr*)
-                    nmem_malloc(nmem, sizeof(*mk));
-                mk->name = 0;
-                mk->value = nmem_strdup(nmem, mergekey_norm);
-                mk->next = 0;
-
+                                 se->mergekey);
+                if (!mergekey_norm)
+                {
+                    r = -1;
+                    break;
+                }
+                for (mkp = &mk; *mkp; mkp = &(*mkp)->next)
+                    if (!strcmp((*mkp)->value, mergekey_norm))
+                        break;
+                if (!*mkp)
+                {
+                    *mkp = (struct record_metadata_attr*)
+                        nmem_malloc(nmem, sizeof(**mkp));
+                    (*mkp)->name = 0;
+                    (*mkp)->value = nmem_strdup(nmem, mergekey_norm);
+                    (*mkp)->next = 0;
+                    no_merge_keys++;
+                }
+                else
+                    no_merge_dups++;
+            }
+        if (no_merge_keys > 1 || no_merge_dups > 0)
+        {
+            yaz_log(YLOG_LOG, "Got %d mergekeys, %d dups for position %d",
+                    no_merge_keys, no_merge_dups, record_no);
+        }
+        for (sroot = root->children; !r && sroot; sroot = sroot->next)
+            if (sroot->type == XML_ELEMENT_NODE &&
+                !strcmp((const char *) sroot->name, "record"))
+            {
                 r = ingest_sub_record(cl, xdoc, sroot, record_no, nmem, sdb,
                                       mk);
-                if (r)
-                    break;
             }
     }
     else if (!strcmp((const char *) root->name, "record"))
@@ -2038,7 +2064,7 @@ static int ingest_to_cluster(struct client *cl,
             xmlFree(value);
         return -2;
     }
-    cluster = reclist_insert(se->reclist, service, record,
+    cluster = reclist_insert(se->reclist, se->relevance, service, record,
                              merge_keys, &se->total_merged);
     if (!cluster)
         return 0; // complete match with existing record
@@ -2060,9 +2086,6 @@ static int ingest_to_cluster(struct client *cl,
     if (global_parameters.dump_records)
         session_log(se, YLOG_LOG, "Cluster id %s from %s (#%d)", cluster->recid,
                     sdb->database->id, record_no);
-
-
-    relevance_newrec(se->relevance, cluster);
 
     // original metadata, to check if first existence of a field
     metadata0 = xmalloc(sizeof(*metadata0) * service->num_metadata);

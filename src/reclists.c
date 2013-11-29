@@ -358,8 +358,28 @@ int reclist_get_num_records(struct reclist *l)
     return 0;
 }
 
+static void merge_cluster(struct reclist *l,
+                          struct relevance *r,
+                          struct record_cluster *dst,
+                          struct record_cluster **src)
+{
+#if 0
+    dst->metadata = (*src)->metadata;
+    dst->sortkeys = (*src)->sortkeys;
+    int relevance_score;
+    int *term_frequency_vec;
+    float *term_frequency_vecf;
+    // Set-specific ID for this record
+    char *recid;
+    WRBUF relevance_explain1;
+    WRBUF relevance_explain2;
+    struct record *records;
+#endif
+}
+
 // Insert a record. Return record cluster (newly formed or pre-existing)
 struct record_cluster *reclist_insert(struct reclist *l,
+                                      struct relevance *r,
                                       struct conf_service *service,
                                       struct record *record,
                                       struct record_metadata_attr *merge_keys,
@@ -393,8 +413,7 @@ struct record_cluster *reclist_insert(struct reclist *l,
                 {
                     struct record **re;
 
-                    cluster = (*p)->record;
-                    for (re = &cluster->records; *re; re = &(*re)->next)
+                    for (re = &(*p)->record->records; *re; re = &(*re)->next)
                     {
                         if ((*re)->client == record->client &&
                             record_compare(record, *re, service))
@@ -403,14 +422,19 @@ struct record_cluster *reclist_insert(struct reclist *l,
                             return 0;
                         }
                     }
-                    *re = record;
-                    record->next = 0;
-                    goto out;
+
+                    if (!cluster)
+                    {
+                        cluster = (*p)->record;
+                        *re = record;
+                        record->next = 0;
+                    }
+                    else
+                        merge_cluster(l, r, cluster, &(*p)->record);
                 }
             }
         }
     }
-out:
     if (!cluster)
     {
         struct reclist_bucket *new =
@@ -427,7 +451,6 @@ out:
         append_merge_keys(&cluster->merge_keys, merge_keys, l->nmem);
 
         cluster->relevance_score = 0;
-        cluster->term_frequency_vec = 0;
         cluster->recid = cluster->merge_keys->value;
         (*total)++;
         cluster->metadata =
@@ -440,6 +463,7 @@ out:
         memset(cluster->sortkeys, 0,
                sizeof(union data_types*) * service->num_sortkeys);
 
+        relevance_newrec(r, cluster);
         cluster->relevance_explain1 = wrbuf_alloc();
         cluster->relevance_explain2 = wrbuf_alloc();
         /* attach to hash list */

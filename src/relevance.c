@@ -320,24 +320,21 @@ void relevance_destroy(struct relevance **rp)
 
 void relevance_newrec(struct relevance *r, struct record_cluster *rec)
 {
-    if (!rec->term_frequency_vec)
-    {
-        int i;
+    int i;
 
-        // term frequency [1,..] . [0] is total length of all fields
-        rec->term_frequency_vec =
-            nmem_malloc(r->nmem,
-                        r->vec_len * sizeof(*rec->term_frequency_vec));
-        for (i = 0; i < r->vec_len; i++)
-            rec->term_frequency_vec[i] = 0;
+    // term frequency [1,..] . [0] is total length of all fields
+    rec->term_frequency_vec =
+        nmem_malloc(r->nmem,
+                    r->vec_len * sizeof(*rec->term_frequency_vec));
+    for (i = 0; i < r->vec_len; i++)
+        rec->term_frequency_vec[i] = 0;
 
-        // term frequency divided by length of field [1,...]
-        rec->term_frequency_vecf =
-            nmem_malloc(r->nmem,
-                        r->vec_len * sizeof(*rec->term_frequency_vecf));
-        for (i = 0; i < r->vec_len; i++)
-            rec->term_frequency_vecf[i] = 0.0;
-    }
+    // term frequency divided by length of field [1,...]
+    rec->term_frequency_vecf =
+        nmem_malloc(r->nmem,
+                    r->vec_len * sizeof(*rec->term_frequency_vecf));
+    for (i = 0; i < r->vec_len; i++)
+        rec->term_frequency_vecf[i] = 0.0;
 }
 
 void relevance_donerecord(struct relevance *r, struct record_cluster *cluster)

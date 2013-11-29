@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/yaz-ccl.h>
 
 #include "facet_limit.h"
+#include "relevance.h"
 #include "reclists.h"
 
 struct record;

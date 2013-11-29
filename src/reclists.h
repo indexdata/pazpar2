@@ -39,6 +39,7 @@ struct reclist *reclist_create(NMEM);
 void reclist_destroy(struct reclist *l);
 void reclist_limit(struct reclist *l, struct session *session, int lazy);
 struct record_cluster *reclist_insert(struct reclist *tl,
+                                      struct relevance *r,
                                       struct conf_service *service,
                                       struct record  *record,
                                       struct record_metadata_attr *merge_keys, 
