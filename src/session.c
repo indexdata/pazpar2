@@ -2067,7 +2067,13 @@ static int ingest_to_cluster(struct client *cl,
     cluster = reclist_insert(se->reclist, se->relevance, service, record,
                              merge_keys, &se->total_merged);
     if (!cluster)
+    {
+        if (type)
+            xmlFree(type);
+        if (value)
+            xmlFree(value);
         return 0; // complete match with existing record
+    }
 
     {
         const char *use_term_factor_str =

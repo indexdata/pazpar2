@@ -35,6 +35,8 @@ struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
 void relevance_clear(struct relevance *r);
 void relevance_destroy(struct relevance **rp);
 void relevance_newrec(struct relevance *r, struct record_cluster *cluster);
+void relevance_mergerec(struct relevance *r, struct record_cluster *dst,
+                        const struct record_cluster *src);
 void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
                           const char *words, const char *multiplier,
                           const char *name);

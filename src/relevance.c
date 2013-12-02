@@ -318,6 +318,18 @@ void relevance_destroy(struct relevance **rp)
     }
 }
 
+void relevance_mergerec(struct relevance *r, struct record_cluster *dst,
+                        const struct record_cluster *src)
+{
+    int i;
+
+    for (i = 0; i < r->vec_len; i++)
+        dst->term_frequency_vec[i] += src->term_frequency_vec[i];
+
+    for (i = 0; i < r->vec_len; i++)
+        dst->term_frequency_vecf[i] += src->term_frequency_vecf[i];
+}
+
 void relevance_newrec(struct relevance *r, struct record_cluster *rec)
 {
     int i;
