@@ -93,6 +93,8 @@ struct record_cluster
     WRBUF relevance_explain1;
     WRBUF relevance_explain2;
     struct record *records;
+    struct record_cluster *sorted_next;
+    struct reclist_sortparms *sort_parms;
 };
 
 #endif // RECORD_H
