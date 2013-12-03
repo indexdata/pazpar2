@@ -54,7 +54,6 @@ static void append_merge_keys(struct record_metadata_attr **p,
                               const struct record_metadata_attr *a,
                               NMEM nmem)
 {
-#if 1
     for (; a; a = a->next)
     {
         struct record_metadata_attr **pi = p;
@@ -69,18 +68,6 @@ static void append_merge_keys(struct record_metadata_attr **p,
             (*pi)->next = 0;
         }
     }
-#else
-    while (*p)
-        p = &(*p)->next;
-    for (; a; a = a->next)
-    {
-        *p = (struct record_metadata_attr *) nmem_malloc(nmem, sizeof(**p));
-        (*p)->name = nmem_strdup_null(nmem, a->name);
-        (*p)->value = nmem_strdup_null(nmem, a->value);
-        p = &(*p)->next;
-    }
-    *p = 0;
-#endif
 }
 
 struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
