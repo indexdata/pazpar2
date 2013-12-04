@@ -9,7 +9,8 @@
     xmlns:pz="http://www.indexdata.com/pazpar2/1.0"
     xmlns:dc="http://purl.org/dc/elements/1.1/"
     xmlns:dcterms="http://purl.org/dc/terms/"
-    xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/">
+    xmlns:dkabm="http://biblstandard.dk/abm/namespace/dkabm/"
+    xmlns:os="http://oss.dbc.dk/ns/opensearch">
 
  <xsl:output indent="yes"
         method="xml"
@@ -24,8 +25,19 @@
     </pz:cluster>
   </xsl:template>
 
-  <xsl:template match="dkabm:record">
+  <xsl:template match="os:object">
     <pz:record>
+      <xsl:apply-templates/>
+    </pz:record>
+  </xsl:template>
+
+  <xsl:template match="os:score">
+    <pz:metadata type="score">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="dkabm:record">
 
       <pz:metadata type="id">
         <xsl:value-of select="dc:identifier"/>
@@ -83,7 +95,6 @@
         <xsl:value-of select="$medium" />
       </pz:metadata>
 
-    </pz:record>
   </xsl:template>
 
   <xsl:template match="text()"/>
