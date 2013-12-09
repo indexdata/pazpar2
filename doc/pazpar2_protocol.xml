@@ -210,7 +210,7 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
       <listitem>
        <para>
 	Limits the search to a given set of targets specified by the
-	filter. The filter consists a comma separated list of
+	filter. The filter consists of a comma separated list of
 	<emphasis>setting</emphasis>+<emphasis>operator</emphasis>+<emphasis>args</emphasis>
 	pairs. The <emphasis>setting</emphasis> is a Pazpar2 setting
 	(such as <literal>pz:id</literal>).
