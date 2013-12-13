@@ -114,6 +114,7 @@ int record_compare(struct record *r1, struct record *r2,
             switch (type)
             {
             case Metadata_type_generic:
+            case Metadata_type_skiparticle:
                 if (strcmp(m1->data.text.disp, m2->data.text.disp))
                     return 0;
                 break;
@@ -126,6 +127,9 @@ int record_compare(struct record *r1, struct record *r2,
             case Metadata_type_float:
                 if (m1->data.fnumber != m2->data.fnumber)
                     return 0;
+            case Metadata_type_position:
+            case Metadata_type_relevance:
+                break;
             }
             m1 = m1->next;
             m2 = m2->next;

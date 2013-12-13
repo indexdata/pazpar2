@@ -1047,6 +1047,7 @@ static void info_service_metadata(struct conf_service *service, WRBUF w)
             switch (md->type)
             {
             case Metadata_type_generic:
+            case Metadata_type_skiparticle:
                 break;
             case Metadata_type_year:
                 wrbuf_puts(w, " type=\"year\"");
@@ -1056,6 +1057,9 @@ static void info_service_metadata(struct conf_service *service, WRBUF w)
                 break;
             case Metadata_type_float:
                 wrbuf_puts(w, " type=\"float\"");
+                break;
+            case Metadata_type_relevance:
+            case Metadata_type_position:
                 break;
             }
             switch (md->merge)
