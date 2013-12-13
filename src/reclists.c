@@ -84,7 +84,7 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
         int increasing = 0;
         int i;
         int offset = 0;
-        enum conf_sortkey_type type = Metadata_sortkey_string;
+        enum conf_metadata_type type = Metadata_type_generic;
         struct reclist_sortparms *new;
 
         if (!(cpp = strchr(parms, ',')))
@@ -107,21 +107,21 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
             if (pp[2])
             {
                 if (pp[2] == 'p')
-                    type = Metadata_sortkey_position;
+                    type = Metadata_type_position;
                 else
                     yaz_log(YLOG_FATAL, "Bad sortkey modifier: %s", parm);
             }
             *pp = '\0';
         }
-        if (type != Metadata_sortkey_position)
+        if (type != Metadata_type_position)
         {
             if (!strcmp(parm, "relevance"))
             {
-                type = Metadata_sortkey_relevance;
+                type = Metadata_type_relevance;
             }
             else if (!strcmp(parm, "position"))
             {
-                type = Metadata_sortkey_position;
+                type = Metadata_type_position;
             }
             else
             {
@@ -131,8 +131,6 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
                     if (!strcmp(sk->name, parm))
                     {
                         type = sk->type;
-                        if (type == Metadata_sortkey_skiparticle)
-                            type = Metadata_sortkey_string;
                         break;
                     }
                 }
@@ -173,35 +171,38 @@ static int reclist_cmp(const void *p1, const void *p2)
         const char *s1, *s2;
         switch (s->type)
         {
-        case Metadata_sortkey_relevance:
-            res = r2->relevance_score - r1->relevance_score;
+        case Metadata_type_relevance:
+            res = r1->relevance_score - r2->relevance_score;
             break;
-        case Metadata_sortkey_string:
+        case Metadata_type_generic:
+        case Metadata_type_skiparticle:
             s1 = ut1 ? ut1->text.sort : "";
             s2 = ut2 ? ut2->text.sort : "";
-            res = strcmp(s2, s1);
-            if (res)
-            {
-                if (s->increasing)
-                    res *= -1;
-            }
+            res = strcmp(s1, s2);
             break;
-        case Metadata_sortkey_numeric:
+        case Metadata_type_year:
+        case Metadata_type_date:
             if (ut1 && ut2)
             {
                 if (s->increasing)
                     res = ut1->number.min  - ut2->number.min;
                 else
-                    res = ut2->number.max  - ut1->number.max;
+                    res = ut1->number.max  - ut2->number.max;
             }
             else if (ut1 && !ut2)
-                res = -1;
+            {
+                res = -1; /* without date/year: last! */
+                continue;
+            }
             else if (!ut1 && ut2)
-                res = 1;
+            {
+                res = 1; /* without date/year: last! */
+                continue;
+            }
             else
                 res = 0;
             break;
-        case Metadata_sortkey_position:
+        case Metadata_type_position:
             if (r1->records && r2->records)
             {
                 int pos1 = 0, pos2 = 0;
@@ -213,13 +214,29 @@ static int reclist_cmp(const void *p1, const void *p2)
                     if (pos2 == 0 || rec->position < pos2)
                         pos2 = rec->position;
                 res = pos1 - pos2;
+                continue;
             }
             break;
-        default:
-            yaz_log(YLOG_WARN, "Bad sort type: %d", s->type);
-            res = 0;
+        case Metadata_type_float:
+            if (ut1 && ut2)
+            {
+                if (ut1->fnumber == ut2->fnumber)
+                    res = 0;
+                else if (ut1->fnumber > ut2->fnumber)
+                    res = 1;
+                else
+                    res = -1;
+            }
+            else if (ut1)
+                res = 1;
+            else if (ut2)
+                res = -1;
+            else
+                res = 0;
             break;
         }
+        if (res && !s->increasing)
+            res *= -1;
     }
     if (res == 0)
         res = strcmp(r1->recid, r2->recid);

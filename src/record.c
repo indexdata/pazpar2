@@ -123,6 +123,9 @@ int record_compare(struct record *r1, struct record *r2,
                     m1->data.number.max != m2->data.number.max)
                     return 0;
                 break;
+            case Metadata_type_float:
+                if (m1->data.fnumber != m2->data.fnumber)
+                    return 0;
             }
             m1 = m1->next;
             m2 = m2->next;

@@ -32,8 +32,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 enum conf_metadata_type {
     Metadata_type_generic,    // Generic text field
-    Metadata_type_year,        // A number
-    Metadata_type_date        // A number
+    Metadata_type_year,       // year YYYY - YYYY
+    Metadata_type_date,       // date YYYYMMDD - YYYYMMDD
+    Metadata_type_float,      // float number
+    Metadata_type_skiparticle,
+    Metadata_type_relevance,
+    Metadata_type_position,
 };
 
 enum conf_metadata_merge {
@@ -43,14 +47,6 @@ enum conf_metadata_merge {
     Metadata_merge_range,     // Store value as a range of lowest-highest
     Metadata_merge_all,       // Just include all elements found
     Metadata_merge_first      // All from first target
-};
-
-enum conf_sortkey_type {
-    Metadata_sortkey_relevance,
-    Metadata_sortkey_numeric,       // Standard numerical sorting
-    Metadata_sortkey_skiparticle,   // Skip leading article when sorting
-    Metadata_sortkey_string,        // Flat string
-    Metadata_sortkey_position       // Position
 };
 
 // This controls the ability to insert 'static' values from settings into retrieval recs
@@ -94,7 +90,7 @@ struct conf_metadata
 struct conf_sortkey
 {
     char *name;
-    enum conf_sortkey_type type;
+    enum conf_metadata_type type;
 };
 
 struct conf_server;

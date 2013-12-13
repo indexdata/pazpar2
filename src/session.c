@@ -1314,7 +1314,7 @@ struct record_cluster **show_range_start(struct session *se,
     if (se->relevance)
     {
         for (spp = sp; spp; spp = spp->next)
-            if (spp->type == Metadata_sortkey_relevance)
+            if (spp->type == Metadata_type_relevance)
             {
                 relevance_prepare_read(se->relevance, se->reclist);
                 break;
@@ -1455,17 +1455,17 @@ static struct record_metadata *record_metadata_init(
     }
     *attrp = 0;
 
-    if (type == Metadata_type_generic)
+    switch (type)
     {
-        char *p = nmem_strdup(nmem, value);
-
-        p = normalize7bit_generic(p, " ,/.:([");
-
-        rec_md->data.text.disp = p;
+    case Metadata_type_generic:
+    case Metadata_type_skiparticle:
+        rec_md->data.text.disp =
+            normalize7bit_generic(nmem_strdup(nmem, value), " ,/.:([");
         rec_md->data.text.sort = 0;
         rec_md->data.text.snippet = 0;
-    }
-    else if (type == Metadata_type_year || type == Metadata_type_date)
+        break;
+    case Metadata_type_year:
+    case Metadata_type_date:
     {
         int first, last;
         int longdate = 0;
@@ -1478,8 +1478,14 @@ static struct record_metadata *record_metadata_init(
         rec_md->data.number.min = first;
         rec_md->data.number.max = last;
     }
-    else
+    break;
+    case Metadata_type_float:
+        rec_md->data.fnumber = atof(value);
+        break;
+    case Metadata_type_relevance:
+    case Metadata_type_position:
         return 0;
+    }
     return rec_md;
 }
 
@@ -2214,7 +2220,7 @@ static int ingest_to_cluster(struct client *cl,
                     {
                         const char *sort_str = 0;
                         int skip_article =
-                            ser_sk->type == Metadata_sortkey_skiparticle;
+                            ser_sk->type == Metadata_type_skiparticle;
 
                         if (!cluster->sortkeys[sk_field_id])
                             cluster->sortkeys[sk_field_id] =

@@ -925,6 +925,9 @@ static void write_metadata(WRBUF w, struct conf_service *service,
                     if (md->data.number.min != md->data.number.max)
                         wrbuf_printf(w, "-%d", md->data.number.max);
                     break;
+                case Metadata_type_float:
+                    wrbuf_printf(w, "%f", md->data.fnumber);
+                    break;
                 default:
                     wrbuf_puts(w, "[can't represent]");
                     break;

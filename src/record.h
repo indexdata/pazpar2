@@ -34,6 +34,7 @@ union data_types {
         int min;
         int max;
     } number;
+    double fnumber;
 };
 
 

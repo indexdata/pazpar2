@@ -207,7 +207,7 @@ static struct conf_sortkey *conf_service_add_sortkey(
     struct conf_service *service,
     int field_id,
     const char *name,
-    enum conf_sortkey_type type)
+    enum conf_metadata_type type)
 {
     struct conf_sortkey *sk = 0;
     NMEM nmem = service->nmem;
@@ -392,6 +392,8 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
             type = Metadata_type_year;
         else if (!strcmp((const char *) xml_type, "date"))
             type = Metadata_type_date;
+        else if (!strcmp((const char *) xml_type, "float"))
+            type = Metadata_type_float;
         else
         {
             yaz_log(YLOG_FATAL,
@@ -433,7 +435,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
         else
         {
             yaz_log(YLOG_FATAL,
-                    "Unknown value for medadata/setting: %s", xml_setting);
+                    "Unknown value for metadata/setting: %s", xml_setting);
             return -1;
         }
     }
@@ -441,17 +443,29 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     // add a sortkey if so specified
     if (xml_sortkey && strcmp((const char *) xml_sortkey, "no"))
     {
-        enum conf_sortkey_type sk_type;
+        enum conf_metadata_type sk_type = type;
         if (merge == Metadata_merge_no)
         {
             yaz_log(YLOG_FATAL,
                     "Can't specify sortkey on a non-merged field");
             return -1;
         }
+        if (!strcmp((const char *) xml_sortkey, "yes"))
+            ;
         if (!strcmp((const char *) xml_sortkey, "numeric"))
-            sk_type = Metadata_sortkey_numeric;
+            ;
         else if (!strcmp((const char *) xml_sortkey, "skiparticle"))
-            sk_type = Metadata_sortkey_skiparticle;
+        {
+            if (sk_type == Metadata_type_generic)
+                sk_type = Metadata_type_skiparticle;
+            else
+            {
+                yaz_log(YLOG_FATAL,
+                        "skiparticle only supported for type=generic: %s",
+                    xml_type);
+                return -1;
+            }
+        }
         else
         {
             yaz_log(YLOG_FATAL,
@@ -1014,20 +1028,17 @@ static void info_service_metadata(struct conf_service *service, WRBUF w)
             if (md->sortkey_offset > 0) {
                 wrbuf_puts(w, " sortkey=\"");
                 switch (service->sortkeys[md->sortkey_offset].type) {
-                    case Metadata_sortkey_relevance:
+                    case Metadata_type_relevance:
                         wrbuf_puts(w, "relevance");
                         break;
-                    case Metadata_sortkey_numeric:
-                        wrbuf_puts(w, "numeric");
-                        break;
-                    case Metadata_sortkey_skiparticle:
+                    case Metadata_type_skiparticle:
                         wrbuf_puts(w, "skiparticle");
                         break;
-                    case Metadata_sortkey_string:
-                        wrbuf_puts(w, "string");
-                        break;
-                    case Metadata_sortkey_position:
+                    case Metadata_type_position:
                         wrbuf_puts(w, "position");
+                        break;
+                    default:
+                        wrbuf_puts(w, "yes");
                         break;
                 }
                 wrbuf_puts(w, "\"");
@@ -1041,6 +1052,9 @@ static void info_service_metadata(struct conf_service *service, WRBUF w)
                     break;
                 case Metadata_type_date:
                     wrbuf_puts(w, " type=\"date\"");
+                    break;
+                case Metadata_type_float:
+                    wrbuf_puts(w, " type=\"float\"");
                     break;
             }
 
