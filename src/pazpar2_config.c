@@ -78,7 +78,7 @@ static char *xml_context(const xmlNode *ptr, char *res, size_t len)
         off = off - l;
         memcpy(res + off, attr->name, l);
         res[--off] = '@';
-    } 
+    }
     while (ptr && ptr->type == XML_ELEMENT_NODE)
     {
         size_t l = strlen((const char *) ptr->name);
@@ -1027,66 +1027,67 @@ static void info_service_metadata(struct conf_service *service, WRBUF w)
             }
             if (md->sortkey_offset > 0) {
                 wrbuf_puts(w, " sortkey=\"");
-                switch (service->sortkeys[md->sortkey_offset].type) {
-                    case Metadata_type_relevance:
-                        wrbuf_puts(w, "relevance");
-                        break;
-                    case Metadata_type_skiparticle:
-                        wrbuf_puts(w, "skiparticle");
-                        break;
-                    case Metadata_type_position:
-                        wrbuf_puts(w, "position");
-                        break;
-                    default:
-                        wrbuf_puts(w, "yes");
-                        break;
+                switch (service->sortkeys[md->sortkey_offset].type)
+                {
+                case Metadata_type_relevance:
+                    wrbuf_puts(w, "relevance");
+                    break;
+                case Metadata_type_skiparticle:
+                    wrbuf_puts(w, "skiparticle");
+                    break;
+                case Metadata_type_position:
+                    wrbuf_puts(w, "position");
+                    break;
+                default:
+                    wrbuf_puts(w, "yes");
+                    break;
                 }
                 wrbuf_puts(w, "\"");
             }
-
-            switch (md->type) {
-                case Metadata_type_generic:
-                    break;
-                case Metadata_type_year:
-                    wrbuf_puts(w, " type=\"year\"");
-                    break;
-                case Metadata_type_date:
-                    wrbuf_puts(w, " type=\"date\"");
-                    break;
-                case Metadata_type_float:
-                    wrbuf_puts(w, " type=\"float\"");
-                    break;
+            switch (md->type)
+            {
+            case Metadata_type_generic:
+                break;
+            case Metadata_type_year:
+                wrbuf_puts(w, " type=\"year\"");
+                break;
+            case Metadata_type_date:
+                wrbuf_puts(w, " type=\"date\"");
+                break;
+            case Metadata_type_float:
+                wrbuf_puts(w, " type=\"float\"");
+                break;
             }
-
-            switch (md->merge) {
-                case Metadata_merge_no:
-                    break;
-                case Metadata_merge_unique:
-                    wrbuf_puts(w, " merge=\"unique\"");
-                    break;
-                case Metadata_merge_longest:
-                    wrbuf_puts(w, " merge=\"longest\"");
-                    break;
-                case Metadata_merge_range:
-                    wrbuf_puts(w, " merge=\"range\"");
-                    break;
-                case Metadata_merge_all:
-                    wrbuf_puts(w, " merge=\"all\"");
-                    break;
-                case Metadata_merge_first:
-                    wrbuf_puts(w, " merge=\"first\"");
-                    break;
+            switch (md->merge)
+            {
+            case Metadata_merge_no:
+                break;
+            case Metadata_merge_unique:
+                wrbuf_puts(w, " merge=\"unique\"");
+                break;
+            case Metadata_merge_longest:
+                wrbuf_puts(w, " merge=\"longest\"");
+                break;
+            case Metadata_merge_range:
+                wrbuf_puts(w, " merge=\"range\"");
+                break;
+            case Metadata_merge_all:
+                wrbuf_puts(w, " merge=\"all\"");
+                break;
+            case Metadata_merge_first:
+                wrbuf_puts(w, " merge=\"first\"");
+                break;
             }
-
-            switch (md->mergekey) {
-                case Metadata_mergekey_no:
-                    break;
-                case Metadata_mergekey_optional:
-                    wrbuf_puts(w, " mergekey=\"optional\"");
-                    break;
-                case Metadata_mergekey_required:
-                    wrbuf_puts(w, " mergekey=\"required\"");
-                    break;
+            switch (md->mergekey)
+            {
+            case Metadata_mergekey_no:
+                break;
+            case Metadata_mergekey_optional:
+                wrbuf_puts(w, " mergekey=\"optional\"");
+                break;
+            case Metadata_mergekey_required:
+                wrbuf_puts(w, " mergekey=\"required\"");
+                break;
             }
             wrbuf_puts(w, " />\n");
         }
@@ -1105,16 +1106,18 @@ static void info_service_databases(struct conf_service *service, WRBUF w)
         for(db = service->databases; db; db = db->next)
         {
             wrbuf_puts(w, "    <database");
-            if (db->id) {
-                    wrbuf_puts(w, " id=\"");
-                    wrbuf_printf(w, "%s", db->id);
-                    wrbuf_puts(w, "\"");
+            if (db->id)
+            {
+                wrbuf_puts(w, " id=\"");
+                wrbuf_printf(w, "%s", db->id);
+                wrbuf_puts(w, "\"");
             }
             wrbuf_puts(w, ">\n");
             for (i = 0; i < db->num_settings; i++)
             {
                 s = db->settings[i];
-                while (s != NULL) {
+                while (s != NULL)
+                {
                     wrbuf_puts(w, "     <setting");
                     wrbuf_puts(w, " name=\"");
                     wrbuf_xmlputs(w, s->name);
@@ -1128,7 +1131,6 @@ static void info_service_databases(struct conf_service *service, WRBUF w)
             }
             wrbuf_puts(w, "    </database>\n");
         }
-
         wrbuf_puts(w, "   </databases>\n");
     }
 }
