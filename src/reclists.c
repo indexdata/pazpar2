@@ -514,14 +514,12 @@ struct record_cluster *reclist_insert(struct reclist *l,
                         cluster = rb->record;
                         *re = record;
                         record->next = 0;
-                        yaz_log(YLOG_LOG, "reclist: record insert %p", cluster);
                     }
                     else
                     {
                         if (cluster != rb->record)
                         {
                             assert(rb->record->relevance_explain1);
-                            yaz_log(YLOG_LOG, "reclist: cluster merge %p %p", cluster, rb->record);
                             merge_cluster(l, r, cluster, rb->record);
                             (*total)--;
                         }
@@ -533,7 +531,6 @@ struct record_cluster *reclist_insert(struct reclist *l,
         {
             (*total)++;
             cluster = new_cluster(l, r, service, record, merge_keys);
-            yaz_log(YLOG_LOG, "reclist: new cluster p=%p", cluster);
         }
 
         if (!rb)
