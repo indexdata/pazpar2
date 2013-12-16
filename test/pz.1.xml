@@ -1,0 +1,14 @@
+<pz:cluster xmlns:pz="http://www.indexdata.com/pazpar2/1.0">
+<record xmlns="http://www.indexdata.com/pazpar2/1.0">
+ <metadata type="author">Jack Collins</metadata>
+ <metadata type="medium">book</metadata>
+ <metadata type="date">1995</metadata>
+ <metadata type="title">How to program a computer vol1</metadata>
+</record>
+<record xmlns="http://www.indexdata.com/pazpar2/1.0">
+ <metadata type="author">Jack Collins</metadata>
+ <metadata type="medium">book</metadata>
+ <metadata type="date">1995</metadata>
+ <metadata type="title">How to program a computer vol2</metadata>
+</record>
+</pz:cluster>

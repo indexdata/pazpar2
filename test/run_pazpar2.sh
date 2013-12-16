@@ -9,6 +9,9 @@
 # srcdir might be set by make
 srcdir=${srcdir:-"."}
 
+YAZ_ZTEST_XML_FETCH=${srcdir}/
+export YAZ_ZTEST_XML_FETCH
+
 # terminate pazpar2 if test takes more than this (in seconds)
 WAIT=120
 
