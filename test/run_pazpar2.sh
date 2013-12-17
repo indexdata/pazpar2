@@ -9,9 +9,6 @@
 # srcdir might be set by make
 srcdir=${srcdir:-"."}
 
-YAZ_ZTEST_XML_FETCH=${srcdir}/
-export YAZ_ZTEST_XML_FETCH
-
 # terminate pazpar2 if test takes more than this (in seconds)
 WAIT=120
 
@@ -87,6 +84,9 @@ if test "$icu" = "true"; then
 fi
 
 if test "$ztest" = "true" ; then
+    YAZ_ZTEST_XML_FETCH=${srcdir}/${PREFIX}.
+    export YAZ_ZTEST_XML_FETCH
+
     oIFS=$IFS
     IFS=:
     F=''
@@ -121,7 +121,7 @@ if test "$ztest" = "true" ; then
     fi
     rm -f ztest.pid
     rm -f ${PREFIX}_ztest.log
-    $F -l ${PREFIX}_ztest.log -p ztest.pid -D tcp:localhost:9999
+    $F -l ${PREFIX}_ztest.log -a ztest_apdu.log -p ztest.pid -D tcp:localhost:9999
     sleep 1
     if test ! -f ztest.pid; then
 	echo "yaz-ztest could not be started"
