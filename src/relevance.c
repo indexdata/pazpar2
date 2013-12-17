@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "relevance.h"
 #include "session.h"
+#include "client.h"
+#include "settings.h"
 
 #ifdef WIN32
 #define log2(x) (log(x)/log(2))
@@ -45,6 +47,7 @@ struct relevance
     double lead_decay;
     int length_divide;
     NMEM nmem;
+    struct norm_client *norm;
 };
 
 struct word_entry {
@@ -54,6 +57,222 @@ struct word_entry {
     char *ccl_field;
     struct word_entry *next;
 };
+
+// Structure to keep data for norm_client scores from one client
+struct norm_client
+{
+    int num; // number of the client
+    float max;
+    float min;
+    int count;
+    const char *native_score;
+    int scorefield;
+    float a,b; // Rn = a*R + b
+    struct client *client;
+    struct norm_client *next;
+    struct norm_record *records;
+};
+
+const int scorefield_none = -1;  // Do not normalize anything, use tf/idf as is
+  // This is the old behavior, and the default
+const int scorefield_internal = -2;  // use our tf/idf, but normalize it
+const int scorefield_position = -3;  // fake a score based on the position
+
+// A structure for each (sub)record. There is one list for each client
+struct norm_record
+{
+    struct record *record;
+    float score;
+    struct record_cluster *clust;
+    struct norm_record *next;
+};
+
+// Find the norm_client entry for this client, or create one if not there
+struct norm_client *findnorm( struct relevance *rel, struct client* client)
+{
+    struct norm_client *n = rel->norm;
+    struct session_database *sdb;
+    while (n) {
+        if (n->client == client )
+            return n;
+        n = n->next;
+    }
+    n = nmem_malloc(rel->nmem, sizeof(struct norm_client) );
+    if ( rel->norm )
+        n->num = rel->norm->num +1;
+    else
+        n->num = 1;
+    n->count = 0;
+    n->max = 0.0;
+    n->min = 0.0;
+    n->client = client;
+    n->next = rel->norm;
+    rel->norm = n;
+    sdb = client_get_database(client);
+    n->native_score = session_setting_oneval(sdb, PZ_NATIVE_SCORE);
+    n->records = 0;
+    n->scorefield = scorefield_none;
+    yaz_log(YLOG_LOG,"Normalizing: Client %d uses '%s'", n->num, n->native_score );
+    if ( ! n->native_score  || ! *n->native_score )  // not specified
+        n->scorefield = scorefield_none; 
+    else if ( strcmp(n->native_score,"position") == 0 )
+        n->scorefield = scorefield_position;
+    else if ( strcmp(n->native_score,"internal") == 0 )
+        n->scorefield = scorefield_internal;
+    else
+    { // Get the field index for the score
+        struct session *se = client_get_session(client);
+        n->scorefield = conf_service_metadata_field_id(se->service, n->native_score);
+    }
+    yaz_log(YLOG_LOG,"Normalizing: Client %d uses '%s' = %d",
+            n->num, n->native_score, n->scorefield );
+    return n;
+}
+
+
+// Add a record in the list for that client, for normalizing later
+static void setup_norm_record( struct relevance *rel,  struct record_cluster *clust)
+{
+    struct record *record;
+    for (record = clust->records; record; record = record->next)
+    {
+        struct norm_client *norm = findnorm(rel, record->client);
+        struct norm_record *rp;
+        if ( norm->scorefield == scorefield_none)
+            break;  // not interested in normalizing this client
+        rp = nmem_malloc(rel->nmem, sizeof(struct norm_record) );
+        norm->count ++;
+        rp->next = norm->records;
+        norm->records = rp;
+        rp->clust = clust;
+        rp->record = record;
+        if ( norm->scorefield == scorefield_position )
+            rp->score = 1.0 / record->position;
+        else if ( norm->scorefield == scorefield_internal )
+            rp->score = clust->relevance_score; // the tf/idf for the whole cluster
+              // TODO - Get them for each record, merge later!
+        else
+        {
+            struct record_metadata *md = record->metadata[norm->scorefield];
+            rp->score = md->data.fnumber;
+            assert(rp->score>0); // ###
+        }
+        yaz_log(YLOG_LOG,"Got score for %d/%d : %f ",
+                norm->num, record->position, rp->score );
+        if ( norm->count == 1 )
+        {
+            norm->max = rp->score;
+            norm->min = rp->score;
+        } else {
+            if ( rp->score > norm->max )
+                norm->max = rp->score;
+            if ( rp->score < norm->min && abs(rp->score) < 1e-6 )
+                norm->min = rp->score;  // skip zeroes
+        }
+    }
+}
+
+// Calculate the squared sum of residuals, that is the difference from
+// normalized values to the target curve, which is 1/n 
+static double squaresum( struct norm_record *rp, double a, double b)
+{
+    double sum = 0.0;
+    for ( ; rp; rp = rp->next )
+    {
+        double target = 1.0 / rp->record->position;
+        double normscore = rp->score * a + b;
+        double diff = target - normscore;
+        sum += diff * diff;
+    }
+    return sum;
+}
+
+static void normalize_scores(struct relevance *rel)
+{
+    // For each client, normalize scores
+    struct norm_client *norm;
+    for ( norm = rel->norm; norm; norm = norm->next )
+    {
+        yaz_log(YLOG_LOG,"Normalizing client %d: scorefield=%d count=%d",
+                norm->num, norm->scorefield, norm->count);
+        norm->a = 1.0; // default normalizing factors, no change
+        norm->b = 0.0;
+        if ( norm->scorefield != scorefield_none &&
+             norm->scorefield != scorefield_position )
+        { // have something to normalize
+            double range = norm->max - norm->min;
+            int it = 0;
+            double a,b;  // params to optimize
+            double as,bs; // step sizes
+            double chi;
+            // initial guesses for the parameters
+            if ( range < 1e-6 ) // practically zero
+                range = norm->max;
+            a = 1.0 / range;
+            b = abs(norm->min);
+            as = a / 3;
+            bs = b / 3;
+            chi = squaresum( norm->records, a,b);
+            while (it++ < 100)  // safeguard against things not converging
+            {
+                // optimize a
+                double plus = squaresum(norm->records, a+as, b);
+                double minus= squaresum(norm->records, a-as, b);
+                if ( plus < chi && plus < minus )
+                {
+                    a = a + as;
+                    chi = plus;
+                }
+                else if ( minus < chi && minus < plus )
+                {
+                    a = a - as;
+                    chi = minus;
+                }
+                else
+                    as = as / 2;  
+                // optimize b
+                plus = squaresum(norm->records, a, b+bs);
+                minus= squaresum(norm->records, a, b-bs);
+                if ( plus < chi && plus < minus )
+                {
+                    b = b + bs;
+                    chi = plus;
+                }
+                else if ( minus < chi && minus < plus )
+                {
+                    b = b - bs;
+                    chi = minus;
+                }
+                else
+                    bs = bs / 2;
+                yaz_log(YLOG_LOG,"Fitting it=%d: a=%f / %f  b=%f / %f  chi = %f",
+                        it, a, as, b, bs, chi );
+                norm->a = a;
+                norm->b = b;
+                if ( abs(as) * 1000.0 < abs(a) &&
+                     abs(bs) * 1000.0 < abs(b) )
+                    break;  // not changing much any more
+            }
+        }
+        
+        if ( norm->scorefield != scorefield_none )
+        { // distribute the normalized scores to the records
+            struct norm_record *nr = norm->records;
+            for ( ; nr ; nr = nr->next ) {
+                double r = nr->score;
+                r = norm->a * r + norm -> b;
+                nr->clust->relevance_score = 10000 * r;
+                yaz_log(YLOG_LOG,"Normalized %f * %f + %f = %f",
+                        nr->score, norm->a, norm->b, r );
+                // TODO - This keeps overwriting the cluster score in random order!
+                // Need to merge results better
+            }
+
+        }
+
+    } // client loop
+}
+
 
 static struct word_entry *word_entry_match(struct relevance *r,
                                            const char *norm_str,
@@ -290,6 +509,7 @@ struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
     res->follow_factor = follow_factor;
     res->lead_decay = lead_decay;
     res->length_divide = length_divide;
+    res->norm = 0;
     res->prt = pp2_charset_token_create(pft, "relevance");
 
     pull_terms(res, query);
@@ -360,6 +580,8 @@ void relevance_donerecord(struct relevance *r, struct record_cluster *cluster)
     r->doc_frequency_vec[0]++;
 }
 
+
+
 // Prepare for a relevance-sorted read
 void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
 {
@@ -367,6 +589,7 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
     float *idfvec = xmalloc(rel->vec_len * sizeof(float));
 
     reclist_enter(reclist);
+
     // Calculate document frequency vector for each term.
     for (i = 1; i < rel->vec_len; i++)
     {
@@ -422,9 +645,21 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
             wrbuf_printf(w, "score = relevance(%d);\n", relevance);
         }
         rec->relevance_score = relevance;
-    }
+
+        // Build the normalizing structures
+        // List of (sub)records for each target
+        setup_norm_record( rel, rec );
+        
+        // TODO - Loop again, merge individual record scores into clusters
+        // Can I reset the reclist, or can I leave and enter without race conditions?
+        
+    } // cluster loop
+
+    normalize_scores(rel);
+    
     reclist_leave(reclist);
     xfree(idfvec);
+
 }
 
 /*

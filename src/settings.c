@@ -83,6 +83,7 @@ static char *hard_settings[] = {
     "pz:block_timeout",
     "pz:extendrecs",
     "pz:authentication_mode",
+    "pz:native_score",
     0
 };
 
