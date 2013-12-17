@@ -155,7 +155,6 @@ static void setup_norm_record( struct relevance *rel,  struct record_cluster *cl
         {
             struct record_metadata *md = record->metadata[norm->scorefield];
             rp->score = md->data.fnumber;
-            assert(rp->score>0); // ###
         }
         yaz_log(YLOG_LOG,"Got score for %d/%d : %f ",
                 norm->num, record->position, rp->score );
@@ -187,9 +186,11 @@ static double squaresum( struct norm_record *rp, double a, double b)
     return sum;
 }
 
+// For each client, normalize scores
 static void normalize_scores(struct relevance *rel)
 {
-    // For each client, normalize scores
+    const int maxiterations = 100;
+    const double enough = 100.0;  // sets the number of decimals we are happy with
     struct norm_client *norm;
     for ( norm = rel->norm; norm; norm = norm->next )
     {
@@ -205,56 +206,81 @@ static void normalize_scores(struct relevance *rel)
             double a,b;  // params to optimize
             double as,bs; // step sizes
             double chi;
+            char dir = 'a';
             // initial guesses for the parameters
             if ( range < 1e-6 ) // practically zero
                 range = norm->max;
             a = 1.0 / range;
             b = abs(norm->min);
-            as = a / 3;
-            bs = b / 3;
+            as = a / 10;
+            bs = b / 10;
             chi = squaresum( norm->records, a,b);
-            while (it++ < 100)  // safeguard against things not converging
+            while (it++ < maxiterations)  // safeguard against things not converging
             {
-                // optimize a
-                double plus = squaresum(norm->records, a+as, b);
-                double minus= squaresum(norm->records, a-as, b);
-                if ( plus < chi && plus < minus )
+                double aplus = squaresum(norm->records, a+as, b);
+                double aminus= squaresum(norm->records, a-as, b);
+                double bplus = squaresum(norm->records, a, b+bs);
+                double bminus= squaresum(norm->records, a, b-bs);
+                if ( aplus < chi && aplus < aminus && aplus < bplus && aplus < bminus)
                 {
                     a = a + as;
-                    chi = plus;
+                    chi = aplus;
+                    yaz_log(YLOG_LOG,"Fitting aplus it=%d: a=%f / %f  b=%f / %f  chi = %f",
+                        it, a, as, b, bs, chi );
                 }
-                else if ( minus < chi && minus < plus )
+                else if ( aminus < chi && aminus < aplus && aminus < bplus && aminus < bminus)
                 {
                     a = a - as;
-                    chi = minus;
+                    chi = aminus;
+                    yaz_log(YLOG_LOG,"Fitting aminus it=%d: a=%f / %f  b=%f / %f  chi = %f",
+                        it, a, as, b, bs, chi );
                 }
-                else
-                    as = as / 2;  
-                // optimize b
-                plus = squaresum(norm->records, a, b+bs);
-                minus= squaresum(norm->records, a, b-bs);
-                if ( plus < chi && plus < minus )
+                else if ( bplus < chi && bplus < aplus && bplus < aminus && bplus < bminus)
                 {
                     b = b + bs;
-                    chi = plus;
+                    chi = bplus;
+                    yaz_log(YLOG_LOG,"Fitting bplus it=%d: a=%f / %f  b=%f / %f  chi = %f",
+                        it, a, as, b, bs, chi );
                 }
-                else if ( minus < chi && minus < plus )
+                else if ( bminus < chi && bminus < aplus && bminus < bplus && bminus < aminus)
                 {
                     b = b - bs;
-                    chi = minus;
+                    chi = bminus;
+                    yaz_log(YLOG_LOG,"Fitting bminus it=%d: a=%f / %f  b=%f / %f  chi = %f",
+                        it, a, as, b, bs, chi );
                 }
                 else
-                    bs = bs / 2;
-                yaz_log(YLOG_LOG,"Fitting it=%d: a=%f / %f  b=%f / %f  chi = %f",
-                        it, a, as, b, bs, chi );
+                {
+                    if ( as > bs )
+                    {
+                        as = as / 2;
+                        yaz_log(YLOG_LOG,"Fitting step a it=%d: a=%f / %f  b=%f / %f  chi = %f",
+                            it, a, as, b, bs, chi );
+                    }
+                    else
+                    {
+                        bs = bs / 2;
+                        yaz_log(YLOG_LOG,"Fitting step b it=%d: a=%f / %f  b=%f / %f  chi = %f",
+                            it, a, as, b, bs, chi );
+                    }
+                }
                 norm->a = a;
                 norm->b = b;
-                if ( abs(as) * 1000.0 < abs(a) &&
-                     abs(bs) * 1000.0 < abs(b) )
+                if ( fabs(as) * enough < fabs(a) &&
+                     fabs(bs) * enough < fabs(b) ) {
+                    yaz_log(YLOG_LOG,"Fitting done: stopping loop at %d" , it );
                     break;  // not changing much any more
+
+                }
             }
+            yaz_log(YLOG_LOG,"Fitting done: it=%d: a=%f / %f  b=%f / %f  chi = %f",
+                        it-1, a, as, b, bs, chi );
+            yaz_log(YLOG_LOG,"  a: %f < %f %d",
+                    fabs(as)*enough, fabs(a), (fabs(as) * enough < fabs(a)) );
+            yaz_log(YLOG_LOG,"  b: %f < %f %d",
+                    fabs(bs)*enough, fabs(b), (fabs(bs) * enough < fabs(b)) );
         }
-        
+
         if ( norm->scorefield != scorefield_none )
         { // distribute the normalized scores to the records
             struct norm_record *nr = norm->records;
