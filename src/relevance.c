@@ -189,13 +189,15 @@ static double squaresum( struct norm_record *rp, double a, double b)
 // For each client, normalize scores
 static void normalize_scores(struct relevance *rel)
 {
-    const int maxiterations = 100;
-    const double enough = 100.0;  // sets the number of decimals we are happy with
+    const int maxiterations = 1000;
+    const double enough = 1000.0;  // sets the number of decimals we are happy with
+    const double stepchange = 0.5; // reduction of the step size when finding middle
+      // 0.5 sems to be magical, much better than 0.4 or 0.6
     struct norm_client *norm;
     for ( norm = rel->norm; norm; norm = norm->next )
     {
-        yaz_log(YLOG_LOG,"Normalizing client %d: scorefield=%d count=%d",
-                norm->num, norm->scorefield, norm->count);
+        yaz_log(YLOG_LOG,"Normalizing client %d: scorefield=%d count=%d range=%f %f",
+                norm->num, norm->scorefield, norm->count, norm->min, norm->max);
         norm->a = 1.0; // default normalizing factors, no change
         norm->b = 0.0;
         if ( norm->scorefield != scorefield_none &&
@@ -206,7 +208,7 @@ static void normalize_scores(struct relevance *rel)
             double a,b;  // params to optimize
             double as,bs; // step sizes
             double chi;
-            char dir = 'a';
+            char *branch = "?";
             // initial guesses for the parameters
             if ( range < 1e-6 ) // practically zero
                 range = norm->max;
@@ -221,54 +223,59 @@ static void normalize_scores(struct relevance *rel)
                 double aminus= squaresum(norm->records, a-as, b);
                 double bplus = squaresum(norm->records, a, b+bs);
                 double bminus= squaresum(norm->records, a, b-bs);
+                double prevchi = chi;
                 if ( aplus < chi && aplus < aminus && aplus < bplus && aplus < bminus)
                 {
                     a = a + as;
                     chi = aplus;
-                    yaz_log(YLOG_LOG,"Fitting aplus it=%d: a=%f / %f  b=%f / %f  chi = %f",
-                        it, a, as, b, bs, chi );
+                    as = as * (1.0 + stepchange);
+                    branch = "aplus ";
                 }
                 else if ( aminus < chi && aminus < aplus && aminus < bplus && aminus < bminus)
                 {
                     a = a - as;
                     chi = aminus;
-                    yaz_log(YLOG_LOG,"Fitting aminus it=%d: a=%f / %f  b=%f / %f  chi = %f",
-                        it, a, as, b, bs, chi );
+                    as = as * (1.0 + stepchange);
+                    branch = "aminus";
                 }
                 else if ( bplus < chi && bplus < aplus && bplus < aminus && bplus < bminus)
                 {
                     b = b + bs;
                     chi = bplus;
-                    yaz_log(YLOG_LOG,"Fitting bplus it=%d: a=%f / %f  b=%f / %f  chi = %f",
-                        it, a, as, b, bs, chi );
+                    bs = bs * (1.0 + stepchange);
+                    branch = "bplus ";
                 }
                 else if ( bminus < chi && bminus < aplus && bminus < bplus && bminus < aminus)
                 {
                     b = b - bs;
                     chi = bminus;
-                    yaz_log(YLOG_LOG,"Fitting bminus it=%d: a=%f / %f  b=%f / %f  chi = %f",
-                        it, a, as, b, bs, chi );
+                    branch = "bminus";
+                    bs = bs * (1.0+stepchange);
                 }
                 else
-                {
-                    if ( as > bs )
+                { // a,b is the best so far, adjust one step size
+                  // which one? The one that has the greatest effect to chi
+                  // That is, the average of plus and minus is further away from chi
+                    double adif = 0.5 * ( aplus + aminus ) - prevchi;
+                    double bdif = 0.5 * ( bplus + bminus ) - prevchi;
+                    if ( fabs(adif) > fabs(bdif) )
                     {
-                        as = as / 2;
-                        yaz_log(YLOG_LOG,"Fitting step a it=%d: a=%f / %f  b=%f / %f  chi = %f",
-                            it, a, as, b, bs, chi );
+                        as = as * ( 1.0 - stepchange);
+                        branch = "step a";
                     }
                     else
                     {
-                        bs = bs / 2;
-                        yaz_log(YLOG_LOG,"Fitting step b it=%d: a=%f / %f  b=%f / %f  chi = %f",
-                            it, a, as, b, bs, chi );
+                        bs = bs * ( 1.0 - stepchange);
+                        branch = "step b";
                     }
                 }
+                yaz_log(YLOG_LOG,"Fitting %s it=%d: a=%f %f  b=%f %f  chi=%f ap=%f am=%f, bp=%f bm=%f p=%f",
+                    branch, it, a, as, b, bs, chi,
+                    aplus, aminus, bplus, bminus, prevchi );
                 norm->a = a;
                 norm->b = b;
                 if ( fabs(as) * enough < fabs(a) &&
                      fabs(bs) * enough < fabs(b) ) {
-                    yaz_log(YLOG_LOG,"Fitting done: stopping loop at %d" , it );
                     break;  // not changing much any more
 
                 }
