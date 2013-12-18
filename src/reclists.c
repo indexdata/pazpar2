@@ -496,21 +496,19 @@ struct record_cluster *reclist_insert(struct reclist *l,
                 // We found a matching record. Merge them
                 if (!strcmp(merge_key, mkr->value))
                 {
-                    struct record **re;
-
                     rb = *p;
-                    for (re = &rb->record->records; *re; re = &(*re)->next)
-                    {
-                        if ((*re)->client == record->client &&
-                            record_compare(record, *re, service))
-                        {
-                            yaz_mutex_leave(l->mutex);
-                            return 0;
-                        }
-                    }
-
                     if (!cluster)
                     {
+                        struct record **re;
+                        for (re = &rb->record->records; *re; re = &(*re)->next)
+                        {
+                            if ((*re)->client == record->client &&
+                                record_compare(record, *re, service))
+                            {
+                                yaz_mutex_leave(l->mutex);
+                                return 0;
+                            }
+                        }
                         cluster = rb->record;
                         *re = record;
                         record->next = 0;
