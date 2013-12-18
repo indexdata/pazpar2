@@ -21,7 +21,7 @@
   <md-score>2.304635</md-score>
  </location>
  <count>1</count>
- <relevance>6645</relevance>
+ <relevance>8294</relevance>
  <recid>content: title water management problems and challenges in india author dinesh kumar m medium book</recid>
 </hit>
 <hit>
@@ -40,7 +40,7 @@
   <md-score>2.231453</md-score>
  </location>
  <count>1</count>
- <relevance>5215</relevance>
+ <relevance>6424</relevance>
  <recid>content: title the magic of water author hochschwender ted medium book</recid>
 </hit>
 <hit>
@@ -57,7 +57,7 @@
   <md-score>2.186368</md-score>
  </location>
  <count>1</count>
- <relevance>4334</relevance>
+ <relevance>5273</relevance>
  <recid>content: title water author de villiers marq medium book</recid>
 </hit>
 <hit>
@@ -74,7 +74,7 @@
   <md-score>2.186368</md-score>
  </location>
  <count>1</count>
- <relevance>4334</relevance>
+ <relevance>5273</relevance>
  <recid>content: title water use for public water supply in michigan medium book</recid>
 </hit>
 <hit>
@@ -91,7 +91,7 @@
   <md-score>2.114981</md-score>
  </location>
  <count>1</count>
- <relevance>2939</relevance>
+ <relevance>3449</relevance>
  <recid>content: title report to the iucn on water demand management country study medium book</recid>
 </hit>
 <hit>
@@ -111,7 +111,7 @@
   <md-score>2.061328</md-score>
  </location>
  <count>1</count>
- <relevance>1890</relevance>
+ <relevance>2078</relevance>
  <recid>content: title evaluation and control of water pollution in bhavani basin medium book</recid>
 </hit>
 <hit>
@@ -130,7 +130,7 @@
   <md-score>2.061328</md-score>
  </location>
  <count>1</count>
- <relevance>1890</relevance>
+ <relevance>2078</relevance>
  <recid>content: title unsia water cluster medium book</recid>
 </hit>
 <hit>
@@ -147,7 +147,7 @@
   <md-score>2.061328</md-score>
  </location>
  <count>1</count>
- <relevance>1890</relevance>
+ <relevance>2078</relevance>
  <recid>content: title water and water supplies author thresh john clough medium book</recid>
 </hit>
 <hit>
@@ -166,7 +166,7 @@
   <md-score>2.061328</md-score>
  </location>
  <count>1</count>
- <relevance>1890</relevance>
+ <relevance>2078</relevance>
  <recid>content: title water author majeed abdul medium book</recid>
 </hit>
 <hit>
@@ -185,7 +185,7 @@
   <md-score>2.061328</md-score>
  </location>
  <count>1</count>
- <relevance>1890</relevance>
+ <relevance>2078</relevance>
  <recid>content: title water law author fisher d e medium book</recid>
 </hit>
 <hit>
@@ -202,7 +202,7 @@
   <md-score>2.061328</md-score>
  </location>
  <count>1</count>
- <relevance>1890</relevance>
+ <relevance>2078</relevance>
  <recid>content: title water technology management medium book</recid>
 </hit>
 <hit>
@@ -219,7 +219,7 @@
   <md-score>2.037029</md-score>
  </location>
  <count>1</count>
- <relevance>1415</relevance>
+ <relevance>1457</relevance>
  <recid>content: title wonderful water author glover david medium book</recid>
 </hit>
 <hit>
@@ -239,7 +239,7 @@
   <md-score>2.016555</md-score>
  </location>
  <count>1</count>
- <relevance>1015</relevance>
+ <relevance>934</relevance>
  <recid>content: title a primer on fresh water medium book</recid>
 </hit>
 <hit>
@@ -266,7 +266,7 @@
   <md-score>2.016555</md-score>
  </location>
  <count>2</count>
- <relevance>1015</relevance>
+ <relevance>934</relevance>
  <recid>content: title water quality assessment of the state water project medium book</recid>
 </hit>
 <hit>
@@ -283,7 +283,7 @@
   <md-score>1.928196</md-score>
  </location>
  <count>1</count>
- <relevance>-710</relevance>
+ <relevance>-1322</relevance>
  <recid>content: title district water supply plan medium book</recid>
 </hit>
 <hit>
@@ -302,7 +302,7 @@
   <md-score>1.928196</md-score>
  </location>
  <count>1</count>
- <relevance>-710</relevance>
+ <relevance>-1322</relevance>
  <recid>content: title proposition medium book</recid>
 </hit>
 <hit>
@@ -320,7 +320,7 @@
   <md-score>1.928196</md-score>
  </location>
  <count>1</count>
- <relevance>-710</relevance>
+ <relevance>-1322</relevance>
  <recid>content: title wastewater and drinking water user charge survey medium book</recid>
 </hit>
 <hit>
@@ -340,7 +340,7 @@
   <md-score>1.928196</md-score>
  </location>
  <count>1</count>
- <relevance>-710</relevance>
+ <relevance>-1322</relevance>
  <recid>content: title water in press medium book</recid>
 </hit>
 <hit>
@@ -359,7 +359,7 @@
   <md-score>1.928196</md-score>
  </location>
  <count>1</count>
- <relevance>-710</relevance>
+ <relevance>-1322</relevance>
  <recid>content: title who governs water author frey hans medium book</recid>
 </hit>
 </show>

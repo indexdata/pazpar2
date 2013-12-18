@@ -165,8 +165,8 @@ static void setup_norm_record( struct relevance *rel,  struct record_cluster *cl
         } else {
             if ( rp->score > norm->max )
                 norm->max = rp->score;
-            if ( rp->score < norm->min && abs(rp->score) < 1e-6 )
-                norm->min = rp->score;  // skip zeroes
+            if ( rp->score < norm->min )
+                norm->min = rp->score; 
         }
     }
 }
@@ -190,14 +190,15 @@ static double squaresum( struct norm_record *rp, double a, double b)
 static void normalize_scores(struct relevance *rel)
 {
     const int maxiterations = 1000;
-    const double enough = 1000.0;  // sets the number of decimals we are happy with
+    const double enough = 100.0;  // sets the number of decimals we are happy with
     const double stepchange = 0.5; // reduction of the step size when finding middle
       // 0.5 sems to be magical, much better than 0.4 or 0.6
     struct norm_client *norm;
     for ( norm = rel->norm; norm; norm = norm->next )
     {
-        yaz_log(YLOG_LOG,"Normalizing client %d: scorefield=%d count=%d range=%f %f",
-                norm->num, norm->scorefield, norm->count, norm->min, norm->max);
+        yaz_log(YLOG_LOG,"Normalizing client %d: scorefield=%d count=%d range=%f %f = %f",
+                norm->num, norm->scorefield, norm->count, norm->min,
+                norm->max, norm->max-norm->min);
         norm->a = 1.0; // default normalizing factors, no change
         norm->b = 0.0;
         if ( norm->scorefield != scorefield_none &&
@@ -210,13 +211,26 @@ static void normalize_scores(struct relevance *rel)
             double chi;
             char *branch = "?";
             // initial guesses for the parameters
+            // Rmax = a * rmax + b    # want to be 1.0
+            // Rmin = a * rmin + b    # want to be 0.0
+            // Rmax - Rmin = a ( rmax - rmin )    # subtracting equations
+            // 1.0 - 0.0 = a ( rmax - rmin )
+            // a = 1 / range
+            // Rmin = a * rmin + b
+            // b = Rmin - a * rmin
+            //   = 0.0 - 1/range * rmin
+            //   = - rmin / range
+            
             if ( range < 1e-6 ) // practically zero
                 range = norm->max;
             a = 1.0 / range;
-            b = abs(norm->min);
+            b = -1.0 * norm->min / range;
+            // b = fabs(norm->min) / range;
             as = a / 10;
-            bs = b / 10;
+            bs = fabs(b) / 10;
             chi = squaresum( norm->records, a,b);
+            yaz_log(YLOG_LOG,"Initial done: it=%d: a=%f / %f  b=%f / %f  chi = %f",
+                        0, a, as, b, bs, chi );
             while (it++ < maxiterations)  // safeguard against things not converging
             {
                 double aplus = squaresum(norm->records, a+as, b);
@@ -269,7 +283,7 @@ static void normalize_scores(struct relevance *rel)
                         branch = "step b";
                     }
                 }
-                yaz_log(YLOG_LOG,"Fitting %s it=%d: a=%f %f  b=%f %f  chi=%f ap=%f am=%f, bp=%f bm=%f p=%f",
+                yaz_log(YLOG_LOG,"Fitting %s it=%d: a=%g %g  b=%g %g  chi=%g ap=%g am=%g, bp=%g bm=%g p=%g",
                     branch, it, a, as, b, bs, chi,
                     aplus, aminus, bplus, bminus, prevchi );
                 norm->a = a;
@@ -280,12 +294,8 @@ static void normalize_scores(struct relevance *rel)
 
                 }
             }
-            yaz_log(YLOG_LOG,"Fitting done: it=%d: a=%f / %f  b=%f / %f  chi = %f",
+            yaz_log(YLOG_LOG,"Fitting done: it=%d: a=%g / %g  b=%g / %g  chi = %g",
                         it-1, a, as, b, bs, chi );
-            yaz_log(YLOG_LOG,"  a: %f < %f %d",
-                    fabs(as)*enough, fabs(a), (fabs(as) * enough < fabs(a)) );
-            yaz_log(YLOG_LOG,"  b: %f < %f %d",
-                    fabs(bs)*enough, fabs(b), (fabs(bs) * enough < fabs(b)) );
         }
 
         if ( norm->scorefield != scorefield_none )
