@@ -49,6 +49,7 @@ void reclist_sort(struct reclist *l, struct reclist_sortparms *parms);
 struct record_cluster *reclist_read_record(struct reclist *l);
 void reclist_enter(struct reclist *l);
 void reclist_leave(struct reclist *l);
+void reclist_rewind(struct reclist *l);
 struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
     struct conf_service *service);
 

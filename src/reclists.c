@@ -342,6 +342,12 @@ void reclist_leave(struct reclist *l)
         l->sorted_ptr = l->sorted_list;
 }
 
+void reclist_rewind(struct reclist *l)
+{
+    if (l)
+        l->sorted_ptr = l->sorted_list;
+}
+
 
 struct reclist *reclist_create(NMEM nmem)
 {
