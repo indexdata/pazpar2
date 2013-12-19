@@ -330,22 +330,19 @@ struct record_cluster *reclist_read_record(struct reclist *l)
 void reclist_enter(struct reclist *l)
 {
     yaz_mutex_enter(l->mutex);
-    if (l)
-        l->sorted_ptr = l->sorted_list;
+    l->sorted_ptr = l->sorted_list;
 }
 
 
 void reclist_leave(struct reclist *l)
 {
     yaz_mutex_leave(l->mutex);
-    if (l)
-        l->sorted_ptr = l->sorted_list;
+    l->sorted_ptr = l->sorted_list;
 }
 
 void reclist_rewind(struct reclist *l)
 {
-    if (l)
-        l->sorted_ptr = l->sorted_list;
+    l->sorted_ptr = l->sorted_list;
 }
 
 
