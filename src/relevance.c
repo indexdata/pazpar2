@@ -130,7 +130,7 @@ struct norm_client *findnorm( struct relevance *rel, struct client* client)
 }
 
 
-// Add a record in the list for that client, for normalizing later
+// Add all records from a cluster into the list for that client, for normalizing later
 static void setup_norm_record( struct relevance *rel,  struct record_cluster *clust)
 {
     struct record *record;
@@ -158,6 +158,7 @@ static void setup_norm_record( struct relevance *rel,  struct record_cluster *cl
         }
         yaz_log(YLOG_LOG,"Got score for %d/%d : %f ",
                 norm->num, record->position, rp->score );
+        record -> score = rp->score; 
         if ( norm->count == 1 )
         {
             norm->max = rp->score;
@@ -305,14 +306,13 @@ static void normalize_scores(struct relevance *rel)
                 double r = nr->score;
                 r = norm->a * r + norm -> b;
                 nr->clust->relevance_score = 10000 * r;
+                nr->record->score = r;
                 yaz_log(YLOG_LOG,"Normalized %f * %f + %f = %f",
                         nr->score, norm->a, norm->b, r );
                 // TODO - This keeps overwriting the cluster score in random order!
-                // Need to merge results better
+                // Need to merge results better               
             }
-
         }
-
     } // client loop
 }
 
@@ -645,7 +645,7 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
                             rel->doc_frequency_vec[i]);
         }
     }
-    // Calculate relevance for each document
+    // Calculate relevance for each document (cluster)
     while (1)
     {
         int relevance = 0;
@@ -692,14 +692,15 @@ void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
         // Build the normalizing structures
         // List of (sub)records for each target
         setup_norm_record( rel, rec );
-        
-        // TODO - Loop again, merge individual record scores into clusters
-        // Can I reset the reclist, or can I leave and enter without race conditions?
-        
+
     } // cluster loop
 
     normalize_scores(rel);
-    
+
+    // TODO - Calculate the cluster scores from individual records
+    // At the moment the record scoring puts one of them in the cluster...
+    reclist_rewind(reclist);
+
     reclist_leave(reclist);
     xfree(idfvec);
 

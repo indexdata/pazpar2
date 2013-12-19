@@ -66,6 +66,8 @@ struct record {
     struct record *next;
     // client result set position;
     int position;
+    // score for ranking, either native or our TF/IDF, or other
+    double score;
     // checksum
     unsigned checksum;
 };
