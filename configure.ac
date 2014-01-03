@@ -1,6 +1,6 @@
 ## -*- Autoconf -*-
 ## This file is part of Pazpar2.
-## Copyright (C) 2006-2013 Index Data
+## Copyright (C) Index Data
 ## Process this file with autoconf to produce a configure script.
 
 # Autoconf and automake setup

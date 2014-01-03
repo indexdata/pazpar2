@@ -1,5 +1,5 @@
 /* This file is part of Pazpar2.
-   Copyright (C) 2006-2013 Index Data
+   Copyright (C) Index Data
 
 Pazpar2 is free software; you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free
@@ -1288,7 +1288,7 @@ static void cmd_show(struct http_channel *c)
 
     status = session_active_clients(s->psession);
 
-    if (block)
+    if (block && reclist_get_num_records(s->psession->reclist) == 0)
     {
         if (!strcmp(block, "preferred")
             && !session_is_preferred_clients_ready(s->psession)
