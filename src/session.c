@@ -1459,8 +1459,11 @@ static struct record_metadata *record_metadata_init(
     {
     case Metadata_type_generic:
     case Metadata_type_skiparticle:
-        rec_md->data.text.disp =
-            normalize7bit_generic(nmem_strdup(nmem, value), " ,/.:([");
+        if (strstr(value, "://")) /* looks like a URL */
+            rec_md->data.text.disp = nmem_strdup(nmem, value);
+        else
+            rec_md->data.text.disp =
+                normalize7bit_generic(nmem_strdup(nmem, value), " ,/.:([");
         rec_md->data.text.sort = 0;
         rec_md->data.text.snippet = 0;
         break;
