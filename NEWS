@@ -1,3 +1,5 @@
+--- 1.6.38 2014/01/07
+
 Avoid removing slash and other characters for generic metadata that
 looks like a URL (contains ://). PAZ-915
 
