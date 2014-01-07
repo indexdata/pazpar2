@@ -1,3 +1,17 @@
+Avoid removing slash and other characters for generic metadata that
+looks like a URL (contains ://). PAZ-915
+
+pz2.js: Only use XDR when doing CORS. Favor XHR in all other circumstances.
+
+Cluster merge fixes. PAZ-901
+
+Set client state to "working" when waiting for DNS resolver. PAZ-907
+
+Log when session terminates. PAZ-905
+
+Fix LSB/HS conformance for /etc/init.d/pazpar2 PAZ-904
+Debian: add support for /etc/init.d/pazpar2 status
+
 --- 1.6.37 2013/11/18
 
 Fix 'Record Missing' for command=show PAZ-903
