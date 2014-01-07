@@ -4,6 +4,7 @@
  <metadata type="medium">book</metadata>
  <metadata type="date">1995</metadata>
  <metadata type="title">How to program a computer vol1</metadata>
+ <metadata type="url">http://www.indexdata.com/pazpar2/</metadata>
 </record>
 <record xmlns="http://www.indexdata.com/pazpar2/1.0">
  <metadata type="author">Jack Collins</metadata>

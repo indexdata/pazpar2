@@ -16,6 +16,7 @@
   <md-medium>book</md-medium>
   <md-date>1995</md-date>
   <md-title>How to program a computer vol1</md-title>
+  <md-url>http://www.indexdata.com/pazpar2/</md-url>
  </location>
  <location id="localhost:9999"
     name="ztest" checksum="1993510496">
