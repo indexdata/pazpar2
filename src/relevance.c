@@ -77,6 +77,7 @@ const int scorefield_none = -1;  // Do not normalize anything, use tf/idf as is
   // This is the old behavior, and the default
 const int scorefield_internal = -2;  // use our tf/idf, but normalize it
 const int scorefield_position = -3;  // fake a score based on the position
+// Positive numbers indicate the field to be used for scoring.
 
 // A structure for each (sub)record. There is one list for each client
 struct norm_record
