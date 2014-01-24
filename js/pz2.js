@@ -215,7 +215,7 @@ pz2.prototype =
                                 context.keepAlive
                             );
                         if ( context.initCallback )
-                            context.initCallback(this.windowid);
+                            context.initCallback(context.windowid);
                     }
                     else
                         context.throwError('Init failed. Malformed WS resonse.',
@@ -241,7 +241,7 @@ pz2.prototype =
 
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.safeGet(
-            { "command": "ping", "session": this.sessionID, "windowid" : this.windowid },
+            { "command": "ping", "session": this.sessionID, "windowid" : context.windowid },
             function(data) {
                 if ( data.getElementsByTagName("status")[0]
                         .childNodes[0].nodeValue == "OK" ) {
@@ -344,7 +344,7 @@ pz2.prototype =
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.safeGet(
-            { "command": "stat", "session": this.sessionID, "windowid" : this.windowid },
+            { "command": "stat", "session": this.sessionID, "windowid" : context.windowid },
             function(data) {
                 if ( data.getElementsByTagName("stat") ) {
                     var activeClients = 
@@ -366,7 +366,7 @@ pz2.prototype =
                                 },
                                 delay
                             );
-                    context.statCallback(stat, this.windowid);
+                    context.statCallback(stat, context.windowid);
                 }
                 else
                     context.throwError('Stat failed. Malformed WS resonse.',
@@ -472,7 +472,7 @@ pz2.prototype =
                   context.show();
                 }, 
                 delay);
-              context.showCallback(show, this.windowid);
+              context.showCallback(show, context.windowid);
           }
         );
     },
@@ -524,7 +524,7 @@ pz2.prototype =
                     record = new Array();
                     record['xmlDoc'] = data;
                     record['offset'] = context.currRecOffset;
-                    callback(record, args, this.windowid);
+                    callback(record, args, context.windowid);
                 //pz2 record
                 } else if ( recordNode = 
                     data.getElementsByTagName("record")[0] ) {
@@ -554,7 +554,7 @@ pz2.prototype =
                                   },
                                   delay
                                );                                    
-                    callback(record, args, this.windowid);
+                    callback(record, args, context.windowid);
                 }
                 else
                     context.throwError('Record failed. Malformed WS resonse.',
@@ -643,7 +643,7 @@ pz2.prototype =
                                 delay
                             );
                    
-                    context.termlistCallback(termList, this.windowid);
+                    context.termlistCallback(termList, context.windowid);
                 }
                 else
                     context.throwError('Termlist failed. Malformed WS resonse.',
@@ -732,7 +732,7 @@ pz2.prototype =
                                 delay
                             );
 
-                    context.bytargetCallback(bytarget, this.windowid);
+                    context.bytargetCallback(bytarget, context.windowid);
                 }
                 else
                     context.throwError('Bytarget failed. Malformed WS resonse.',
