@@ -32,6 +32,7 @@ var pz2 = function ( paramArray )
         throw new Error("Pz2.js: Array with parameters has to be supplied."); 
 
     //supported pazpar2's protocol version
+    this.windowid = paramArray.windowid || window.name;
     this.suppProtoVer = '1';
     if (typeof paramArray.pazpar2path != "undefined")
         this.pz2String = paramArray.pazpar2path;
@@ -240,7 +241,7 @@ pz2.prototype =
 
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.safeGet(
-            { "command": "ping", "session": this.sessionID, "windowid" : window.name },
+            { "command": "ping", "session": this.sessionID, "windowid" : this.windowid },
             function(data) {
                 if ( data.getElementsByTagName("status")[0]
                         .childNodes[0].nodeValue == "OK" ) {
@@ -290,7 +291,7 @@ pz2.prototype =
           "command": "search",
           "query": this.currQuery, 
           "session": this.sessionID,
-          "windowid" : window.name
+          "windowid" : this.windowid
         };
 	
         if( sort !== undefined ) {
@@ -343,7 +344,7 @@ pz2.prototype =
         var context = this;
         var request = new pzHttpRequest(this.pz2String, this.errorHandler);
         request.safeGet(
-            { "command": "stat", "session": this.sessionID, "windowid" : window.name },
+            { "command": "stat", "session": this.sessionID, "windowid" : this.windowid },
             function(data) {
                 if ( data.getElementsByTagName("stat") ) {
                     var activeClients = 
@@ -401,7 +402,7 @@ pz2.prototype =
               "sort": this.currentSort, 
               "block": 1,
               "type": this.showResponseType,
-              "windowid" : window.name
+              "windowid" : this.windowid
           };
         if (query_state)
           requestParameters["query-state"] = query_state;
@@ -490,7 +491,7 @@ pz2.prototype =
             "command": "record", 
             "session": this.sessionID,
             "id": this.currRecID,
-            "windowid" : window.name
+            "windowid" : this.windowid
         };
 	
 	this.currRecOffset = null;
@@ -579,7 +580,7 @@ pz2.prototype =
                 "command": "termlist", 
                 "session": this.sessionID, 
                 "name": this.termKeys,
-                "windowid" : window.name, 
+                "windowid" : this.windowid, 
 		"version" : this.version
 	
             },
@@ -672,7 +673,7 @@ pz2.prototype =
 		"command": "bytarget", 
 		"session": this.sessionID, 
 		"block": 1,
-		"windowid" : window.name,
+		"windowid" : this.windowid,
 		"version" : this.version
 	    },
             function(data) {
