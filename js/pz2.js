@@ -171,7 +171,7 @@ pz2.prototype =
         this.stop();
             
         if ( this.resetCallback )
-                this.resetCallback();
+                this.resetCallback(this.windowid);
     },
 
     init: function (sessionId, serviceId) 
@@ -215,7 +215,7 @@ pz2.prototype =
                                 context.keepAlive
                             );
                         if ( context.initCallback )
-                            context.initCallback();
+                            context.initCallback(this.windowid);
                     }
                     else
                         context.throwError('Init failed. Malformed WS resonse.',
@@ -366,7 +366,7 @@ pz2.prototype =
                                 },
                                 delay
                             );
-                    context.statCallback(stat);
+                    context.statCallback(stat, this.windowid);
                 }
                 else
                     context.throwError('Stat failed. Malformed WS resonse.',
@@ -472,7 +472,7 @@ pz2.prototype =
                   context.show();
                 }, 
                 delay);
-            context.showCallback(show);
+              context.showCallback(show, this.windowid);
           }
         );
     },
@@ -524,7 +524,7 @@ pz2.prototype =
                     record = new Array();
                     record['xmlDoc'] = data;
                     record['offset'] = context.currRecOffset;
-                    callback(record, args);
+                    callback(record, args, this.windowid);
                 //pz2 record
                 } else if ( recordNode = 
                     data.getElementsByTagName("record")[0] ) {
@@ -554,7 +554,7 @@ pz2.prototype =
                                   },
                                   delay
                                );                                    
-                    callback(record, args);
+                    callback(record, args, this.windowid);
                 }
                 else
                     context.throwError('Record failed. Malformed WS resonse.',
@@ -643,7 +643,7 @@ pz2.prototype =
                                 delay
                             );
                    
-                   context.termlistCallback(termList);
+                    context.termlistCallback(termList, this.windowid);
                 }
                 else
                     context.throwError('Termlist failed. Malformed WS resonse.',
@@ -732,7 +732,7 @@ pz2.prototype =
                                 delay
                             );
 
-                    context.bytargetCallback(bytarget);
+                    context.bytargetCallback(bytarget, this.windowid);
                 }
                 else
                     context.throwError('Bytarget failed. Malformed WS resonse.',
