@@ -284,7 +284,13 @@ void connection_continue(struct connection *co)
 {
     int r = ZOOM_connection_exec_task(co->link);
     if (!r)
+    {
+        struct client *cl = co->client;
+
+        client_lock(cl);
         non_block_events(co);
+        client_unlock(cl);
+    }
     else
     {
         iochan_setflags(co->iochan, ZOOM_connection_get_mask(co->link));
