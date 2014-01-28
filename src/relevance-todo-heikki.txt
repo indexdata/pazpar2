@@ -1,0 +1,160 @@
+
+Relevancy stuff - status 20-Jan-2014 - How to get going again?
+
+This summary is also in PAZ-917.
+
+I have done some ranking-related stuff, and now it looks like we might end up
+not continuing with it. So I write this quick summary to state what I have done,
+and what I would do next, so we can pick the ball up again, if need be.
+
+Added a new setting native_score which can be a field name for the score. If
+specified, this is the field that contains the ranking score from the back-end.
+These scores are normalized to a range that is close to 1.0 .. 0.0, minimizing
+the squared distance from 1/position curve.
+
+This can also be a special value "position", which can be used when the target
+returns the records in relevancy order, but without a numeric value. This makes
+a guess based on 1/position. There is also another magic value "internal", which
+uses our TF/IDF ranking, but normalized the same way as before.
+
+The normalizing works fine, as long as records have scores from the back end.
+For our own TF/IDF thing, things don't work so well yet, as it works on the
+cluster level, not on individual records. I haven't quite sorted out how to make
+the TF/IDF thing on a record level, probably need to duplicate the ranking code
+and keep score vectors per record as well as per cluster, so as to keep the
+current behavior as the default... There is a dirty hack to put the cluster
+score in the records too.
+
+The record scores are supposed to be combined into cluster scores, so that
+clusters can be sorted. This is not yet done, but should not be much of work. At
+the moment each cluster gets one of the record scores directly. Once this is
+done, we can define new setting(s) to adjust the cluster scoring. First by
+selecting some algorithm (max, avg, sum, some form of decaying sum (largest
+score + half the second largest + quarter of the next largest, etc)), and then
+adjustments parameters to give some targets extra weight (at least when
+averaging), or extra boost (to indicate they tend to have better results).
+
+Before starting to code anything much, we obviously need tests. There is a
+decent test framework, it should not be many days work to make a number of test
+cases for the native ranking first, then for the normalized TF/IDF (once we get
+that coded), and then for merging record scores into cluster scores.
+
+
+* * *
+
+
+How does relevancy ranking work in pz2
+Need to understand it before I can change it to work on individual records
+
+Data structures
+
+struct relevance {
+    int *doc_frequency_vec;
+    int *term_frequency_vec_tmp;
+    int *term_pos;
+    int vec_len;
+    struct word_entry *entries;
+    ...
+    struct norm_client *norm;   // my list of (sub)records for normalizing, one list per client
+}
+
+struct word_entry {
+    const char *norm_str;
+    const char *display_str;
+    int termno;
+    char *ccl_field;
+    struct word_entry *next;
+}
+
+// Find the norm_client entry for this client, or create one if not there
+struct norm_client *findnorm( struct relevance *rel, struct client* client) 
+
+// Add all records from a cluster into the list for that client, for normalizing later
+static void setup_norm_record( struct relevance *rel,  struct record_cluster *clust)
+
+// find the word_entry that matches the norm_str
+// if found, sets up entries->ccl_field, and weight
+static struct word_entry *word_entry_match(struct relevance *r,
+                                           const char *norm_str,
+                                           const char *rank, int *weight)
+
+// Put <match> tags around the words in the recors text
+// not called from inside relevance.c at all! Called from session.c:2051,
+// ingest_to_cluster(). Can probably be ignored for this summary.
+int relevance_snippet(struct relevance *r,
+                      const char *words, const char *name,
+                      WRBUF w_snippet)
+
+// not called from inside relevance.c!
+// Seems to implement the decay and follow stuff, adjusting term weights within a field
+// Called from session.c:2286, ingest_to_cluster(), in if(rank), with a comment
+// ranking of _all_ fields enabled. 
+void relevance_countwords(struct relevance *r, struct record_cluster *cluster,
+                          const char *words, const char *rank,
+                          const char *name)
+
+// Recurses through a RPN query, pulls out the terms we want for ranking
+// Appends each word to relevance->entries with normalized string,
+// ccl_field, termno, and display_str.
+// Ok, here we decide which terms we are interested in!
+// called from relevance_create_ccl(), (and recursively from itself)
+static void pull_terms(struct relevance *res, struct ccl_rpn_node *n)
+
+// Clears the relevance->doc_frequency_vec
+void relevance_clear(struct relevance *r)
+
+// Sets up the relevance structure. Gets lots of controlling params
+// pulls terms, which gets the vec_len. then mallocs relevance->term_frequency_vec
+// term_frequency_vec_tmp, and term_pos. Calls relevance_clear to clear the doc_frequency_vec.
+struct relevance *relevance_create_ccl(pp2_charset_fact_t pft,
+                                       struct ccl_rpn_node *query,
+                                       int rank_cluster,
+                                       double follow_factor, double lead_decay,
+                                       int length_divide)
+
+// kills the nmem, freeing all memory.
+void relevance_destroy(struct relevance **rp)
+
+// Adds the values from src into the dst, for both term_frequency_vec and
+// term_frequency_vecf. Both src and dst are clusters.
+// Called from reclists.c:419 merge_cluster()
+void relevance_mergerec(struct relevance *r, struct record_cluster *dst,
+                        const struct record_cluster *src)
+
+// Adds a new cluster to the relevance stuff
+// mallocs rec->term_frequency_vec and _vecf for the cluster, and clears them to zeroes
+// Called from reclists.c: 458 new_cluster()
+void relevance_newrec(struct relevance *r, struct record_cluster *rec)
+
+// increments relevance->doc_frequency_vec[i] for each i that has something in the
+// cluster->term_frequency_vec[i], i=1..vec_len, and increments doc_frequency_vec[0].
+// called from session.c:2330, ingest_to_cluster(), near the end
+void relevance_donerecord(struct relevance *r, struct record_cluster *cluster)
+
+// Calculates a idfvec from relevance->doc_frequency_vec (basically 1/doc_frequency_vec,
+// times doc_frequency_vec[0].
+// Then loops through all clusters, and for each calculates score from each term
+// rec->term_frequency_vec[i] * idfvec[i]. Sums these as the cluster score.
+// If rank_cluster is set, divides the sum by the count, getting avg score.
+// Then calls normalize_scores.
+// Called from session.c:1319 show_range_start().
+void relevance_prepare_read(struct relevance *rel, struct reclist *reclist)
+
+
+TODO - Read through ingest_to_cluster, and summarize how the ranking actually
+works.  That's a long routine, 400 lines. Quick read didn't show all that much.
+
+So, basically we have
+  - relevance->entries
+     - Set up in pull_terms, updated in word_entry_match
+  - relevance->doc_frequency_vec
+     - Set up with zeroes in relevance_create_ccl
+     - Updated in relevance_donerecord, based on the cluster->term_frequency_vec
+  - cluster->term_frequency_vec
+     - Set up and zeroed in relevance_newrec
+     - Updated in relevance_mergerec
+
+* * *
+
+
+
