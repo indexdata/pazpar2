@@ -84,6 +84,7 @@ static char *hard_settings[] = {
     "pz:extendrecs",
     "pz:authentication_mode",
     "pz:native_score",
+    "pz:memcached",
     0
 };
 

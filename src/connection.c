@@ -216,7 +216,7 @@ static void non_block_events(struct connection *co)
         ev = ZOOM_connection_last_event(link);
 
 #if 1
-        yaz_log(YLOG_DEBUG, "%p Connection ZOOM_EVENT_%s", co, ZOOM_get_event_str(ev));
+        yaz_log(YLOG_LOG, "%p Connection ZOOM_EVENT_%s", co, ZOOM_get_event_str(ev));
 #endif
         switch (ev)
         {
@@ -414,6 +414,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
 
     struct session_database *sdb = client_get_database(con->client);
     const char *apdulog = session_setting_oneval(sdb, PZ_APDULOG);
+    const char *memcached = session_setting_oneval(sdb, PZ_MEMCACHED);
 
     assert(con);
 
@@ -423,6 +424,8 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
 
     if ((charset = session_setting_oneval(sdb, PZ_NEGOTIATION_CHARSET)))
         ZOOM_options_set(zoptions, "charset", charset);
+    if (memcached && *memcached)
+        ZOOM_options_set(zoptions, "memcached", memcached);
 
     assert(host->ipport);
     if (host->proxy)
