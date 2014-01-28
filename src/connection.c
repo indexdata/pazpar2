@@ -216,7 +216,7 @@ static void non_block_events(struct connection *co)
         ev = ZOOM_connection_last_event(link);
 
 #if 1
-        yaz_log(YLOG_LOG, "%p Connection ZOOM_EVENT_%s", co, ZOOM_get_event_str(ev));
+        yaz_log(YLOG_DEBUG, "%p Connection ZOOM_EVENT_%s", co, ZOOM_get_event_str(ev));
 #endif
         switch (ev)
         {
