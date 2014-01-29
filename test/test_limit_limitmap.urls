@@ -27,13 +27,13 @@ http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=d
 http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=Mysubject%3DRailroads
 1 http://localhost:9763/search.pz2?session=1&command=show&block=1&version=2
 http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=date%3D1977
-http://localhost:9763/search.pz2?session=1&command=show&block=1&version=2
+1 http://localhost:9763/search.pz2?session=1&command=show&block=1&version=2
 http://localhost:9763/search.pz2?session=1&command=termlist&block=1&version2=
 http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=date%3C1977
 http://localhost:9763/search.pz2?session=1&command=show&block=1&version=2
 http://localhost:9763/search.pz2?session=1&command=termlist&block=1&version=2
 http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=date%3D1977-1997
-http://localhost:9763/search.pz2?session=1&command=show&block=1&version=2
+1 http://localhost:9763/search.pz2?session=1&command=show&block=1&version=2
 http://localhost:9763/search.pz2?session=1&command=termlist&block=1&version2=
 http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=date%3C1977
 http://localhost:9763/search.pz2?session=1&command=show&block=1&version=2
