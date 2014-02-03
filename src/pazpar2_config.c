@@ -513,7 +513,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
 }
 
 
-static void service_add_metadata(xmlNode *n, int *num_metadata, int *num_sortkeys)
+static void count_metadata(xmlNode *n, int *num_metadata, int *num_sortkeys)
 {
     xmlChar *sortkey = xmlGetProp(n, (xmlChar *) "sortkey");
     (*num_metadata)++;
@@ -549,11 +549,11 @@ static struct conf_service *service_create_static(struct conf_server *server,
                 {
                     if (m->type == XML_ELEMENT_NODE &&
                             !strcmp((const char *) m->name, "metadata"))
-                        service_add_metadata(m, &num_metadata, &num_sortkeys);
+                        count_metadata(m, &num_metadata, &num_sortkeys);
                 }
             }
             else // This is a metadata-element proper, count it right away.
-                service_add_metadata(n, &num_metadata, &num_sortkeys);
+                count_metadata(n, &num_metadata, &num_sortkeys);
         }
 
     service = service_init(server, num_metadata, num_sortkeys, service_id);
