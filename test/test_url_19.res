@@ -28,9 +28,11 @@
       <metadata name="title-remainder" brief="yes" merge="longest" rank="5"/>
       <metadata name="isbn"/>
       <metadata name="date" brief="yes" sortkey="numeric" type="year" merge="range" termlist="yes"/>
-      <metadata name="author" brief="yes" termlist="yes" merge="longest" rank="2" mergekey="optional"/>
-      <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
-      <metadata name="id"/>
-      <metadata name="lccn" merge="unique"/>
+      <metadata>
+         <metadata name="author" brief="yes" termlist="yes" merge="longest" rank="2" mergekey="optional"/>
+         <metadata name="subject" merge="unique" termlist="yes" rank="3"/>
+         <metadata name="id"/>
+         <metadata name="lccn" merge="unique"/>
+      </metadata>
       <metadata name="description" brief="yes" merge="longest" rank="3"/>
     </service>
