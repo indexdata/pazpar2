@@ -515,9 +515,9 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
 
 static void service_add_metadata(xmlNode *n, int *num_metadata, int *num_sortkeys)
 {
+    xmlChar *sortkey = xmlGetProp(n, (xmlChar *) "sortkey");
     (*num_metadata)++;
 
-    xmlChar *sortkey = xmlGetProp(n, (xmlChar *) "sortkey");
     if (sortkey && strcmp((const char *) sortkey, "no"))
         (*num_sortkeys)++;
     xmlFree(sortkey);
