@@ -1263,8 +1263,8 @@ struct conf_config *config_create(const char *fname, int verbose)
 {
     xmlDoc *doc = xmlReadFile(fname,
                               NULL,
-                              XML_PARSE_XINCLUDE + XML_PARSE_NOBLANKS
-                              + XML_PARSE_NSCLEAN + XML_PARSE_NONET );
+                              XML_PARSE_XINCLUDE
+                              + XML_PARSE_NSCLEAN + XML_PARSE_NONET);
     xmlNode *n;
     const char *p;
     int r;
