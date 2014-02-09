@@ -149,14 +149,13 @@ LEVELS=loglevel,fatal,warn,log,debug,notime,zoom,zoomdetails
 if test -n "$PAZPAR2_USE_VALGRIND"; then
     valgrind --num-callers=30 --show-reachable=yes --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -v $LEVELS -X -l ${PREFIX}_pazpar2.log -f ${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
     PP2PID=$!
-    sleep 6
+    sleep 0.01
     WAIT=400
 elif test -n "$SKIP_PAZPAR2"; then
     echo "${PREFIX}: not starting Pazpar2 (should be running already)"
 else
     ../src/pazpar2 -v $LEVELS -d -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
     PP2PID=$!
-    sleep 2
 fi
 
 if [ -z "$SKIP_PAZPAR2" -a -z "$WAIT_PAZPAR2" ] ; then
@@ -183,7 +182,8 @@ code=0
 
 # We can start test for real
 testno=1
-rounds=1
+# set rounds to "wait" because pazpar2 might not be ready
+rounds=$maxrounds
 for f in `cat ${srcdir}/${URLS}`; do
     if echo $f | grep '^http' >/dev/null; then
 	OUT1=${srcdir}/${PREFIX}_${testno}.res
