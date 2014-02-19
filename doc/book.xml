@@ -394,13 +394,20 @@
   <section id="installation.debian">
    <title>Installation on Debian GNU/Linux and Ubuntu</title>
    <para>
-    Index Data provides Debian and Ubuntu packages for Pazpar2.
-    As of February 2010, these
-    are prepared for Debian versions Etch, Lenny and Squeeze; and for
-    Ubuntu versions 8.04 (hardy), 8.10 (intrepid), 9.04 (jaunty) and
-    9.10 (karmic).  These packages are available at
-    <ulink url="&url.pazpar2.download.debian;"/> and
-    <ulink url="&url.pazpar2.download.ubuntu;"/>.
+    Index Data provides Debian and Ubuntu packages for Pazpar2 and YAZ.
+    Refer to these directories:
+    <ulink url="&url.pazpar2.download;debian/"/> and
+    <ulink url="&url.pazpar2.download;ubuntu/"/>.
+   </para>
+  </section>
+
+  <section id="installation.centos">
+   <title>Installation on RedHat / CentOS</title>
+   <para>
+    Index Data provides CentOS packages for Pazpar2 and YAZ.
+    Refer to
+    <ulink url="&url.pazpar2.download;redhat/centos"/> for
+    CentOS packages.
    </para>
   </section>
 
