@@ -1102,7 +1102,74 @@
     behavior of the client function.
    </para>
 
-   <variablelist>
+    <varlistentry>
+     <term>pz:allow</term>
+     <listitem>
+      <para>
+       Allows or denies access to the resources it is applied to. Possible
+       values are '0' and '1'.
+       The default is '1' (allow access to this resource).
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:apdulog</term>
+     <listitem>
+      <para>
+       If the 'pz:apdulog' setting is defined and has other value than 0,
+       then Z39.50 APDUs are written to the log.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:authentication</term>
+     <listitem>
+      <para>
+       Sets an authentication string for a given database. For Z39.50,
+       this is carried as part of the Initialize Request. In order to carry
+       the information in the "open" elements, separate
+       username and password with a slash (In Z39.50 it is a VisibleString).
+       In order to carry the information in the idPass  elements, separate
+       username term, password term and,  optionally, a group term with a
+       single blank.
+       If three terms are given, the order is
+       <emphasis>user, group, password</emphasis>.
+       If only two terms are given, the order is
+       <emphasis>user, password</emphasis>.
+      </para>
+      <para>
+       For HTTP based procotols, such as SRU and Solr, the authentication
+       string includes a username term and, optionally, a password term.
+       Each term is separated by a single blank. The
+       authentication information is passed either by HTTP basic
+       authentication or via URL parameters. The mode is operation is
+       determined by <literal>pz:authentication_mode</literal> setting.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:authentication_mode</term>
+     <listitem>
+      <para>
+       Determines how authentication is carried in HTTP based protocols.
+       Value may be "<literal>basic</literal>" or "<literal>url</literal>".
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:block_timeout</term>
+     <listitem>
+      <para>
+       (Not yet implemented).
+       Specifies the time for which a block should be released anyway.
+      </para>
+     </listitem>
+    </varlistentry>
+
     <varlistentry>
      <term>pz:cclmap:xxx</term>
      <listitem>
@@ -1120,16 +1187,7 @@
       </para>
      </listitem>
     </varlistentry>
-    <varlistentry id="requestsyntax">
-     <term>pz:requestsyntax</term>
-     <listitem>
-      <para>
-       This specifies the record syntax to use when requesting
-       records from a given server. The value can be a symbolic name like
-       marc21 or xml, or it can be a Z39.50-style dot-separated OID.
-      </para>
-     </listitem>
-    </varlistentry>
+
     <varlistentry>
      <term>pz:elements</term>
      <listitem>
@@ -1139,19 +1197,102 @@
       </para>
      </listitem>
     </varlistentry>
+
     <varlistentry>
-     <term>pz:piggyback</term>
+     <term>pz:extendrecs</term>
      <listitem>
       <para>
-       Piggybacking enables the server to retrieve records from the
-       server as part of the search response in Z39.50. Almost all
-       servers support this (or fail it gracefully), but a few
-       servers will produce undesirable results.
-       Set to '1' to enable piggybacking, '0' to disable it. Default
-       is 1 (piggybacking enabled).
+       If a show command goes to the boundary of a result set for a
+       database - depends on sorting - and pz:extendrecs is set to a positive
+       value. then Pazpar2 wait for show to fetch pz:extendrecs more
+       records. This setting is best used if a database does native
+       sorting, because the result set otherwise may be completely
+       re-sorted during extended fetch.
+       The default value of pz:extendrecs is 0 (no extended fetch).
+      </para>
+      <warning>
+       <para>
+	The pz:extendrecs setting appeared in Pazpar2 version 1.6.26.
+	But the bahavior changed with the release of Pazpar2 1.6.29.
+       </para>
+      </warning>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:facetmap:<replaceable>name</replaceable></term>
+     <listitem>
+      <para>
+       Specifies that for field <replaceable>name</replaceable>, the target
+       supports (native) facets. The value is the name of the
+       field on the target.
+      </para>
+      <note>
+       <para>
+	At this point only Solr targets have been tested with this
+	facility.
+       </para>
+      </note>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:id</term>
+     <listitem>
+      <para>
+       This setting can't be 'set' -- it contains the ID (normally
+       ZURL) for a given target, and is useful for filtering --
+       specifically when you want to select one or more specific
+       targets in the search command.
       </para>
      </listitem>
     </varlistentry>
+
+    <varlistentry id="limitmap">
+     <term>pz:limitmap:<replaceable>name</replaceable></term>
+     <listitem>
+      <para>
+       Specifies attributes for limiting a search to a field - using
+       the limit parameter for search. It can be used to filter locally
+       or remotely (search in a target). In some cases the mapping of
+       a field to a value is identical to an existing cclmap field; in
+       other cases the field must be specified in a different way - for
+       example to match a complete field (rather than parts of a subfield).
+      </para>
+      <para>
+       The value of limitmap may have one of three forms: referral to
+       an existing CCL field, a raw PQF string or a local limit. Leading string
+       determines type; either <literal>ccl:</literal> for CCL field,
+       <literal>rpn:</literal> for PQF/RPN, or <literal>local:</literal>
+       for filtering in Pazpar2. The local filtering may be followed
+       by a field a metadata field (default is to use the name of the
+       limitmap itself).
+      </para>
+      <para>
+       For Pazpar2 version 1.6.23 and later the limitmap may include multiple
+       specifications, separated by <literal>,</literal> (comma).
+       For example:
+       <literal>ccl:title,local:ltitle,rpn:@attr 1=4</literal>.
+      </para>
+      <note>
+       <para>
+	The limitmap facility is supported for Pazpar2 version 1.6.0.
+	Local filtering is supported in Pazpar2 1.6.6.
+       </para>
+      </note>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:maxrecs</term>
+     <listitem>
+      <para>
+       Controls the maximum number of records to be retrieved from a
+       server. The default is 100.
+      </para>
+     </listitem>
+    </varlistentry>
+
     <varlistentry>
      <term>pz:nativesyntax</term>
      <listitem>
@@ -1182,6 +1323,96 @@
     </varlistentry>
 
     <varlistentry>
+     <term>pz:negotiation_charset</term>
+     <listitem>
+      <para>
+       Sets character set for Z39.50 negotiation. Most targets do not support
+       this, and some will even close connection if set (crash on server
+       side or similar). If set, you probably want to set it to
+       <literal>UTF-8</literal>.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:piggyback</term>
+     <listitem>
+      <para>
+       Piggybacking enables the server to retrieve records from the
+       server as part of the search response in Z39.50. Almost all
+       servers support this (or fail it gracefully), but a few
+       servers will produce undesirable results.
+       Set to '1' to enable piggybacking, '0' to disable it. Default
+       is 1 (piggybacking enabled).
+      </para>
+     </listitem>
+    </varlistentry>
+    <varlistentry>
+     <term>pz:pqf_prefix</term>
+     <listitem>
+      <para>
+       Allows you to specify an arbitrary PQF query language substring.
+       The provided string is prefixed to the user's query after it has been
+       normalized to PQF internally in pazpar2.
+       This allows you to attach complex 'filters' to queries for a given
+       target, sometimes necessary to select sub-catalogs
+       in union catalog systems, etc.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:pqf_strftime</term>
+     <listitem>
+      <para>
+       Allows you to extend a query with dates and operators.
+       The provided string allows certain substitutions and serves as a
+       format string.
+       The special two character sequence '%%' gets converted to the
+       original query. Other characters leading with the percent sign are
+       conversions supported by strftime.
+       All other characters are copied verbatim. For example, the string
+       <literal>@and @attr 1=30 @attr 2=3 %Y %%</literal>
+       would search for current year combined with the original PQF (%%).
+      </para>
+      <para>
+       This setting can also be used as more general alternative to
+       pz:pqf_prefix -- a way of embedding the submitted query
+       anywhere in the string rather than appending it to prefix.  For
+       example, if it is desired to omit all records satisfying the
+       query <literal>@attr 1=pica.bib 0007</literal> then this
+       subquery can be combined with the submitted query as the second
+       argument of <literal>@andnot</literal> by using the
+       pz:pqf_strftime value <literal>@not %% @attr 1=pica.bib
+       0007</literal>.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:preferred</term>
+     <listitem>
+      <para>
+       Specifies that a target is preferred, e.g. possible local, faster
+       target. Using block=pref on show command will wait for all these
+       targets to return records before releasing the block.
+       If no target is preferred, the block=pref will identical to block=1,
+       which release when one target has returned records.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:presentchunk</term>
+     <listitem>
+      <para>
+       Controls the chunk size in present requests. Pazpar2 will
+       make (maxrecs / chunk) request(s). The default is 20.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
      <term>pz:queryencoding</term>
      <listitem>
       <para>
@@ -1193,14 +1424,136 @@
     </varlistentry>
 
     <varlistentry>
-     <term>pz:negotiation_charset</term>
+     <term>pz:recordfilter</term>
      <listitem>
       <para>
-       Sets character set for Z39.50 negotiation. Most targets do not support
-       this, and some will even close connection if set (crash on server
-       side or similar). If set, you probably want to set it to
-       <literal>UTF-8</literal>.
+       Specifies a filter which allows Pazpar2 to only include
+       records that meet a certain criteria in a result.
+       Unmatched records  will be ignored.
+       The filter takes the form name, name~value, or name=value, which
+       will include only records with metadata element (name) that has the
+       substring (~value) given, or matches exactly (=value).
+       If value is omitted all records with the named metadata element
+       present will be included.
       </para>
+     </listitem>
+    </varlistentry>
+
+   <variablelist>
+    <varlistentry id="requestsyntax">
+     <term>pz:requestsyntax</term>
+     <listitem>
+      <para>
+       This specifies the record syntax to use when requesting
+       records from a given server. The value can be a symbolic name like
+       marc21 or xml, or it can be a Z39.50-style dot-separated OID.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:sort</term>
+     <listitem>
+      <para>
+       Specifies sort criteria to be applied to the result set.
+       Only works for targets which support the sort service.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry id="pzsortmap">
+     <term>pz:sortmap:<replaceable>field</replaceable></term>
+     <listitem>
+      <para>
+       Specifies native sorting for a target where
+       <replaceable>field</replaceable> is a sort criteria (see command
+       show). The value has to components separated by colon: strategy and
+       native-field. Strategy is one of <literal>z3950</literal>,
+       <literal>type7</literal>, <literal>cql</literal>,
+       <literal>sru11</literal>, or <literal>embed</literal>.
+       The second component, native-field, is the field that is recognized
+       by the target.
+      </para>
+      <note>
+       <para>
+ 	Only supported for Pazpar2 1.6.4 and later.
+       </para>
+      </note>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:sru</term>
+     <listitem>
+      <para>
+       This setting enables
+       <ulink url="&url.sru;">SRU</ulink>/<ulink url="&url.solr;">Solr</ulink>
+       support.
+       It has four possible settings.
+       'get', enables SRU access through GET requests. 'post' enables SRU/POST
+       support, less commonly supported, but useful if very large requests are
+       to be submitted. 'soap' enables the SRW (SRU over SOAP) variation of
+       the protocol.
+      </para>
+      <para>
+       A value of 'solr' enables Solr client support. This is supported
+       for Pazpar version 1.5.0 and later.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:sru_version</term>
+     <listitem>
+      <para>
+       This allows SRU version to be specified. If unset Pazpar2
+       will the default of YAZ (currently 1.2). Should be set
+       to 1.1 or 1.2. For Solr, the current supported/tested version
+       is 1.4 and 3.x.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:termlist_term_count</term>
+     <listitem>
+      <para>
+       Specifies number of facet terms to be requested from the target.
+       The default is unspecified e.g. server-decided. Also see pz:facetmap.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:termlist_term_factor</term>
+     <listitem>
+      <para>
+       Specifies whether to use a factor for pazpar2 generated facets (1)
+       or not (0).
+       When mixing locally generated (by the downloaded (pz:maxrecs) samples)
+       facet with native (target-generated) facets, the later will
+       dominated the dominate the facet list since they are generated
+       based on the complete result set.
+       By scaling up the facet count using the ratio between total hit
+       count and the sample size,
+       the total facet count can be approximated and thus better compared
+       with native facets. This is not enabled by default.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry id="pzurl">
+     <term>pz:url</term>
+     <listitem>
+      <para>
+       Specifies URL for the target and overrides the target ID.
+      </para>
+      <note>
+       <para>
+	<literal>pz:url</literal> is only recognized for
+	Pazpar2 1.6.4 and later.
+       </para>
+      </note>
      </listitem>
     </varlistentry>
 
@@ -1247,101 +1600,7 @@
       </para>
      </listitem>
     </varlistentry>
-    <varlistentry>
-     <term>pz:authentication</term>
-     <listitem>
-      <para>
-       Sets an authentication string for a given database. For Z39.50,
-       this is carried as part of the Initialize Request. In order to carry
-       the information in the "open" elements, separate
-       username and password with a slash (In Z39.50 it is a VisibleString).
-       In order to carry the information in the idPass  elements, separate
-       username term, password term and,  optionally, a group term with a
-       single blank.
-       If three terms are given, the order is
-       <emphasis>user, group, password</emphasis>.
-       If only two terms are given, the order is
-       <emphasis>user, password</emphasis>.
-      </para>
-      <para>
-       For HTTP based procotols, such as SRU and Solr, the authentication
-       string includes a username term and, optionally, a password term.
-       Each term is separated by a single blank. The
-       authentication information is passed either by HTTP basic
-       authentication or via URL parameters. The mode is operation is
-       determined by <literal>pz:authentication_mode</literal> setting.
-      </para>
-     </listitem>
-    </varlistentry>
 
-    <varlistentry>
-     <term>pz:authentication_mode</term>
-     <listitem>
-      <para>
-       Determines how authentication is carried in HTTP based protocols.
-       Value may be "<literal>basic</literal>" or "<literal>url</literal>".
-      </para>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term>pz:allow</term>
-     <listitem>
-      <para>
-       Allows or denies access to the resources it is applied to. Possible
-       values are '0' and '1'.
-       The default is '1' (allow access to this resource).
-      </para>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term>pz:maxrecs</term>
-     <listitem>
-      <para>
-       Controls the maximum number of records to be retrieved from a
-       server. The default is 100.
-      </para>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term>pz:extendrecs</term>
-     <listitem>
-      <para>
-       If a show command goes to the boundary of a result set for a
-       database - depends on sorting - and pz:extendrecs is set to a positive
-       value. then Pazpar2 wait for show to fetch pz:extendrecs more
-       records. This setting is best used if a database does native
-       sorting, because the result set otherwise may be completely
-       re-sorted during extended fetch.
-       The default value of pz:extendrecs is 0 (no extended fetch).
-      </para>
-      <warning>
-       <para>
-	The pz:extendrecs setting appeared in Pazpar2 version 1.6.26.
-	But the bahavior changed with the release of Pazpar2 1.6.29.
-       </para>
-      </warning>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term>pz:presentchunk</term>
-     <listitem>
-      <para>
-       Controls the chunk size in present requests. Pazpar2 will
-       make (maxrecs / chunk) request(s). The default is 20.
-      </para>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term>pz:id</term>
-     <listitem>
-      <para>
-       This setting can't be 'set' -- it contains the ID (normally
-       ZURL) for a given target, and is useful for filtering --
-       specifically when you want to select one or more specific
-       targets in the search command.
-      </para>
-     </listitem>
-    </varlistentry>
     <varlistentry>
      <term>pz:zproxy</term>
      <listitem>
@@ -1353,254 +1612,7 @@
      </listitem>
     </varlistentry>
 
-    <varlistentry>
-     <term>pz:apdulog</term>
-     <listitem>
-      <para>
-       If the 'pz:apdulog' setting is defined and has other value than 0,
-       then Z39.50 APDUs are written to the log.
-      </para>
-     </listitem>
-    </varlistentry>
-
-    <varlistentry>
-     <term>pz:sru</term>
-     <listitem>
-      <para>
-       This setting enables
-       <ulink url="&url.sru;">SRU</ulink>/<ulink url="&url.solr;">Solr</ulink>
-       support.
-       It has four possible settings.
-       'get', enables SRU access through GET requests. 'post' enables SRU/POST
-       support, less commonly supported, but useful if very large requests are
-       to be submitted. 'soap' enables the SRW (SRU over SOAP) variation of
-       the protocol.
-      </para>
-      <para>
-       A value of 'solr' enables Solr client support. This is supported
-       for Pazpar version 1.5.0 and later.
-      </para>
-     </listitem>
-    </varlistentry>
-
-    <varlistentry>
-     <term>pz:sru_version</term>
-     <listitem>
-      <para>
-       This allows SRU version to be specified. If unset Pazpar2
-       will the default of YAZ (currently 1.2). Should be set
-       to 1.1 or 1.2. For Solr, the current supported/tested version
-       is 1.4 and 3.x.
-      </para>
-     </listitem>
-    </varlistentry>
-
-    <varlistentry>
-     <term>pz:pqf_prefix</term>
-     <listitem>
-      <para>
-       Allows you to specify an arbitrary PQF query language substring.
-       The provided string is prefixed to the user's query after it has been
-       normalized to PQF internally in pazpar2.
-       This allows you to attach complex 'filters' to queries for a given
-       target, sometimes necessary to select sub-catalogs
-       in union catalog systems, etc.
-      </para>
-     </listitem>
-    </varlistentry>
-
-    <varlistentry>
-     <term>pz:pqf_strftime</term>
-     <listitem>
-      <para>
-       Allows you to extend a query with dates and operators.
-       The provided string allows certain substitutions and serves as a
-       format string.
-       The special two character sequence '%%' gets converted to the
-       original query. Other characters leading with the percent sign are
-       conversions supported by strftime.
-       All other characters are copied verbatim. For example, the string
-       <literal>@and @attr 1=30 @attr 2=3 %Y %%</literal>
-       would search for current year combined with the original PQF (%%).
-      </para>
-      <para>
-       This setting can also be used as more general alternative to
-       pz:pqf_prefix -- a way of embedding the submitted query
-       anywhere in the string rather than appending it to prefix.  For
-       example, if it is desired to omit all records satisfying the
-       query <literal>@attr 1=pica.bib 0007</literal> then this
-       subquery can be combined with the submitted query as the second
-       argument of <literal>@andnot</literal> by using the
-       pz:pqf_strftime value <literal>@not %% @attr 1=pica.bib
-       0007</literal>.
-      </para>
-     </listitem>
-    </varlistentry>
-
-    <varlistentry>
-     <term>pz:sort</term>
-     <listitem>
-      <para>
-       Specifies sort criteria to be applied to the result set.
-       Only works for targets which support the sort service.
-      </para>
-     </listitem>
-    </varlistentry>
-
-    <varlistentry>
-     <term>pz:recordfilter</term>
-     <listitem>
-      <para>
-       Specifies a filter which allows Pazpar2 to only include
-       records that meet a certain criteria in a result.
-       Unmatched records  will be ignored.
-       The filter takes the form name, name~value, or name=value, which
-       will include only records with metadata element (name) that has the
-       substring (~value) given, or matches exactly (=value).
-       If value is omitted all records with the named metadata element
-       present will be included.
-      </para>
-     </listitem>
-    </varlistentry>
-
-    <varlistentry>
-     <term>pz:preferred</term>
-     <listitem>
-      <para>
-       Specifies that a target is preferred, e.g. possible local, faster
-       target. Using block=pref on show command will wait for all these
-       targets to return records before releasing the block.
-       If no target is preferred, the block=pref will identical to block=1,
-       which release when one target has returned records.
-      </para>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term>pz:block_timeout</term>
-     <listitem>
-      <para>
-       (Not yet implemented).
-       Specifies the time for which a block should be released anyway.
-      </para>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term>pz:termlist_term_count</term>
-     <listitem>
-      <para>
-       Specifies number of facet terms to be requested from the target.
-       The default is unspecified e.g. server-decided. Also see pz:facetmap.
-      </para>
-     </listitem>
-    </varlistentry>
-    <varlistentry>
-     <term>pz:termlist_term_factor</term>
-     <listitem>
-      <para>
-       Specifies whether to use a factor for pazpar2 generated facets (1)
-       or not (0).
-       When mixing locally generated (by the downloaded (pz:maxrecs) samples)
-       facet with native (target-generated) facets, the later will
-       dominated the dominate the facet list since they are generated
-       based on the complete result set.
-       By scaling up the facet count using the ratio between total hit
-       count and the sample size,
-       the total facet count can be approximated and thus better compared
-       with native facets. This is not enabled by default.
-      </para>
-     </listitem>
-    </varlistentry>
-
-    <varlistentry>
-     <term>pz:facetmap:<replaceable>name</replaceable></term>
-     <listitem>
-      <para>
-       Specifies that for field <replaceable>name</replaceable>, the target
-       supports (native) facets. The value is the name of the
-       field on the target.
-      </para>
-      <note>
-       <para>
-	At this point only Solr targets have been tested with this
-	facility.
-       </para>
-      </note>
-     </listitem>
-    </varlistentry>
-
-    <varlistentry id="limitmap">
-     <term>pz:limitmap:<replaceable>name</replaceable></term>
-     <listitem>
-      <para>
-       Specifies attributes for limiting a search to a field - using
-       the limit parameter for search. It can be used to filter locally
-       or remotely (search in a target). In some cases the mapping of
-       a field to a value is identical to an existing cclmap field; in
-       other cases the field must be specified in a different way - for
-       example to match a complete field (rather than parts of a subfield).
-      </para>
-      <para>
-       The value of limitmap may have one of three forms: referral to
-       an existing CCL field, a raw PQF string or a local limit. Leading string
-       determines type; either <literal>ccl:</literal> for CCL field,
-       <literal>rpn:</literal> for PQF/RPN, or <literal>local:</literal>
-       for filtering in Pazpar2. The local filtering may be followed
-       by a field a metadata field (default is to use the name of the
-       limitmap itself).
-      </para>
-      <para>
-       For Pazpar2 version 1.6.23 and later the limitmap may include multiple
-       specifications, separated by <literal>,</literal> (comma).
-       For example:
-       <literal>ccl:title,local:ltitle,rpn:@attr 1=4</literal>.
-      </para>
-      <note>
-       <para>
-	The limitmap facility is supported for Pazpar2 version 1.6.0.
-	Local filtering is supported in Pazpar2 1.6.6.
-       </para>
-      </note>
-     </listitem>
-    </varlistentry>
-
-    <varlistentry id="pzurl">
-     <term>pz:url</term>
-     <listitem>
-      <para>
-       Specifies URL for the target and overrides the target ID.
-      </para>
-      <note>
-       <para>
-	<literal>pz:url</literal> is only recognized for
-	Pazpar2 1.6.4 and later.
-       </para>
-      </note>
-     </listitem>
-    </varlistentry>
-
-    <varlistentry id="pzsortmap">
-     <term>pz:sortmap:<replaceable>field</replaceable></term>
-     <listitem>
-      <para>
-       Specifies native sorting for a target where
-       <replaceable>field</replaceable> is a sort criteria (see command
-       show). The value has to components separated by colon: strategy and
-       native-field. Strategy is one of <literal>z3950</literal>,
-       <literal>type7</literal>, <literal>cql</literal>,
-       <literal>sru11</literal>, or <literal>embed</literal>.
-       The second component, native-field, is the field that is recognized
-       by the target.
-      </para>
-      <note>
-       <para>
- 	Only supported for Pazpar2 1.6.4 and later.
-       </para>
-      </note>
-     </listitem>
-    </varlistentry>
-
    </variablelist>
-
   </refsect2>
 
  </refsect1>
