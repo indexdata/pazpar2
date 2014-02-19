@@ -1,3 +1,20 @@
+--- 1.6.39 2014/02/19
+
+Doc: update WRT ICU which is configured for YAZ; not Pazpar2.
+It's been like that since version 1.1.1 from August 2009.
+
+Add support for result-set caching via memcached. See description of
+pz:memcached. Require that Pazpar2 is using YAZ 5.0.12 or later.
+
+Add support for a <metadata> container tag. Patfh from Sven Porst.
+
+Add support for XInclude in main configuarion file. Patch from Sven Porst.
+
+Add client_{lock,unlock} before call to non_block_events in
+connection_continue. Problem is that if non_block_events fire records,
+then we will not unlock client at all. And as a result, a dead-lock
+occurs.
+
 --- 1.6.38 2014/01/07
 
 Avoid removing slash and other characters for generic metadata that
