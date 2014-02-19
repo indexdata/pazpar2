@@ -1307,7 +1307,7 @@
       </para>
       <para>
        This setting is honored in Pazpar2 1.6.39 or later. Pazpar2 must
-       be using YAZ version 5.0.12 or later.
+       be using YAZ version 5.0.13 or later.
       </para>
      </listitem>
     </varlistentry>
