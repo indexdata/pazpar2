@@ -1294,6 +1294,25 @@
     </varlistentry>
 
     <varlistentry>
+     <term>pz:memcached</term>
+     <listitem>
+      <para>
+       If set and non-empty,
+       <ulink url="&url.libmemcached;">libMemcached</ulink> will
+       configured and enabled for the target.
+       The value of this setting is same as the ZOOM option
+       <literal>memcached</literal>, which  in turn is the configuration
+       string passed to the <function>memcached</function> function
+       of <ulink url="&url.libmemcached;">libMemcached</ulink>.
+      </para>
+      <para>
+       This setting is honored in Pazpar2 1.6.39 or later. Pazpar2 must
+       be using YAZ version 5.0.12 or later.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
      <term>pz:nativesyntax</term>
      <listitem>
       <para>
