@@ -79,8 +79,9 @@
     -- <ulink url="&url.xslt;">XSLT</ulink> is used to normalize and extract
     data from retrieval records for display and analysis. It can be used
     against any server which supports the
-    <ulink url="&url.z39.50;">Z39.50</ulink>, <ulink url="&url.sru;">SRU/SRW</ulink>
-    or <ulink url="&url.solr;">SOLR</ulink> protocol. Proprietary
+    <ulink url="&url.z39.50;">Z39.50</ulink>,
+    <ulink url="&url.sru;">SRU/SRW</ulink>
+    or <ulink url="&url.solr;">Solr</ulink> protocol. Proprietary
     backend modules can function as connectors between these standard
     protocols and any non-standard API, including web-site scraping, to
     support a large number of other protocols.
@@ -205,25 +206,12 @@
     <listitem>
      <para>
       The popular Z39.50 toolkit for the C language.
-      YAZ <emphasis>must</emphasis> be compiled with Libxml2/Libxslt support.
-     </para>
-    </listitem>
-    </varlistentry>
-    <varlistentry><term><ulink url="&url.icu;">International
-    Components for Unicode (ICU)</ulink></term>
-    <listitem>
-     <para>
-      ICU provides Unicode support for non-English languages with
-      character sets outside the range of 7bit ASCII, like
-      Greek, Russian, German and French. Pazpar2 uses the ICU
-      Unicode character conversions, Unicode normalization, case
-      folding and other fundamental operations needed in
-      tokenization, normalization and ranking of records.
+      YAZ <emphasis>must</emphasis> be compiled with
+      <ulink url="&url.libxml2;">Libxml2</ulink>/<ulink url="&url.libxslt;">Libxslt</ulink> support.
      </para>
      <para>
-      Compiling, linking, and usage of the ICU libraries is optional,
-      but strongly recommended for usage in an international
-      environment.
+      It is highly recommended that YAZ is also compiled with
+      <ulink url="&url.icu;">ICU</ulink> support.
      </para>
     </listitem>
     </varlistentry>
@@ -697,7 +685,7 @@
     While noise from misbehaving targets can not be removed, it can
     be reduced using truly Unicode based ranking. This is an
     option which is available to the system administrator if ICU
-    support is compiled into Pazpar2, see
+    support is compiled into YAZ, see
     <xref linkend="installation"/> for details.
    </para>
    <para>
