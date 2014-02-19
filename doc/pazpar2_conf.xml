@@ -1102,6 +1102,8 @@
     behavior of the client function.
    </para>
 
+   <variablelist>
+
     <varlistentry>
      <term>pz:allow</term>
      <listitem>
@@ -1458,7 +1460,6 @@
      </listitem>
     </varlistentry>
 
-   <variablelist>
     <varlistentry id="requestsyntax">
      <term>pz:requestsyntax</term>
      <listitem>
