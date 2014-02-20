@@ -1486,8 +1486,8 @@
      <listitem>
       <para>
        Specifies native sorting for a target where
-       <replaceable>field</replaceable> is a sort criteria (see command
-       show). The value has to components separated by colon: strategy and
+       <replaceable>field</replaceable> is a sort criterion (see command
+       show). The value has two components separated by a colon: strategy and
        native-field. Strategy is one of <literal>z3950</literal>,
        <literal>type7</literal>, <literal>cql</literal>,
        <literal>sru11</literal>, or <literal>embed</literal>.
