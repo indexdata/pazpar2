@@ -203,15 +203,9 @@ pp2_charset_t pp2_charset_create_xml(xmlNode *xml_node)
 #if YAZ_HAVE_ICU
     UErrorCode status = U_ZERO_ERROR;
     struct icu_chain *chain = 0;
-    while (xml_node && xml_node->type != XML_ELEMENT_NODE)
-        xml_node = xml_node->next;
     chain = icu_chain_xml_config(xml_node, 1, &status);
-    if (!chain || U_FAILURE(status)){
-        //xmlDocPtr icu_doc = 0;
-        //xmlChar *xmlstr = 0;
-                //int size = 0;
-                //xmlDocDumpMemory(icu_doc, size);
-
+    if (!chain || U_FAILURE(status))
+    {
         yaz_log(YLOG_FATAL, "Could not parse ICU chain config:\n"
                 "<%s>\n ... \n</%s>",
                 xml_node->name, xml_node->name);

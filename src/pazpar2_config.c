@@ -639,14 +639,9 @@ static struct conf_service *service_create_static(struct conf_server *server,
                  || !strcmp((const char *) n->name, "facet"))
 
         {
-            if (!service->charsets)
-                service->charsets = pp2_charset_fact_create();
-            if (pp2_charset_fact_define(service->charsets,
-                                        n->children, (const char *) n->name))
-            {
-                yaz_log(YLOG_FATAL, "ICU chain definition error");
-                return 0;
-            }
+            yaz_log(YLOG_FATAL, "No longer supported: <%s>", n->name);
+            yaz_log(YLOG_LOG, "Use <icu_chain id=\"%s\">.. instead", n->name);
+            return 0;
         }
         else if (!strcmp((const char *) n->name, (const char *) "metadata"))
         {
@@ -680,7 +675,7 @@ static struct conf_service *service_create_static(struct conf_server *server,
                     service->rank_cluster = 1;
                 else if (!strcmp(rank_cluster, "no"))
                     service->rank_cluster = 0;
-                else 
+                else
                 {
                     yaz_log(YLOG_FATAL, "service: rank@cluster boolean");
                     return 0;
@@ -942,14 +937,9 @@ static struct conf_server *server_create(struct conf_config *config,
                  || !strcmp((const char *) n->name, "mergekey")
                  || !strcmp((const char *) n->name, "facet"))
         {
-            if (!server->charsets)
-                server->charsets = pp2_charset_fact_create();
-            if (pp2_charset_fact_define(server->charsets,
-                                        n->children, (const char *) n->name))
-            {
-                yaz_log(YLOG_FATAL, "ICU chain definition error");
-                return 0;
-            }
+            yaz_log(YLOG_FATAL, "No longer supported: <%s>", n->name);
+            yaz_log(YLOG_LOG, "Use <icu_chain id=\"%s\">.. instead", n->name);
+            return 0;
         }
         else if (!strcmp((const char *) n->name, "service"))
         {
