@@ -1280,7 +1280,7 @@ int http_init(struct conf_server *server, const char *record_fname)
     if (s == -1)
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "socket");
-        freeaddrinfo(ai);
+        freeaddrinfo(af);
         return 1;
     }
     if (ipv6_only >= 0 && ai->ai_family == AF_INET6 &&
@@ -1288,7 +1288,7 @@ int http_init(struct conf_server *server, const char *record_fname)
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "setsockopt IPV6_V6ONLY %s:%s %d",
                 server->host, server->port, ipv6_only);
-        freeaddrinfo(ai);
+        freeaddrinfo(af);
         CLOSESOCKET(s);
         return 1;
     }
@@ -1296,7 +1296,7 @@ int http_init(struct conf_server *server, const char *record_fname)
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "setsockopt SO_REUSEADDR %s:%s",
                 server->host, server->port);
-        freeaddrinfo(ai);
+        freeaddrinfo(af);
         CLOSESOCKET(s);
         return 1;
     }
@@ -1304,11 +1304,11 @@ int http_init(struct conf_server *server, const char *record_fname)
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "bind %s:%s",
                 server->host, server->port);
-        freeaddrinfo(ai);
+        freeaddrinfo(af);
         CLOSESOCKET(s);
         return 1;
     }
-    freeaddrinfo(ai);
+    freeaddrinfo(af);
     if (listen(s, SOMAXCONN) < 0)
     {
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "listen %s:%s",
