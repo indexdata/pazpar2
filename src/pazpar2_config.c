@@ -55,7 +55,6 @@ struct conf_config
     int no_threads;
     WRBUF confdir;
     iochan_man_t iochan_man;
-    database_hosts_t database_hosts;
 };
 
 struct service_xslt
@@ -859,7 +858,6 @@ static struct conf_server *server_create(struct conf_config *config,
     server->charsets = 0;
     server->http_server = 0;
     server->iochan_man = 0;
-    server->database_hosts = config->database_hosts;
     server->settings_fname = 0;
 
     if (server_id)
@@ -1282,7 +1280,6 @@ struct conf_config *config_create(const char *fname, int verbose)
     config->servers = 0;
     config->no_threads = 0;
     config->iochan_man = 0;
-    config->database_hosts = database_hosts_create();
 
     config->confdir = wrbuf_alloc();
     if ((p = strrchr(fname,
@@ -1348,7 +1345,6 @@ void config_destroy(struct conf_config *config)
             struct conf_server *s_next = server->next;
             server_destroy(server);
             server = s_next;
-            database_hosts_destroy(&config->database_hosts);
         }
         wrbuf_destroy(config->confdir);
         nmem_destroy(config->nmem);

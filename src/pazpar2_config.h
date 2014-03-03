@@ -28,7 +28,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "charsets.h"
 #include "http.h"
 #include "database.h"
-#include "host.h"
 
 enum conf_metadata_type {
     Metadata_type_generic,    // Generic text field
@@ -154,7 +153,6 @@ struct conf_server
     struct conf_config *config;
     http_server_t http_server;
     iochan_man_t iochan_man;
-    database_hosts_t database_hosts;
 };
 
 struct conf_config *config_create(const char *fname, int verbose);

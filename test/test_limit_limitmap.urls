@@ -17,7 +17,7 @@ test_limit_limitmap_settings_3.xml http://localhost:9763/search.pz2?session=1&co
 1 http://localhost:9763/search.pz2?session=1&command=search&query=greece&limit=author%3Dadam\,+james%7Cother_author
 1 http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=search&query=greece&limit=author%3Dadam\,+james%7Cother_author&filter=pz%3Aid%3DTarget-1
-http://localhost:9763/search.pz2?session=1&command=bytarget
+1 http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=show
 test_limit_limitmap_settings_4.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=Mysubject%3DRailroads

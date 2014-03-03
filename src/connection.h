@@ -28,12 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "eventl.h"
 
 struct connection;
-struct host;
 
-void connect_resolver_host(struct host *host, iochan_man_t iochan);
 ZOOM_connection connection_get_link(struct connection *co);
 void connection_continue(struct connection *co);
-void connect_resolver_host(struct host *host, iochan_man_t iochan_man);
 
 #endif
 

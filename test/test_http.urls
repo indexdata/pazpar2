@@ -68,7 +68,7 @@ http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=aut
 http://localhost:9763/search.pz2?session=9&command=bytarget
 http://localhost:9763/search.pz2?session=9&command=show
 http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3Dadam\,+james%7Cother_author
-http://localhost:9763/search.pz2?session=9&command=bytarget
+1 http://localhost:9763/search.pz2?session=9&command=bytarget
 http://localhost:9763/search.pz2?session=9&command=show
 http://localhost:9763/search.pz2?session=9&command=search&query=computer&limit=Mysubject%3DRailroads
 http://localhost:9763/search.pz2?session=9&command=show&block=1

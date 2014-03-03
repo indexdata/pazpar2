@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "ppmutex.h"
 #include "session.h"
-#include "host.h"
 #include "pazpar2_config.h"
 #include "settings.h"
 #include "http.h"

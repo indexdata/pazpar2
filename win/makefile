@@ -179,8 +179,6 @@ LNKOPT= $(COMMON_LNK_OPTIONS) $(RELEASE_LNK_OPTIONS) $(LNK_LIBS)
 # Source and object modules
 
 PAZPAR2_OBJS = \
-   "$(OBJDIR)\getaddrinfo.obj" \
-   "$(OBJDIR)\host.obj" \
    "$(OBJDIR)\pazpar2.obj" \
    "$(OBJDIR)\pazpar2_config.obj" \
    "$(OBJDIR)\http.obj" \
