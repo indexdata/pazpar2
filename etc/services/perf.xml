@@ -48,29 +48,23 @@
     <set name="pz:xslt" value="marc21.xsl"/>
   </settings>
 
-  <relevance>
     <icu_chain id="relevance" locale="en">
       <transform rule="[:Control:] Any-Remove"/>
       <tokenize rule="l"/>
       <transform rule="[[:WhiteSpace:][:Punctuation:]] Remove"/>
       <casemap rule="l"/>
     </icu_chain>
-  </relevance>
   
-  <sort>
     <icu_chain id="sort" locale="en">
       <transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
       <casemap rule="l"/>
     </icu_chain>
-  </sort>
   
-  <mergekey>
     <icu_chain id="mergekey" locale="en">
       <tokenize rule="l"/>
       <transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]] Remove"/>
       <casemap rule="l"/>
     </icu_chain>
-  </mergekey>
   
   <!-- we try to keep same order as in marc21.xsl -->
   <metadata name="id" brief="yes"/>
