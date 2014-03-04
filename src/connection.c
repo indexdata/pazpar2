@@ -103,23 +103,6 @@ struct connection {
 
 static int connection_connect(struct connection *con, iochan_man_t iochan_man);
 
-static int connection_is_idle(struct connection *co)
-{
-    ZOOM_connection link = co->link;
-    int event;
-
-    if (co->state != Conn_Open || !link)
-        return 0;
-
-    if (!ZOOM_connection_is_idle(link))
-        return 0;
-    event = ZOOM_connection_peek_event(link);
-    if (event == ZOOM_EVENT_NONE)
-        return 1;
-    else
-        return 0;
-}
-
 ZOOM_connection connection_get_link(struct connection *co)
 {
     return co->link;
@@ -327,18 +310,6 @@ static void connection_handler(IOCHAN iochan, int event)
 
         iochan_update(co);
     }
-}
-
-
-// Disassociate connection from client
-static void connection_release(struct connection *co)
-{
-    struct client *cl = co->client;
-
-    if (!cl)
-        return;
-    client_set_connection(cl, 0);
-    co->client = 0;
 }
 
 static int connection_connect(struct connection *con, iochan_man_t iochan_man)
