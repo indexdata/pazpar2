@@ -508,7 +508,6 @@ static void select_targets_callback(struct session *se,
         l->next = se->clients_cached;
         se->clients_cached = l;
     }
-    /* set session always. If may be 0 if client is not active */
     client_set_session(cl, se);
 
     l = xmalloc(sizeof(*l));
