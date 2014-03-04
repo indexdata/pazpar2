@@ -259,6 +259,19 @@ static void non_block_events(struct connection *co)
     }
 }
 
+static void iochan_update(struct connection *co)
+{
+    if (co->link)
+    {
+        int m = ZOOM_connection_get_mask(co->link);
+
+        if (m == 0)
+            m = ZOOM_SELECT_READ;
+        iochan_setflags(co->iochan, m);
+        iochan_setfd(co->iochan, ZOOM_connection_get_socket(co->link));
+    }
+}
+
 void connection_continue(struct connection *co)
 {
     int r = ZOOM_connection_exec_task(co->link);
@@ -271,10 +284,7 @@ void connection_continue(struct connection *co)
         client_unlock(cl);
     }
     else
-    {
-        iochan_setflags(co->iochan, ZOOM_connection_get_mask(co->link));
-        iochan_setfd(co->iochan, ZOOM_connection_get_socket(co->link));
-    }
+        iochan_update(co);
 }
 
 static void connection_handler(IOCHAN iochan, int event)
@@ -302,6 +312,11 @@ static void connection_handler(IOCHAN iochan, int event)
     }
     else
     {
+        if (ZOOM_connection_is_idle(co->link))
+        {
+            connection_destroy(co);
+            return;
+        }
         client_lock(cl);
         non_block_events(co);
 
@@ -310,11 +325,7 @@ static void connection_handler(IOCHAN iochan, int event)
         non_block_events(co);
         client_unlock(cl);
 
-        if (co->link)
-        {
-            iochan_setflags(iochan, ZOOM_connection_get_mask(co->link));
-            iochan_setfd(iochan, ZOOM_connection_get_socket(co->link));
-        }
+        iochan_update(co);
     }
 }
 
