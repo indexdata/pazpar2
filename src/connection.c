@@ -108,6 +108,11 @@ ZOOM_connection connection_get_link(struct connection *co)
     return co->link;
 }
 
+void connection_mark_dead(struct connection *co)
+{ 
+    iochan_settimeout(co->iochan, 1);
+}
+
 // Close connection and recycle structure
 static void connection_destroy(struct connection *co)
 {

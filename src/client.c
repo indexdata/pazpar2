@@ -1082,6 +1082,12 @@ void client_disconnect(struct client *cl)
     client_set_connection(cl, 0);
 }
 
+void client_mark_dead(struct client *cl)
+{
+    if (cl->connection)
+        connection_mark_dead(cl->connection);
+}
+
 // Initialize CCL map for a target
 static CCL_bibset prepare_cclmap(struct client *cl, CCL_bibset base_bibset)
 {

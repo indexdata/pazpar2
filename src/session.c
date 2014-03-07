@@ -556,6 +556,7 @@ static void session_remove_cached_clients(struct session *se)
         client_lock(l->client);
         client_set_session(l->client, 0);
         client_set_database(l->client, 0);
+        client_mark_dead(l->client);
         client_unlock(l->client);
         client_destroy(l->client);
         xfree(l);
