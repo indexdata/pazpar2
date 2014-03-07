@@ -173,6 +173,20 @@ int pp2_charset_fact_define(pp2_charset_fact_t pft,
     xmlChar *id = 0;
 
     assert(xml_node);
+
+    if (strcmp((const char *) xml_node->name, "icu_chain"))
+    {
+        yaz_log(YLOG_WARN, "Wrapper element <%s> deprecated", xml_node->name);
+        yaz_log(YLOG_LOG, "Use <icu_chain id=\"%s\">.. only", xml_node->name);
+        xml_node = xml_node->children;
+        while (xml_node && xml_node->type != XML_ELEMENT_NODE)
+            xml_node = xml_node->next;
+    }
+    if (!xml_node)
+    {
+        yaz_log(YLOG_FATAL, "Missing icu_chain element");
+        return -1;
+    }
     pct = pp2_charset_create_xml(xml_node);
     if (!pct)
         return -1;
