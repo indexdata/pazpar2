@@ -1,3 +1,17 @@
+--- 1.6.40 2014/04/10
+
+sortmap relevance always uses increasing=1. PAZ-930
+
+solr-pz2.xsl: ensure medium is also applied if Solr record do not
+have it. PAZ-929 
+
+Fix leak in getaddrinfo usage for HTTP listener. Not a big deal because
+this code is only executed once.
+
+Fix typos is sortmap documentation.
+
+Doc: fix misplaced variablelist tag.
+
 --- 1.6.39 2014/02/19
 
 Doc: update WRT ICU which is configured for YAZ; not Pazpar2.
