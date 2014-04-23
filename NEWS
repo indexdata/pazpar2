@@ -1,3 +1,11 @@
+--- 1.6.41 2014/04/23
+
+Fix URL with leading http:// not working PAZ-933
+
+Build packages for Ubuntu Trusty Tahr 14.04 LTS
+
+cf.xsl: handle medium override AND md field
+
 --- 1.6.40 2014/04/10
 
 sortmap relevance always uses increasing=1. PAZ-930
