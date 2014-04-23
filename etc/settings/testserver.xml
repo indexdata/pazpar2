@@ -6,8 +6,7 @@
   <set name="pz:apdulog" value="1"/>
 
   <!-- mapping for unqualified search -->
-  <!-- <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/> -->
-  <set name="pz:cclmap:term" value="u=my\x2cb t=l,r s=al"/>
+  <set name="pz:cclmap:term" value="u=1016 t=l,r s=al"/>
 
   <!-- field-specific mappings -->
   <set name="pz:cclmap:ti" value="u=4 s=al"/>
