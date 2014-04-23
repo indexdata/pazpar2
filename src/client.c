@@ -1501,6 +1501,8 @@ int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
         const char *sort_strategy_and_spec =
             get_strategy_plus_sort(cl, sp->name);
         int increasing = sp->increasing;
+        if (!strcmp(sp->name, "relevance"))
+            increasing = 1;
         if (sort_strategy_and_spec && strlen(sort_strategy_and_spec) < 40)
         {
             char strategy[50], *p;

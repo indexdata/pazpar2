@@ -26,7 +26,16 @@
   <xsl:template match="/record">
     <pz:record>
       <pz:metadata type="medium">
-         <xsl:value-of select="$medium" />
+        <xsl:choose>
+          <xsl:when test="string-length($medium)">
+            <xsl:value-of select="$medium" />
+          </xsl:when>
+          <xsl:otherwise>
+            <xsl:if test="medium">
+             <xsl:value-of select="medium" />
+            </xsl:if>
+          </xsl:otherwise>
+        </xsl:choose>
       </pz:metadata>
       <xsl:apply-templates/>
     </pz:record>
@@ -104,6 +113,9 @@
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
+  
+  <!-- no-op template to avoid printing medium out --> 
+  <xsl:template match="medium" />
 
   <xsl:template match="*" >
     <pz:metadata type="{local-name()}">

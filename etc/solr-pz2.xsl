@@ -18,6 +18,11 @@
 
   <xsl:template match="doc">
     <pz:record>
+      <xsl:if test="string-length($medium) &gt; 0">
+        <pz:metadata type="medium">
+           <xsl:value-of select="$medium"/>
+        </pz:metadata>
+      </xsl:if>
       <xsl:apply-templates></xsl:apply-templates>
     </pz:record>
   </xsl:template>
@@ -61,8 +66,7 @@
 	  <xsl:value-of select="../@name"/>
 	</xsl:attribute>
 	<xsl:choose>
-	  <xsl:when test="../@name = 'medium' and string-length($medium) > 0">
-	    <xsl:value-of select="$medium"/>
+	  <xsl:when test="../@name = 'medium' and string-length($medium) = 0">
 	  </xsl:when>
 	  <xsl:otherwise>
 	    <xsl:value-of select="."/>
