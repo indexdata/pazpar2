@@ -69,7 +69,7 @@ static void perform_getaddrinfo(struct work *w)
 {
     struct addrinfo hints, *res;
     char host[512], *cp;
-    char *port = 0;
+    char *port = "210";
     int error;
 
     hints.ai_flags = 0;
@@ -81,14 +81,27 @@ static void perform_getaddrinfo(struct work *w)
     hints.ai_canonname      = NULL;
     hints.ai_next           = NULL;
 
-    strncpy(host, w->hostport, sizeof(host)-1);
+    if (!strncmp(w->hostport, "http://", 7))
+    {
+        port = "80";
+        strncpy(host, w->hostport + 7, sizeof(host)-1);
+    }
+    else if (!strncmp(w->hostport, "https://", 8))
+    {
+        port = "443";
+        strncpy(host, w->hostport + 8, sizeof(host)-1);
+    }
+    else
+    {
+        strncpy(host, w->hostport, sizeof(host)-1);
+    }
     host[sizeof(host)-1] = 0;
     if ((cp = strrchr(host, ':')))
     {
         *cp = '\0';
         port = cp + 1;
     }
-    error = getaddrinfo(host, port ? port : "210", &hints, &res);
+    error = getaddrinfo(host, port, &hints, &res);
     if (error)
     {
         yaz_log(YLOG_WARN, "Failed to resolve %s: %s",

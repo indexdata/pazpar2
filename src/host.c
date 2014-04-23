@@ -88,7 +88,13 @@ struct host *find_host(database_hosts_t hosts, const char *url,
 
         tproxy = xmalloc (strlen(url) + 10); /* so we can add :port */
         strcpy(tproxy, url);
-        for (cp = tproxy; *cp; cp++)
+        if (!strncmp(tproxy, "http://", 7))
+            cp = tproxy + 7;
+        else if (!strncmp(tproxy, "https://", 8))
+            cp = tproxy + 8;
+        else
+            cp = tproxy;
+        for (; *cp; cp++)
             if (strchr("/?#~", *cp))
             {
                 *cp = '\0';
