@@ -73,6 +73,16 @@
     in main thread).
    </para>
   </refsect2>
+  <refsect2 id="config-file">
+   <title>file</title>
+   <para>
+    This configuration takes one attribute <literal>path</literal> which
+    specifies a path to search for local files, such as XSLTs  and settings.
+    The path is a colon separated list of directories. Its default value
+    is "<literal>.</literal>" which is equivalent to the location of the
+    main configuration file (where indeed the file element is given).
+   </para>
+  </refsect2>
   <refsect2 id="config-server">
    <title>server</title>
    <para>

@@ -24,7 +24,6 @@ override_dh_auto_install:
 	cp etc/services/*.xml debian/pazpar2/etc/pazpar2/services-available
 	cp etc/settings/*.xml debian/pazpar2/etc/pazpar2/settings/
 	cp -r etc/settings/mkc debian/pazpar2/etc/pazpar2/settings
-	cp etc/*.xsl debian/pazpar2/etc/pazpar2/
 # pazpar2-apache2 package
 	cp debian/ap2pazpar2.cfg debian/pazpar2-apache2/etc/pazpar2
 # pazpar2-test1 package
@@ -38,6 +37,8 @@ override_dh_auto_install:
 # pazpar2-js package
 	cp debian/ap2pazpar2-js.cfg debian/pazpar2-js/etc/pazpar2
 	mv debian/tmp/usr/share/pazpar2/js/pz2.js debian/pazpar2-js/usr/share/pazpar2/js/
+# pazpar2-xsl package
+	cp -r etc/xsl debian/pazpar2-xsl/usr/share/pazpar2
 
 override_dh_installchangelogs:
 	dh_installchangelogs NEWS

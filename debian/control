@@ -11,7 +11,7 @@ Standards-Version: 3.7.2
 
 Package: pazpar2
 Architecture: any
-Depends: ${shlibs:Depends}
+Depends: ${shlibs:Depends}, pazpar2-xsl
 Description: High-performance metaseacher
  Pazpar2 is a high-performance, user interface-independent, data
  model-independent metasearching middleware featuring merging, relevance
@@ -43,6 +43,16 @@ Description: Java Script utilities
  This package includes the Java Script library pz2.js. It also adds an
  Alias for Apache2 so that this library and other demo portals are
  available.
+
+Package: pazpar2-xsl
+Architecture: all
+Description: XSLTs for converting to pz2 XML
+ Pazpar2 is a high-performance, user interface-independent, data
+ model-independent metasearching middleware featuring merging, relevance
+ ranking, record sorting, and faceted results.
+ .
+ This package includes the standard XSLTs for converting various external
+ XML Formats to pazpar2's internal format (pz2).
 
 Package: pazpar2-doc
 Section: doc
