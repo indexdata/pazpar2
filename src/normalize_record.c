@@ -66,6 +66,7 @@ normalize_record_t normalize_record_create(struct conf_service *service,
 
         if (!xsp_doc)
             no_errors++;
+        else
         {
             *m = nmem_malloc(nt->nmem, sizeof(**m));
             (*m)->marcmap = NULL;
