@@ -101,7 +101,7 @@ rm -fr ${RPM_BUILD_ROOT}
 %dir %{_sysconfdir}/pazpar2/services-enabled
 %dir %{_sysconfdir}/pazpar2/services-available
 %config %{_sysconfdir}/pazpar2/*.xml
-%config %{_sysconfdir}/pazpar2/*.xsl
+%config %{_sysconfdir}/pazpar2/xsl
 %config %{_sysconfdir}/pazpar2/settings/*.xml
 %config %{_sysconfdir}/pazpar2/settings/*/*.xml
 %config %{_sysconfdir}/pazpar2/services-available/*.xml
