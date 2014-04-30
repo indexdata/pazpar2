@@ -90,8 +90,8 @@ cp etc/default.xml ${RPM_BUILD_ROOT}/etc/pazpar2/services-available/
 cp etc/services/*.xml ${RPM_BUILD_ROOT}/etc/pazpar2/services-available/
 cp etc/settings/*.xml ${RPM_BUILD_ROOT}/etc/pazpar2/settings/
 cp -r etc/settings/mkc ${RPM_BUILD_ROOT}/etc/pazpar2/settings
-mkdir -p ${RPM_BUILD_ROOT}/usr/share/pazpar2
-cp -r etc/xsl ${RPM_BUILD_ROOT}/usr/share/pazpar2
+mkdir -p ${RPM_BUILD_ROOT}/usr/share/pazpar2/xsl
+cp etc/xsl/*.xsl ${RPM_BUILD_ROOT}/usr/share/pazpar2/xsl
 mkdir -p ${RPM_BUILD_ROOT}/etc/rc.d/init.d
 install -m755 rpm/pazpar2.init ${RPM_BUILD_ROOT}/etc/rc.d/init.d/pazpar2
 echo "Alias /pazpar2 /usr/share/pazpar2" >${RPM_BUILD_ROOT}/etc/pazpar2/ap2pazpar2-js.cfg

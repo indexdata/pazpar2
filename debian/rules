@@ -38,7 +38,7 @@ override_dh_auto_install:
 	cp debian/ap2pazpar2-js.cfg debian/pazpar2-js/etc/pazpar2
 	mv debian/tmp/usr/share/pazpar2/js/pz2.js debian/pazpar2-js/usr/share/pazpar2/js/
 # pazpar2-xsl package
-	cp -r etc/xsl debian/pazpar2-xsl/usr/share/pazpar2
+	cp  etc/xsl/*.xsl debian/pazpar2-xsl/usr/share/pazpar2/xsl
 
 override_dh_installchangelogs:
 	dh_installchangelogs NEWS
