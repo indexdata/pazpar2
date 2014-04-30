@@ -8,10 +8,11 @@ for x in *.xsl; do
     echo "$t"
     for m in ${t}?.xml; do
 	b=`basename $m .xml`
+	opt=`grep 'xsltproc:' $m|cut -d: -f2|cut -d- -f1|tr '#' '-'`
 	l=$b.log.xml
 	r=$b.res.xml
 	d=$b.dif
-	xsltproc $x $m >$l
+	xsltproc $opt $x $m >$l
 	if test -f $r; then
 	    if diff $l $r >$d; then
 		rm $d
