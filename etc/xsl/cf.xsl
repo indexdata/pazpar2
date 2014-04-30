@@ -16,13 +16,7 @@
 
   <xsl:param name="medium" />
 
-  <!--
-    According to cf/builder/templates/parseTask.cff, connectors can
-    also generate a "medium" field, but that is ignored in this
-    stylesheet, the rule below instead using an XSLT parameter.
-    Should the data element be used in preference when it is included?
-  -->
-
+  <!-- Use medium parameter if given. Default to medium from connector -->
   <xsl:template match="/record">
     <pz:record>
       <pz:metadata type="medium">
