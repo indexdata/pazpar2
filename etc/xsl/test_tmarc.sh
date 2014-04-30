@@ -5,7 +5,7 @@ for m in tmarc?.xml; do
 	l=$b.log.xml
 	r=$b.res.xml
 	d=$b.dif
-	xsltproc ../etc/xsl/tmarc.xsl $m >$l
+	xsltproc tmarc.xsl $m >$l
 	if test -f $r; then
 		if diff $l $r >$d; then
 			rm $d

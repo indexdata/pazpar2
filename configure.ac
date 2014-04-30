@@ -63,6 +63,7 @@ AC_OUTPUT([
 	src/Makefile
 	test/Makefile
 	js/Makefile
+	etc/xsl/Makefile
 	doc/Makefile
 	doc/local0.ent
 	doc/common/Makefile

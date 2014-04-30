@@ -2,7 +2,7 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src test js doc
+SUBDIRS = src etc/xsl test js doc
 
 EXTRA_DIST = $(PACKAGE).spec IDMETA README NEWS LICENSE m4/id-config.sh \
 	buildconf.sh Doxyfile.in m4/yaz.m4 \
@@ -10,7 +10,7 @@ EXTRA_DIST = $(PACKAGE).spec IDMETA README NEWS LICENSE m4/id-config.sh \
 
 dist-hook:
 	if test -x /usr/bin/git -a -d .git; then git log >ChangeLog ; cp ChangeLog $(distdir); fi
-	for d in etc etc/xsl etc/settings etc/services www/test1 www/jsdemo; do \
+	for d in etc etc/settings etc/services www/test1 www/jsdemo; do \
 		mkdir -p $(distdir)/$$d; cp -r $$d/* $(distdir)/$$d; \
 	done; rm -f $(distdir)/etc/pazpar2.cfg; exit 0
 	mkdir $(distdir)/rpm
