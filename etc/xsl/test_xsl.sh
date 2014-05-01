@@ -1,4 +1,9 @@
 #!/bin/sh
+v=`xsltproc --version|head -1|awk '{print $5}'`
+if test $v -lt 10124; then
+    echo "libxslt is version $v. Skipping test"
+    exit 0
+fi
 res=0
 for x in *.xsl; do
     t=`basename $x .xsl`
