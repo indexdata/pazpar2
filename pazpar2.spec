@@ -26,6 +26,14 @@ Group: Data
 Requires: pazpar2
 
 %post
+for f in /usr/share/pazpar2/xsl/*.xsl; do
+	e=/etc/pazpar2/`basename $f`
+	if test -f $e; then
+		if diff $e $f >/dev/null; then
+			rm $e
+		fi
+	fi
+done
 if [ $1 = 1 ]; then
 	/sbin/chkconfig --add pazpar2
 	/sbin/service pazpar2 start > /dev/null 2>&1

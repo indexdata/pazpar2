@@ -9,6 +9,14 @@ no_services=true
 for f in /etc/pazpar2/services-enabled/*.xml; do
 	test -e $f && no_services=false
 done
+for f in /usr/share/pazpar2/xsl/*.xsl; do
+	e=/etc/pazpar2/`basename $f`
+	if test -f $e; then
+		if diff $e $f >/dev/null; then
+			rm $e
+		fi
+	fi
+done
 if ${no_services}; then
 	ln -sf ../services-available/default.xml \
 		/etc/pazpar2/services-enabled/default.xml
