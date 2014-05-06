@@ -61,18 +61,18 @@
   </xsl:template>
 
   <xsl:template name="string">
-      <pz:metadata>
-	<xsl:attribute  name="type">
-	  <xsl:value-of select="../@name"/>
-	</xsl:attribute>
-	<xsl:choose>
-	  <xsl:when test="../@name = 'medium' and string-length($medium) = 0">
-	  </xsl:when>
-	  <xsl:otherwise>
-	    <xsl:value-of select="."/>
-	  </xsl:otherwise>
-	</xsl:choose>
-      </pz:metadata>
+    <xsl:choose>
+      <xsl:when test="../@name = 'medium' and string-length($medium) &gt; 0">
+      </xsl:when>
+      <xsl:otherwise>
+	<pz:metadata>
+	  <xsl:attribute  name="type">
+	    <xsl:value-of select="../@name"/>
+	  </xsl:attribute>
+	  <xsl:value-of select="."/>
+	</pz:metadata>
+      </xsl:otherwise>
+    </xsl:choose>
   </xsl:template>
 
 </xsl:stylesheet>
