@@ -1,4 +1,3 @@
-<!-- Solr target -->
 <settings target="LOC Solr Test">
   <set name="pz:name"  value="LOC Solr Test" />
   <set name="pz:url"   value="ocs-test.indexdata.com/solr/select" />
@@ -9,7 +8,6 @@
   <set name="pz:limitmap:medium"  value="rpn:@attr 1=medium_exact @attr 6=3" />
 
   <!-- no native_score, the default behavior -->
-  
   <set name="full_text_target"  value="=NO" />
   <set name="use_url_proxy"  value="0" />
   <set name="pz:piggyback"   value="1" />

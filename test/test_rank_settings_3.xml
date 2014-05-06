@@ -1,10 +1,8 @@
-<!-- Solr target -->
 <settings target="LOC Solr Test">
   <set name="pz:name"  value="LOC Solr Test" />
   <set name="pz:url"   value="ocs-test.indexdata.com/solr/select" />
 
   <set name="pz:native_score"  value="score" />
-  
   <set name="full_text_target"  value="=NO" />
   <set name="use_url_proxy"  value="0" />
   <set name="pz:piggyback"   value="1" />

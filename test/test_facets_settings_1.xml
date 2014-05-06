@@ -1,4 +1,3 @@
-<!-- Solr target -->
 <settings target="localhost:9999/db1">
   <set name="pz:maxrecs"  value="2" />
   <set name="pz:facetmap:date"    value="date" />
