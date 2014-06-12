@@ -1,3 +1,8 @@
+--- 1.6.43 2014/06/12
+
+Add pz:redis option for ZOOM caching using redis. This is an alternative
+to memcached. Requires YAZ 5.2.0 to work.
+
 --- 1.6.42 2014/05/06
 
 Re-ingest native facets PAZ-934
