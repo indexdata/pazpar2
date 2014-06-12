@@ -1315,6 +1315,23 @@
     </varlistentry>
 
     <varlistentry>
+     <term>pz:redis</term>
+     <listitem>
+      <para>
+       If set and non-empty,
+       <ulink url="&url.redis;">redis</ulink> will
+       configured and enabled for the target.
+       The value of this setting is exactly as the redis option for
+       ZOOM C of YAZ.
+      </para>
+      <para>
+       This setting is honored in Pazpar2 1.6.43 or later. Pazpar2 must
+       be using YAZ version 5.2.0 or later.
+      </para>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
      <term>pz:nativesyntax</term>
      <listitem>
       <para>
