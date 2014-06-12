@@ -1194,7 +1194,7 @@ Element_parseChildNodes = function (node)
     for (var i = 0; i < attrs.length; i++) {
         hasChildElems = true;
         var attrName = '@' + attrs[i].nodeName;
-        var attrValue = attrs[i].value;
+        var attrValue = attrs[i].nodeValue;
         parsed[attrName] = attrValue;
     }
 
