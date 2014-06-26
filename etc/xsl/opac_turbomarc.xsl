@@ -30,7 +30,7 @@
              Available
           </xsl:when>
           <xsl:when test="circulations/circulation/availableNow/@value = '0'">
-	    <xsl:value-of select="circulations/circulation/availabiltyDate"/>
+	    <xsl:value-of select="circulations/circulation/availabilityDate"/>
 	  </xsl:when>
         </xsl:choose>
       </pz:metadata>
