@@ -1,3 +1,11 @@
+--- 1.6.44 2014/06/27
+
+Update OPAC stylesheets for availabilityDate PAZ-943
+
+Fix too funny startrecs description
+
+Fix broken ~ match if filter contains = PAZ-941
+
 --- 1.6.43 2014/06/12
 
 Add pz:redis option for ZOOM caching using redis. This is an alternative
