@@ -1,3 +1,26 @@
+--- 1.7.0 2014/06/27
+
+Separate package: pazpar2-xsl PAZ-932
+
+--- 1.6.44 2014/06/27
+
+Update OPAC stylesheets for availabilityDate PAZ-943
+
+Fix too funny startrecs description
+
+Fix broken ~ match if filter contains = PAZ-941
+
+--- 1.6.43 2014/06/12
+
+Add pz:redis option for ZOOM caching using redis. This is an alternative
+to memcached. Requires YAZ 5.2.0 to work.
+
+--- 1.6.42 2014/05/06
+
+Re-ingest native facets PAZ-934
+
+Fix medium override for solr-pz2.xsl.
+
 --- 1.6.41 2014/04/23
 
 Fix URL with leading http:// not working PAZ-933
