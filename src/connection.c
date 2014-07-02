@@ -330,6 +330,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     struct session_database *sdb = client_get_database(con->client);
     const char *apdulog = session_setting_oneval(sdb, PZ_APDULOG);
     const char *memcached = session_setting_oneval(sdb, PZ_MEMCACHED);
+    const char *redis = session_setting_oneval(sdb, PZ_REDIS);
 
     assert(con);
 
@@ -341,6 +342,8 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
         ZOOM_options_set(zoptions, "charset", charset);
     if (memcached && *memcached)
         ZOOM_options_set(zoptions, "memcached", memcached);
+    if (redis && *redis)
+        ZOOM_options_set(zoptions, "redis", redis);
 
     if (con->zproxy)
     {

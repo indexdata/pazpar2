@@ -200,11 +200,18 @@ static struct database_criterion *create_database_criterion(NMEM m,
         int subi;
         struct database_criterion *new = nmem_malloc(m, sizeof(*new));
         char *eq;
-        if ((eq = strchr(values[i], '=')))
-            new->type = PAZPAR2_STRING_MATCH;
-        else if ((eq = strchr(values[i], '~')))
-            new->type = PAZPAR2_SUBSTRING_MATCH;
-        else
+        for (eq = values[i]; *eq; eq++)
+            if (*eq == '=')
+            {
+                new->type = PAZPAR2_STRING_MATCH;
+                break;
+            }
+            else if (*eq == '~')
+            {
+                new->type = PAZPAR2_SUBSTRING_MATCH;
+                break;
+            }
+        if (!*eq)
         {
             yaz_log(YLOG_WARN, "Missing equal-sign/tilde in filter");
             return 0;

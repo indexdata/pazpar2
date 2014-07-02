@@ -868,6 +868,7 @@ int client_start_search(struct client *cl)
     if (cl->same_search == 1 && rc_prep_connection == 2)
     {
         session_log(se, YLOG_LOG, "client %s resuse result", client_get_id(cl));
+        client_report_facets(cl, cl->resultset);
         return client_reingest(cl);
     }
     else if (!rc_prep_connection)

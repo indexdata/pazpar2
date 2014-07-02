@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<doc>
+  <arr name="electronic-text">
+    <str/>
+  </arr>
+  <arr name="subject">
+    <str>Science fiction Short stories Forgers -- Fiction</str>
+  </arr>
+  <arr name="subject-long">
+    <str>Science fiction Short stories Forgers -- Fiction, PS</str>
+  </arr>
+  <arr name="electronic-url">
+    <str>http://www.gutenberg.org/ebooks/24558</str>
+  </arr>
+  <arr name="publication-place">
+    <str/>
+  </arr>
+  <arr name="publication-name">
+    <str>Project Gutenberg</str>
+  </arr>
+  <arr name="title-dates">
+    <str/>
+  </arr>
+  <arr name="date">
+    <str/>
+  </arr>
+  <arr name="medium">
+    <str>book</str>
+  </arr>
+  <arr name="title-number-section">
+    <str/>
+  </arr>
+  <arr name="title-responsibility">
+    <str/>
+  </arr>
+  <arr name="publication-date">
+    <str/>
+  </arr>
+  <str name="id">3552-24558</str>
+  <arr name="author-date">
+    <str/>
+  </arr>
+  <arr name="author">
+    <str>Schmitz, James H.</str>
+  </arr>
+  <arr name="title">
+    <str>Watch the Sky</str>
+  </arr>
+  <arr name="author-title">
+    <str/>
+  </arr>
+  <arr name="electronic-note">
+    <str/>
+  </arr>
+  <arr name="title-remainder">
+    <str/>
+  </arr>
+  <arr name="title-medium">
+    <str/>
+  </arr>
+  <arr name="database">
+    <str>3552</str>
+  </arr>
+  <date name="harvest-timestamp">2014-04-23T08:00:01.067Z</date>
+  <str name="harvest-date">2014-04-23</str>
+  <long name="_version_">1466162433409155072</long>
+  <float name="score">7.7963223</float>
+</doc>

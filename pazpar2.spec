@@ -13,6 +13,7 @@ Packager: Adam Dickmeiss <adam@indexdata.dk>
 URL: http://www.indexdata.com/pazpar2
 Summary: pazpar2 daemon
 Requires: libyaz5 >= 5.0.0
+Requires: pazpar2-xsl
 
 %description
 Pazpar2 is a high-performance, user interface-independent, data
@@ -25,6 +26,14 @@ Group: Data
 Requires: pazpar2
 
 %post
+for f in /usr/share/pazpar2/xsl/*.xsl; do
+	e=/etc/pazpar2/`basename $f`
+	if test -f $e; then
+		if diff $e $f >/dev/null; then
+			rm $e
+		fi
+	fi
+done
 if [ $1 = 1 ]; then
 	/sbin/chkconfig --add pazpar2
 	/sbin/service pazpar2 start > /dev/null 2>&1
@@ -52,6 +61,14 @@ if [ $1 = 0 ]; then
 		rm /etc/httpd/conf.d/pazpar2-js.conf
 	fi
 fi
+%package -n pazpar2-xsl
+Summary: XSLTs for converting to pz2 format
+Group: Data
+
+%description -n pazpar2-xsl
+This package includes XSLTs for converting from various input XML formats
+to Pazpar2's internal XML format.
+
 %package -n pazpar2-doc
 Summary: pazpar2 documentation
 Group: Data
@@ -81,7 +98,8 @@ cp etc/default.xml ${RPM_BUILD_ROOT}/etc/pazpar2/services-available/
 cp etc/services/*.xml ${RPM_BUILD_ROOT}/etc/pazpar2/services-available/
 cp etc/settings/*.xml ${RPM_BUILD_ROOT}/etc/pazpar2/settings/
 cp -r etc/settings/mkc ${RPM_BUILD_ROOT}/etc/pazpar2/settings
-cp etc/*.xsl ${RPM_BUILD_ROOT}/etc/pazpar2/
+mkdir -p ${RPM_BUILD_ROOT}/usr/share/pazpar2/xsl
+cp etc/xsl/*.xsl ${RPM_BUILD_ROOT}/usr/share/pazpar2/xsl
 mkdir -p ${RPM_BUILD_ROOT}/etc/rc.d/init.d
 install -m755 rpm/pazpar2.init ${RPM_BUILD_ROOT}/etc/rc.d/init.d/pazpar2
 echo "Alias /pazpar2 /usr/share/pazpar2" >${RPM_BUILD_ROOT}/etc/pazpar2/ap2pazpar2-js.cfg
@@ -101,7 +119,6 @@ rm -fr ${RPM_BUILD_ROOT}
 %dir %{_sysconfdir}/pazpar2/services-enabled
 %dir %{_sysconfdir}/pazpar2/services-available
 %config %{_sysconfdir}/pazpar2/*.xml
-%config %{_sysconfdir}/pazpar2/*.xsl
 %config %{_sysconfdir}/pazpar2/settings/*.xml
 %config %{_sysconfdir}/pazpar2/settings/*/*.xml
 %config %{_sysconfdir}/pazpar2/services-available/*.xml
@@ -115,6 +132,10 @@ rm -fr ${RPM_BUILD_ROOT}
 %defattr(-,root,root)
 %{_datadir}/pazpar2/js/pz2.js
 %config %{_sysconfdir}/pazpar2/ap2pazpar2-js.cfg
+
+%files -n pazpar2-xsl
+%defattr(-,root,root)
+%{_datadir}/pazpar2/xsl
 
 %files -n pazpar2-doc
 %defattr(-,root,root)

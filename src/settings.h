@@ -58,6 +58,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define PZ_AUTHENTICATION_MODE  35
 #define PZ_NATIVE_SCORE         36
 #define PZ_MEMCACHED            37
+#define PZ_REDIS                38
 #define PZ_MAX_EOF              39
 
 struct setting

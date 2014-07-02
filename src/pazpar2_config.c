@@ -54,6 +54,7 @@ struct conf_config
 
     int no_threads;
     WRBUF confdir;
+    char *path;
     iochan_man_t iochan_man;
 };
 
@@ -255,13 +256,20 @@ int conf_service_sortkey_field_id(struct conf_service *service,
 
 static void conf_dir_path(struct conf_config *config, WRBUF w, const char *src)
 {
-    if (config->confdir && wrbuf_len(config->confdir) > 0 &&
-        !yaz_is_abspath(src))
+    char full_path[1024];
+    if (yaz_filepath_resolve(src, config->path,
+                             wrbuf_len(config->confdir) > 0 ?
+                             wrbuf_cstr(config->confdir) : ".",
+                             full_path))
     {
-        wrbuf_printf(w, "%s/%s", wrbuf_cstr(config->confdir), src);
+        wrbuf_puts(w, full_path);
     }
     else
+    {
+        yaz_log(YLOG_WARN, "File not found: fname=%s path=%s base=%s", src,
+                config->path, wrbuf_cstr(config->confdir));
         wrbuf_puts(w, src);
+    }
 }
 
 void service_destroy(struct conf_service *service)
@@ -1242,6 +1250,15 @@ static int parse_config(struct conf_config *config, xmlNode *root)
                 xmlFree(number);
             }
         }
+        else if (!strcmp((const char *) n->name, "file"))
+        {
+            xmlChar *path = xmlGetProp(n, (xmlChar *) "path");
+            if (path)
+            {
+                config->path = nmem_strdup(config->nmem, (const char *) path);
+                xmlFree(path);
+            }
+        }
         else if (!strcmp((const char *) n->name, "targetprofiles"))
         {
             yaz_log(YLOG_FATAL, "targetprofiles unsupported here. Must be part of service");
@@ -1288,6 +1305,7 @@ struct conf_config *config_create(const char *fname, int verbose)
 
     config->nmem = nmem;
     config->servers = 0;
+    config->path = nmem_strdup(nmem, ".");
     config->no_threads = 0;
     config->iochan_man = 0;
 

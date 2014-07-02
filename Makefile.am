@@ -2,7 +2,7 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 
-SUBDIRS = src test js doc
+SUBDIRS = src etc/xsl test js doc
 
 EXTRA_DIST = $(PACKAGE).spec IDMETA README NEWS LICENSE m4/id-config.sh \
 	buildconf.sh Doxyfile.in m4/yaz.m4 \

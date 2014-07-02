@@ -1,3 +1,15 @@
+pazpar2 (1.7.0-2.indexdata) unstable; urgency=medium
+
+  * Fix version passed to dpkg-maintscript-helper rm_conffile
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Fri, 27 Jun 2014 15:48:37 +0200
+
+pazpar2 (1.7.0-1.indexdata) unstable; urgency=medium
+
+  * Upstream.
+
+ -- Adam Dickmeiss <adam@indexdata.dk>  Fri, 27 Jun 2014 15:02:50 +0200
+
 pazpar2 (1.6.41-1.indexdata) unstable; urgency=medium
 
   * Upstream.

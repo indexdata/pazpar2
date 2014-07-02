@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 struct normalize_step {
     struct normalize_step *next;
-    xsltStylesheet *stylesheet;  /* created by normalize_record */
+    xsltStylesheet *stylesheet1; /* created by normalize_record */
     xsltStylesheet *stylesheet2; /* external stylesheet (service) */
     struct marcmap *marcmap;
 };
@@ -66,15 +66,16 @@ normalize_record_t normalize_record_create(struct conf_service *service,
 
         if (!xsp_doc)
             no_errors++;
+        else
         {
             *m = nmem_malloc(nt->nmem, sizeof(**m));
             (*m)->marcmap = NULL;
-            (*m)->stylesheet = NULL;
+            (*m)->stylesheet1 = NULL;
             (*m)->stylesheet2 = NULL;
 
 
-            (*m)->stylesheet = xsltParseStylesheetDoc(xsp_doc);
-            if (!(*m)->stylesheet)
+            (*m)->stylesheet1 = xsltParseStylesheetDoc(xsp_doc);
+            if (!(*m)->stylesheet1)
                 no_errors++;
             m = &(*m)->next;
         }
@@ -92,14 +93,14 @@ normalize_record_t normalize_record_create(struct conf_service *service,
 
             *m = nmem_malloc(nt->nmem, sizeof(**m));
             (*m)->marcmap = NULL;
-            (*m)->stylesheet = NULL;
+            (*m)->stylesheet1 = NULL;
 
             (*m)->stylesheet2 = service_xslt_get(service, stylesheets[i]);
             if ((*m)->stylesheet2)
                 ;
             else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl"))
             {
-                if (!((*m)->stylesheet =
+                if (!((*m)->stylesheet1 =
                       xsltParseStylesheetFile((xmlChar *) wrbuf_cstr(fname))))
                 {
                     yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load stylesheet: %s",
@@ -143,8 +144,8 @@ void normalize_record_destroy(normalize_record_t nt)
         struct normalize_step *m;
         for (m = nt->steps; m; m = m->next)
         {
-            if (m->stylesheet)
-                xsltFreeStylesheet(m->stylesheet);
+            if (m->stylesheet1)
+                xsltFreeStylesheet(m->stylesheet1);
         }
         nmem_destroy(nt->nmem);
     }
@@ -160,8 +161,8 @@ int normalize_record_transform(normalize_record_t nt, xmlDoc **doc,
 	{
 	    xmlNodePtr root = 0;
 	    xmlDoc *ndoc;
-	    if (m->stylesheet)
-		ndoc = xsltApplyStylesheet(m->stylesheet, *doc, parms);
+	    if (m->stylesheet1)
+		ndoc = xsltApplyStylesheet(m->stylesheet1, *doc, parms);
 	    else if (m->stylesheet2)
 		ndoc = xsltApplyStylesheet(m->stylesheet2, *doc, parms);
 	    else if (m->marcmap)

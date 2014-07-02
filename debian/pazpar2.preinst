@@ -1,19 +1,10 @@
-#!/bin/sh
-set -e
+#!/bin/sh -e
 
 for i in cf.xsl marc21.xsl pp2out-to-carrot2.xsl solr-pz2.xsl \
  dads-pz2.xsl marc22.xsl primo-pz2.xsl tmarc.xsl danmarc2.xsl \
  MarcXML2TurboMarc.xsl pz2-ourl-base.xsl unimarc.xsl dc.xsl \
  oai_dc.xsl pz2-ourl-marc21.xsl usmarc.xsl dkabm.xsl opac_turbomarc.xsl \
  pz2-solr.xsl marc21-ourl.xsl opac.xsl server-status-nagios.xsl ; do
-        dpkg-maintscript-helper rm_conffile /etc/pazpar2/$i 1.6.99-1.indexdata -- "$@"
+	dpkg-maintscript-helper rm_conffile /etc/pazpar2/$i 1.6.99-1.indexdata -- "$@"
 done
 
-if [ "$1" = "purge" ] ; then
-	update-rc.d pazpar2 remove >/dev/null || exit $?
-	rm -f /var/log/pazpar2.log
-	for f in /etc/pazpar2/services-enabled/*; do
-		[ -L "$f" ] && rm -f "$f"
-	done	
-fi
-exit 0

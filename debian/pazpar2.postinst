@@ -4,6 +4,14 @@ set -e
 if [ "$1" != "configure" ]; then
     exit 0
 fi
+for i in cf.xsl marc21.xsl pp2out-to-carrot2.xsl solr-pz2.xsl \
+ dads-pz2.xsl marc22.xsl primo-pz2.xsl tmarc.xsl danmarc2.xsl \
+ MarcXML2TurboMarc.xsl pz2-ourl-base.xsl unimarc.xsl dc.xsl \
+ oai_dc.xsl pz2-ourl-marc21.xsl usmarc.xsl dkabm.xsl opac_turbomarc.xsl \
+ pz2-solr.xsl marc21-ourl.xsl opac.xsl server-status-nagios.xsl ; do
+        dpkg-maintscript-helper rm_conffile /etc/pazpar2/$i 1.6.99.-1.indexdata -- "$@"
+done
+
 # add default.xml if there are no enabled services
 no_services=true
 for f in /etc/pazpar2/services-enabled/*.xml; do

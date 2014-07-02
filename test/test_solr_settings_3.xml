@@ -1,4 +1,3 @@
-<!-- Solr target -->
 <settings target="LOC Solr Test">
   <!-- Configure native facets -->
   <set name="pz:termlist_term_count" value="10"/>

@@ -248,7 +248,7 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
        <para>
 	Specifies the first record to retrieve from each target.
 	The first record in a result set for a target is numbered 0, next
-	record is numbered 2. By default maxrecs is 0.
+	record is numbered 1. By default startrecs is 0.
 	</para>
       </listitem>
      </varlistentry>
