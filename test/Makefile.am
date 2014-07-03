@@ -4,7 +4,7 @@
 solr_tests = test_solr.sh test_termlist_block.sh test_limit_limitmap.sh test_sort.sh
 check_SCRIPTS = test_http.sh test_icu.sh test_post.sh \
  test_settings.sh test_turbomarcxml.sh test_facets.sh \
- test_url.sh test_filter.sh test_sru.sh \
+ test_url.sh test_filter.sh test_sru.sh test_perf.sh \
  $(solr_tests)
 
 EXTRA_DIST = run_pazpar2.sh marc21_test.xsl tmarc.xsl solr-pz2.xsl \
@@ -34,6 +34,7 @@ EXTRA_DIST = run_pazpar2.sh marc21_test.xsl tmarc.xsl solr-pz2.xsl \
 	ztest_localhost_settings.xml test_termlist_block_settings_2.xml \
 	test_facets_settings_1.xml test_facets_settings_2.xml \
 	test_sru.cfg sru_service.xml \
+	test_perf.cfg \
 	$(check_SCRIPTS)
 
 TESTS = $(check_SCRIPTS)
