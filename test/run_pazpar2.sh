@@ -14,8 +14,9 @@ WAIT=120
 
 kill_pazpar2()
 {
-    if test -n "$PP2PID"; then
+    if test -z "$SKIP_PAZPAR2" -a -n "$PP2PID"; then
 	kill $PP2PID
+	PP2PID=""
     fi
     if test -f ztest.pid; then
 	kill `cat ztest.pid`
@@ -27,6 +28,7 @@ kill_pazpar2()
     fi
 }
 
+perf=false
 ztest=false
 icu=false
 while test $# -gt 0; do
@@ -41,6 +43,9 @@ while test $# -gt 0; do
         --icu)
             icu=true
             ;;
+	--perf)
+	    perf=true
+	    ;;
         -*)
 	    echo "Bad option $1"
 	    exit 1
@@ -153,6 +158,13 @@ if test -n "$PAZPAR2_USE_VALGRIND"; then
     WAIT=400
 elif test -n "$SKIP_PAZPAR2"; then
     echo "${PREFIX}: not starting Pazpar2 (should be running already)"
+elif $perf; then
+    /usr/bin/time -p ../src/pazpar2 -p pazpar2.pid -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
+    PP2PID=$!
+    sleep 1
+    if test -f pazpar2.pid; then
+	PP2PID=`cat pazpar2.pid`
+    fi
 else
     ../src/pazpar2 -v $LEVELS -d -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
     PP2PID=$!
@@ -250,7 +262,9 @@ for f in `cat ${srcdir}/${URLS}`; do
 	    else
 		echo "${PREFIX} $testno: pazpar2 died"
 	    fi
-	    exit 1
+	    PP2PID=""
+	    code=1
+	    break
 	fi
     fi
 done
@@ -264,15 +278,10 @@ if [ "$WAIT_PAZPAR2" ] ; then
     done
     echo "done"
 fi
-# Kill programs
-if test -f ztest.pid; then
-    kill `cat ztest.pid`
-    rm -f ztest.pid
-fi
-
-if [ -z "$SKIP_PAZPAR2" ] ; then
-    kill_pazpar2
-    sleep 2
+kill_pazpar2
+sleep 2
+if $perf; then
+    tail -3 ${PREFIX}_extra_pazpar2.log
 fi
 exit $code
 
