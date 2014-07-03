@@ -145,7 +145,7 @@ else
     sec=1
     maxrounds=10
 fi
-LEVELS=loglevel,fatal,warn,log,debug,notime,zoom,zoomdetails
+LEVELS=loglevel,fatal,warn,log,debug,zoom,zoomdetails
 if test -n "$PAZPAR2_USE_VALGRIND"; then
     valgrind --num-callers=30 --show-reachable=yes --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -v $LEVELS -X -l ${PREFIX}_pazpar2.log -f ${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
     PP2PID=$!
@@ -216,10 +216,11 @@ for f in `cat ${srcdir}/${URLS}`; do
 		    fi
 		fi
 	    else
-		if test $rounds -eq 0; then
+		if test $testno -eq 1 -o $rounds -eq 0; then
 		    echo "${PREFIX} $testno: Making for the first time"
 		    mv $OUT2 $OUT1
 		    code=1
+		    rounds=0
 		fi
 	    fi
 	    if test $rounds -gt 0; then
