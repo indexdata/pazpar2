@@ -9,7 +9,7 @@
  <md-title>How to program a computer</md-title>
  <md-author>Jack Collins</md-author>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="2614320583">
+    name="marc" checksum="2614320583">
   <md-title>How to program a computer</md-title>
   <md-author>Jack Collins</md-author>
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
@@ -17,7 +17,7 @@
         YYYYYYYYY</md-test-usersetting-2>
  </location>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="2788512872">
+    name="marc" checksum="2788512872">
   <md-title>How to program a computer</md-title>
   <md-author>Jack Collins</md-author>
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
@@ -46,7 +46,7 @@ score = relevance(48160);
  <md-date>1977</md-date>
  <md-subject>Optical pattern recognition</md-subject>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="3659474317">
+    name="marc" checksum="3659474317">
   <md-title>Computer science &amp; technology</md-title>
   <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
   <md-date>1977</md-date>
@@ -54,9 +54,6 @@ score = relevance(48160);
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Optical pattern recognition</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>40134</relevance>
@@ -78,7 +75,7 @@ score = relevance(40134);
  <md-subject>Bible</md-subject>
  <md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="3136897450">
+    name="marc" checksum="3136897450">
   <md-title>The Computer Bible</md-title>
   <md-date>1973-1980</md-date>
   <md-subject>Bible. O.T</md-subject>
@@ -109,7 +106,7 @@ score = relevance(40134);
  <md-subject>Community colleges</md-subject>
  <md-description>Cover title</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="4182051184">
+    name="marc" checksum="4182051184">
   <md-title>A plan for community college computer development</md-title>
   <md-date>1971</md-date>
   <md-subject>Universities and colleges</md-subject>
@@ -118,12 +115,6 @@ score = relevance(40134);
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Universities and colleges</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
-  <md-subjects>Community colleges</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>17200</relevance>
@@ -146,7 +137,7 @@ score = relevance(17200);
  <md-subject>Railroads</md-subject>
  <md-description>&quot;Contract DOT-UT-10003.&quot;</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="4007858895">
+    name="marc" checksum="4007858895">
   <md-title>Washington metropolitan area rail computer feasibility study;</md-title>
   <md-title-remainder>final report</md-title-remainder>
   <md-date>1971</md-date>
@@ -156,9 +147,6 @@ score = relevance(17200);
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Railroads</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>17200</relevance>
@@ -182,7 +170,7 @@ score = relevance(17200);
  <md-subject>Puget Sound region (Wash.)</md-subject>
  <md-description>Scale of maps ca. 1:1,000,000</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="3311089739">
+    name="marc" checksum="3311089739">
   <md-title>The Puget Sound Region</md-title>
   <md-title-remainder>a portfolio of thematic computer maps</md-title-remainder>
   <md-date>1974</md-date>
@@ -194,9 +182,6 @@ score = relevance(17200);
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Cartography</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>16722</relevance>
@@ -220,7 +205,7 @@ score = relevance(16722);
  <md-subject>Imaging systems in medicine</md-subject>
  <md-description>Includes bibliographical references and index</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="2962705161">
+    name="marc" checksum="2962705161">
   <md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
   <md-title-remainder>the proceedings of a workshop</md-title-remainder>
   <md-date>1974</md-date>
@@ -231,15 +216,6 @@ score = relevance(16722);
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Radioisotope scanning</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
-  <md-subjects>Scintillation cameras</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
-  <md-subjects>Imaging systems in medicine</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>12040</relevance>
@@ -260,7 +236,7 @@ score = relevance(12040);
  <md-author>Wood, Helen M</md-author>
  <md-subject>Computers</md-subject>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="3833666606">
+    name="marc" checksum="3833666606">
   <md-title>The use of passwords for controlled access to computer resources</md-title>
   <md-date>1977</md-date>
   <md-author>Wood, Helen M</md-author>
@@ -268,9 +244,6 @@ score = relevance(12040);
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Computers</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>12040</relevance>
@@ -292,7 +265,7 @@ score = relevance(12040);
  <md-subject>Tomography</md-subject>
  <md-description>Includes bibliographical references and index</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="3485282028">
+    name="marc" checksum="3485282028">
   <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
   <md-title-remainder>proceedings of the workshop</md-title-remainder>
   <md-date>1977</md-date>
@@ -301,9 +274,6 @@ score = relevance(12040);
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Tomography</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>0</relevance>

@@ -13,7 +13,7 @@
  <md-subject>Railroads</md-subject>
  <md-description>&quot;Contract DOT-UT-10003.&quot;</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="4007858895">
+    name="marc" checksum="4007858895">
   <md-title>Washington metropolitan area rail computer feasibility study;</md-title>
   <md-title-remainder>final report</md-title-remainder>
   <md-date>1971</md-date>
@@ -23,9 +23,6 @@
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Railroads</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>59412</relevance>

@@ -14,7 +14,7 @@
  <md-subject>Greece</md-subject>
  <md-description>Reprint of the 1909 ed., which was issued as the 1904-1906 Gifford lectures</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="2614320583">
+    name="marc" checksum="2614320583">
   <md-title>The religious teachers of Greece</md-title>
   <md-date>1972</md-date>
   <md-author>Adam, James</md-author>
@@ -26,12 +26,6 @@
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Greek literature</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
-  <md-subjects>Philosophy, Ancient</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>48655</relevance>
@@ -56,7 +50,7 @@ score = relevance(48655);
  <md-subject>Federal aid to education</md-subject>
  <md-description>&quot;This directory was developed by the Technology for the National Diffusion Network Project, Teachers College, Columbia University pursuant to contract number OE-300-83-0253, U.S. Department of Education&quot;--T.p. verso</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="2788512872">
+    name="marc" checksum="2788512872">
   <md-title>Technology programs that work</md-title>
   <md-date>1984</md-date>
   <md-subject>United States</md-subject>
@@ -70,12 +64,6 @@ score = relevance(48655);
   <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
   <md-test-usersetting-2>test-usersetting-2 data: 
         YYYYYYYYY</md-test-usersetting-2>
-  <md-subjects>Educational technology</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
-  <md-subjects>Federal aid to education</md-subjects>
-  <md-subjects>PAZPAR2_NULL_b</md-subjects>
-  <md-subjects>PAZPAR2_NULL_c</md-subjects>
  </location>
  <count>1</count>
  <relevance>4054</relevance>
