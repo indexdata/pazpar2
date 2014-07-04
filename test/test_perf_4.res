@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <show><status>OK</status>
-<activeclients>1</activeclients>
-<merged>39</merged>
+<activeclients>0</activeclients>
+<merged>99</merged>
 <total>100</total>
 <start>0</start>
 <num>20</num>
@@ -16,7 +16,7 @@
   <md-description>Title from caption</md-description>
  </location>
  <count>1</count>
- <relevance>152547</relevance>
+ <relevance>55113</relevance>
  <recid>content: title internet world</recid>
 </hit>
 <hit>
@@ -33,7 +33,7 @@
   <md-author>Jack Collins</md-author>
  </location>
  <count>2</count>
- <relevance>91528</relevance>
+ <relevance>33068</relevance>
  <recid>content: title how to program a computer author jack collins</recid>
 </hit>
 <hit>
@@ -48,7 +48,7 @@
   <md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
  </location>
  <count>1</count>
- <relevance>76273</relevance>
+ <relevance>27556</relevance>
  <recid>content: title the computer bible</recid>
 </hit>
 <hit>
@@ -62,8 +62,20 @@
   <md-date>1977</md-date>
  </location>
  <count>1</count>
- <relevance>57205</relevance>
+ <relevance>20667</relevance>
  <recid>content: title computer science technology</recid>
+</hit>
+<hit>
+ <md-title>How to program a computer</md-title>
+ <md-author>Jack C100</md-author>
+ <location id="localhost:9999/db1"
+    name="db1" checksum="4208086653">
+  <md-title>How to program a computer</md-title>
+  <md-author>Jack C100</md-author>
+ </location>
+ <count>1</count>
+ <relevance>16534</relevance>
+ <recid>content: title how to program a computer author jack c100</recid>
 </hit>
 <hit>
  <md-title>How to program a computer</md-title>
@@ -74,7 +86,7 @@
   <md-author>Jack C24</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c24</recid>
 </hit>
 <hit>
@@ -86,7 +98,7 @@
   <md-author>Jack C25</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c25</recid>
 </hit>
 <hit>
@@ -98,7 +110,7 @@
   <md-author>Jack C26</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c26</recid>
 </hit>
 <hit>
@@ -110,7 +122,7 @@
   <md-author>Jack C27</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c27</recid>
 </hit>
 <hit>
@@ -122,7 +134,7 @@
   <md-author>Jack C28</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c28</recid>
 </hit>
 <hit>
@@ -134,7 +146,7 @@
   <md-author>Jack C29</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c29</recid>
 </hit>
 <hit>
@@ -146,7 +158,7 @@
   <md-author>Jack C30</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c30</recid>
 </hit>
 <hit>
@@ -158,7 +170,7 @@
   <md-author>Jack C31</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c31</recid>
 </hit>
 <hit>
@@ -170,7 +182,7 @@
   <md-author>Jack C32</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c32</recid>
 </hit>
 <hit>
@@ -182,7 +194,7 @@
   <md-author>Jack C33</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c33</recid>
 </hit>
 <hit>
@@ -194,7 +206,7 @@
   <md-author>Jack C34</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c34</recid>
 </hit>
 <hit>
@@ -206,7 +218,7 @@
   <md-author>Jack C35</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c35</recid>
 </hit>
 <hit>
@@ -218,7 +230,7 @@
   <md-author>Jack C36</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c36</recid>
 </hit>
 <hit>
@@ -230,7 +242,7 @@
   <md-author>Jack C37</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c37</recid>
 </hit>
 <hit>
@@ -242,19 +254,7 @@
   <md-author>Jack C38</md-author>
  </location>
  <count>1</count>
- <relevance>45764</relevance>
+ <relevance>16534</relevance>
  <recid>content: title how to program a computer author jack c38</recid>
-</hit>
-<hit>
- <md-title>How to program a computer</md-title>
- <md-author>Jack C39</md-author>
- <location id="localhost:9999/db1"
-    name="db1" checksum="2008735752">
-  <md-title>How to program a computer</md-title>
-  <md-author>Jack C39</md-author>
- </location>
- <count>1</count>
- <relevance>45764</relevance>
- <recid>content: title how to program a computer author jack c39</recid>
 </hit>
 </show>

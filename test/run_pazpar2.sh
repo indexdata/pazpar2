@@ -242,8 +242,11 @@ for f in `cat ${srcdir}/${URLS}`; do
 	testno=`expr $testno + 1`
 	postfile=
 	rounds=1
-    elif echo $f | grep '^[0-9]' >/dev/null; then
+    elif echo $f | grep '^w' >/dev/null; then
 	rounds=$maxrounds
+    elif echo $f | grep '^[0-9]' >/dev/null; then
+	sleep $f
+	rounds=1
     else
 	if test -f $srcdir/$f; then
 	    postfile=$srcdir/$f

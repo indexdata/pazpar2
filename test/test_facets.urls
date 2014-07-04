@@ -3,7 +3,7 @@ ztest_localhost_settings.xml http://localhost:9763/search.pz2?session=1&command=
 http://localhost:9763/search.pz2?session=1&command=search&query=7+and+computer
 http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=bytarget
-4 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
+w http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
 test_facets_settings_1.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=4+and+computer
 http://localhost:9763/search.pz2?session=1&command=show&block=1
@@ -15,13 +15,13 @@ http://localhost:9763/search.pz2?session=1&command=termlist
 http://localhost:9763/search.pz2?session=1&command=search&query=6+and+computer
 http://localhost:9763/search.pz2?session=1&command=show
 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
-10 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
+w http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
 http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?command=init
 ztest_localhost_settings.xml http://localhost:9763/search.pz2?session=2&command=settings
 test_facets_settings_2.xml http://localhost:9763/search.pz2?session=2&command=settings
 http://localhost:9763/search.pz2?session=2&command=search&query=9+and+computer
-10 http://localhost:9763/search.pz2?session=2&command=show&block=1
+w http://localhost:9763/search.pz2?session=2&command=show&block=1
 http://localhost:9763/search.pz2?session=2&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium
 http://localhost:9763/search.pz2?session=2&command=search&query=9+and+computer
 http://localhost:9763/search.pz2?session=2&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate%2Cmedium

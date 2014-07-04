@@ -1,12 +1,12 @@
 http://localhost:9763/search.pz2?command=init&clear=1
 ztest_localhost_settings.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
-4 http://localhost:9763/search.pz2?session=1&command=show&block=1
+w http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=termlist&block=1&name=xtargets%2Cauthor%2Csubject%2Cdate
 test_termlist_block_settings_2.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
-4 http://localhost:9763/search.pz2?session=1&command=show&block=1
+w http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=termlist&block=1&name=xtargets%2Cauthor%2Csubject%2Cdate
 http://localhost:9763/search.pz2?session=1&command=termlist&block=1&report=status&name=xtargets%2Cauthor%2Csubject%2Cdate
