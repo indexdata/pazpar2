@@ -1,7 +1,7 @@
 http://localhost:9763/search.pz2?session=1&command=init
 test_sort_settings.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=water
-3 http://localhost:9763/search.pz2?session=1&command=show
+w http://localhost:9763/search.pz2?session=1&command=show
 http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Csubject%2Cauthor%2Cdate%2Cmedium
 http://localhost:9763/search.pz2?session=1&command=search&query=water&sort=position:1

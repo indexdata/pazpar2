@@ -35,10 +35,6 @@
   <set name="pz:queryencoding"  value="UTF-8" />
   <set name="pz:extra_args"  value="fl=*,score" />
   <set name="pz:termlist_term_count" value="10"/>
-  <set name="pz:facetmap:author"  value="author_exact"  />
-  <set name="pz:facetmap:subject" value="subject_exact" />
-  <set name="pz:facetmap:medium"  value="medium_exact"  />
-  <set name="pz:facetmap:date"  value="date" />
   <set name="pz:maxrecs" value="200" />
   <set name="pz:present_chunk" value="0"/>
 </settings>

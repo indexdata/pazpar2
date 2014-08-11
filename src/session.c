@@ -905,36 +905,38 @@ static struct session_database *find_session_database(struct session *se,
 }
 
 // Apply a session override to a database
-void session_apply_setting(struct session *se, char *dbname, char *setting,
+void session_apply_setting(struct session *se, char *dbname, char *name,
                            char *value)
 {
     struct session_database *sdb = find_session_database(se, dbname);
     struct conf_service *service = se->service;
-    struct setting *new = nmem_malloc(se->session_nmem, sizeof(*new));
-    int offset = settings_create_offset(service, setting);
+    struct setting *s;
+    int offset = settings_create_offset(service, name);
 
     expand_settings_array(&sdb->settings, &sdb->num_settings, offset,
                           se->session_nmem);
-    new->precedence = 0;
-    new->target = dbname;
-    new->name = setting;
-    new->value = value;
-    new->next = sdb->settings[offset];
-    sdb->settings[offset] = new;
-
-    se->settings_modified = 1;
 
     // Force later recompute of settings-driven data structures
     // (happens when a search starts and client connections are prepared)
-    switch (offset)
-    {
-    case PZ_XSLT:
-        if (sdb->map)
+    if (offset == PZ_XSLT)
+        sdb->map = 0;
+
+    se->settings_modified = 1;
+    for (s = sdb->settings[offset]; s; s = s->next)
+        if (!strcmp(s->name, name) &&
+            dbname && s->target && !strcmp(dbname, s->target))
         {
-            sdb->map = 0;
+            s->value = value;
+            return;
         }
-        break;
-    }
+    s = nmem_malloc(se->session_nmem, sizeof(*s));
+    s->precedence = 0;
+    s->target = dbname;
+    s->name = name;
+    s->value = value;
+    s->next = sdb->settings[offset];
+    sdb->settings[offset] = s;
+
 }
 
 void session_destroy(struct session *se)

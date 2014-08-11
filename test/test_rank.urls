@@ -1,16 +1,16 @@
 http://localhost:9763/search.pz2?session=1&command=init
 test_rank_settings_1.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=water&sort=relevance
-2 http://localhost:9763/search.pz2?session=1&command=show&sort=relevance
+w http://localhost:9763/search.pz2?session=1&command=show&sort=relevance
 http://localhost:9763/search.pz2?session=1&command=init
 test_rank_settings_2.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=water&sort=relevance
-2 http://localhost:9763/search.pz2?session=1&command=show&sort=relevance
+w http://localhost:9763/search.pz2?session=1&command=show&sort=relevance
 http://localhost:9763/search.pz2?session=1&command=init
 test_rank_settings_3.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=water&sort=relevance
-2 http://localhost:9763/search.pz2?session=1&command=show&sort=relevance
+w http://localhost:9763/search.pz2?session=1&command=show&sort=relevance
 http://localhost:9763/search.pz2?session=1&command=init
 test_rank_settings_4.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=water&sort=relevance
-2 http://localhost:9763/search.pz2?session=1&command=show&sort=relevance
+w http://localhost:9763/search.pz2?session=1&command=show&sort=relevance

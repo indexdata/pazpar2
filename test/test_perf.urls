@@ -1,5 +1,5 @@
 http://localhost:9763/search.pz2?command=init&clear=1
 ztest_localhost_settings.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=100+and+computer
-http://localhost:9763/search.pz2?session=1&command=show&block=1
+2 w http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=termlist

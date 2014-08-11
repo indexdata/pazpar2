@@ -17,6 +17,7 @@ kill_pazpar2()
     if test -z "$SKIP_PAZPAR2" -a -n "$PP2PID"; then
 	kill $PP2PID
 	PP2PID=""
+	rm -f pazpar2.pid
     fi
     if test -f ztest.pid; then
 	kill `cat ztest.pid`
@@ -28,7 +29,6 @@ kill_pazpar2()
     fi
 }
 
-perf=false
 ztest=false
 icu=false
 while test $# -gt 0; do
@@ -43,9 +43,6 @@ while test $# -gt 0; do
         --icu)
             icu=true
             ;;
-	--perf)
-	    perf=true
-	    ;;
         -*)
 	    echo "Bad option $1"
 	    exit 1
@@ -151,20 +148,21 @@ else
     maxrounds=10
 fi
 LEVELS=loglevel,fatal,warn,log,debug,zoom,zoomdetails
-if test -n "$PAZPAR2_USE_VALGRIND"; then
+if test "$PERF_PROG"; then
+    eval $PERF_PROG ../src/pazpar2 -p pazpar2.pid -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
+    PP2PID=$!
+    sleep 5
+    if test -f pazpar2.pid; then
+	PP2PID=`cat pazpar2.pid`
+	echo "Got PID $PP2PID"
+    fi
+elif test -n "$PAZPAR2_USE_VALGRIND"; then
     valgrind --num-callers=30 --show-reachable=yes --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -v $LEVELS -X -l ${PREFIX}_pazpar2.log -f ${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
     PP2PID=$!
     sleep 0.01
     WAIT=400
 elif test -n "$SKIP_PAZPAR2"; then
     echo "${PREFIX}: not starting Pazpar2 (should be running already)"
-elif $perf; then
-    /usr/bin/time -p ../src/pazpar2 -p pazpar2.pid -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
-    PP2PID=$!
-    sleep 1
-    if test -f pazpar2.pid; then
-	PP2PID=`cat pazpar2.pid`
-    fi
 else
     ../src/pazpar2 -v $LEVELS -d -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
     PP2PID=$!
@@ -242,8 +240,11 @@ for f in `cat ${srcdir}/${URLS}`; do
 	testno=`expr $testno + 1`
 	postfile=
 	rounds=1
-    elif echo $f | grep '^[0-9]' >/dev/null; then
+    elif echo $f | grep '^w' >/dev/null; then
 	rounds=$maxrounds
+    elif echo $f | grep '^[0-9]' >/dev/null; then
+	sleep $f
+	rounds=1
     else
 	if test -f $srcdir/$f; then
 	    postfile=$srcdir/$f
@@ -280,7 +281,7 @@ if [ "$WAIT_PAZPAR2" ] ; then
 fi
 kill_pazpar2
 sleep 2
-if $perf; then
+if test "$PERF_PROG"; then
     tail -3 ${PREFIX}_extra_pazpar2.log
 fi
 exit $code

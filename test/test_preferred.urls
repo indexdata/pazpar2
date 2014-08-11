@@ -1,16 +1,16 @@
 http://localhost:9763/search.pz2?command=init&clear=1
 cf_mit_opencourseware_settings.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=su%3D%22computer%22
-4 http://localhost:9763/search.pz2?session=1&command=show&block=1
+w http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate
 ocs-loc_settings.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=su%3D%22computer%22
-4 http://localhost:9763/search.pz2?session=1&command=show&block=1
+w http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate
 ocs-oaister_settings.xml http://localhost:9763/search.pz2?session=1&command=settings
 http://localhost:9763/search.pz2?session=1&command=search&query=su%3D%22computer%22
-4 http://localhost:9763/search.pz2?session=1&command=show&block=1
+w http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=termlist&name=xtargets%2Cauthor%2Csubject%2Cdate
