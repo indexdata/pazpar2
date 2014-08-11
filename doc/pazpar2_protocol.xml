@@ -47,7 +47,7 @@
    <para>
     Initializes a session.
     Returns session ID to be used in subsequent requests. If
-    a server ID is given in the Pazpar2 server section, then a
+    a server ID is given in the Pazpar2 server section, then
     that is included in the session ID as suffix after a period (.).
    </para>
    <para>
