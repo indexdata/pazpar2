@@ -211,17 +211,12 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         IOCHAN p, *nextp;
         IOCHAN start;
         IOCHAN inv_start;
-        fd_set in, out, except;
-        int res, max;
+        int res;
         static struct timeval to;
-        struct timeval *timeout;
 
-//        struct yaz_poll_fd *fds;
+        struct yaz_poll_fd *fds;
         int i, no_fds = 0;
-        FD_ZERO(&in);
-        FD_ZERO(&out);
-        FD_ZERO(&except);
-        timeout = &to; /* hang on select */
+        int connection_fired = 0;
         to.tv_sec = 300;
         to.tv_usec = 0;
 
@@ -231,48 +226,57 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         start = man->channel_list;
         yaz_mutex_leave(man->iochan_mutex);
         inv_start = start;
-        for (p = start; p; p = p->next) {
+        for (p = start; p; p = p->next)
+            if (p->fd >= 0)
+                no_fds++;
+        if (man->sel_fd != -1)
             no_fds++;
+        fds = (struct yaz_poll_fd *) xmalloc(no_fds * sizeof(*fds));
+        i = 0;
+        if (man->sel_fd != -1)
+        {
+            fds[i].fd = man->sel_fd;
+            fds[i].input_mask = 0;
+            if (p->flags & EVENT_INPUT)
+                fds[i].input_mask |= yaz_poll_read;
+            i++;
         }
-//        fds = (struct yaz_poll_fd *) xmalloc(no_fds * sizeof(*fds));
-
-        max = 0;
-        for (p = start; p; p = p->next) {
+        for (p = start; p; p = p->next)
+        {
             if (p->thread_users > 0)
                 continue;
             if (p->max_idle && p->max_idle < to.tv_sec)
                 to.tv_sec = p->max_idle;
             if (p->fd < 0)
                 continue;
+            fds[i].fd = p->fd;
+            fds[i].input_mask = 0;
             if (p->flags & EVENT_INPUT)
-                FD_SET(p->fd, &in);
+                fds[i].input_mask |= yaz_poll_read;
             if (p->flags & EVENT_OUTPUT)
-                FD_SET(p->fd, &out);
+                fds[i].input_mask |= yaz_poll_write;
             if (p->flags & EVENT_EXCEPT)
-                FD_SET(p->fd, &except);
-            if (p->fd > max)
-                max = p->fd;
+                fds[i].input_mask |= yaz_poll_except;
+            i++;
         }
-        yaz_log(man->log_level, "max=%d sel_fd=%d", max, man->sel_fd);
-
-        if (man->sel_fd != -1) {
-            if (man->sel_fd > max)
-                max = man->sel_fd;
-            FD_SET(man->sel_fd, &in);
-        }
-        yaz_log(man->log_level, "select begin nofds=%d", max);
-        res = select(max + 1, &in, &out, &except, timeout);
-        yaz_log(man->log_level, "select returned res=%d", res);
-        if (res < 0) {
+        yaz_log(man->log_level, "yaz_poll begin nofds=%d", no_fds);
+        res = yaz_poll(fds, no_fds, to.tv_sec, 0);
+        yaz_log(man->log_level, "yaz_poll returned res=%d", res);
+        if (res < 0)
+        {
             if (errno == EINTR)
                 continue;
             else {
-                yaz_log(YLOG_ERRNO | YLOG_WARN, "select");
+                yaz_log(YLOG_ERRNO | YLOG_WARN, "poll");
                 return 0;
             }
         }
-        if (man->sel_fd != -1) {
-            if (FD_ISSET(man->sel_fd, &in)) {
+        i = 0;
+        if (man->sel_fd != -1)
+        {
+            assert(fds[i].fd == man->sel_fd);
+            if (fds[i].output_mask)
+            {
                 IOCHAN chan;
 
                 yaz_log(man->log_level, "eventl: sel input on sel_fd=%d",
@@ -284,62 +288,79 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
                     chan->thread_users--;
                 }
             }
+            i++;
         }
-        if (man->log_level) {
+        if (man->log_level)
+        {
             int no = 0;
-            for (p = start; p; p = p->next) {
+            for (p = start; p; p = p->next)
                 no++;
-            }
             yaz_log(man->log_level, "%d channels", no);
         }
-        i = 0;
-        for (p = start; p; p = p->next) {
+        for (p = start; p; p = p->next)
+        {
             time_t now = time(0);
 
-            if (p->destroyed) {
+            if (p->destroyed)
+            {
                 yaz_log(man->log_level,
                         "eventl: skip destroyed chan=%p name=%s", p,
                         p->name ? p->name : "");
+                if (p->fd >= 0)
+                    i++;
                 continue;
             }
-            if (p->thread_users > 0) {
+            if (p->thread_users > 0)
+            {
                 yaz_log(man->log_level,
                         "eventl: skip chan=%p name=%s users=%d", p,
                         p->name ? p->name : "", p->thread_users);
+                if (p->fd >= 0)
+                    i++;
                 continue;
             }
             p->this_event = 0;
 
-            if (p->max_idle && now - p->last_event > p->max_idle) {
+            if (p->max_idle && now - p->last_event > p->max_idle)
+            {
                 p->last_event = now;
                 p->this_event |= EVENT_TIMEOUT;
             }
-            if (p->fd >= 0) {
-                if (FD_ISSET(p->fd, &in)) {
+            if (p->fd >= 0)
+            {
+                assert(fds[i].fd == p->fd);
+                if (fds[i].output_mask & yaz_poll_read)
+                {
                     p->last_event = now;
                     p->this_event |= EVENT_INPUT;
                 }
-                if (FD_ISSET(p->fd, &out)) {
+                if (fds[i].output_mask & yaz_poll_write)
+                {
                     p->last_event = now;
                     p->this_event |= EVENT_OUTPUT;
                 }
-                if (FD_ISSET(p->fd, &except)) {
+                if (fds[i].output_mask & yaz_poll_except)
+                {
                     p->last_event = now;
                     p->this_event |= EVENT_EXCEPT;
                 }
+                i++;
             }
             /* only fire one Z39.50/SRU socket event.. except for timeout */
             if (p->this_event) {
                 if (!(p->this_event & EVENT_TIMEOUT) &&
-                    !strcmp(p->name, "connection_socket")) {
+                    !strcmp(p->name, "connection_socket"))
+                {
                     /* not a timeout and we have a Z39.50/SRU socket */
-                    if (i == 0)
+                    if (connection_fired == 0)
                         run_fun(man, p);
-                    i++;
-                } else
+                    connection_fired++;
+                }
+                else
                     run_fun(man, p);
             }
         }
+
         assert(inv_start == start);
         yaz_mutex_enter(man->iochan_mutex);
         for (nextp = iochans; *nextp;) {
@@ -350,6 +371,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
                 nextp = &p->next;
         }
         yaz_mutex_leave(man->iochan_mutex);
+        xfree(fds);
     } while (*iochans);
     return 0;
 }
