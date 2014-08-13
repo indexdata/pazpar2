@@ -36,14 +36,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#ifdef WIN32
-#include <winsock.h>
-#else
 #include <unistd.h>
-#endif
-#if HAVE_SYS_TIME_H
-#include <sys/time.h>
-#endif
 
 #include <stdlib.h>
 #include <errno.h>
@@ -398,18 +391,6 @@ void iochan_man_events(iochan_man_t man)
                 man->no_threads);
     }
     event_loop(man, &man->channel_list);
-}
-
-void pazpar2_sleep(double d)
-{
-#ifdef WIN32
-    Sleep( (DWORD) (d * 1000));
-#else
-    struct timeval tv;
-    tv.tv_sec = floor(d);
-    tv.tv_usec = (d - floor(d)) * 1000000;
-    select(0, 0, 0, 0, &tv);
-#endif
 }
 
 /*
