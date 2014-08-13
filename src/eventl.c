@@ -253,6 +253,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
         }
         for (p = start; p; p = p->next, i++)
         {
+            p->poll_offset = i;
             fds[i].client_data = p;
             fds[i].fd = p->fd;
             fds[i].input_mask = 0;
@@ -282,9 +283,9 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                 return 0;
             }
         }
-        i = 0;
         if (man->sel_fd != -1)
         {
+            i = 0;
             assert(fds[i].fd == man->sel_fd);
             if (fds[i].output_mask)
             {
@@ -300,7 +301,6 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                     chan->thread_users--;
                 }
             }
-            i++;
         }
         if (man->log_level)
         {
@@ -309,10 +309,10 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                 no++;
             yaz_log(man->log_level, "%d channels", no);
         }
-        for (; i < no_fds; i++)
+        for (p = start; p; p = p->next)
         {
             time_t now = time(0);
-            p = fds[i].client_data;
+            i = p->poll_offset;
 
             if (p->destroyed)
             {
