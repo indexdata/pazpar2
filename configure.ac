@@ -36,7 +36,7 @@ esac
 YAZ_DOC
 
 AC_SEARCH_LIBS([log],[m])
-AC_CHECK_HEADERS([sys/time.h sys/socket.h unistd.h netinet/in.h netdb.h arpa/inet.h])
+AC_CHECK_HEADERS([sys/time.h sys/socket.h unistd.h netdb.h])
 checkBoth=0
 AC_CHECK_FUNC([connect])
 if test "$ac_cv_func_connect" = "no"; then
