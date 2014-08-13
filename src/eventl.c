@@ -74,15 +74,18 @@ static int iochan_use(int delta)
         no_iochans_total += delta;
     iochans = no_iochans;
     yaz_mutex_leave(g_mutex);
-    yaz_log(YLOG_DEBUG, "%s iochans=%d", delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), iochans);
+    yaz_log(YLOG_DEBUG, "%s iochans=%d",
+            delta == 0 ? "" : (delta > 0 ? "INC" : "DEC"), iochans);
     return iochans;
 }
 
-int  iochans_count(void) {
+int iochans_count(void)
+{
     return iochan_use(0);
 }
 
-int  iochans_count_total(void) {
+int iochans_count_total(void)
+{
     int total = 0;
     if (!g_mutex)
         return 0;
@@ -108,7 +111,8 @@ struct iochan_man_s {
     struct yaz_poll_fd *fds;
 };
 
-iochan_man_t iochan_man_create(int no_threads) {
+iochan_man_t iochan_man_create(int no_threads)
+{
     iochan_man_t man = xmalloc(sizeof(*man));
     man->channel_list = 0;
     man->sel_thread = 0; /* can't create sel_thread yet because we may fork */
@@ -132,8 +136,10 @@ IOCHAN iochan_destroy_real(IOCHAN chan)
     return next;
 }
 
-void iochan_man_destroy(iochan_man_t *mp) {
-    if (*mp) {
+void iochan_man_destroy(iochan_man_t *mp)
+{
+    if (*mp)
+    {
         IOCHAN c;
         if ((*mp)->sel_thread)
             sel_thread_destroy((*mp)->sel_thread);
@@ -142,9 +148,8 @@ void iochan_man_destroy(iochan_man_t *mp) {
         c = (*mp)->channel_list;
         (*mp)->channel_list = NULL;
         yaz_mutex_leave((*mp)->iochan_mutex);
-        while (c) {
+        while (c)
             c = iochan_destroy_real(c);
-        }
         yaz_mutex_destroy(&(*mp)->iochan_mutex);
         xfree((*mp)->fds);
         xfree(*mp);
@@ -152,7 +157,8 @@ void iochan_man_destroy(iochan_man_t *mp) {
     }
 }
 
-void iochan_add(iochan_man_t man, IOCHAN chan) {
+void iochan_add(iochan_man_t man, IOCHAN chan)
+{
     chan->man = man;
     yaz_mutex_enter(man->iochan_mutex);
     yaz_log(man->log_level, "iochan_add : chan=%p channel list=%p", chan,
@@ -162,7 +168,8 @@ void iochan_add(iochan_man_t man, IOCHAN chan) {
     yaz_mutex_leave(man->iochan_mutex);
 }
 
-IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags, const char *name) {
+IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags, const char *name)
+{
     IOCHAN new_iochan;
 
     if (!(new_iochan = (IOCHAN) xmalloc(sizeof(*new_iochan))))
@@ -180,7 +187,8 @@ IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags, const char *name) {
     return new_iochan;
 }
 
-static void work_handler(void *work_data) {
+static void work_handler(void *work_data)
+{
     IOCHAN p = work_data;
 
     yaz_log(p->man->log_level, "eventl: work begin chan=%p name=%s event=%d",
@@ -199,18 +207,22 @@ static void work_handler(void *work_data) {
             p->name ? p->name : "", p->this_event);
 }
 
-static void run_fun(iochan_man_t man, IOCHAN p) {
-    if (man->sel_thread) {
+static void run_fun(iochan_man_t man, IOCHAN p)
+{
+    if (man->sel_thread)
+    {
         yaz_log(man->log_level,
                 "eventl: work add chan=%p name=%s event=%d", p,
                 p->name ? p->name : "", p->this_event);
         p->thread_users++;
         sel_thread_add(man->sel_thread, p);
-    } else
+    }
+    else
         work_handler(p);
 }
 
-static int event_loop(iochan_man_t man, IOCHAN *iochans) {
+static int event_loop(iochan_man_t man, IOCHAN *iochans)
+{
     do /* loop as long as there are active associations to process */
     {
         IOCHAN p, *nextp;
@@ -223,8 +235,6 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         int connection_fired = 0;
         to.tv_sec = 300;
         to.tv_usec = 0;
-
-        // INV: start must no change through the loop
 
         yaz_mutex_enter(man->iochan_mutex);
         start = man->channel_list;
@@ -273,7 +283,8 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         {
             if (errno == EINTR)
                 continue;
-            else {
+            else
+            {
                 yaz_log(YLOG_ERRNO | YLOG_WARN, "poll");
                 return 0;
             }
@@ -288,7 +299,8 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
 
                 yaz_log(man->log_level, "eventl: sel input on sel_fd=%d",
                         man->sel_fd);
-                while ((chan = sel_thread_result(man->sel_thread))) {
+                while ((chan = sel_thread_result(man->sel_thread)))
+                {
                     yaz_log(man->log_level,
                             "eventl: got thread result chan=%p name=%s", chan,
                             chan->name ? chan->name : "");
@@ -348,7 +360,8 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
                 }
             }
             /* only fire one Z39.50/SRU socket event.. except for timeout */
-            if (p->this_event) {
+            if (p->this_event)
+            {
                 if (!(p->this_event & EVENT_TIMEOUT) &&
                     !strcmp(p->name, "connection_socket"))
                 {
@@ -364,11 +377,12 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
 
         assert(inv_start == start);
         yaz_mutex_enter(man->iochan_mutex);
-        for (nextp = iochans; *nextp;) {
+        for (nextp = iochans; *nextp; )
+        {
             IOCHAN p = *nextp;
-            if (p->destroyed && p->thread_users == 0) {
+            if (p->destroyed && p->thread_users == 0)
                 *nextp = iochan_destroy_real(p);
-            } else
+            else
                 nextp = &p->next;
         }
         yaz_mutex_leave(man->iochan_mutex);
@@ -376,8 +390,10 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
     return 0;
 }
 
-void iochan_man_events(iochan_man_t man) {
-    if (man->no_threads > 0 && !man->sel_thread) {
+void iochan_man_events(iochan_man_t man)
+{
+    if (man->no_threads > 0 && !man->sel_thread)
+    {
         man->sel_thread = sel_thread_create(work_handler, 0 /*work_destroy */,
                 &man->sel_fd, man->no_threads);
         yaz_log(man->log_level, "iochan_man_events. Using %d threads",
@@ -386,7 +402,8 @@ void iochan_man_events(iochan_man_t man) {
     event_loop(man, &man->channel_list);
 }
 
-void pazpar2_sleep(double d) {
+void pazpar2_sleep(double d)
+{
 #ifdef WIN32
     Sleep( (DWORD) (d * 1000));
 #else
