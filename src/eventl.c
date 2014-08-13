@@ -231,8 +231,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         yaz_mutex_leave(man->iochan_mutex);
         inv_start = start;
         for (p = start; p; p = p->next)
-            if (p->fd >= 0)
-                no_fds++;
+            no_fds++;
         if (man->sel_fd != -1)
             no_fds++;
         if (no_fds > man->size_fds)
@@ -248,23 +247,22 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
             fds[i].input_mask = yaz_poll_read;
             i++;
         }
-        for (p = start; p; p = p->next)
+        for (p = start; p; p = p->next, i++)
         {
             if (p->thread_users > 0)
                 continue;
             if (p->max_idle && p->max_idle < to.tv_sec)
                 to.tv_sec = p->max_idle;
-            if (p->fd < 0)
-                continue;
             fds[i].fd = p->fd;
             fds[i].input_mask = 0;
+            if (p->fd < 0)
+                continue;
             if (p->flags & EVENT_INPUT)
                 fds[i].input_mask |= yaz_poll_read;
             if (p->flags & EVENT_OUTPUT)
                 fds[i].input_mask |= yaz_poll_write;
             if (p->flags & EVENT_EXCEPT)
                 fds[i].input_mask |= yaz_poll_except;
-            i++;
         }
         yaz_log(man->log_level, "yaz_poll begin nofds=%d", no_fds);
         res = yaz_poll(fds, no_fds, to.tv_sec, 0);
@@ -304,7 +302,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
                 no++;
             yaz_log(man->log_level, "%d channels", no);
         }
-        for (p = start; p; p = p->next)
+        for (p = start; p; p = p->next, i++)
         {
             time_t now = time(0);
 
@@ -313,8 +311,6 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
                 yaz_log(man->log_level,
                         "eventl: skip destroyed chan=%p name=%s", p,
                         p->name ? p->name : "");
-                if (p->fd >= 0)
-                    i++;
                 continue;
             }
             if (p->thread_users > 0)
@@ -322,8 +318,6 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
                 yaz_log(man->log_level,
                         "eventl: skip chan=%p name=%s users=%d", p,
                         p->name ? p->name : "", p->thread_users);
-                if (p->fd >= 0)
-                    i++;
                 continue;
             }
             p->this_event = 0;
@@ -351,7 +345,6 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
                     p->last_event = now;
                     p->this_event |= EVENT_EXCEPT;
                 }
-                i++;
             }
             /* only fire one Z39.50/SRU socket event.. except for timeout */
             if (p->this_event) {
