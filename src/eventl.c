@@ -229,12 +229,10 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
         IOCHAN start;
         IOCHAN inv_start;
         int res;
-        static struct timeval to;
         struct yaz_poll_fd *fds;
         int i, no_fds = 0;
         int connection_fired = 0;
-        to.tv_sec = 300;
-        to.tv_usec = 0;
+        int tv_sec = 300;
 
         yaz_mutex_enter(man->iochan_mutex);
         start = man->channel_list;
@@ -265,8 +263,8 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
             fds[i].input_mask = 0;
             if (p->thread_users > 0)
                 continue;
-            if (p->max_idle && p->max_idle < to.tv_sec)
-                to.tv_sec = p->max_idle;
+            if (p->max_idle && p->max_idle < tv_sec)
+                tv_sec = p->max_idle;
             if (p->fd < 0)
                 continue;
             if (p->flags & EVENT_INPUT)
@@ -277,7 +275,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                 fds[i].input_mask |= yaz_poll_except;
         }
         yaz_log(man->log_level, "yaz_poll begin nofds=%d", no_fds);
-        res = yaz_poll(fds, no_fds, to.tv_sec, 0);
+        res = yaz_poll(fds, no_fds, tv_sec, 0);
         yaz_log(man->log_level, "yaz_poll returned res=%d", res);
         if (res < 0)
         {
