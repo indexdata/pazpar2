@@ -47,6 +47,7 @@ typedef struct iochan
     iochan_man_t man;
     char *name;
     struct iochan *next;
+    int poll_offset;
 } *IOCHAN;
 
 
