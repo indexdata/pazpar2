@@ -104,6 +104,8 @@ struct iochan_man_s {
     int no_threads;
     int log_level;
     YAZ_MUTEX iochan_mutex;
+    int size_fds;
+    struct yaz_poll_fd *fds;
 };
 
 iochan_man_t iochan_man_create(int no_threads) {
@@ -114,6 +116,8 @@ iochan_man_t iochan_man_create(int no_threads) {
     man->no_threads = no_threads;
     man->log_level = yaz_log_module_level("iochan");
     man->iochan_mutex = 0;
+    man->size_fds = 0;
+    man->fds = 0;
     yaz_mutex_create(&man->iochan_mutex);
     return man;
 }
@@ -142,6 +146,7 @@ void iochan_man_destroy(iochan_man_t *mp) {
             c = iochan_destroy_real(c);
         }
         yaz_mutex_destroy(&(*mp)->iochan_mutex);
+        xfree((*mp)->fds);
         xfree(*mp);
         *mp = 0;
     }
@@ -213,7 +218,6 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         IOCHAN inv_start;
         int res;
         static struct timeval to;
-
         struct yaz_poll_fd *fds;
         int i, no_fds = 0;
         int connection_fired = 0;
@@ -231,14 +235,17 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
                 no_fds++;
         if (man->sel_fd != -1)
             no_fds++;
-        fds = (struct yaz_poll_fd *) xmalloc(no_fds * sizeof(*fds));
+        if (no_fds > man->size_fds)
+        {
+            man->size_fds = no_fds * 2;
+            man->fds = xrealloc(man->fds, man->size_fds * sizeof(*man->fds));
+        }
+        fds = man->fds;
         i = 0;
         if (man->sel_fd != -1)
         {
             fds[i].fd = man->sel_fd;
-            fds[i].input_mask = 0;
-            if (p->flags & EVENT_INPUT)
-                fds[i].input_mask |= yaz_poll_read;
+            fds[i].input_mask = yaz_poll_read;
             i++;
         }
         for (p = start; p; p = p->next)
@@ -371,7 +378,6 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
                 nextp = &p->next;
         }
         yaz_mutex_leave(man->iochan_mutex);
-        xfree(fds);
     } while (*iochans);
     return 0;
 }
