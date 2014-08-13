@@ -334,7 +334,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                 p->last_event = now;
                 p->this_event |= EVENT_TIMEOUT;
             }
-            if (fds[i].fd >= 0)
+            if (fds[i].fd >= 0 && p->fd == fds[i].fd)
             {
                 if (fds[i].output_mask & yaz_poll_read)
                 {
