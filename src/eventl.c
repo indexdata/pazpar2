@@ -36,7 +36,9 @@
 #include <stdio.h>
 #include <assert.h>
 
+#if HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include <stdlib.h>
 #include <errno.h>
