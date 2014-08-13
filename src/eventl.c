@@ -245,16 +245,18 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
         {
             fds[i].fd = man->sel_fd;
             fds[i].input_mask = yaz_poll_read;
+            fds[i].client_data = 0;
             i++;
         }
         for (p = start; p; p = p->next, i++)
         {
+            fds[i].client_data = p;
+            fds[i].fd = p->fd;
+            fds[i].input_mask = 0;
             if (p->thread_users > 0)
                 continue;
             if (p->max_idle && p->max_idle < to.tv_sec)
                 to.tv_sec = p->max_idle;
-            fds[i].fd = p->fd;
-            fds[i].input_mask = 0;
             if (p->fd < 0)
                 continue;
             if (p->flags & EVENT_INPUT)
@@ -302,9 +304,10 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
                 no++;
             yaz_log(man->log_level, "%d channels", no);
         }
-        for (p = start; p; p = p->next, i++)
+        for (; i < no_fds; i++)
         {
             time_t now = time(0);
+            p = fds[i].client_data;
 
             if (p->destroyed)
             {
@@ -321,15 +324,13 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans) {
                 continue;
             }
             p->this_event = 0;
-
             if (p->max_idle && now - p->last_event > p->max_idle)
             {
                 p->last_event = now;
                 p->this_event |= EVENT_TIMEOUT;
             }
-            if (p->fd >= 0)
+            if (fds[i].fd >= 0)
             {
-                assert(fds[i].fd == p->fd);
                 if (fds[i].output_mask & yaz_poll_read)
                 {
                     p->last_event = now;
