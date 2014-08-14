@@ -1,4 +1,4 @@
---- 1.7.1 2014/08/13
+--- 1.7.1 2014/08/14
 
 Use poll rather than select for main event loop to overcome limit of
 1024 file descriptors PAZ-947
