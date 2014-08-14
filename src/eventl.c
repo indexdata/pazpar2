@@ -255,7 +255,7 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
         {
             p->poll_offset = i;
             fds[i].client_data = p;
-            fds[i].fd = p->fd;
+            fds[i].fd = -1;
             fds[i].input_mask = 0;
             if (p->thread_users > 0)
                 continue;
@@ -269,6 +269,8 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                 fds[i].input_mask |= yaz_poll_write;
             if (p->flags & EVENT_EXCEPT)
                 fds[i].input_mask |= yaz_poll_except;
+            if (fds[i].input_mask)
+                fds[i].fd = p->fd;
         }
         yaz_log(man->log_level, "yaz_poll begin nofds=%d", no_fds);
         res = yaz_poll(fds, no_fds, tv_sec, 0);
