@@ -48,7 +48,7 @@ jade-check: $(XMLFILES)
 	jade -E14 -D $(srcdir) -d common/print.dsl -t tex $(srcdir)/common/xml.dcl $(MAINXML)
 	touch jade-check
 
-manref.xml: $(XMLMAN) $(srcdir)/common/stripref.xsl
+manref.xml: $(XMLMAN) $(srcdir)/common/stripref.xsl local.ent
 	rm -f manref.xml
 	for i in $(XMLMAN); do \
 		xsltproc $(srcdir)/common/stripref.xsl $(srcdir)/$$i | sed 1d >> manref.xml; \
