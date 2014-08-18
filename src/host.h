@@ -30,6 +30,7 @@ struct host {
     char *proxy;    // logical proxy address
     char *ipport;   // tproxy or proxy resolved
     struct connection *connections; // All connections to this
+    int error;      // resolving error
     struct host *next;
     YAZ_MUTEX mutex;
     YAZ_COND cond_ready;

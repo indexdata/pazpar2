@@ -59,6 +59,7 @@ static struct host *create_host(const char *proxy,
     host->connections = 0;
     host->ipport = 0;
     host->mutex = 0;
+    host->error = 0;
 
     if (host_getaddrinfo(host, iochan_man))
     {
@@ -121,6 +122,8 @@ struct host *find_host(database_hosts_t hosts, const char *url,
             hosts->hosts = p;
         }
     }
+    if (p && p->error) /* already resolved error */
+        p = 0;
     yaz_mutex_leave(hosts->mutex);
     xfree(tproxy);
     return p;

@@ -61,6 +61,7 @@ struct work {
     char *ipport;    /* result or NULL if it could not be resolved */
     struct host *host; /* host that we're dealing with - mother thread */
     iochan_man_t iochan_man; /* iochan manager */
+    int error;
 };
 
 static int log_level = YLOG_LOG;
@@ -106,6 +107,7 @@ static void perform_getaddrinfo(struct work *w)
     {
         yaz_log(YLOG_WARN, "Failed to resolve %s: %s",
                 w->hostport, gai_strerror(error));
+        w->error = error;
     }
     else
     {
@@ -157,6 +159,7 @@ void iochan_handler(struct iochan *i, int event)
     {
         struct work *w = sel_thread_result(p);
         w->host->ipport = w->ipport;
+        w->host->error = w->error;
         connect_resolver_host(w->host, w->iochan_man);
         xfree(w);
     }
@@ -196,6 +199,7 @@ int host_getaddrinfo(struct host *host, iochan_man_t iochan_man)
     w->ipport = 0;
     w->host = host;
     w->iochan_man = iochan_man;
+    w->error = 0;
 #if USE_THREADED_RESOLVER
     if (use_thread)
     {
@@ -208,6 +212,7 @@ int host_getaddrinfo(struct host *host, iochan_man_t iochan_man)
 #endif
     perform_getaddrinfo(w);
     host->ipport = w->ipport;
+    host->error = w->error;
     xfree(w);
     if (!host->ipport)
         return -1;
