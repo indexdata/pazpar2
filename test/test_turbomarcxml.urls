@@ -1,8 +1,8 @@
 http://localhost:9763/search.pz2?command=init&clear=1
 http://localhost:9763/search.pz2?session=1&command=settings&pz:name%5Bz3950.indexdata.com%2Fgils%5D=gils&pz:requestsyntax%5Bz3950.indexdata.com%2Fgils%5D=usmarc&pz:nativesyntax%5Bz3950.indexdata.com%2Fgils%5D=xml&pz:xslt%5Bz3950.indexdata.com%2Fgils%5D=marc21_test.xsl
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
-2 http://localhost:9763/search.pz2?session=1&command=show&block=1
+w http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=settings&pz:name%5Bz3950.indexdata.com%2Fgils%5D=gils&pz:requestsyntax%5Bz3950.indexdata.com%2Fgils%5D=usmarc&pz:nativesyntax%5Bz3950.indexdata.com%2Fgils%5D=txml&pz:xslt%5Bz3950.indexdata.com%2Fgils%5D=tmarc.xsl
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
-2 http://localhost:9763/search.pz2?session=1&command=show&block=1
-2 http://localhost:9763/search.pz2?session=1&command=bytarget
+w http://localhost:9763/search.pz2?session=1&command=show&block=1
+w http://localhost:9763/search.pz2?session=1&command=bytarget

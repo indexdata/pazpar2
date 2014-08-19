@@ -14,8 +14,10 @@ WAIT=120
 
 kill_pazpar2()
 {
-    if test -n "$PP2PID"; then
+    if test -z "$SKIP_PAZPAR2" -a -n "$PP2PID"; then
 	kill $PP2PID
+	PP2PID=""
+	rm -f pazpar2.pid
     fi
     if test -f ztest.pid; then
 	kill `cat ztest.pid`
@@ -145,8 +147,16 @@ else
     sec=1
     maxrounds=10
 fi
-LEVELS=loglevel,fatal,warn,log,debug,notime,zoom,zoomdetails
-if test -n "$PAZPAR2_USE_VALGRIND"; then
+LEVELS=loglevel,fatal,warn,log,debug,zoom,zoomdetails
+if test "$PERF_PROG"; then
+    eval $PERF_PROG ../src/pazpar2 -p pazpar2.pid -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
+    PP2PID=$!
+    sleep 5
+    if test -f pazpar2.pid; then
+	PP2PID=`cat pazpar2.pid`
+	echo "Got PID $PP2PID"
+    fi
+elif test -n "$PAZPAR2_USE_VALGRIND"; then
     valgrind --num-callers=30 --show-reachable=yes --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -v $LEVELS -X -l ${PREFIX}_pazpar2.log -f ${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
     PP2PID=$!
     sleep 0.01
@@ -216,10 +226,11 @@ for f in `cat ${srcdir}/${URLS}`; do
 		    fi
 		fi
 	    else
-		if test $rounds -eq 0; then
+		if test $testno -eq 1 -o $rounds -eq 0; then
 		    echo "${PREFIX} $testno: Making for the first time"
 		    mv $OUT2 $OUT1
 		    code=1
+		    rounds=0
 		fi
 	    fi
 	    if test $rounds -gt 0; then
@@ -229,8 +240,11 @@ for f in `cat ${srcdir}/${URLS}`; do
 	testno=`expr $testno + 1`
 	postfile=
 	rounds=1
-    elif echo $f | grep '^[0-9]' >/dev/null; then
+    elif echo $f | grep '^w' >/dev/null; then
 	rounds=$maxrounds
+    elif echo $f | grep '^[0-9]' >/dev/null; then
+	sleep $f
+	rounds=1
     else
 	if test -f $srcdir/$f; then
 	    postfile=$srcdir/$f
@@ -249,7 +263,9 @@ for f in `cat ${srcdir}/${URLS}`; do
 	    else
 		echo "${PREFIX} $testno: pazpar2 died"
 	    fi
-	    exit 1
+	    PP2PID=""
+	    code=1
+	    break
 	fi
     fi
 done
@@ -263,15 +279,10 @@ if [ "$WAIT_PAZPAR2" ] ; then
     done
     echo "done"
 fi
-# Kill programs
-if test -f ztest.pid; then
-    kill `cat ztest.pid`
-    rm -f ztest.pid
-fi
-
-if [ -z "$SKIP_PAZPAR2" ] ; then
-    kill_pazpar2
-    sleep 2
+kill_pazpar2
+sleep 2
+if test "$PERF_PROG"; then
+    tail -3 ${PREFIX}_extra_pazpar2.log
 fi
 exit $code
 

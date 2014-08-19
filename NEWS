@@ -1,3 +1,14 @@
+--- 1.7.2 2014/08/18
+
+Fix hang for 2nd use of target with unresolved DNS PAZ-949
+
+--- 1.7.1 2014/08/14
+
+Use poll rather than select for main event loop to overcome limit of
+1024 file descriptors PAZ-947
+
+Override setting with same name (do not append) PAZ-945
+
 --- 1.7.0 2014/06/27
 
 Separate package: pazpar2-xsl PAZ-932

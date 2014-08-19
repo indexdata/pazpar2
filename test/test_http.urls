@@ -2,7 +2,7 @@ http://localhost:9763/search.pz2?command=init&pz:elements%5Bz3950.indexdata.com%
 http://localhost:9763/search.pz2?session=1&command=stat
 http://localhost:9763/search.pz2?session=1&command=ping
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
-2 http://localhost:9763/search.pz2?session=1&command=show&block=1&snippets=1
+w http://localhost:9763/search.pz2?session=1&command=show&block=1&snippets=1
 http://localhost:9763/search.pz2?session=1&command=record&id=content%3A+title+how+to+program+a+computer+author+jack+collins+medium+book&snippets=1
 http://localhost:9763/search.pz2?session=1&command=record&id=content%3A+title+how+to+program+a+computer+author+jack+collins+medium+book&offset=0
 http://localhost:9763/search.pz2?session=1&command=show&start=0&number=1&sort=title:0
@@ -15,52 +15,52 @@ http://localhost:9763/search.pz2?session=1&command=show&start=0&number=1
 http://localhost:9763/search.pz2?command=init&clear=1
 http://localhost:9763/search.pz2?session=2&command=settings&pz:name%5Bz3950.indexdata.com%2Fgils%23DUMMY%5D=gils&pz:requestsyntax%5Bz3950.indexdata.com%2Fgils%23DUMMY%5D=usmarc&pz:nativesyntax%23DUMMY%5Bz3950.indexdata.com%2Fgils%23DUMMY%5D=iso2709&pz:xslt%5Bz3950.indexdata.com%2Fgils%23DUMMY%5D=marc21%5Ftest.xsl
 http://localhost:9763/search.pz2?session=2&command=search&query=computer
-2 http://localhost:9763/search.pz2?session=2&command=show&block=1
+w http://localhost:9763/search.pz2?session=2&command=show&block=1
 http://localhost:9763/search.pz2?session=2&command=search&query=kubiak%20stanis%C5%82aw
 http://localhost:9763/search.pz2?session=2&command=search&query=kubiak%20sts%C5%82aw
-2 http://localhost:9763/search.pz2?session=2&command=bytarget
+w http://localhost:9763/search.pz2?session=2&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=search&query=computer
-1 http://localhost:9763/search.pz2?session=1&command=record&id=content%3A+title+how+to+program+a+computer+author+jack+collins+medium+book
+w http://localhost:9763/search.pz2?session=1&command=record&id=content%3A+title+how+to+program+a+computer+author+jack+collins+medium+book
 http://localhost:9763/search.pz2?session=1&command=record&id=content%3A+title+how+to+program+a+computer+author+jack+collins+medium+book&offset=0&binary=1
 http://localhost:9763/search.pz2?session=1&command=record&id=content%3A+title+how+to+program+a+computer+author+jack+collins+medium+book&offset=0&binary=1&syntax=usmarc
 http://localhost:9763/search.pz2?command=init&service=gils
 http://localhost:9763/search.pz2?session=3&command=search&query=utah
-2 http://localhost:9763/search.pz2?session=3&command=show&block=1
+w http://localhost:9763/search.pz2?session=3&command=show&block=1
 http://localhost:9763/search.pz2?command=init&clear=1
 http://localhost:9763/search.pz2?session=4&command=settings&pz:name%5Bz3950.indexdata.com%2Fgils%5D=gils&pz:requestsyntax%5Bz3950.indexdata.com%2Fgils%5D=usmarc&pz:nativesyntax%5Bz3950.indexdata.com%2Fgils%5D=iso2709&pz:xslt%5Bz3950.indexdata.com%2Fgils%5D=marc21.mmap
 http://localhost:9763/search.pz2?session=4&command=search&query=computer
-2 http://localhost:9763/search.pz2?session=4&command=show&block=1
+w http://localhost:9763/search.pz2?session=4&command=show&block=1
 http://localhost:9763/search.pz2?command=init
 http://localhost:9763/search.pz2?session=5&command=settings&pz:name%5Bz3950.indexdata.com%2Fmarc%5D=marc&pz:requestsyntax%5Bz3950.indexdata.com%2Fmarc%5D=usmarc&pz:nativesyntax%5Bz3950.indexdata.com%2Fmarc%5D=iso2709&pz:xslt%5Bz3950.indexdata.com%2Fmarc%5D=marc21%5Ftest.xsl&pz:recordfilter%5Bz3950.indexdata.com%2Fmarc%5D=date
 http://localhost:9763/search.pz2?session=5&command=search&query=computer&filter=pz%3Aid%3Dz3950.indexdata.com%2Fmarc
-2 http://localhost:9763/search.pz2?session=5&command=show&block=1
+w http://localhost:9763/search.pz2?session=5&command=show&block=1
 http://localhost:9763/search.pz2?session=5&command=search&query=computer&filter=pz%3Aid%3Dunknown
 http://localhost:9763/search.pz2?session=3&command=settings&pz:maxrecs%5Bz3950.indexdata.com%2Fgils%5D=8
 http://localhost:9763/search.pz2?session=3&command=search&query=the
 http://localhost:9763/search.pz2?session=5&command=search&query=the&maxrecs=5&startrecs=2
-2 http://localhost:9763/search.pz2?session=3&command=show&block=1
+w http://localhost:9763/search.pz2?session=3&command=show&block=1
 http://localhost:9763/search.pz2?session=5&command=show&block=1
 http://localhost:9763/search.pz2?command=init&pz:elements%5Bz3950.indexdata.com%2Fmarc%5D=F
-1 http://localhost:9763/search.pz2?session=6&command=search&query=louis
-1 http://localhost:9763/search.pz2?session=6&command=show&block=1
+w http://localhost:9763/search.pz2?session=6&command=search&query=louis
+w http://localhost:9763/search.pz2?session=6&command=show&block=1
 http://localhost:9763/search.pz2?session=6&command=record&id=content%3A+title+computer+processing+of+dynamic+images+from+an+anger+scintillation+camera+author+medium+book&offset=0&nativesyntax=txml%3Bcharset%3Dmarc-8
 http://localhost:9763/search.pz2?command=init&pz:elements%5Bz3950.indexdata.com%2Fmarc%5D=F
 http://localhost:9763/search.pz2?session=7&command=search&query=greece
-1 http://localhost:9763/search.pz2?session=7&command=show&block=1&rank=title%3D9,author%3D7
-1 http://localhost:9763/search.pz2?session=6&command=show&block=1
+w http://localhost:9763/search.pz2?session=7&command=show&block=1&rank=title%3D9,author%3D7
+w http://localhost:9763/search.pz2?session=6&command=show&block=1
 http://localhost:9763/search.pz2?session=6&command=record&id=content%3A+title+computer+processing+of+dynamic+images+from+an+anger+scintillation+camera+author+medium+book&checksum=2614320583
 http://localhost:9763/search.pz2?command=init
 http://localhost:9763/search.pz2?session=8&command=settings&pz:name%5Bz3950.indexdata.com%2Fmarc%5D=marc&pz:requestsyntax%5Bz3950.indexdata.com%2Fmarc%5D=usmarc&pz:nativesyntax%5Bz3950.indexdata.com%2Fmarc%5D=iso2709&pz:xslt%5Bz3950.indexdata.com%2Fmarc%5D=marc21%5Ftest.xsl&pz:recordfilter%5Bz3950.indexdata.com%2Fmarc%5D=date
 http://localhost:9763/search.pz2?session=8&command=search&query=xyzzyz
-2 http://localhost:9763/search.pz2?session=8&command=show&block=1
+w http://localhost:9763/search.pz2?session=8&command=show&block=1
 http://localhost:9763/search.pz2?session=8&command=search&query=a+AND
-1 http://localhost:9763/search.pz2?session=8&command=show&block=1
+w http://localhost:9763/search.pz2?session=8&command=show&block=1
 http://localhost:9763/search.pz2?command=init&pz:limitmap:author%5Bz3950.indexdata.com%2Fmarc%5D=ccl:author_phrase&pz:limitmap:Mysubject%5Bz3950.indexdata.com%2fmarc%5D=local:subject&pz:limitmap:date%5Bz3950.indexdata.com%2fmarc%5D=local:
-1 http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3DAdam\,+James%7Cother_author
-1 http://localhost:9763/search.pz2?session=9&command=show&block=1
+w http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3DAdam\,+James%7Cother_author
+w http://localhost:9763/search.pz2?session=9&command=show&block=1
 http://localhost:9763/search.pz2?session=9&command=settings&pz:limitmap:author%5Bz3950.indexdata.com%2Fmarc%5D=rpn:%40attr+1%3D1003+%40attr+6%3D3
-1 http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3Dadam\,+james%7Cother_author
-1 http://localhost:9763/search.pz2?session=9&command=show&block=1
+w http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3Dadam\,+james%7Cother_author
+w http://localhost:9763/search.pz2?session=9&command=show&block=1
 http://localhost:9763/search.pz2?session=9&command=search&query=greece&limit=author%3Dadam\,+james%7Cother_author&filter=pz%3Aid%3Dz3950.indexdata.com%2Fmarc
 1 http://localhost:9763/search.pz2?session=9&command=bytarget
 http://localhost:9763/search.pz2?session=9&command=show

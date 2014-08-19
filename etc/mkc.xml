@@ -16,30 +16,30 @@
     <transform rule="[[:WhiteSpace:][:Punctuation:]`] Remove"/>
     <casemap rule="l"/>
   </icu_chain>
-  
+
   <icu_chain id="sort" locale="en">
     <transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]`] Remove"/>
     <casemap rule="l"/>
   </icu_chain>
-  
+
   <icu_chain id="mergekey" locale="en">
     <tokenize rule="l"/>
     <transform rule="[[:Control:][:WhiteSpace:][:Punctuation:]`] Remove"/>
     <casemap rule="l"/>
   </icu_chain>
-  
+
   <icu_chain id="facet" locale="en">
     <display/>
     <transform rule="Title"/>
   </icu_chain>
-  
+
   <!-- we try to keep same order as in marc21.xsl -->
   <metadata name="id" brief="yes"/>
   <metadata name="lccn" merge="unique"/>
   <metadata name="isbn"/>
   <metadata name="issn"/>
   <metadata name="tech-rep-nr"/>
-  <metadata name="author" brief="yes" termlist="yes" merge="unique" 
+  <metadata name="author" brief="yes" termlist="yes" merge="unique"
 	    rank="20" mergekey="optional" limitmap="ccl: au" />
   <metadata name="author-title"/>
   <metadata name="author-date"/>
@@ -73,9 +73,9 @@
   <metadata name="physical-unittype"/>
   <metadata name="physical-unitsize"/>
   <metadata name="physical-specified"/>
-  
+
   <metadata name="series-title"/>
-  
+
   <metadata name="description" brief="yes" merge="longest" rank="3"/>
   <metadata name="subject-long" rank="3"/>
   <metadata name="subject" termlist="yes" rank="0" limitmap="ccl: su" />
@@ -94,7 +94,7 @@
   <metadata name="locallocation" brief="yes"/>
   <metadata name="callnumber" brief="yes"/>
   <metadata name="publicnote" brief="yes"/>
-  
+
   <!-- journals -->
   <metadata name="journal-title"/>
   <metadata name="journal-subpart"/>
@@ -102,12 +102,12 @@
   <metadata name="issue-date"/>
   <metadata name="issue-number"/>
   <metadata name="pages-number"/>
-  
+
   <metadata name="url_recipe" setting="postproc" brief="yes" merge="no"/>
   <metadata name="open_url_resolver" setting="parameter" merge="no"/>
   <metadata name="open-url" merge="longest"/>
   <metadata name="use_url_proxy" setting="postproc" brief="yes" merge="no"/>
-  
+
   <metadata name="publisher"/>
   <metadata name="available"/>
   <metadata name="due"/>

@@ -158,17 +158,24 @@ char *settings_name(struct conf_service *service, int offset)
 
 
 // Apply a session override to a database
-void service_apply_setting(struct conf_service *service, char *setting, char *value)
+void service_apply_setting(struct conf_service *service, char *name, char *value)
 {
-    struct setting *new = nmem_malloc(service->nmem, sizeof(*new));
-    int offset = settings_create_offset(service, setting);
+    struct setting *s;
+    int offset = settings_create_offset(service, name);
     expand_settings_array(&service->settings->settings, &service->settings->num_settings, offset, service->nmem);
-    new->precedence = 0;
-    new->target = NULL;
-    new->name = setting;
-    new->value = value;
-    new->next = service->settings->settings[offset];
-    service->settings->settings[offset] = new;
+    for (s = service->settings->settings[offset]; s; s = s->next)
+        if (!strcmp(s->name, name))
+        {
+            s->value = value;
+            return;
+        }
+    s = nmem_malloc(service->nmem, sizeof(*s));
+    s->precedence = 0;
+    s->target = NULL;
+    s->name = name;
+    s->value = value;
+    s->next = service->settings->settings[offset];
+    service->settings->settings[offset] = s;
 }
 
 

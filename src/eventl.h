@@ -47,6 +47,7 @@ typedef struct iochan
     iochan_man_t man;
     char *name;
     struct iochan *next;
+    int poll_offset;
 } *IOCHAN;
 
 
@@ -68,8 +69,6 @@ void iochan_man_destroy(iochan_man_t *mp);
 #define iochan_activity(i) ((i)->last_event = time(0))
 
 IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags, const char *name);
-
-void pazpar2_sleep(double d);
 
 #endif
 /*
