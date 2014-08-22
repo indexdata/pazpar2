@@ -1,3 +1,7 @@
+--- 1.7.3 2014/08/22
+
+poll: add assert for number of FDs; abort on poll failure
+
 --- 1.7.2 2014/08/18
 
 Fix hang for 2nd use of target with unresolved DNS PAZ-949
