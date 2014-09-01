@@ -228,8 +228,10 @@ static void non_block_events(struct connection *co)
                 int err;
                 if ((err = ZOOM_connection_error(link, &error, &addinfo)))
                 {
-                    yaz_log(YLOG_LOG, "Error %s from %s",
-                            error, client_get_id(cl));
+                    struct session *se = client_get_session(cl);
+
+                    session_log(se, YLOG_WARN, "%s: Error %s (%s)",
+                                client_get_id(cl), error, addinfo);
                     client_set_diagnostic(cl, err, error, addinfo);
                     client_set_state(cl, Client_Error);
                 }
@@ -254,7 +256,6 @@ static void non_block_events(struct connection *co)
         case ZOOM_EVENT_RECV_APDU:
             break;
         case ZOOM_EVENT_CONNECT:
-            yaz_log(YLOG_LOG, "Connected to %s", client_get_id(cl));
             co->state = Conn_Open;
             break;
         case ZOOM_EVENT_RECV_SEARCH:

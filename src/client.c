@@ -106,7 +106,7 @@ struct client {
     Odr_int hits;
     int record_offset;
     int show_stat_no;
-    int filtered; // When using local:, this will count the number of filtered records.
+    int filtered; /* number of records ignored for local filtering */
     int maxrecs;
     int startrecs;
     int diagnostic;
@@ -570,6 +570,7 @@ void client_search_response(struct client *cl)
     struct connection *co = cl->connection;
     ZOOM_connection link = connection_get_link(co);
     ZOOM_resultset resultset = cl->resultset;
+    struct session *se = client_get_session(cl);
 
     const char *error, *addinfo = 0;
 
@@ -577,16 +578,16 @@ void client_search_response(struct client *cl)
     {
         cl->hits = 0;
         client_set_state(cl, Client_Error);
-        yaz_log(YLOG_WARN, "Search error %s (%s): %s",
-                error, addinfo, client_get_id(cl));
+        session_log(se, YLOG_WARN, "%s: Error %s (%s)",
+                    client_get_id(cl), error, addinfo);
     }
     else
     {
         client_report_facets(cl, resultset);
         cl->record_offset = cl->startrecs;
         cl->hits = ZOOM_resultset_size(resultset);
-        yaz_log(YLOG_DEBUG, "client_search_response: hits " ODR_INT_PRINTF,
-                cl->hits);
+        session_log(se, YLOG_LOG, "%s: hits: " ODR_INT_PRINTF,
+                    client_get_id(cl), cl->hits);
         if (cl->suggestions)
             client_suggestions_destroy(cl);
         cl->suggestions =
@@ -933,13 +934,13 @@ int client_start_search(struct client *cl)
     /* Nothing has changed and we already have a result */
     if (cl->same_search == 1 && rc_prep_connection == 2)
     {
-        session_log(se, YLOG_LOG, "client %s resuse result", client_get_id(cl));
+        session_log(se, YLOG_LOG, "%s: reuse result", client_get_id(cl));
         client_report_facets(cl, cl->resultset);
         return client_reingest(cl);
     }
     else if (!rc_prep_connection)
     {
-        session_log(se, YLOG_LOG, "client %s postponing search: No connection",
+        session_log(se, YLOG_LOG, "%s: postponing search: No connection",
                     client_get_id(cl));
         client_set_state_nb(cl, Client_Working);
         return -1;
@@ -949,7 +950,7 @@ int client_start_search(struct client *cl)
     link = connection_get_link(co);
     assert(link);
 
-    session_log(se, YLOG_LOG, "client %s new search", client_get_id(cl));
+    session_log(se, YLOG_LOG, "%s: new search", client_get_id(cl));
 
     cl->diagnostic = 0;
     cl->filtered = 0;
@@ -1009,17 +1010,16 @@ int client_start_search(struct client *cl)
     query = ZOOM_query_create();
     if (cl->cqlquery)
     {
-        yaz_log(YLOG_LOG, "Client %s: Search CQL: %s", client_get_id(cl),
-                cl->cqlquery);
+        session_log(se, YLOG_LOG, "%s: Search CQL: %s", client_get_id(cl),
+                    cl->cqlquery);
         ZOOM_query_cql(query, cl->cqlquery);
         if (*opt_sort)
             ZOOM_query_sortby(query, opt_sort);
     }
     else
     {
-        yaz_log(YLOG_LOG, "Client %s: Search PQF: %s", client_get_id(cl),
-                cl->pquery);
-
+        session_log(se, YLOG_LOG, "%s: Search PQF: %s", client_get_id(cl),
+                    cl->pquery);
         ZOOM_query_prefix(query, cl->pquery);
     }
     if (cl->sort_strategy && cl->sort_criteria) {
