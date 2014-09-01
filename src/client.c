@@ -619,11 +619,11 @@ static void client_record_ingest(struct client *cl)
     ZOOM_resultset resultset = cl->resultset;
     struct session *se = client_get_session(cl);
     xmlDoc *xdoc;
+    int offset = cl->record_offset + 1; /* 0 versus 1 numbered offsets */
 
-    xdoc = client_get_xdoc(cl, cl->record_offset + 1);
+    xdoc = client_get_xdoc(cl, offset);
     if (xdoc)
     {
-        int offset = ++cl->record_offset;
         if (cl->session)
         {
             NMEM nmem = nmem_create();
@@ -640,7 +640,6 @@ static void client_record_ingest(struct client *cl)
     else if ((rec = ZOOM_resultset_record_immediate(resultset,
                                                     cl->record_offset)))
     {
-        int offset = ++cl->record_offset;
         if (cl->session == 0)
             ;  /* no operation */
         else if (ZOOM_record_error(rec, &msg, &addinfo, 0))
@@ -672,7 +671,7 @@ static void client_record_ingest(struct client *cl)
             else
             {
                 /* OK = 0, -1 = failure, -2 = Filtered */
-                int rc = ingest_record(cl, xmlrec, cl->record_offset, nmem);
+                int rc = ingest_record(cl, xmlrec, offset, nmem);
                 if (rc == -1)
                 {
                     const char *rec_syn =  ZOOM_record_get(rec, "syntax", NULL);
@@ -684,8 +683,8 @@ static void client_record_ingest(struct client *cl)
                                 s ? s : "null", type,
                                 rec_syn ? rec_syn : "null");
                 }
-                if (rc == -2)
-                    cl->filtered += 1;
+                else if (rc == -2)
+                    cl->filtered++;
             }
             nmem_destroy(nmem);
         }
@@ -693,8 +692,9 @@ static void client_record_ingest(struct client *cl)
     else
     {
         session_log(se, YLOG_WARN, "Got NULL record from %s #%d",
-                    client_get_id(cl), cl->record_offset);
+                    client_get_id(cl), offset);
     }
+    cl->record_offset++;
 }
 
 void client_record_response(struct client *cl, int *got_records)
