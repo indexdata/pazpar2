@@ -187,7 +187,7 @@ const char *session_setting_oneval(struct session_database *db, int offset);
 
 int ingest_record(struct client *cl, const char *rec, int record_no, NMEM nmem);
 int ingest_xml_record(struct client *cl, xmlDoc *xdoc,
-                      int record_no, NMEM nmem);
+                      int record_no, NMEM nmem, int cached_copy);
 void session_alert_watch(struct session *s, int what);
 void add_facet(struct session *s, const char *type, const char *value, int count);
 

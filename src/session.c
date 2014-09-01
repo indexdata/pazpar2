@@ -1687,9 +1687,6 @@ static int ingest_sub_record(struct client *cl, xmlDoc *xdoc, xmlNode *root,
 {
     int ret = 0;
     struct session *se = client_get_session(cl);
-    struct conf_service *service = se->service;
-
-    insert_settings_values(sdb, xdoc, root, service);
 
     if (!check_record_filter(root, sdb))
     {
@@ -1705,9 +1702,6 @@ static int ingest_sub_record(struct client *cl, xmlDoc *xdoc, xmlNode *root,
 
     return ret;
 }
-
-int ingest_xml_record(struct client *cl, xmlDoc *xdoc,
-                      int record_no, NMEM nmem);
 
 /** \brief ingest XML record
     \param cl client holds the result set for record
@@ -1725,13 +1719,13 @@ int ingest_record(struct client *cl, const char *rec,
     struct session_database *sdb = client_get_database(cl);
     struct conf_service *service = se->service;
     xmlDoc *xdoc = normalize_record(se, sdb, service, rec, nmem);
-    int r = ingest_xml_record(cl, xdoc, record_no, nmem);
+    int r = ingest_xml_record(cl, xdoc, record_no, nmem, 0);
     client_store_xdoc(cl, record_no, xdoc);
     return r;
 }
 
 int ingest_xml_record(struct client *cl, xmlDoc *xdoc,
-                      int record_no, NMEM nmem)
+                      int record_no, NMEM nmem, int cached_copy)
 {
     struct session *se = client_get_session(cl);
     struct session_database *sdb = client_get_database(cl);
@@ -1794,6 +1788,8 @@ int ingest_xml_record(struct client *cl, xmlDoc *xdoc,
             if (sroot->type == XML_ELEMENT_NODE &&
                 !strcmp((const char *) sroot->name, "record"))
             {
+                if (!cached_copy)
+                    insert_settings_values(sdb, xdoc, root, service);
                 r = ingest_sub_record(cl, xdoc, sroot, record_no, nmem, sdb,
                                       mk);
             }
@@ -1811,6 +1807,8 @@ int ingest_xml_record(struct client *cl, xmlDoc *xdoc,
             mk->value = nmem_strdup(nmem, mergekey_norm);
             mk->next = 0;
 
+            if (!cached_copy)
+                insert_settings_values(sdb, xdoc, root, service);
             r = ingest_sub_record(cl, xdoc, root, record_no, nmem, sdb, mk);
         }
     }

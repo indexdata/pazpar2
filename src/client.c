@@ -627,7 +627,7 @@ static void client_record_ingest(struct client *cl)
         if (cl->session)
         {
             NMEM nmem = nmem_create();
-            int rc = ingest_xml_record(cl, xdoc, offset, nmem);
+            int rc = ingest_xml_record(cl, xdoc, offset, nmem, 1);
             if (rc == -1)
                 session_log(se, YLOG_WARN,
                             "Failed to ingest xdoc from %s #%d",
