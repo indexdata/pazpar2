@@ -112,6 +112,8 @@ const char *client_get_facet_limit_local(struct client *cl,
 
 void client_update_show_stat(struct client *cl, int cmd);
 
+void client_store_xdoc(struct client *cl, int record_no, xmlDoc *xdoc);
+
 #endif
 
 /*

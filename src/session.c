@@ -1706,6 +1706,9 @@ static int ingest_sub_record(struct client *cl, xmlDoc *xdoc, xmlNode *root,
     return ret;
 }
 
+int ingest_xml_record(struct client *cl, xmlDoc *xdoc,
+                      int record_no, NMEM nmem);
+
 /** \brief ingest XML record
     \param cl client holds the result set for record
     \param rec record buffer (0 terminated)
@@ -1722,9 +1725,19 @@ int ingest_record(struct client *cl, const char *rec,
     struct session_database *sdb = client_get_database(cl);
     struct conf_service *service = se->service;
     xmlDoc *xdoc = normalize_record(se, sdb, service, rec, nmem);
-    int r = 0;
-    xmlNode *root;
+    int r = ingest_xml_record(cl, xdoc, record_no, nmem);
+    client_store_xdoc(cl, record_no, xdoc);
+    return r;
+}
 
+int ingest_xml_record(struct client *cl, xmlDoc *xdoc,
+                      int record_no, NMEM nmem)
+{
+    struct session *se = client_get_session(cl);
+    struct session_database *sdb = client_get_database(cl);
+    struct conf_service *service = se->service;
+    xmlNode *root;
+    int r = 0;
     if (!xdoc)
         return -1;
 
@@ -1807,7 +1820,6 @@ int ingest_record(struct client *cl, const char *rec,
                     (const char *) root->name);
         r = -1;
     }
-    xmlFreeDoc(xdoc);
     return r;
 }
 

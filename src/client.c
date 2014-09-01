@@ -71,6 +71,8 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "relevance.h"
 #include "incref.h"
 
+#define XDOC_CACHE_SIZE 100
+
 static YAZ_MUTEX g_mutex = 0;
 static int no_clients = 0;
 
@@ -121,6 +123,7 @@ struct client {
     int same_search;
     char *sort_strategy;
     char *sort_criteria;
+    xmlDoc **xdoc;
 };
 
 struct suggestions {
@@ -191,6 +194,50 @@ void client_set_state(struct client *cl, enum client_state st)
         }
     }
 }
+
+static void client_init_xdoc(struct client *cl)
+{
+    int i;
+
+    cl->xdoc = xmalloc(sizeof(*cl->xdoc) * XDOC_CACHE_SIZE);
+    for (i = 0; i < XDOC_CACHE_SIZE; i++)
+        cl->xdoc[i] = 0;
+}
+
+static void client_destroy_xdoc(struct client *cl)
+{
+    int i;
+
+    assert(cl->xdoc);
+    for (i = 0; i < XDOC_CACHE_SIZE; i++)
+        if (cl->xdoc[i])
+            xmlFreeDoc(cl->xdoc[i]);
+    xfree(cl->xdoc);
+}
+
+xmlDoc *client_get_xdoc(struct client *cl, int record_no)
+{
+    assert(cl->xdoc);
+    if (record_no >= 0 && record_no < XDOC_CACHE_SIZE)
+        return cl->xdoc[record_no];
+    return 0;
+}
+
+void client_store_xdoc(struct client *cl, int record_no, xmlDoc *xdoc)
+{
+    assert(cl->xdoc);
+    if (record_no >= 0 && record_no < XDOC_CACHE_SIZE)
+    {
+        if (cl->xdoc[record_no])
+            xmlFreeDoc(cl->xdoc[record_no]);
+        cl->xdoc[record_no] = xdoc;
+    }
+    else
+    {
+        xmlFreeDoc(xdoc);
+    }
+}
+
 
 static void client_show_raw_error(struct client *cl, const char *addinfo);
 
@@ -571,8 +618,27 @@ static void client_record_ingest(struct client *cl)
     ZOOM_record rec = 0;
     ZOOM_resultset resultset = cl->resultset;
     struct session *se = client_get_session(cl);
+    xmlDoc *xdoc;
 
-    if ((rec = ZOOM_resultset_record_immediate(resultset, cl->record_offset)))
+    xdoc = client_get_xdoc(cl, cl->record_offset + 1);
+    if (xdoc)
+    {
+        int offset = cl->record_offset++;
+        if (cl->session)
+        {
+            NMEM nmem = nmem_create();
+            int rc = ingest_xml_record(cl, xdoc, offset, nmem);
+            if (rc == -1)
+                session_log(se, YLOG_WARN,
+                            "Failed to ingest xdoc from %s #%d",
+                            client_get_id(cl), offset);
+            else if (rc == -2)
+                cl->filtered++;
+            nmem_destroy(nmem);
+        }
+    }
+    else if ((rec = ZOOM_resultset_record_immediate(resultset,
+                                                    cl->record_offset)))
     {
         int offset = ++cl->record_offset;
         if (cl->session == 0)
@@ -888,6 +954,9 @@ int client_start_search(struct client *cl)
     cl->diagnostic = 0;
     cl->filtered = 0;
 
+    client_destroy_xdoc(cl);
+    client_init_xdoc(cl);
+
     if (extra_args && *extra_args)
         ZOOM_connection_option_set(link, "extraArgs", extra_args);
 
@@ -1001,6 +1070,7 @@ struct client *client_create(const char *id)
     cl->sort_criteria = 0;
     assert(id);
     cl->id = xstrdup(id);
+    client_init_xdoc(cl);
     client_use(1);
 
     yaz_log(YLOG_DEBUG, "client_create c=%p %s", cl, id);
@@ -1046,6 +1116,7 @@ int client_destroy(struct client *c)
             assert(!c->connection);
             facet_limits_destroy(c->facet_limits);
 
+            client_destroy_xdoc(c);
             if (c->resultset)
             {
                 ZOOM_resultset_destroy(c->resultset);
