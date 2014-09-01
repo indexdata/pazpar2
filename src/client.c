@@ -623,7 +623,7 @@ static void client_record_ingest(struct client *cl)
     xdoc = client_get_xdoc(cl, cl->record_offset + 1);
     if (xdoc)
     {
-        int offset = cl->record_offset++;
+        int offset = ++cl->record_offset;
         if (cl->session)
         {
             NMEM nmem = nmem_create();
