@@ -57,7 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/oid_db.h>
 #include <yaz/snprintf.h>
 
-#define USE_TIMING 1
+#define USE_TIMING 0
 #if USE_TIMING
 #include <yaz/timing.h>
 #endif
@@ -1282,6 +1282,12 @@ int session_fetch_more(struct session *se)
             {
                 session_log(se, YLOG_LOG, "%s: no more to fetch",
                             client_get_id(cl));
+                session_log(se, YLOG_LOG, "%s: hits=" ODR_INT_PRINTF
+                            " records=%d filtered=%d",
+                            client_get_id(cl),
+                            client_get_hits(cl),
+                            client_get_num_records(cl),
+                            client_get_num_records_filtered(cl));
             }
         }
         else
