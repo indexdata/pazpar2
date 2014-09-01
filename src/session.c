@@ -1038,13 +1038,13 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
         WRBUF w = wrbuf_alloc();
         const char *name = session_setting_oneval(client_get_database(cl),
                                                   PZ_NAME);
-
         res[*count].id = client_get_id(cl);
         res[*count].name = *name ? name : "Unknown";
         res[*count].hits = client_get_hits(cl);
         res[*count].approximation = client_get_approximation(cl);
-        res[*count].records = client_get_num_records(cl);
-        res[*count].filtered = client_get_num_records_filtered(cl);
+        res[*count].records = client_get_num_records(cl,
+                                                     &res[*count].filtered,
+                                                     0, 0);
         res[*count].diagnostic =
             client_get_diagnostic(cl, &res[*count].message,
                                   &res[*count].addinfo);
@@ -1280,14 +1280,24 @@ int session_fetch_more(struct session *se)
             }
             else
             {
-                session_log(se, YLOG_LOG, "%s: no more to fetch",
-                            client_get_id(cl));
+                int filtered;
+                int ingest_failures;
+                int record_failures;
+                int num = client_get_num_records(
+                    cl, &filtered, &ingest_failures, &record_failures);
+
                 session_log(se, YLOG_LOG, "%s: hits=" ODR_INT_PRINTF
-                            " records=%d filtered=%d",
+                            " fetched=%d filtered=%d",
                             client_get_id(cl),
                             client_get_hits(cl),
-                            client_get_num_records(cl),
-                            client_get_num_records_filtered(cl));
+                            num, filtered);
+                if (ingest_failures || record_failures)
+                {
+                    session_log(se, YLOG_WARN, "%s:"
+                                " ingest failures=%d record failures=%d",
+                                client_get_id(cl),
+                                ingest_failures, record_failures);
+                }
             }
         }
         else

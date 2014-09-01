@@ -107,6 +107,8 @@ struct client {
     int record_offset;
     int show_stat_no;
     int filtered; /* number of records ignored for local filtering */
+    int ingest_failures; /* number of records where XSLT/other failed */
+    int record_failures; /* number of records where ZOOM reported error */
     int maxrecs;
     int startrecs;
     int diagnostic;
@@ -577,9 +579,9 @@ void client_search_response(struct client *cl)
     if (ZOOM_connection_error(link, &error, &addinfo))
     {
         cl->hits = 0;
-        client_set_state(cl, Client_Error);
         session_log(se, YLOG_WARN, "%s: Error %s (%s)",
                     client_get_id(cl), error, addinfo);
+        client_set_state(cl, Client_Error);
     }
     else
     {
@@ -630,9 +632,12 @@ static void client_record_ingest(struct client *cl)
             NMEM nmem = nmem_create();
             int rc = ingest_xml_record(cl, xdoc, offset, nmem, 1);
             if (rc == -1)
+            {
                 session_log(se, YLOG_WARN,
-                            "Failed to ingest xdoc from %s #%d",
+                            "%s: #%d: failed to ingest xdoc",
                             client_get_id(cl), offset);
+                cl->ingest_failures++;
+            }
             else if (rc == -2)
                 cl->filtered++;
             nmem_destroy(nmem);
@@ -647,6 +652,7 @@ static void client_record_ingest(struct client *cl)
         {
             session_log(se, YLOG_WARN, "Record error %s (%s): %s #%d",
                         msg, addinfo, client_get_id(cl), offset);
+            cl->record_failures++;
         }
         else
         {
@@ -662,12 +668,13 @@ static void client_record_ingest(struct client *cl)
             if (!xmlrec)
             {
                 const char *rec_syn =  ZOOM_record_get(rec, "syntax", NULL);
-                session_log(se, YLOG_WARN, "ZOOM_record_get failed from %s #%d",
+                session_log(se, YLOG_WARN, "%s: #%d: ZOOM_record_get failed",
                             client_get_id(cl), offset);
                 session_log(se, YLOG_LOG, "pz:nativesyntax=%s . "
                             "ZOOM record type=%s . Actual record syntax=%s",
                             s ? s : "null", type,
                             rec_syn ? rec_syn : "null");
+                cl->ingest_failures++;
             }
             else
             {
@@ -677,12 +684,13 @@ static void client_record_ingest(struct client *cl)
                 {
                     const char *rec_syn =  ZOOM_record_get(rec, "syntax", NULL);
                     session_log(se, YLOG_WARN,
-                                "Failed to ingest record from %s #%d",
+                                "%s: #%d: failed to ingest record",
                                 client_get_id(cl), offset);
                     session_log(se, YLOG_LOG, "pz:nativesyntax=%s . "
                                 "ZOOM record type=%s . Actual record syntax=%s",
                                 s ? s : "null", type,
                                 rec_syn ? rec_syn : "null");
+                    cl->ingest_failures++;
                 }
                 else if (rc == -2)
                     cl->filtered++;
@@ -707,9 +715,10 @@ void client_record_response(struct client *cl, int *got_records)
 
     if (ZOOM_connection_error(link, &error, &addinfo))
     {
+        struct session *se = client_get_session(cl);
+        session_log(se, YLOG_WARN, "%s: Error %s (%s)",
+                    client_get_id(cl), error, addinfo);
         client_set_state(cl, Client_Error);
-        yaz_log(YLOG_WARN, "Search error %s (%s): %s",
-            error, addinfo, client_get_id(cl));
     }
     else
     {
@@ -740,7 +749,7 @@ int client_reingest(struct client *cl)
 {
     int i = cl->startrecs;
     int to = cl->record_offset;
-    cl->filtered = 0;
+    cl->record_failures = cl->ingest_failures = cl->filtered = 0;
 
     cl->record_offset = i;
     for (; i < to; i++)
@@ -953,7 +962,7 @@ int client_start_search(struct client *cl)
     session_log(se, YLOG_LOG, "%s: new search", client_get_id(cl));
 
     cl->diagnostic = 0;
-    cl->filtered = 0;
+    cl->record_failures = cl->ingest_failures = cl->filtered = 0;
 
     client_destroy_xdoc(cl);
     client_init_xdoc(cl);
@@ -1666,14 +1675,16 @@ Odr_int client_get_approximation(struct client *cl)
     return cl->hits;
 }
 
-int client_get_num_records(struct client *cl)
+int client_get_num_records(struct client *cl, int *filtered, int *ingest,
+                           int *failed)
 {
+    if (filtered)
+        *filtered = cl->filtered;
+    if (ingest)
+        *ingest = cl->ingest_failures;
+    if (failed)
+        *failed = cl->record_failures;
     return cl->record_offset;
-}
-
-int client_get_num_records_filtered(struct client *cl)
-{
-    return cl->filtered;
 }
 
 void client_set_diagnostic(struct client *cl, int diagnostic,
