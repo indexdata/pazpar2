@@ -7,6 +7,7 @@
 <message>Unsupported Use attribute</message>
 <addinfo>host_wildcard</addinfo>
 <records>0</records>
+<filtered>0</filtered>
 <state>Client_Error</state>
 <settings>
 <set name="pz:elements" value="F"/>

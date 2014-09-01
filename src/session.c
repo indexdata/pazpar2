@@ -2077,8 +2077,6 @@ static int ingest_to_cluster(struct client *cl,
 
     if (check_limit_local(cl, record, record_no))
     {
-        session_log(se, YLOG_LOG, "Facet filtered out record no %d from %s",
-                    record_no, sdb->database->id);
         if (type)
             xmlFree(type);
         if (value)

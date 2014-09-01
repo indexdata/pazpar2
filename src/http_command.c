@@ -788,9 +788,9 @@ static void bytarget_response(struct http_channel *c, struct http_session *s,
 
         wrbuf_printf(c->wrbuf, "<records>%d</records>\n",
                      ht[i].records - ht[i].filtered);
+        wrbuf_printf(c->wrbuf, "<filtered>%d</filtered>\n", ht[i].filtered);
         if (version >= 2)
         {
-            wrbuf_printf(c->wrbuf, "<filtered>%d</filtered>\n", ht[i].filtered);
             wrbuf_printf(c->wrbuf, "<approximation>" ODR_INT_PRINTF
                          "</approximation>\n", ht[i].approximation);
         }
