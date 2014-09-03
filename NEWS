@@ -1,3 +1,21 @@
+--- 1.7.4 2014/09/02
+
+Log ingest failures and record failures:
+
+Clean up logging PAZ-942
+Use session lead in more places. Log hits/records/filtered for each
+target when fetching is complete. Log hit count when a search
+(response) is received. Remove some less useful log messages.
+
+Fix warning about about missing (internal) stylesheet PAZ-956
+
+Report number of filtered records in bytarget PAZ-954
+
+Cache XML documents as they appear after normalization. The key
+for the cache is database+record offset. Cache is removed if query
+is modified for search. This speeds up re-establishing a result set
+for databases where new query is same previous query.
+
 --- 1.7.3 2014/08/22
 
 poll: add assert for number of FDs; abort on poll failure
