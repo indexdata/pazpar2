@@ -88,8 +88,8 @@ int client_parse_query(struct client *cl, const char *query,
                        facet_limits_t facet_limits, const char **error_msg);
 Odr_int client_get_hits(struct client *cl);
 Odr_int client_get_approximation(struct client *cl);
-int client_get_num_records(struct client *cl);
-int client_get_num_records_filtered(struct client *cl);
+int client_get_num_records(struct client *cl, int *filtered, int *ingest,
+                           int *failed);
 int client_get_diagnostic(struct client *cl,
                           const char **message, const char **addinfo);
 void client_set_diagnostic(struct client *cl, int diagnostic,
@@ -112,6 +112,8 @@ const char *client_get_facet_limit_local(struct client *cl,
                                          NMEM nmem, int *num, char ***values);
 
 void client_update_show_stat(struct client *cl, int cmd);
+
+void client_store_xdoc(struct client *cl, int record_no, xmlDoc *xdoc);
 
 #endif
 

@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/yaz-util.h>
 #include <yaz/nmem.h>
 #include <yaz/snprintf.h>
-#include <yaz/tpath.h>
 #include <yaz/xml_include.h>
 
 #include "service_xslt.h"

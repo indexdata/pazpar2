@@ -208,7 +208,17 @@ static int sc_main(
     }
     pazpar2_mutex_init();
 
-    config = config_create(config_fname, global_parameters.dump_records);
+    if (!test_mode)
+    {
+        yaz_log(YLOG_LOG, "Pazpar2 start " VERSION " "
+#ifdef PAZPAR2_VERSION_SHA1
+                PAZPAR2_VERSION_SHA1
+#else
+                "-"
+#endif
+            );
+    }
+    config = config_create(config_fname);
     if (!config)
         return 1;
     sc_stop_config = config;
@@ -219,13 +229,6 @@ static int sc_main(
     }
     else
     {
-        yaz_log(YLOG_LOG, "Pazpar2 start " VERSION  " "
-#ifdef PAZPAR2_VERSION_SHA1
-                PAZPAR2_VERSION_SHA1
-#else
-                "-"
-#endif
-                );
         ret = 0;
         if (daemon && !log_file_in_use)
         {

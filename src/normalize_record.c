@@ -89,17 +89,15 @@ normalize_record_t normalize_record_create(struct conf_service *service,
 
         for (i = 0; i < num; i++)
         {
-            WRBUF fname = conf_get_fname(conf, stylesheets[i]);
-
             *m = nmem_malloc(nt->nmem, sizeof(**m));
             (*m)->marcmap = NULL;
             (*m)->stylesheet1 = NULL;
-
             (*m)->stylesheet2 = service_xslt_get(service, stylesheets[i]);
             if ((*m)->stylesheet2)
                 ;
             else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-4], ".xsl"))
             {
+                WRBUF fname = conf_get_fname(conf, stylesheets[i]);
                 if (!((*m)->stylesheet1 =
                       xsltParseStylesheetFile((xmlChar *) wrbuf_cstr(fname))))
                 {
@@ -107,23 +105,24 @@ normalize_record_t normalize_record_create(struct conf_service *service,
                             stylesheets[i]);
                     no_errors++;
                 }
+                wrbuf_destroy(fname);
             }
             else if (!strcmp(&stylesheets[i][strlen(stylesheets[i])-5], ".mmap"))
             {
+                WRBUF fname = conf_get_fname(conf, stylesheets[i]);
                 if (!((*m)->marcmap = marcmap_load(wrbuf_cstr(fname), nt->nmem)))
                 {
                     yaz_log(YLOG_FATAL|YLOG_ERRNO, "Unable to load marcmap: %s",
                             stylesheets[i]);
                     no_errors++;
                 }
+                wrbuf_destroy(fname);
             }
             else
             {
                 yaz_log(YLOG_FATAL, "Cannot handle stylesheet: %s", stylesheets[i]);
                 no_errors++;
             }
-
-            wrbuf_destroy(fname);
             m = &(*m)->next;
         }
     }

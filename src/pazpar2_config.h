@@ -155,7 +155,7 @@ struct conf_server
     iochan_man_t iochan_man;
 };
 
-struct conf_config *config_create(const char *fname, int verbose);
+struct conf_config *config_create(const char *fname);
 void config_destroy(struct conf_config *config);
 void config_process_events(struct conf_config *config);
 void info_services(struct conf_server *server, WRBUF w);

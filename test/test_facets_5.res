@@ -5,5 +5,6 @@
 <hits>7</hits>
 <diagnostic>0</diagnostic>
 <records>7</records>
+<filtered>0</filtered>
 <state>Client_Idle</state>
 </target></bytarget>

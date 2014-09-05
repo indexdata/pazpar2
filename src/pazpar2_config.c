@@ -1274,7 +1274,7 @@ static int parse_config(struct conf_config *config, xmlNode *root)
     return 0;
 }
 
-struct conf_config *config_create(const char *fname, int verbose)
+struct conf_config *config_create(const char *fname)
 {
     xmlDoc *doc = xmlReadFile(fname,
                               NULL,
@@ -1327,16 +1327,13 @@ struct conf_config *config_create(const char *fname, int verbose)
     r = yaz_xml_include_simple(n, wrbuf_cstr(config->confdir));
     if (r == 0) /* OK */
     {
-        if (verbose)
-        {
-            yaz_log(YLOG_LOG, "Configuration %s after include processing",
-                    fname);
+        yaz_log(YLOG_LOG, "Configuration %s after include processing",
+                fname);
 #if LIBXML_VERSION >= 20600
-            xmlDocFormatDump(yaz_log_file(), doc, 0);
+        xmlDocFormatDump(yaz_log_file(), doc, 0);
 #else
-            xmlDocDump(yaz_log_file(), doc);
+        xmlDocDump(yaz_log_file(), doc);
 #endif
-        }
         r = parse_config(config, n);
     }
     xmlFreeDoc(doc);

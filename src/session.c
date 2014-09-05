@@ -57,7 +57,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/oid_db.h>
 #include <yaz/snprintf.h>
 
-#define USE_TIMING 1
+#define USE_TIMING 0
 #if USE_TIMING
 #include <yaz/timing.h>
 #endif
@@ -1038,13 +1038,13 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
         WRBUF w = wrbuf_alloc();
         const char *name = session_setting_oneval(client_get_database(cl),
                                                   PZ_NAME);
-
         res[*count].id = client_get_id(cl);
         res[*count].name = *name ? name : "Unknown";
         res[*count].hits = client_get_hits(cl);
         res[*count].approximation = client_get_approximation(cl);
-        res[*count].records = client_get_num_records(cl);
-        res[*count].filtered = client_get_num_records_filtered(cl);
+        res[*count].records = client_get_num_records(cl,
+                                                     &res[*count].filtered,
+                                                     0, 0);
         res[*count].diagnostic =
             client_get_diagnostic(cl, &res[*count].message,
                                   &res[*count].addinfo);
@@ -1280,8 +1280,24 @@ int session_fetch_more(struct session *se)
             }
             else
             {
-                session_log(se, YLOG_LOG, "%s: no more to fetch",
-                            client_get_id(cl));
+                int filtered;
+                int ingest_failures;
+                int record_failures;
+                int num = client_get_num_records(
+                    cl, &filtered, &ingest_failures, &record_failures);
+
+                session_log(se, YLOG_LOG, "%s: hits=" ODR_INT_PRINTF
+                            " fetched=%d filtered=%d",
+                            client_get_id(cl),
+                            client_get_hits(cl),
+                            num, filtered);
+                if (ingest_failures || record_failures)
+                {
+                    session_log(se, YLOG_WARN, "%s:"
+                                " ingest failures=%d record failures=%d",
+                                client_get_id(cl),
+                                ingest_failures, record_failures);
+                }
             }
         }
         else
@@ -1687,9 +1703,6 @@ static int ingest_sub_record(struct client *cl, xmlDoc *xdoc, xmlNode *root,
 {
     int ret = 0;
     struct session *se = client_get_session(cl);
-    struct conf_service *service = se->service;
-
-    insert_settings_values(sdb, xdoc, root, service);
 
     if (!check_record_filter(root, sdb))
     {
@@ -1722,9 +1735,19 @@ int ingest_record(struct client *cl, const char *rec,
     struct session_database *sdb = client_get_database(cl);
     struct conf_service *service = se->service;
     xmlDoc *xdoc = normalize_record(se, sdb, service, rec, nmem);
-    int r = 0;
-    xmlNode *root;
+    int r = ingest_xml_record(cl, xdoc, record_no, nmem, 0);
+    client_store_xdoc(cl, record_no, xdoc);
+    return r;
+}
 
+int ingest_xml_record(struct client *cl, xmlDoc *xdoc,
+                      int record_no, NMEM nmem, int cached_copy)
+{
+    struct session *se = client_get_session(cl);
+    struct session_database *sdb = client_get_database(cl);
+    struct conf_service *service = se->service;
+    xmlNode *root;
+    int r = 0;
     if (!xdoc)
         return -1;
 
@@ -1781,6 +1804,8 @@ int ingest_record(struct client *cl, const char *rec,
             if (sroot->type == XML_ELEMENT_NODE &&
                 !strcmp((const char *) sroot->name, "record"))
             {
+                if (!cached_copy)
+                    insert_settings_values(sdb, xdoc, root, service);
                 r = ingest_sub_record(cl, xdoc, sroot, record_no, nmem, sdb,
                                       mk);
             }
@@ -1798,6 +1823,8 @@ int ingest_record(struct client *cl, const char *rec,
             mk->value = nmem_strdup(nmem, mergekey_norm);
             mk->next = 0;
 
+            if (!cached_copy)
+                insert_settings_values(sdb, xdoc, root, service);
             r = ingest_sub_record(cl, xdoc, root, record_no, nmem, sdb, mk);
         }
     }
@@ -1807,7 +1834,6 @@ int ingest_record(struct client *cl, const char *rec,
                     (const char *) root->name);
         r = -1;
     }
-    xmlFreeDoc(xdoc);
     return r;
 }
 
@@ -2067,8 +2093,6 @@ static int ingest_to_cluster(struct client *cl,
 
     if (check_limit_local(cl, record, record_no))
     {
-        session_log(se, YLOG_LOG, "Facet filtered out record no %d from %s",
-                    record_no, sdb->database->id);
         if (type)
             xmlFree(type);
         if (value)

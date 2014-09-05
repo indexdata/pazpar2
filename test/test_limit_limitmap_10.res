@@ -5,6 +5,7 @@
 <hits>10</hits>
 <diagnostic>0</diagnostic>
 <records>10</records>
+<filtered>0</filtered>
 <state>Client_Idle</state>
 </target>
 <target><id>Target-2</id>
@@ -12,5 +13,6 @@
 <hits>2015</hits>
 <diagnostic>0</diagnostic>
 <records>100</records>
+<filtered>0</filtered>
 <state>Client_Idle</state>
 </target></bytarget>
