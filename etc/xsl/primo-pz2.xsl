@@ -105,11 +105,14 @@
   </xsl:template>
 
   <xsl:template match="prim:display">
+
+<!--
     <xsl:for-each select="prim:creator">
        <pz:metadata type="author">
         <xsl:value-of select="." />
       </pz:metadata>
-    </xsl:for-each>  
+    </xsl:for-each>
+-->
     <xsl:for-each select="prim:type">
       <xsl:variable name="type" select="."/>
       <pz:metadata type="medium">
@@ -162,6 +165,13 @@
   </xsl:template>
 
   <xsl:template match="prim:search">
+
+    <xsl:for-each select="prim:creatorcontrib">
+       <pz:metadata type="author">
+        <xsl:value-of select="." />
+      </pz:metadata>
+    </xsl:for-each>
+
     <xsl:for-each select="prim:description">
       <pz:metadata type="description">
 	<xsl:value-of select="." />
