@@ -70,14 +70,20 @@
     </xsl:for-each>
 
     <xsl:for-each select="prim:volume">
-      <pz:metadata type="journal-number">
+      <pz:metadata type="volume">
 	<xsl:value-of select="." />
       </pz:metadata>
     </xsl:for-each>
 
     <xsl:for-each select="prim:issue">
-      <pz:metadata type="issue-number">
+      <pz:metadata type="issue">
 	<xsl:value-of select="." />
+      </pz:metadata>
+    </xsl:for-each>
+
+    <xsl:for-each select="prim:spage">
+      <pz:metadata type="page">
+        <xsl:value-of select="." />
       </pz:metadata>
     </xsl:for-each>
 
