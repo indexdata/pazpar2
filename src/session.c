@@ -908,35 +908,36 @@ static struct session_database *find_session_database(struct session *se,
 void session_apply_setting(struct session *se, char *dbname, char *name,
                            char *value)
 {
-    struct session_database *sdb = find_session_database(se, dbname);
-    struct conf_service *service = se->service;
-    struct setting *s;
-    int offset = settings_create_offset(service, name);
+    session_enter(se, "session_apply_setting");
+    {
+        struct session_database *sdb = find_session_database(se, dbname);
+        struct conf_service *service = se->service;
+        struct setting *s;
+        int offset = settings_create_offset(service, name);
 
-    expand_settings_array(&sdb->settings, &sdb->num_settings, offset,
-                          se->session_nmem);
-
-    // Force later recompute of settings-driven data structures
-    // (happens when a search starts and client connections are prepared)
-    if (offset == PZ_XSLT)
-        sdb->map = 0;
-
-    se->settings_modified = 1;
-    for (s = sdb->settings[offset]; s; s = s->next)
-        if (!strcmp(s->name, name) &&
-            dbname && s->target && !strcmp(dbname, s->target))
+        expand_settings_array(&sdb->settings, &sdb->num_settings, offset,
+                              se->session_nmem);
+        // Force later recompute of settings-driven data structures
+        // (happens when a search starts and client connections are prepared)
+        if (offset == PZ_XSLT)
+            sdb->map = 0;
+        se->settings_modified = 1;
+        for (s = sdb->settings[offset]; s; s = s->next)
+            if (!strcmp(s->name, name) &&
+                dbname && s->target && !strcmp(dbname, s->target))
+                break;
+        if (!s)
         {
-            s->value = value;
-            return;
+            s = nmem_malloc(se->session_nmem, sizeof(*s));
+            s->precedence = 0;
+            s->target = dbname;
+            s->name = name;
+            s->next = sdb->settings[offset];
+            sdb->settings[offset] = s;
         }
-    s = nmem_malloc(se->session_nmem, sizeof(*s));
-    s->precedence = 0;
-    s->target = dbname;
-    s->name = name;
-    s->value = value;
-    s->next = sdb->settings[offset];
-    sdb->settings[offset] = s;
-
+        s->value = value;
+    }
+    session_leave(se, "session_apply_setting");
 }
 
 void session_destroy(struct session *se)
