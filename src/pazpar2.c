@@ -108,6 +108,9 @@ static int sc_main(
     struct conf_config *config = 0;
     int test_mode = 0;
 
+    xmlInitParser();
+    LIBXML_TEST_VERSION
+
 #ifndef WIN32
     if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
         yaz_log(YLOG_WARN|YLOG_ERRNO, "signal");
