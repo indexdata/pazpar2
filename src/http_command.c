@@ -401,6 +401,7 @@ static int process_settings(struct session *se, struct http_request *rq,
                             struct http_response *rs)
 {
     struct http_argument *a;
+    NMEM nmem = nmem_create();
 
     for (a = rq->arguments; a; a = a->next)
         if (strchr(a->name, '['))
@@ -411,17 +412,18 @@ static int process_settings(struct session *se, struct http_request *rq,
             char *setting;
 
             // Nmem_strsplit *rules*!!!
-            nmem_strsplit(se->session_nmem, "[]", a->name, &res, &num);
+            nmem_strsplit(nmem, "[]", a->name, &res, &num);
             if (num != 2)
             {
                 error(rs, PAZPAR2_MALFORMED_SETTING, a->name);
+                nmem_destroy(nmem);
                 return -1;
             }
             setting = res[0];
             dbname = res[1];
-            session_apply_setting(se, dbname, setting,
-                    nmem_strdup(se->session_nmem, a->value));
+            session_apply_setting(se, dbname, setting, a->value);
         }
+    nmem_destroy(nmem);
     return 0;
 }
 
@@ -507,9 +509,7 @@ static void apply_local_setting(void *client_data,
 {
     struct session *se =  (struct session *) client_data;
 
-    session_apply_setting(se, nmem_strdup(se->session_nmem, set->target),
-                          nmem_strdup(se->session_nmem, set->name),
-                          nmem_strdup(se->session_nmem, set->value));
+    session_apply_setting(se, set->target, set->name, set->value);
 }
 
 static void cmd_settings(struct http_channel *c)

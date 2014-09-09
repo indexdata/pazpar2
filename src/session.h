@@ -182,7 +182,8 @@ void show_single_stop(struct session *s, struct record_cluster *rec);
 int session_set_watch(struct session *s, int what, session_watchfun fun, void *data, struct http_channel *c);
 int session_active_clients(struct session *s);
 int session_is_preferred_clients_ready(struct session *s);
-void session_apply_setting(struct session *se, char *dbname, char *setting, char *value);
+void session_apply_setting(struct session *se, const char *dbname,
+                           const char *setting, const char *value);
 const char *session_setting_oneval(struct session_database *db, int offset);
 
 int ingest_record(struct client *cl, const char *rec, int record_no, NMEM nmem);
