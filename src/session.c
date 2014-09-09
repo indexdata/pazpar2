@@ -883,7 +883,7 @@ void session_init_databases(struct session *se)
 // Probably session_init_databases_fun should be refactored instead of
 // called here.
 static struct session_database *load_session_database(struct session *se,
-                                                      char *id)
+                                                      const char *id)
 {
     struct database *db = new_database_inherit_settings(id, se->session_nmem, se->service->settings);
     session_init_databases_fun((void*) se, db);
@@ -894,7 +894,7 @@ static struct session_database *load_session_database(struct session *se,
 
 // Find an existing session database. If not found, load it
 static struct session_database *find_session_database(struct session *se,
-                                                      char *id)
+                                                      const char *id)
 {
     struct session_database *sdb;
 
@@ -905,8 +905,8 @@ static struct session_database *find_session_database(struct session *se,
 }
 
 // Apply a session override to a database
-void session_apply_setting(struct session *se, char *dbname, char *name,
-                           char *value)
+void session_apply_setting(struct session *se, const char *dbname,
+                           const char *name, const char *value)
 {
     session_enter(se, "session_apply_setting");
     {
@@ -930,12 +930,12 @@ void session_apply_setting(struct session *se, char *dbname, char *name,
         {
             s = nmem_malloc(se->session_nmem, sizeof(*s));
             s->precedence = 0;
-            s->target = dbname;
-            s->name = name;
+            s->target = nmem_strdup(se->session_nmem, dbname);
+            s->name = nmem_strdup(se->session_nmem, name);
             s->next = sdb->settings[offset];
             sdb->settings[offset] = s;
         }
-        s->value = value;
+        s->value = nmem_strdup(se->session_nmem, value);
     }
     session_leave(se, "session_apply_setting");
 }
