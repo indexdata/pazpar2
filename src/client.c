@@ -1151,7 +1151,9 @@ void client_set_connection(struct client *cl, struct connection *con)
     }
     else
     {
+        client_lock(cl);
         cl->connection = con;
+        client_unlock(cl);
         client_destroy(cl);
     }
 }
