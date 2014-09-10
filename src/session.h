@@ -113,6 +113,7 @@ struct session {
     unsigned session_id;
     int settings_modified;
     facet_limits_t facet_limits;
+    int clients_starting;
     struct reclist_sortparms *sorted_results;
 };
 

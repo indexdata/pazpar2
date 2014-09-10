@@ -746,16 +746,20 @@ enum pazpar2_error_code session_search(struct session *se,
     int no_working = 0;
     int no_failed_query = 0;
     int no_failed_limit = 0;
-    struct client_list *l, *l0;
-
-    session_alert_watch(se, SESSION_WATCH_SHOW);
-    session_alert_watch(se, SESSION_WATCH_BYTARGET);
-    session_alert_watch(se, SESSION_WATCH_TERMLIST);
-    session_alert_watch(se, SESSION_WATCH_SHOW_PREF);
+    struct client_list *l;
 
     session_log(se, YLOG_DEBUG, "Search");
 
     *addinfo = 0;
+
+    session_enter(se, "session_search0");
+    if (se->clients_starting)
+    {
+        session_leave(se, "session_search0");
+        return PAZPAR2_NO_ERROR;
+    }
+    se->clients_starting = 1;
+    session_leave(se, "session_search0");
 
     if (se->settings_modified) {
         session_remove_cached_clients(se);
@@ -784,6 +788,7 @@ enum pazpar2_error_code session_search(struct session *se,
     if (!live_channels)
     {
         session_leave(se, "session_search");
+        se->clients_starting = 0;
         return PAZPAR2_NO_TARGETS;
     }
 
@@ -793,14 +798,18 @@ enum pazpar2_error_code session_search(struct session *se,
     {
         *addinfo = "limit";
         session_leave(se, "session_search");
+        se->clients_starting = 0;
         return PAZPAR2_MALFORMED_PARAMETER_VALUE;
     }
 
-    l0 = se->clients_active;
-    se->clients_active = 0;
     session_leave(se, "session_search");
 
-    for (l = l0; l; l = l->next)
+    session_alert_watch(se, SESSION_WATCH_SHOW);
+    session_alert_watch(se, SESSION_WATCH_BYTARGET);
+    session_alert_watch(se, SESSION_WATCH_TERMLIST);
+    session_alert_watch(se, SESSION_WATCH_SHOW_PREF);
+
+    for (l = se->clients_active; l; l = l->next)
     {
         int parse_ret;
         struct client *cl = l->client;
@@ -823,8 +832,9 @@ enum pazpar2_error_code session_search(struct session *se,
             no_working++;
         }
     }
-    session_reset_active_clients(se, l0);
-
+    session_enter(se, "session_search2");
+    se->clients_starting = 0;
+    session_leave(se, "session_search2");
     if (no_working == 0)
     {
         if (no_failed_query > 0)
@@ -1004,6 +1014,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->facet_limits = 0;
     session->mergekey = 0;
     session->rank = 0;
+    session->clients_starting = 0;
 
     for (i = 0; i <= SESSION_WATCH_MAX; i++)
     {
