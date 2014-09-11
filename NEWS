@@ -1,3 +1,9 @@
+--- 1.7.5 2014/09/11
+
+Various fixes for threaded operation PAZ-960 thru PAZ-966
+
+Dump main configuration file during start of Pazpar2 PAZ-957
+
 --- 1.7.4 2014/09/02
 
 Log ingest failures and record failures:
