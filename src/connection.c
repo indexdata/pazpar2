@@ -370,7 +370,8 @@ void connect_resolver_host(struct host *host, iochan_man_t iochan_man)
     {
         if (con->state == Conn_Closed)
         {
-            if (!host->ipport || !con->client) /* unresolved or no client */
+            struct client *cl = con->client;
+            if (!host->ipport || !cl) /* unresolved or no client */
             {
                 remove_connection_from_host(con);
                 yaz_mutex_leave(host->mutex);
@@ -378,11 +379,12 @@ void connect_resolver_host(struct host *host, iochan_man_t iochan_man)
             }
             else
             {
-                struct session_database *sdb = client_get_database(con->client);
-                if (sdb)
+                struct session_database *sdb = client_get_database(cl);
+                struct session *se = client_get_session(cl);
+                if (sdb && se)
                 {
                     yaz_mutex_leave(host->mutex);
-                    client_start_search(con->client);
+                    client_start_search(cl);
                 }
                 else
                 {
