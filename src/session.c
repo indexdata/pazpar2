@@ -621,10 +621,8 @@ static void session_clear_set(struct session *se, struct reclist_sortparms *sp)
     se->reclist = reclist_create(se->nmem);
 }
 
-static void session_sort_unlocked(struct session *se,
-                                  struct reclist_sortparms *sp,
-                                  const char *mergekey,
-                                  const char *rank)
+void session_sort(struct session *se, struct reclist_sortparms *sp,
+                  const char *mergekey, const char *rank)
 {
     struct client_list *l;
     const char *field = sp->name;
@@ -632,6 +630,7 @@ static void session_sort_unlocked(struct session *se,
     int type  = sp->type;
     int clients_research = 0;
 
+    session_enter(se, "session_sort");
     session_log(se, YLOG_DEBUG, "session_sort field=%s increasing=%d type=%d",
                 field, increasing, type);
 
@@ -665,6 +664,7 @@ static void session_sort_unlocked(struct session *se,
         {
             session_log(se, YLOG_DEBUG, "session_sort: field=%s increasing=%d type=%d already fetched",
                         field, increasing, type);
+            session_leave(se, "session_sort");
             return;
         }
     }
@@ -682,14 +682,7 @@ static void session_sort_unlocked(struct session *se,
         client_parse_init(cl, 1);
         clients_research += client_parse_sort(cl, sp);
     }
-    if (clients_research)
-    {
-        session_log(se, YLOG_DEBUG,
-                    "session_sort: reset results due to %d clients researching",
-                    clients_research);
-        session_clear_set(se, sp);
-    }
-    else
+    if (!clients_research || se->clients_starting)
     {
         // A new sorting based on same record set
         struct reclist_sortparms *sr = nmem_malloc(se->nmem, sizeof(*sr));
@@ -699,36 +692,39 @@ static void session_sort_unlocked(struct session *se,
         sr->next = se->sorted_results;
         se->sorted_results = sr;
         session_log(se, YLOG_DEBUG, "session_sort: no research/ingesting done");
-        return ;
+        session_leave(se, "session_sort");
     }
-    session_log(se, YLOG_DEBUG, "Re- search/ingesting for clients due to change in sort order");
-
-    for (l = se->clients_active; l; l = l->next)
+    else
     {
-        struct client *cl = l->client;
-        if (client_get_state(cl) == Client_Connecting ||
-            client_get_state(cl) == Client_Idle ||
-            client_get_state(cl) == Client_Working) {
-            client_start_search(cl);
-        }
-        else
+        se->clients_starting = 1;
+        session_log(se, YLOG_DEBUG,
+                    "session_sort: reset results due to %d clients researching",
+                    clients_research);
+        session_clear_set(se, sp);
+        session_log(se, YLOG_DEBUG, "Re- search/ingesting for clients due to change in sort order");
+
+        session_leave(se, "session_sort");
+        for (l = se->clients_active; l; l = l->next)
         {
-            session_log(se, YLOG_DEBUG,
-                        "session_sort: %s: No re-start/ingest in show. "
-                        "Wrong client state: %d",
-                        client_get_id(cl), client_get_state(cl));
+            struct client *cl = l->client;
+            if (client_get_state(cl) == Client_Connecting ||
+                client_get_state(cl) == Client_Idle ||
+                client_get_state(cl) == Client_Working) {
+                client_start_search(cl);
+            }
+            else
+            {
+                session_log(se, YLOG_DEBUG,
+                            "session_sort: %s: No re-start/ingest in show. "
+                            "Wrong client state: %d",
+                            client_get_id(cl), client_get_state(cl));
+            }
         }
+        session_enter(se, "session_sort");
+        se->clients_starting = 0;
+        session_leave(se, "session_sort");
     }
 }
-
-void session_sort(struct session *se, struct reclist_sortparms *sp,
-                  const char *mergekey, const char *rank)
-{
-    //session_enter(se, "session_sort");
-    session_sort_unlocked(se, sp, mergekey, rank);
-    //session_leave(se, "session_sort");
-}
-
 
 enum pazpar2_error_code session_search(struct session *se,
                                        const char *query,
