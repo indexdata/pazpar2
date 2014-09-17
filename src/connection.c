@@ -360,6 +360,11 @@ static void connection_release(struct connection *co)
     co->client = 0;
 }
 
+void connection_release2(struct connection *co)
+{
+    co->client = 0;
+}
+
 void connect_resolver_host(struct host *host, iochan_man_t iochan_man)
 {
     struct connection *con;

@@ -927,6 +927,8 @@ int client_start_search(struct client *cl)
     int present_chunk = 20; // Default chunk size
     int rc_prep_connection;
 
+    cl->diagnostic = 0;
+    cl->record_failures = cl->ingest_failures = cl->filtered = 0;
 
     yaz_gettimeofday(&tval);
     tval.tv_sec += 5;
@@ -960,9 +962,6 @@ int client_start_search(struct client *cl)
     assert(link);
 
     session_log(se, YLOG_LOG, "%s: new search", client_get_id(cl));
-
-    cl->diagnostic = 0;
-    cl->record_failures = cl->ingest_failures = cl->filtered = 0;
 
     client_destroy_xdoc(cl);
     client_init_xdoc(cl);
@@ -1163,6 +1162,26 @@ void client_disconnect(struct client *cl)
     if (cl->state != Client_Idle)
         client_set_state(cl, Client_Disconnected);
     client_set_connection(cl, 0);
+}
+
+void client_stop(struct client *cl)
+{
+    client_lock(cl);
+    if (cl->state == Client_Working || cl->state == Client_Connecting)
+    {
+        yaz_log(YLOG_LOG, "client_stop: %s release", client_get_id(cl));
+        if (cl->connection)
+        {
+            connection_release2(cl->connection);
+            assert(cl->ref_count > 1);
+            cl->ref_count--;
+            cl->connection = 0;
+        }
+        cl->state = Client_Disconnected;
+    }
+    else
+        yaz_log(YLOG_LOG, "client_stop: %s ignore", client_get_id(cl));
+    client_unlock(cl);
 }
 
 // Initialize CCL map for a target

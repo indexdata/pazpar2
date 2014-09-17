@@ -101,6 +101,7 @@ void client_incref(struct client *c);
 void client_got_records(struct client *c);
 void client_lock(struct client *c);
 void client_unlock(struct client *c);
+void client_stop(struct client *c);
 
 int client_has_facet(struct client *cl, const char *name);
 void client_check_preferred_watch(struct client *cl);
