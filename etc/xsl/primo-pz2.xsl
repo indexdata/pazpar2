@@ -81,6 +81,12 @@
       </pz:metadata>
     </xsl:for-each>
 
+    <xsl:for-each select="prim:spage">
+      <pz:metadata type="pages-number">
+        <xsl:value-of select="." />
+      </pz:metadata>
+    </xsl:for-each>
+
     <xsl:for-each select="prim:issn">
       <pz:metadata type="issn">
         <xsl:value-of select="." />
