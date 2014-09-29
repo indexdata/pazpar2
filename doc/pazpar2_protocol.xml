@@ -706,6 +706,13 @@ search.pz2?session=605047297&command=record&id=3
    </para>
   </refsect2>
 
+  <refsect2 id="command-stop">
+   <title>stop</title>
+   <para>
+    Makes Pazpar2 stop further search &amp; retrieval for busy databases.
+   </para>
+  </refsect2>
+
   <refsect2 id="command-termlist">
    <title>termlist</title>
    <para>
