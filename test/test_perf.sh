@@ -9,6 +9,7 @@ if test -z "$PERF_PROG"; then
         PERF_PROG="/usr/bin/time -p"
     fi
 fi
+export PERF_PROG
 exec ${srcdir}/run_pazpar2.sh --ztest --icu $TEST
 
 # Local Variables:
