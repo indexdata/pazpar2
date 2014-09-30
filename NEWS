@@ -1,3 +1,11 @@
+--- 1.8.0 2014/09/30
+
+New command=stop which stops further search&retrieval for active
+databases.
+
+CF/primo XSL generates {volume,issue,pages}-number that are defined
+in default Pazpar2 service definition. PAZ-968 PAZ-970
+
 --- 1.7.5 2014/09/11
 
 Various fixes for threaded operation PAZ-960 thru PAZ-966
