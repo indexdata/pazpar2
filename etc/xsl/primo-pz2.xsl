@@ -94,7 +94,7 @@
     </xsl:for-each>
 
     <xsl:for-each select="prim:jtitle">
-      <pz:metadata type="journal-title">
+      <pz:metadata type="citation">
 	<xsl:value-of select="." />
       </pz:metadata>
     </xsl:for-each>
