@@ -1,3 +1,8 @@
+--- 1.8.1 [IN PROGRESS]
+
+pz2.js: on successful search, issue a "show" command only if a show
+callback function has been installed. Fixes part of MKWS-284.
+
 --- 1.8.0 2014/09/30
 
 New command=stop which stops further search&retrieval for active
