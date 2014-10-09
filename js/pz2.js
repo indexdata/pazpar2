@@ -319,7 +319,8 @@ pz2.prototype =
                         .childNodes[0].nodeValue == "OK" ) {
                     context.searchStatusOK = true;
                     //piggyback search
-                    context.show(start, num, sort);
+                    if (context.showCallback)
+                        context.show(start, num, sort);
                     if (context.statCallback)
                         context.stat();
                     if (context.termlistCallback)
