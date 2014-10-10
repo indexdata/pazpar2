@@ -1,7 +1,11 @@
---- 1.8.1 [IN PROGRESS]
+--- 1.8.1 2014/09/10
+
+Turbomarc needs number check for date 903 map PAZ-973
+
+primo-pz2.xsl creates citation rather than journal-subpart PAZ-972
 
 pz2.js: on successful search, issue a "show" command only if a show
-callback function has been installed. Fixes part of MKWS-284.
+callback function has been installed. Fixes part of PAZ-975
 
 --- 1.8.0 2014/09/30
 
