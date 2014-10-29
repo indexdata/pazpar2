@@ -1,3 +1,10 @@
+--- 1.8.2 [IN PROGRESS]
+
+Remove from js/pz2.js the code that translates just two diagnostic
+codes (1 and 2) into human-readable messages. This is no longer
+necessary at all, as PazPar2 has been returning the message as well as
+the code in its responses since December 2012. Fixes PAZ-978.
+
 --- 1.8.1 2014/10/10
 
 Turbomarc needs number check for date 903 map PAZ-973
