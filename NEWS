@@ -1,9 +1,18 @@
---- 1.8.2 [IN PROGRESS]
+--- 1.8.2 2014/10/30
+
+Add Ubuntu utopic 14.04 and Ubuntu saucy 13.10 to the list of packages
+built. 
 
 Remove from js/pz2.js the code that translates just two diagnostic
 codes (1 and 2) into human-readable messages. This is no longer
 necessary at all, as PazPar2 has been returning the message as well as
 the code in its responses since December 2012. Fixes PAZ-978.
+
+primo xsl produces citation rather than journal-subpart PAZ-972
+(fix in 1.8.1 was incorrect)
+
+Fix missing .url files PAZ-977
+Add missing .url+.cfg and add proper check for it.
 
 --- 1.8.1 2014/10/10
 
