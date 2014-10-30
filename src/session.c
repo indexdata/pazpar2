@@ -726,6 +726,33 @@ void session_sort(struct session *se, struct reclist_sortparms *sp,
     }
 }
 
+void session_stop(struct session *se)
+{
+    struct client_list *l;
+    session_enter(se, "session_stop1");
+    if (se->clients_starting)
+    {
+        session_leave(se, "session_stop1");
+        return;
+    }
+    se->clients_starting = 1;
+    session_leave(se, "session_stop1");
+
+    session_alert_watch(se, SESSION_WATCH_SHOW);
+    session_alert_watch(se, SESSION_WATCH_BYTARGET);
+    session_alert_watch(se, SESSION_WATCH_TERMLIST);
+    session_alert_watch(se, SESSION_WATCH_SHOW_PREF);
+
+    for (l = se->clients_active; l; l = l->next)
+    {
+        struct client *cl = l->client;
+        client_stop(cl);
+    }
+    session_enter(se, "session_stop2");
+    se->clients_starting = 0;
+    session_leave(se, "session_stop2");
+}
+
 enum pazpar2_error_code session_search(struct session *se,
                                        const char *query,
                                        const char *startrecs,

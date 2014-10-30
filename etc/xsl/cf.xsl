@@ -107,9 +107,32 @@
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
-  
-  <!-- no-op template to avoid printing medium out --> 
+
+  <!-- no-op template to avoid printing medium out -->
   <xsl:template match="medium" />
+
+  <xsl:template match="volume">
+    <pz:metadata type="volume-number">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <xsl:template match="issue">
+    <pz:metadata type="issue-number">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+
+  <!-- put both page and pages-number for page -->
+  <xsl:template match="page">
+    <pz:metadata type="pages-number">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+    <pz:metadata type="page">
+      <xsl:value-of select="."/>
+    </pz:metadata>
+  </xsl:template>
+  <!-- leave endpage as is -->
 
   <xsl:template match="*" >
     <pz:metadata type="{local-name()}">

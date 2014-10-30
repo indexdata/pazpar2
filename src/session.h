@@ -186,6 +186,7 @@ int session_is_preferred_clients_ready(struct session *s);
 void session_apply_setting(struct session *se, const char *dbname,
                            const char *setting, const char *value);
 const char *session_setting_oneval(struct session_database *db, int offset);
+void session_stop(struct session *se);
 
 int ingest_record(struct client *cl, const char *rec, int record_no, NMEM nmem);
 int ingest_xml_record(struct client *cl, xmlDoc *xdoc,

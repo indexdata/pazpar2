@@ -32,6 +32,7 @@ struct connection;
 ZOOM_connection connection_get_link(struct connection *co);
 void connection_continue(struct connection *co);
 void connection_mark_dead(struct connection *co);
+void connection_release2(struct connection *co);
 
 #endif
 

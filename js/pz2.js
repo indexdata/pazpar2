@@ -319,7 +319,8 @@ pz2.prototype =
                         .childNodes[0].nodeValue == "OK" ) {
                     context.searchStatusOK = true;
                     //piggyback search
-                    context.show(start, num, sort);
+                    if (context.showCallback)
+                        context.show(start, num, sort);
                     if (context.statCallback)
                         context.stat();
                     if (context.termlistCallback)
@@ -708,11 +709,6 @@ pz2.prototype =
                         } else if (bytarget[i]["state"]=="Client_Working") {
                           bytarget[i]["hits"] = "...";
                         }
-                        if (bytarget[i].diagnostic == "1") {
-                          bytarget[i].diagnostic = "Permanent system error";
-                        } else if (bytarget[i].diagnostic == "2") {
-                          bytarget[i].diagnostic = "Temporary system error";
-                        } 
                         var targetsSuggestions = targetNodes[i].getElementsByTagName("suggestions");
                         if (targetsSuggestions != undefined && targetsSuggestions.length>0) {
                           var suggestions = targetsSuggestions[0];

@@ -318,6 +318,11 @@ static void connection_handler(IOCHAN iochan, int event)
     }
 }
 
+void connection_release2(struct connection *co)
+{
+    co->client = 0;
+}
+
 static int connection_connect(struct connection *con, iochan_man_t iochan_man)
 {
     ZOOM_options zoptions = ZOOM_options_create();

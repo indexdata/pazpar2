@@ -59,6 +59,17 @@ if test "x${PREFIX}" = "x"; then
     exit 1
 fi
 
+URLS=${PREFIX}.urls
+if test ! -f ${srcdir}/${URLS}; then
+    echo "${srcdir}/${URLS} missing"
+    exit 1
+fi
+CFG=${PREFIX}.cfg
+if test ! -f ${srcdir}/${CFG}; then
+    echo "${srcdir}/${CFG} missing"
+    exit 1
+fi
+
 # look for curl in PATH
 oIFS=$IFS
 IFS=:
@@ -136,8 +147,6 @@ if [ -z "$SKIP_PAZPAR2" ] ; then
     rm -f ${PREFIX}_pazpar2.log
 fi
 
-CFG=${PREFIX}.cfg
-URLS=${PREFIX}.urls
 VALGRINDLOG=${PREFIX}_valgrind.log
 
 if test `uname` = "Linux"; then

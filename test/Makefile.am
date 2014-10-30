@@ -12,6 +12,8 @@ EXTRA_DIST = run_pazpar2.sh marc21_test.xsl tmarc.xsl solr-pz2.xsl \
 	gils_service.xml marc_service.xml marc21.mmap \
 	test_facets.cfg test_facets.urls \
 	test_icu.cfg test_icu.urls \
+	test_sru.cfg test_sru.urls \
+	test_perf.cfg test_perf.urls \
 	test_http.cfg test_http.urls \
 	test_post.cfg test_post.urls \
 	test_settings.cfg test_settings.urls \

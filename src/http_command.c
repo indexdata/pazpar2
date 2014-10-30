@@ -1457,6 +1457,17 @@ static void cmd_stat(struct http_channel *c)
     release_session(c, s);
 }
 
+static void cmd_stop(struct http_channel *c)
+{
+    struct http_session *s = locate_session(c);
+    if (!s)
+        return;
+    response_open_ok(c, "stop");
+    session_stop(s->psession);
+    response_close(c, "stop");
+    release_session(c, s);
+}
+
 static void cmd_info(struct http_channel *c)
 {
     char yaz_version_str[20];
@@ -1516,6 +1527,7 @@ struct {
     { "ping", cmd_ping },
     { "record", cmd_record },
     { "info", cmd_info },
+    { "stop", cmd_stop },
     {0,0}
 };
 
