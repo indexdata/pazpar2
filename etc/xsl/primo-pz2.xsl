@@ -131,6 +131,9 @@
     </xsl:for-each>
 
     <xsl:for-each select="prim:ispartof">
+      <pz:metadata type="journal-subpart">
+	<xsl:value-of select="." />
+      </pz:metadata>
       <pz:metadata type="citation">
 	<xsl:value-of select="." />
       </pz:metadata>
