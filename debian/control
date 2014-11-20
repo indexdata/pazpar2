@@ -5,8 +5,7 @@ Maintainer: Adam Dickmeiss <adam@indexdata.dk>
 Build-Depends: debhelper (>= 7),
 	autotools-dev,
 	libyaz5-dev (>= 5.0.0),
-	docbook-xsl,
-	libgnutls-dev
+	docbook-xsl
 Standards-Version: 3.7.2
 
 Package: pazpar2
