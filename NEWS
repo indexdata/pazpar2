@@ -1,3 +1,8 @@
+--- 1.8.3 2014/11/20
+
+Re-introduce journal-subpart PAZ-980
+Both citation and journal-subpart have same value.
+
 --- 1.8.2 2014/10/30
 
 Add Ubuntu utopic 14.04 and Ubuntu saucy 13.10 to the list of packages

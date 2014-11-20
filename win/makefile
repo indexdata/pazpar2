@@ -5,7 +5,7 @@
 DEBUG=0   # 0 for release, 1 for debug
 USE_MANIFEST = 1 # Can be enabled Visual Studio 2005/2008
 PACKAGE_NAME=pazpar2
-PACKAGE_VERSION=1.8.2
+PACKAGE_VERSION=1.8.3
 
 # YAZ
 YAZ_DIR=..\..\yaz
