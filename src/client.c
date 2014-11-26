@@ -921,11 +921,13 @@ int client_start_search(struct client *cl)
     const char *opt_preferred   = session_setting_oneval(sdb, PZ_PREFERRED);
     const char *extra_args      = session_setting_oneval(sdb, PZ_EXTRA_ARGS);
     const char *opt_present_chunk = session_setting_oneval(sdb, PZ_PRESENT_CHUNK);
+    const char *opt_timeout     = session_setting_oneval(sdb, PZ_TIMEOUT);
     ZOOM_query query;
     char maxrecs_str[24], startrecs_str[24], present_chunk_str[24];
     struct timeval tval;
     int present_chunk = 20; // Default chunk size
     int rc_prep_connection;
+    int operation_timeout = se->service->z3950_operation_timeout;
 
     cl->diagnostic = 0;
     cl->record_failures = cl->ingest_failures = cl->filtered = 0;
@@ -933,12 +935,15 @@ int client_start_search(struct client *cl)
     yaz_gettimeofday(&tval);
     tval.tv_sec += 5;
 
+    if (opt_timeout && *opt_timeout)
+        operation_timeout = atoi(opt_timeout);
+
     if (opt_present_chunk && strcmp(opt_present_chunk,"")) {
         present_chunk = atoi(opt_present_chunk);
         yaz_log(YLOG_DEBUG, "Present chunk set to %d", present_chunk);
     }
     rc_prep_connection =
-        client_prep_connection(cl, se->service->z3950_operation_timeout,
+        client_prep_connection(cl, operation_timeout,
                                se->service->z3950_session_timeout,
                                se->service->server->iochan_man,
                                &tval);

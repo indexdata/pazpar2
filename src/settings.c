@@ -86,6 +86,7 @@ static char *hard_settings[] = {
     "pz:native_score",
     "pz:memcached",
     "pz:redis",
+    "pz:timeout",
     0
 };
 

@@ -740,7 +740,7 @@
 	</listitem>
        </varlistentry>
 
-       <varlistentry>
+       <varlistentry id="service-timeout">
 	<term>timeout</term>
 	<listitem>
 	 <para>
@@ -760,6 +760,10 @@
 	  The following is recommended but not required:
 	  z3950_operation (30) &lt; session (60) &lt; z3950_session (180) .
 	  The default values are given in parantheses.
+	 </para>
+	 <para>
+	  The Z39.50 operation timeout may be set per database. Refer to
+	  <xref linkend="pztimeout"/>.
 	 </para>
 	</listitem>
        </varlistentry>
@@ -1586,6 +1590,23 @@
        the total facet count can be approximated and thus better compared
        with native facets. This is not enabled by default.
       </para>
+     </listitem>
+    </varlistentry>
+
+
+    <varlistentry id="pztimeout">
+     <term>pz:timeout</term>
+     <listitem>
+      <para>
+       Specifies timeout for operation (eg search, and fetch) for
+       a database. This overrides the z3650_operation timeout
+       that is given for a service. See <xref linkend="service-timeout"/>.
+      </para>
+      <note>
+       <para>
+	The timeout facility is supported for Pazpar2 version 1.8.4 and later.
+       </para>
+      </note>
      </listitem>
     </varlistentry>
 
