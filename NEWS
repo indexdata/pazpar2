@@ -1,3 +1,13 @@
+--- 1.8.4 2014/11/26
+
+Use YAZ backtrace facility PAZ-983. In case of crashes YAZ log may
+include more details about the fault. Better install gdb and the
+debug version of pazpar2 (pazpar2-dbg on Debian/Ubuntu).
+
+Per target timeout PAZ-981
+New setting pz:timeout which overrides z3950_operation timeout
+in service.
+
 --- 1.8.3 2014/11/20
 
 Re-introduce journal-subpart PAZ-980
