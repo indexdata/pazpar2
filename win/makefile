@@ -17,6 +17,8 @@ LIBXSLT_DIR=\libxslt-1.1.28.win32
 # ICU
 HAVE_ICU=1
 ICU_DIR=c:\icu
+ICU_LIB=$(ICU_DIR)\lib
+ICU_INCLUDE=$(ICU_DIR)\include
 
 default: all
 
@@ -92,13 +94,13 @@ LIBXSLT_LIB = \
 	   "$(LIBXSLT_DIR)\lib\libxslt.lib"
 
 !if $(HAVE_ICU)
-ICU_DEF=/DYAZ_HAVE_ICU=1 /I"$(ICU_DIR)\include"
-ICU_LIB= $(ICU_DIR)\lib\icudt.lib \
-	 $(ICU_DIR)\lib\icuin.lib \
-	 $(ICU_DIR)\lib64\icuuc.lib
+ICU_DEF=/DYAZ_HAVE_ICU=1 /I"$(ICU_INCLUDE)"
+ICU_LIBS= $(ICU_LIB)\icudt.lib \
+	 $(ICU_LIB)\icuin.lib \
+	 $(ICU_LIB)\icuuc.lib
 !else
 ICU_DEF=/DYAZ_HAVE_ICU=0
-ICU_LIB=
+ICU_LIBS=
 !endif
 
 COMMON_C_OPTIONS=          \
@@ -148,7 +150,7 @@ RELEASE_C_OPTIONS=  \
 LINK=link.exe
 
 LINK_LIBS= kernel32.lib ws2_32.lib advapi32.lib \
-           $(YAZ_LIB) $(ICU_LIB) $(LIBXSLT_LIB)
+           $(YAZ_LIB) $(ICU_LIBS) $(LIBXSLT_LIB)
 
 COMMON_LNK_OPTIONS= /nologo /subsystem:windows /incremental:no
 
