@@ -144,6 +144,7 @@ static struct connection *connection_create(struct client *cl,
                                             iochan_man_t iochan_man)
 {
     struct connection *co;
+    int ret;
 
     co = xmalloc(sizeof(*co));
 
@@ -159,9 +160,13 @@ static struct connection *connection_create(struct client *cl,
     co->operation_timeout = operation_timeout;
     co->session_timeout = session_timeout;
 
-    connection_connect(co, iochan_man);
-
+    ret = connection_connect(co, iochan_man);
     connection_use(1);
+    if (ret)
+    {   /* error */
+        connection_destroy(co);
+        co = 0;
+    }
     return co;
 }
 

@@ -956,9 +956,10 @@ int client_start_search(struct client *cl)
     }
     else if (!rc_prep_connection)
     {
-        session_log(se, YLOG_LOG, "%s: postponing search: No connection",
-                    client_get_id(cl));
-        client_set_state_nb(cl, Client_Working);
+        client_set_diagnostic(cl, 2,
+                              ZOOM_diag_str(2),
+                              "Cannot create connection");
+        client_set_state_nb(cl, Client_Error);
         return -1;
     }
     co = client_get_connection(cl);
