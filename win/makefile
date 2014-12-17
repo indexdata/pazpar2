@@ -3,22 +3,22 @@
 # See the file LICENSE for details.
 
 DEBUG=0   # 0 for release, 1 for debug
-USE_MANIFEST = 1 # Can be enabled Visual Studio 2005/2008
+USE_MANIFEST = 0 # Can be enabled Visual Studio 2005/2008
 PACKAGE_NAME=pazpar2
-PACKAGE_VERSION=1.8.2
+PACKAGE_VERSION=1.8.5
 
 # YAZ
 YAZ_DIR=..\..\yaz
 
 # Libxml2 + libxslt + associates
-ZLIB_DIR=\zlib-1.2.3.win32
-ICONV_DIR=\iconv-1.9.2.win32
-LIBXML2_DIR=\libxml2-2.7.6.win32
-LIBXSLT_DIR=\libxslt-1.1.26.win32
+LIBXML2_DIR=\libxml2-2.9.2.win32
+LIBXSLT_DIR=\libxslt-1.1.28.win32
 
 # ICU
 HAVE_ICU=1
 ICU_DIR=c:\icu
+ICU_LIB=$(ICU_DIR)\lib
+ICU_INCLUDE=$(ICU_DIR)\include
 
 default: all
 
@@ -80,31 +80,27 @@ YAZ_DEF=/DYAZ_HAVE_XML2=2 /DYAZ_HAVE_XSLT=1 /I"$(YAZ_DIR)\include"
 # Copy libxslt and associates to our bin directory
 libxslt: $(BINDIR)\libxslt.dll
 
-$(BINDIR)\libxslt.dll: "$(LIBXSLT_DIR)\bin\libxslt.dll"
-	copy "$(ICONV_DIR)\bin\iconv.dll" $(BINDIR)
-	copy "$(ZLIB_DIR)\bin\zlib1.dll" $(BINDIR)
+$(BINDIR)\libxslt.dll: "$(LIBXSLT_DIR)\lib\libxslt.dll"
 	copy "$(LIBXML2_DIR)\bin\libxml2.dll" $(BINDIR)
-	copy "$(LIBXSLT_DIR)\bin\libxslt.dll" $(BINDIR)
+	copy "$(LIBXSLT_DIR)\lib\libxslt.dll" $(BINDIR)
 
 
 LIBXSLT_DEF= \
-	    /I"$(ICONV_DIR)\include" \
-	    /I"$(LIBXML2_DIR)\include" \
+	    /I"$(LIBXML2_DIR)\include\libxml2" \
 	    /I"$(LIBXSLT_DIR)\include"
 
 LIBXSLT_LIB = \
-	   "$(ICONV_DIR)\lib\iconv.lib" \
 	   "$(LIBXML2_DIR)\lib\libxml2.lib" \
 	   "$(LIBXSLT_DIR)\lib\libxslt.lib"
 
 !if $(HAVE_ICU)
-ICU_DEF=/DYAZ_HAVE_ICU=1 /I"$(ICU_DIR)\include"
-ICU_LIB= $(ICU_DIR)\lib\icudt.lib \
-	 $(ICU_DIR)\lib\icuin.lib \
-	 $(ICU_DIR)\lib\icuuc.lib
+ICU_DEF=/DYAZ_HAVE_ICU=1 /I"$(ICU_INCLUDE)"
+ICU_LIBS= $(ICU_LIB)\icudt.lib \
+	 $(ICU_LIB)\icuin.lib \
+	 $(ICU_LIB)\icuuc.lib
 !else
 ICU_DEF=/DYAZ_HAVE_ICU=0
-ICU_LIB=
+ICU_LIBS=
 !endif
 
 COMMON_C_OPTIONS=          \
@@ -154,9 +150,9 @@ RELEASE_C_OPTIONS=  \
 LINK=link.exe
 
 LINK_LIBS= kernel32.lib ws2_32.lib advapi32.lib \
-           $(YAZ_LIB) $(ICU_LIB) $(LIBXSLT_LIB)
+           $(YAZ_LIB) $(ICU_LIBS) $(LIBXSLT_LIB)
 
-COMMON_LNK_OPTIONS= /nologo /subsystem:windows /machine:i386 /incremental:no
+COMMON_LNK_OPTIONS= /nologo /subsystem:windows /incremental:no
 
 DEBUG_LNK_OPTIONS= /debug 
 

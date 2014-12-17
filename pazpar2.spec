@@ -8,11 +8,11 @@ Group: Applications/Internet
 Vendor: Index Data ApS <info@indexdata.dk>
 Source: pazpar2-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
-BuildRequires: libyaz5-devel >= 5.0.0
+BuildRequires: libyaz5-devel >= 5.7.0
 Packager: Adam Dickmeiss <adam@indexdata.dk>
 URL: http://www.indexdata.com/pazpar2
 Summary: pazpar2 daemon
-Requires: libyaz5 >= 5.0.0
+Requires: libyaz5 >= 5.7.0
 Requires: pazpar2-xsl
 
 %description

@@ -281,7 +281,7 @@
    <para>
     The compilation is tuned by editing the makefile of Pazpar2.
     The process is similar to YAZ. Adjust the various directories
-    <literal>YAZ_DIR</literal>, <literal>ZLIB_DIR</literal>, etc.,
+    <literal>YAZ_DIR</literal>, <literal>ICU_DIR</literal>, etc.,
     as required.
    </para>
    <para>

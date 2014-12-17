@@ -1,3 +1,25 @@
+--- 1.8.5 2014/12/17
+
+Larger string buffer for forward address PAZ-987
+Fixes buffer overflow that could occur if forward address is IPV6.
+
+Updates to Windows NMAKE makefile for Visual Studio 2013.
+
+--- 1.8.4 2014/11/26
+
+Use YAZ backtrace facility PAZ-983. In case of crashes YAZ log may
+include more details about the fault. Better install gdb and the
+debug version of pazpar2 (pazpar2-dbg on Debian/Ubuntu).
+
+Per target timeout PAZ-981
+New setting pz:timeout which overrides z3950_operation timeout
+in service.
+
+--- 1.8.3 2014/11/20
+
+Re-introduce journal-subpart PAZ-980
+Both citation and journal-subpart have same value.
+
 --- 1.8.2 2014/10/30
 
 Add Ubuntu utopic 14.04 and Ubuntu saucy 13.10 to the list of packages

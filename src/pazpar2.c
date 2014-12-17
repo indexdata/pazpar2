@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/log.h>
 #include <yaz/options.h>
 #include <yaz/sc.h>
+#include <yaz/backtrace.h>
 
 // #define MTRACE
 #ifdef MTRACE
@@ -120,6 +121,8 @@ static int sc_main(
 
     yaz_log_init_prefix("pazpar2");
     yaz_log_xml_errors(0, YLOG_WARN);
+
+    yaz_enable_panic_backtrace(argv[0]);
 
     while ((ret = options("dDf:h:l:m:p:R:tu:v:Vw:X", argv, argc, &arg)) != -2)
     {
@@ -221,6 +224,7 @@ static int sc_main(
 #endif
             );
     }
+    
     config = config_create(config_fname);
     if (!config)
         return 1;

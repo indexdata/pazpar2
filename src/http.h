@@ -50,7 +50,7 @@ struct http_channel
     struct http_request *request;
     struct http_response *response;
     struct http_channel *next; // for freelist
-    char addr[20]; // forwarded address
+    char addr[256]; // forwarded address
     http_channel_observer_t observers;
     struct conf_server *server;
     http_server_t http_server;
