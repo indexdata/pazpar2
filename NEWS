@@ -1,3 +1,10 @@
+--- 1.8.5 2014/12/17
+
+Larger string buffer for forward address PAZ-987
+Fixes buffer overflow that could occur if forward address is IPV6.
+
+Updates to Windows NMAKE makefile for Visual Studio 2013.
+
 --- 1.8.4 2014/11/26
 
 Use YAZ backtrace facility PAZ-983. In case of crashes YAZ log may
