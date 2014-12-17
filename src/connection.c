@@ -450,6 +450,8 @@ int client_prep_connection(struct client *cl,
             client_get_id(cl), url);
 
     co = client_get_connection(cl);
+    if (co)
+        return 2;
     if (!co)
     {
         co = connection_create(cl, url, zproxy,
