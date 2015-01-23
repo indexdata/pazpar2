@@ -262,6 +262,11 @@
 	     articles), and 'no' (no sorting). The default value is
 	     'no'.
 	    </para>
+	    <para>
+	     When 'skiparticle' is used, some common articles from the
+	     English and German languages are ignored. At present the
+	     list is: 'the', 'den', 'der', 'die', 'des', 'an', 'a'.
+	    </para>
 	   </listitem>
 	  </varlistentry>
 
