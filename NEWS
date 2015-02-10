@@ -1,3 +1,12 @@
+--- 1.8.6 2015/02/10
+
+Increase facet limit PAZ-990
+No longer a limit on facets.
+
+Pazpar2-js no longer requires Apache2 PAZ-989
+Package pazpar2-apache2 sets up everything WRT apache and only
+package which requires it. pazpar2-apache depends on pazpar2-js.
+
 --- 1.8.5 2014/12/17
 
 Larger string buffer for forward address PAZ-987
