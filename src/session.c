@@ -204,29 +204,18 @@ void add_facet(struct session *s, const char *type, const char *value, int count
 
     if (wrbuf_len(facet_wrbuf))
     {
-        int i;
-        for (i = 0; i < s->num_termlists; i++)
-            if (!strcmp(s->termlists[i].name, type))
+        struct named_termlist **tp = &s->termlists;
+        for (; (*tp); tp = &(*tp)->next)
+            if (!strcmp((*tp)->name, type))
                 break;
-        if (i == s->num_termlists)
+        if (!*tp)
         {
-            if (i == SESSION_MAX_TERMLISTS)
-            {
-                session_log(s, YLOG_FATAL, "Too many termlists");
-                wrbuf_destroy(facet_wrbuf);
-                wrbuf_destroy(display_wrbuf);
-                return;
-            }
-
-            s->termlists[i].name = nmem_strdup(s->nmem, type);
-            s->termlists[i].termlist = termlist_create(s->nmem);
-            s->num_termlists = i + 1;
+            *tp = nmem_malloc(s->nmem, sizeof(**tp));
+            (*tp)->name = nmem_strdup(s->nmem, type);
+            (*tp)->termlist = termlist_create(s->nmem);
+            (*tp)->next = 0;
         }
-
-#if 0
-        session_log(s, YLOG_LOG, "Facets for %s: %s norm:%s (%d)", type, value, wrbuf_cstr(facet_wrbuf), count);
-#endif
-        termlist_insert(s->termlists[i].termlist, wrbuf_cstr(display_wrbuf),
+        termlist_insert((*tp)->termlist, wrbuf_cstr(display_wrbuf),
                         wrbuf_cstr(facet_wrbuf), count);
     }
     wrbuf_destroy(facet_wrbuf);
@@ -604,8 +593,7 @@ static void session_clear_set(struct session *se, struct reclist_sortparms *sp)
                     nmem_total(se->nmem));
     nmem_reset(se->nmem);
     se->total_records = se->total_merged = 0;
-    se->num_termlists = 0;
-
+    se->termlists = 0;
     relevance_clear(se->relevance);
 
     /* reset list of sorted results and clear to relevance search */
@@ -1025,7 +1013,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->total_records = 0;
     session->number_of_warnings_unknown_elements = 0;
     session->number_of_warnings_unknown_metadata = 0;
-    session->num_termlists = 0;
+    session->termlists = 0;
     session->reclist = reclist_create(nmem);
     session->clients_active = 0;
     session->clients_cached = 0;
@@ -1191,9 +1179,10 @@ void perform_termlist(struct http_channel *c, struct session *se,
         const char *tname;
         int must_generate_empty = 1; /* bug 5350 */
 
-        for (i = 0; i < se->num_termlists; i++)
+        struct named_termlist *t = se->termlists;
+        for (; t; t = t->next)
         {
-            tname = se->termlists[i].name;
+            tname = t->name;
             if (!strcmp(names[j], tname) || !strcmp(names[j], "*"))
             {
                 struct termlist_score **p = 0;
@@ -1204,8 +1193,7 @@ void perform_termlist(struct http_channel *c, struct session *se,
                 wrbuf_puts(c->wrbuf, "\">\n");
                 must_generate_empty = 0;
 
-                p = termlist_highscore(se->termlists[i].termlist, &len,
-                                       nmem_tmp);
+                p = termlist_highscore(t->termlist, &len, nmem_tmp);
                 if (p)
                 {
                     int i;
