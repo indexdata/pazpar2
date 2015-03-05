@@ -1460,7 +1460,7 @@
     </varlistentry>
 
     <varlistentry>
-     <term>pz:presentchunk</term>
+     <term>pz:present_chunk</term>
      <listitem>
       <para>
        Controls the chunk size in present requests. Pazpar2 will
