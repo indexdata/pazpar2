@@ -1162,7 +1162,7 @@ static int targets_termlist_nb(WRBUF wrbuf, struct session *se, int num,
 void perform_termlist(struct http_channel *c, struct session *se,
                       const char *name, int num, int version)
 {
-    int i, j;
+    int j;
     NMEM nmem_tmp = nmem_create();
     char **names;
     int num_names = 0;
