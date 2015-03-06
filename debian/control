@@ -33,7 +33,6 @@ Description: debugging symbols for Pazpar2
 
 Package: pazpar2-js
 Architecture: all
-Depends: apache2.2-common
 Description: Java Script utilities
  Pazpar2 is a high-performance, user interface-independent, data
  model-independent metasearching middleware featuring merging, relevance
@@ -65,7 +64,7 @@ Description: Documentation for Pazpar2 metasearcher
 
 Package: pazpar2-apache2
 Architecture: all
-Depends: pazpar2, apache2
+Depends: pazpar2, apache2, pazpar2-js
 Description: Apache2 configuration for Pazpar2
  Pazpar2 is a high-performance, user interface-independent, data
  model-independent metasearching middleware featuring merging, relevance
@@ -76,7 +75,7 @@ Description: Apache2 configuration for Pazpar2
 
 Package: pazpar2-test1
 Architecture: all
-Depends: pazpar2-apache2, pazpar2-js
+Depends: pazpar2-apache2
 Description: Pazpar2 portal test1
  Pazpar2 is a high-performance, user interface-independent, data
  model-independent metasearching middleware featuring merging, relevance
@@ -88,7 +87,7 @@ Description: Pazpar2 portal test1
 
 Package: pazpar2-jsdemo
 Architecture: all
-Depends: pazpar2-apache2, pazpar2-js
+Depends: pazpar2-apache2
 Description: Pazpar2 demo using the pz2.js library
  Pazpar2 is a high-performance, user interface-independent, data
  model-independent metasearching middleware featuring merging, relevance

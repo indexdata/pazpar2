@@ -71,14 +71,13 @@ struct session_database
 #define SESSION_WATCH_BYTARGET  4
 #define SESSION_WATCH_MAX       4
 
-#define SESSION_MAX_TERMLISTS 10
-
 typedef void (*session_watchfun)(void *data);
 
 struct named_termlist
 {
     char *name;
     struct termlist *termlist;
+    struct named_termlist *next;
 };
 
 struct session_watchentry {
@@ -97,8 +96,7 @@ struct session {
     struct client_list *clients_cached; // Clients in cache
     NMEM session_nmem;  // Nmem for session-permanent storage
     NMEM nmem;          // Nmem for each operation (i.e. search, result set, etc)
-    int num_termlists;
-    struct named_termlist termlists[SESSION_MAX_TERMLISTS];
+    struct named_termlist *termlists;
     struct relevance *relevance;
     struct reclist *reclist;
     char *mergekey;
