@@ -157,29 +157,6 @@ char *settings_name(struct conf_service *service, int offset)
     return service->dictionary->dict[offset];
 }
 
-
-// Apply a session override to a database
-void service_apply_setting(struct conf_service *service, char *name, char *value)
-{
-    struct setting *s;
-    int offset = settings_create_offset(service, name);
-    expand_settings_array(&service->settings->settings, &service->settings->num_settings, offset, service->nmem);
-    for (s = service->settings->settings[offset]; s; s = s->next)
-        if (!strcmp(s->name, name))
-        {
-            s->value = value;
-            return;
-        }
-    s = nmem_malloc(service->nmem, sizeof(*s));
-    s->precedence = 0;
-    s->target = NULL;
-    s->name = name;
-    s->value = value;
-    s->next = service->settings->settings[offset];
-    service->settings->settings[offset] = s;
-}
-
-
 static int isdir(const char *path)
 {
     struct stat st;
