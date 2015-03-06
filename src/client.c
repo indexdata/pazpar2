@@ -543,27 +543,6 @@ static void ingest_raw_record(struct client *cl, ZOOM_record rec)
     client_show_raw_dequeue(cl);
 }
 
-void client_check_preferred_watch(struct client *cl)
-{
-    struct session *se = cl->session;
-    yaz_log(YLOG_DEBUG, "client_check_preferred_watch: %s ", client_get_id(cl));
-    if (se)
-    {
-        client_unlock(cl);
-        /* TODO possible threading issue. Session can have been destroyed */
-        if (session_is_preferred_clients_ready(se)) {
-            session_alert_watch(se, SESSION_WATCH_SHOW_PREF);
-        }
-        else
-            yaz_log(YLOG_DEBUG, "client_check_preferred_watch: Still locked on preferred targets.");
-
-        client_lock(cl);
-    }
-    else
-        yaz_log(YLOG_WARN, "client_check_preferred_watch: %s. No session!", client_get_id(cl));
-
-}
-
 struct suggestions* client_suggestions_create(const char* suggestions_string);
 static void client_suggestions_destroy(struct client *cl);
 
@@ -603,6 +582,11 @@ void client_got_records(struct client *cl)
     struct session *se = cl->session;
     if (se)
     {
+        client_unlock(cl);
+        /* TODO possible threading issue. Session can have been destroyed */
+        if (session_is_preferred_clients_ready(se))
+            session_alert_watch(se, SESSION_WATCH_SHOW_PREF);
+        client_lock(cl);
         if (reclist_get_num_records(se->reclist) > 0)
         {
             client_unlock(cl);
