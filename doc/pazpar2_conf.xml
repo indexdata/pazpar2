@@ -1451,10 +1451,11 @@
      <listitem>
       <para>
        Specifies that a target is preferred, e.g. possible local, faster
-       target. Using block=pref on show command will wait for all these
+       target. Using block=preferred on <link linkend="command-show">
+       show command</link> will wait for all these
        targets to return records before releasing the block.
-       If no target is preferred, the block=pref will identical to block=1,
-       which release when one target has returned records.
+       If no target is preferred, the block=preferred will identical to
+       block=1, which release when one target has returned records.
       </para>
      </listitem>
     </varlistentry>

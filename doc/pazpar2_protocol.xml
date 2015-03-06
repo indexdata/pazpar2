@@ -429,6 +429,11 @@ search.pz2?session=2044502273&command=stat
 	ready to display. Use this to show first records rapidly without
 	requiring rapid polling.
        </para>
+       <para>
+	If block is set to <literal>preferred</literal>, the command will
+	wait until records have been received from all databases with preferred
+	setting
+       </para>
       </listitem>
      </varlistentry>
 
