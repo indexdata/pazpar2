@@ -123,6 +123,15 @@
     </pz:metadata>
   </xsl:template>
 
+  <xsl:template match="affiliation">
+    <pz:metadata type="affiliation-person" empty="PAZPAR2_NULL_VALUE">
+      <xsl:value-of select="person"/>
+    </pz:metadata>
+    <pz:metadata type="affiliation-institution" empty="PAZPAR2_NULL_VALUE">
+      <xsl:value-of select="institution"/>
+    </pz:metadata>
+  </xsl:template>
+
   <!-- put both page and pages-number for page -->
   <xsl:template match="page">
     <pz:metadata type="pages-number">
