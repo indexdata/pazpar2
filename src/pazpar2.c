@@ -58,7 +58,7 @@ void child_handler(void *data)
 
 static void show_version(void)
 {
-    char yaz_version_str[80];
+    char yaz_version_str[20];
     printf("Pazpar2 " PACKAGE_VERSION
 #ifdef PAZPAR2_VERSION_SHA1
            " "
@@ -214,17 +214,20 @@ static int sc_main(
     }
     pazpar2_mutex_init();
 
-    if (!test_mode)
     {
-        yaz_log(YLOG_LOG, "Pazpar2 start " VERSION " "
+        char yaz_version_str[20];
+        char yaz_sha1_str[41];
+        yaz_log(YLOG_LOG, "Pazpar2 %s " VERSION " "
 #ifdef PAZPAR2_VERSION_SHA1
                 PAZPAR2_VERSION_SHA1
 #else
                 "-"
 #endif
-            );
+                , test_mode ? "test" : "start");
+        yaz_version(yaz_version_str, yaz_sha1_str);
+        yaz_log(YLOG_LOG, "YAZ %s %s", yaz_version_str, yaz_sha1_str);
     }
-    
+
     config = config_create(config_fname);
     if (!config)
         return 1;
