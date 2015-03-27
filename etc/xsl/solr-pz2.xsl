@@ -107,6 +107,14 @@
 	    CC PDL (public domain)
 	   </xsl:when>
  
+	   <!-- The RIOXX profile itself provides two ways of saying "all rights reserved" -->
+	   <xsl:when test=". = 'http://www.rioxx.net/licenses/all-rights-reserved'">
+	    All rights reserved
+	   </xsl:when>
+	   <xsl:when test=". = 'http://www.rioxx.net/licenses/under-embargo-all-rights-reserved'">
+	    Under embargo
+	   </xsl:when>
+
 	   <xsl:otherwise>
 	    [unknown]
 	   </xsl:otherwise>
