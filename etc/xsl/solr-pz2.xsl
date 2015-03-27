@@ -83,14 +83,15 @@
 	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nd/')">
 	    CC By-ND
 	   </xsl:when>
-	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nd-sa/')">
-	    CC By-ND-SA
-	   </xsl:when>
 	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nc/')">
 	    CC By-NC
 	   </xsl:when>
 	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nc-nd/')">
 	    CC By-NC-ND
+	   </xsl:when>
+	   <!-- There is actually no such licence as this, but East London uses it anyway! -->
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nd-sa/')">
+	    CC By-ND-SA
 	   </xsl:when>
 	   <xsl:otherwise>
 	    [unknown]
