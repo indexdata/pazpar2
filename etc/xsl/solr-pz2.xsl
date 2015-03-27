@@ -77,6 +77,9 @@
 	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by/')">
 	    CC By
 	   </xsl:when>
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-sa/')">
+	    CC By-SA
+	   </xsl:when>
 	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nd/')">
 	    CC By-ND
 	   </xsl:when>
