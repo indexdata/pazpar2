@@ -99,6 +99,14 @@
 	    CC By-ND-SA
 	   </xsl:when>
 
+	   <!-- Creative Commons' public-domain tools are not actually licences, may well be used -->
+	   <xsl:when test=". = 'http://creativecommons.org/about/cc0'">
+	    CC0 (public domain)
+	   </xsl:when>
+	   <xsl:when test=". = 'http://creativecommons.org/about/pdm2'">
+	    CC PDL (public domain)
+	   </xsl:when>
+ 
 	   <xsl:otherwise>
 	    [unknown]
 	   </xsl:otherwise>
