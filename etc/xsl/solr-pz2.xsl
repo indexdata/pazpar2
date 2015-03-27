@@ -74,19 +74,19 @@
 	<xsl:if test="../@name='license_url'">
 	 <pz:metadata type="license_name">
 	  <xsl:choose>
-	   <xsl:when test=". = 'http://creativecommons.org/licenses/by/4.0'">
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by/')">
 	    CC By
 	   </xsl:when>
-	   <xsl:when test=". = 'http://creativecommons.org/licenses/by-nd/4.0'">
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nd/')">
 	    CC By-ND
 	   </xsl:when>
-	   <xsl:when test=". = 'http://creativecommons.org/licenses/by-nd-sa/4.0'">
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nd-sa/')">
 	    CC By-ND-SA
 	   </xsl:when>
-	   <xsl:when test=". = 'http://creativecommons.org/licenses/by-nc/4.0'">
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nc/')">
 	    CC By-NC
 	   </xsl:when>
-	   <xsl:when test=". = 'http://creativecommons.org/licenses/by-nc-nd/4.0'">
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nc-nd/')">
 	    CC By-NC-ND
 	   </xsl:when>
 	   <xsl:otherwise>
