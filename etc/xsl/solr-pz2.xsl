@@ -71,6 +71,30 @@
 	  </xsl:attribute>
 	  <xsl:value-of select="."/>
 	</pz:metadata>
+	<xsl:if test="../@name='license_url'">
+	 <pz:metadata type="license_name">
+	  <xsl:choose>
+	   <xsl:when test=". = 'http://creativecommons.org/licenses/by/4.0'">
+	    CC By
+	   </xsl:when>
+	   <xsl:when test=". = 'http://creativecommons.org/licenses/by-nd/4.0'">
+	    CC By-ND
+	   </xsl:when>
+	   <xsl:when test=". = 'http://creativecommons.org/licenses/by-nd-sa/4.0'">
+	    CC By-ND-SA
+	   </xsl:when>
+	   <xsl:when test=". = 'http://creativecommons.org/licenses/by-nc/4.0'">
+	    CC By-NC
+	   </xsl:when>
+	   <xsl:when test=". = 'http://creativecommons.org/licenses/by-nc-nd/4.0'">
+	    CC By-NC-ND
+	   </xsl:when>
+	   <xsl:otherwise>
+	    [unknown]
+	   </xsl:otherwise>
+	  </xsl:choose>
+	 </pz:metadata>
+	</xsl:if>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
