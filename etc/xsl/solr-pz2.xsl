@@ -74,6 +74,7 @@
 	<xsl:if test="../@name='license_url'">
 	 <pz:metadata type="license_name">
 	  <xsl:choose>
+	   <!-- Creative Commons licenses -->
 	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by/')">
 	    CC By
 	   </xsl:when>
@@ -92,10 +93,12 @@
 	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nc-nd/')">
 	    CC By-NC-ND
 	   </xsl:when>
-	   <!-- There is actually no such licence as this, but East London uses it anyway! -->
+
+	   <!-- There is actually no such license as this, but East London uses it anyway! -->
 	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nd-sa/')">
 	    CC By-ND-SA
 	   </xsl:when>
+
 	   <xsl:otherwise>
 	    [unknown]
 	   </xsl:otherwise>
