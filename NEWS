@@ -1,3 +1,15 @@
+--- 1.8.7 2015/03/27
+
+solr-pz2.xsl: extend Solr transformation to emit license_name field PAZ-996
+
+cf.xsl: forwards flat affiliation structure PAZ-992
+
+parpar2: log YAZ version upon start PAZ-993
+
+Update and fix documentation for preferred targets
+
+Fix spelling of present_chunk in documentation
+
 --- 1.8.6 2015/02/10
 
 Increase facet limit PAZ-990

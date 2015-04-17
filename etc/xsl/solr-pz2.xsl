@@ -71,6 +71,56 @@
 	  </xsl:attribute>
 	  <xsl:value-of select="."/>
 	</pz:metadata>
+	<xsl:if test="../@name='license_url'">
+	 <pz:metadata type="license_name">
+	  <xsl:choose>
+	   <!-- Creative Commons licenses -->
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by/')">
+	    CC By
+	   </xsl:when>
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-sa/')">
+	    CC By-SA
+	   </xsl:when>
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nd/')">
+	    CC By-ND
+	   </xsl:when>
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nc/')">
+	    CC By-NC
+	   </xsl:when>
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nc-sa/')">
+	    CC By-NC-SA
+	   </xsl:when>
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nc-nd/')">
+	    CC By-NC-ND
+	   </xsl:when>
+
+	   <!-- There is actually no such license as this, but East London uses it anyway! -->
+	   <xsl:when test="starts-with(., 'http://creativecommons.org/licenses/by-nd-sa/')">
+	    CC By-ND-SA
+	   </xsl:when>
+
+	   <!-- Creative Commons' public-domain tools are not actually licences, may well be used -->
+	   <xsl:when test=". = 'http://creativecommons.org/about/cc0'">
+	    CC0 (public domain)
+	   </xsl:when>
+	   <xsl:when test=". = 'http://creativecommons.org/about/pdm2'">
+	    CC PDL (public domain)
+	   </xsl:when>
+ 
+	   <!-- The RIOXX profile itself provides two ways of saying "all rights reserved" -->
+	   <xsl:when test=". = 'http://www.rioxx.net/licenses/all-rights-reserved'">
+	    All rights reserved
+	   </xsl:when>
+	   <xsl:when test=". = 'http://www.rioxx.net/licenses/under-embargo-all-rights-reserved'">
+	    Under embargo
+	   </xsl:when>
+
+	   <xsl:otherwise>
+	    [unknown]
+	   </xsl:otherwise>
+	  </xsl:choose>
+	 </pz:metadata>
+	</xsl:if>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:template>
