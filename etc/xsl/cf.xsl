@@ -14,7 +14,10 @@
         version="1.0"
         encoding="UTF-8"/>
 
-  <xsl:param name="medium" />
+    <xsl:param name="medium" />
+
+    <xsl:variable name="startpage" select="/record/page" />
+    <xsl:variable name="endpage" select="/record/endpage" />
 
   <!-- Use medium parameter if given. Default to medium from connector -->
   <xsl:template match="/record">
@@ -31,7 +34,20 @@
           </xsl:otherwise>
         </xsl:choose>
       </pz:metadata>
+
+      <!-- calculate md-pages-number for startpage/endpage -->
+      <xsl:if test="string-length($startpage)">
+        <pz:metadata type="pages-number">
+          <xsl:value-of select="$startpage" />
+          <xsl:if test="string-length($endpage)">
+            <xsl:text>-</xsl:text>
+            <xsl:value-of select="$endpage" />
+          </xsl:if>
+        </pz:metadata>
+      </xsl:if>
+
       <xsl:apply-templates/>
+
     </pz:record>
   </xsl:template>
 
@@ -122,17 +138,6 @@
       <xsl:value-of select="."/>
     </pz:metadata>
   </xsl:template>
-
-  <!-- put both page and pages-number for page -->
-  <xsl:template match="page">
-    <pz:metadata type="pages-number">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-    <pz:metadata type="page">
-      <xsl:value-of select="."/>
-    </pz:metadata>
-  </xsl:template>
-  <!-- leave endpage as is -->
 
   <xsl:template match="*" >
     <pz:metadata type="{local-name()}">
