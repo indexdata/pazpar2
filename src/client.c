@@ -1368,10 +1368,12 @@ static int apply_limit(struct session_database *sdb,
                             struct ccl_rpn_node *cn;
                             wrbuf_rewind(ccl_w);
                             wrbuf_puts(ccl_w, ccl);
-                            wrbuf_puts(ccl_w, "=\"");
+                            wrbuf_putc(ccl_w, '=');
+                            if (strchr(values[i], ' '))
+                                wrbuf_putc(ccl_w, '\"');
                             wrbuf_puts(ccl_w, values[i]);
-                            wrbuf_puts(ccl_w, "\"");
-
+                            if (strchr(values[i], ' '))
+                                wrbuf_putc(ccl_w, '\"');
                             cn = ccl_find_str(ccl_map, wrbuf_cstr(ccl_w),
                                               &cerror, &cpos);
                             if (cn)

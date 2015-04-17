@@ -23,7 +23,7 @@
   <set name="pz:cclmap:author_phrase" value="1=author_exact 6=3"/>
   <set name="pz:cclmap:term"  value="1=text s=Dal" />
   <set name="pz:cclmap:isbn"  value="1=isbn" />
-  <set name="pz:cclmap:date_exact"  value="1=date_exact r=r" />
+  <set name="pz:cclmap:date_exact"  value="1=date_exact r=o" />
   <set name="pz:xslt"  value="solr-pz2.xsl" />
   <set name="pz:queryencoding"  value="UTF-8" />
 
