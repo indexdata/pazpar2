@@ -16,7 +16,7 @@
   <set name="pz:cclmap:au" value="u=1003"/>
 
 
-  <set name="pz:limitmap:date"   value="ccl:date_exact" />
+  <set name="pz:limitmap:date"   value="ccl:date" />
 
   <!-- Retrieval settings -->
 
