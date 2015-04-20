@@ -1,3 +1,15 @@
+--- 1.8.8 2015/04/20
+
+Limitmap ccl: deal with quotes and backslash PAZ-999
+
+Handle date range from a limit parameter PAZ-997
+The CCL term is not quoted unless it includes blanks. This will ensure
+that r=r is handled correctly. This changes behavior a bit. If term
+should not be converted to @and, then instead of r=r one should use
+r=o or r=3 instead.
+
+Construct md-pages-number form page/endpage PAZ-998
+
 --- 1.8.7 2015/03/27
 
 solr-pz2.xsl: extend Solr transformation to emit license_name field PAZ-996
