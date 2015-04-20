@@ -1308,6 +1308,31 @@ const char *client_get_facet_limit_local(struct client *cl,
     return 0;
 }
 
+static void ccl_quote_map_term(CCL_bibset ccl_map, WRBUF w,
+                               const char *term)
+{
+    int quote_it = 0;
+    const char *cp;
+    for (cp = term; *cp; cp++)
+        if ((*cp >= '0' && *cp <= '9') || strchr(" +-", *cp))
+            ;
+        else
+            quote_it = 1;
+    if (!quote_it)
+        wrbuf_puts(w, term);
+    else
+    {
+        wrbuf_putc(w, '\"');
+        for (cp = term; *cp; cp++)
+        {
+            if (strchr( "\\\"", *cp))
+                wrbuf_putc(w, '\\');
+            wrbuf_putc(w, *cp);
+        }
+        wrbuf_putc(w, '\"');
+    }
+}
+
 static int apply_limit(struct session_database *sdb,
                        facet_limits_t facet_limits,
                        WRBUF w_pqf, CCL_bibset ccl_map,
@@ -1369,11 +1394,7 @@ static int apply_limit(struct session_database *sdb,
                             wrbuf_rewind(ccl_w);
                             wrbuf_puts(ccl_w, ccl);
                             wrbuf_putc(ccl_w, '=');
-                            if (strchr(values[i], ' '))
-                                wrbuf_putc(ccl_w, '\"');
-                            wrbuf_puts(ccl_w, values[i]);
-                            if (strchr(values[i], ' '))
-                                wrbuf_putc(ccl_w, '\"');
+                            ccl_quote_map_term(ccl_map, ccl_w, values[i]);
                             cn = ccl_find_str(ccl_map, wrbuf_cstr(ccl_w),
                                               &cerror, &cpos);
                             if (cn)
