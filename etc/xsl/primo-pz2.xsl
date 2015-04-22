@@ -78,11 +78,34 @@
       </pz:metadata>
     </xsl:for-each>
 
-    <xsl:for-each select="prim:spage">
-      <pz:metadata type="pages-number">
-        <xsl:value-of select="." />
-      </pz:metadata>
-    </xsl:for-each>
+    <xsl:variable name="spage" select="prim:spage" />
+    <xsl:variable name="epage" select="prim:epage" />
+    <xsl:variable name="pages" select="prim:pages" />
+
+    <xsl:choose>
+      <!-- in some case primo wrongly returns a range in spage, we're done -->
+      <xsl:when test="contains($spage,'-')">
+        <pz:metadata type="pages-number">
+          <xsl:value-of select="$spage" />
+        </pz:metadata>
+      </xsl:when>
+      <!-- if there is a range in pages, we're also done -->
+      <xsl:when test="contains($pages,'-')">
+        <pz:metadata type="pages-number">
+          <xsl:value-of select="$pages" />
+        </pz:metadata>
+      </xsl:when>
+      <!-- otherwise, construct -->
+      <xsl:when test="$spage">
+        <pz:metadata type="pages-number">
+          <xsl:value-of select="$spage" />
+          <xsl:if test="string-length($epage)">
+            <xsl:text>-</xsl:text>
+            <xsl:value-of select="$epage" />
+          </xsl:if>
+        </pz:metadata>
+      </xsl:when>
+    </xsl:choose>
 
     <xsl:for-each select="prim:issn">
       <pz:metadata type="issn">
