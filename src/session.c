@@ -56,6 +56,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/querytowrbuf.h>
 #include <yaz/oid_db.h>
 #include <yaz/snprintf.h>
+#include <yaz/xml_get.h>
 
 #define USE_TIMING 0
 #if USE_TIMING
@@ -1571,7 +1572,7 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
             continue;
         if (!strcmp((const char *) n->name, "metadata"))
         {
-            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
+            const char *type = yaz_xml_get_prop(n, "type");
             if (type == NULL) {
                 yaz_log(YLOG_FATAL, "Missing type attribute on metadata element. Skipping!");
             }
@@ -1590,7 +1591,6 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
                 if (value)
                     xmlFree(value);
             }
-            xmlFree(type);
         }
     }
     return no_found;
@@ -1603,7 +1603,7 @@ static const char *get_mergekey(xmlDoc *doc, xmlNode *root,
 {
     char *mergekey_norm = 0;
     WRBUF norm_wr = wrbuf_alloc();
-    xmlChar *mergekey;
+    const char *mergekey;
 
     if (session_mergekey)
     {
@@ -1615,10 +1615,9 @@ static const char *get_mergekey(xmlDoc *doc, xmlNode *root,
         for (i = 0; i < num; i++)
             get_mergekey_from_doc(doc, root, values[i], service, norm_wr);
     }
-    else if ((mergekey = xmlGetProp(root, (xmlChar *) "mergekey")))
+    else if ((mergekey = yaz_xml_get_prop(root, "mergekey")))
     {
-        mergekey_norm_wr(service->charsets, norm_wr, (const char *) mergekey);
-        xmlFree(mergekey);
+        mergekey_norm_wr(service->charsets, norm_wr, mergekey);
     }
     else
     {
@@ -1685,7 +1684,7 @@ static int check_record_filter(xmlNode *root, struct session_database *sdb)
             continue;
         if (!strcmp((const char *) n->name, "metadata"))
         {
-            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
+            const char *type = yaz_xml_get_prop(n, "type");
             if (type)
             {
                 size_t len;
@@ -1713,7 +1712,6 @@ static int check_record_filter(xmlNode *root, struct session_database *sdb)
                     }
                     xmlFree(value);
                 }
-                xmlFree(type);
             }
         }
     }
@@ -1721,6 +1719,8 @@ static int check_record_filter(xmlNode *root, struct session_database *sdb)
 }
 
 static int ingest_to_cluster(struct client *cl,
+                             WRBUF wrbuf_disp,
+                             WRBUF wrbuf_norm,
                              xmlDoc *xdoc,
                              xmlNode *root,
                              int record_no,
@@ -1733,6 +1733,7 @@ static int ingest_sub_record(struct client *cl, xmlDoc *xdoc, xmlNode *root,
 {
     int ret = 0;
     struct session *se = client_get_session(cl);
+    WRBUF wrbuf_disp, wrbuf_norm;
 
     if (!check_record_filter(root, sdb))
     {
@@ -1741,11 +1742,15 @@ static int ingest_sub_record(struct client *cl, xmlDoc *xdoc, xmlNode *root,
                     record_no, sdb->database->id);
         return 0;
     }
+    wrbuf_disp = wrbuf_alloc();
+    wrbuf_norm = wrbuf_alloc();
     session_enter(se, "ingest_sub_record");
     if (client_get_session(cl) == se && se->relevance)
-        ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekeys);
+        ret = ingest_to_cluster(cl, wrbuf_disp, wrbuf_norm,
+                                xdoc, root, record_no, mergekeys);
     session_leave(se, "ingest_sub_record");
-
+    wrbuf_destroy(wrbuf_norm);
+    wrbuf_destroy(wrbuf_disp);
     return ret;
 }
 
@@ -2026,14 +2031,14 @@ static int check_limit_local(struct client *cl,
 }
 
 static int ingest_to_cluster(struct client *cl,
+                             WRBUF wrbuf_disp,
+                             WRBUF wrbuf_norm,
                              xmlDoc *xdoc,
                              xmlNode *root,
                              int record_no,
                              struct record_metadata_attr *merge_keys)
 {
     xmlNode *n;
-    xmlChar *type = 0;
-    xmlChar *value = 0;
     struct session *se = client_get_session(cl);
     struct conf_service *service = se->service;
     int term_factor = 1;
@@ -2050,12 +2055,6 @@ static int ingest_to_cluster(struct client *cl,
 
     for (n = root->children; n; n = n->next)
     {
-        if (type)
-            xmlFree(type);
-        if (value)
-            xmlFree(value);
-        type = value = 0;
-
         if (n->type != XML_ELEMENT_NODE)
             continue;
         if (!strcmp((const char *) n->name, "metadata"))
@@ -2064,20 +2063,26 @@ static int ingest_to_cluster(struct client *cl,
             struct record_metadata **wheretoput = 0;
             struct record_metadata *rec_md = 0;
             int md_field_id = -1;
+            xmlChar *value0;
+            const char *type = yaz_xml_get_prop(n, "type");
 
-            type = xmlGetProp(n, (xmlChar *) "type");
-            value = xmlNodeListGetString(xdoc, n->children, 1);
             if (!type)
                 continue;
-            if (!value || !*value)
+            wrbuf_rewind(wrbuf_disp);
+            value0 = xmlNodeListGetString(xdoc, n->children, 1);
+            if (!value0 || !*value0)
             {
-                xmlChar *empty = xmlGetProp(n, (xmlChar *) "empty");
+                const char *empty = yaz_xml_get_prop(n, "empty");
                 if (!empty)
                     continue;
-                if (value)
-                    xmlFree(value);
-                value = empty;
+                wrbuf_puts(wrbuf_disp, (const char *) empty);
             }
+            else
+            {
+                wrbuf_puts(wrbuf_disp, (const char *) value0);
+            }
+            if (value0)
+                xmlFree(value0);
             md_field_id
                 = conf_service_metadata_field_id(service, (const char *) type);
             if (md_field_id < 0)
@@ -2094,12 +2099,12 @@ static int ingest_to_cluster(struct client *cl,
             ser_md = &service->metadata[md_field_id];
 
             // non-merged metadata
-            rec_md = record_metadata_init(se->nmem, (const char *) value,
+            rec_md = record_metadata_init(se->nmem, wrbuf_cstr(wrbuf_disp),
                                           ser_md->type, n->properties);
             if (!rec_md)
             {
                 session_log(se, YLOG_WARN, "bad metadata data '%s' "
-                            "for element '%s'", value, type);
+                            "for element '%s'", wrbuf_cstr(wrbuf_disp), type);
                 continue;
             }
 
@@ -2107,7 +2112,7 @@ static int ingest_to_cluster(struct client *cl,
             {
                 WRBUF w = wrbuf_alloc();
                 if (relevance_snippet(se->relevance,
-                                      (char*) value, ser_md->name, w))
+                                      wrbuf_cstr(wrbuf_disp), ser_md->name, w))
                     rec_md->data.text.snippet = nmem_strdup(se->nmem,
                                                             wrbuf_cstr(w));
                 wrbuf_destroy(w);
@@ -2123,20 +2128,12 @@ static int ingest_to_cluster(struct client *cl,
 
     if (check_limit_local(cl, record, record_no))
     {
-        if (type)
-            xmlFree(type);
-        if (value)
-            xmlFree(value);
         return -2;
     }
     cluster = reclist_insert(se->reclist, se->relevance, service, record,
                              merge_keys, &se->total_merged);
     if (!cluster)
     {
-        if (type)
-            xmlFree(type);
-        if (value)
-            xmlFree(value);
         return 0; // complete match with existing record
     }
 
@@ -2174,12 +2171,6 @@ static int ingest_to_cluster(struct client *cl,
     // now parsing XML record and adding data to cluster or record metadata
     for (n = root->children; n; n = n->next)
     {
-        if (type)
-            xmlFree(type);
-        if (value)
-            xmlFree(value);
-        type = value = 0;
-
         if (n->type != XML_ELEMENT_NODE)
             continue;
         if (!strcmp((const char *) n->name, "metadata"))
@@ -2191,12 +2182,13 @@ static int ingest_to_cluster(struct client *cl,
             int md_field_id = -1;
             int sk_field_id = -1;
             const char *rank = 0;
-            xmlChar *xml_rank = 0;
+            const char *xml_rank = 0;
+            const char *type = 0;
+            xmlChar *value0;
 
-            type = xmlGetProp(n, (xmlChar *) "type");
-            value = xmlNodeListGetString(xdoc, n->children, 1);
-
-            if (!type || !value || !*value)
+            wrbuf_rewind(wrbuf_disp);
+            type = yaz_xml_get_prop(n, "type");
+            if (!type)
                 continue;
 
             md_field_id
@@ -2212,8 +2204,19 @@ static int ingest_to_cluster(struct client *cl,
                 ser_sk = &service->sortkeys[sk_field_id];
             }
 
+            value0 = xmlNodeListGetString(xdoc, n->children, 1);
+            if (!value0 || !*value0)
+            {
+                if (value0)
+                    xmlFree(value0);
+                continue;
+            }
+            wrbuf_puts(wrbuf_disp, (const char *) value0);
+            xmlFree(value0);
+
+
             // merged metadata
-            rec_md = record_metadata_init(se->nmem, (const char *) value,
+            rec_md = record_metadata_init(se->nmem, wrbuf_cstr(wrbuf_disp),
                                           ser_md->type, 0);
 
             // see if the field was not in cluster already (from beginning)
@@ -2240,7 +2243,7 @@ static int ingest_to_cluster(struct client *cl,
             }
             else
             {
-                xml_rank = xmlGetProp(n, (xmlChar *) "rank");
+                xml_rank = yaz_xml_get_prop(n, "rank");
                 rank = xml_rank ? (const char *) xml_rank : ser_md->rank;
             }
 
@@ -2340,7 +2343,8 @@ static int ingest_to_cluster(struct client *cl,
             if (rank)
             {
                 relevance_countwords(se->relevance, cluster,
-                                     (char *) value, rank, ser_md->name);
+                                     wrbuf_cstr(wrbuf_disp),
+                                     rank, ser_md->name);
             }
             // construct facets ... unless the client already has reported them
             if (ser_md->termlist && !client_has_facet(cl, (char *) type))
@@ -2358,15 +2362,8 @@ static int ingest_to_cluster(struct client *cl,
                     }
                 }
                 else
-                    add_facet(se, (char *) type, (char *) value, term_factor);
+                    add_facet(se, type, wrbuf_cstr(wrbuf_disp), term_factor);
             }
-
-            // cleaning up
-            if (xml_rank)
-                xmlFree(xml_rank);
-            xmlFree(type);
-            xmlFree(value);
-            type = value = 0;
         }
         else
         {
@@ -2376,11 +2373,6 @@ static int ingest_to_cluster(struct client *cl,
             se->number_of_warnings_unknown_elements++;
         }
     }
-    if (type)
-        xmlFree(type);
-    if (value)
-        xmlFree(value);
-
     nmem_destroy(ingest_nmem);
     xfree(metadata0);
     relevance_donerecord(se->relevance, cluster);

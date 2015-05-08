@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/wrbuf.h>
 #include <yaz/log.h>
 #include <yaz/yaz-version.h>
+#include <yaz/xml_get.h>
 #include <ctype.h>
 #include <assert.h>
 #include <string.h>
@@ -166,11 +167,10 @@ int pp2_charset_fact_add(pp2_charset_fact_t pft,
 }
 
 int pp2_charset_fact_define(pp2_charset_fact_t pft,
-                            xmlNode *xml_node, const char *default_id)
+                            xmlNode *xml_node, const char *id)
 {
     int r;
     pp2_charset_t pct;
-    xmlChar *id = 0;
 
     assert(xml_node);
 
@@ -190,20 +190,17 @@ int pp2_charset_fact_define(pp2_charset_fact_t pft,
     pct = pp2_charset_create_xml(xml_node);
     if (!pct)
         return -1;
-    if (!default_id)
+    if (!id)
     {
-        id = xmlGetProp(xml_node, (xmlChar*) "id");
+        id = yaz_xml_get_prop(xml_node, "id");
         if (!id)
         {
             yaz_log(YLOG_WARN, "Missing id for icu_chain");
             pp2_charset_destroy(pct);
             return -1;
         }
-        default_id = (const char *) id;
     }
-    r = pp2_charset_fact_add(pft, pct, default_id);
-    if (id)
-        xmlFree(id);
+    r = pp2_charset_fact_add(pft, pct, id);
     return r;
 }
 
