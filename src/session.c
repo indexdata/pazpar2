@@ -149,13 +149,47 @@ static void session_leave(struct session *s, const char *caller)
         session_log(s, YLOG_DEBUG, "Session unlock by %s", caller);
 }
 
+static int run_icu(struct session *s, const char *icu_chain_id,
+                   const char *value,
+                   WRBUF norm_wr, WRBUF disp_wr)
+{
+    const char *facet_component;
+    struct conf_service *service = s->service;
+    pp2_charset_token_t prt =
+        pp2_charset_token_create(service->charsets, icu_chain_id);
+    if (!prt)
+    {
+        session_log(s, YLOG_FATAL,
+                    "Unknown ICU chain '%s'", icu_chain_id);
+        return 0;
+    }
+    pp2_charset_token_first(prt, value, 0);
+    while ((facet_component = pp2_charset_token_next(prt)))
+    {
+        const char *display_component;
+        if (*facet_component)
+        {
+            if (wrbuf_len(norm_wr))
+                wrbuf_puts(norm_wr, " ");
+            wrbuf_puts(norm_wr, facet_component);
+        }
+        display_component = pp2_get_display(prt);
+        if (display_component)
+        {
+            if (wrbuf_len(disp_wr))
+                wrbuf_puts(disp_wr, " ");
+            wrbuf_puts(disp_wr, display_component);
+        }
+    }
+    pp2_charset_token_destroy(prt);
+    return 1;
+}
+
 static void session_normalize_facet(struct session *s,
                                     const char *type, const char *value,
                                     WRBUF display_wrbuf, WRBUF facet_wrbuf)
 {
     struct conf_service *service = s->service;
-    pp2_charset_token_t prt;
-    const char *facet_component;
     int i;
     const char *icu_chain_id = 0;
 
@@ -164,35 +198,8 @@ static void session_normalize_facet(struct session *s,
             icu_chain_id = (service->metadata + i)->facetrule;
     if (!icu_chain_id)
         icu_chain_id = "facet";
-    prt = pp2_charset_token_create(service->charsets, icu_chain_id);
-    if (!prt)
-    {
-        session_log(s, YLOG_FATAL,
-                    "Unknown ICU chain '%s' for facet of type '%s'",
-                icu_chain_id, type);
-        wrbuf_destroy(facet_wrbuf);
-        wrbuf_destroy(display_wrbuf);
-        return;
-    }
-    pp2_charset_token_first(prt, value, 0);
-    while ((facet_component = pp2_charset_token_next(prt)))
-    {
-        const char *display_component;
-        if (*facet_component)
-        {
-            if (wrbuf_len(facet_wrbuf))
-                wrbuf_puts(facet_wrbuf, " ");
-            wrbuf_puts(facet_wrbuf, facet_component);
-        }
-        display_component = pp2_get_display(prt);
-        if (display_component)
-        {
-            if (wrbuf_len(display_wrbuf))
-                wrbuf_puts(display_wrbuf, " ");
-            wrbuf_puts(display_wrbuf, display_component);
-        }
-    }
-    pp2_charset_token_destroy(prt);
+
+    run_icu(s, icu_chain_id, value, facet_wrbuf, display_wrbuf);
 }
 
 void add_facet(struct session *s, const char *type, const char *value, int count)
@@ -2167,7 +2174,6 @@ static int ingest_to_cluster(struct client *cl,
     // now parsing XML record and adding data to cluster or record metadata
     for (n = root->children; n; n = n->next)
     {
-        pp2_charset_token_t prt;
         if (type)
             xmlFree(type);
         if (value)
@@ -2270,6 +2276,7 @@ static int ingest_to_cluster(struct client *cl,
                     *wheretoput = rec_md;
                     if (ser_sk)
                     {
+                        pp2_charset_token_t prt;
                         const char *sort_str = 0;
                         int skip_article =
                             ser_sk->type == Metadata_type_skiparticle;
