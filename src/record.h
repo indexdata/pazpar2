@@ -27,6 +27,7 @@ struct conf_service;
 union data_types {
     struct {
         const char *disp;
+        const char *norm;
         const char *sort;
         const char *snippet;
     } text;

@@ -82,6 +82,7 @@ struct conf_metadata
 
     char *limitmap;  // Should be expanded into service-wide default e.g. pz:limitmap:<name>=value setting
     char *limitcluster;
+    char *icurule;
 };
 
 
