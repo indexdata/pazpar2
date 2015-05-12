@@ -170,7 +170,8 @@ static struct conf_metadata* conf_service_add_metadata(
     enum conf_metadata_mergekey mt,
     const char *facetrule,
     const char *limitmap,
-    const char *limitcluster
+    const char *limitcluster,
+    const char *icurule
     )
 {
     struct conf_metadata * md = 0;
@@ -202,6 +203,7 @@ static struct conf_metadata* conf_service_add_metadata(
     md->facetrule = nmem_strdup_null(nmem, facetrule);
     md->limitmap = nmem_strdup_null(nmem, limitmap);
     md->limitcluster = nmem_strdup_null(nmem, limitcluster);
+    md->icurule = nmem_strdup_null(nmem, icurule);
     return md;
 }
 
@@ -315,6 +317,7 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
     xmlChar *xml_limitmap = 0;
     xmlChar *xml_limitcluster = 0;
     xmlChar *xml_icu_chain = 0;
+    xmlChar *xml_icurule = 0;
 
     struct _xmlAttr *attr;
 
@@ -358,6 +361,9 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
         else if (!xmlStrcmp(attr->name, BAD_CAST "limitcluster") &&
                  attr->children && attr->children->type == XML_TEXT_NODE)
             xml_limitcluster = attr->children->content;
+        else if (!xmlStrcmp(attr->name, BAD_CAST "icurule") &&
+                 attr->children && attr->children->type == XML_TEXT_NODE)
+            xml_icurule = attr->children->content;
         else
         {
             yaz_log(YLOG_FATAL, "Unknown metadata attribute '%s'", attr->name);
@@ -515,7 +521,9 @@ static int parse_metadata(struct conf_service *service, xmlNode *n,
                               mergekey_type,
                               (const char *) xml_icu_chain,
                               (const char *) xml_limitmap,
-                              (const char *) xml_limitcluster);
+                              (const char *) xml_limitcluster,
+                              (const char *) xml_icurule
+        );
     (*md_node)++;
     return 0;
 }

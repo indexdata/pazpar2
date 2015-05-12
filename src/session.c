@@ -1478,7 +1478,8 @@ void statistics(struct session *se, struct statistics *stat)
 }
 
 static struct record_metadata *record_metadata_init(
-    NMEM nmem, const char *value, enum conf_metadata_type type,
+    NMEM nmem, const char *value, const char *norm,
+    enum conf_metadata_type type,
     struct _xmlAttr *attr)
 {
     struct record_metadata *rec_md = record_metadata_create(nmem);
@@ -1508,11 +1509,20 @@ static struct record_metadata *record_metadata_init(
     {
     case Metadata_type_generic:
     case Metadata_type_skiparticle:
-        if (strstr(value, "://")) /* looks like a URL */
+        if (norm)
+        {
             rec_md->data.text.disp = nmem_strdup(nmem, value);
+            rec_md->data.text.norm = nmem_strdup(nmem, norm);
+        }
         else
-            rec_md->data.text.disp =
-                normalize7bit_generic(nmem_strdup(nmem, value), " ,/.:([");
+        {
+            if (strstr(value, "://")) /* looks like a URL */
+                rec_md->data.text.disp = nmem_strdup(nmem, value);
+            else
+                rec_md->data.text.disp =
+                    normalize7bit_generic(nmem_strdup(nmem, value), " ,/.:([");
+            rec_md->data.text.norm = rec_md->data.text.disp;
+        }
         rec_md->data.text.sort = 0;
         rec_md->data.text.snippet = 0;
         break;
@@ -2068,6 +2078,20 @@ static int ingest_to_cluster(struct client *cl,
 
             if (!type)
                 continue;
+
+            md_field_id
+                = conf_service_metadata_field_id(service, (const char *) type);
+            if (md_field_id < 0)
+            {
+                if (se->number_of_warnings_unknown_metadata == 0)
+                {
+                    session_log(se, YLOG_WARN,
+                            "Ignoring unknown metadata element: %s", type);
+                }
+                se->number_of_warnings_unknown_metadata++;
+                continue;
+            }
+
             wrbuf_rewind(wrbuf_disp);
             value0 = xmlNodeListGetString(xdoc, n->children, 1);
             if (!value0 || !*value0)
@@ -2083,23 +2107,10 @@ static int ingest_to_cluster(struct client *cl,
             }
             if (value0)
                 xmlFree(value0);
-            md_field_id
-                = conf_service_metadata_field_id(service, (const char *) type);
-            if (md_field_id < 0)
-            {
-                if (se->number_of_warnings_unknown_metadata == 0)
-                {
-                    session_log(se, YLOG_WARN,
-                            "Ignoring unknown metadata element: %s", type);
-                }
-                se->number_of_warnings_unknown_metadata++;
-                continue;
-            }
-
             ser_md = &service->metadata[md_field_id];
 
             // non-merged metadata
-            rec_md = record_metadata_init(se->nmem, wrbuf_cstr(wrbuf_disp),
+            rec_md = record_metadata_init(se->nmem, wrbuf_cstr(wrbuf_disp), 0,
                                           ser_md->type, n->properties);
             if (!rec_md)
             {
@@ -2186,7 +2197,6 @@ static int ingest_to_cluster(struct client *cl,
             const char *type = 0;
             xmlChar *value0;
 
-            wrbuf_rewind(wrbuf_disp);
             type = yaz_xml_get_prop(n, "type");
             if (!type)
                 continue;
@@ -2204,6 +2214,9 @@ static int ingest_to_cluster(struct client *cl,
                 ser_sk = &service->sortkeys[sk_field_id];
             }
 
+            wrbuf_rewind(wrbuf_disp);
+            wrbuf_rewind(wrbuf_norm);
+
             value0 = xmlNodeListGetString(xdoc, n->children, 1);
             if (!value0 || !*value0)
             {
@@ -2211,16 +2224,29 @@ static int ingest_to_cluster(struct client *cl,
                     xmlFree(value0);
                 continue;
             }
-            wrbuf_puts(wrbuf_disp, (const char *) value0);
+
+            if (ser_md->icurule)
+            {
+                run_icu(se, ser_md->icurule, (const char *) value0,
+                        wrbuf_norm, wrbuf_disp);
+                yaz_log(YLOG_LOG, "run_icu input=%s norm=%s disp=%s",
+                        (const char *) value0,
+                        wrbuf_cstr(wrbuf_norm), wrbuf_cstr(wrbuf_disp));
+                rec_md = record_metadata_init(se->nmem, wrbuf_cstr(wrbuf_disp),
+                                              wrbuf_cstr(wrbuf_norm),
+                                              ser_md->type, 0);
+            }
+            else
+            {
+                wrbuf_puts(wrbuf_disp, (const char *) value0);
+                rec_md = record_metadata_init(se->nmem, wrbuf_cstr(wrbuf_disp),
+                                              0,
+                                              ser_md->type, 0);
+            }
+
             xmlFree(value0);
 
-
-            // merged metadata
-            rec_md = record_metadata_init(se->nmem, wrbuf_cstr(wrbuf_disp),
-                                          ser_md->type, 0);
-
             // see if the field was not in cluster already (from beginning)
-
             if (!rec_md)
                 continue;
 
@@ -2262,8 +2288,8 @@ static int ingest_to_cluster(struct client *cl,
             {
                 while (*wheretoput)
                 {
-                    if (!strcmp((const char *) (*wheretoput)->data.text.disp,
-                                rec_md->data.text.disp))
+                    if (!strcmp((const char *) (*wheretoput)->data.text.norm,
+                                rec_md->data.text.norm))
                         break;
                     wheretoput = &(*wheretoput)->next;
                 }
@@ -2273,8 +2299,8 @@ static int ingest_to_cluster(struct client *cl,
             else if (ser_md->merge == Metadata_merge_longest)
             {
                 if (!*wheretoput
-                    || strlen(rec_md->data.text.disp)
-                    > strlen((*wheretoput)->data.text.disp))
+                    || strlen(rec_md->data.text.norm)
+                    > strlen((*wheretoput)->data.text.norm))
                 {
                     *wheretoput = rec_md;
                     if (ser_sk)
