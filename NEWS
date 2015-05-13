@@ -1,3 +1,13 @@
+--- 1.9.0 2015/05/23
+
+New metadata facility "icurule" for normalizing metadata text PAZ-1002
+This allows ICU normalization of text before in-cluster merging takes
+place.
+
+Heuristics to deal with Primo s/e/page PAZ-1001
+
+Fix test_limit_limitmap fails PAZ-1000
+
 --- 1.8.8 2015/04/20
 
 Limitmap ccl: deal with quotes and backslash PAZ-999
