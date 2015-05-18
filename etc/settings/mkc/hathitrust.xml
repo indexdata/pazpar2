@@ -1,4 +1,4 @@
-<settings target="mkc.indexdata.com:9008/hathitrust">
+<settings target="mkc.indexdata.com:210/hathitrust">
   <set name="pz:name" value="Hathitrust"/>
   <set name="pz:id" value="hathitrust"/>
 </settings>
