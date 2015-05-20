@@ -284,7 +284,7 @@
   <set target="z3950.library.wisc.edu:210/madison" name="pz:name" value="z3950.library.wisc.edu:210/madison"/>
   <set target="z3950.libris.kb.se:210/libr" name="pz:name" value="z3950.libris.kb.se:210/libr"/>
   <set target="z3950.lillehammer.folkebibl.no:210/data" name="pz:name" value="z3950.lillehammer.folkebibl.no:210/data"/>
-  <set target="z3950.loc.gov:7090/voyager" name="pz:name" value="z3950.loc.gov:7090/voyager"/>
+  <set target="lx2.loc.gov:210/LCDB" name="pz:name" value="lx2.loc.gov:210/LCDB"/>
   <set target="z3950.nakskov.integrabib.dk:210/default" name="pz:name" value="z3950.nakskov.integrabib.dk:210/default"/>
   <set target="z3950.nb.no:2100/Norbok" name="pz:name" value="z3950.nb.no:2100/Norbok"/>
   <set target="z3950.nb.no:2100/Norper" name="pz:name" value="z3950.nb.no:2100/Norper"/>

@@ -1,5 +1,5 @@
 <settings>
-  <set target="z3950.loc.gov:7090/voyager" name="pz:name" value="Library of Congress"/>
+  <set target="lx2.loc.gov:210/LCDB" name="pz:name" value="Library of Congress"/>
   <set target="melvyl.cdlib.org:210/CDL90" name="pz:name" value="University of California"/>
   <set target="library.ox.ac.uk:210" name="pz:name" value="Oxford University"/>
 </settings>
