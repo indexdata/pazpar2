@@ -42,7 +42,7 @@
   <set target="z3950.library.wisc.edu:210/madison" name="pz:name" value="U of Wisconsin"/>
   <set target="opencontent.indexdata.com:210/oca-all" name="pz:name" value="OCA American Libraries"/>
   <set target="opencontent.indexdata.com:210/gutenberg" name="pz:name" value="Project Gutenberg"/>
-  <set target="lx2.loc.gov:210/LCDB" name="pz:name" value="Library of Congress"/>
+  <set target="lx2.loc.gov:210/LCDB_MARC8" name="pz:name" value="Library of Congress"/>
   <set target="melvyl.cdlib.org:210/CDL90" name="pz:name" value="University of California"/>
   <set target="library.ox.ac.uk:210/ADVANCE" name="pz:name" value="Oxford University"/>
 
