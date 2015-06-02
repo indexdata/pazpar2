@@ -1540,7 +1540,7 @@ int client_parse_query(struct client *cl, const char *query,
     {
         if (cl->pquery)
             session_log(se, YLOG_LOG, "Client %s: "
-                        "Re-search due query/limit change: %s to %s", 
+                        "Re-search due query/limit change: %s to %s",
                         client_get_id(cl), cl->pquery, wrbuf_cstr(w_pqf));
         xfree(cl->pquery);
         cl->pquery = xstrdup(wrbuf_cstr(w_pqf));
@@ -1747,7 +1747,7 @@ const char *client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
     /* int idx; */
     struct suggestions *suggestions = cl->suggestions;
 
-    if (!suggestions) 
+    if (!suggestions)
         return "";
     if (suggestions->passthrough)
     {
