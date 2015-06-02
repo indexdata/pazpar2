@@ -7,4 +7,6 @@
 <records>200</records>
 <filtered>0</filtered>
 <state>Client_Idle</state>
+<query_type>pqf</query_type>
+<query_data>@attr 4=Dal @attr 1=text water </query_data>
 </target></bytarget>

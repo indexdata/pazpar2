@@ -7,4 +7,6 @@
 <records>0</records>
 <filtered>0</filtered>
 <state>Client_Idle</state>
+<query_type>pqf</query_type>
+<query_data>&quot;kubiak stsław&quot; </query_data>
 </target></bytarget>

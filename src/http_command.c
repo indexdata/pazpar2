@@ -809,6 +809,15 @@ static void bytarget_response(struct http_channel *c, struct http_session *s,
             wrbuf_puts(c->wrbuf, ht[i].suggestions_xml);
             wrbuf_puts(c->wrbuf, "</suggestions>");
         }
+        if (ht[i].query_data)
+        {
+            wrbuf_puts(c->wrbuf, "<query_type>");
+            wrbuf_xmlputs(c->wrbuf, ht[i].query_type);
+            wrbuf_puts(c->wrbuf, "</query_type>\n");
+            wrbuf_puts(c->wrbuf, "<query_data>");
+            wrbuf_xmlputs(c->wrbuf, ht[i].query_data);
+            wrbuf_puts(c->wrbuf, "</query_data>\n");
+        }
         wrbuf_puts(c->wrbuf, "</target>");
     }
     response_close(c, "bytarget");

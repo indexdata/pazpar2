@@ -116,6 +116,8 @@ void client_update_show_stat(struct client *cl, int cmd);
 
 void client_store_xdoc(struct client *cl, int record_no, xmlDoc *xdoc);
 
+const char *client_get_query(struct client *cl, const char **type, NMEM nmem);
+
 #endif
 
 /*

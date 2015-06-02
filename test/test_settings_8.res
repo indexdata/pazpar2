@@ -13,4 +13,6 @@
 <set name="pz:id" value="z3950.indexdata.com/marc"/>
 <set name="pz:name" value="1"/>
 </settings>
+<query_type>pqf</query_type>
+<query_data>@attr 1=1016 water </query_data>
 </target></bytarget>

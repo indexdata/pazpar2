@@ -141,6 +141,8 @@ struct hitsbytarget {
     int connected;
     char *settings_xml;
     char *suggestions_xml;
+    const char *query_type;
+    const char *query_data;
 };
 
 struct hitsbytarget *get_hitsbytarget(struct session *s, int *count, NMEM nmem);

@@ -1084,6 +1084,9 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
         wrbuf_rewind(w);
         res[*count].suggestions_xml =
             nmem_strdup(nmem, client_get_suggestions_xml(cl, w));
+
+        res[*count].query_data =
+            client_get_query(cl, &res[*count].query_type, nmem);
         wrbuf_destroy(w);
         (*count)++;
     }

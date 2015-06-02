@@ -17,4 +17,6 @@
 <set name="pz:name" value="Target name"/>
 <set name="category" value="1"/>
 </settings>
+<query_type>pqf</query_type>
+<query_data>@attr 1=host_wildcard water </query_data>
 </target></bytarget>

@@ -888,6 +888,22 @@ int client_parse_range(struct client *cl, const char *startrecs,
     return 0;
 }
 
+const char *client_get_query(struct client *cl, const char **type, NMEM nmem)
+{
+    if (cl->pquery)
+    {
+        *type = "pqf";
+        return nmem_strdup(nmem, cl->pquery);
+    }
+    if (cl->cqlquery)
+    {
+        *type = "cql";
+        return nmem_strdup(nmem, cl->cqlquery);
+    }
+    *type = 0;
+    return 0;
+}
+
 int client_start_search(struct client *cl)
 {
     struct session_database *sdb = client_get_database(cl);
