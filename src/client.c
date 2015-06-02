@@ -1742,7 +1742,7 @@ int client_get_diagnostic(struct client *cl, const char **message,
     return cl->diagnostic;
 }
 
-const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
+const char *client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
 {
     /* int idx; */
     struct suggestions *suggestions = cl->suggestions;
@@ -1770,7 +1770,6 @@ const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
     */
     return wrbuf_cstr(wrbuf);
 }
-
 
 void client_set_database(struct client *cl, struct session_database *db)
 {

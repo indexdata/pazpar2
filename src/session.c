@@ -1049,8 +1049,6 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     return session;
 }
 
-const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf);
-
 static struct hitsbytarget *hitsbytarget_nb(struct session *se,
                                             int *count, NMEM nmem)
 {

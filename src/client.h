@@ -110,6 +110,8 @@ const char *client_get_facet_limit_local(struct client *cl,
                                          int *l,
                                          NMEM nmem, int *num, char ***values);
 
+const char *client_get_suggestions_xml(struct client *cl, WRBUF wrbuf);
+
 void client_update_show_stat(struct client *cl, int cmd);
 
 void client_store_xdoc(struct client *cl, int record_no, xmlDoc *xdoc);
