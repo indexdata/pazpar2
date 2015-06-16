@@ -1,3 +1,12 @@
+--- 1.10.0 2015/06/16
+
+Sort by retrieval PAZ-1006
+Allows sorting by order that records were retrieved from databases.
+
+Response from bytarget command includes native query PAZ-1005
+
+Use lx2.loc.gov:210/LCDB_MARC8 instd of z3950.loc.gov:7090/voyager PAZ-1003
+
 --- 1.9.0 2015/05/23
 
 New metadata facility "icurule" for normalizing metadata text PAZ-1002
