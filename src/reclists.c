@@ -123,6 +123,10 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
             {
                 type = Metadata_type_position;
             }
+            else if (!strcmp(parm, "retrieval"))
+            {
+                type = Metadata_type_retrieval;
+            }
             else
             {
                 for (i = 0; i < service->num_sortkeys; i++)
@@ -233,6 +237,9 @@ static int reclist_cmp(const void *p1, const void *p2)
                 res = -1;
             else
                 res = 0;
+            break;
+        case Metadata_type_retrieval:
+            res = r1->retrieval_position - r2->retrieval_position;
             break;
         }
         if (res && !s->increasing)
@@ -441,6 +448,7 @@ static struct record_cluster *new_cluster(
     cluster = nmem_malloc(l->nmem, sizeof(*cluster));
 
     record->next = 0;
+    cluster->retrieval_position = l->num_records;
     cluster->records = record;
     cluster->merge_keys = 0;
     append_merge_keys(&cluster->merge_keys, merge_keys, l->nmem);

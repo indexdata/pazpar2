@@ -38,6 +38,7 @@ enum conf_metadata_type {
     Metadata_type_skiparticle,
     Metadata_type_relevance,
     Metadata_type_position,
+    Metadata_type_retrieval,
 };
 
 enum conf_metadata_merge {

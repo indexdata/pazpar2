@@ -1547,6 +1547,7 @@ static struct record_metadata *record_metadata_init(
         break;
     case Metadata_type_relevance:
     case Metadata_type_position:
+    case Metadata_type_retrieval:
         return 0;
     }
     return rec_md;

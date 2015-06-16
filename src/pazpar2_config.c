@@ -1083,6 +1083,9 @@ static void info_service_metadata(struct conf_service *service, WRBUF w)
                 case Metadata_type_position:
                     wrbuf_puts(w, "position");
                     break;
+                case Metadata_type_retrieval:
+                    wrbuf_puts(w, "retrieval");
+                    break;
                 default:
                     wrbuf_puts(w, "yes");
                     break;
