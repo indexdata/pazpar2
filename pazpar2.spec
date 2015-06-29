@@ -1,5 +1,4 @@
 %define idmetaversion %(. ./IDMETA; echo $VERSION)
-Summary: Metasearcher
 Name: pazpar2
 Version: %{idmetaversion}
 Release: 1.indexdata
