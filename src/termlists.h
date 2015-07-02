@@ -26,6 +26,7 @@ struct termlist_score
 {
     char *norm_term;
     char *display_term;
+    char *id;
     int frequency;
 };
 
@@ -33,7 +34,8 @@ struct termlist;
 
 struct termlist *termlist_create(NMEM nmem);
 void termlist_insert(struct termlist *tl, const char *display_term,
-                     const char *norm_term, int freq);
+                     const char *norm_term,
+                     const char *id, size_t id_len, int freq);
 struct termlist_score **termlist_highscore(struct termlist *tl, int *len,
                                            NMEM nmem);
 

@@ -62,7 +62,8 @@ struct termlist *termlist_create(NMEM nmem)
 }
 
 void termlist_insert(struct termlist *tl, const char *display_term,
-                     const char *norm_term, int freq)
+                     const char *norm_term, const char *id, size_t id_len,
+                     int freq)
 {
     unsigned int bucket;
     struct termlist_bucket **p;
@@ -87,6 +88,7 @@ void termlist_insert(struct termlist *tl, const char *display_term,
         new->term.norm_term = nmem_strdup(tl->nmem, buf);
         new->term.display_term = *display_term ?
             nmem_strdup(tl->nmem, display_term) : new->term.norm_term;
+        new->term.id = id ? nmem_strdupn(tl->nmem, id, id_len) : 0;
         new->term.frequency = freq;
         new->next = 0;
         *p = new;

@@ -521,7 +521,7 @@ static void client_report_facets(struct client *cl, ZOOM_resultset rs)
                                 ZOOM_facet_field_get_term(facets[facet_idx],
                                                           term_idx, &freq);
                             if (term)
-                                add_facet(se, p, term, freq);
+                                add_facet(se, p, term, freq, cl);
                         }
                         break;
                     }
@@ -1349,7 +1349,7 @@ static void ccl_quote_map_term(CCL_bibset ccl_map, WRBUF w,
     }
 }
 
-static int apply_limit(struct session_database *sdb,
+static int apply_limit(struct client *cl,
                        facet_limits_t facet_limits,
                        WRBUF w_pqf, CCL_bibset ccl_map,
                        struct conf_service *service)
@@ -1358,6 +1358,7 @@ static int apply_limit(struct session_database *sdb,
     int i = 0;
     const char *name;
     const char *value;
+    struct session_database *sdb = client_get_database(cl);
 
     NMEM nmem_tmp = nmem_create();
     for (i = 0; (name = facet_limits_get(facet_limits, i, &value)); i++)
@@ -1377,6 +1378,14 @@ static int apply_limit(struct session_database *sdb,
                 nmem_strsplit_escape2(nmem_tmp, "|", value, &values,
                                       &num, 1, '\\', 1);
 
+                for (i = 0; i < num; i++)
+                {
+                    const char *id = session_lookup_id_facet(cl->session,
+                                                             cl, name,
+                                                             values[i]);
+                    if (id)
+                        values[i] = nmem_strdup(nmem_tmp, id);
+                }
                 nmem_strsplit_escape2(nmem_tmp, ",", s->value, &cvalues,
                                       &cnum, 1, '\\', 1);
 
@@ -1503,7 +1512,7 @@ int client_parse_query(struct client *cl, const char *query,
         wrbuf_puts(w_pqf, " ");
     }
 
-    if (apply_limit(sdb, facet_limits, w_pqf, ccl_map, service))
+    if (apply_limit(cl, facet_limits, w_pqf, ccl_map, service))
     {
         ccl_qual_rm(&ccl_map);
         return -2;
