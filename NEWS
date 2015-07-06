@@ -1,3 +1,8 @@
+--- 1.11.0 2015/07/06
+
+Facet ID term map PAZ-1008
+New setting pz:facetmap:split:name (refer to documentation)
+
 --- 1.10.0 2015/06/16
 
 Sort by retrieval PAZ-1006
