@@ -1271,12 +1271,22 @@
        supports (native) facets. The value is the name of the
        field on the target.
       </para>
-      <note>
-       <para>
-	At this point only Solr targets have been tested with this
-	facility.
-       </para>
-      </note>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:facetmap:split:<replaceable>name</replaceable></term>
+     <listitem>
+      <para>
+       Like pz:facetmap, but makes Pazpar2 inspect the term value consisting
+       of two items separated by colon. First item is the raw ID to be
+       sent to database if limitmap on the field
+       <replaceable>name</replaceable> is used. The second item is
+       the display term.
+      </para>
+      <para>
+       This facility was added in Pazpar2 version 1.11.0.
+      </para>
      </listitem>
     </varlistentry>
 
