@@ -1,3 +1,7 @@
+--- 1.11.1 2015/07/21
+
+Fix PAZ-1009: Do not create local facets when using facetmap:split
+
 --- 1.11.0 2015/07/06
 
 Facet ID term map PAZ-1008
