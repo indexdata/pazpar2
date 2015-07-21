@@ -1,3 +1,8 @@
+--- 1.11.2 2015/07/21
+
+Fix PAZ-1015, which prevented the docs from being built, and therefore
+the whole package from being released.
+
 --- 1.11.1 2015/07/21
 
 Fix PAZ-1009: Do not create local facets when using facetmap:split
