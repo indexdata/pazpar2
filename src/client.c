@@ -778,6 +778,8 @@ int client_has_facet(struct client *cl, const char *name)
     for (s = sdb->settings[PZ_FACETMAP]; s; s = s->next)
     {
         const char *p = strchr(s->name + 3, ':');
+        if ( !strncmp(p, ":split:", 7) )
+            p += 6; // PAZ-1009
         if (p && !strcmp(name, p + 1))
             return 1;
     }
