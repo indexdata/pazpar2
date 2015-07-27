@@ -840,13 +840,15 @@ void http_send_response(struct http_channel *ch)
     struct http_buf *hb;
 
     yaz_timing_stop(ch->yt);
-    yaz_log(YLOG_LOG, "Response: %6.5f %d %s%s%s ",
-            yaz_timing_get_real(ch->yt),
-            iochan_getfd(ch->iochan),
-            ch->request->path,
-            *ch->request->search ? "?" : "",
-            ch->request->search);
-
+    if (ch->request)
+    {
+        yaz_log(YLOG_LOG, "Response: %6.5f %d %s%s%s ",
+                yaz_timing_get_real(ch->yt),
+                iochan_getfd(ch->iochan),
+                ch->request->path,
+                *ch->request->search ? "?" : "",
+                ch->request->search);
+    }
     assert(rs);
     hb = http_serialize_response(ch, rs);
     if (!hb)
