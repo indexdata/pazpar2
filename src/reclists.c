@@ -127,7 +127,7 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
             {
                 type = Metadata_type_retrieval;
             }
-            else
+            else if (service)
             {
                 for (i = 0; i < service->num_sortkeys; i++)
                 {
@@ -145,6 +145,12 @@ struct reclist_sortparms *reclist_parse_sortparms(NMEM nmem, const char *parms,
                     return 0;
                 }
                 offset = i;
+            }
+            else
+            {
+                yaz_log(YLOG_FATAL, "Sortkey not defined in service: %s",
+                        parm);
+                return 0;
             }
         }
         new = *rp = nmem_malloc(nmem, sizeof(struct reclist_sortparms));

@@ -1629,8 +1629,11 @@ int client_parse_query(struct client *cl, const char *query,
     return ret_value;
 }
 
-int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
+int client_parse_sort(struct client *cl, struct reclist_sortparms *sp,
+                      int *has_sortmap)
 {
+    if (has_sortmap)
+        *has_sortmap = 0;
     if (sp)
     {
         const char *sort_strategy_and_spec =
@@ -1666,6 +1669,8 @@ int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
                     xfree(cl->sort_criteria);
                     cl->sort_criteria = xstrdup(p);
                 }
+                if (has_sortmap)
+                    (*has_sortmap)++;
             }
             else {
                 yaz_log(YLOG_LOG, "Client %s: "

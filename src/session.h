@@ -112,6 +112,7 @@ struct session {
     int settings_modified;
     facet_limits_t facet_limits;
     int clients_starting;
+    int force_position;
     struct reclist_sortparms *sorted_results;
     struct facet_id *facet_id_list;
 };

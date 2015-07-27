@@ -6,6 +6,177 @@
 <start>0</start>
 <num>20</num>
 <hit>
+ <md-title>The arts of rowing and training</md-title>
+ <md-title-remainder>with an appendix containing the laws of boat-racing, &amp;c</md-title-remainder>
+ <md-date>1866</md-date>
+ <md-author>&quot;Argonaut&quot;</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1554355631">
+  <md-title>The arts of rowing and training</md-title>
+  <md-title-remainder>with an appendix containing the laws of boat-racing, &amp;c</md-title-remainder>
+  <md-date>1866</md-date>
+  <md-author>&quot;Argonaut&quot;</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title the arts of rowing and training author argonaut medium book</recid>
+</hit>
+<hit>
+ <md-title>Gradual reduction milling</md-title>
+ <md-title-remainder>A treatise on the art of modern milling</md-title-remainder>
+ <md-author>&quot;Cereal,&quot;</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3168968100">
+  <md-title>Gradual reduction milling</md-title>
+  <md-title-remainder>A treatise on the art of modern milling</md-title-remainder>
+  <md-author>&quot;Cereal,&quot;</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title gradual reduction milling author cereal medium book</recid>
+</hit>
+<hit>
+ <md-title>The sovereigns and courts of Europe</md-title>
+ <md-date>1891</md-date>
+ <md-author>&quot;Politikos,&quot; pseud</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="488613273">
+  <md-title>The sovereigns and courts of Europe</md-title>
+  <md-date>1891</md-date>
+  <md-author>&quot;Politikos,&quot; pseud</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title the sovereigns and courts of europe author politikos pseud medium book</recid>
+</hit>
+<hit>
+ <md-title>Guide to Florida</md-title>
+ <md-date>1875-1876</md-date>
+ <md-author>&quot;Rambler,&quot; pseud</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2103225742">
+  <md-title>Guide to Florida</md-title>
+  <md-date>1875</md-date>
+  <md-author>&quot;Rambler,&quot; pseud</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3717838211">
+  <md-title>Guide to Florida</md-title>
+  <md-date>1876</md-date>
+  <md-author>&quot;Rambler,&quot; pseud</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>2</count>
+ <recid>content: title guide to florida author rambler pseud medium book</recid>
+</hit>
+<hit>
+ <md-title>2000+ ceist</md-title>
+ <md-title-remainder>idir throm agus éadrom</md-title-remainder>
+ <md-date>1999</md-date>
+ <md-author>&apos;Ac Gearailt, Breandán</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1037483384">
+  <md-title>2000+ ceist</md-title>
+  <md-title-remainder>idir throm agus éadrom</md-title-remainder>
+  <md-date>1999</md-date>
+  <md-author>&apos;Ac Gearailt, Breandán</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title ceist author ac gearailt breanda n medium book</recid>
+</hit>
+<hit>
+ <md-title>The story of Jewād;</md-title>
+ <md-title-remainder>a romance;</md-title-remainder>
+ <md-date>1884</md-date>
+ <md-author>&apos;Alī &apos;Azīz</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2652095853">
+  <md-title>The story of Jewād;</md-title>
+  <md-title-remainder>a romance;</md-title-remainder>
+  <md-date>1884</md-date>
+  <md-author>&apos;Alī &apos;Azīz</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title the story of jewa d author ali azi z medium book</recid>
+</hit>
+<hit>
+ <md-title>A digest of the law of actions and trials at nisi prius</md-title>
+ <md-date>1808</md-date>
+ <md-author>&apos;Espinasse, Isaac</md-author>
+ <md-description>Paged continuously</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="4266708322">
+  <md-title>A digest of the law of actions and trials at nisi prius</md-title>
+  <md-date>1808</md-date>
+  <md-author>&apos;Espinasse, Isaac</md-author>
+  <md-description>Paged continuously</md-description>
+  <md-description>Includes indexes</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title a digest of the law of actions and trials at nisi prius author espinasse isaac medium book</recid>
+</hit>
+<hit>
+ <md-title>Tales</md-title>
+ <md-date>1768</md-date>
+ <md-author>&apos;Ināyat Āllāh</md-author>
+ <md-description>Caption title: The Baar danesh; or, Garden of knowledge</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1586353495">
+  <md-title>Tales</md-title>
+  <md-date>1768</md-date>
+  <md-author>&apos;Ināyat Āllāh</md-author>
+  <md-description>Caption title: The Baar danesh; or, Garden of knowledge</md-description>
+  <md-description>Tr. by Alexander Dow</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title tales author ina yat a lla h medium book</recid>
+</hit>
+<hit>
+ <md-title>Bahar-danush;</md-title>
+ <md-title-remainder>or, Garden of knowledge. An oriental romance</md-title-remainder>
+ <md-date>1799</md-date>
+ <md-author>&apos;Ināyat Āllāh</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3200965964">
+  <md-title>Bahar-danush;</md-title>
+  <md-title-remainder>or, Garden of knowledge. An oriental romance</md-title-remainder>
+  <md-date>1799</md-date>
+  <md-author>&apos;Ināyat Āllāh</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title bahar danush author ina yat a lla h medium book</recid>
+</hit>
+<hit>
+ <md-title>Adat istiadat perkawinan Dayak Kanayatn</md-title>
+ <md-date>1999</md-date>
+ <md-author>A. B. Dacing T</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="520611137">
+  <md-title>Adat istiadat perkawinan Dayak Kanayatn</md-title>
+  <md-date>1999</md-date>
+  <md-author>A. B. Dacing T</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title adat istiadat perkawinan dayak kanayatn author a b dacing t medium book</recid>
+</hit>
+<hit>
  <md-title>Mutatus polemo</md-title>
  <md-title-remainder>the horrible stratagems of the Jesuits, lately practised in England during the civil wars and now discovered by a reclaimed Romanist, imployed before as a workman of the mission from His Holiness : wherein the royalist may see himself out-witted and forlorn, while the Presbyterian is closed with, and all to draw on the holy cause : a relation in particular, and with such exquisite characters of truth stampt upon it, that each of our three grand parties may here feel how each other pulses beat : also, a discovery of a plot laid for a speedy invasion</md-title-remainder>
  <md-date>1650</md-date>
@@ -23,21 +194,6 @@
  </location>
  <count>1</count>
  <recid>content: title mutatus polemo author a b medium book</recid>
-</hit>
-<hit>
- <md-title>Adat istiadat perkawinan Dayak Kanayatn</md-title>
- <md-date>1999</md-date>
- <md-author>A. B. Dacing T</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="520611137">
-  <md-title>Adat istiadat perkawinan Dayak Kanayatn</md-title>
-  <md-date>1999</md-date>
-  <md-author>A. B. Dacing T</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title adat istiadat perkawinan dayak kanayatn author a b dacing t medium book</recid>
 </hit>
 <hit>
  <md-title>Homseni</md-title>
@@ -156,195 +312,37 @@
  <recid>content: title overland inland and upland author a u medium book</recid>
 </hit>
 <hit>
- <md-title>Biographisch woordenboek der Nederlanden</md-title>
- <md-title-remainder>bevattende levensbeschrijvingen van zoodanige personen, die zich op eenigerlei wijze in ons vaderland hebben vermaard gemaakt</md-title-remainder>
- <md-date>1852</md-date>
- <md-author>Aa, Abraham Jacob van der</md-author>
- <md-description>Title varies: v. 3-6, 9, A. J. van der Aa, Biographisch woordenboek der Nederlanden, voortgezet door K. J. R. van Harderwijk; v. 7-8, 10-21, voortgezet door K. J. R. van Harderwijk en Dr. G. D. J. Schotel</md-description>
+ <md-title>Homeward songs by the way</md-title>
+ <md-date>1895</md-date>
+ <md-author>AE</md-author>
+ <md-description>&quot;This book ... was issued by C. Whaley, Dublin, Ireland. First edition, June, 1894; second edition, January, 1895&quot;--P. 2</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1101479112">
-  <md-title>Biographisch woordenboek der Nederlanden</md-title>
-  <md-title-remainder>bevattende levensbeschrijvingen van zoodanige personen, die zich op eenigerlei wijze in ons vaderland hebben vermaard gemaakt</md-title-remainder>
-  <md-date>1852</md-date>
-  <md-author>Aa, Abraham Jacob van der</md-author>
-  <md-description>Title varies: v. 3-6, 9, A. J. van der Aa, Biographisch woordenboek der Nederlanden, voortgezet door K. J. R. van Harderwijk; v. 7-8, 10-21, voortgezet door K. J. R. van Harderwijk en Dr. G. D. J. Schotel</md-description>
-  <md-description>Vol. 2 is in 4 pts.; v. 8, 12 and 17 in 2 pts. each, with continuous paging</md-description>
+    name="LOC Solr Test" checksum="2167221470">
+  <md-title>Homeward songs by the way</md-title>
+  <md-date>1895</md-date>
+  <md-author>AE</md-author>
+  <md-description>&quot;Designs and headbands by Bruce Rogers&quot;--Colophon</md-description>
+  <md-description>&quot;Limited to 925 copies&quot;--Verso of t.p</md-description>
+  <md-description>&quot;This book ... was issued by C. Whaley, Dublin, Ireland. First edition, June, 1894; second edition, January, 1895&quot;--P. 2</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title biographisch woordenboek der nederlanden author aa abraham jacob van der medium book</recid>
+ <recid>content: title homeward songs by the way author ae medium book</recid>
 </hit>
 <hit>
- <md-title>De geschiedenis der Vereenigde Nederlanden, enderzelver buitenlandsche bezittingen</md-title>
- <md-title-remainder>geduurende de staatsen erfstadhouderlijke regeerwijze, ten tijde van Willem den Vierden; de vrouwe gouvernante Anna; en Willem den Vijfden</md-title-remainder>
- <md-date>1804-1810</md-date>
- <md-author>Aa, Cornelis van der</md-author>
- <md-description>Vol. 1 has half-title: De lotgewallen van de republiek der Veréénigde Nederlanden. Sints de invoering der staats- en erfstadhouderlijke regeerwijze in het jaar MDCCXLVII. Vol. 2-6: Geschiedenis der Veréénigde Nederlanden, 1747-1794</md-description>
+ <md-title>The divine vision, and other poems</md-title>
+ <md-date>1904</md-date>
+ <md-author>AE</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2716091581">
-  <md-title>De geschiedenis der Vereenigde Nederlanden, enderzelver buitenlandsche bezittingen</md-title>
-  <md-title-remainder>geduurende de staatsen erfstadhouderlijke regeerwijze, ten tijde van Willem den Vierden; de vrouwe gouvernante Anna; en Willem den Vijfden</md-title-remainder>
-  <md-date>1804-1810</md-date>
-  <md-author>Aa, Cornelis van der</md-author>
-  <md-description>Vol. 1 has half-title: De lotgewallen van de republiek der Veréénigde Nederlanden. Sints de invoering der staats- en erfstadhouderlijke regeerwijze in het jaar MDCCXLVII. Vol. 2-6: Geschiedenis der Veréénigde Nederlanden, 1747-1794</md-description>
+    name="LOC Solr Test" checksum="3781833939">
+  <md-title>The divine vision, and other poems</md-title>
+  <md-date>1904</md-date>
+  <md-author>AE</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title de geschiedenis der vereenigde nederlanden enderzelver buitenlandsche bezittingen author aa cornelis van der medium book</recid>
-</hit>
-<hit>
- <md-title>Sketches from the ranch</md-title>
- <md-title-remainder>a Montana memoir</md-title-remainder>
- <md-date>1998</md-date>
- <md-author>Aadland, Dan</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="35736754">
-  <md-title>Sketches from the ranch</md-title>
-  <md-title-remainder>a Montana memoir</md-title-remainder>
-  <md-date>1998</md-date>
-  <md-author>Aadland, Dan</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title sketches from the ranch author aadland dan medium book</recid>
-</hit>
-<hit>
- <md-title>Economic value of pro-environmental farming</md-title>
- <md-title-remainder>a critical and decision-making oriented application of the contingent valuation method</md-title-remainder>
- <md-date>1999</md-date>
- <md-author>Aakkula, Jyrki J</md-author>
- <md-description>Originally presented as the author&apos;s dissertation (University of Helsinki, 1999)</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1650349223">
-  <md-title>Economic value of pro-environmental farming</md-title>
-  <md-title-remainder>a critical and decision-making oriented application of the contingent valuation method</md-title-remainder>
-  <md-date>1999</md-date>
-  <md-author>Aakkula, Jyrki J</md-author>
-  <md-description>Originally presented as the author&apos;s dissertation (University of Helsinki, 1999)</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title economic value of pro environmental farming author aakkula jyrki j medium book</recid>
-</hit>
-<hit>
- <md-title>Digital signature blindness</md-title>
- <md-title-remainder>analysis of legislative approaches toward electronic authentication</md-title-remainder>
- <md-date>2000</md-date>
- <md-author>Aalberts, Babette</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3264961692">
-  <md-title>Digital signature blindness</md-title>
-  <md-title-remainder>analysis of legislative approaches toward electronic authentication</md-title-remainder>
-  <md-date>2000</md-date>
-  <md-author>Aalberts, Babette</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title digital signature blindness author aalberts babette medium book</recid>
-</hit>
-<hit>
- <md-title>Roof</md-title>
- <md-title-remainder>de ontvreemding van joods bezit tijdens de Tweede Wereldoorlog</md-title-remainder>
- <md-date>1999</md-date>
- <md-author>Aalders, Gerard</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="584606865">
-  <md-title>Roof</md-title>
-  <md-title-remainder>de ontvreemding van joods bezit tijdens de Tweede Wereldoorlog</md-title-remainder>
-  <md-date>1999</md-date>
-  <md-author>Aalders, Gerard</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title roof author aalders gerard medium book</recid>
-</hit>
-<hit>
- <md-title>Als ik wil kan ik duiken--</md-title>
- <md-title-remainder>brieven van Claartje van Aals, verpleegster in de joods psychiatrische inrichting Het Apeldoornsche Bosch, 1940-1943</md-title-remainder>
- <md-date>1995</md-date>
- <md-author>Aals, Claartje van</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2199219334">
-  <md-title>Als ik wil kan ik duiken--</md-title>
-  <md-title-remainder>brieven van Claartje van Aals, verpleegster in de joods psychiatrische inrichting Het Apeldoornsche Bosch, 1940-1943</md-title-remainder>
-  <md-date>1995</md-date>
-  <md-author>Aals, Claartje van</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title als ik wil kan ik duiken author aals claartje van medium book</recid>
-</hit>
-<hit>
- <md-title>Sneeuwbeeld</md-title>
- <md-date>2000</md-date>
- <md-author>Aalten, Thomas van</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3813831803">
-  <md-title>Sneeuwbeeld</md-title>
-  <md-date>2000</md-date>
-  <md-author>Aalten, Thomas van</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title sneeuwbeeld author aalten thomas van medium book</recid>
-</hit>
-<hit>
- <md-title>Murrosikä ja sukupuoli</md-title>
- <md-title-remainder>julkiset ja yksityiset ikämäärittelyt</md-title-remainder>
- <md-date>1999</md-date>
- <md-author>Aapola, Sinikka</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1133476976">
-  <md-title>Murrosikä ja sukupuoli</md-title>
-  <md-title-remainder>julkiset ja yksityiset ikämäärittelyt</md-title-remainder>
-  <md-date>1999</md-date>
-  <md-author>Aapola, Sinikka</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title murrosika ja sukupuoli author aapola sinikka medium book</recid>
-</hit>
-<hit>
- <md-title>Kunsten å bu i hus</md-title>
- <md-title-remainder>essay</md-title-remainder>
- <md-date>1999</md-date>
- <md-author>Aareskjold, Solveig</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2748089445">
-  <md-title>Kunsten å bu i hus</md-title>
-  <md-title-remainder>essay</md-title-remainder>
-  <md-date>1999</md-date>
-  <md-author>Aareskjold, Solveig</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title kunsten a bu i hus author aareskjold solveig medium book</recid>
-</hit>
-<hit>
- <md-title>Raimo Pullat</md-title>
- <md-title-remainder>valikbibliograafia, 1964-2000</md-title-remainder>
- <md-date>2000</md-date>
- <md-author>Aarma, Liivi</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="67734618">
-  <md-title>Raimo Pullat</md-title>
-  <md-title-remainder>valikbibliograafia, 1964-2000</md-title-remainder>
-  <md-date>2000</md-date>
-  <md-author>Aarma, Liivi</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title raimo pullat author aarma liivi medium book</recid>
+ <recid>content: title the divine vision and other poems author ae medium book</recid>
 </hit>
 </show>

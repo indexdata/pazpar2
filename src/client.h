@@ -77,7 +77,8 @@ int client_start_search(struct client *cl);
 int client_fetch_more(struct client *cl);
 int client_parse_init(struct client *cl, int same_search);
 int client_parse_range(struct client *cl, const char *startrecs, const char *maxrecs);
-int client_parse_sort(struct client *cl, struct reclist_sortparms *sp);
+int client_parse_sort(struct client *cl, struct reclist_sortparms *sp,
+                      int *has_sortmap);
 void client_set_session(struct client *cl, struct session *se);
 int client_is_active(struct client *cl);
 int client_is_active_preferred(struct client *cl);

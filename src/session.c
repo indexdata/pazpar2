@@ -714,7 +714,7 @@ void session_sort(struct session *se, struct reclist_sortparms *sp,
                 break;
         if (sr)
         {
-            session_log(se, YLOG_DEBUG, "session_sort: field=%s increasing=%d type=%d already fetched",
+            session_log(se, YLOG_LOG, "session_sort: field=%s increasing=%d type=%d already fetched",
                         field, increasing, type);
             session_leave(se, "session_sort");
             return;
@@ -732,7 +732,7 @@ void session_sort(struct session *se, struct reclist_sortparms *sp,
         struct client *cl = l->client;
         // Assume no re-search is required.
         client_parse_init(cl, 1);
-        clients_research += client_parse_sort(cl, sp);
+        clients_research += client_parse_sort(cl, sp, 0);
     }
     if (!clients_research || se->clients_starting)
     {
@@ -774,6 +774,7 @@ void session_sort(struct session *se, struct reclist_sortparms *sp,
         }
         session_enter(se, "session_sort");
         se->clients_starting = 0;
+        se->force_position = 0;
         session_leave(se, "session_sort");
     }
 }
@@ -821,6 +822,7 @@ enum pazpar2_error_code session_search(struct session *se,
     int no_working = 0;
     int no_failed_query = 0;
     int no_failed_limit = 0;
+    int no_sortmap = 0;
     struct client_list *l;
 
     session_log(se, YLOG_DEBUG, "Search");
@@ -834,6 +836,7 @@ enum pazpar2_error_code session_search(struct session *se,
         return PAZPAR2_NO_ERROR;
     }
     se->clients_starting = 1;
+    se->force_position = 0;
     session_leave(se, "session_search0");
 
     if (se->settings_modified) {
@@ -902,12 +905,19 @@ enum pazpar2_error_code session_search(struct session *se,
         else
         {
             client_parse_range(cl, startrecs, maxrecs);
-            client_parse_sort(cl, sp);
+            client_parse_sort(cl, sp, &no_sortmap);
             client_start_search(cl);
             no_working++;
         }
     }
+    yaz_log(YLOG_LOG, "session_search: no_working=%d no_sortmap=%d",
+            no_working, no_sortmap);
     session_enter(se, "session_search2");
+    if (no_working == 1 && no_sortmap == 1)
+    {
+        se->force_position = 1;
+        yaz_log(YLOG_LOG, "force_position=1");
+    }
     se->clients_starting = 0;
     session_leave(se, "session_search2");
     if (no_working == 0)
@@ -1091,6 +1101,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->mergekey = 0;
     session->rank = 0;
     session->clients_starting = 0;
+    session->force_position = 0;
 
     for (i = 0; i <= SESSION_WATCH_MAX; i++)
     {
@@ -1409,6 +1420,7 @@ struct record_cluster **show_range_start(struct session *se,
     struct reclist_sortparms *spp;
     struct client_list *l;
     int i;
+    NMEM nmem_tmp = 0;
 #if USE_TIMING
     yaz_timing_t t = yaz_timing_create();
 #endif
@@ -1430,7 +1442,15 @@ struct record_cluster **show_range_start(struct session *se,
             *approx_hits += client_get_approximation(l->client);
         }
     }
+    if (se->force_position)
+    {
+        nmem_tmp = nmem_create();
+        sp = reclist_parse_sortparms(nmem_tmp, "position:1", 0);
+        assert(sp);
+    }
     reclist_sort(se->reclist, sp);
+    if (nmem_tmp)
+        nmem_destroy(nmem_tmp);
 
     reclist_enter(se->reclist);
     *total = reclist_get_num_records(se->reclist);

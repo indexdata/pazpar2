@@ -6,6 +6,90 @@
 <start>0</start>
 <num>20</num>
 <hit>
+ <md-title>Forensic declamations, for the use of schools and colleges;</md-title>
+ <md-date>1901</md-date>
+ <md-author>Espenshade, Abraham Howry</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1554355631">
+  <md-title>Forensic declamations, for the use of schools and colleges;</md-title>
+  <md-date>1901</md-date>
+  <md-author>Espenshade, Abraham Howry</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title forensic declamations for the use of schools and colleges author espenshade abraham howry medium book</recid>
+</hit>
+<hit>
+ <md-title>Modern Birmingham and its institutions</md-title>
+ <md-title-remainder>a chronicle of local events, from 1841 to 1871</md-title-remainder>
+ <md-date>1873-1877</md-date>
+ <md-author>Langford, John Alfred</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3168968100">
+  <md-title>Modern Birmingham and its institutions</md-title>
+  <md-title-remainder>a chronicle of local events, from 1841 to 1871</md-title-remainder>
+  <md-date>1873-1877</md-date>
+  <md-author>Langford, John Alfred</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title modern birmingham and its institutions author langford john alfred medium book</recid>
+</hit>
+<hit>
+ <md-title>Geography of New Zealand for senior pupils in the public schools</md-title>
+ <md-title-remainder>scholarship candidates, and pupil teachers</md-title-remainder>
+ <md-date>1903</md-date>
+ <md-author>Macdonald, J. R</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="488613273">
+  <md-title>Geography of New Zealand for senior pupils in the public schools</md-title>
+  <md-title-remainder>scholarship candidates, and pupil teachers</md-title-remainder>
+  <md-date>1903</md-date>
+  <md-author>Macdonald, J. R</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title geography of new zealand for senior pupils in the public schools author macdonald j r medium book</recid>
+</hit>
+<hit>
+ <md-title>The Master&apos;s touch</md-title>
+ <md-date>1907</md-date>
+ <md-author>Stewart, Wentworth Fall</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2103225742">
+  <md-title>The Master&apos;s touch</md-title>
+  <md-date>1907</md-date>
+  <md-author>Stewart, Wentworth Fall</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title the master s touch author stewart wentworth fall medium book</recid>
+</hit>
+<hit>
+ <md-title>Novum Belgium</md-title>
+ <md-title-remainder>description de / Nieuw Netherland / et / Notice sur René Goupil</md-title-remainder>
+ <md-date>1862</md-date>
+ <md-author>Jogues, Isaac</md-author>
+ <md-description>The Novum Belgium is dated at end  of Des 3 Rivieres en la Nouvelle France, 3 augusti, 1646; the Notice sur rené Goupil was probably prepared the same year</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3717838211">
+  <md-title>Novum Belgium</md-title>
+  <md-title-remainder>description de / Nieuw Netherland / et / Notice sur René Goupil</md-title-remainder>
+  <md-date>1862</md-date>
+  <md-author>Jogues, Isaac</md-author>
+  <md-description>&quot;Tiré à 100 exemplaires.&quot; This copy is not numbered</md-description>
+  <md-description>The Novum Belgium is dated at end  of Des 3 Rivieres en la Nouvelle France, 3 augusti, 1646; the Notice sur rené Goupil was probably prepared the same year</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title novum belgium author jogues isaac medium book</recid>
+</hit>
+<hit>
  <md-title>De successione ab intestato</md-title>
  <md-date>1470-1970</md-date>
  <md-author>Cino</md-author>
@@ -260,93 +344,5 @@
  </location>
  <count>1</count>
  <recid>content: title a glimpse of hayti and her negro chief medium book</recid>
-</hit>
-<hit>
- <md-title>The history of the ancient Scots</md-title>
- <md-title-remainder>In three parts: I. Their origin and history, to the beginning of the ninth century. II. From the beginning of the ninth century to the end of the thirteenth. III. The Hebrides under the government of Norway.--Somerled.--Chiefs descended from Somerled</md-title-remainder>
- <md-date>1858</md-date>
- <md-author>MacCallum, Duncan</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3781833939">
-  <md-title>The history of the ancient Scots</md-title>
-  <md-title-remainder>In three parts: I. Their origin and history, to the beginning of the ninth century. II. From the beginning of the ninth century to the end of the thirteenth. III. The Hebrides under the government of Norway.--Somerled.--Chiefs descended from Somerled</md-title-remainder>
-  <md-date>1858</md-date>
-  <md-author>MacCallum, Duncan</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title the history of the ancient scots author maccallum duncan medium book</recid>
-</hit>
-<hit>
- <md-title>Novum Belgium</md-title>
- <md-title-remainder>description de / Nieuw Netherland / et / Notice sur René Goupil</md-title-remainder>
- <md-date>1862</md-date>
- <md-author>Jogues, Isaac</md-author>
- <md-description>The Novum Belgium is dated at end  of Des 3 Rivieres en la Nouvelle France, 3 augusti, 1646; the Notice sur rené Goupil was probably prepared the same year</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3717838211">
-  <md-title>Novum Belgium</md-title>
-  <md-title-remainder>description de / Nieuw Netherland / et / Notice sur René Goupil</md-title-remainder>
-  <md-date>1862</md-date>
-  <md-author>Jogues, Isaac</md-author>
-  <md-description>&quot;Tiré à 100 exemplaires.&quot; This copy is not numbered</md-description>
-  <md-description>The Novum Belgium is dated at end  of Des 3 Rivieres en la Nouvelle France, 3 augusti, 1646; the Notice sur rené Goupil was probably prepared the same year</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title novum belgium author jogues isaac medium book</recid>
-</hit>
-<hit>
- <md-title>Lake George and Lake Champlain</md-title>
- <md-title-remainder>from their first discovery to 1759</md-title-remainder>
- <md-date>1869</md-date>
- <md-author>Butler, B. C</md-author>
- <md-description>Pages 64-240 deal with events in this region in the French and Indian war</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1101479112">
-  <md-title>Lake George and Lake Champlain</md-title>
-  <md-title-remainder>from their first discovery to 1759</md-title-remainder>
-  <md-date>1869</md-date>
-  <md-author>Butler, B. C</md-author>
-  <md-description>Pages 64-240 deal with events in this region in the French and Indian war</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title lake george and lake champlain author butler b c medium book</recid>
-</hit>
-<hit>
- <md-title>Genealogy of the Dutton family of Pennsylvania, preceded by a history of the family in England from the time of William the Conqueror to the year 1669: with an appendix containing a short account of the Duttons of Conn</md-title>
- <md-date>1871</md-date>
- <md-author>Cope, Gilbert</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2716091581">
-  <md-title>Genealogy of the Dutton family of Pennsylvania, preceded by a history of the family in England from the time of William the Conqueror to the year 1669: with an appendix containing a short account of the Duttons of Conn</md-title>
-  <md-date>1871</md-date>
-  <md-author>Cope, Gilbert</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title genealogy of the dutton family of pennsylvania preceded by a history of the family in england from the time of william the conqueror to the year with an appendix containing a short account of the duttons of conn author cope gilbert medium book</recid>
-</hit>
-<hit>
- <md-title>The land of the Veda</md-title>
- <md-title-remainder>being personal reminiscences of India; its people, castes, thugs, and fakirs ; its religions, mythology, principal monuments, palaces, and mausoleums: together with the incidents of the great Sepoy rebellion, and its results to Christianity and civilization ; also, statistical tables of Christian missions, and a glossary of Indian terms used in this work and in missionary correspondence</md-title-remainder>
- <md-date>1872</md-date>
- <md-author>Butler, William</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="35736754">
-  <md-title>The land of the Veda</md-title>
-  <md-title-remainder>being personal reminiscences of India; its people, castes, thugs, and fakirs ; its religions, mythology, principal monuments, palaces, and mausoleums: together with the incidents of the great Sepoy rebellion, and its results to Christianity and civilization ; also, statistical tables of Christian missions, and a glossary of Indian terms used in this work and in missionary correspondence</md-title-remainder>
-  <md-date>1872</md-date>
-  <md-author>Butler, William</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title the land of the veda author butler william medium book</recid>
 </hit>
 </show>
