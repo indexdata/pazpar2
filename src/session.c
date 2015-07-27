@@ -1712,7 +1712,7 @@ static const char *get_mergekey(xmlDoc *doc, xmlNode *root,
     /* generate unique key if none is not generated already or is empty */
     if (wrbuf_len(norm_wr) == 0)
     {
-        wrbuf_printf(norm_wr, "position: %s-%d",
+        wrbuf_printf(norm_wr, "position: %s-%06d",
                      client_get_id(cl), record_no);
     }
     else

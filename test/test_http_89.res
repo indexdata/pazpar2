@@ -186,7 +186,7 @@ idf[1] = log(((1 + total(10))/termoccur(10));
 computer: relevance += 100000 * tf[1](1.200000) * idf[1](0.095310) (11437);
 score = relevance(11437);
  </relevance_info>
- <recid>position: z3950.indexdata.com/marc-1</recid>
+ <recid>position: z3950.indexdata.com/marc-000001</recid>
 </hit>
 <hit>
  <md-title>How to program a computer</md-title>
@@ -210,6 +210,6 @@ idf[1] = log(((1 + total(10))/termoccur(10));
 computer: relevance += 100000 * tf[1](1.200000) * idf[1](0.095310) (11437);
 score = relevance(11437);
  </relevance_info>
- <recid>position: z3950.indexdata.com/marc-2</recid>
+ <recid>position: z3950.indexdata.com/marc-000002</recid>
 </hit>
 </show>
