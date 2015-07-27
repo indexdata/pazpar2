@@ -1,3 +1,7 @@
+--- next version
+
+fix PAZ-1013 - do not re-search if facetlimit scan fails to find value
+
 --- 1.11.2 2015/07/21
 
 Fix PAZ-1015, which prevented the docs from being built, and therefore

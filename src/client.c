@@ -1386,7 +1386,21 @@ static int apply_limit(struct client *cl,
                                                              cl, name,
                                                              values[i]);
                     if (id)
-                        values[i] = nmem_strdup(nmem_tmp, id);
+                    {
+                        if ( *id )
+                        {
+                            values[i] = nmem_strdup(nmem_tmp, id);
+                            yaz_log(YLOG_DEBUG,
+                                "apply_limit: s='%s' found id '%s'",s->name,id );
+                        }
+                        else
+                        {
+                            yaz_log(YLOG_DEBUG,
+                                "apply_limit: %s: term '%s' not found, failing client",
+                                s->name, values[i] );
+                            ret = -1;
+                        }
+                    }
                 }
                 nmem_strsplit_escape2(nmem_tmp, ",", s->value, &cvalues,
                                       &cnum, 1, '\\', 1);

@@ -228,18 +228,27 @@ static void session_add_id_facet(struct session *s, struct client *cl,
 }
 
 
+// Look up a facet term, and return matching id
+// If facet type not found, returns 0
+// If facet type found, but no matching term, returns ""
 const char *session_lookup_id_facet(struct session *s, struct client *cl,
                                     const char *type,
                                     const char *term)
 {
+    char *retval = 0;
     struct facet_id *t = s->facet_id_list;
-    for (; t; t = t->next)
-        if (!strcmp(client_get_id(cl), t->client_id) &&
-            !strcmp(t->type, type) && !strcmp(t->term, term))
+    for (; t; t = t->next) 
+    {
+        if (!strcmp(client_get_id(cl), t->client_id) &&  !strcmp(t->type, type) )
         {
-            return t->id;
+            retval = "";
+            if ( !strcmp(t->term, term))
+            {
+                return t->id;
+            }
         }
-    return 0;
+    }
+    return retval;
 }
 
 void add_facet(struct session *s, const char *type, const char *value, int count, struct client *cl)
