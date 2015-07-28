@@ -1,11 +1,16 @@
---- next version
+--- 1.11.3 2015/07/28
 
-fix PAZ-1013 - do not re-search if facetlimit scan fails to find value
+Do not re-search if facetlimit scan fails to find value PAZ-1013
+
+Optimizie single-target sortmap - keep record order PAZ-1917
+
+position rec-icd with leading zeros PAZ-1018
+
+Fix Bad HTTP request causes a crash PAZ-1012
 
 --- 1.11.2 2015/07/21
 
-Fix PAZ-1015, which prevented the docs from being built, and therefore
-the whole package from being released.
+Fix Can not make doc on mochi PAZ-1015
 
 --- 1.11.1 2015/07/21
 
