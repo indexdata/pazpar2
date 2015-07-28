@@ -886,6 +886,7 @@ enum pazpar2_error_code session_search(struct session *se,
         *addinfo = "limit";
         session_leave(se, "session_search");
         se->clients_starting = 0;
+        session_reset_active_clients(se, 0);
         return PAZPAR2_MALFORMED_PARAMETER_VALUE;
     }
 

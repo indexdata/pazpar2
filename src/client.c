@@ -1518,6 +1518,9 @@ int client_parse_query(struct client *cl, const char *query,
     if (!ccl_map)
         return -3;
 
+    xfree(cl->cqlquery);
+    cl->cqlquery = 0;
+
     w_ccl = wrbuf_alloc();
     wrbuf_puts(w_ccl, query);
 
@@ -1530,7 +1533,15 @@ int client_parse_query(struct client *cl, const char *query,
 
     if (apply_limit(cl, facet_limits, w_pqf, ccl_map, service))
     {
+        client_set_state(cl, Client_Error);
         ccl_qual_rm(&ccl_map);
+
+        wrbuf_destroy(w_ccl);
+        wrbuf_destroy(w_pqf);
+
+        xfree(cl->pquery);
+        cl->pquery = 0;
+
         return -2;
     }
 
@@ -1551,6 +1562,10 @@ int client_parse_query(struct client *cl, const char *query,
                     wrbuf_cstr(w_ccl));
         wrbuf_destroy(w_ccl);
         wrbuf_destroy(w_pqf);
+
+        xfree(cl->pquery);
+        cl->pquery = 0;
+
         return -1;
     }
     wrbuf_destroy(w_ccl);
@@ -1592,14 +1607,10 @@ int client_parse_query(struct client *cl, const char *query,
     }
     wrbuf_destroy(w_pqf);
 
-    xfree(cl->cqlquery);
-    cl->cqlquery = 0;
-
     odr_out = odr_createmem(ODR_ENCODE);
     zquery = p_query_rpn(odr_out, cl->pquery);
     if (!zquery)
     {
-
         session_log(se, YLOG_WARN, "Invalid PQF query for Client %s: %s",
                     client_get_id(cl), cl->pquery);
         ret_value = -1;
