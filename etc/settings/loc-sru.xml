@@ -1,4 +1,4 @@
-<settings target="z3950.loc.gov:7090/voyager">
+<settings target="lx2.loc.gov:210/LCDB_MARC8">
   <set name="pz:name" value="Library of Congress (SRU)"/>
   <set name="pz:sru" value="get"/>
   <set name="pz:sru_version" value="1.1"/>

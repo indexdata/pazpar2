@@ -27,6 +27,7 @@ struct conf_service;
 union data_types {
     struct {
         const char *disp;
+        const char *norm;
         const char *sort;
         const char *snippet;
     } text;
@@ -93,6 +94,7 @@ struct record_cluster
     float *term_frequency_vecf;
     // Set-specific ID for this record
     char *recid;
+    int retrieval_position;
     WRBUF relevance_explain1;
     WRBUF relevance_explain2;
     struct record *records;

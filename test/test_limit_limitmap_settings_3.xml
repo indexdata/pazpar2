@@ -2,4 +2,5 @@
   <set name="pz:limitmap:author"  value="rpn:@attr 1=1003 @attr 6=3" />
   <set name="pz:limitmap:subject" value="rpn:@attr 1=21 @attr 6=3" />
   <set name="pz:limitmap:Mysubject" value="local:*" />
+  <set name="pz:limitmap:date"   value="ccl:local" />
 </settings>

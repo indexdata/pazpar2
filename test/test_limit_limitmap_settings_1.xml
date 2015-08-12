@@ -15,6 +15,9 @@
   <set name="pz:cclmap:date_exact" value="u=30 6=3 r=r"/>
   <set name="pz:cclmap:au" value="u=1003"/>
 
+
+  <set name="pz:limitmap:date"   value="ccl:date" />
+
   <!-- Retrieval settings -->
 
   <set name="pz:requestsyntax" value="marc21"/>

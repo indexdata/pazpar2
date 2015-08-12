@@ -78,7 +78,8 @@ int client_start_search(struct client *cl);
 int client_fetch_more(struct client *cl);
 int client_parse_init(struct client *cl, int same_search);
 int client_parse_range(struct client *cl, const char *startrecs, const char *maxrecs);
-int client_parse_sort(struct client *cl, struct reclist_sortparms *sp);
+int client_parse_sort(struct client *cl, struct reclist_sortparms *sp,
+                      int *has_sortmap);
 void client_set_session(struct client *cl, struct session *se);
 int client_is_active(struct client *cl);
 int client_is_active_preferred(struct client *cl);
@@ -111,9 +112,13 @@ const char *client_get_facet_limit_local(struct client *cl,
                                          int *l,
                                          NMEM nmem, int *num, char ***values);
 
+const char *client_get_suggestions_xml(struct client *cl, WRBUF wrbuf);
+
 void client_update_show_stat(struct client *cl, int cmd);
 
 void client_store_xdoc(struct client *cl, int record_no, xmlDoc *xdoc);
+
+const char *client_get_query(struct client *cl, const char **type, NMEM nmem);
 
 #endif
 

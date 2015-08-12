@@ -521,7 +521,7 @@ static void client_report_facets(struct client *cl, ZOOM_resultset rs)
                                 ZOOM_facet_field_get_term(facets[facet_idx],
                                                           term_idx, &freq);
                             if (term)
-                                add_facet(se, p, term, freq);
+                                add_facet(se, p, term, freq, cl);
                         }
                         break;
                     }
@@ -778,6 +778,8 @@ int client_has_facet(struct client *cl, const char *name)
     for (s = sdb->settings[PZ_FACETMAP]; s; s = s->next)
     {
         const char *p = strchr(s->name + 3, ':');
+        if ( !strncmp(p, ":split:", 7) )
+            p += 6; // PAZ-1009
         if (p && !strcmp(name, p + 1))
             return 1;
     }
@@ -885,6 +887,22 @@ int client_parse_range(struct client *cl, const char *startrecs,
         cl->startrecs = atoi(startrecs);
     }
 
+    return 0;
+}
+
+const char *client_get_query(struct client *cl, const char **type, NMEM nmem)
+{
+    if (cl->pquery)
+    {
+        *type = "pqf";
+        return nmem_strdup(nmem, cl->pquery);
+    }
+    if (cl->cqlquery)
+    {
+        *type = "cql";
+        return nmem_strdup(nmem, cl->cqlquery);
+    }
+    *type = 0;
     return 0;
 }
 
@@ -1315,7 +1333,32 @@ const char *client_get_facet_limit_local(struct client *cl,
     return 0;
 }
 
-static int apply_limit(struct session_database *sdb,
+static void ccl_quote_map_term(CCL_bibset ccl_map, WRBUF w,
+                               const char *term)
+{
+    int quote_it = 0;
+    const char *cp;
+    for (cp = term; *cp; cp++)
+        if ((*cp >= '0' && *cp <= '9') || strchr(" +-", *cp))
+            ;
+        else
+            quote_it = 1;
+    if (!quote_it)
+        wrbuf_puts(w, term);
+    else
+    {
+        wrbuf_putc(w, '\"');
+        for (cp = term; *cp; cp++)
+        {
+            if (strchr( "\\\"", *cp))
+                wrbuf_putc(w, '\\');
+            wrbuf_putc(w, *cp);
+        }
+        wrbuf_putc(w, '\"');
+    }
+}
+
+static int apply_limit(struct client *cl,
                        facet_limits_t facet_limits,
                        WRBUF w_pqf, CCL_bibset ccl_map,
                        struct conf_service *service)
@@ -1324,6 +1367,7 @@ static int apply_limit(struct session_database *sdb,
     int i = 0;
     const char *name;
     const char *value;
+    struct session_database *sdb = client_get_database(cl);
 
     NMEM nmem_tmp = nmem_create();
     for (i = 0; (name = facet_limits_get(facet_limits, i, &value)); i++)
@@ -1343,6 +1387,28 @@ static int apply_limit(struct session_database *sdb,
                 nmem_strsplit_escape2(nmem_tmp, "|", value, &values,
                                       &num, 1, '\\', 1);
 
+                for (i = 0; i < num; i++)
+                {
+                    const char *id = session_lookup_id_facet(cl->session,
+                                                             cl, name,
+                                                             values[i]);
+                    if (id)
+                    {
+                        if ( *id )
+                        {
+                            values[i] = nmem_strdup(nmem_tmp, id);
+                            yaz_log(YLOG_DEBUG,
+                                "apply_limit: s='%s' found id '%s'",s->name,id );
+                        }
+                        else
+                        {
+                            yaz_log(YLOG_DEBUG,
+                                "apply_limit: %s: term '%s' not found, failing client",
+                                s->name, values[i] );
+                            ret = -1;
+                        }
+                    }
+                }
                 nmem_strsplit_escape2(nmem_tmp, ",", s->value, &cvalues,
                                       &cnum, 1, '\\', 1);
 
@@ -1375,10 +1441,8 @@ static int apply_limit(struct session_database *sdb,
                             struct ccl_rpn_node *cn;
                             wrbuf_rewind(ccl_w);
                             wrbuf_puts(ccl_w, ccl);
-                            wrbuf_puts(ccl_w, "=\"");
-                            wrbuf_puts(ccl_w, values[i]);
-                            wrbuf_puts(ccl_w, "\"");
-
+                            wrbuf_putc(ccl_w, '=');
+                            ccl_quote_map_term(ccl_map, ccl_w, values[i]);
                             cn = ccl_find_str(ccl_map, wrbuf_cstr(ccl_w),
                                               &cerror, &cpos);
                             if (cn)
@@ -1461,6 +1525,9 @@ int client_parse_query(struct client *cl, const char *query,
     if (!ccl_map)
         return -3;
 
+    xfree(cl->cqlquery);
+    cl->cqlquery = 0;
+
     w_ccl = wrbuf_alloc();
     wrbuf_puts(w_ccl, query);
 
@@ -1471,9 +1538,17 @@ int client_parse_query(struct client *cl, const char *query,
         wrbuf_puts(w_pqf, " ");
     }
 
-    if (apply_limit(sdb, facet_limits, w_pqf, ccl_map, service))
+    if (apply_limit(cl, facet_limits, w_pqf, ccl_map, service))
     {
+        client_set_state(cl, Client_Error);
         ccl_qual_rm(&ccl_map);
+
+        wrbuf_destroy(w_ccl);
+        wrbuf_destroy(w_pqf);
+
+        xfree(cl->pquery);
+        cl->pquery = 0;
+
         return -2;
     }
 
@@ -1494,6 +1569,10 @@ int client_parse_query(struct client *cl, const char *query,
                     wrbuf_cstr(w_ccl));
         wrbuf_destroy(w_ccl);
         wrbuf_destroy(w_pqf);
+
+        xfree(cl->pquery);
+        cl->pquery = 0;
+
         return -1;
     }
     wrbuf_destroy(w_ccl);
@@ -1524,7 +1603,7 @@ int client_parse_query(struct client *cl, const char *query,
     {
         if (cl->pquery)
             session_log(se, YLOG_LOG, "Client %s: "
-                        "Re-search due query/limit change: %s to %s", 
+                        "Re-search due query/limit change: %s to %s",
                         client_get_id(cl), cl->pquery, wrbuf_cstr(w_pqf));
         xfree(cl->pquery);
         cl->pquery = xstrdup(wrbuf_cstr(w_pqf));
@@ -1535,14 +1614,10 @@ int client_parse_query(struct client *cl, const char *query,
     }
     wrbuf_destroy(w_pqf);
 
-    xfree(cl->cqlquery);
-    cl->cqlquery = 0;
-
     odr_out = odr_createmem(ODR_ENCODE);
     zquery = p_query_rpn(odr_out, cl->pquery);
     if (!zquery)
     {
-
         session_log(se, YLOG_WARN, "Invalid PQF query for Client %s: %s",
                     client_get_id(cl), cl->pquery);
         ret_value = -1;
@@ -1586,8 +1661,11 @@ int client_parse_query(struct client *cl, const char *query,
     return ret_value;
 }
 
-int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
+int client_parse_sort(struct client *cl, struct reclist_sortparms *sp,
+                      int *has_sortmap)
 {
+    if (has_sortmap)
+        *has_sortmap = 0;
     if (sp)
     {
         const char *sort_strategy_and_spec =
@@ -1623,6 +1701,8 @@ int client_parse_sort(struct client *cl, struct reclist_sortparms *sp)
                     xfree(cl->sort_criteria);
                     cl->sort_criteria = xstrdup(p);
                 }
+                if (has_sortmap)
+                    (*has_sortmap)++;
             }
             else {
                 yaz_log(YLOG_LOG, "Client %s: "
@@ -1726,12 +1806,12 @@ int client_get_diagnostic(struct client *cl, const char **message,
     return cl->diagnostic;
 }
 
-const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
+const char *client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
 {
     /* int idx; */
     struct suggestions *suggestions = cl->suggestions;
 
-    if (!suggestions) 
+    if (!suggestions)
         return "";
     if (suggestions->passthrough)
     {
@@ -1754,7 +1834,6 @@ const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
     */
     return wrbuf_cstr(wrbuf);
 }
-
 
 void client_set_database(struct client *cl, struct session_database *db)
 {

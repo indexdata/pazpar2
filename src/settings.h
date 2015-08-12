@@ -65,9 +65,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 struct setting
 {
     int precedence;
-    char *target;
-    char *name;
-    char *value;
+    const char *target;
+    const char *name;
+    const char *value;
     struct setting *next;
 };
 

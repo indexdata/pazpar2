@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <stdio.h>
 #include <sys/types.h>
 #include <yaz/dirent.h>
+#include <yaz/xml_get.h>
 #include <stdlib.h>
 #include <sys/stat.h>
 
@@ -176,11 +177,10 @@ int settings_read_node_x(xmlNode *n,
                                      struct setting *set))
 {
     int ret_val = 0; /* success */
-    char *namea = (char *) xmlGetProp(n, (xmlChar *) "name");
-    char *targeta = (char *) xmlGetProp(n, (xmlChar *) "target");
-    char *valuea = (char *) xmlGetProp(n, (xmlChar *) "value");
-    char *usera = (char *) xmlGetProp(n, (xmlChar *) "user");
-    char *precedencea = (char *) xmlGetProp(n, (xmlChar *) "precedence");
+    const char *namea = yaz_xml_get_prop(n, "name");
+    const char *targeta = yaz_xml_get_prop(n, "target");
+    const char *valuea = yaz_xml_get_prop(n, "value");
+    const char *precedencea = yaz_xml_get_prop(n, "precedence");
 
     for (n = n->children; n; n = n->next)
     {
@@ -190,11 +190,10 @@ int settings_read_node_x(xmlNode *n,
         {
             xmlNode *root = n->children;
             struct setting set;
-            char *name = (char *) xmlGetProp(n, (xmlChar *) "name");
-            char *target = (char *) xmlGetProp(n, (xmlChar *) "target");
-            char *value = (char *) xmlGetProp(n, (xmlChar *) "value");
-            char *user = (char *) xmlGetProp(n, (xmlChar *) "user");
-            char *precedence = (char *) xmlGetProp(n, (xmlChar *) "precedence");
+            const char *name = yaz_xml_get_prop(n, "name");
+            const char *target = yaz_xml_get_prop(n, "target");
+            const char *value = yaz_xml_get_prop(n, "value");
+            const char *precedence = yaz_xml_get_prop(n, "precedence");
             xmlChar *buf_out = 0;
 
             set.next = 0;
@@ -231,7 +230,7 @@ int settings_read_node_x(xmlNode *n,
                     xmlDocSetRootElement(doc, xmlCopyNode(root, 1));
                     xmlDocDumpMemory(doc, &buf_out, &len_out);
                     /* xmlDocDumpMemory 0-terminates */
-                    set.value = (char *) buf_out;
+                    set.value = (const char *) buf_out;
                     xmlFreeDoc(doc);
                 }
             }
@@ -248,11 +247,6 @@ int settings_read_node_x(xmlNode *n,
                 ret_val = -1;
             }
             xmlFree(buf_out);
-            xmlFree(name);
-            xmlFree(precedence);
-            xmlFree(value);
-            xmlFree(user);
-            xmlFree(target);
         }
         else
         {
@@ -261,11 +255,6 @@ int settings_read_node_x(xmlNode *n,
             ret_val = -1;
         }
     }
-    xmlFree(namea);
-    xmlFree(precedencea);
-    xmlFree(valuea);
-    xmlFree(usera);
-    xmlFree(targeta);
     return ret_val;
 }
 

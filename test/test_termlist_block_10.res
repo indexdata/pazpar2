@@ -7,6 +7,8 @@
 <records>23</records>
 <filtered>0</filtered>
 <state>Client_Idle</state>
+<query_type>pqf</query_type>
+<query_data>computer </query_data>
 </target>
 <target><id>id_solr</id>
 <name>LOC (SOLR)</name>
@@ -15,4 +17,6 @@
 <records>100</records>
 <filtered>0</filtered>
 <state>Client_Idle</state>
+<query_type>pqf</query_type>
+<query_data>@attr 4=Dal @attr 1=text computer </query_data>
 </target></bytarget>

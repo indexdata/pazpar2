@@ -129,6 +129,7 @@ int record_compare(struct record *r1, struct record *r2,
                     return 0;
             case Metadata_type_position:
             case Metadata_type_relevance:
+            case Metadata_type_retrieval:
                 break;
             }
             m1 = m1->next;

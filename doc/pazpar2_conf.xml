@@ -421,6 +421,29 @@
 	  </varlistentry>
 
 	  <varlistentry>
+	   <term id="icurule">icurule</term>
+	   <listitem>
+	    <para>
+	     Specifies the ICU rule set to be used for normalizing
+	     metadata text. The "display" part of the rule is kept
+	     in the returned metadata record (record+show commands), the
+	     end result - normalized text - is used for performing
+	     within-cluster merge (unique, longest, etc). If the icurule is
+	     omitted, type generic (text) is converted as follows:
+	     any of the characters "<literal> ,/.:([</literal>" are
+	     chopped of prefix and suffix of text content
+	     <emphasis>unless</emphasis> it includes the
+	     characters "<literal>://</literal>" (URL).
+	    </para>
+	    <note>
+	     <para>
+	      Requires Pazpar2 1.9.0 or later.
+	     </para>
+	    </note>
+	   </listitem>
+	  </varlistentry>
+
+	  <varlistentry>
 	   <term>setting</term>
 	   <listitem>
 	    <para>
@@ -1248,12 +1271,22 @@
        supports (native) facets. The value is the name of the
        field on the target.
       </para>
-      <note>
-       <para>
-	At this point only Solr targets have been tested with this
-	facility.
-       </para>
-      </note>
+     </listitem>
+    </varlistentry>
+
+    <varlistentry>
+     <term>pz:facetmap:split:<replaceable>name</replaceable></term>
+     <listitem>
+      <para>
+       Like pz:facetmap, but makes Pazpar2 inspect the term value consisting
+       of two items separated by colon. First item is the raw ID to be
+       sent to database if limitmap on the field
+       <replaceable>name</replaceable> is used. The second item is
+       the display term.
+      </para>
+      <para>
+       This facility was added in Pazpar2 version 1.11.0.
+      </para>
      </listitem>
     </varlistentry>
 

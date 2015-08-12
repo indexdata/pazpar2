@@ -273,8 +273,13 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
 	the number '0' (decreasing) or '1' (increasing).  Default
         sort order is decreasing.
 	Sort field names can be any field name designated as a sort field
-        in the pazpar2.cfg file, or the special names 'relevance' and
-	'position'.
+        in the pazpar2.cfg file, or the special names 'relevance',
+	'retrieval' and	'position'.
+       </para>
+       <para>
+	Sort type 'position' sorts by position/offset for each database.
+	Sort type 'retrieval' sorts by position of retrieval (first record
+	retrieved is 1, second record is 2, etc.).
        </para>
        <para>
 	If not specified here or as
@@ -287,7 +292,7 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
 	supports native sorting in order to get best results. Pazpar2
 	will trigger a new search if search criteria changes from Pazpar2
 	to target-based sorting or visa-versa.
-	</para>
+       </para>
       </listitem>
      </varlistentry>
 
@@ -447,8 +452,13 @@ search.pz2?session=2044502273&command=stat
 	the number '0' (decreasing) or '1' (increasing).  Default
         sort order is decreasing.
 	Sort field names can be any field name designated as a sort field
-        in the pazpar2.cfg file, or the special names 'relevance' and
-	'position'.
+        in the pazpar2.cfg file, or the special names 'relevance',
+	'retrieval' and	'position'.
+       </para>
+       <para>
+	Sort type 'position' sorts by position/offset for each database.
+	Sort type 'retrieval' sorts by position of retrieval (first record
+	retrieved is 1, second record is 2, etc.).
        </para>
        <para>
 	If not specified here or as

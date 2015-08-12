@@ -56,6 +56,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <yaz/querytowrbuf.h>
 #include <yaz/oid_db.h>
 #include <yaz/snprintf.h>
+#include <yaz/xml_get.h>
 
 #define USE_TIMING 0
 #if USE_TIMING
@@ -149,13 +150,47 @@ static void session_leave(struct session *s, const char *caller)
         session_log(s, YLOG_DEBUG, "Session unlock by %s", caller);
 }
 
+static int run_icu(struct session *s, const char *icu_chain_id,
+                   const char *value,
+                   WRBUF norm_wr, WRBUF disp_wr)
+{
+    const char *facet_component;
+    struct conf_service *service = s->service;
+    pp2_charset_token_t prt =
+        pp2_charset_token_create(service->charsets, icu_chain_id);
+    if (!prt)
+    {
+        session_log(s, YLOG_FATAL,
+                    "Unknown ICU chain '%s'", icu_chain_id);
+        return 0;
+    }
+    pp2_charset_token_first(prt, value, 0);
+    while ((facet_component = pp2_charset_token_next(prt)))
+    {
+        const char *display_component;
+        if (*facet_component)
+        {
+            if (wrbuf_len(norm_wr))
+                wrbuf_puts(norm_wr, " ");
+            wrbuf_puts(norm_wr, facet_component);
+        }
+        display_component = pp2_get_display(prt);
+        if (display_component)
+        {
+            if (wrbuf_len(disp_wr))
+                wrbuf_puts(disp_wr, " ");
+            wrbuf_puts(disp_wr, display_component);
+        }
+    }
+    pp2_charset_token_destroy(prt);
+    return 1;
+}
+
 static void session_normalize_facet(struct session *s,
                                     const char *type, const char *value,
                                     WRBUF display_wrbuf, WRBUF facet_wrbuf)
 {
     struct conf_service *service = s->service;
-    pp2_charset_token_t prt;
-    const char *facet_component;
     int i;
     const char *icu_chain_id = 0;
 
@@ -164,44 +199,79 @@ static void session_normalize_facet(struct session *s,
             icu_chain_id = (service->metadata + i)->facetrule;
     if (!icu_chain_id)
         icu_chain_id = "facet";
-    prt = pp2_charset_token_create(service->charsets, icu_chain_id);
-    if (!prt)
-    {
-        session_log(s, YLOG_FATAL,
-                    "Unknown ICU chain '%s' for facet of type '%s'",
-                icu_chain_id, type);
-        wrbuf_destroy(facet_wrbuf);
-        wrbuf_destroy(display_wrbuf);
-        return;
-    }
-    pp2_charset_token_first(prt, value, 0);
-    while ((facet_component = pp2_charset_token_next(prt)))
-    {
-        const char *display_component;
-        if (*facet_component)
-        {
-            if (wrbuf_len(facet_wrbuf))
-                wrbuf_puts(facet_wrbuf, " ");
-            wrbuf_puts(facet_wrbuf, facet_component);
-        }
-        display_component = pp2_get_display(prt);
-        if (display_component)
-        {
-            if (wrbuf_len(display_wrbuf))
-                wrbuf_puts(display_wrbuf, " ");
-            wrbuf_puts(display_wrbuf, display_component);
-        }
-    }
-    pp2_charset_token_destroy(prt);
+
+    run_icu(s, icu_chain_id, value, facet_wrbuf, display_wrbuf);
 }
 
-void add_facet(struct session *s, const char *type, const char *value, int count)
+struct facet_id {
+    char *client_id;
+    char *type;
+    char *id;
+    char *term;
+    struct facet_id *next;
+};
+
+static void session_add_id_facet(struct session *s, struct client *cl,
+                                 const char *type,
+                                 const char *id,
+                                 size_t id_len,
+                                 const char *term)
+{
+    struct facet_id *t = nmem_malloc(s->session_nmem, sizeof(*t));
+
+    t->client_id = nmem_strdup(s->session_nmem, client_get_id(cl));
+    t->type = nmem_strdup(s->session_nmem, type);
+    t->id = nmem_strdupn(s->session_nmem, id, id_len);
+    t->term = nmem_strdup(s->session_nmem, term);
+    t->next = s->facet_id_list;
+    s->facet_id_list = t;
+}
+
+
+// Look up a facet term, and return matching id
+// If facet type not found, returns 0
+// If facet type found, but no matching term, returns ""
+const char *session_lookup_id_facet(struct session *s, struct client *cl,
+                                    const char *type,
+                                    const char *term)
+{
+    char *retval = 0;
+    struct facet_id *t = s->facet_id_list;
+    for (; t; t = t->next) 
+    {
+        if (!strcmp(client_get_id(cl), t->client_id) &&  !strcmp(t->type, type) )
+        {
+            retval = "";
+            if ( !strcmp(t->term, term))
+            {
+                return t->id;
+            }
+        }
+    }
+    return retval;
+}
+
+void add_facet(struct session *s, const char *type, const char *value, int count, struct client *cl)
 {
     WRBUF facet_wrbuf = wrbuf_alloc();
     WRBUF display_wrbuf = wrbuf_alloc();
+    const char *id = 0;
+    size_t id_len = 0;
+
+    /* inspect pz:facetmap:split:name ?? */
+    if (!strncmp(type, "split:", 6))
+    {
+        const char *cp = strchr(value, ':');
+        if (cp)
+        {
+            id = value;
+            id_len = cp - value;
+            value = cp + 1;
+        }
+        type += 6;
+    }
 
     session_normalize_facet(s, type, value, display_wrbuf, facet_wrbuf);
-
     if (wrbuf_len(facet_wrbuf))
     {
         struct named_termlist **tp = &s->termlists;
@@ -216,7 +286,10 @@ void add_facet(struct session *s, const char *type, const char *value, int count
             (*tp)->next = 0;
         }
         termlist_insert((*tp)->termlist, wrbuf_cstr(display_wrbuf),
-                        wrbuf_cstr(facet_wrbuf), count);
+                        wrbuf_cstr(facet_wrbuf), id, id_len, count);
+        if (id)
+            session_add_id_facet(s, cl, type, id, id_len,
+                                 wrbuf_cstr(display_wrbuf));
     }
     wrbuf_destroy(facet_wrbuf);
     wrbuf_destroy(display_wrbuf);
@@ -650,7 +723,7 @@ void session_sort(struct session *se, struct reclist_sortparms *sp,
                 break;
         if (sr)
         {
-            session_log(se, YLOG_DEBUG, "session_sort: field=%s increasing=%d type=%d already fetched",
+            session_log(se, YLOG_LOG, "session_sort: field=%s increasing=%d type=%d already fetched",
                         field, increasing, type);
             session_leave(se, "session_sort");
             return;
@@ -668,7 +741,7 @@ void session_sort(struct session *se, struct reclist_sortparms *sp,
         struct client *cl = l->client;
         // Assume no re-search is required.
         client_parse_init(cl, 1);
-        clients_research += client_parse_sort(cl, sp);
+        clients_research += client_parse_sort(cl, sp, 0);
     }
     if (!clients_research || se->clients_starting)
     {
@@ -710,6 +783,7 @@ void session_sort(struct session *se, struct reclist_sortparms *sp,
         }
         session_enter(se, "session_sort");
         se->clients_starting = 0;
+        se->force_position = 0;
         session_leave(se, "session_sort");
     }
 }
@@ -757,6 +831,7 @@ enum pazpar2_error_code session_search(struct session *se,
     int no_working = 0;
     int no_failed_query = 0;
     int no_failed_limit = 0;
+    int no_sortmap = 0;
     struct client_list *l;
 
     session_log(se, YLOG_DEBUG, "Search");
@@ -770,6 +845,7 @@ enum pazpar2_error_code session_search(struct session *se,
         return PAZPAR2_NO_ERROR;
     }
     se->clients_starting = 1;
+    se->force_position = 0;
     session_leave(se, "session_search0");
 
     if (se->settings_modified) {
@@ -810,6 +886,7 @@ enum pazpar2_error_code session_search(struct session *se,
         *addinfo = "limit";
         session_leave(se, "session_search");
         se->clients_starting = 0;
+        session_reset_active_clients(se, 0);
         return PAZPAR2_MALFORMED_PARAMETER_VALUE;
     }
 
@@ -838,12 +915,19 @@ enum pazpar2_error_code session_search(struct session *se,
         else
         {
             client_parse_range(cl, startrecs, maxrecs);
-            client_parse_sort(cl, sp);
+            client_parse_sort(cl, sp, &no_sortmap);
             client_start_search(cl);
             no_working++;
         }
     }
+    yaz_log(YLOG_LOG, "session_search: no_working=%d no_sortmap=%d",
+            no_working, no_sortmap);
     session_enter(se, "session_search2");
+    if (no_working == 1 && no_sortmap == 1)
+    {
+        se->force_position = 1;
+        yaz_log(YLOG_LOG, "force_position=1");
+    }
     se->clients_starting = 0;
     session_leave(se, "session_search2");
     if (no_working == 0)
@@ -1019,6 +1103,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->clients_cached = 0;
     session->settings_modified = 0;
     session->session_nmem = nmem;
+    session->facet_id_list = 0;
     session->nmem = nmem_create();
     session->databases = 0;
     session->sorted_results = 0;
@@ -1026,6 +1111,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->mergekey = 0;
     session->rank = 0;
     session->clients_starting = 0;
+    session->force_position = 0;
 
     for (i = 0; i <= SESSION_WATCH_MAX; i++)
     {
@@ -1040,8 +1126,6 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session_use(1);
     return session;
 }
-
-const char * client_get_suggestions_xml(struct client *cl, WRBUF wrbuf);
 
 static struct hitsbytarget *hitsbytarget_nb(struct session *se,
                                             int *count, NMEM nmem)
@@ -1076,8 +1160,11 @@ static struct hitsbytarget *hitsbytarget_nb(struct session *se,
         session_settings_dump(se, client_get_database(cl), w);
         res[*count].settings_xml = nmem_strdup(nmem, wrbuf_cstr(w));
         wrbuf_rewind(w);
-        wrbuf_puts(w, "");
-        res[*count].suggestions_xml = nmem_strdup(nmem, client_get_suggestions_xml(cl, w));
+        res[*count].suggestions_xml =
+            nmem_strdup(nmem, client_get_suggestions_xml(cl, w));
+
+        res[*count].query_data =
+            client_get_query(cl, &res[*count].query_type, nmem);
         wrbuf_destroy(w);
         (*count)++;
     }
@@ -1207,7 +1294,6 @@ void perform_termlist(struct http_channel *c, struct session *se,
                         wrbuf_puts(c->wrbuf, "<name>");
                         wrbuf_xmlputs(c->wrbuf, p[i]->display_term);
                         wrbuf_puts(c->wrbuf, "</name>");
-
                         wrbuf_printf(c->wrbuf,
                                      "<frequency>%d</frequency>",
                                      p[i]->frequency);
@@ -1344,6 +1430,7 @@ struct record_cluster **show_range_start(struct session *se,
     struct reclist_sortparms *spp;
     struct client_list *l;
     int i;
+    NMEM nmem_tmp = 0;
 #if USE_TIMING
     yaz_timing_t t = yaz_timing_create();
 #endif
@@ -1365,7 +1452,15 @@ struct record_cluster **show_range_start(struct session *se,
             *approx_hits += client_get_approximation(l->client);
         }
     }
+    if (se->force_position)
+    {
+        nmem_tmp = nmem_create();
+        sp = reclist_parse_sortparms(nmem_tmp, "position:1", 0);
+        assert(sp);
+    }
     reclist_sort(se->reclist, sp);
+    if (nmem_tmp)
+        nmem_destroy(nmem_tmp);
 
     reclist_enter(se->reclist);
     *total = reclist_get_num_records(se->reclist);
@@ -1470,7 +1565,8 @@ void statistics(struct session *se, struct statistics *stat)
 }
 
 static struct record_metadata *record_metadata_init(
-    NMEM nmem, const char *value, enum conf_metadata_type type,
+    NMEM nmem, const char *value, const char *norm,
+    enum conf_metadata_type type,
     struct _xmlAttr *attr)
 {
     struct record_metadata *rec_md = record_metadata_create(nmem);
@@ -1500,11 +1596,20 @@ static struct record_metadata *record_metadata_init(
     {
     case Metadata_type_generic:
     case Metadata_type_skiparticle:
-        if (strstr(value, "://")) /* looks like a URL */
+        if (norm)
+        {
             rec_md->data.text.disp = nmem_strdup(nmem, value);
+            rec_md->data.text.norm = nmem_strdup(nmem, norm);
+        }
         else
-            rec_md->data.text.disp =
-                normalize7bit_generic(nmem_strdup(nmem, value), " ,/.:([");
+        {
+            if (strstr(value, "://")) /* looks like a URL */
+                rec_md->data.text.disp = nmem_strdup(nmem, value);
+            else
+                rec_md->data.text.disp =
+                    normalize7bit_generic(nmem_strdup(nmem, value), " ,/.:([");
+            rec_md->data.text.norm = rec_md->data.text.disp;
+        }
         rec_md->data.text.sort = 0;
         rec_md->data.text.snippet = 0;
         break;
@@ -1528,6 +1633,7 @@ static struct record_metadata *record_metadata_init(
         break;
     case Metadata_type_relevance:
     case Metadata_type_position:
+    case Metadata_type_retrieval:
         return 0;
     }
     return rec_md;
@@ -1564,7 +1670,7 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
             continue;
         if (!strcmp((const char *) n->name, "metadata"))
         {
-            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
+            const char *type = yaz_xml_get_prop(n, "type");
             if (type == NULL) {
                 yaz_log(YLOG_FATAL, "Missing type attribute on metadata element. Skipping!");
             }
@@ -1583,7 +1689,6 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
                 if (value)
                     xmlFree(value);
             }
-            xmlFree(type);
         }
     }
     return no_found;
@@ -1596,7 +1701,7 @@ static const char *get_mergekey(xmlDoc *doc, xmlNode *root,
 {
     char *mergekey_norm = 0;
     WRBUF norm_wr = wrbuf_alloc();
-    xmlChar *mergekey;
+    const char *mergekey;
 
     if (session_mergekey)
     {
@@ -1608,10 +1713,9 @@ static const char *get_mergekey(xmlDoc *doc, xmlNode *root,
         for (i = 0; i < num; i++)
             get_mergekey_from_doc(doc, root, values[i], service, norm_wr);
     }
-    else if ((mergekey = xmlGetProp(root, (xmlChar *) "mergekey")))
+    else if ((mergekey = yaz_xml_get_prop(root, "mergekey")))
     {
-        mergekey_norm_wr(service->charsets, norm_wr, (const char *) mergekey);
-        xmlFree(mergekey);
+        mergekey_norm_wr(service->charsets, norm_wr, mergekey);
     }
     else
     {
@@ -1638,7 +1742,7 @@ static const char *get_mergekey(xmlDoc *doc, xmlNode *root,
     /* generate unique key if none is not generated already or is empty */
     if (wrbuf_len(norm_wr) == 0)
     {
-        wrbuf_printf(norm_wr, "position: %s-%d",
+        wrbuf_printf(norm_wr, "position: %s-%06d",
                      client_get_id(cl), record_no);
     }
     else
@@ -1678,7 +1782,7 @@ static int check_record_filter(xmlNode *root, struct session_database *sdb)
             continue;
         if (!strcmp((const char *) n->name, "metadata"))
         {
-            xmlChar *type = xmlGetProp(n, (xmlChar *) "type");
+            const char *type = yaz_xml_get_prop(n, "type");
             if (type)
             {
                 size_t len;
@@ -1706,7 +1810,6 @@ static int check_record_filter(xmlNode *root, struct session_database *sdb)
                     }
                     xmlFree(value);
                 }
-                xmlFree(type);
             }
         }
     }
@@ -1714,6 +1817,8 @@ static int check_record_filter(xmlNode *root, struct session_database *sdb)
 }
 
 static int ingest_to_cluster(struct client *cl,
+                             WRBUF wrbuf_disp,
+                             WRBUF wrbuf_norm,
                              xmlDoc *xdoc,
                              xmlNode *root,
                              int record_no,
@@ -1726,6 +1831,7 @@ static int ingest_sub_record(struct client *cl, xmlDoc *xdoc, xmlNode *root,
 {
     int ret = 0;
     struct session *se = client_get_session(cl);
+    WRBUF wrbuf_disp, wrbuf_norm;
 
     if (!check_record_filter(root, sdb))
     {
@@ -1734,11 +1840,15 @@ static int ingest_sub_record(struct client *cl, xmlDoc *xdoc, xmlNode *root,
                     record_no, sdb->database->id);
         return 0;
     }
+    wrbuf_disp = wrbuf_alloc();
+    wrbuf_norm = wrbuf_alloc();
     session_enter(se, "ingest_sub_record");
     if (client_get_session(cl) == se && se->relevance)
-        ret = ingest_to_cluster(cl, xdoc, root, record_no, mergekeys);
+        ret = ingest_to_cluster(cl, wrbuf_disp, wrbuf_norm,
+                                xdoc, root, record_no, mergekeys);
     session_leave(se, "ingest_sub_record");
-
+    wrbuf_destroy(wrbuf_norm);
+    wrbuf_destroy(wrbuf_disp);
     return ret;
 }
 
@@ -2019,14 +2129,14 @@ static int check_limit_local(struct client *cl,
 }
 
 static int ingest_to_cluster(struct client *cl,
+                             WRBUF wrbuf_disp,
+                             WRBUF wrbuf_norm,
                              xmlDoc *xdoc,
                              xmlNode *root,
                              int record_no,
                              struct record_metadata_attr *merge_keys)
 {
     xmlNode *n;
-    xmlChar *type = 0;
-    xmlChar *value = 0;
     struct session *se = client_get_session(cl);
     struct conf_service *service = se->service;
     int term_factor = 1;
@@ -2043,12 +2153,6 @@ static int ingest_to_cluster(struct client *cl,
 
     for (n = root->children; n; n = n->next)
     {
-        if (type)
-            xmlFree(type);
-        if (value)
-            xmlFree(value);
-        type = value = 0;
-
         if (n->type != XML_ELEMENT_NODE)
             continue;
         if (!strcmp((const char *) n->name, "metadata"))
@@ -2057,20 +2161,12 @@ static int ingest_to_cluster(struct client *cl,
             struct record_metadata **wheretoput = 0;
             struct record_metadata *rec_md = 0;
             int md_field_id = -1;
+            xmlChar *value0;
+            const char *type = yaz_xml_get_prop(n, "type");
 
-            type = xmlGetProp(n, (xmlChar *) "type");
-            value = xmlNodeListGetString(xdoc, n->children, 1);
             if (!type)
                 continue;
-            if (!value || !*value)
-            {
-                xmlChar *empty = xmlGetProp(n, (xmlChar *) "empty");
-                if (!empty)
-                    continue;
-                if (value)
-                    xmlFree(value);
-                value = empty;
-            }
+
             md_field_id
                 = conf_service_metadata_field_id(service, (const char *) type);
             if (md_field_id < 0)
@@ -2084,15 +2180,30 @@ static int ingest_to_cluster(struct client *cl,
                 continue;
             }
 
+            wrbuf_rewind(wrbuf_disp);
+            value0 = xmlNodeListGetString(xdoc, n->children, 1);
+            if (!value0 || !*value0)
+            {
+                const char *empty = yaz_xml_get_prop(n, "empty");
+                if (!empty)
+                    continue;
+                wrbuf_puts(wrbuf_disp, (const char *) empty);
+            }
+            else
+            {
+                wrbuf_puts(wrbuf_disp, (const char *) value0);
+            }
+            if (value0)
+                xmlFree(value0);
             ser_md = &service->metadata[md_field_id];
 
             // non-merged metadata
-            rec_md = record_metadata_init(se->nmem, (const char *) value,
+            rec_md = record_metadata_init(se->nmem, wrbuf_cstr(wrbuf_disp), 0,
                                           ser_md->type, n->properties);
             if (!rec_md)
             {
                 session_log(se, YLOG_WARN, "bad metadata data '%s' "
-                            "for element '%s'", value, type);
+                            "for element '%s'", wrbuf_cstr(wrbuf_disp), type);
                 continue;
             }
 
@@ -2100,7 +2211,7 @@ static int ingest_to_cluster(struct client *cl,
             {
                 WRBUF w = wrbuf_alloc();
                 if (relevance_snippet(se->relevance,
-                                      (char*) value, ser_md->name, w))
+                                      wrbuf_cstr(wrbuf_disp), ser_md->name, w))
                     rec_md->data.text.snippet = nmem_strdup(se->nmem,
                                                             wrbuf_cstr(w));
                 wrbuf_destroy(w);
@@ -2116,20 +2227,12 @@ static int ingest_to_cluster(struct client *cl,
 
     if (check_limit_local(cl, record, record_no))
     {
-        if (type)
-            xmlFree(type);
-        if (value)
-            xmlFree(value);
         return -2;
     }
     cluster = reclist_insert(se->reclist, se->relevance, service, record,
                              merge_keys, &se->total_merged);
     if (!cluster)
     {
-        if (type)
-            xmlFree(type);
-        if (value)
-            xmlFree(value);
         return 0; // complete match with existing record
     }
 
@@ -2167,13 +2270,6 @@ static int ingest_to_cluster(struct client *cl,
     // now parsing XML record and adding data to cluster or record metadata
     for (n = root->children; n; n = n->next)
     {
-        pp2_charset_token_t prt;
-        if (type)
-            xmlFree(type);
-        if (value)
-            xmlFree(value);
-        type = value = 0;
-
         if (n->type != XML_ELEMENT_NODE)
             continue;
         if (!strcmp((const char *) n->name, "metadata"))
@@ -2185,12 +2281,12 @@ static int ingest_to_cluster(struct client *cl,
             int md_field_id = -1;
             int sk_field_id = -1;
             const char *rank = 0;
-            xmlChar *xml_rank = 0;
+            const char *xml_rank = 0;
+            const char *type = 0;
+            xmlChar *value0;
 
-            type = xmlGetProp(n, (xmlChar *) "type");
-            value = xmlNodeListGetString(xdoc, n->children, 1);
-
-            if (!type || !value || !*value)
+            type = yaz_xml_get_prop(n, "type");
+            if (!type)
                 continue;
 
             md_field_id
@@ -2206,12 +2302,39 @@ static int ingest_to_cluster(struct client *cl,
                 ser_sk = &service->sortkeys[sk_field_id];
             }
 
-            // merged metadata
-            rec_md = record_metadata_init(se->nmem, (const char *) value,
-                                          ser_md->type, 0);
+            wrbuf_rewind(wrbuf_disp);
+            wrbuf_rewind(wrbuf_norm);
+
+            value0 = xmlNodeListGetString(xdoc, n->children, 1);
+            if (!value0 || !*value0)
+            {
+                if (value0)
+                    xmlFree(value0);
+                continue;
+            }
+
+            if (ser_md->icurule)
+            {
+                run_icu(se, ser_md->icurule, (const char *) value0,
+                        wrbuf_norm, wrbuf_disp);
+                yaz_log(YLOG_LOG, "run_icu input=%s norm=%s disp=%s",
+                        (const char *) value0,
+                        wrbuf_cstr(wrbuf_norm), wrbuf_cstr(wrbuf_disp));
+                rec_md = record_metadata_init(se->nmem, wrbuf_cstr(wrbuf_disp),
+                                              wrbuf_cstr(wrbuf_norm),
+                                              ser_md->type, 0);
+            }
+            else
+            {
+                wrbuf_puts(wrbuf_disp, (const char *) value0);
+                rec_md = record_metadata_init(se->nmem, wrbuf_cstr(wrbuf_disp),
+                                              0,
+                                              ser_md->type, 0);
+            }
+
+            xmlFree(value0);
 
             // see if the field was not in cluster already (from beginning)
-
             if (!rec_md)
                 continue;
 
@@ -2234,7 +2357,7 @@ static int ingest_to_cluster(struct client *cl,
             }
             else
             {
-                xml_rank = xmlGetProp(n, (xmlChar *) "rank");
+                xml_rank = yaz_xml_get_prop(n, "rank");
                 rank = xml_rank ? (const char *) xml_rank : ser_md->rank;
             }
 
@@ -2253,8 +2376,8 @@ static int ingest_to_cluster(struct client *cl,
             {
                 while (*wheretoput)
                 {
-                    if (!strcmp((const char *) (*wheretoput)->data.text.disp,
-                                rec_md->data.text.disp))
+                    if (!strcmp((const char *) (*wheretoput)->data.text.norm,
+                                rec_md->data.text.norm))
                         break;
                     wheretoput = &(*wheretoput)->next;
                 }
@@ -2264,12 +2387,13 @@ static int ingest_to_cluster(struct client *cl,
             else if (ser_md->merge == Metadata_merge_longest)
             {
                 if (!*wheretoput
-                    || strlen(rec_md->data.text.disp)
-                    > strlen((*wheretoput)->data.text.disp))
+                    || strlen(rec_md->data.text.norm)
+                    > strlen((*wheretoput)->data.text.norm))
                 {
                     *wheretoput = rec_md;
                     if (ser_sk)
                     {
+                        pp2_charset_token_t prt;
                         const char *sort_str = 0;
                         int skip_article =
                             ser_sk->type == Metadata_type_skiparticle;
@@ -2333,7 +2457,8 @@ static int ingest_to_cluster(struct client *cl,
             if (rank)
             {
                 relevance_countwords(se->relevance, cluster,
-                                     (char *) value, rank, ser_md->name);
+                                     wrbuf_cstr(wrbuf_disp),
+                                     rank, ser_md->name);
             }
             // construct facets ... unless the client already has reported them
             if (ser_md->termlist && !client_has_facet(cl, (char *) type))
@@ -2343,23 +2468,16 @@ static int ingest_to_cluster(struct client *cl,
                     char year[64];
                     sprintf(year, "%d", rec_md->data.number.max);
 
-                    add_facet(se, (char *) type, year, term_factor);
+                    add_facet(se, (char *) type, year, term_factor, cl);
                     if (rec_md->data.number.max != rec_md->data.number.min)
                     {
                         sprintf(year, "%d", rec_md->data.number.min);
-                        add_facet(se, (char *) type, year, term_factor);
+                        add_facet(se, (char *) type, year, term_factor, cl);
                     }
                 }
                 else
-                    add_facet(se, (char *) type, (char *) value, term_factor);
+                    add_facet(se, type, wrbuf_cstr(wrbuf_disp), term_factor, cl);
             }
-
-            // cleaning up
-            if (xml_rank)
-                xmlFree(xml_rank);
-            xmlFree(type);
-            xmlFree(value);
-            type = value = 0;
         }
         else
         {
@@ -2369,11 +2487,6 @@ static int ingest_to_cluster(struct client *cl,
             se->number_of_warnings_unknown_elements++;
         }
     }
-    if (type)
-        xmlFree(type);
-    if (value)
-        xmlFree(value);
-
     nmem_destroy(ingest_nmem);
     xfree(metadata0);
     relevance_donerecord(se->relevance, cluster);

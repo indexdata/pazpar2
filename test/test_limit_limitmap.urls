@@ -1,6 +1,6 @@
 test_limit_limitmap_service.xml http://localhost:9763/search.pz2?command=init&service=limitmap
 test_limit_limitmap_settings_1.xml http://localhost:9763/search.pz2?session=1&command=settings
-http://localhost:9763/search.pz2?session=1&command=search&query=computer
+http://localhost:9763/search.pz2?session=1&command=search&query=computer&limit=date%3D1976-1978|date%3D%22foo%23%3F
 w http://localhost:9763/search.pz2?session=1&command=show&block=1
 http://localhost:9763/search.pz2?session=1&command=bytarget
 http://localhost:9763/search.pz2?session=1&command=termlist&block=1&name=xtargets%2Cauthor%2Csubject%2Cdate

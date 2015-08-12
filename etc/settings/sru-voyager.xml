@@ -1,4 +1,4 @@
-<settings target="z3950.loc.gov:7090/voyager">
+<settings target="lx2.loc.gov:210/LCDB_MARC8">
 
   <!-- Simple test against a local SRU server (could be yaz-ztest) -->
 

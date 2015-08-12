@@ -6,21 +6,24 @@
 <start>0</start>
 <num>20</num>
 <hit>
- <md-title>Liechtensteinische Betriebszählung 1995</md-title>
- <md-title-remainder>Industrie, Gewerbe, Dienstleistungen</md-title-remainder>
- <md-date>1999</md-date>
- <md-description>&quot;Nr. 312&quot;--Spine</md-description>
+ <md-title>Leaves of grass</md-title>
+ <md-date>1860</md-date>
+ <md-author>Whitman, Walt</md-author>
+ <md-description>Myerson describes 2 authorized printings, with 3 states of frontispiece and 5 states of binding. For unauthorized printings, cf. LC record 45-46794</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="99732482">
-  <md-title>Liechtensteinische Betriebszählung 1995</md-title>
-  <md-title-remainder>Industrie, Gewerbe, Dienstleistungen</md-title-remainder>
-  <md-date>1999</md-date>
-  <md-description>&quot;Nr. 312&quot;--Spine</md-description>
+    name="LOC Solr Test" checksum="1554355631">
+  <md-title>Leaves of grass</md-title>
+  <md-date>1860</md-date>
+  <md-author>Whitman, Walt</md-author>
+  <md-description>Author&apos;s name, Walt Whitman, appears in copyright statement on t.p. verso</md-description>
+  <md-description>Third edition</md-description>
+  <md-description>Myerson describes 2 authorized printings, with 3 states of frontispiece and 5 states of binding. For unauthorized printings, cf. LC record 45-46794</md-description>
+  <md-description>LC has rebound copy, with frontispiece in Myerson 1st state.DLC</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title liechtensteinische betriebsza hlung medium book</recid>
+ <recid>content: title leaves of grass author whitman walt medium book</recid>
 </hit>
 <hit>
  <md-title>New power</md-title>
@@ -36,6 +39,171 @@
  </location>
  <count>1</count>
  <recid>content: title new power author lowther christine medium book</recid>
+</hit>
+<hit>
+ <md-title>Casus decretorum Bartholomei Brixiensis</md-title>
+ <md-date>1489</md-date>
+ <md-author>Bartolomeo</md-author>
+ <md-description>LC copy has 2 capitals supplied in red and silver (a2);  coat-of-arms in colors painted on verso of final blank. Half-bound in wooden boards with blind-stamped pigskin, and with 2 clasps.DLC</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="488613273">
+  <md-title>Casus decretorum Bartholomei Brixiensis</md-title>
+  <md-date>1489</md-date>
+  <md-author>Bartolomeo</md-author>
+  <md-description>A modification of Benencasa&apos;s Casus. Cf. S. Kuttner. Repertorium der Kanonistik, I, 1937, p. 229-230; 455</md-description>
+  <md-description>Imprint from colophon</md-description>
+  <md-description>Printer&apos;s device at colophon</md-description>
+  <md-description>Colophon: Casus Decreti Bartholomei Brixien[sis] in vrbe Basilien[si] per Nicolaum Kesler ciuem eiusdem studiosissime impressi finiunt feliciter</md-description>
+  <md-description>Signatures: a⁸ b-z⁸/⁶ [et]⁸ [con]⁶ t[ra]⁶ [rum]⁸</md-description>
+  <md-description>BM 15th cent. omits the t[ra] gathering and indicates the corresponding number of leaves (182); the gathering is present in GW and in LC copy</md-description>
+  <md-description>Capital spaces, some with guide letters</md-description>
+  <md-description>LC copy has 2 capitals supplied in red and silver (a2);  coat-of-arms in colors painted on verso of final blank. Half-bound in wooden boards with blind-stamped pigskin, and with 2 clasps.DLC</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title casus decretorum bartholomei brixiensis author bartolomeo medium book</recid>
+</hit>
+<hit>
+ <md-title>Hymnes chantés dans la séance de la Convention nationale du 23 thermidor, jour anniversaire du 10 août</md-title>
+ <md-date>1795</md-date>
+ <md-description>Le chant républicain du 10 août / par Le Brun ; musique de Chérubini -- Hymne a la liberté / par Th. Desorgues ; musique de Langlé -- L&apos;hymne du 10 août / par M. Chénier ; musique de Catel -- Hymne a la liberté : chant de triomphe / par Baour Lormian ; musique de Rigel père</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2103225742">
+  <md-title>Hymnes chantés dans la séance de la Convention nationale du 23 thermidor, jour anniversaire du 10 août</md-title>
+  <md-date>1795</md-date>
+  <md-description>Without the music</md-description>
+  <md-description>Caption title. Imprint from colophon</md-description>
+  <md-description>Le chant républicain du 10 août / par Le Brun ; musique de Chérubini -- Hymne a la liberté / par Th. Desorgues ; musique de Langlé -- L&apos;hymne du 10 août / par M. Chénier ; musique de Catel -- Hymne a la liberté : chant de triomphe / par Baour Lormian ; musique de Rigel père</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title hymnes chante s dans la se ance de la convention nationale du thermidor jour anniversaire du aou t medium book</recid>
+</hit>
+<hit>
+ <md-title>Policronicon</md-title>
+ <md-date>1527</md-date>
+ <md-author>Higden, Ranulf</md-author>
+ <md-description>Hidgen&apos;s work, divided into seven books and extending to the year 1348, was originally written in Latin.  The present English translation was made by John de Trevisa, who continued it to 1357.  The eighth book, 1358-1460, was added by Caxton, who in 1482 printed the work from Trevisa&apos;s translation, revising the antiquated text. This continuation is of interest as being the only original work of any magnitude from his pen.  Cf. W. Blades, Life and typography of William Caxton, 1863, v. 2, p. 125</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3717838211">
+  <md-title>Policronicon</md-title>
+  <md-date>1527</md-date>
+  <md-author>Higden, Ranulf</md-author>
+  <md-description>Imprint from colophon</md-description>
+  <md-description>This is a reprint of the edition printed by Wynken de Worde in 1495. The only variation appears to be the introduction of a few woodcuts and the omission of the date of Wynken de Worde&apos;s edition at the end. Cf. S.E. Brydges. The British bibliographer, 1814, v. 4, p. 349-350</md-description>
+  <md-description>Hidgen&apos;s work, divided into seven books and extending to the year 1348, was originally written in Latin.  The present English translation was made by John de Trevisa, who continued it to 1357.  The eighth book, 1358-1460, was added by Caxton, who in 1482 printed the work from Trevisa&apos;s translation, revising the antiquated text. This continuation is of interest as being the only original work of any magnitude from his pen.  Cf. W. Blades, Life and typography of William Caxton, 1863, v. 2, p. 125</md-description>
+  <md-description>The first book comprises a brief description of the countries of the known world, and a more particular account of Great Britain</md-description>
+  <md-description>Error in foliation: CCCxxxvi repeated</md-description>
+  <md-description>2a⁸ 2b-2h⁶ a-y⁸ z⁶ A-S⁸ T⁶ Y⁸ X⁸ (2h6 blank)</md-description>
+  <md-description>Ill. t.p. printed in red and black</md-description>
+  <md-description>Printed in double columns</md-description>
+  <md-description>LC copy imperfect: final leaf wanting. Imprint statement from RLIN record UTBGDDV8260-B. Many leaves re-margined and inlaid.DLC</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title policronicon author higden ranulf medium book</recid>
+</hit>
+<hit>
+ <md-title>Vitas patrum</md-title>
+ <md-date>1495</md-date>
+ <md-description>LC Vollbehr Collection copy 2 imperfect: leaf CCCxlvii [i.e. 348] in facsimile (cf. Vollbehr&apos;s files, Proctor 9697), and used as t.p. (wanting original); book measures 27 cm., bound in red leather, with coat-of-arms of Curzon in gilt on cover; inside dentelles.DLC</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1037483384">
+  <md-title>Vitas patrum</md-title>
+  <md-date>1495</md-date>
+  <md-description>&quot;By the blessyd [and] holy saynt Saynt Ierome ... [and] other solytarye relygyouse persones after hy[m] ...&quot;: leaf Aa2</md-description>
+  <md-description>Imprint from colophon</md-description>
+  <md-description>Signatures: Aa⁸ a-o⁸ p⁶ q-x⁸ y¹⁰ z-2t⁸ 2v-2x⁶</md-description>
+  <md-description>Error in foliation: lxxxxiii repeated</md-description>
+  <md-description>The title is xylographic (white on black)</md-description>
+  <md-description>LC Vollbehr Collection copy 1 bound in full leather, stamped in gilt and blind; inside dentelles, with blind stamping on the paste-down endpapers.DLC</md-description>
+  <md-description>LC Vollbehr Collection copy 2 imperfect: leaf CCCxlvii [i.e. 348] in facsimile (cf. Vollbehr&apos;s files, Proctor 9697), and used as t.p. (wanting original); book measures 27 cm., bound in red leather, with coat-of-arms of Curzon in gilt on cover; inside dentelles.DLC</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title vitas patrum medium book</recid>
+</hit>
+<hit>
+ <md-title>A shorte treatise vpon the Turkes chronicles</md-title>
+ <md-date>1546</md-date>
+ <md-author>Giovio, Paolo</md-author>
+ <md-description>(from t.p.) The conte[n]tes of the boke [brace] the begynnyng of the Turkyshe empyre -- The lyues of al the Turkyshe emperours -- The araye and discipline of the Turkysh warfare described &amp; set forth most exactly / the sayd Paulus beyng the authour</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="2652095853">
+  <md-title>A shorte treatise vpon the Turkes chronicles</md-title>
+  <md-date>1546</md-date>
+  <md-author>Giovio, Paolo</md-author>
+  <md-description>Imprint from colophon</md-description>
+  <md-description>Signatures: *⁸ A-S⁸</md-description>
+  <md-description>(from t.p.) The conte[n]tes of the boke [brace] the begynnyng of the Turkyshe empyre -- The lyues of al the Turkyshe emperours -- The araye and discipline of the Turkysh warfare described &amp; set forth most exactly / the sayd Paulus beyng the authour</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title a shorte treatise vpon the turkes chronicles author giovio paolo medium book</recid>
+</hit>
+<hit>
+ <md-title>The paradox of tradition</md-title>
+ <md-title-remainder>gender, land, and inheritance rights among the Baganda</md-title-remainder>
+ <md-author>Nalwanga-Sebina</md-author>
+ <md-description>Cover title</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="4266708322">
+  <md-title>The paradox of tradition</md-title>
+  <md-title-remainder>gender, land, and inheritance rights among the Baganda</md-title-remainder>
+  <md-author>Nalwanga-Sebina</md-author>
+  <md-description>Cover title</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title the paradox of tradition author nalwanga sebina medium book</recid>
+</hit>
+<hit>
+ <md-title>A Description of Kentucky, in North America</md-title>
+ <md-title-remainder>to which are prefixed miscellaneous observations respecting the United States</md-title-remainder>
+ <md-author>Toulmin, Harry</md-author>
+ <md-description>Pages 117-119 contain a letter received &quot;since the preceding account was printed&quot;, dated Feb. 2, 1793</md-description>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="1586353495">
+  <md-title>A Description of Kentucky, in North America</md-title>
+  <md-title-remainder>to which are prefixed miscellaneous observations respecting the United States</md-title-remainder>
+  <md-author>Toulmin, Harry</md-author>
+  <md-description>Map accompanied by explanatory leaf</md-description>
+  <md-description>Pages 117-119 contain a letter received &quot;since the preceding account was printed&quot;, dated Feb. 2, 1793</md-description>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title a description of kentucky in north america author toulmin harry medium book</recid>
+</hit>
+<hit>
+ <md-title>Vidas e obra de Antonio Oliveira Salazar</md-title>
+ <md-author>Duarte, Augusto</md-author>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="3200965964">
+  <md-title>Vidas e obra de Antonio Oliveira Salazar</md-title>
+  <md-author>Duarte, Augusto</md-author>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title vidas e obra de antonio oliveira salazar author duarte augusto medium book</recid>
+</hit>
+<hit>
+ <md-title>A obra administrativa da ditadura em Mocambique</md-title>
+ <md-medium>book</md-medium>
+ <location id="LOC Solr Test"
+    name="LOC Solr Test" checksum="520611137">
+  <md-title>A obra administrativa da ditadura em Mocambique</md-title>
+  <md-medium>book</md-medium>
+ </location>
+ <count>1</count>
+ <recid>content: title a obra administrativa da ditadura em mocambique medium book</recid>
 </hit>
 <hit>
  <md-title>Tres cartas de Serguei Esenin</md-title>
@@ -58,288 +226,138 @@
  <recid>content: title tres cartas de serguei esenin author esenin sergei aleksandrovich medium book</recid>
 </hit>
 <hit>
- <md-title>The Chamorro language of Guam;</md-title>
- <md-title-remainder>a grammar of the idiom spoken by the inhabitants of the Marianne, or Ladrones, Islands</md-title-remainder>
- <md-date>1909</md-date>
- <md-author>Safford, William Edwin</md-author>
- <md-description>&quot;Reprinted from the American Anthropologist, 1903-1905.&quot;</md-description>
+ <md-title>Refutação dos sofismas empregados por alguns jornalistas inglezes sobre dom Miguel em Portugal e os portugueses em Plymouth</md-title>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1714344951">
-  <md-title>The Chamorro language of Guam;</md-title>
-  <md-title-remainder>a grammar of the idiom spoken by the inhabitants of the Marianne, or Ladrones, Islands</md-title-remainder>
-  <md-date>1909</md-date>
-  <md-author>Safford, William Edwin</md-author>
-  <md-description>Various pagings</md-description>
-  <md-description>&quot;Reprinted from the American Anthropologist, 1903-1905.&quot;</md-description>
-  <md-description>Issued in five parts</md-description>
+    name="LOC Solr Test" checksum="3749836075">
+  <md-title>Refutação dos sofismas empregados por alguns jornalistas inglezes sobre dom Miguel em Portugal e os portugueses em Plymouth</md-title>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the chamorro language of guam author safford william edwin medium book</recid>
+ <recid>content: title refutac a o dos sofismas empregados por alguns jornalistas inglezes sobre dom miguel em portugal e os portugueses em plymouth medium book</recid>
 </hit>
 <hit>
- <md-title>Felix Mendelssohn Bartholdy en zijne werken</md-title>
- <md-date>1908</md-date>
- <md-author>Hartog, Jacques</md-author>
- <md-description>On cover: Jubilé-uitgave</md-description>
+ <md-title>Mount Washington;</md-title>
+ <md-title-remainder>a handbook for travelers</md-title-remainder>
+ <md-author>Burt, Frank H</md-author>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="648602593">
-  <md-title>Felix Mendelssohn Bartholdy en zijne werken</md-title>
-  <md-date>1908</md-date>
-  <md-author>Hartog, Jacques</md-author>
-  <md-description>On cover: Jubilé-uitgave</md-description>
+    name="LOC Solr Test" checksum="1069481248">
+  <md-title>Mount Washington;</md-title>
+  <md-title-remainder>a handbook for travelers</md-title-remainder>
+  <md-author>Burt, Frank H</md-author>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title felix mendelssohn bartholdy en zijne werken author hartog jacques medium book</recid>
+ <recid>content: title mount washington author burt frank h medium book</recid>
 </hit>
 <hit>
- <md-title>The small holding</md-title>
- <md-date>1908</md-date>
- <md-author>Green, Frederick Ernest</md-author>
- <md-description>&quot;Much of the matter reprinted in this ... book has appeared in Farm and garden, and some of it in Farm and home.&quot;</md-description>
+ <md-title>Practical religion exemplfy&apos;d in the lives of Mrs. Mary Terry who died Decemb. 8th 1708. in the eighteenth year of her age. and Miss Clissovld. who departed this life the 12th of Decemb. 1711. in the twenty ninth year of her age</md-title>
+ <md-date>1713</md-date>
+ <md-author>Reynolds, Thomas</md-author>
+ <md-description>Title within mourning border</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3328957420">
-  <md-title>The small holding</md-title>
-  <md-date>1908</md-date>
-  <md-author>Green, Frederick Ernest</md-author>
-  <md-description>&quot;Much of the matter reprinted in this ... book has appeared in Farm and garden, and some of it in Farm and home.&quot;</md-description>
+    name="LOC Solr Test" checksum="2684093717">
+  <md-title>Practical religion exemplfy&apos;d in the lives of Mrs. Mary Terry who died Decemb. 8th 1708. in the eighteenth year of her age. and Miss Clissovld. who departed this life the 12th of Decemb. 1711. in the twenty ninth year of her age</md-title>
+  <md-date>1713</md-date>
+  <md-author>Reynolds, Thomas</md-author>
+  <md-description>Title within mourning border</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the small holding author green frederick ernest medium book</recid>
+ <recid>content: title practical religion exemplfy d in the lives of mrs mary terry who died decemb th in the eighteenth year of her age and miss clissovld who departed this life the th of decemb in the twenty ninth year of her age author reynolds thomas medium book</recid>
 </hit>
 <hit>
- <md-title>Essai sur les emprunts d&apos;états, et la protection des droits des porteurs de fonds d&apos;états étrangers</md-title>
- <md-date>1907</md-date>
- <md-author>Wuarin, Albert</md-author>
+ <md-title>Tom-tell-troth, or, A free discourse touching the murmurs of the times</md-title>
+ <md-title-remainder>directed to His Majesty by way of humble advertisement</md-title-remainder>
+ <md-date>1642</md-date>
+ <md-description>Errors in paging: 15-16 repeated</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1197472704">
-  <md-title>Essai sur les emprunts d&apos;états, et la protection des droits des porteurs de fonds d&apos;états étrangers</md-title>
-  <md-date>1907</md-date>
-  <md-author>Wuarin, Albert</md-author>
+    name="LOC Solr Test" checksum="3738890">
+  <md-title>Tom-tell-troth, or, A free discourse touching the murmurs of the times</md-title>
+  <md-title-remainder>directed to His Majesty by way of humble advertisement</md-title-remainder>
+  <md-date>1642</md-date>
+  <md-description>Errors in paging: 15-16 repeated</md-description>
+  <md-description>Signatures: B⁴ ²B⁴ C-D⁴</md-description>
+  <md-description>LC copy wanting final blank.DLC</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title essai sur les emprunts d e tats et la protection des droits des porteurs de fonds d e tats e trangers author wuarin albert medium book</recid>
+ <recid>content: title tom tell troth or a free discourse touching the murmurs of the times medium book</recid>
 </hit>
 <hit>
- <md-title>Lancasterian schools in Philadelphia</md-title>
- <md-date>1907</md-date>
- <md-author>Ellis, Charles Calvert</md-author>
+ <md-title>A short discoverie of the coasts and continent of America, from the equinoctiall northward, and of the adjacent isles</md-title>
+ <md-date>1644</md-date>
+ <md-author>Castell, William</md-author>
+ <md-description>Signatures: [A]² ***⁴ B-F⁴ G², 2A-2F⁴ 2G⁴(-2G4)</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="131730346">
-  <md-title>Lancasterian schools in Philadelphia</md-title>
-  <md-date>1907</md-date>
-  <md-author>Ellis, Charles Calvert</md-author>
+    name="LOC Solr Test" checksum="1618351359">
+  <md-title>A short discoverie of the coasts and continent of America, from the equinoctiall northward, and of the adjacent isles</md-title>
+  <md-date>1644</md-date>
+  <md-author>Castell, William</md-author>
+  <md-description>Signatures: [A]² ***⁴ B-F⁴ G², 2A-2F⁴ 2G⁴(-2G4)</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title lancasterian schools in philadelphia author ellis charles calvert medium book</recid>
+ <recid>content: title a short discoverie of the coasts and continent of america from the equinoctiall northward and of the adjacent isles author castell william medium book</recid>
 </hit>
 <hit>
- <md-title>On fermentation</md-title>
- <md-date>1907</md-date>
- <md-author>Taylor, Alonzo Englebert</md-author>
- <md-description>Source: Gift of A.W. Bitting, presented in memory of Katherine Golden Bitting, Oct. 6, 1939.DLC</md-description>
+ <md-title>An ansvver to mis-led Doctor Fearne, according to his own method</md-title>
+ <md-title-remainder>of his book : sect. 1.2, The divinity being by Scripture : sect. 3.4.5, The reason by Aristotle : sect. 6.7, The sense or matter of fact by witnesse examined</md-title-remainder>
+ <md-date>1642</md-date>
+ <md-author>Herle, Charles</md-author>
+ <md-description>Signatures: [A]² B-E⁴ F⁴(-F4)</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3877827531">
-  <md-title>On fermentation</md-title>
-  <md-date>1907</md-date>
-  <md-author>Taylor, Alonzo Englebert</md-author>
-  <md-description>LC copy has bookplate of Katherine Golden Bitting.DLC</md-description>
-  <md-description>Source: Gift of A.W. Bitting, presented in memory of Katherine Golden Bitting, Oct. 6, 1939.DLC</md-description>
+    name="LOC Solr Test" checksum="3232963828">
+  <md-title>An ansvver to mis-led Doctor Fearne, according to his own method</md-title>
+  <md-title-remainder>of his book : sect. 1.2, The divinity being by Scripture : sect. 3.4.5, The reason by Aristotle : sect. 6.7, The sense or matter of fact by witnesse examined</md-title-remainder>
+  <md-date>1642</md-date>
+  <md-author>Herle, Charles</md-author>
+  <md-description>Signatures: [A]² B-E⁴ F⁴(-F4)</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title on fermentation author taylor alonzo englebert medium book</recid>
+ <recid>content: title an ansvver to mis led doctor fearne according to his own method author herle charles medium book</recid>
 </hit>
 <hit>
- <md-title>The last siege of Louisburg</md-title>
- <md-date>1907</md-date>
- <md-author>Macdonald, C. Ochiltree</md-author>
+ <md-title>A petition of W.C. exhibited to the High Court of Parliament now assembled</md-title>
+ <md-title-remainder>for the propagating of the Gospel in America and the West Indies, and for the setling of our plantations there : which petition is approved by 70 able English divines : also by Master Alexander Henderson and some other worthy ministers of Scotland</md-title-remainder>
+ <md-date>1641</md-date>
+ <md-author>Castell, William</md-author>
+ <md-description>LC copy wanting initial blank.DLC</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2812085173">
-  <md-title>The last siege of Louisburg</md-title>
-  <md-date>1907</md-date>
-  <md-author>Macdonald, C. Ochiltree</md-author>
+    name="LOC Solr Test" checksum="552609001">
+  <md-title>A petition of W.C. exhibited to the High Court of Parliament now assembled</md-title>
+  <md-title-remainder>for the propagating of the Gospel in America and the West Indies, and for the setling of our plantations there : which petition is approved by 70 able English divines : also by Master Alexander Henderson and some other worthy ministers of Scotland</md-title-remainder>
+  <md-date>1641</md-date>
+  <md-author>Castell, William</md-author>
+  <md-description>Signatures: A-B⁴ C²</md-description>
+  <md-description>LC copy wanting initial blank.DLC</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the last siege of louisburg author macdonald c ochiltree medium book</recid>
+ <recid>content: title a petition of w c exhibited to the high court of parliament now assembled author castell william medium book</recid>
 </hit>
 <hit>
- <md-title>The standard financial dictionary;</md-title>
- <md-title-remainder>an encyclopedia covering the entire field of finance, words, terms, phrases</md-title-remainder>
- <md-date>1906-1907</md-date>
- <md-author>Shea, Christopher Ambrose</md-author>
+ <md-title>The priviledges and practice of parliaments in England</md-title>
+ <md-title-remainder>collected out of the common lawes of this land, seene and allowed by the learned in the lawes, commended to the high court of Parliament now assembled</md-title-remainder>
+ <md-date>1641</md-date>
+ <md-description>Place of printing from Wing</md-description>
  <md-medium>book</md-medium>
  <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2263215062">
-  <md-title>The standard financial dictionary;</md-title>
-  <md-title-remainder>an encyclopedia covering the entire field of finance, words, terms, phrases</md-title-remainder>
-  <md-date>1906-1907</md-date>
-  <md-author>Shea, Christopher Ambrose</md-author>
+    name="LOC Solr Test" checksum="2167221470">
+  <md-title>The priviledges and practice of parliaments in England</md-title>
+  <md-title-remainder>collected out of the common lawes of this land, seene and allowed by the learned in the lawes, commended to the high court of Parliament now assembled</md-title-remainder>
+  <md-date>1641</md-date>
+  <md-description>Place of printing from Wing</md-description>
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
- <recid>content: title the standard financial dictionary author shea christopher ambrose medium book</recid>
-</hit>
-<hit>
- <md-title>Die Musik in Böhmen</md-title>
- <md-date>1906</md-date>
- <md-author>Batka, Richard</md-author>
- <md-description>The frontispiece is a mounted photograph</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1746342815">
-  <md-title>Die Musik in Böhmen</md-title>
-  <md-date>1906</md-date>
-  <md-author>Batka, Richard</md-author>
-  <md-description>Series title also at head of t.-p</md-description>
-  <md-description>The frontispiece is a mounted photograph</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title die musik in bo hmen author batka richard medium book</recid>
-</hit>
-<hit>
- <md-title>Baku</md-title>
- <md-title-remainder>an eventful history</md-title-remainder>
- <md-date>1905</md-date>
- <md-author>Henry, James Dodds</md-author>
- <md-description>pt. I. The origin, progress and present position of the Russian petroleum industry.--pt. II. The rising in the Caucasus.--pt. III. Batoum, Baku&apos;s chief oil port</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3360955284">
-  <md-title>Baku</md-title>
-  <md-title-remainder>an eventful history</md-title-remainder>
-  <md-date>1905</md-date>
-  <md-author>Henry, James Dodds</md-author>
-  <md-description>pt. I. The origin, progress and present position of the Russian petroleum industry.--pt. II. The rising in the Caucasus.--pt. III. Batoum, Baku&apos;s chief oil port</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title baku author henry james dodds medium book</recid>
-</hit>
-<hit>
- <md-title>The life of Froude</md-title>
- <md-date>1905</md-date>
- <md-author>Paul, Herbert W</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1682347087">
-  <md-title>The life of Froude</md-title>
-  <md-date>1905</md-date>
-  <md-author>Paul, Herbert W</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title the life of froude author paul herbert w medium book</recid>
-</hit>
-<hit>
- <md-title>Dějiny české hudby</md-title>
- <md-date>1903</md-date>
- <md-author>Nejedlý, Zdeněk</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="680600457">
-  <md-title>Dějiny české hudby</md-title>
-  <md-date>1903</md-date>
-  <md-author>Nejedlý, Zdeněk</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title de jiny c eske hudby author nejedly zdene k medium book</recid>
-</hit>
-<hit>
- <md-title>The geological structure of Monzoni and Fassa</md-title>
- <md-date>1903</md-date>
- <md-author>Gordon, Maria M. Ogilvie</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2295212926">
-  <md-title>The geological structure of Monzoni and Fassa</md-title>
-  <md-date>1903</md-date>
-  <md-author>Gordon, Maria M. Ogilvie</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title the geological structure of monzoni and fassa author gordon maria m ogilvie medium book</recid>
-</hit>
-<hit>
- <md-title>Four southern magazines</md-title>
- <md-date>1902</md-date>
- <md-author>Rogers, Edward Reinhold</md-author>
- <md-description>&quot;The four chapters of this brief discussion are limited to four of the principal ante-bellum southern magazines--namely, De Bow&apos;s review, of New Orleans; The Southern review, of Charleston, S. C.; The Southern quarterly review, also of Charleston, S. C.; The Southern literary messenger, of Richmond, Virginia.&quot;--Pref</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="1229470568">
-  <md-title>Four southern magazines</md-title>
-  <md-date>1902</md-date>
-  <md-author>Rogers, Edward Reinhold</md-author>
-  <md-description>&quot;The four chapters of this brief discussion are limited to four of the principal ante-bellum southern magazines--namely, De Bow&apos;s review, of New Orleans; The Southern review, of Charleston, S. C.; The Southern quarterly review, also of Charleston, S. C.; The Southern literary messenger, of Richmond, Virginia.&quot;--Pref</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title four southern magazines author rogers edward reinhold medium book</recid>
-</hit>
-<hit>
- <md-title>Frederick Chopin</md-title>
- <md-title-remainder>as a man and musician;</md-title-remainder>
- <md-date>1902</md-date>
- <md-author>Niecks, Frederick</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="3909825395">
-  <md-title>Frederick Chopin</md-title>
-  <md-title-remainder>as a man and musician;</md-title-remainder>
-  <md-date>1902</md-date>
-  <md-author>Niecks, Frederick</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title frederick chopin author niecks frederick medium book</recid>
-</hit>
-<hit>
- <md-title>What I saw in South Africa, September and October, 1902</md-title>
- <md-date>1902</md-date>
- <md-author>MacDonald, James Ramsay</md-author>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="2844083037">
-  <md-title>What I saw in South Africa, September and October, 1902</md-title>
-  <md-date>1902</md-date>
-  <md-author>MacDonald, James Ramsay</md-author>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title what i saw in south africa september and october author macdonald james ramsay medium book</recid>
-</hit>
-<hit>
- <md-title>History of the First Light Battery Connecticut Volunteers, 1861-1865</md-title>
- <md-title-remainder>Personal records and reminiscences. The story of the battery from its organization to the present time</md-title-remainder>
- <md-date>1901</md-date>
- <md-author>Beecher, Herbert W</md-author>
- <md-description>Edited by John De Morgan</md-description>
- <md-medium>book</md-medium>
- <location id="LOC Solr Test"
-    name="LOC Solr Test" checksum="163728210">
-  <md-title>History of the First Light Battery Connecticut Volunteers, 1861-1865</md-title>
-  <md-title-remainder>Personal records and reminiscences. The story of the battery from its organization to the present time</md-title-remainder>
-  <md-date>1901</md-date>
-  <md-author>Beecher, Herbert W</md-author>
-  <md-description>Edited by John De Morgan</md-description>
-  <md-medium>book</md-medium>
- </location>
- <count>1</count>
- <recid>content: title history of the first light battery connecticut volunteers author beecher herbert w medium book</recid>
+ <recid>content: title the priviledges and practice of parliaments in england medium book</recid>
 </hit>
 </show>

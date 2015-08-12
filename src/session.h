@@ -112,7 +112,9 @@ struct session {
     int settings_modified;
     facet_limits_t facet_limits;
     int clients_starting;
+    int force_position;
     struct reclist_sortparms *sorted_results;
+    struct facet_id *facet_id_list;
 };
 
 struct statistics {
@@ -141,6 +143,8 @@ struct hitsbytarget {
     int connected;
     char *settings_xml;
     char *suggestions_xml;
+    const char *query_type;
+    const char *query_data;
 };
 
 struct hitsbytarget *get_hitsbytarget(struct session *s, int *count, NMEM nmem);
@@ -190,11 +194,15 @@ int ingest_record(struct client *cl, const char *rec, int record_no, NMEM nmem);
 int ingest_xml_record(struct client *cl, xmlDoc *xdoc,
                       int record_no, NMEM nmem, int cached_copy);
 void session_alert_watch(struct session *s, int what);
-void add_facet(struct session *s, const char *type, const char *value, int count);
+void add_facet(struct session *s, const char *type, const char *value, int count, struct client *cl);
 
 int session_check_cluster_limit(struct session *se, struct record_cluster *rec);
 
 void perform_termlist(struct http_channel *c, struct session *se, const char *name, int num, int version);
+
+const char *session_lookup_id_facet(struct session *s, struct client *cl,
+                                    const char *type, const char *term);
+
 void session_log(struct session *s, int level, const char *fmt, ...)
 #ifdef __GNUC__
     __attribute__ ((format (printf, 3, 4)))

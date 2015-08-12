@@ -7,4 +7,6 @@
 <records>2</records>
 <filtered>0</filtered>
 <state>Client_Idle</state>
+<query_type>pqf</query_type>
+<query_data>@and 6 computer </query_data>
 </target></bytarget>

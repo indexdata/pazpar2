@@ -20,6 +20,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title kray krve pyak n n a chi sui sa author ui ma cham medium book</recid>
 </hit>
 <hit>
@@ -37,6 +38,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title mran ma rui ra a kha pe on mhan duin ya ri author on san medium book</recid>
 </hit>
 <hit>
@@ -54,6 +56,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title pe chap khran nhan a khra vatthu tui mya author on san medium book</recid>
 </hit>
 <hit>
@@ -71,6 +74,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title loka kri mha di lui pai author on kon medium book</recid>
 </hit>
 <hit>
@@ -88,6 +92,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title dutiya mran ma nuin n am to nhan bhu ran non kyo than no ratha author on khan cui medium book</recid>
 </hit>
 <hit>
@@ -108,6 +113,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title nat syhan non nhan ra ja dha tukalya author on hin kyo medium book</recid>
 </hit>
 <hit>
@@ -126,6 +132,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title san rhac chay phrac la khai lyhan author on cui medium book</recid>
 </hit>
 <hit>
@@ -143,6 +150,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title the writings of general aung san author on chan medium book</recid>
 </hit>
 <hit>
@@ -162,6 +170,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title ityop ya wiw author e rmya s kabada walda iyasus medium book</recid>
 </hit>
 <hit>
@@ -179,6 +188,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title bezay s awata ebyat way me eba l yalebon author e danha mar ka rin medium book</recid>
 </hit>
 <hit>
@@ -196,6 +206,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title bhan mha a lvay ta ku khye n ve ra yu nan n author e mi khyui medium book</recid>
 </hit>
 <hit>
@@ -213,6 +224,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title h elmen tawas on he wa h a te ka bay na bay author eya su gabrakida n medium book</recid>
 </hit>
 <hit>
@@ -230,6 +242,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title mo la mruin mrui kusina rum bhu ra samuin author a ca ra medium book</recid>
 </hit>
 <hit>
@@ -247,6 +260,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title thu chac so ip mak rup krvan a kron author an kran ma la medium book</recid>
 </hit>
 <hit>
@@ -266,6 +280,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title almas am author alams ah ay dasa lan medium book</recid>
 </hit>
 <hit>
@@ -283,6 +298,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title yanas a nat ba roc author abe l s ayfa medium book</recid>
 </hit>
 <hit>
@@ -301,6 +317,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title lamnam la nna author a mani rat medium book</recid>
 </hit>
 <hit>
@@ -319,6 +336,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title lilit khun c h ang author a mani rat medium book</recid>
 </hit>
 <hit>
@@ -338,6 +356,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title pannya author ngkham sainyasuk medium book</recid>
 </hit>
 <hit>
@@ -355,6 +374,7 @@
   <md-medium>book</md-medium>
  </location>
  <count>1</count>
+ <relevance>0</relevance>
  <recid>content: title the children of adam author uthma n fath i medium book</recid>
 </hit>
 </show>

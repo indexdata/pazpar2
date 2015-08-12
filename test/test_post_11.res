@@ -7,4 +7,6 @@
 <records>10</records>
 <filtered>0</filtered>
 <state>Client_Idle</state>
+<query_type>pqf</query_type>
+<query_data>@or @attr 1=1016 computer  2015</query_data>
 </target></bytarget>

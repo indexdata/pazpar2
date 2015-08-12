@@ -3,3 +3,4 @@
 *.dif
 Makefile
 Makefile.in
+*.trs

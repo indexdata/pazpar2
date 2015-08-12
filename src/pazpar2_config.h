@@ -37,6 +37,7 @@ enum conf_metadata_type {
     Metadata_type_skiparticle,
     Metadata_type_relevance,
     Metadata_type_position,
+    Metadata_type_retrieval,
 };
 
 enum conf_metadata_merge {
@@ -81,6 +82,7 @@ struct conf_metadata
 
     char *limitmap;  // Should be expanded into service-wide default e.g. pz:limitmap:<name>=value setting
     char *limitcluster;
+    char *icurule;
 };
 
 
