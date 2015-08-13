@@ -1338,12 +1338,14 @@ struct conf_config *config_create(const char *fname)
     r = yaz_xml_include_simple(n, wrbuf_cstr(config->confdir));
     if (r == 0) /* OK */
     {
+#ifndef WIN32
         yaz_log(YLOG_LOG, "Configuration %s after include processing",
                 fname);
 #if LIBXML_VERSION >= 20600
         xmlDocFormatDump(yaz_log_file(), doc, 0);
 #else
         xmlDocDump(yaz_log_file(), doc);
+#endif
 #endif
         r = parse_config(config, n);
     }
