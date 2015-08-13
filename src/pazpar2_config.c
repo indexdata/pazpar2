@@ -1104,8 +1104,7 @@ static void info_service_metadata(struct conf_service *service, WRBUF w)
             case Metadata_type_float:
                 wrbuf_puts(w, " type=\"float\"");
                 break;
-            case Metadata_type_relevance:
-            case Metadata_type_position:
+            default:
                 break;
             }
             switch (md->merge)
