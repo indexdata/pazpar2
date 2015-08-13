@@ -1145,15 +1145,14 @@ static void info_service_metadata(struct conf_service *service, WRBUF w)
 
 static void info_service_databases(struct conf_service *service, WRBUF w)
 {
-    struct database *db;
-    struct setting *s;
-    int i;
 
     if (service->databases)
     {
+        struct database *db;
         wrbuf_puts(w, "   <databases>\n");
         for(db = service->databases; db; db = db->next)
         {
+            int i;
             wrbuf_puts(w, "    <database");
             if (db->id)
             {
@@ -1164,7 +1163,7 @@ static void info_service_databases(struct conf_service *service, WRBUF w)
             wrbuf_puts(w, ">\n");
             for (i = 0; i < db->num_settings; i++)
             {
-                s = db->settings[i];
+                struct setting *s = db->settings[i];
                 while (s != NULL)
                 {
                     wrbuf_puts(w, "     <setting");
@@ -1188,8 +1187,7 @@ void info_services(struct conf_server *server, WRBUF w)
 {
     struct conf_service *s = server->service;
     int i;
-    struct setting *S;
-
+ 
     wrbuf_puts(w, " <services>\n");
     for (; s; s = s->next)
     {
@@ -1205,7 +1203,7 @@ void info_services(struct conf_server *server, WRBUF w)
         {
             for (i=0; i<s->settings->num_settings; i++)
             {
-                S = s->settings->settings[i];
+                struct setting *S = s->settings->settings[i];
                 while (S != NULL) {
                     wrbuf_puts(w, "   <setting");
                     wrbuf_puts(w, " name=\"");
