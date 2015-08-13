@@ -1150,7 +1150,7 @@ static void info_service_databases(struct conf_service *service, WRBUF w)
     {
         struct database *db;
         wrbuf_puts(w, "   <databases>\n");
-        for(db = service->databases; db; db = db->next)
+        for (db = service->databases; db; db = db->next)
         {
             int i;
             wrbuf_puts(w, "    <database");
@@ -1164,17 +1164,15 @@ static void info_service_databases(struct conf_service *service, WRBUF w)
             for (i = 0; i < db->num_settings; i++)
             {
                 struct setting *s = db->settings[i];
-                while (s != NULL)
+                for (; s; s = s->next)
                 {
-                    wrbuf_puts(w, "     <setting");
-                    wrbuf_puts(w, " name=\"");
+                    wrbuf_puts(w, "     <setting name=\"");
                     wrbuf_xmlputs(w, s->name);
                     wrbuf_puts(w, "\"");
                     wrbuf_puts(w, " value=\"");
                     wrbuf_xmlputs(w, s->value);
                     wrbuf_puts(w, "\"");
                     wrbuf_puts(w, " />\n");
-                    s = s->next;
                 }
             }
             wrbuf_puts(w, "    </database>\n");
@@ -1187,7 +1185,7 @@ void info_services(struct conf_server *server, WRBUF w)
 {
     struct conf_service *s = server->service;
     int i;
- 
+
     wrbuf_puts(w, " <services>\n");
     for (; s; s = s->next)
     {
@@ -1201,34 +1199,30 @@ void info_services(struct conf_server *server, WRBUF w)
         wrbuf_puts(w, ">\n");
         if (s->settings)
         {
-            for (i=0; i<s->settings->num_settings; i++)
+            for (i = 0; i < s->settings->num_settings; i++)
             {
                 struct setting *S = s->settings->settings[i];
-                while (S != NULL) {
-                    wrbuf_puts(w, "   <setting");
-                    wrbuf_puts(w, " name=\"");
+                for (; S; S = S->next)
+                {
+                    wrbuf_puts(w, "   <setting name=\"");
                     wrbuf_xmlputs(w,  S->name);
                     wrbuf_puts(w, "\"");
                     wrbuf_puts(w, " value=\"");
                     wrbuf_xmlputs(w, S->value);
                     wrbuf_puts(w, "\"");
-                    if (S->target) {
+                    if (S->target)
+                    {
                         wrbuf_puts(w, " target=\"");
                         wrbuf_xmlputs(w, S->target);
                         wrbuf_puts(w, "\"");
                     }
-
                     wrbuf_puts(w, " />\n");
-
-                    S = S->next;
                 }
             }
         }
         info_service_metadata(s, w);
         info_service_databases(s, w);
-        wrbuf_puts(w, "  </service>");
-
-        wrbuf_puts(w, "\n");
+        wrbuf_puts(w, "  </service>\n");
     }
     wrbuf_puts(w, " </services>\n");
 }
