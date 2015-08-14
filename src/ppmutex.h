@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #ifndef PAZPAR2_PPMUTEX_H
-#define PAZPAR2_PPMUTEXF_H
+#define PAZPAR2_PPMUTEX_H
 
 #include <yaz/mutex.h>
 
