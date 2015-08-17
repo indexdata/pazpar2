@@ -1,3 +1,17 @@
+--- 1.12.0 2015/08/17
+
+Fix PAZPAR2_PPMUTEX_H incorrectly defined PAZ-1023
+
+Fix windows: crash in xmlDocFormatDump PAZ-1021
+Problem is the passed FILE*. We can not pass FILE pointers between
+DLLs. So we just avoid dumping the XML config during start on Windows.
+
+Use YAZ comstack features for IPv6 and non-blocking getaddrinfo. PAZ-927
+
+Upgrade to debian DH version 9 PAZ-1020
+
+Fix bytarget list not cleared for new search PAZ-1019
+
 --- 1.11.3 2015/07/28
 
 Do not re-search if facetlimit scan fails to find value PAZ-1013
