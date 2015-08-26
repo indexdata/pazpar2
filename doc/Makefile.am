@@ -3,7 +3,7 @@ SUBDIRS = common
 
 SUFFIXES=.1 .5 .7 .8 .pdf .esp .xml 
 
-XMLFILES = book.xml manref.xml gpl-2.0.xml local.ent
+XMLFILES = book.xml ajaxdev.xml manref.xml gpl-2.0.xml local.ent
 
 MAINXML = $(srcdir)/book.xml
 

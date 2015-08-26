@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <section id="ajaxdev">
  <title>Ajax client development</title>
-
  <para>
   Pazpar2 offers programmer a simple Web Service protocol that can be
   used (queried in a request/response fashion) from any, server- or
@@ -14,33 +13,27 @@
   finished. Blocking and waiting for usually slow back-end targets is
   one of the biggest functionality issues in a federated search engine.
  </para>
- 
- <para><bridgehead>Pz2.js</bridgehead></para>
- 
  <para>
-  Pazpar2 comes with a small JavaScript library called pz2.js. This
-  library is designed to simplify development of an Ajax-based pazpar2
+  Pazpar2 comes with a small JavaScript library called
+  <filename>pz2.js</filename>.
+  This library is designed to simplify development of an Ajax-based pazpar2
   client and alleviate programmer from the low-level details like
   polling the web service, fetching and parsing returned XML output or
   managing timers, sessions and basic state variables.
  </para>
- 
  <para>
   The library supports most major browsers including Firefox 1.5+, IE
   6+, Safari 2+, Opera 9+ and Konqueror.
  </para>
- 
  <para>
   The library can work in two modes: a session-aware mode and a
   session-less mode.
  </para>
- 
  <para>
   In the session-aware mode, the library assumes that the pazpar2
   daemon is contacted directly (preferably via Apache proxy to avoid
   security breaches) and tracks the session Ids internally.
  </para>
- 
  <para>
   In the session-less mode the library assumes that the client is
   identified on the server and the session Ids are not managed
@@ -49,56 +42,49 @@
   language like PHP that can identify clients and relate them to open
   pazpar2 sessions).
  </para>
- 
- <para><bridgehead>Using pz2.js</bridgehead></para>
- 
+ <para><bridgehead>Using <filename>pz2.js</filename></bridgehead></para>
  <para>
-  Client development with the pz2.js is strongly event based and the
+  Client development with the <filename>pz2.js</filename> is strongly event based and the
   style should be familiar to most JavaScript developers. A simple
   client (jsdemo) is distributed with pazpar2's source code and shows
-  how to set-up and use pz2.js.
+  how to set-up and use <filename>pz2.js</filename>.
  </para>
- 
  <para>
   In short, programmer starts by instantiating the pz2 object and
   passing an array of parameters to the constructor. The parameter array
   specifies callbacks used for handling responses to the pazpar2
   commands. Additionally, the parameter array is used to configure
-  run-time parameters of the pz2.js like polling timer time-outs,
-  session-mode and XSLT style-sheets.
+  run-time parameters of the <filename>pz2.js</filename> like polling
+  timer time-outs, session-mode and XSLT style-sheets.
  </para>
- 
  <para><bridgehead>Command callbacks</bridgehead></para>
- 
  <para>
   Callback naming is simple and follows “on” prefix plus command name
   scheme (like onsearch, onshow, onrecord, ... etc.). When programmer
-  calls a function like show or record on the pz2 object, pz2.js will
+  calls a function like show or record on the pz2 object, <filename>pz2.js</filename> will
   keep on polling pazpar2 (until the backend targets are idle) and with
   each command's response an assigned callback will be called. In case
   of pazpar2's internal error an error callback is called.
  </para>
- 
  <screen>
-  my_paz = new pz2 ( 
+  my_paz = new pz2 (
   {
    "pazpar2path": "/pazpar2/search.pz2",
    "usesessions" : true,
-  
+
    // assigning command handler, turns on automatic polling
    "onshow": my_onshow,
    // polling period for each command can be specified
-   "showtime": 500, 
-  
+   "showtime": 500,
+
    "onterm": my_onterm,
-   // facet terms are specified as a comma separated list 
-   "termlist": "subject,author", 
-  
+   // facet terms are specified as a comma separated list
+   "termlist": "subject,author",
+
    "onrecord": my_onrecord
   }
   );
  </screen>
- 
  <para>
   Each command callback is a user defined function that takes a hash
   object as a parameter. The hash object contains parsed pazpar2
@@ -106,14 +92,13 @@
   response XML document). Within the handler programmer further
   processes the data and updates the viewed document.
  </para>
-
  <screen>
-  function my_onstat(data) { 
-   var stat = document.getElementById("stat"); 
-   stat.innerHTML = '&lt;span&gt;Active clients: '+ data.activeclients 
-    + '/' + data.clients + ' | &lt;/span&gt;' 
-    + '&lt;span&gt;Retrieved records: ' + data.records 
-    + '/' + data.hits + '&lt;/span&gt;'; 
+  function my_onstat(data) {
+   var stat = document.getElementById("stat");
+   stat.innerHTML = '&lt;span&gt;Active clients: '+ data.activeclients
+    + '/' + data.clients + ' | &lt;/span&gt;'
+    + '&lt;span&gt;Retrieved records: ' + data.records
+    + '/' + data.hits + '&lt;/span&gt;';
   }
 
   function my_onshow(data) {
@@ -128,20 +113,16 @@
    Element_appendTransformResult(someDiv, data.xmlDoc, data.xslDoc);
   }
  </screen>
-
- <para><bridgehead>pz2.js on runtime</bridgehead></para>
- 
+ <para><bridgehead><filename>pz2.js</filename> on runtime</bridgehead></para>
  <para>
   The search process is initiated by calling the search method on the
   instantiated pz2 object. To initiate short status reports and
   per-target status information methods stat and bytarget have to be
   called accordingly.
  </para>
- 
  <screen>
   my_paz.search (query, recPergPage, 'relevance');
  </screen>
- 
  <para>
   Managing the results (keeping track of the browsed results page and
   sorting) is up to the client's programmer. At any point the show
@@ -149,43 +130,34 @@
   different sorting criteria or range and without re-executing the
   search on the back-end.
  </para>
- 
  <screen>
   my_paz.show (1, 10, 'relevance');
  </screen>
- 
  <para>
   To retrieve a detailed record the record command is called. When
   calling record command one may temporarily override its default
   callback by specifying the handler parameter. This might be useful
   when retrieving raw records that need to be processed differently.
  </para>
- 
  <screen>
   my_paz.record (recId, 2, 'opac', { “callback”: temp_callback, “args”, caller_args});
  </screen>
- 
  <variablelist>
-  
-  <para><bridgehead>PARAMATERS ARRAY</bridgehead></para> 
-  
+  <para><bridgehead>PARAMETERS ARRAY</bridgehead></para>
   <varlistentry><term>pazpar2path</term>
   <listitem><para>server path to pazpar2 (relative to the portal), when pazpar2 is installed as a package this does not have to be set </para></listitem>
   </varlistentry>
-
   <varlistentry><term>usesessions</term>
-  <listitem><para>boolean, when set to true pz2.js will manage sessions internally otherwise it's left to the server-side script, default true</para></listitem>
+  <listitem><para>boolean, when set to true <filename>pz2.js</filename> will manage sessions internally otherwise it's left to the server-side script, default true</para></listitem>
   </varlistentry>
-
   <varlistentry><term>autoInit</term>
   <listitem><para>bolean, sets auto initialization of pazpar2 session on the object instantiation, default true, valid only if usesession is set to true</para></listitem>
   </varlistentry>
-
   <varlistentry><term>detailstylesheet</term>
   <listitem><para>path to the xsl presentation stylesheet (relative to the portal) used for the detailed record display</para></listitem></varlistentry>
-  
+
   <varlistentry><term>errorhandler</term>
-  <listitem><para>callback function called on any, pazpar2 or pz2.js' internal, error</para></listitem></varlistentry>
+  <listitem><para>callback function called on any, pazpar2 or <filename>pz2.js</filename>' internal, error</para></listitem></varlistentry>
 
   <varlistentry><term>oninit</term>
   <listitem><para>specifies init response callback function</para></listitem></varlistentry>
@@ -226,9 +198,9 @@
  </variablelist>
 
  <variablelist>
-  
+
   <para><bridgehead>METHODS</bridgehead></para>
-  
+
   <varlistentry><term>stop ()</term>
   <listitem><para>stop activity by clearing timeouts</para></listitem></varlistentry>
 
@@ -260,15 +232,15 @@
   <listitem><para>start polling for pazpar2 status</para></listitem></varlistentry>
 
  </variablelist>
- 
+
  <para/>
- <para>Pz2.js comes with a set of cross-browser helper classes and functions.</para>
+ <para><filename>pz2.js</filename> comes with a set of cross-browser helper classes and functions.</para>
 
  <variablelist>
 
   <para><bridgehead>Ajax helper class</bridgehead></para>
 
-  <varlistentry><term>pzHttpRequest</term> 
+  <varlistentry><term>pzHttpRequest</term>
   <listitem><para>a cross-browser Ajax wrapper class</para></listitem></varlistentry>
 
   <varlistentry><term>constructor (url, errorHandler)</term>
@@ -288,7 +260,7 @@
  <variablelist>
 
   <para><bridgehead>XML helper functions</bridgehead></para>
-  
+
   <varlistentry><term>document.newXmlDoc (root)</term>
   <listitem><para>create new XML document with root node as specified in parameter</para></listitem></varlistentry>
 
@@ -319,7 +291,7 @@
   <listitem><para>parse all descendants into an associative array</para></listitem></varlistentry>
 
  </variablelist>
- 
+
 </section>
 
 <!-- Keep this comment at the end of the file
