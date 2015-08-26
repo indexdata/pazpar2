@@ -825,6 +825,7 @@ int client_fetch_more(struct client *cl)
     const char *str;
     int extend_recs = 0;
     int number = cl->hits - cl->record_offset;
+    struct connection *co = client_get_connection(cl);
 
     str = session_setting_oneval(sdb, PZ_EXTENDRECS);
     if (!str || !*str)
@@ -840,10 +841,13 @@ int client_fetch_more(struct client *cl)
 
     if (number > extend_recs)
         number = extend_recs;
-    if (number > 0)
+    if (number <= 0)
+        yaz_log(YLOG_LOG, "cl=%s. OK no more in total set", client_get_id(cl));
+    else if (!co)
+        yaz_log(YLOG_LOG, "cl=%s. No connection", client_get_id(cl));
+    else
     {
         ZOOM_resultset set = cl->resultset;
-        struct connection *co = client_get_connection(cl);
 
         str = session_setting_oneval(sdb, PZ_REQUESTSYNTAX);
         ZOOM_resultset_option_set(set, "preferredRecordSyntax", str);
@@ -855,10 +859,6 @@ int client_fetch_more(struct client *cl)
         client_set_state(cl, Client_Working);
         connection_continue(co);
         return 1;
-    }
-    else
-    {
-        yaz_log(YLOG_LOG, "cl=%s. OK no more in total set", client_get_id(cl));
     }
     return 0;
 }
