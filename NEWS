@@ -1,3 +1,7 @@
+--- 1.12.1 2015/08/26
+
+Fix pazpar2 crash when using pz:extendrecs PAZ-1024
+
 --- 1.12.0 2015/08/17
 
 Fix PAZPAR2_PPMUTEX_H incorrectly defined PAZ-1023
