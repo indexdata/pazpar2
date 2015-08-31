@@ -1,3 +1,13 @@
+--- 1.12.2 2015/08/31
+
+Facility disable/logging of POSTed content PAZ-1027
+Log level "post" controls whether POSTed content is logged. This
+is enabled by default. To disable, use -v -post on the command line.
+
+Explain the semantics of using option -d twice in pazpar2 man page.
+
+Update ajaxdev.xml and make it part of the dist PAZ-1025
+
 --- 1.12.1 2015/08/26
 
 Fix pazpar2 crash when using pz:extendrecs PAZ-1024
