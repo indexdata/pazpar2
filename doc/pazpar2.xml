@@ -71,7 +71,8 @@
     <listitem>
      <para>
       Enables dump of XML records to the current log file.
-      It is useful if stylesheets are being debugged.
+      It is useful if stylesheets are being debugged. Using this option
+      twice makes Pazpar2 also dump full HTTP responses.
      </para>
      <para>
       This option may also be used together with option <option>-t</option>
