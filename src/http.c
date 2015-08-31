@@ -655,6 +655,7 @@ static struct http_buf *http_serialize_response(struct http_channel *c,
         FILE *lf = yaz_log_file();
         yaz_log(YLOG_LOG, "Response:");
         fwrite(wrbuf_buf(c->wrbuf), 1, wrbuf_len(c->wrbuf), lf);
+        fputc('\n', lf);
     }
     return http_buf_bywrbuf(c->http_server, c->wrbuf);
 }
