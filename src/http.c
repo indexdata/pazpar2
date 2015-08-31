@@ -81,6 +81,7 @@ struct http_buf
     struct http_buf *next;
 };
 
+static int log_level_post = 0;
 
 static void proxy_io(IOCHAN i, int event);
 static struct http_channel *http_channel_create(http_server_t http_server,
@@ -959,8 +960,8 @@ static void http_io(IOCHAN i, int event)
                         hc->request->path,
                         *hc->request->search ? "?" : "",
                         hc->request->search);
-                if (hc->request->content_buf)
-                    yaz_log(YLOG_LOG, "%s", hc->request->content_buf);
+                if (hc->request->content_buf && log_level_post)
+                    yaz_log(log_level_post, "%s", hc->request->content_buf);
                 if (http_weshouldproxy(hc->request))
                     http_proxy(hc->request);
                 else
@@ -1452,8 +1453,10 @@ http_server_t http_server_create(void)
     hs->proxy_addr = 0;
     hs->ref_count = 1;
     hs->http_sessions = 0;
-
     hs->record_file = 0;
+
+    log_level_post = yaz_log_module_level("post");
+
     return hs;
 }
 

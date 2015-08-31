@@ -120,6 +120,7 @@ static int sc_main(
 #endif
 
     yaz_log_init_prefix("pazpar2");
+    yaz_log_init_level(yaz_log_mask_str("post"));
     yaz_log_xml_errors(0, YLOG_WARN);
 
     yaz_enable_panic_backtrace(argv[0]);
