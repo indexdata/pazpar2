@@ -607,7 +607,8 @@ struct http_request *http_parse_request(struct http_channel *c,
         r->content_len = start + len - buf;
         r->content_buf = buf;
 
-        if (!yaz_strcmp_del("application/x-www-form-urlencoded",
+        if (content_type &&
+            !yaz_strcmp_del("application/x-www-form-urlencoded",
                             content_type, "; "))
         {
             http_parse_arguments(r, c->nmem, r->content_buf);
