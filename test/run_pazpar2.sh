@@ -156,7 +156,7 @@ else
     sec=1
     maxrounds=10
 fi
-LEVELS=loglevel,fatal,warn,log,debug,zoom,zoomdetails
+LEVELS=loglevel,fatal,warn,log,debug,zoom,zoomdetails,http,iochan
 if test "$PERF_PROG"; then
     eval $PERF_PROG ../src/pazpar2 -p pazpar2.pid -X -l ${PREFIX}_pazpar2.log -f ${srcdir}/${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
     PP2PID=$!
@@ -168,7 +168,7 @@ if test "$PERF_PROG"; then
 elif test -n "$PAZPAR2_USE_VALGRIND"; then
     valgrind --num-callers=30 --show-reachable=yes --leak-check=full --log-file=$VALGRINDLOG ../src/pazpar2 -v $LEVELS -X -l ${PREFIX}_pazpar2.log -f ${CFG} >${PREFIX}_extra_pazpar2.log 2>&1 &
     PP2PID=$!
-    sleep 0.01
+    sleep 10
     WAIT=400
 elif test -n "$SKIP_PAZPAR2"; then
     echo "${PREFIX}: not starting Pazpar2 (should be running already)"
