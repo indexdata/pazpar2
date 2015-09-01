@@ -1048,8 +1048,9 @@ void session_apply_setting(struct session *se, const char *dbname,
 void session_destroy(struct session *se)
 {
     struct session_database *sdb;
-    session_log(se, YLOG_LOG, "destroy");
-    session_use(-1);
+    int i = session_use(-1);
+
+    session_log(se, YLOG_LOG, "destroy %d", i);
     session_remove_cached_clients(se);
 
     for (sdb = se->databases; sdb; sdb = sdb->next)
@@ -1121,9 +1122,9 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     session->normalize_cache = normalize_cache_create();
     session->session_mutex = 0;
     pazpar2_mutex_create(&session->session_mutex, tmp_str);
-    session_log(session, YLOG_LOG, "create");
 
-    session_use(1);
+    i = session_use(1);
+    session_log(session, YLOG_LOG, "create %d", i);
     return session;
 }
 
