@@ -126,7 +126,7 @@ http_sessions_t http_sessions_create(void)
     hs->session_list = 0;
     hs->mutex = 0;
     pazpar2_mutex_create(&hs->mutex, "http_sessions");
-    hs->log_level = yaz_log_module_level("HTTP");
+    hs->log_level = yaz_log_module_level("http");
     return hs;
 }
 
