@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
     <service id="marc">
+      <timeout session="60" z3950_operation="30" z3950_session="60"/>
       <rank debug="yes"/>
       <settings src="z3950_indexdata_com_marc.xml"/>
       <metadata name="url" merge="unique"/>
