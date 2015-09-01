@@ -273,7 +273,8 @@ static int event_loop(iochan_man_t man, IOCHAN *iochans)
                 fds[i].fd = p->fd;
         }
         assert(i == no_fds);
-        yaz_log(man->log_level, "yaz_poll begin nofds=%d", no_fds);
+        yaz_log(man->log_level, "yaz_poll begin tv_sec=%d nofds=%d", tv_sec,
+                no_fds);
         res = yaz_poll(fds, no_fds, tv_sec, 0);
         yaz_log(man->log_level, "yaz_poll returned res=%d", res);
         if (res < 0)
