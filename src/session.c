@@ -1079,8 +1079,8 @@ size_t session_get_memory_status(struct session *session) {
 }
 
 
-struct session *new_session(NMEM nmem, struct conf_service *service,
-                            unsigned session_id)
+struct session *session_create(NMEM nmem, struct conf_service *service,
+                               unsigned session_id)
 {
     int i;
     struct session *session = nmem_malloc(nmem, sizeof(*session));

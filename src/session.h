@@ -148,8 +148,8 @@ struct hitsbytarget {
 };
 
 struct hitsbytarget *get_hitsbytarget(struct session *s, int *count, NMEM nmem);
-struct session *new_session(NMEM nmem, struct conf_service *service,
-                            unsigned session_id);
+struct session *session_create(NMEM nmem, struct conf_service *service,
+                               unsigned session_id);
 int sessions_count(void);
 void session_destroy(struct session *s);
 void session_init_databases(struct session *s);
