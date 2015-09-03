@@ -10,13 +10,13 @@
 ]>
 <refentry id="pazpar2_play">
  <refentryinfo>
-  <productname>Pazpar2_Play</productname>
+  <productname>Pazpar2_play</productname>
   <productnumber>&version;</productnumber>
   <info><orgname>Index Data</orgname></info>
  </refentryinfo>
 
  <refmeta>
-  <refentrytitle>Pazpar2_Play</refentrytitle>
+  <refentrytitle>Pazpar2_play</refentrytitle>
   <manvolnum>1</manvolnum>
   <refmiscinfo class="manual">User Commands</refmiscinfo>
  </refmeta>
@@ -37,9 +37,10 @@
   <para>
    <command>pazpar2_play</command> is a utility that plays recorded
    HTTP activity against pazpar2. Pazpar2 may record activity to a file
-   with option -R. This utilility allow you to play the activity again
+   with option -R. This utilility allows you to play the activity again
    against pazpar2. Pazpar2 must use predictable sessions in order for this
-   to work. This means that either Pazpar2 should be executed with option -R.
+   to work. This means that either Pazpar2 should be executed with option -R
+   or with debug mode (-X).
   </para>
  </refsect1>
  <refsect1>
@@ -84,7 +85,7 @@
  <refsect1>
   <title>SEE ALSO</title>
   <para>
-   Pazpar2 configuration:
+   Pazpar2 daemon:
    <citerefentry>
     <refentrytitle>pazpar2</refentrytitle>
     <manvolnum>8</manvolnum>
