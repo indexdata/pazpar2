@@ -1,3 +1,19 @@
+--- 1.12.3 2015/09/03
+
+Make pazpar2_play part of Deb/RPM PAZ-1031
+
+Allow predictable sessions (Option -R - for pazpar2) PAZ-1030
+
+Fix pazpar2 recording broken PAZ-1029
+
+At session destroy, log facet IDs in use
+
+log level for http is http (not HTTP)
+
+Fix 0 ptr reference for POST and no Content-Type PAZ-1028
+
+Log levels http+iochan for tests. Wait longer time in valgrind mode.
+
 --- 1.12.2 2015/08/31
 
 Facility disable/logging of POSTed content PAZ-1027
