@@ -1050,7 +1050,9 @@ void session_destroy(struct session *se)
     struct session_database *sdb;
     int i = session_use(-1);
 
-    session_log(se, YLOG_LOG, "destroy %d", i);
+    session_log(se, YLOG_LOG, "destroy "
+                "session-total %d nmem-op %zd nmem-ses %zd", i,
+                nmem_total(se->nmem), nmem_total(se->session_nmem));
     session_remove_cached_clients(se);
 
     for (sdb = se->databases; sdb; sdb = sdb->next)
@@ -1060,10 +1062,6 @@ void session_destroy(struct session *se)
     reclist_destroy(se->reclist);
     xfree(se->mergekey);
     xfree(se->rank);
-    if (nmem_total(se->nmem))
-        session_log(se, YLOG_DEBUG, "NMEN operation usage %zd", nmem_total(se->nmem));
-    if (nmem_total(se->session_nmem))
-        session_log(se, YLOG_DEBUG, "NMEN session usage %zd", nmem_total(se->session_nmem));
     facet_limits_destroy(se->facet_limits);
     nmem_destroy(se->nmem);
     service_destroy(se->service);
@@ -1124,7 +1122,7 @@ struct session *new_session(NMEM nmem, struct conf_service *service,
     pazpar2_mutex_create(&session->session_mutex, tmp_str);
 
     i = session_use(1);
-    session_log(session, YLOG_LOG, "create %d", i);
+    session_log(session, YLOG_LOG, "create session-total %d", i);
     return session;
 }
 
