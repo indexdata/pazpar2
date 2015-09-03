@@ -112,6 +112,7 @@ rm -fr ${RPM_BUILD_ROOT}
 %defattr(-,root,root)
 %doc README LICENSE NEWS
 %{_sbindir}/pazpar2
+%{_bindir}/pazpar2_play
 %dir %{_sysconfdir}/pazpar2
 %dir %{_sysconfdir}/pazpar2/settings
 %dir %{_sysconfdir}/pazpar2/settings/mkc
@@ -123,6 +124,7 @@ rm -fr ${RPM_BUILD_ROOT}
 %config %{_sysconfdir}/pazpar2/services-available/*.xml
 %config %{_sysconfdir}/rc.d/init.d/pazpar2
 %config(noreplace) /etc/logrotate.d/pazpar2
+%{_mandir}/man1/pazpar2*
 %{_mandir}/man5/pazpar2*
 %{_mandir}/man7/pazpar2*
 %{_mandir}/man8/pazpar2*

@@ -1,0 +1,102 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook V4.4//EN"
+ "http://www.oasis-open.org/docbook/xml/4.4/docbookx.dtd"
+[
+     <!ENTITY % local SYSTEM "local.ent">
+     %local;
+     <!ENTITY % entities SYSTEM "entities.ent">
+     %entities;
+     <!ENTITY % idcommon SYSTEM "common/common.ent">
+     %idcommon;
+]>
+<refentry id="pazpar2_play">
+ <refentryinfo>
+  <productname>Pazpar2_Play</productname>
+  <productnumber>&version;</productnumber>
+  <info><orgname>Index Data</orgname></info>
+ </refentryinfo>
+
+ <refmeta>
+  <refentrytitle>Pazpar2_Play</refentrytitle>
+  <manvolnum>1</manvolnum>
+  <refmiscinfo class="manual">User Commands</refmiscinfo>
+ </refmeta>
+ <refnamediv>
+  <refname>pazpar2_play</refname>
+  <refpurpose>Play recorded HTTP log against pazpar2</refpurpose>
+ </refnamediv>
+ <refsynopsisdiv>
+  <cmdsynopsis>
+   <command>pazpar2_play</command>
+   <arg choice="opt"><option>-v <replaceable>level</replaceable></option></arg>
+   <arg choice="opt">file</arg>
+   <arg choice="opt">server-addr</arg>
+  </cmdsynopsis>
+ </refsynopsisdiv>
+ <refsect1>
+  <title>DESCRIPTION</title>
+  <para>
+   <command>pazpar2_play</command> is a utility that plays recorded
+   HTTP activity against pazpar2. Pazpar2 may record activity to a file
+   with option -R. This utilility allow you to play the activity again
+   against pazpar2. Pazpar2 must use predictable sessions in order for this
+   to work. This means that either Pazpar2 should be executed with option -R.
+  </para>
+ </refsect1>
+ <refsect1>
+  <title>OPTIONS</title>
+  <variablelist>
+   <varlistentry>
+    <term><option>-v <replaceable>level</replaceable></option></term>
+    <listitem>
+     <para>
+      Sets log level (YAZ log level system).
+     </para>
+    </listitem>
+   </varlistentry>
+  </variablelist>
+ </refsect1>
+ <refsect1>
+  <title>EXAMPLES</title>
+  <para>
+   Typical usage. First step is to enable recording in pazpar2.
+   Something like:
+   <screen>
+    pazpar2 -f config.xml -R /tmp/recording.log
+   </screen>
+   For RPM version of Pazpar2, add/modify
+   <filename>/etc/sysconfig/pazpar2</filename> and modify OPTIONS.
+   For Debian version of Pazpar2 add/modify
+   <filename>/etc/defaults/pazpar2</filename> and modify OPTIONS.
+  </para>
+  <para>
+   At some point we want to run recording.. Perhaps against another
+   Pazpar2 instance for analysis. We start Pazpar2 with -R- to ensure
+   that sessions are numbered in the same way initial recording.
+   <screen>
+    pazpar2 -f config.xml -R -
+   </screen>
+   We can now run the player against it:
+   <screen>
+    pazpar2_play /tmp/recording.log localhost:9004
+   </screen>
+  </para>
+ </refsect1>
+ <refsect1>
+  <title>SEE ALSO</title>
+  <para>
+   Pazpar2 configuration:
+   <citerefentry>
+    <refentrytitle>pazpar2</refentrytitle>
+    <manvolnum>8</manvolnum>
+   </citerefentry>
+  </para>
+ </refsect1>
+
+</refentry>
+
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: nxml
+nxml-child-indent: 1
+End:
+-->

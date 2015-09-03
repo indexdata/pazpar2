@@ -1,7 +1,7 @@
 # This file is part of Pazpar2.
 
 sbin_PROGRAMS = pazpar2
-noinst_PROGRAMS = pazpar2_play
+bin_PROGRAMS = pazpar2_play
 
 check_PROGRAMS = \
       test_sel_thread \
@@ -14,7 +14,7 @@ noinst_LIBRARIES = libpazpar2.a
 CONFIG_CLEAN_FILES=*.log
 
 AM_CFLAGS = $(YAZINC)
-        
+
 libpazpar2_a_SOURCES = \
 	charsets.c charsets.h \
 	client.c client.h \

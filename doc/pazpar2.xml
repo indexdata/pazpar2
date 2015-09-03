@@ -148,7 +148,7 @@
       (<literal>-</literal>), will make Pazpar2 use predictable sessions
       only (no recording).
       This is necessary when playing HTTP communication against pazpar2
-      with pazpar2_play.
+      with the pazpar2 program. Refer to <xref linkend="pazpar2_play"/>.
      </para>
     </listitem>
    </varlistentry>
@@ -309,6 +309,13 @@
    <citerefentry>
     <refentrytitle>pazpar2_protocol</refentrytitle>
     <manvolnum>7</manvolnum>
+   </citerefentry>
+  </para>
+  <para>
+   Pazpar2 player:
+   <citerefentry>
+    <refentrytitle>pazpar2_play</refentrytitle>
+    <manvolnum>1</manvolnum>
    </citerefentry>
   </para>
  </refsect1>

@@ -7,11 +7,11 @@ XMLFILES = book.xml ajaxdev.xml manref.xml gpl-2.0.xml local.ent
 
 MAINXML = $(srcdir)/book.xml
 
-XMLMAN = pazpar2.xml pazpar2_protocol.xml pazpar2_conf.xml
+XMLMAN = pazpar2.xml pazpar2_protocol.xml pazpar2_conf.xml pazpar2_play.xml
 
 SUPPORTFILES = entities.ent
 
-MANFILES = pazpar2.8 pazpar2_protocol.7 pazpar2_conf.5
+MANFILES = pazpar2.8 pazpar2_protocol.7 pazpar2_conf.5 pazpar2_play.1
 
 HTMLFILES = index.html
 
