@@ -1048,11 +1048,17 @@ void session_apply_setting(struct session *se, const char *dbname,
 void session_destroy(struct session *se)
 {
     struct session_database *sdb;
-    int i = session_use(-1);
+    struct facet_id *t;
+    int sessions_total = session_use(-1);
+    int no_facet_ids = 0;
 
+    for (t = se->facet_id_list; t; t = t->next)
+        no_facet_ids++;
     session_log(se, YLOG_LOG, "destroy "
-                "session-total %d nmem-op %zd nmem-ses %zd", i,
-                nmem_total(se->nmem), nmem_total(se->session_nmem));
+                "session-total %d nmem-op %zd nmem-ses %zd facets-ids %d",
+                sessions_total,
+                nmem_total(se->nmem), nmem_total(se->session_nmem),
+                no_facet_ids);
     session_remove_cached_clients(se);
 
     for (sdb = se->databases; sdb; sdb = sdb->next)
