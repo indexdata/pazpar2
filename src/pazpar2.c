@@ -152,7 +152,8 @@ static int sc_main(
             pidfile = arg;
             break;
         case 'R':
-            record_fname = arg;
+            if (strcmp(arg, "-"))
+                record_fname = arg;
             global_parameters.predictable_sessions = 1;
             break;
         case 't':

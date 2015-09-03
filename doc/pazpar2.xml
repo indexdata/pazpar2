@@ -143,7 +143,12 @@
     <listitem>
      <para>
       If this option is given, HTTP requests are logged to file named
-      <replaceable>recfile</replaceable>.
+      <replaceable>recfile</replaceable> and predictable sessions are enabled.
+      Using special argument, dash
+      (<literal>-</literal>), will make Pazpar2 use predictable sessions
+      only (no recording).
+      This is necessary when playing HTTP communication against pazpar2
+      with pazpar2_play.
      </para>
     </listitem>
    </varlistentry>
