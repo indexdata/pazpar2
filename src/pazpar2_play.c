@@ -41,7 +41,7 @@ struct con {
 };
 
 
-static int run(FILE *inf, struct addrinfo *res)
+static int run(int verbose, FILE *inf, struct addrinfo *res)
 {
     long long tv_sec0 = 0;
     long long tv_usec0 = 0;
@@ -74,6 +74,8 @@ static int run(FILE *inf, struct addrinfo *res)
             fprintf(stderr, "bad line %s\n", req);
             return -1;
         }
+        if (verbose)
+            fprintf(stderr, "read line: %s\n", req);
         if (tv_sec0)
         {
             struct timeval spec;
@@ -147,8 +149,14 @@ static int run(FILE *inf, struct addrinfo *res)
                             (long long) toread, (long long) r);
                     return -1;
                 }
+                if (verbose)
+                {
+                    fprintf(stderr, "read %ld bytes\n---\n", (long) r);
+                    fwrite(buf, 1, r, stderr);
+                    fprintf(stderr, "\n----\n");
+                }
                 if (*request_type == 'r')
-                {   /* Only deal with things tha Pazpar2 received */
+                {   /* Only deal with things that Pazpar2 received */
                     w = write((*conp)->fd, buf, toread);
                     if (w != toread)
                     {
@@ -175,6 +183,7 @@ int main(int argc, char **argv)
     int ret;
     char *arg;
     char *host = 0;
+    int verbose = 0;
     const char *file = 0;
     while ((ret = options("v:", argv, argc, &arg)) != -2)
     {
@@ -236,7 +245,7 @@ int main(int argc, char **argv)
             fprintf(stderr, "cannot open %s\n", file);
             exit(1);
         }
-        run(inf, res);
+        run(verbose, inf, res);
         fclose(inf);
     }
     else
