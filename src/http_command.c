@@ -49,18 +49,27 @@ void print_meminfo(WRBUF wrbuf)
     struct mallinfo minfo;
     minfo = mallinfo();
     wrbuf_printf(wrbuf, "  <memory>\n"
-                        "   <arena>%d</arena>\n"
-                        "   <uordblks>%d</uordblks>\n"
-                        "   <fordblks>%d</fordblks>\n"
-                        "   <ordblks>%d</ordblks>\n"
-                        "   <keepcost>%d</keepcost>\n"
-                        "   <hblks>%d</hblks>\n"
-                        "   <hblkhd>%d</hblkhd>\n"
-                        "   <virt>%d</virt>\n"
-                        "   <virtuse>%d</virtuse>\n"
-                        "  </memory>\n",
-                 minfo.arena, minfo.uordblks, minfo.fordblks,minfo.ordblks, minfo.keepcost, minfo.hblks, minfo.hblkhd, minfo.arena + minfo.hblkhd, minfo.uordblks + minfo.hblkhd);
-
+                 "    <arena>%d</arena><!--  Non-mmapped space allocated (bytes) -->\n"
+                 "    <ordblks>%d</ordblks><!--  Number of free chunks -->\n"
+                 "    <smblks>%d</smblks><!--  Number of free fastbin blocks -->\n"
+                 "    <hblks>%d</hblks><!--  Number of mmapped regions -->\n"
+                 "    <hblkhd>%d</hblkhd><!--  Space allocated in mmapped regions (bytes) -->\n"
+                 "    <usmblks>%d</usmblks><!--  Maximum total allocated space (bytes) -->\n"
+                 "    <fsmblks>%d</fsmblks><!--  Space in freed fastbin blocks (bytes) -->\n"
+                 "    <uordblks>%d</uordblks><!--  Total allocated space (bytes) -->\n"
+                 "    <fordblks>%d</fordblks><!--  Total free space (bytes) -->\n"
+                 "    <keepcost>%d</keepcost><!-- Top-most, releasable space (bytes) -->\n"
+                 "  </memory>\n",
+                 minfo.arena,
+                 minfo.ordblks,
+                 minfo.smblks,
+                 minfo.hblks,
+                 minfo.hblkhd,
+                 minfo.usmblks,
+                 minfo.fsmblks,
+                 minfo.uordblks,
+                 minfo.fordblks,
+                 minfo.keepcost);
 }
 #else
 #define print_meminfo(x)
