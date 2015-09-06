@@ -694,43 +694,17 @@ static void cmd_session_status(struct http_channel *c)
     release_session(c, s);
 }
 
-#ifdef HAVE_RESULTSETS_COUNT
-int resultsets_count(void);
-#else
-#define resultsets_count()      0
-#endif
-
 static void cmd_server_status(struct http_channel *c)
 {
     int sessions   = sessions_count();
     int clients    = clients_count();
-    int resultsets = resultsets_count();
 
     response_open_ok(c, "server-status");
-    wrbuf_printf(c->wrbuf, "\n  <sessions>%u</sessions>\n", sessions);
-    wrbuf_printf(c->wrbuf, "  <clients>%u</clients>\n",   clients);
-    /* Only works if yaz has been compiled with enabling of this */
-    wrbuf_printf(c->wrbuf, "  <resultsets>%u</resultsets>\n",resultsets);
+
+    wrbuf_printf(c->wrbuf, "\n  <sessions>%d</sessions>\n", sessions);
+    wrbuf_printf(c->wrbuf, "  <clients>%d</clients>\n",   clients);
     print_meminfo(c->wrbuf);
 
-/* TODO add all sessions status                         */
-/*    http_sessions_t http_sessions = c->http_sessions; */
-/*    struct http_session *p;                           */
-/*
-    yaz_mutex_enter(http_sessions->mutex);
-    for (p = http_sessions->session_list; p; p = p->next)
-    {
-        p->activity_counter++;
-        wrbuf_puts(c->wrbuf, "<session-status>\n");
-        wrbuf_printf(c->wrbuf, "<id>%s</id>\n", p->session_id);
-        yaz_mutex_leave(http_sessions->mutex);
-        session_status(c, p);
-        wrbuf_puts(c->wrbuf, "</session-status>\n");
-        yaz_mutex_enter(http_sessions->mutex);
-        p->activity_counter--;
-    }
-    yaz_mutex_leave(http_sessions->mutex);
-*/
     response_close(c, "server-status");
     xmalloc_trav(0);
 }
