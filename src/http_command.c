@@ -48,18 +48,18 @@ void print_meminfo(WRBUF wrbuf)
 {
     struct mallinfo minfo;
     minfo = mallinfo();
-    wrbuf_printf(wrbuf, "  <memory>\n"
-                 "    <arena>%d</arena><!--  Non-mmapped space allocated (bytes) -->\n"
-                 "    <ordblks>%d</ordblks><!--  Number of free chunks -->\n"
-                 "    <smblks>%d</smblks><!--  Number of free fastbin blocks -->\n"
-                 "    <hblks>%d</hblks><!--  Number of mmapped regions -->\n"
-                 "    <hblkhd>%d</hblkhd><!--  Space allocated in mmapped regions (bytes) -->\n"
-                 "    <usmblks>%d</usmblks><!--  Maximum total allocated space (bytes) -->\n"
-                 "    <fsmblks>%d</fsmblks><!--  Space in freed fastbin blocks (bytes) -->\n"
-                 "    <uordblks>%d</uordblks><!--  Total allocated space (bytes) -->\n"
-                 "    <fordblks>%d</fordblks><!--  Total free space (bytes) -->\n"
-                 "    <keepcost>%d</keepcost><!-- Top-most, releasable space (bytes) -->\n"
-                 "  </memory>\n",
+    wrbuf_printf(wrbuf, " <memory>\n"
+                 "  <arena>%d</arena><!--  Non-mmapped space allocated (bytes) -->\n"
+                 "  <ordblks>%d</ordblks><!--  Number of free chunks -->\n"
+                 "  <smblks>%d</smblks><!--  Number of free fastbin blocks -->\n"
+                 "  <hblks>%d</hblks><!--  Number of mmapped regions -->\n"
+                 "  <hblkhd>%d</hblkhd><!--  Space allocated in mmapped regions (bytes) -->\n"
+                 "  <usmblks>%d</usmblks><!--  Maximum total allocated space (bytes) -->\n"
+                 "  <fsmblks>%d</fsmblks><!--  Space in freed fastbin blocks (bytes) -->\n"
+                 "  <uordblks>%d</uordblks><!--  Total allocated space (bytes) -->\n"
+                 "  <fordblks>%d</fordblks><!--  Total free space (bytes) -->\n"
+                 "  <keepcost>%d</keepcost><!-- Top-most, releasable space (bytes) -->\n"
+                 " </memory>\n",
                  minfo.arena,
                  minfo.ordblks,
                  minfo.smblks,
@@ -701,21 +701,6 @@ static void cmd_session_status(struct http_channel *c)
     session_status(c, s);
     response_close(c, "session-status");
     release_session(c, s);
-}
-
-static void cmd_server_status(struct http_channel *c)
-{
-    int sessions   = sessions_count();
-    int clients    = clients_count();
-
-    response_open_ok(c, "server-status");
-
-    wrbuf_printf(c->wrbuf, "\n  <sessions>%d</sessions>\n", sessions);
-    wrbuf_printf(c->wrbuf, "  <clients>%d</clients>\n",   clients);
-    print_meminfo(c->wrbuf);
-
-    response_close(c, "server-status");
-    xmalloc_trav(0);
 }
 
 static void bytarget_response(struct http_channel *c, struct http_session *s,
@@ -1496,6 +1481,9 @@ static void cmd_info(struct http_channel *c)
         }
     }
 #endif
+    wrbuf_printf(c->wrbuf, " <sessions>%d</sessions>\n", sessions_count());
+    wrbuf_printf(c->wrbuf, " <clients>%d</clients>\n",   clients_count());
+    print_meminfo(c->wrbuf);
     info_services(c->server, c->wrbuf);
 
     response_close(c, "info");
@@ -1514,7 +1502,6 @@ struct {
     { "termlist", cmd_termlist },
     { "exit", cmd_exit },
     { "session-status", cmd_session_status },
-    { "server-status", cmd_server_status },
     { "service", cmd_service },
     { "ping", cmd_ping },
     { "record", cmd_record },
