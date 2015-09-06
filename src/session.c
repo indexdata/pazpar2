@@ -113,7 +113,7 @@ static int session_use(int delta)
     return sessions;
 }
 
-int sessions_count(void)
+int sessions_get_count(void)
 {
     return session_use(0);
 }
