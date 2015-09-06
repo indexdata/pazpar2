@@ -42,6 +42,12 @@
   <para>
    Each command is described in sub sections to follow.
   </para>
+  <refsect2 id="command-info">
+   <title>info</title>
+   <para>
+    Returns version and statistics about the Pazpar2 instance.
+   </para>
+  </refsect2>
   <refsect2 id="command-init">
    <title>init</title>
    <para>
