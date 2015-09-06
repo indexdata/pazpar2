@@ -90,7 +90,7 @@ static int client_use(int delta)
     return clients;
 }
 
-int clients_count(void)
+int clients_get_count(void)
 {
     return client_use(0);
 }

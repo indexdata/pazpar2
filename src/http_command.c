@@ -1482,7 +1482,7 @@ static void cmd_info(struct http_channel *c)
     }
 #endif
     wrbuf_printf(c->wrbuf, " <sessions>%d</sessions>\n", sessions_get_count());
-    wrbuf_printf(c->wrbuf, " <clients>%d</clients>\n",   clients_count());
+    wrbuf_printf(c->wrbuf, " <clients>%d</clients>\n",   clients_get_count());
     print_meminfo(c->wrbuf);
     info_services(c->server, c->wrbuf);
 
