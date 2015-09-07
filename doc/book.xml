@@ -81,7 +81,7 @@
     against any server which supports the
     <ulink url="&url.z39.50;">Z39.50</ulink>,
     <ulink url="&url.sru;">SRU/SRW</ulink>
-    or <ulink url="&url.solr;">Solr</ulink> protocol. Proprietary
+    or <ulink url="&url.solr;">Apache Solr</ulink> protocol. Proprietary
     backend modules can function as connectors between these standard
     protocols and any non-standard API, including web-site scraping, to
     support a large number of other protocols.
