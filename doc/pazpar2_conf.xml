@@ -1184,11 +1184,12 @@
        <emphasis>user, password</emphasis>.
       </para>
       <para>
-       For HTTP based procotols, such as SRU and Solr, the authentication
-       string includes a username term and, optionally, a password term.
+       For HTTP based procotols, such as SRU and Apache Solr, the
+       authentication string includes a username term and, optionally,
+       a password term.
        Each term is separated by a single blank. The
        authentication information is passed either by HTTP basic
-       authentication or via URL parameters. The mode is operation is
+       authentication or via URL parameters. The mode of operation is
        determined by <literal>pz:authentication_mode</literal> setting.
       </para>
      </listitem>
