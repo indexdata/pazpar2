@@ -2190,6 +2190,8 @@ static int ingest_to_cluster(struct client *cl,
             if (!value0 || !*value0)
             {
                 const char *empty = yaz_xml_get_prop(n, "empty");
+                if (value0)
+                    xmlFree(value0);
                 if (!empty)
                     continue;
                 wrbuf_puts(wrbuf_disp, (const char *) empty);
@@ -2197,9 +2199,8 @@ static int ingest_to_cluster(struct client *cl,
             else
             {
                 wrbuf_puts(wrbuf_disp, (const char *) value0);
-            }
-            if (value0)
                 xmlFree(value0);
+            }
             ser_md = &service->metadata[md_field_id];
 
             // non-merged metadata
