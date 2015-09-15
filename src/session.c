@@ -834,7 +834,11 @@ enum pazpar2_error_code session_search(struct session *se,
     int no_sortmap = 0;
     struct client_list *l;
 
-    session_log(se, YLOG_DEBUG, "Search");
+    session_log(se, YLOG_LOG, "search query %s", query);
+    if (filter)
+        session_log(se, YLOG_LOG, "search filter %s", filter);
+    if (limit)
+        session_log(se, YLOG_LOG, "search limit %s", limit);
 
     *addinfo = 0;
 
@@ -920,8 +924,9 @@ enum pazpar2_error_code session_search(struct session *se,
             no_working++;
         }
     }
-    yaz_log(YLOG_LOG, "session_search: no_working=%d no_sortmap=%d",
-            no_working, no_sortmap);
+    session_log(se, YLOG_LOG, "search "
+                "working %d sortmap %d failed-query %d failed-limit %d",
+                no_working, no_sortmap, no_failed_query, no_failed_limit);
     session_enter(se, "session_search2");
     if (no_working == 1 && no_sortmap == 1)
     {
