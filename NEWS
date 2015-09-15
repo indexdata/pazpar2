@@ -1,3 +1,22 @@
+--- 1.12.4 2015/09/15
+
+log msg cleanup PAZ-1037
+
+Fix leak in record parsing
+Occurred when empty data was produced and metadata did not have the
+attribute "empty". The empty attribute was introduced in PAZ-858
+
+Updates to pz:authentication documentation
+
+Refer to full Apache product
+
+Document info command. This command has been around since first release
+in 2007. Command info includes versions, statistics, etc.
+The undocumented server-status comand is gone and completely replaced by
+command info which returns general information of the pazpar2 instance.
+
+Minor updates to pazpar2_play manual
+
 --- 1.12.3 2015/09/03
 
 Make pazpar2_play part of Deb/RPM PAZ-1031
