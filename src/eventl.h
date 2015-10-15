@@ -52,7 +52,7 @@ typedef struct iochan
 
 
 iochan_man_t iochan_man_create(int no_threads);
-void iochan_add(iochan_man_t man, IOCHAN chan);
+int iochan_add(iochan_man_t man, IOCHAN chan);
 void iochan_man_events(iochan_man_t man);
 void iochan_man_destroy(iochan_man_t *mp);
 

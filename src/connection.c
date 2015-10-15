@@ -333,6 +333,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     const char *sru;
     const char *sru_version = 0;
     const char *value;
+    int r = 0;
     WRBUF w;
 
     struct session_database *sdb = client_get_database(con->client);
@@ -423,12 +424,20 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     con->state = Conn_Connecting;
     iochan_settimeout(con->iochan, con->operation_timeout);
     iochan_setdata(con->iochan, con);
-    iochan_add(iochan_man, con->iochan);
-
-    client_set_state(con->client, Client_Connecting);
+    if (iochan_add(iochan_man, con->iochan))
+    {
+        yaz_log(YLOG_FATAL, "Out of connections");
+        ZOOM_connection_destroy(con->link);
+        con->link = 0;
+        r = -1;
+    }
+    else
+    {
+        client_set_state(con->client, Client_Connecting);
+    }
     ZOOM_options_destroy(zoptions);
     wrbuf_destroy(w);
-    return 0;
+    return r;
 }
 
 // Ensure that client has a connection associated

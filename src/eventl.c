@@ -50,6 +50,7 @@
 #include <yaz/xmalloc.h>
 #include <yaz/mutex.h>
 #include <yaz/poll.h>
+#include <sys/resource.h>
 #include "eventl.h"
 #include "sel_thread.h"
 
@@ -103,6 +104,7 @@ struct iochan_man_s {
     int log_level;
     YAZ_MUTEX iochan_mutex;
     int size_fds;
+    int limit_fd;
     struct yaz_poll_fd *fds;
 };
 
@@ -117,6 +119,16 @@ iochan_man_t iochan_man_create(int no_threads)
     man->iochan_mutex = 0;
     man->size_fds = 0;
     man->fds = 0;
+    man->limit_fd = 0;
+#if HAVE_GETRLIMIT
+    {
+        struct rlimit limit_data;
+        getrlimit(RLIMIT_NOFILE, &limit_data);
+        yaz_log(YLOG_LOG, "getrlimit NOFILE cur=%ld max=%ld",
+                (long) limit_data.rlim_cur, (long) limit_data.rlim_max);
+        man->limit_fd = limit_data.rlim_cur - 200;
+    }
+#endif
     yaz_mutex_create(&man->iochan_mutex);
     return man;
 }
@@ -152,15 +164,26 @@ void iochan_man_destroy(iochan_man_t *mp)
     }
 }
 
-void iochan_add(iochan_man_t man, IOCHAN chan)
+int iochan_add(iochan_man_t man, IOCHAN chan)
 {
+    int r = 0, no_fds = 0;
+    IOCHAN p;
     chan->man = man;
-    yaz_mutex_enter(man->iochan_mutex);
+
     yaz_log(man->log_level, "iochan_add : chan=%p channel list=%p", chan,
             man->channel_list);
-    chan->next = man->channel_list;
-    man->channel_list = chan;
+    yaz_mutex_enter(man->iochan_mutex);
+    for (p = man->channel_list; p; p = p->next)
+        no_fds++;
+    if (man->limit_fd > 0 && no_fds >= man->limit_fd)
+        r = -1;
+    else
+    {
+        chan->next = man->channel_list;
+        man->channel_list = chan;
+    }
     yaz_mutex_leave(man->iochan_mutex);
+    return r;
 }
 
 IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags, const char *name)
