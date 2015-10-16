@@ -108,7 +108,7 @@ struct iochan_man_s {
     struct yaz_poll_fd *fds;
 };
 
-iochan_man_t iochan_man_create(int no_threads)
+iochan_man_t iochan_man_create(int no_threads, int max_sockets)
 {
     iochan_man_t man = xmalloc(sizeof(*man));
     man->channel_list = 0;
@@ -129,6 +129,10 @@ iochan_man_t iochan_man_create(int no_threads)
         man->limit_fd = limit_data.rlim_cur - 200;
     }
 #endif
+    if (max_sockets)
+        man->limit_fd = max_sockets;
+    yaz_log(YLOG_LOG, "iochan max threads %d max sockets %d",
+            no_threads, max_sockets);
     yaz_mutex_create(&man->iochan_mutex);
     return man;
 }
@@ -168,22 +172,36 @@ int iochan_add(iochan_man_t man, IOCHAN chan)
 {
     int r = 0, no_fds = 0;
     IOCHAN p;
-    chan->man = man;
 
     yaz_log(man->log_level, "iochan_add : chan=%p channel list=%p", chan,
             man->channel_list);
     yaz_mutex_enter(man->iochan_mutex);
     for (p = man->channel_list; p; p = p->next)
-        no_fds++;
-    if (man->limit_fd > 0 && no_fds >= man->limit_fd)
+    {
+        if (p->fd >= 0)
+            no_fds++;
+    }
+    if (chan->fd > 0 && man->limit_fd > 0 && no_fds >= man->limit_fd)
+    {
         r = -1;
+        yaz_log(YLOG_WARN, "max channels %d in use", no_fds);
+    }
     else
     {
+        chan->man = man;
         chan->next = man->channel_list;
         man->channel_list = chan;
     }
     yaz_mutex_leave(man->iochan_mutex);
     return r;
+}
+
+void iochan_destroy(IOCHAN chan)
+{
+    if (chan->man)
+        chan->destroyed = 1;
+    else
+        iochan_destroy_real(chan);
 }
 
 IOCHAN iochan_create(int fd, IOC_CALLBACK cb, int flags, const char *name)

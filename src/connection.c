@@ -427,6 +427,8 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     if (iochan_add(iochan_man, con->iochan))
     {
         yaz_log(YLOG_FATAL, "Out of connections");
+        iochan_destroy(con->iochan);
+        con->iochan = 0;
         ZOOM_connection_destroy(con->link);
         con->link = 0;
         r = -1;

@@ -73,6 +73,15 @@
     in main thread).
    </para>
   </refsect2>
+  <refsect2 id="config-sockets">
+   <title>sockets</title>
+   <para>
+    This section is optional and is supported for Pazpar2 version 1.13.0 and
+    later . It is identified by element "<literal>sockets</literal>" which
+    may include one attribute "<literal>max</literal>" which specifies
+    the maximum number of sockets to be used by Pazpar2.
+   </para>
+  </refsect2>
   <refsect2 id="config-file">
    <title>file</title>
    <para>

@@ -51,12 +51,12 @@ typedef struct iochan
 } *IOCHAN;
 
 
-iochan_man_t iochan_man_create(int no_threads);
+iochan_man_t iochan_man_create(int no_threads, int max_sockets);
 int iochan_add(iochan_man_t man, IOCHAN chan);
 void iochan_man_events(iochan_man_t man);
 void iochan_man_destroy(iochan_man_t *mp);
+void iochan_destroy(IOCHAN chan);
 
-#define iochan_destroy(i) (void)((i)->destroyed = 1)
 #define iochan_getfd(i) ((i)->fd)
 #define iochan_setfd(i, d) ((i)->fd = d)
 #define iochan_getdata(i) ((i)->data)

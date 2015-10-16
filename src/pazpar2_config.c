@@ -53,6 +53,7 @@ struct conf_config
     struct conf_server *servers;
 
     int no_threads;
+    int max_sockets;
     WRBUF confdir;
     char *path;
     iochan_man_t iochan_man;
@@ -1252,6 +1253,15 @@ static int parse_config(struct conf_config *config, xmlNode *root)
                 xmlFree(number);
             }
         }
+        else if (!strcmp((const char *) n->name, "sockets"))
+        {
+            xmlChar *number = xmlGetProp(n, (xmlChar *) "max");
+            if (number)
+            {
+                config->max_sockets = atoi((const char *) number);
+                xmlFree(number);
+            }
+        }
         else if (!strcmp((const char *) n->name, "file"))
         {
             xmlChar *path = xmlGetProp(n, (xmlChar *) "path");
@@ -1309,6 +1319,7 @@ struct conf_config *config_create(const char *fname)
     config->servers = 0;
     config->path = nmem_strdup(nmem, ".");
     config->no_threads = 0;
+    config->max_sockets = 0;
     config->iochan_man = 0;
 
     config->confdir = wrbuf_alloc();
@@ -1411,7 +1422,7 @@ int config_start_listeners(struct conf_config *conf,
 {
     struct conf_server *ser;
 
-    conf->iochan_man = iochan_man_create(conf->no_threads);
+    conf->iochan_man = iochan_man_create(conf->no_threads, conf->max_sockets);
     for (ser = conf->servers; ser; ser = ser->next)
     {
         WRBUF w;

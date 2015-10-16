@@ -796,11 +796,15 @@ static int http_proxy(struct http_request *rq)
         p->channel = c;
         p->first_response = 1;
         c->proxy = p;
-        // We will add EVENT_OUTPUT below
         p->iochan = iochan_create(sock, proxy_io, EVENT_INPUT, "http_proxy");
         iochan_setdata(p->iochan, p);
 
-        iochan_add(ser->iochan_man, p->iochan);
+        if (iochan_add(ser->iochan_man, p->iochan))
+        {
+            iochan_destroy(p->iochan);
+            xfree(p);
+            return -1;
+        }
     }
 
     // Do _not_ modify Host: header, just checking it's existence
@@ -1219,11 +1223,13 @@ static void http_accept(IOCHAN i, int event)
     c = iochan_create(s, http_io, EVENT_INPUT | EVENT_EXCEPT,
                       "http_session_socket");
 
-
     ch = http_channel_create(server->http_server, host, server);
     ch->iochan = c;
     iochan_setdata(c, ch);
-    iochan_add(server->iochan_man, c);
+    if (iochan_add(server->iochan_man, c))
+    {
+        http_channel_destroy(c);
+    }
 }
 
 /* Create a http-channel listener, syntax [host:]port */
@@ -1331,15 +1337,19 @@ int http_init(struct conf_server *server, const char *record_fname)
             return 1;
         }
     }
-    server->http_server = http_server_create();
 
+    c = iochan_create(s, http_accept, EVENT_INPUT|EVENT_EXCEPT, "http_server");
+    if (iochan_add(server->iochan_man, c))
+    {
+        iochan_destroy(c);
+        return -1;
+    }
+
+    server->http_server = http_server_create();
     server->http_server->record_file = record_file;
     server->http_server->listener_socket = s;
-
-    c = iochan_create(s, http_accept, EVENT_INPUT | EVENT_EXCEPT, "http_server");
     iochan_setdata(c, server);
 
-    iochan_add(server->iochan_man, c);
     return 0;
 }
 
