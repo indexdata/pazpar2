@@ -1,3 +1,10 @@
+--- 1.12.5 2015/10/19
+
+Usage limit PAZ-1038
+Guard against running out of sockets/file-descriptors. The limit may
+be set with <socket max="number"/> in main configuration. If omitted,
+the system default is used (getrlimit RLIMIT_NOFILE).
+
 --- 1.12.4 2015/09/15
 
 log msg cleanup PAZ-1037
