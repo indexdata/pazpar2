@@ -336,8 +336,10 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     int r = 0;
     WRBUF w;
 
-    struct session_database *sdb = client_get_database(con->client);
+    struct client *cl = con->client;
+    struct session_database *sdb = client_get_database(cl);
     const char *apdulog = session_setting_oneval(sdb, PZ_APDULOG);
+    struct session *se = client_get_session(cl);
     const char *memcached = session_setting_oneval(sdb, PZ_MEMCACHED);
     const char *redis = session_setting_oneval(sdb, PZ_REDIS);
 
@@ -402,7 +404,8 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
 
     if (!(con->link = ZOOM_connection_create(zoptions)))
     {
-        yaz_log(YLOG_FATAL|YLOG_ERRNO, "Failed to create ZOOM Connection");
+        session_log(se, YLOG_WARN, "%s: ZOOM_connection_create failed",
+                    client_get_id(cl));
         ZOOM_options_destroy(zoptions);
         return -1;
     }
@@ -424,9 +427,9 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     con->state = Conn_Connecting;
     iochan_settimeout(con->iochan, con->operation_timeout);
     iochan_setdata(con->iochan, con);
-    if (iochan_add(iochan_man, con->iochan))
+    if (iochan_add(iochan_man, con->iochan, 20))
     {
-        yaz_log(YLOG_FATAL, "Out of connections");
+        session_log(se, YLOG_WARN, "%s: out of connections", client_get_id(cl));
         iochan_destroy(con->iochan);
         con->iochan = 0;
         ZOOM_connection_destroy(con->link);
@@ -435,7 +438,7 @@ static int connection_connect(struct connection *con, iochan_man_t iochan_man)
     }
     else
     {
-        client_set_state(con->client, Client_Connecting);
+        client_set_state(cl, Client_Connecting);
     }
     ZOOM_options_destroy(zoptions);
     wrbuf_destroy(w);

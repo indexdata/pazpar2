@@ -195,7 +195,7 @@ struct http_session *http_session_create(struct conf_service *service,
                 r->timeout_iochan, service->session_timeout);
     iochan_settimeout(r->timeout_iochan, service->session_timeout);
 
-    iochan_add(service->server->iochan_man, r->timeout_iochan);
+    iochan_add(service->server->iochan_man, r->timeout_iochan, -1);
     http_session_use(1);
     return r;
 }

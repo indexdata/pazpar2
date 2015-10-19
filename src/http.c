@@ -799,7 +799,7 @@ static int http_proxy(struct http_request *rq)
         p->iochan = iochan_create(sock, proxy_io, EVENT_INPUT, "http_proxy");
         iochan_setdata(p->iochan, p);
 
-        if (iochan_add(ser->iochan_man, p->iochan))
+        if (iochan_add(ser->iochan_man, p->iochan, 5))
         {
             iochan_destroy(p->iochan);
             xfree(p);
@@ -1226,8 +1226,9 @@ static void http_accept(IOCHAN i, int event)
     ch = http_channel_create(server->http_server, host, server);
     ch->iochan = c;
     iochan_setdata(c, ch);
-    if (iochan_add(server->iochan_man, c))
+    if (iochan_add(server->iochan_man, c, 0))
     {
+        yaz_log(YLOG_WARN, "Refusing incoming HTTP connection");
         http_channel_destroy(c);
     }
 }
@@ -1339,8 +1340,9 @@ int http_init(struct conf_server *server, const char *record_fname)
     }
 
     c = iochan_create(s, http_accept, EVENT_INPUT|EVENT_EXCEPT, "http_server");
-    if (iochan_add(server->iochan_man, c))
+    if (iochan_add(server->iochan_man, c, 0))
     {
+        yaz_log(YLOG_WARN, "Can not create HTTP binding socket");
         iochan_destroy(c);
         return -1;
     }

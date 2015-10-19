@@ -131,8 +131,8 @@ iochan_man_t iochan_man_create(int no_threads, int max_sockets)
 #endif
     if (max_sockets)
         man->limit_fd = max_sockets;
-    yaz_log(YLOG_LOG, "iochan max threads %d max sockets %d",
-            no_threads, max_sockets);
+    yaz_log(YLOG_LOG, "iochan threads %d limit fd %d", no_threads,
+            man->limit_fd);
     yaz_mutex_create(&man->iochan_mutex);
     return man;
 }
@@ -168,7 +168,7 @@ void iochan_man_destroy(iochan_man_t *mp)
     }
 }
 
-int iochan_add(iochan_man_t man, IOCHAN chan)
+int iochan_add(iochan_man_t man, IOCHAN chan, int slack)
 {
     int r = 0, no_fds = 0;
     IOCHAN p;
@@ -181,7 +181,7 @@ int iochan_add(iochan_man_t man, IOCHAN chan)
         if (p->fd >= 0)
             no_fds++;
     }
-    if (chan->fd > 0 && man->limit_fd > 0 && no_fds >= man->limit_fd)
+    if (slack >= 0 && man->limit_fd > 0 && no_fds >= man->limit_fd - slack)
     {
         r = -1;
         yaz_log(YLOG_WARN, "max channels %d in use", no_fds);
