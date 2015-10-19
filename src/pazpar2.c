@@ -234,6 +234,7 @@ static int sc_main(
     if (!config)
         return 1;
     sc_stop_config = config;
+    ret = 0;
     if (test_mode)
     {
         yaz_log(YLOG_LOG, "Configuration OK");
@@ -241,7 +242,6 @@ static int sc_main(
     }
     else
     {
-        ret = 0;
         if (daemon && !log_file_in_use)
         {
             yaz_log(YLOG_FATAL, "Logfile must be given (option -l) for daemon "
@@ -261,9 +261,9 @@ static int sc_main(
                        pidfile, uid);
         }
         yaz_log(YLOG_LOG, "Pazpar2 stop");
-        return ret;
     }
-    return 0;
+    config_destroy(config);
+    return ret;
 }
 
 
