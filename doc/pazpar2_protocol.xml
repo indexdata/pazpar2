@@ -846,7 +846,7 @@ search.pz2?session=605047297&command=bytarget&id=3
 <bytarget>
   <status>OK</status>
   <target>
-    <id>z3950.loc.gov/voyager/</id>
+    <id>lx2.loc.gov:210/LCDB/</id>
     <hits>10000</hits>
     <diagnostic>0</diagnostic>
     <records>65</records>
