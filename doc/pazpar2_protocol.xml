@@ -846,7 +846,7 @@ search.pz2?session=605047297&command=bytarget&id=3
 <bytarget>
   <status>OK</status>
   <target>
-    <id>lx2.loc.gov:210/LCDB/</id>
+    <id>lx2.loc.gov/LCDB/</id>
     <hits>10000</hits>
     <diagnostic>0</diagnostic>
     <records>65</records>
