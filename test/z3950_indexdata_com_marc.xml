@@ -286,7 +286,7 @@
   </set>
   
   <set name="pz:apdulog" value="1"/>
-  <set name="pz:pqf_strftime" value="@or %% %Y"/>
+  <set name="pz:pqf_strftime" value="@or %% 2015"/>
 
   <!-- Examples of application-specific setting -->
   <!-- Available in output record and/or normalization stylesheet -->
