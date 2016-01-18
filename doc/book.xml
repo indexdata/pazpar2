@@ -101,7 +101,7 @@
    <para>
     Once you launch a search in Pazpar2, the operation continues behind the
     scenes. Pazpar2 connects to servers, carries out searches, and
-    retrieves, deduplicates, and stores results internally. Your application
+    retrieves, de-duplicates, and stores results internally. Your application
     code may periodically inquire about the status of an ongoing operation,
     and ask to see records or result set facets. Results become
     available immediately, and it is easy to build end-user interfaces than
@@ -157,7 +157,7 @@
   <section id="connectors">
    <title>Connectors to non-standard databases</title>
    <para>
-    If you need to access commercial or open access resources that don't support
+    If you need to access commercial or open-access resources that don't support
     Z39.50 or SRU, one approach would be to use a tool like <ulink
     url="&url.simpleserver;">SimpleServer</ulink> to build a
     gateway. An easier option is to use Index Data's <ulink
@@ -179,7 +179,7 @@
   <section id="name">
    <title>A note on the name Pazpar2</title>
    <para>
-    The name Pazpar2 derives from three sources.  One one hand, it is
+    The name Pazpar2 derives from three sources.  On one hand, it is
     Index Data's second major piece of software that does parallel
     searching of Z39.50 targets.  On the other, it is a near-homophone
     of Passpartout, the ever-helpful servant in Jules Verne's novel
@@ -207,7 +207,7 @@
      <para>
       The popular Z39.50 toolkit for the C language.
       YAZ <emphasis>must</emphasis> be compiled with
-      <ulink url="&url.libxml2;">Libxml2</ulink>/<ulink url="&url.libxslt;">Libxslt</ulink> support.
+      <ulink url="&url.libxml2;">libxml2</ulink>/<ulink url="&url.libxslt;">libxslt</ulink> support.
      </para>
      <para>
       It is highly recommended that YAZ is also compiled with
@@ -229,7 +229,7 @@
     <ulink url="&url.pazpar2.download;"/>.
     Most Unix-based operating systems have the required
     tools available as binary packages.
-    For example, if Libxml2/libXSLT libraries
+    For example, if libxml2/libxslt libraries
     are already installed as development packages, use these.
    </para>
 
@@ -347,7 +347,7 @@
 
    <para>
     The test UIs are located in <literal>www</literal>. Ensure that this
-    directory is available to the web server by copying
+    directory is available to the web server, either by copying
     <literal>www</literal> to the document root,
     using Apache's <literal>Alias</literal> directive, or
     creating a symbolic link: for example, on a Debian or Ubuntu
@@ -363,7 +363,7 @@
     This makes the test applications visible at
     <ulink url="http://localhost/pazpar2-demo/"/>
     but they can not be run successfully from that URL, as they submit
-    search requests back to the server form which they were served,
+    search requests back to the server from which they were served,
     and Apache2 doesn't know how to handle them.  Instead, the test
     applications must be accessed from Pazpar2 itself, acting as a
     proxy to Apache2, at the URL
@@ -441,7 +441,7 @@
     ProxyPass
     </ulink>
     directive of Apache must be used to map a URL path
-    the the Pazpar2 server (listening port).
+    to the Pazpar2 server (listening port).
    </para>
 
    <note>
