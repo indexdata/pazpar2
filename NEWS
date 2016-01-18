@@ -72,7 +72,7 @@ Fix bytarget list not cleared for new search PAZ-1019
 
 Do not re-search if facetlimit scan fails to find value PAZ-1013
 
-Optimizie single-target sortmap - keep record order PAZ-1917
+Optimize single-target sortmap - keep record order PAZ-1917
 
 position rec-icd with leading zeros PAZ-1018
 
@@ -94,11 +94,11 @@ New setting pz:facetmap:split:name (refer to documentation)
 --- 1.10.0 2015/06/16
 
 Sort by retrieval PAZ-1006
-Allows sorting by order that records were retrieved from databases.
+Allows sorting by the order that records were retrieved from databases.
 
 Response from bytarget command includes native query PAZ-1005
 
-Use lx2.loc.gov:210/LCDB_MARC8 instd of z3950.loc.gov:7090/voyager PAZ-1003
+Use lx2.loc.gov:210/LCDB_MARC8 instead of z3950.loc.gov:7090/voyager PAZ-1003
 
 --- 1.9.0 2015/05/23
 
@@ -272,13 +272,13 @@ cf.xsl: handle medium override AND md field
 
 sortmap relevance always uses increasing=1. PAZ-930
 
-solr-pz2.xsl: ensure medium is also applied if Solr record do not
+solr-pz2.xsl: ensure medium is also applied if Solr records do not
 have it. PAZ-929 
 
 Fix leak in getaddrinfo usage for HTTP listener. Not a big deal because
 this code is only executed once.
 
-Fix typos is sortmap documentation.
+Fix typos in sortmap documentation.
 
 Doc: fix misplaced variablelist tag.
 
@@ -290,9 +290,9 @@ It's been like that since version 1.1.1 from August 2009.
 Add support for result-set caching via memcached. See description of
 pz:memcached. Require that Pazpar2 is using YAZ 5.0.12 or later.
 
-Add support for a <metadata> container tag. Patfh from Sven Porst.
+Add support for a <metadata> container tag. Patch from Sven Porst.
 
-Add support for XInclude in main configuarion file. Patch from Sven Porst.
+Add support for XInclude in main configuration file. Patch from Sven Porst.
 
 Add client_{lock,unlock} before call to non_block_events in
 connection_continue. Problem is that if non_block_events fire records,
@@ -369,7 +369,7 @@ command. These were incorrect in versions 1.6.23 thru 1.6.32.
 
 Experimental support for snippets. If argument snippets=1 is given
 for command record or show, the text will include <match>-tags for
-those area that matches.
+those areas that match.
 
 Fix memory leak WRT client structures (incorrect inc ref count).
 
@@ -380,16 +380,16 @@ session.
 
 --- 1.6.31 2013/05/24
 
-Local limit for fields of type "generic" (ie text fields) are
+Local limit for fields of type "generic" (i.e. text fields) are
 now normalized by mergekey rule before comparison takes place.
-Before, no normalization took place and comparsion was, thus, exact.
+Before, no normalization took place and comparison was, thus, exact.
 
-New facility: dynamic rank , which allows ranking to be changed
+New facility: dynamic rank, which allows ranking to be changed
 for an existing result set. The rank can be set for search or
 show. This overrides the rank for metadata elements (which fields
 to rank and weight).
 
-New facility:dynamic mergekey , which allows mergekey to be changed
+New facility: dynamic mergekey, which allows mergekey to be changed
 for an existing result set. The mergekey can be set for search or
 show.
 
@@ -436,7 +436,7 @@ of the first child.
 --- 1.6.26 2013/03/08
 
 New pz:metadata attribute, empty="empty-value" for Pazpar2's
-internal representation. With this attribute, Pazpar2 treates an empty
+internal representation. With this attribute, Pazpar2 treats an empty
 pz:metadata type as having the value for "empty"  - if empty.
 
 New setting, pz:extendrecs, which triggers extended fetch of records
@@ -444,8 +444,8 @@ for a database beyond pz:maxrecs for a show command.
 
 Fix warning that was falsely issued for "missing limitmap".
 
-Log message for Pazpart start/stop changed. Now using same style as
-Metaproxy, ie Pazpar2 start SHA1 / Pazpar2 stop .
+Log message for Pazpar2 start/stop changed. Now using same style as
+Metaproxy, i.e. Pazpar2 start SHA1 / Pazpar2 stop .
 
 --- 1.6.25 2013/02/07
 
@@ -463,7 +463,7 @@ Indent results for both command stat and info.
 
 Allow limit on merged content. The new configuration metadata
 element, limitcluster, configures that a metadata element (name) be used
-as limit name for search. Applies to the whole service (ie all targets),
+as limit name for search. Applies to the whole service (i.e. all targets),
 unlike pz:limitmap which is configured per-target (database).
 
 New feature: limitmap local:* matches against all metadata fields.
@@ -481,29 +481,29 @@ when YAZ is compiled without ICU support.
 
 --- 1.6.22 2012/10/11
 
-Requires YAZ-4.2.40 to support native solr support.
+Requires YAZ-4.2.40 to support native Solr support.
 
 Fix and improve logic handling whether or not to re-do search on sort
 order changes. A sort order with change in ascending/descending only
-whould not trigger a new search, which is required for targets with
+would not trigger a new search, which is required for targets with
 native sorting capabilities. Each client is now checked if instructions
-(sortmap) exist for native sorting and only client that does requires
-it is researched. Other clients is just re-ingesting the records,
-they already have. The resultset is now cleared if any researching
+(sortmap) exist for native sorting and only a client that does require
+it is re-searched. Other clients are just re-ingesting the records,
+they already have. The resultset is now cleared if any re-searching
 is done.
 
 Connection sharing between session has broken since version 1.6.8 with
 introduction of logic that would minimize searching if pazpar2 could
-detect this based on same query and limits and partly sort order.
-This could lead to segementations violations.
+detect this, based on same query and limits and partly sort order.
+This could lead to segementation violations.
 
-Added a chapter in the manaul about relevance ranking.
+Added a chapter in the manual about relevance ranking.
 
 --- 1.6.21 2012/09/24
 
 Rank tweak: follow=number will increase mult by number if two terms
 occur next to each other; number-1 if they are one term apart , .. 0
-if they are number a part (all in order). Default is 0 (following
+if they are one number apart (all in order). Default is 0 (following
 terms has no effect).
 
 Rank tweak: lead=k will divide mult by 1 + log2(1+k*l) where k is
@@ -519,22 +519,22 @@ by length.
 --- 1.6.20 2012/09/21
 
 Rank algorithm details may be printed as part of show response in
-element <relevance_info>.. This is only printed if <rank debug="yes"/>
+element <relevance_info>. This is only printed if <rank debug="yes"/>
 is used in service.
 
-Record as returned by show/record command have a minimal indentation
+Records as returned by show/record command have a minimal indentation
 which makes things human-readable.
 
 New configuration of default sorting criteria (sort-default) in
-service definition. If no criteria is defined it will be as before
+service definition. If no criteria is defined, it will be as before
 'relevance'.
 
 Search command now supports sort parameter just as the show command.
-If no parameter is give, it will use the service sort-default value.
+If no parameter is given, it will use the service sort-default value.
 
 --- 1.6.19 2012/09/18
 
-Rank algorithm skips strings that gets normalized to empty string.
+Rank algorithm skips strings that get normalized to empty string.
 For example, & and ! could map to the empty string. The weight for
 those terms is now 0 (as if they were not part of the query).
 
@@ -554,18 +554,18 @@ average score of each record in a cluster.
 --- 1.6.17 2012/09/05
 
 Fix bad re-use of connections (connections with changing proxy should not
-be reused).
+be re-used).
 
 --- 1.6.16 2012/08/22
 
-Fix a bug introduce in 1.6.15 around the position sorting. It resetted the
+Fix a bug introduced in 1.6.15 around the position sorting. It resetted the
 resultset and sorting when the sort order is position. However this will be done on
-every client poll, which will make pazpar2 continuing reset and fetching.
-It should only be done on FIRST request where the sort order change.
+every client poll, which will make pazpar2 continue to reset and fetch.
+It should only be done on FIRST request where the sort order changes.
 
 Fix an issue on suggestion option: Also disable suggestions on empty string.
 
-Clean up in turbo marc stylesheet.
+Clean up in turbomarc stylesheet.
 
 Remove the hardcoded size of termlists.
 
@@ -576,7 +576,7 @@ CCL parsing to be customized a bit, such as defining names of operators
 and, or, not.
 
 New facility: raw record by checksum, rather than offset. The record
-command optionally takes checksum which identifies certain record from
+command optionally takes checksum which identifies a certain record from
 a database.
 
 New facility: per field ranking. Rank may be given as M [F N] where
@@ -588,7 +588,7 @@ Fix for IE7/8 in pz.js
 
 Applied patch from Giannis Kosmas on keepAlive, which also adds keepAlive to init response.
 
-Lower log level some places.
+Lower log level in some places.
 
 Remove some invalid test results.
 
@@ -616,13 +616,13 @@ Metadata field rank may given by XML internal document (pz:xslt
 result). If rank is not given, the rank from service description is
 used - as before.
 
-Metadata field can now configured a default limitmap and facetmap.
+Metadata field can now configure a default limitmap and facetmap.
 Setting limitmap to "local:" would work for all kind of targets, but would
-prob. not be the optimal solution. But at least better than the default behavior
-of pazpar2 where no filtering is done.
+probably not be the optimal solution. But at least better than the default
+behavior of pazpar2 where no filtering is done.
 
-A service definition can now also contains <set/> that defines service-wide
-settings. These will override server-wide sets and will be overridded by
+A service definition can now also contain <set/> that defines service-wide
+settings. These will override server-wide sets and will be overridden by
 settings.
 
 New setting, pz:present_chunk, that specifies number of records to fetch
@@ -650,7 +650,7 @@ New Marc2TurboMarc.xsl (contribution from Sven Porst).
 Can solve the missing marc21.xsl updates in some cases.
 
 tmarc.xsl: Simplify the 6xx to subject-long and fix 1-based
-substring (contribtion from Sven Porst)
+substring (contribution from Sven Porst)
 
 marc21.xsl: fix 1-based substring call
 
@@ -660,8 +660,8 @@ Add test_termlist_block to test suite
 
 --- 1.6.10 2012/02/23
 
-Fix SEGV for invalid PQFs and SRU/SOLR targets
-Also refactor a bit the code that converts from PQF to SRU/SOLR queries.
+Fix SEGV for invalid PQFs and SRU/Solr targets
+Also refactor a bit the code that converts from PQF to SRU/Solr queries.
 
 Fix pz2.js: "null object" due to change in in bytarget result XML.
 
@@ -670,8 +670,8 @@ Added this normalization to the other subject-long fields (d6xx),
 where it was missing.
 
 Fixes in marc21.xsl: Updated with most of the new tmarc.xsl.
-Still differences around medium and holdings. marc21.xsl is not
-longer active used by Index Data, and should be considered unsupported.
+Still differences around medium and holdings. marc21.xsl is no
+longer actively used by Index Data, and should be considered unsupported.
 Use tmarc.xsl instead.
 
 --- 1.6.9 2012/01/19
@@ -691,7 +691,7 @@ filtered out. This bug was present in 1.6.6-1.6.7.
 Fix bug introduced in 1.6.6 where a connection re-use could stall
 incoming requests.
 
-Local filtering may now specify a local metadata field, eg.
+Local filtering may now specify a local metadata field, e.g.
  pz:limitmap:somefield[t]=local:otherfield
 
 --- 1.6.6 2011/11/25
@@ -700,14 +700,14 @@ For search, when limit and or filtering is in place and search
 is identical to previous search, the result set is re-used and the
 target is not searched.
 
-Limits may work perform local filtering as well, by using "local:"
+Limits may perform local filtering as well, by using "local:"
 for a limitmap.
 
 --- 1.6.5 2011/11/01
 
 Updated bytarget command to contain a suggestions element with misspelled
 words and suggestions to these. pz2.js has been updated to deliver this
-onwards as well. Only target that currently delivers this is the solr
+onwards as well. Only target that currently delivers this is the Solr
 client in YAZ 4.2.18.
 
 --- 1.6.4 2011/10/28
@@ -782,7 +782,7 @@ Extend tmarc.xsl to extract 773$g data (OpenURL).
 ICU default maps remove backquote (`).
 
 Command 'search' takes limit parameter (optional).  The limit parameter
-allows a search to be limited one or more facets and the corresponding
+allows a search to be limited to one or more facets and the corresponding
 values. This is for server side filtering.
 
 Configure tweak: Use -lm for log(3) if needed
@@ -813,8 +813,8 @@ New commands: status-server and status-session
 
 --- 1.5.3 2011/02/18
 
-Fix for threaded runs: Client now have a copy of the database URL,
-which can used after the database has been release from the client.
+Fix for threaded runs: Clients now have a copy of the database URL,
+which can used after the database has been released from the client.
 This makes the logging in the connection idle timeout of the client nicer (no NOURL) and should be thread-safe.
 
 tmarc.xsl: Add journal-title-abbrev and full text.
@@ -830,7 +830,7 @@ Fix wrong termlist factor when maxrecs is different from 100.
 --- 1.5.2 2011/01/18
 
 Fix missing pz:termlist_term_factor in settings.c messed up pz:preferred.
-Term factor is default enabled but can be diseabled by
+Term factor is default enabled but can be disabled by
 pz:termlist_term_factor=0
 
 --- 1.5.1 2011/01/06
@@ -844,7 +844,7 @@ Added exact-match recordfilter; format name=value
 
 --- 1.5.0 2010/10/05
 
-SOLR support. Pazpar2 may operate as web service client for SOLR.
+Apache Solr support. Pazpar2 may operate as web service client for Solr.
 
 --- 1.4.4 2010/08/17
 
@@ -859,9 +859,9 @@ tested on CentOS 5.5 only.
 --- 1.4.2 2010/06/18
 
 Fix problem with result sets being removed from a client session
-if the connection for it was resused by another session. Bug #3489.
+if the connection for it was re-used by another session. Bug #3489.
 
-New iphone UI for Pazpar2 (www/iphone).
+New iPhone UI for Pazpar2 (www/iphone).
 
 --- 1.4.1 2010/05/21
 
@@ -876,7 +876,7 @@ Threaded mode operational on Windows. Requires Windows 7 or Windows
 Server 2008.
 
 Default value of setting pz:max_connections is 0 which means that there
-is no limit on number of connections.
+is no limit on the number of connections.
 
 --- 1.4.0 2010/03/29
 
@@ -885,7 +885,7 @@ the configuration. See pazpar2_conf for details.
 
 New setting setting: pz:max_connections. Setting pz:max_connections is
 a limit of number of sockets to a host. When this limit is reached,
-Pazpar2 will wait up to 5 seconds for a connection to becomes available.
+Pazpar2 will wait up to 5 seconds for a connection to become available.
 The client will be marked Client_Error when it can not be searched
 (other clients in a session may work). If pz:max_connections is not set
 for a target, a value of 30 will be used. Note: the pz:max_connections
@@ -907,7 +907,7 @@ etc). And default.xml includes settings/edu.xml. The default.xml file,
 not to be confused with settings/defaults.xml, is a template for jsdemo
 and other services. The Debian package installs /etc/pazpar2/server.xml
 which is now the main pazpar2 configuration (used to be called pazpar2.cfg).
-server.xml includes services from /etc/pazpar2/services-enabled/*.xml .
+The server.xml includes services from /etc/pazpar2/services-enabled/*.xml .
 The default.xml (from etc) is installed in /etc/pazpar2/services-available
 and a symlink to it is created from services-enabled. The default.xml
 service is unnamed and, thus, will be used by jsdemo and test1.
@@ -927,26 +927,26 @@ Move mergekey definition away from the normalization stylesheets and
 define a mergekey common for all target types in pazpar2.cfg.
 
 Code update: Use the Odr_int type for hit counts. This is part of
-YAZ 3.0.47 and later and so configure checks for that.
+YAZ 3.0.47 and later, and so configure checks for that.
 
 --- 1.2.3 2009/11/24
 
 Metadata attribute 'skiparticle' also works for ICU based
-normalization. (was only working for the non-ICU/ASCII before).
+normalization (was only working for the non-ICU/ASCII before).
 
 Command bytarget with argument settings=1 will show settings per
-target.. This is to be able to verify correct settings and be able to
+target. This is to be able to verify correct settings and be able to
 test that they are correct. The database settings array size is now
-also stored..  Problems with database settings array is that if not
+also stored.  Problems with database settings array is that if not
 careful it will be too small (smaller than dictionary per-service
 in settings).
 
 Make record list sorting stable by comparing mergekey for records if
 relevance/title or other sorting criteria all match. This is merely to
-ensure that our regressions tests works (reproducible output).
+ensure that our regressions tests work (reproducible output).
 
 Relevance calculation changes: use a different denominator (length) for
-per-field relevance scoring.. Instead of length of all ranked fields we
+per-field relevance scoring. Instead of length of all ranked fields, we
 now use length of individual fields (as if they were individual "free"
 text fields). This will ensure that documents with a long field with no
 match (say description) will not "hurt" a title match.
@@ -959,15 +959,15 @@ Command search takes two optional parameters, startecs and maxrecs,
 that specifies the start offset (0, 1, ...) and maximum number of records
 to fetch for each target.
 
-XSLTs + MARC maps are cached within a session so we don't re-parse
-them over and over again. Even for a session with a single search
-there's much to be gained because many targets use the same
+XSLTs + MARC maps are cached within a session, so we don't re-parse
+them over and over again. Even for a session with a single search,
+there is much to be gained because many targets use the same
 transformation.
 
 The metadata attribute 'mergekey' now takes one of three values 'no',
-'required', 'optional' .  And the resulting mergekey from metadata
+'required', 'optional'.  And the resulting mergekey from metadata
 is now ordered in the same way as metadata in the service definition.
-Older Pazpar2 version use the order in which metadata appeared in a
+Older Pazpar2 versions use the order in which metadata appeared in a
 record instance.
 
 The search argument 'filter' now offers a new operator ~ which does a
@@ -997,13 +997,13 @@ during the session. The service may have its own target settings,
 ICU config, timeout, etc. In order to be recognized, the POST request
 must use Content-Type=text/xml.
 
-Timeout values may be given per-service. That's element 'timeout'
+Timeout values may be given per-service. That is element 'timeout'
 which takes three attribute values (a subset may be given): 'session',
 'z3950_operation', 'z3950_session'. Option -T is no longer supported
 - used to specify session timeout.
 
 Option -t tests the Pazpar2 configuration and returns exit code
-(0=success, non-zero=failure). In previous version of Pazpar2, -t
+(0=success, non-zero=failure). In previous versions of Pazpar2, -t
 specified local settings.
 
 In version 1.2.0 the configuration file - after include processing -
@@ -1015,13 +1015,13 @@ yaz log file if option -d is given.
 Configuration may now have multiple server areas. This means that a
 Pazpar2 instance may listen on multiple ports. Virtual hosting is not
 yet supported - on a server basis. Configuration may also have multiple
-services .. That is repeating service elements inside a server. Each
+services: That is repeating service elements inside a server. Each
 has an attribute 'id' which serves as service ID. This ID in turn may
 be used in a Pazpar2 session, by specifying parameter service=ID for
-command init. There can be at most one unnamed service inside a server
-which can be referred to by not specifying an service ID for command
+command init. There can be at most one unnamed service inside a server,
+which can be referred to by not specifying a service ID for command
 init (backwards compatible). In order to partition multiple servers and
-services a new include directive has been added. This takes an attribute
+services, a new include directive has been added. This takes an attribute
 'src' which specifies one or more sub-files. For example to include
 service files, one might use:
   <server >.. <include src=/"etc/pazpar2/conf.d/*.xml"/> .. </server>.
@@ -1042,11 +1042,11 @@ marc21 stylesheets changed for efficiency.
 
 Session timeout may be specified on the command-line as option -T.
 
-Pazpar2 may now be operated in a no-merged mode for records.. All records
+Pazpar2 may now be operated in a no-merged mode for records: All records
 will be considered unique. This mode is enabled if no mergekey is
 generated by the normalization stylesheet (pz:xslt).
 
-Pazpar2 caches original records from each target and the 'record' command
+Pazpar2 caches original records from each target, and the 'record' command
 with offset returns the original record if 'syntax' and 'esn' are NOT
 specified. This speeds up retrieval of original records but also means
 that Pazpar2 uses more memory. The cached records will be freed when the
@@ -1066,7 +1066,7 @@ Command bytarget returns name of target (if defined).
 
 --- 1.0.12 2008/11/04
 
-Fixed bug #2021.. location now holds all brief elements.
+Fixed bug #2021: location now holds all brief elements.
 
 --- 1.0.11 2008/10/15
 
