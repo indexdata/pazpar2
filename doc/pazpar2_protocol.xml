@@ -59,13 +59,13 @@
    <para>
     If the init command is performed as a HTTP GET request, service
     and settings from local files are used. The service parameter
-    may chose a particular local service.
+    may choose a particular local service.
    </para>
    <para>
     If the init command is performed as a HTTP POST request and
     the content-type is text/xml, then the content is XML parsed
     and treated as service for the session. The root element should be
-    service. Refer to descripton of the
+    service. Refer to description of the
     <link linkend="service_conf">service</link> format.
     The posting of a service appeared in Pazpar2 version 1.2.1.
    </para>
@@ -105,7 +105,7 @@
       <listitem>
        <para>
         If this is defined it specifies a service ID. Makes the session use
-        the service with this ID. If this is setting is omitted, the
+        the service with this ID. If this setting is omitted, the
         session will use the unnamed service in the Pazpar2 configuration.
 	</para>
       </listitem>
@@ -118,10 +118,10 @@
    <title>ping</title>
    <para>
     Keeps a session alive. An idle session will time out after one minute.
-    The ping command can be used to keep the session alive absent other
+    The ping command can be used to keep the session alive, absent other
     activity.
     It is suggested that any browser client have a simple alarm handler which
-    sends a ping every 50 seconds or so once a session has been initialized.
+    sends a ping every 50 seconds or so, once a session has been initialized.
    </para>
    <para>
     Example:
@@ -157,7 +157,7 @@
     information, it is possible to configure Pazpar2 to only allow access
     to this command from a trusted site -- usually from server-side
     scripting, which in turn is responsible for authenticating the user,
-    and possibly determining which resources he has access to, etc.
+    and possibly determining which resources that they have access to, etc.
    </para>
 
    <note>
@@ -172,7 +172,7 @@
     is text/xml, then the content is XML parsed and treated as settings -
     with a format identical to local
     <link linkend="target_settings">settings files</link>.
-    The posting of settings appeared in Pazpar version 1.2.1.
+    The posting of settings appeared in Pazpar2 version 1.2.1.
    </para>
 
    <para>
@@ -192,7 +192,7 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
   <refsect2 id="command-search">
    <title>search</title>
    <para>
-    Launches a search, parameters:
+    Launches a search. Parameters:
 
     <variablelist>
      <varlistentry>
@@ -216,7 +216,7 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
       <listitem>
        <para>
 	Limits the search to a given set of targets specified by the
-	filter. The filter consists of a comma separated list of
+	filter. The filter consists of a comma-separated list of
 	<emphasis>setting</emphasis>+<emphasis>operator</emphasis>+<emphasis>args</emphasis>
 	pairs. The <emphasis>setting</emphasis> is a Pazpar2 setting
 	(such as <literal>pz:id</literal>).
@@ -239,7 +239,7 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
 	<emphasis>name</emphasis>=<emphasis>args</emphasis> pairs separated
 	by comma. The <emphasis>args</emphasis> is a list of values
 	separated by vertical bar (<literal>|</literal>).
-	The meaning of <literal>|</literal> is alternative, ie OR .
+	The meaning of <literal>|</literal> is alternative (i.e. OR).
 	A value that contains a comma (<literal>,</literal>),
 	a vertical bar (<literal>|</literal>) or
 	backslash itself must be preceded by backslash (<literal>\</literal>).
@@ -289,7 +289,7 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
        </para>
        <para>
 	If not specified here or as
-	<link linkend="sort-default">sort-default"</link>
+	<link linkend="sort-default">sort-default</link>
 	in pazpar2.cfg, Pazpar2 will default to the built-in
 	'relevance' ranking.
        </para>
@@ -297,7 +297,7 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
 	Having sort criteria at search is important for targets that
 	supports native sorting in order to get best results. Pazpar2
 	will trigger a new search if search criteria changes from Pazpar2
-	to target-based sorting or visa-versa.
+	to target-based sorting or vice versa.
        </para>
       </listitem>
      </varlistentry>
@@ -308,7 +308,7 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
        <para>
 	Sets mergekey for this search and rest of session, or until
 	another mergekey is given for show/search. The mergekey value is a
-	comma separated list with one or more names as they appear
+	comma-separated list with one or more names as they appear
 	in the service description  equivalent to
 	<literal>mergekey="optional"</literal> inside a metadata element.
 	If the empty string is given for mergekey it is disabled
@@ -328,7 +328,7 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
        <para>
 	Sets rank method this search and rest of session, or until
 	another rank is given for show/search. The rank value is a
-	comma separated list of pairs field=value pairs. The
+	comma-separated list of field=value pairs. The
 	format is the same as
 	<xref linkend="metadata-rank">rank</xref> for a metadata element.
 	If the empty string is given for rank it is disabled
@@ -427,7 +427,7 @@ search.pz2?session=2044502273&command=stat
       <term>num</term>
       <listitem>
        <para>
-	Number of records to show If omitted, 20 is used.
+	Number of records to show. If omitted, 20 is used.
        </para>
       </listitem>
      </varlistentry>
@@ -437,7 +437,7 @@ search.pz2?session=2044502273&command=stat
       <listitem>
        <para>
 	If block is set to 1, the command will hang until there are records
-	ready to display. Use this to show first records rapidly without
+	ready to display. Use this to show first records quickly without
 	requiring rapid polling.
        </para>
        <para>
@@ -468,19 +468,19 @@ search.pz2?session=2044502273&command=stat
        </para>
        <para>
 	If not specified here or as
-	<link linkend="sort-default">sort-default"</link>
-	in pazpar2.cfg, pazpar2 will default to the built-in
+	<link linkend="sort-default">sort-default</link>
+	in pazpar2.cfg, then Pazpar2 will default to the built-in
 	'relevance' ranking.
        </para>
        <para>
 	Having sort criteria at search is important for targets that
-	supports native sorting in order to get best results. pazpar2
-	will trigger a new search if search criteria changes from pazpar2
+	supports native sorting in order to get best results. Pazpar2
+	will trigger a new search if search criteria changes from pazpar2-based
 	to target-based sorting.
        </para>
        <para>
-	For targets where If <link linkend="pzsortmap">pz:sortmap</link>
-	is defined, a sort operation will be executed (possibly including
+	For targets where <link linkend="pzsortmap">pz:sortmap</link>
+	is defined, a sort operation will be executed (which will possibly include
 	extending the search).
        </para>
       </listitem>
@@ -490,12 +490,12 @@ search.pz2?session=2044502273&command=stat
       <term>mergekey</term>
       <listitem>
        <para>
-	Sets mergekey for this show and rest of session, or until
+	Sets mergekey for this show, and for the rest of the session, or until
 	another mergekey is given for show/search. The mergekey value is a
-	comma separated list with one or more names as they appear
+	comma-separated list with one or more names as they appear
 	in the service description  equivalent to
 	<literal>mergekey="optional"</literal> inside a metadata element.
-	If the empty string is given for mergekey it is disabled
+	If the empty string is given for mergekey, it is disabled
 	and rest of session will use the default mergekey from service
 	or stylesheet.
        </para>
@@ -510,12 +510,12 @@ search.pz2?session=2044502273&command=stat
       <term>rank</term>
       <listitem>
        <para>
-	Sets rank method this show and rest of session, or until
+	Sets rank method for this show, and for the rest of the session, or until
 	another rank is given for show/search. The rank value is a
-	comma separated list of pairs field=value pairs. The
+	comma-separated list of field=value pairs. The
 	format is the same as
 	<xref linkend="metadata-rank">rank</xref> for a metadata element.
-	If the empty string is given for rank it is disabled
+	If the empty string is given for rank, it is disabled
 	and rest of session will use the default rank from metadata or
 	stylesheet.
        </para>
@@ -530,7 +530,7 @@ search.pz2?session=2044502273&command=stat
       <term>snippets</term>
       <listitem>
        <para>
-	If specified and set to 1 data will include snippets marked
+	If specified and set to 1, then data will include snippets marked
 	with &lt;match&gt; tags. Otherwise snippets will not be included.
        </para>
        <para>
@@ -615,8 +615,8 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
        </para>
        <para>
 	When offset/checksum is not given, the Pazpar2 metadata for the record
-	is returned and with metadata for each targets' data specified
-	in a 'location' list.
+	is returned and with metadata for each target's data specified
+	in a "location" list.
        </para>
       </listitem>
      </varlistentry>
@@ -627,7 +627,7 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
        <para>
 	This optional parameter is a string which, when given, makes
 	Pazpar2 return the original record for a specific target. The
-	checksum is returned as attribtue 'checksum' in element
+	checksum is returned as attribute 'checksum' in element
 	'location' for show command and record command (when checksum
 	and offset is NOT given).
 	The nativesyntax setting, as usual, is used to determine how to
@@ -670,7 +670,7 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
       <term>esn</term>
       <listitem>
        <para>
-	This optional parameter is the element set name used to retrieval
+	This optional parameter is the element set name used for retrieval
 	of a raw record (i.e. when offset is specified).
 	If esn is not given, but offset is used, the value of pz:elements
 	is used.
@@ -684,7 +684,7 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
        <para>
 	This optional parameter enables "binary" response for retrieval
 	of a original record (i.e. when offset is specified). For binary
-	response the record by default is fetched from ZOOM C using
+	response, the record by default is fetched from ZOOM C using
 	the "raw" option or by parameter nativesyntax if given.
        </para>
       </listitem>
@@ -694,7 +694,7 @@ search.pz2?session=2044502273&command=show&start=0&num=2&sort=title:1
       <term>snippets</term>
       <listitem>
        <para>
-	If specified and set to 1 data will include snippets marked
+	If specified and set to 1, then data will include snippets marked
 	with &lt;match&gt; tags. Otherwise snippets will not be included.
        </para>
        <para>
@@ -730,7 +730,7 @@ search.pz2?session=605047297&command=record&id=3
   <refsect2 id="command-stop">
    <title>stop</title>
    <para>
-    Makes Pazpar2 stop further search &amp; retrieval for busy databases.
+    Makes Pazpar2 stop further search and retrieval for busy databases.
    </para>
   </refsect2>
 
@@ -744,7 +744,7 @@ search.pz2?session=605047297&command=record&id=3
       <term>session</term>
       <listitem>
        <para>
-	Session Id.
+	Session ID
        </para>
       </listitem>
      </varlistentry>
@@ -800,7 +800,7 @@ search.pz2?session=2044502273&command=termlist&name=author,subject
     For the special termlist name "xtargets", results
     are returned about the targets which have returned the most hits.
     The 'term' subtree has additional elements,
-    specifically a state and diagnostic field (in the example below, a
+    specifically a state and diagnostic field. In the example below, a
     target ID is returned in place of 'name'.
     This may or may not change later.
    </para>
@@ -828,7 +828,7 @@ search.pz2?session=2044502273&command=termlist&name=author,subject
       <term>session</term>
       <listitem>
        <para>
-	Session Id.
+	Session ID
 	</para>
       </listitem>
      </varlistentry>

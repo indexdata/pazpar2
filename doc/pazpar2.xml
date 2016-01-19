@@ -104,7 +104,7 @@
      <para>
       Specifies the HTTP listener binding address.
       The <replaceable>ip</replaceable>
-      may be a hostname or <literal>@</literal> for "any" address.
+      may be a hostname, or <literal>@</literal> for "any" address.
       The <replaceable>port</replaceable> is an integer.
      </para>
     </listitem>
@@ -133,7 +133,7 @@
     <term><option>-p <replaceable>pidfile</replaceable></option></term>
     <listitem>
      <para>
-      Specifies PID file. If Pazpar2 is started and configured properly
+      Specifies PID file. If Pazpar2 is started and configured properly,
       the file given holds the process ID of the Pazpar2 process.
      </para>
     </listitem>
@@ -198,7 +198,7 @@
     <term><option>-V</option></term>
     <listitem>
      <para>
-      Shows Pazpar2 version and versions of some of the components that it
+      Shows Pazpar2 version, and versions of some of the components that it
       is using (ICU and YAZ). Pazpar2 will exit immediately after
       displaying the version information (no daemon started).
      </para>
