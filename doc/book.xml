@@ -340,9 +340,17 @@
     This will start a Pazpar2 listener on port 9004. It will proxy
     HTTP requests to port 80 on localhost, which we assume will be the regular
     HTTP server on the system. Inspect and modify pazpar2.cfg as needed
-    if this is to be changed. The pazpar2.cfg file includes settings from the
-    file <filename>settings/edu.xml</filename>
-    to use for searches.
+    if this is to be changed.
+   </para>
+
+   <para>
+    The pazpar2.cfg file includes settings from the
+    file <filename>settings/testserver.xml</filename>
+    to use for searches. That uses a single local target. If you do not yet
+    have a local information server running (e.g. yaz-ztest) then adjust the
+    target settings to refer to a known public server. Alternatively, adjust
+    the <filename>default.xml</filename> to refer to a different set of targets
+    (e.g. <filename>settings/edu.xml</filename>).
    </para>
 
    <para>
