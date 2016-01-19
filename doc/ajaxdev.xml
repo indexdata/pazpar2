@@ -2,7 +2,7 @@
 <section id="ajaxdev">
  <title>Ajax client development</title>
  <para>
-  Pazpar2 offers programmer a simple Web Service protocol that can be
+  Pazpar2 offers programmers a simple Web Service protocol that can be
   used (queried in a request/response fashion) from any, server- or
   client-side, programming language with an XML support. However, when
   programming a Web-based client to Pazpar2, to achieve certain level of
@@ -17,7 +17,7 @@
   Pazpar2 comes with a small JavaScript library called
   <filename>pz2.js</filename>.
   This library is designed to simplify development of an Ajax-based pazpar2
-  client and alleviate programmer from the low-level details like
+  client and alleviate the programmer from the low-level details like
   polling the web service, fetching and parsing returned XML output or
   managing timers, sessions and basic state variables.
  </para>
@@ -32,12 +32,12 @@
  <para>
   In the session-aware mode, the library assumes that the pazpar2
   daemon is contacted directly (preferably via Apache proxy to avoid
-  security breaches) and tracks the session Ids internally.
+  security breaches) and tracks the session IDs internally.
  </para>
  <para>
-  In the session-less mode the library assumes that the client is
-  identified on the server and the session Ids are not managed
-  directly. This way of operation requires more sophisticated pazpar2
+  In the session-less, mode the library assumes that the client is
+  identified on the server and the session IDs are not managed
+  directly. This way of operation requires a more sophisticated pazpar2
   proxy (preferably a wrapper written in a server-side scripting
   language like PHP that can identify clients and relate them to open
   pazpar2 sessions).
@@ -46,25 +46,25 @@
  <para>
   Client development with the <filename>pz2.js</filename> is strongly event based and the
   style should be familiar to most JavaScript developers. A simple
-  client (jsdemo) is distributed with pazpar2's source code and shows
+  client (jsdemo) is distributed with Pazpar2's source code and shows
   how to set-up and use <filename>pz2.js</filename>.
  </para>
  <para>
-  In short, programmer starts by instantiating the pz2 object and
+  In short, the programmer starts by instantiating the pz2 object and
   passing an array of parameters to the constructor. The parameter array
   specifies callbacks used for handling responses to the pazpar2
   commands. Additionally, the parameter array is used to configure
   run-time parameters of the <filename>pz2.js</filename> like polling
-  timer time-outs, session-mode and XSLT style-sheets.
+  timer time-outs, session-mode and XSLT stylesheets.
  </para>
  <para><bridgehead>Command callbacks</bridgehead></para>
  <para>
-  Callback naming is simple and follows “on” prefix plus command name
-  scheme (like onsearch, onshow, onrecord, ... etc.). When programmer
+  Callback naming is simple, and follows “on” prefix plus command name
+  scheme (like onsearch, onshow, onrecord, ... etc.). When the programmer
   calls a function like show or record on the pz2 object, <filename>pz2.js</filename> will
   keep on polling pazpar2 (until the backend targets are idle) and with
   each command's response an assigned callback will be called. In case
-  of pazpar2's internal error an error callback is called.
+  of Pazpar2's internal error, an error callback is called.
  </para>
  <screen>
   my_paz = new pz2 (
@@ -86,10 +86,10 @@
   );
  </screen>
  <para>
-  Each command callback is a user defined function that takes a hash
+  Each command callback is a user-defined function that takes a hash
   object as a parameter. The hash object contains parsed pazpar2
   responses (hash members that correspond to the elements in the
-  response XML document). Within the handler programmer further
+  response XML document). Within the handler, the programmer further
   processes the data and updates the viewed document.
  </para>
  <screen>
@@ -117,7 +117,7 @@
  <para>
   The search process is initiated by calling the search method on the
   instantiated pz2 object. To initiate short status reports and
-  per-target status information methods stat and bytarget have to be
+  per-target status information, methods stat and bytarget are
   called accordingly.
  </para>
  <screen>
@@ -127,15 +127,15 @@
   Managing the results (keeping track of the browsed results page and
   sorting) is up to the client's programmer. At any point the show
   method may be called to bring up the latest result set with a
-  different sorting criteria or range and without re-executing the
+  different sorting criteria or range, without re-executing the
   search on the back-end.
  </para>
  <screen>
   my_paz.show (1, 10, 'relevance');
  </screen>
  <para>
-  To retrieve a detailed record the record command is called. When
-  calling record command one may temporarily override its default
+  To retrieve a detailed record, the record command is called. When
+  calling the record command, one may temporarily override its default
   callback by specifying the handler parameter. This might be useful
   when retrieving raw records that need to be processed differently.
  </para>
@@ -145,19 +145,19 @@
  <variablelist>
   <para><bridgehead>PARAMETERS ARRAY</bridgehead></para>
   <varlistentry><term>pazpar2path</term>
-  <listitem><para>server path to pazpar2 (relative to the portal), when pazpar2 is installed as a package this does not have to be set </para></listitem>
+  <listitem><para>server path to pazpar2 (relative to the portal). When pazpar2 is installed as a package this does not need to be set. </para></listitem>
   </varlistentry>
   <varlistentry><term>usesessions</term>
-  <listitem><para>boolean, when set to true <filename>pz2.js</filename> will manage sessions internally otherwise it's left to the server-side script, default true</para></listitem>
+  <listitem><para>Boolean. When set to true <filename>pz2.js</filename> will manage sessions internally, otherwise it is left to the server-side script. Default true.</para></listitem>
   </varlistentry>
   <varlistentry><term>autoInit</term>
-  <listitem><para>bolean, sets auto initialization of pazpar2 session on the object instantiation, default true, valid only if usesession is set to true</para></listitem>
+  <listitem><para>Boolean. Sets auto initialization of pazpar2 session on the object instantiation. Default true. Valid only if usesession is set to true.</para></listitem>
   </varlistentry>
   <varlistentry><term>detailstylesheet</term>
   <listitem><para>path to the xsl presentation stylesheet (relative to the portal) used for the detailed record display</para></listitem></varlistentry>
 
   <varlistentry><term>errorhandler</term>
-  <listitem><para>callback function called on any, pazpar2 or <filename>pz2.js</filename>' internal, error</para></listitem></varlistentry>
+  <listitem><para>callback function called on any (pazpar2 or <filename>pz2.js</filename>) internal error</para></listitem></varlistentry>
 
   <varlistentry><term>oninit</term>
   <listitem><para>specifies init response callback function</para></listitem></varlistentry>
@@ -250,7 +250,7 @@
   <listitem><para>asynchronous, send the request with given parameters (array) and call callback with response as parameter</para></listitem></varlistentry>
 
   <varlistentry><term>post (params, data, callback)</term>
-  <listitem><para>asychronous, post arbitrary data (may be XML doc) and call callback with response as parameter</para></listitem></varlistentry>
+  <listitem><para>asynchronous, post arbitrary data (may be XML doc) and call callback with response as parameter</para></listitem></varlistentry>
 
   <varlistentry><term>load ()</term>
   <listitem><para>synchronous, returns the response for the given request</para></listitem></varlistentry>
