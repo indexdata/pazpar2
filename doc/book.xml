@@ -386,6 +386,9 @@
     intelligence;
     <literal>demo</literal>
     requires PHP on the server.
+    The <literal>jsdemo</literal> also needs
+    <filename>pazpar2/js/pz2.js</filename>
+    to be available to the webserver.
    </para>
    <para>
     If you don't see the test interfaces, check whether they are available
