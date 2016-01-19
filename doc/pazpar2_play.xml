@@ -37,7 +37,7 @@
   <para>
    <command>pazpar2_play</command> is a utility that plays recorded
    HTTP activity against pazpar2. Pazpar2 may record activity to a file
-   with option -R. This utilility allows you to play the activity again
+   with option -R. This utility allows you to play the activity again
    against pazpar2. Pazpar2 must use predictable sessions in order for this
    to work. This means that either Pazpar2 should be executed with option -R
    or with debug mode (-X).
@@ -64,15 +64,15 @@
    <screen>
     pazpar2 -f config.xml -R /tmp/recording.log
    </screen>
-   For RPM version of Pazpar2, add/modify
+   For the RPM version of Pazpar2, add/modify
    <filename>/etc/sysconfig/pazpar2</filename> and modify OPTIONS.
-   For Debian version of Pazpar2 add/modify
+   For the Debian version of Pazpar2, add/modify
    <filename>/etc/defaults/pazpar2</filename> and modify OPTIONS.
   </para>
   <para>
-   At some point we want to run recording.. Perhaps against another
-   Pazpar2 instance for analysis. We start Pazpar2 with -R- to ensure
-   that sessions are numbered in the same way initial recording.
+   At some point we want to run recording, perhaps against another
+   Pazpar2 instance for analysis. We start Pazpar2 with '-R -' to ensure
+   that sessions are numbered in the same way as initial recording.
    <screen>
     pazpar2 -f config.xml -R -
    </screen>

@@ -340,9 +340,17 @@
     This will start a Pazpar2 listener on port 9004. It will proxy
     HTTP requests to port 80 on localhost, which we assume will be the regular
     HTTP server on the system. Inspect and modify pazpar2.cfg as needed
-    if this is to be changed. The pazpar2.cfg file includes settings from the
-    file <filename>settings/edu.xml</filename>
-    to use for searches.
+    if this is to be changed.
+   </para>
+
+   <para>
+    The pazpar2.cfg file includes settings from the
+    file <filename>settings/testserver.xml</filename>
+    to use for searches. That uses a single local target. If you do not yet
+    have a local information server running (e.g. yaz-ztest) then adjust the
+    target settings to refer to a known public server. Alternatively, adjust
+    the <filename>default.xml</filename> to refer to a different set of targets
+    (e.g. <filename>settings/edu.xml</filename>).
    </para>
 
    <para>
@@ -378,6 +386,9 @@
     intelligence;
     <literal>demo</literal>
     requires PHP on the server.
+    The <literal>jsdemo</literal> also needs
+    <filename>pazpar2/js/pz2.js</filename>
+    to be available to the webserver.
    </para>
    <para>
     If you don't see the test interfaces, check whether they are available
@@ -511,7 +522,7 @@
     for the best possible performance, and to limit overhead when
     several browser clients generate numerous webservice requests.
     However, it is still desirable to use a conventional webserver,
-    such as Apache, to serve up graphics, HTML documents, and
+    such as Apache HTTP Server, to serve up graphics, HTML documents, and
     server-side scripting. Because the security sandbox environment of
     most browser-side programming environments only allows communication
     with the server from which the enclosing HTML page or object
@@ -531,7 +542,7 @@
 
    <para>
     Pazpar2 can also work behind
-    a reverse Proxy. Refer to <xref linkend="installation.apache2proxy"/>)
+    a reverse Proxy. Refer to <xref linkend="installation.apache2proxy"/>
     for more information.
     This allows your existing HTTP server to operate on port 80 as usual.
     Pazpar2 can be started on another (internal) port.
@@ -545,9 +556,9 @@
     etc. Fortunately, it is simple to exchange information between
     Pazpar2, your browser scripting, and backend server-side scripting.
     You can send a session ID and possibly a record ID from your browser
-    code to your server code, and from there use Pazpar2s webservice API
+    code to your server code, and from there use Pazpar2's webservice API
     to access result sets or individual records. You could even 'hide'
-    all of Pazpar2s functionality between your own API implemented on
+    all of Pazpar2's functionality between your own API implemented on
     the server-side, and access that from the browser or elsewhere. The
     possibilities are just about endless.
    </para>
@@ -572,7 +583,7 @@
     elements using an XSLT stylesheet (MARC records are automatically
     normalized to <ulink url="&url.marcxml;">MARCXML</ulink> before this step).
     If desired, you can run multiple XSLT stylesheets in series to accomplish
-    this, but the output of the last one should be a representation of the
+    this, but the output of the last one must be a representation of the
     record in a schema that Pazpar2 understands.
    </para>
 
@@ -605,9 +616,9 @@
     truncation) will be joined into a cluster. In other words, you
     decide how records are merged. If you don't include a merge key,
     records are never merged. The 'metadata' elements provide the meat
-    of the elements -- the content. the 'type' attribute is used to
+    of the elements -- the content. The 'type' attribute is used to
     match each element against processing rules that determine what
-    happens to the data element next. The attribute, 'rank' specifies
+    happens to the data element next. The 'rank' attribute specifies
     specifies a multipler for ranking for this element.
    </para>
 
@@ -621,7 +632,7 @@
    </para>
 
    <para>
-    Pazpar2 1.6.37 and later also allows already clustered records to
+    Pazpar2 1.6.37 and later also allows already-clustered records to
     be ingested. Suppose a database already clusters for us and we would like
     to keep that cluster for Pazpar2. In that case we can generate a
     <literal>cluster</literal> wrapper element that holds individual
@@ -679,7 +690,7 @@
   <section id="unicode">
    <title>Unicode Compliance</title>
    <para>
-    Pazpar2 is Unicode compliant and language and locale aware but relies
+    Pazpar2 is Unicode compliant and language and locale aware, but relies
     on character encoding for the targets to be specified correctly if
     the targets themselves are not UTF-8 based (most aren't).
     Just a few bad behaving targets can spoil the search experience
@@ -705,13 +716,13 @@
   <section id="load_balancing">
    <title>Load balancing</title>
    <para>
-     Just like any web server, Pazpar2, can be load balanced by a standard
+     Just like any web server, Pazpar2 can be load balanced by a standard
      hardware or software load balancer as long as the session stickiness
      is ensured. If you are already running the Apache2 web server in front
      of Pazpar2 and use the apache mod_proxy module to 'relay' client
      requests to Pazpar2, this set up can be easily extended to include
      load balancing capabilites.
-     To do so you need to enable the
+     To do so, you need to enable the
      <ulink url="http://httpd.apache.org/docs/2.2/mod/mod_proxy_balancer.html">
       mod_proxy_balance
      </ulink>
@@ -728,7 +739,7 @@
 
    <para>
     The mod_proxy_balancer can pass all 'sessionsticky' requests to the
-    same backend worker as long as the requests are marked with the
+    same backend worker, as long as the requests are marked with the
     originating worker's ID (called 'route'). If the Pazpar2 serverID is
     configured (by setting an 'id' attribute on the 'server' element in
     the Pazpar2 configuration file) Pazpar2 will append it to the
@@ -736,17 +747,17 @@
     compatible manner.
     Since the 'session' is then re-sent by the client (for all pazpar2
     request besides 'init'), the balancer can use the marker to pass
-    the request to the right route. To do so the balancer needs to be
+    the request to the right route. To do so, the balancer needs to be
     configured to inspect the 'session' parameter.
    </para>
 
    <example id="load_balancing.example">
     <title>Apache 2 load balancing configuration</title>
     <para>
-     Having 4 Pazpar2 instances running on the same host, port range of
-     8004-8007 and serverIDs of: pz1, pz2, pz3 and pz4 respectively we
+     Having four Pazpar2 instances running on the same host, having port range of
+     8004-8007 and serverIDs of: pz1, pz2, pz3 and pz4 respectively, we
      could use the following Apache 2 configuration to expose a single
-     pazpar2 'endpoint' on a standard
+     Pazpar2 'endpoint' on a standard
      (<filename>/pazpar2/search.pz2</filename>) location:
 
      <screen><![CDATA[
@@ -798,18 +809,18 @@
    </para>
    <para>
     Computatation of the Tf-part is based on the normalized documents.
-    The length, the position and terms are thus normalized at this point.
-    Also the computation if performed for each document received from the
+    The length, the position, and terms are thus normalized at this point.
+    Also the computation is performed for each document received from the
     target - before merging takes place. The result of a TF-compuation is
     added to the TF-total of a cluster. Thus, if a document occurs twice,
     then the TF-part is doubled. That, however, can be adjusted, because the
     TF-part may be divided by the number of documents in a cluster.
    </para>
    <para>
-    The algorithm used by Pazpar2 has two phases. In phase one
-    Pazpar2 computes a tf-array .. This is being done as records are
-    fetched form the database. In this case, the rank weigth
-    <literal>w</literal>, the and rank tweaks <literal>lead</literal>,
+    The algorithm used by Pazpar2 has two phases. In phase one,
+    Pazpar2 computes a tf-array: This is being done as records are
+    fetched from the database. In this case, the rank weight
+    <literal>w</literal>, and the rank tweaks <literal>lead</literal>,
     <literal>follow</literal> and <literal>length</literal>.
 
    </para>
@@ -835,7 +846,7 @@
 	  ]]></screen>
    <para>
     In phase two, the idf-array is computed and the final score
-    is computed. This is done for each cluster as part of each show command.
+    is computed. This is done for each cluster, as part of each show command.
     The rank tweak <literal>cluster</literal> is in use here.
    </para>
    <screen><![CDATA[
@@ -888,8 +899,8 @@
    <para>
     To play with the demo, just create a symlink from
     <filename>/etc/pazpar2/services-enabled/default.xml</filename>
-    to <filename>/etc/pazpar2/services-available/mkc.xml</filename>.
-    And restart Pazpar2. You should now be able to search the two demo
+    to <filename>/etc/pazpar2/services-available/mkc.xml</filename>
+    and then restart Pazpar2. You should now be able to search the two demo
     resources using JSDemo or any user interface of your choice.
     If you are interested in learning more about MasterKey Connect, or to
     try out the service for free against your favorite online resource, just

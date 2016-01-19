@@ -66,7 +66,7 @@
    <title>threads</title>
    <para>
     This section is optional and is supported for Pazpar2 version 1.3.1 and
-    later . It is identified by element "<literal>threads</literal>" which
+    later. It is identified by element "<literal>threads</literal>" which
     may include one attribute "<literal>number</literal>" which specifies
     the number of worker-threads that the Pazpar2 instance is to use.
     A value of 0 (zero) disables worker-threads (all work is carried out
@@ -135,8 +135,8 @@
        Pazpar2 in conjunction with browser-based code (JS, Flash,
        applets, etc.) which operates in a security sandbox. Such code
        can only connect to the same server from which the enclosing
-       HTML page originated. Pazpar2s proxy functionality enables you
-       to host all of the main pages (plus images, CSS, etc) of your
+       HTML page originated. Pazpar2's proxy functionality enables you
+       to host all of the main pages (plus images, CSS, etc.) of your
        application on a conventional webserver, while efficiently
        processing webservice requests for metasearch status, results,
        etc.
@@ -149,7 +149,7 @@
      <listitem>
       <para>
        Specifies character set normalization for relevancy / sorting /
-       mergekey and facets - for the server. These definitions serves as
+       mergekey and facets - for the server. These definitions serve as
        default for services that don't have these given. For the meaning
        of these settings refer to the
        <xref linkend="icuchain"/> element inside service.
@@ -170,11 +170,11 @@
      <term>settings</term>
      <listitem>
       <para>
-       Specifies target settings for the server.. These settings serves
+       Specifies target settings for the server. These settings serve
        as default for all services which don't have these given.
        The settings element requires one attribute 'src' which specifies
-       a settings file or a directory . If a directory is given all
-       files with suffix <filename>.xml</filename> is read from this
+       a settings file or a directory. If a directory is given, all
+       files with suffix <filename>.xml</filename> are read from this
        directory. Refer to
        <xref linkend="target_settings"/> for more information.
       </para>
@@ -254,7 +254,7 @@
 	   <listitem>
 	    <para>
 	     If this is set to 'yes', then the data element is
-	     includes in brief records in the webservice API. Note
+	     included in brief records in the webservice API. Note
 	     that this only makes sense for metadata elements that
 	     are merged (see below). The default value is 'no'.
 	    </para>
@@ -287,7 +287,7 @@
 	     help rank
 	     records against the user's query (when ranking is
 	     requested).
-	     The valus is of the form
+	     The value is of the form
 	     <literallayout>
 	      M [F N]
 	     </literallayout>
@@ -298,15 +298,15 @@
 	     excludes this element from the rank calculation.
 	    </para>
 	    <para>
-	     F is a CCL field and N is the multipler for terms
-	     that matches those part of the CCL field in search.
+	     F is a CCL field and N is the multiplier for terms
+	     that matches those parts of the CCL field in search.
 	     The F+N combo allows the system to use a different
-	     multipler for a certain field. For example, a rank value of
-	     "<literal>1 au 3</literal>" gives a multipler of 3 for
-	     all terms part of the au(thor) terms and 1 for everything else.
+	     multiplier for a certain field. For example, a rank value of
+	     "<literal>1 au 3</literal>" gives a multiplier of 3 for
+	     all terms part of the au (author) terms, and 1 for everything else.
 	    </para>
 	    <para>
-	     For Pazpar2 1.6.13 and later, the rank may also defined
+	     For Pazpar2 1.6.13 and later, the rank may also be defined
 	     "per-document", by the normalization stylesheet.
 	    </para>
 	    <para>
@@ -341,13 +341,13 @@
 	     from individual records and merged into cluster
 	     records. The possible values are: 'unique' (include
 	     all unique elements), 'longest' (include only the
-	     longest element (strlen), 'range' (calculate a range
+	     longest element (strlen)), 'range' (calculate a range
 	     of values across all matching records), 'all' (include
 	     all elements), or 'no' (don't merge; this is the
 	     default);
 	    </para>
 	    <para>
-	     Pazpar 1.6.24 also offers a new value for merge, 'first', which
+	     Pazpar2 1.6.24 also offers a new value for merge, 'first', which
 	     is like 'all' but only takes all from first database that returns
 	     the particular metadata field.
 	    </para>
@@ -361,12 +361,12 @@
 	     If set to '<literal>required</literal>', the value of this
 	     metadata element is appended to the resulting mergekey if
 	     the metadata is present in a record instance.
-	     If the metadata element is not present, the a unique mergekey
+	     If the metadata element is not present, then a unique mergekey
 	     will be generated instead.
 	    </para>
 	    <para>
 	     If set to '<literal>optional</literal>', the value of this
-	     metadata element is appended to the resulting mergekey if the
+	     metadata element is appended to the resulting mergekey if
 	     the metadata is present in a record instance. If the metadata
 	     is not present, it will be empty.
 	    </para>
@@ -411,7 +411,7 @@
 	    <para>
 	     Specifies a default limitmap for this field. This is to avoid mass
 	     configuring of targets. However it is important to review/do
-	     this on a per target since it is usually target-specific.
+	     this on a per-target basis, since it is usually target-specific.
 	     See limitmap for format.
 	    </para>
 	   </listitem>
@@ -423,7 +423,7 @@
 	    <para>
 	     Specifies a default facetmap for this field. This is to avoid mass
 	     configuring of targets. However it is important to review/do
-	     this on a per target since it is usually target-specific.
+	     this on a per-target basis, since it is usually target-specific.
 	     See facetmap for format.
 	    </para>
 	   </listitem>
@@ -437,12 +437,12 @@
 	     metadata text. The "display" part of the rule is kept
 	     in the returned metadata record (record+show commands), the
 	     end result - normalized text - is used for performing
-	     within-cluster merge (unique, longest, etc). If the icurule is
+	     within-cluster merge (unique, longest, etc.). If the icurule is
 	     omitted, type generic (text) is converted as follows:
 	     any of the characters "<literal> ,/.:([</literal>" are
 	     chopped of prefix and suffix of text content
 	     <emphasis>unless</emphasis> it includes the
-	     characters "<literal>://</literal>" (URL).
+	     characters "<literal>://</literal>" (i.e. a URL).
 	    </para>
 	    <note>
 	     <para>
@@ -467,9 +467,9 @@
 	     the value to decide how to deal with other data values.
 	    </para>
 	    <para>
-	     The purpose of using settings in this way can either be to
-	     control the behavior of normalization stylesheet in a database-
-	     dependent way, or to easily make database-dependent values
+	     The purpose of using settings in this way, can either be to
+	     control the behavior of normalization stylesheets in a
+             database-dependent way, or to easily make database-dependent values
 	     available to display-logic in your user interface, without having
 	     to implement complicated interactions between the user interface
 	     and your configuration system.
@@ -507,7 +507,7 @@
 	  Rule set 'relevance' is used to normalize
 	  terms for relevance ranking. Rule set 'sort' is used to
 	  normalize terms for sorting. Rule set 'mergekey' is used to
-	  normalize terms for making a mergekey and, finally. Rule set 'facet'
+	  normalize terms for making a mergekey. Rule set 'facet'
 	  is normally used to normalize facet terms, unless
 	  <xref linkend="facetrule">facetrule</xref> is given for a
 	  metadata field.
@@ -527,7 +527,7 @@
 	   <listitem>
 	    <para>
 	     The attribute 'rule' defines the direction of the
-	     per-character casemapping, allowed values are "l"
+	     per-character casemapping. Allowed values are "l"
 	     (lower), "u" (upper), "t" (title).
 	    </para>
 	   </listitem>
@@ -556,7 +556,7 @@
 	     which splits one token into multiple tokens. The
 	     'rule' attribute may have the following values:
 	     "s" (sentence), "l" (line-break), "w" (word), and
-	     "c" (character), the later probably not being
+	     "c" (character), with the latter probably not being
 	     very useful in a pruning Pazpar2 installation.
 	    </para>
 	   </listitem>
@@ -642,7 +642,7 @@
 	 <para>
 	  Customizes the CCL parsing (interpretation of query parameter
 	  in search).
-	  The name and value of the CCL directive is gigen by attributes
+	  The name and value of the CCL directive is given by attributes
 	  'name' and 'value' respectively. Refer to possible list of names
 	  in the
 	  <ulink
@@ -689,7 +689,7 @@
 	   <term>follow</term>
 	   <listitem>
 	    <para>
-	     Attribute 'follow' is a a floating point number greater than
+	     Attribute 'follow' is a floating point number greater than
 	     or equal to 0. A positive number will boost weight for terms
 	     that occur close to each other (proximity, distance).
 	     A value of 1, will double the weight if two terms are in
@@ -705,7 +705,7 @@
 	     Attribute 'lead' is a floating point number.
 	     It controls if term weight should be reduced by position
 	     from start in a metadata field. A positive value of 'lead'
-	     will reduce weight as it apperas further away from the lead
+	     will reduce weight as it appears further away from the lead
 	     of the field. Default value is 0 (no reduction of weight by
 	     position).
 	    </para>
@@ -716,7 +716,7 @@
 	   <listitem>
 	    <para>
 	     Attribute 'length' determines how/if term weight should be
-	     divided by lenght of metadata field. A value of "linear"
+	     divided by length of metadata field. A value of "linear" will
 	     divide by length. A value of "log" will divide by log2(length).
 	     A value of "none" will leave term weight as is (no division).
 	     Default value is "linear".
@@ -741,15 +741,15 @@
 	<listitem>
 	 <para>
 	  Specifies the default sort criteria (default 'relevance'),
-	  which previous was hard-coded as default criteria in search.
+	  which previously was hard-coded as default criteria in search.
 	  This is a fix/work-around to avoid re-searching when using
-	  target-based sorting. In order for this to work efficient,
-	  the search must also have the sort critera parameter; otherwise
+	  target-based sorting. In order for this to work efficiently,
+	  the search must also have the sort criteria parameter; otherwise
 	  pazpar2 will do re-searching on search criteria changes, if
 	  changed between search and show command.
 	 </para>
 	 <para>
-	  This configuration was added in pazpar2 1.6.20.
+	  This configuration was added in Pazpar2 1.6.20.
 	 </para>
 	</listitem>
        </varlistentry>
@@ -796,7 +796,7 @@
 	 <para>
 	  The following is recommended but not required:
 	  z3950_operation (30) &lt; session (60) &lt; z3950_session (180) .
-	  The default values are given in parantheses.
+	  The default values are given in parentheses.
 	 </para>
 	 <para>
 	  The Z39.50 operation timeout may be set per database. Refer to
@@ -944,7 +944,7 @@
    be stored in a system on the server side, or it will be accessible in
    some way from the server.  However, since the Javascript client cannot
    be entirely trusted (some hostile agent might in fact 'pretend' to be
-   a regular ws client), it is more robust to control session settings
+   a regular WS client), it is more robust to control session settings
    from scripting that you run as part of your webserver. Typically, this
    can be handled during the session initialization, as follows:
   </para>
@@ -1193,7 +1193,7 @@
        <emphasis>user, password</emphasis>.
       </para>
       <para>
-       For HTTP based procotols, such as SRU and Apache Solr, the
+       For HTTP based protocols, such as SRU and Apache Solr, the
        authentication string includes a username term and, optionally,
        a password term.
        Each term is separated by a single blank. The
@@ -1267,7 +1267,7 @@
       <warning>
        <para>
 	The pz:extendrecs setting appeared in Pazpar2 version 1.6.26.
-	But the bahavior changed with the release of Pazpar2 1.6.29.
+	But the behavior changed with the release of Pazpar2 1.6.29.
        </para>
       </warning>
      </listitem>
@@ -1397,14 +1397,14 @@
      <term>pz:nativesyntax</term>
      <listitem>
       <para>
-       Specifies how Pazpar2 shoule map retrieved records to XML. Currently
+       Specifies how Pazpar2 should map retrieved records to XML. Currently
        supported values are <literal>xml</literal>,
        <literal>iso2709</literal> and <literal>txml</literal>.
       </para>
       <para>
        The value <literal>iso2709</literal> makes Pazpar2 convert retrieved
        MARC records to MARCXML. In order to convert to XML, the exact
-       chacater set of the MARC must be known (if not, the resulting
+       character set of the MARC must be known (if not, the resulting
        XML is probably not well-formed). The character set may be
        specified by adding:
        <literal>;</literal><replaceable>charset</replaceable> to
@@ -1683,10 +1683,10 @@
       </para>
       <para>
        For each name, the embedded stylesheets (XSL) that comes with the
-       service definition are consulted first and takes precedence over
+       service definition are consulted first, and take precedence over
        external files; see <xref linkend="servicexslt"/>
        of service definition).
-       If the name does not match an embedded stylesheet it is
+       If the name does not match an embedded stylesheet, it is
        considered a filename.
       </para>
       <para>
@@ -1712,7 +1712,7 @@
 	500 $ description
         773 * citation
        </programlisting>
-       To map the field value specify a subfield of '$'.  To store a
+       To map the field value, specify a subfield of '$'.  To store a
        concatenation of all subfields, specify a subfield of '*'.
       </para>
      </listitem>
@@ -1723,7 +1723,7 @@
      <listitem>
       <para>
        The 'pz:zproxy' setting has the value syntax
-       'host.internet.adress:port', it is used to tunnel Z39.50
+       'host.internet.adress:port'. It is used to tunnel Z39.50
        requests through the named Z39.50 proxy.
       </para>
      </listitem>
