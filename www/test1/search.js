@@ -384,7 +384,7 @@ function start_search()
 	alert("Please load targets first");
 	return;
     }
-    var query = escape(document.getElementById('query').value);
+    var query = encodeURIComponent(document.getElementById('query').value);
     var url = "/pazpar2/search.pz2?" +
         "command=search" +
 	"&session=" + session +
@@ -408,7 +408,7 @@ function session_encode ()
     for (i = 0; i < session_cells.length; i++)
     {
         var name = session_cells[i];
-        var value = escape(document.getElementById(name).value);
+        var value = encodeURIComponent(document.getElementById(name).value);
         session += '&' + name + '=' + value;
     }
 
@@ -428,9 +428,8 @@ function session_restore (session)
         var value = pair.join('=');
         var cell = document.getElementById(key);
 
-        cell.value = value;
+        cell.value = decodeURIComponent(value);
     }
-    
 }
 
 
@@ -443,7 +442,7 @@ function session_read ()
 
 function session_store (new_value)
 {
-    window.location.hash = '#' + new_value;
+    window.location.hash = new_value;
 }
 
 
@@ -462,7 +461,7 @@ function session_check ()
 
     clearInterval(url_surveillence);
 
-    if ( session != unescape(old_session) )
+    if ( session != old_session && session != unescape(old_session))
     {
         session_restore(session);
 
