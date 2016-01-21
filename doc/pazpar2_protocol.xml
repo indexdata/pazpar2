@@ -781,7 +781,7 @@ search.pz2?session=2044502273&command=termlist&name=author,subject
       <name>Donald Knuth</name>
       <frequency>10</frequency>
     </term>
-      <term>
+    <term>
       <name>Robert Pirsig</name>
       <frequency>2</frequency>
     </term>
@@ -846,20 +846,27 @@ search.pz2?session=605047297&command=bytarget&id=3
 <bytarget>
   <status>OK</status>
   <target>
-    <id>lx2.loc.gov/LCDB/</id>
+    <id>lx2.loc.gov:210/LCDB_MARC8</id>
+    <name>Library of Congress</name>
     <hits>10000</hits>
     <diagnostic>0</diagnostic>
-    <records>65</records>
-    <state>Client_Presenting</state>
+    <records>20</records>
+    <filtered>0</filtered>
+    <state>Client_Working</state>
+    <query_type>pqf</query_type>
+    <query_data>@attr 1=1016 birds</query_data>
   </target>
   <!-- ... more target nodes below as necessary -->
 </bytarget>
 ]]></screen>
 
-    The following client states are defined: Client_Connecting,
-    Client_Connected, Client_Idle, Client_Initializing, Client_Searching,
-    Client_Searching, Client_Presenting, Client_Error, Client_Failed,
-    Client_Disconnected, Client_Stopped, Client_Continue.
+    The following client states are defined:
+    Client_Connecting,
+    Client_Idle,
+    Client_Working,
+    Client_Error,
+    Client_Failed,
+    Client_Disconnected.
    </para>
   </refsect2>
 
