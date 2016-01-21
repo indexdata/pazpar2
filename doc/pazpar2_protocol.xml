@@ -385,18 +385,16 @@ search.pz2?session=2044502273&command=stat
     Output
     <screen><![CDATA[
 <stat>
-  <activeclients>3</activeclients>
-  <hits>7</hits>                   -- Total hitcount
-  <records>7</records>             -- Total number of records fetched in last query
-  <clients>1</clients>             -- Total number of associated clients
-  <unconnected>0</unconnected>     -- Number of disconnected clients
-  <connecting>0</connecting>       -- Number of clients in connecting state
-  <initializing>0</initializing>   -- Number of clients initializing
-  <searching>0</searching>         -- ... searching
-  <presenting>0</presenting>       -- ... presenting
-  <idle>1</idle>                   -- ... idle (not doing anything)
-  <failed>0</failed>               -- ... Connection failed
-  <error>0</error>                 -- ... Error was produced somewhere
+  <activeclients>26</activeclients>
+  <hits>84919</hits>            -- Total hitcount
+  <records>742</records>        -- Total number of records fetched in last query
+  <clients>45</clients>         -- Total number of associated clients
+  <unconnected>0</unconnected>  -- Number of disconnected clients
+  <connecting>0</connecting>    -- Number of clients in connecting state
+  <working>26</working>         -- ... working (searching, presenting, etc.)
+  <idle>2</idle>                -- ... idle (not doing anything)
+  <failed>0</failed>            -- ... Connection failed
+  <error>13</error>             -- ... Error was produced somewhere
 </stat>
      ]]></screen>
   </para>
