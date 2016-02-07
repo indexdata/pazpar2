@@ -41,7 +41,7 @@ addons:
    - tcl8.5
    - xsltproc
 
-before install:
+before_install:
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update          ; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install pkg-config icu4c yaz; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./test/travis/travis-init.sh; fi
