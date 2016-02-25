@@ -9,6 +9,7 @@ config.h.in
 *.log
 *.o
 *.a
+*.trs
 *~
 stamp-h1
 test_sel_thread
