@@ -14,7 +14,7 @@
   <set target="hcb.bibnet.dk:2100/S" name="pz:name" value="hcb.bibnet.dk:2100/S"/>
   <set target="z3950.bibsys.no:2100/BIBSYS" name="pz:name" value="z3950.bibsys.no:2100/BIBSYS"/>
   <set target="z3950.libris.kb.se:210/libr" name="pz:name" value="z3950.libris.kb.se:210/libr"/>
-  <set target="bagel.indexdata.dk/gils" name="pz:name" value="bagel.indexdata.dk/gils"/>
+  <set target="z3950.indexdata.dk/gils" name="pz:name" value="z3950.indexdata.dk/gils"/>
   <set target="www.deff.dk:2100/Default" name="pz:name" value="www.deff.dk:2100/Default"/>
   <set target="www.deff.dk:2102/Default" name="pz:name" value="www.deff.dk:2102/Default"/>
   

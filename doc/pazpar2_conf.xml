@@ -999,10 +999,10 @@
        This specifies the search target to which this setting should be
        applied. Targets are identified by their Z39.50 URL, generally
        including the host, port, and database name, (e.g.
-       <literal>bagel.indexdata.com:210/marc</literal>).
+       <literal>z3950.indexdata.com:210/marc</literal>).
        Two wildcard forms are accepted:
        * (asterisk) matches all known targets;
-       <literal>bagel.indexdata.com:210/*</literal> matches all
+       <literal>z3950.indexdata.com:210/*</literal> matches all
        known databases on the given host.
       </para>
       <para>

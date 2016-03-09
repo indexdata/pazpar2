@@ -77,8 +77,8 @@
   <set target=" alpha.svkol.cz:9909/SVK01" name="pz:name" value=" alpha.svkol.cz:9909/SVK01"/>
   <set target="alpha.svkol.cz:9909/SVK02" name="pz:name" value="alpha.svkol.cz:9909/SVK02"/>
   <set target="atrium.bib.umontreal.ca:210/ADVANCE" name="pz:name" value="atrium.bib.umontreal.ca:210/ADVANCE"/>
-  <set target="bagel.indexdata.dk:210/gils" name="pz:name" value="bagel.indexdata.dk:210/gils"/>
-  <set target="bagel.indexdata.dk:210/marc" name="pz:name" value="bagel.indexdata.dk:210/marc"/>
+  <set target="z3950.indexdata.com:210/gils" name="pz:name" value="z3950.indexdata.com:210/gils"/>
+  <set target="z3950.indexdata.com:210/marc" name="pz:name" value="z3950.indexdata.com:210/marc"/>
   <set target="bcr1.larioja.org:210/AbsysE" name="pz:name" value="bcr1.larioja.org:210/AbsysE"/>
   <set target="bib.gladsaxe.dk:2100/S" name="pz:name" value="bib.gladsaxe.dk:2100/S"/>
   <set target="bib.gladsaxe.dk:2101/H" name="pz:name" value="bib.gladsaxe.dk:2101/H"/>
