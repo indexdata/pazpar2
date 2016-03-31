@@ -49,5 +49,9 @@ before_install:
 
 before_script:
  - ./buildconf.sh
+
 script:
- - ./configure && make && make check
+ - ./configure
+ - make
+ - make check
+
