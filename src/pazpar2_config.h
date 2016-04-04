@@ -96,10 +96,6 @@ struct conf_sortkey
 
 struct conf_server;
 
-// It is conceivable that there will eventually be several 'services'
-// offered from one server, with separate configuration -- possibly
-// more than one services associated with the same port. For now,
-// however, only a single service is possible.
 struct conf_service
 {
     YAZ_MUTEX mutex;
