@@ -1226,6 +1226,7 @@ static void http_accept(IOCHAN i, int event)
     ch = http_channel_create(server->http_server, host, server);
     ch->iochan = c;
     iochan_setdata(c, ch);
+    iochan_settimeout(c, 60);
     if (iochan_add(server->iochan_man, c, 0))
     {
         yaz_log(YLOG_WARN, "Refusing incoming HTTP connection");
