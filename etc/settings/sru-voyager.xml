@@ -1,8 +1,8 @@
 <settings target="lx2.loc.gov:210/LCDB_MARC8">
 
+  <set name="pz:name" value="Library of Congress (SRU)"/>
   <set name="pz:sru" value="soap"/> <!-- must be get, post or soap -->
   <set name="pz:sru_version" value="1.1"/>
-  <set name="pz:name" value="Library of Congress (SRU)"/>
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=cql.serverChoice t=l,r s=al"/>
@@ -15,15 +15,9 @@
   <set name="pz:cclmap:date" value="u=dc.date r=r"/>
 
   <!-- Retrieval settings -->
-
-  <!-- requestsyntax - not used for SRU -->
-  <set name="pz:requestsyntax" value="marc21"/>
-
-  <!-- SRU schema (e.g. "dc" or "marcxml") -->
   <set name="pz:elements" value="marcxml"/>
 
   <!-- Result normalization settings -->
-
   <set name="pz:nativesyntax" value="xml"/>
   <set name="pz:xslt" value="marc21.xsl"/>
 
