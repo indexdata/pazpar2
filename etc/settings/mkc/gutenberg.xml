@@ -1,4 +1,4 @@
 <settings target="mkc.indexdata.com:210/gutenberg">
-  <set name="pz:name" value="Gutenberg"/>
+  <set name="pz:name" value="Project Gutenberg"/>
   <set name="pz:id" value="gutenberg"/>
 </settings>

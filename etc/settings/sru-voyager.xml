@@ -1,10 +1,8 @@
 <settings target="lx2.loc.gov:210/LCDB_MARC8">
 
-  <!-- Simple test against a local SRU server (could be yaz-ztest) -->
-
   <set name="pz:sru" value="soap"/> <!-- must be get, post or soap -->
   <set name="pz:sru_version" value="1.1"/>
-  <set name="pz:name" value="Local Test"/>
+  <set name="pz:name" value="Library of Congress (SRU)"/>
 
   <!-- mapping for unqualified search -->
   <set name="pz:cclmap:term" value="u=cql.serverChoice t=l,r s=al"/>
@@ -21,7 +19,7 @@
   <!-- requestsyntax - not used for SRU -->
   <set name="pz:requestsyntax" value="marc21"/>
 
-  <!-- SRU schema. Eg. "dc" or "marcxml" -->
+  <!-- SRU schema (e.g. "dc" or "marcxml") -->
   <set name="pz:elements" value="marcxml"/>
 
   <!-- Result normalization settings -->
