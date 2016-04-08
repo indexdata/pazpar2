@@ -1,4 +1,10 @@
+<?xml version="1.0"?>
 <settings target="mkc.indexdata.com:210/hathitrust">
   <set name="pz:name" value="Hathitrust"/>
   <set name="pz:id" value="hathitrust"/>
 </settings>
+<!-- Keep this comment at the end of the file
+     Local variables:
+     mode: nxml
+     End:
+-->
