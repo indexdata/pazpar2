@@ -14,7 +14,7 @@
   <set name="pz:sru" value="get"/>
   <set name="pz:sru_version" value="1.2"/>
   <!-- Retrieval settings -->
-  <set name="pz:elements" value="dc"/>
+  <set name="pz:elements" value="marcxml"/>
   <set name="pz:maxrecs" value="27"/>
   <!-- Result normalization settings -->
   <set name="pz:nativesyntax" value="xml"/>
