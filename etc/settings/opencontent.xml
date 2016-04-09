@@ -12,6 +12,7 @@
   <!-- narrower default search for Wikipedia - full field match -->
   <set target="opencontent.indexdata.com:210/wikipedia" name="pz:cclmap:term" value="u=43 6=2"/>
   <!-- field-specific mappings -->
+  <set name="pz:cclmap:au" value="u=1004 s=al 2=102"/>
   <set name="pz:cclmap:ti" value="u=4 s=al 2=102"/>
   <set name="pz:cclmap:su" value="u=21 s=al 2=102"/>
   <set name="pz:cclmap:isbn" value="u=7 2=102"/>
