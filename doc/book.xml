@@ -877,7 +877,8 @@
   <section id="masterkey_connect">
    <title>Pazpar2 and MasterKey Connect</title>
    <para>
-    MasterKey Connect is a hosted connector, or gateway, service that exposes
+    <ulink url="&url.mkc;">MasterKey Connect</ulink>
+    is a hosted connector, or gateway, service that exposes
     whatever searchable resources you need. Since the service exposes all
     resources using Z39.50 (or SRU), it is easy to set up Pazpar2 to use the
     service. In particular, since all connectors expose basically the same core
