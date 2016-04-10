@@ -295,7 +295,7 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
        </para>
        <para>
 	Having sort criteria at search is important for targets that
-	supports native sorting in order to get best results. Pazpar2
+	supportnative sorting in order to get best results. Pazpar2
 	will trigger a new search if search criteria changes from Pazpar2
 	to target-based sorting or vice versa.
        </para>
@@ -326,12 +326,12 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
       <term>rank</term>
       <listitem>
        <para>
-	Sets rank method this search and rest of session, or until
+	Sets rank method for this search and rest of session, or until
 	another rank is given for show/search. The rank value is a
 	comma-separated list of field=value pairs. The
 	format is the same as
 	<xref linkend="metadata-rank">rank</xref> for a metadata element.
-	If the empty string is given for rank it is disabled
+	If the empty string is given for rank, it is disabled
 	and rest of session will use the default rank from metadata or
 	stylesheet.
        </para>

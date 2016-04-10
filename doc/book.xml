@@ -74,7 +74,7 @@
     search many resources in parallel. It implements record merging,
     relevance-ranking and sorting by arbitrary data content, and facet
     analysis for browsing purposes. It is designed to be data-model
-    independent, and is capable of working with MARC, DublinCore, or any
+    independent, and is capable of working with MARC, Dublin Core, or any
     other <ulink url="&url.xml;">XML</ulink>-structured response format
     -- <ulink url="&url.xslt;">XSLT</ulink> is used to normalize and extract
     data from retrieval records for display and analysis. It can be used
@@ -117,7 +117,7 @@
     retrieval servers. Finally, metadata is extracted in a configurable
     way from this internal record, to support display, merging, ranking,
     result set facets, and sorting. Pazpar2 is not bound to a specific model
-    of metadata, such as DublinCore or MARC: by providing the right
+    of metadata, such as Dublin Core or MARC: by providing the right
     configuration, it can work with any combination of different kinds of data
     in support of many different applications.
    </para>
