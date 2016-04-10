@@ -820,8 +820,8 @@
    <![CDATA[
 <?xml version="1.0" encoding="UTF-8"?>
 <pazpar2 xmlns="http://www.indexdata.com/pazpar2/1.0">
-
  <threads number="10"/>
+ <file path=".:/usr/share/pazpar2/xsl"/>
  <server>
   <listen port="9004"/>
   <service>
@@ -843,7 +843,7 @@
    </icu_chain>
    <settings src="mysettings"/>
    <timeout session="60"/>
-  <service>
+  </service>
  </server>
 </pazpar2>
    ]]>
@@ -856,7 +856,7 @@
    The XML configuration may be partitioned into multiple files by using
    the <literal>include</literal> element which takes a single attribute,
    <literal>src</literal>. The <literal>src</literal> attribute is
-   regular Shell like glob-pattern. For example,
+   regular Shell-like glob pattern. For example,
    <screen><![CDATA[
    <include src="/etc/pazpar2/conf.d/*.xml"/>
    ]]></screen>
@@ -959,7 +959,7 @@
 
   <para>
    Step 2: Code on the webserver authenticates the user, by database lookup,
-   LDAP access, NCIP, etc. Determines which resources the user has access to,
+   LDAP access, NCIP, etc., and determines which resources the user has access to,
    and any user-specific parameters that are to be applied during this session.
   </para>
 
@@ -986,7 +986,7 @@
     Each file contains a root element named &lt;settings&gt;. It may
     contain one or more &lt;set&gt; elements. The settings and set
     elements may contain the following attributes. Attributes in the set
-    node overrides those in the setting root element. Each set node must
+    node override those in the setting root element. Each set node must
     specify (directly, or inherited from the parent node) at least a
     target, name, and value.
    </para>
@@ -1017,7 +1017,7 @@
       </para>
       <para>
        For Pazpar2 1.6.4 or later, the target ID may be user-defined, in
-       which case, the actual host, port, etc is given by setting
+       which case, the actual host, port, etc., is given by the setting
        <xref linkend="pzurl"/>.
       </para>
      </listitem>
@@ -1110,7 +1110,7 @@
     <!-- Result normalization settings -->
 
     <set name="pz:nativesyntax" value="iso2709"/>
-    <set name="pz:xslt" value="../etc/marc21.xsl"/>
+    <set name="pz:xslt" value="marc21.xsl"/>
 
     </settings>
 
@@ -1119,7 +1119,7 @@
 
    <para>
     The next example shows certain settings overridden for one target,
-    one which returns XML records containing DublinCore elements, and
+    one which returns XML records containing Dublin Core elements, and
     which furthermore requires a username/password.
     <screen><![CDATA[
     <settings target="funkytarget.com:210/db1">
@@ -1382,7 +1382,7 @@
       <para>
        If set and non-empty,
        <ulink url="&url.redis;">redis</ulink> will
-       configured and enabled for the target.
+       be configured and enabled for the target.
        The value of this setting is exactly as the redis option for
        ZOOM C of YAZ.
       </para>
@@ -1484,7 +1484,7 @@
        subquery can be combined with the submitted query as the second
        argument of <literal>@andnot</literal> by using the
        pz:pqf_strftime value <literal>@not %% @attr 1=pica.bib
-       0007</literal>.
+       0007</literal>
       </para>
      </listitem>
     </varlistentry>
@@ -1497,7 +1497,7 @@
        target. Using block=preferred on <link linkend="command-show">
        show command</link> will wait for all these
        targets to return records before releasing the block.
-       If no target is preferred, the block=preferred will identical to
+       If no target is preferred, the block=preferred will be identical to
        block=1, which release when one target has returned records.
       </para>
      </listitem>
@@ -1607,7 +1607,7 @@
      <listitem>
       <para>
        This allows SRU version to be specified. If unset Pazpar2
-       will the default of YAZ (currently 1.2). Should be set
+       will use the default of YAZ (currently 1.2). Should be set
        to 1.1 or 1.2. For Solr, the current supported/tested version
        is 1.4 and 3.x.
       </para>
@@ -1632,7 +1632,7 @@
        or not (0).
        When mixing locally generated (by the downloaded (pz:maxrecs) samples)
        facet with native (target-generated) facets, the later will
-       dominated the dominate the facet list since they are generated
+       dominate the facet list since they are generated
        based on the complete result set.
        By scaling up the facet count using the ratio between total hit
        count and the sample size,
@@ -1647,7 +1647,7 @@
      <term>pz:timeout</term>
      <listitem>
       <para>
-       Specifies timeout for operation (eg search, and fetch) for
+       Specifies timeout for operation (e.g. search, and fetch) for
        a database. This overrides the z3650_operation timeout
        that is given for a service. See <xref linkend="service-timeout"/>.
       </para>
@@ -1678,7 +1678,7 @@
      <term id="pzxslt" xreflabel="pz:xslt">pz:xslt</term>
      <listitem>
       <para>
-       Is a comma separated list of of stylesheet names that specifies
+       A comma-separated list of stylesheet names that specifies
        how to convert incoming records to the internal representation.
       </para>
       <para>
