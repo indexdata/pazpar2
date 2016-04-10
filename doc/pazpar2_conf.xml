@@ -956,7 +956,7 @@
    new Pazpar2 session ID. This can be done using a Javascript call, for
    instance. Note that it is possible to submit Ajax HTTPXmlRequest calls
    either to Pazpar2 or to the webserver that Pazpar2 is proxying
-   for. See (XXX Insert link to Pazpar2 protocol).
+   for.  Refer to <xref linkend="pazpar2_protocol"/>.
   </para>
 
   <para>
