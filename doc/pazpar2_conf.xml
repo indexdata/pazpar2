@@ -1234,7 +1234,8 @@
        the purpose of mapping end-user queries. XXX is the field or
        setting name, and the value of the setting provides parameters
        (e.g. parameters to send to the server, etc.). Please consult
-       the YAZ manual for a full overview of the many capabilities of
+       the <ulink url="&url.yaz.ccl;">YAZ manual</ulink>
+       for a full overview of the many capabilities of
        the powerful and flexible CCL parser.
       </para>
       <para>
@@ -1387,6 +1388,7 @@
        configured and enabled for the target.
        The value of this setting is exactly as the redis option for
        ZOOM C of YAZ.
+       Refer to the <ulink url="&url.yaz.zoom;">YAZ manual</ulink>.
       </para>
       <para>
        This setting is honored in Pazpar2 1.6.43 or later. Pazpar2 must
