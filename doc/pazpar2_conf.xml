@@ -209,7 +209,7 @@
 	 <para>
 	  One of these elements is required for every data element in
 	  the internal representation of the record (see
-	  <xref linkend="data_model"/>. It governs
+	  <xref linkend="data_model"/>). It governs
 	  subsequent processing as pertains to sorting, relevance
 	  ranking, merging, and display of data elements. It supports
 	  the following attributes:
@@ -313,8 +313,10 @@
 	     The per field rank was introduced in Pazpar2 1.6.15. Earlier
 	     releases only allowed a rank value M (simple integer).
 	    </para>
-	    See <xref linkend="relevance_ranking"/> for more
-	    about ranking.
+	    <para>
+	      See <xref linkend="relevance_ranking"/> for more
+	      about ranking.
+	    </para>
 	   </listitem>
 	  </varlistentry>
 
