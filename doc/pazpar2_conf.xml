@@ -209,7 +209,7 @@
 	 <para>
 	  One of these elements is required for every data element in
 	  the internal representation of the record (see
-	  <xref linkend="data_model"/>. It governs
+	  <xref linkend="data_model"/>). It governs
 	  subsequent processing as pertains to sorting, relevance
 	  ranking, merging, and display of data elements. It supports
 	  the following attributes:
@@ -313,8 +313,10 @@
 	     The per field rank was introduced in Pazpar2 1.6.15. Earlier
 	     releases only allowed a rank value M (simple integer).
 	    </para>
-	    See <xref linkend="relevance_ranking"/> for more
-	    about ranking.
+	    <para>
+	      See <xref linkend="relevance_ranking"/> for more
+	      about ranking.
+	    </para>
 	   </listitem>
 	  </varlistentry>
 
@@ -954,7 +956,7 @@
    new Pazpar2 session ID. This can be done using a Javascript call, for
    instance. Note that it is possible to submit Ajax HTTPXmlRequest calls
    either to Pazpar2 or to the webserver that Pazpar2 is proxying
-   for. See (XXX Insert link to Pazpar2 protocol).
+   for.  Refer to <xref linkend="pazpar2_protocol"/>.
   </para>
 
   <para>
@@ -1232,7 +1234,8 @@
        the purpose of mapping end-user queries. XXX is the field or
        setting name, and the value of the setting provides parameters
        (e.g. parameters to send to the server, etc.). Please consult
-       the YAZ manual for a full overview of the many capabilities of
+       the <ulink url="&url.yaz.ccl;">YAZ manual</ulink>
+       for a full overview of the many capabilities of
        the powerful and flexible CCL parser.
       </para>
       <para>
@@ -1385,6 +1388,7 @@
        be configured and enabled for the target.
        The value of this setting is exactly as the redis option for
        ZOOM C of YAZ.
+       Refer to the <ulink url="&url.yaz.zoom;">YAZ manual</ulink>.
       </para>
       <para>
        This setting is honored in Pazpar2 1.6.43 or later. Pazpar2 must
