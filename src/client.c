@@ -835,7 +835,8 @@ int client_fetch_more(struct client *cl)
 
     yaz_log(YLOG_DEBUG, "cl=%s show_stat_no=%d got=%d",
             client_get_id(cl), cl->show_stat_no, cl->record_offset);
-    if (cl->show_stat_no < cl->record_offset)
+    if (cl->show_stat_no + cl->ingest_failures + cl->record_failures
+        < cl->record_offset)
         return 0;
     yaz_log(YLOG_DEBUG, "cl=%s Trying to fetch more", client_get_id(cl));
 
