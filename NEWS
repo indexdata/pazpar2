@@ -1,3 +1,9 @@
+--- 1.12.6 2016/09/13
+
+Continue fetching of records even in case of ingest failures PAZ-1042
+
+Fixes and updates to documentation
+
 --- 1.12.5 2015/10/19
 
 Usage limit PAZ-1038
