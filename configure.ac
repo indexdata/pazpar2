@@ -24,7 +24,7 @@ AC_LANG(C)
 
 AC_C_INLINE
 
-YAZ_INIT([static icu],[5.12.0])
+YAZ_INIT([static icu],[5.17.0])
 if test -z "$YAZLIB"; then
 	AC_MSG_ERROR([YAZ development libraries missing])
 fi
@@ -48,7 +48,7 @@ if test "$checkBoth" = "1"; then
     AC_CHECK_FUNC([accept], , [LIBS=$oldLibs])
 fi
 AC_CHECK_FUNC([gethostbyname], ,[AC_CHECK_LIB(nsl, main, [LIBS="$LIBS -lnsl"])])
-AC_CHECK_FUNCS([getaddrinfo mallinfo getrlimit])
+AC_CHECK_FUNCS([getaddrinfo getrlimit])
 
 if test -d ${srcdir}/.git; then
 	sha=`git show --pretty=format:%H|head -1`
