@@ -914,10 +914,10 @@ static void http_io(IOCHAN i, int event)
                     fprintf(hc->http_server->record_file, "r %lld %lld %lld 0\n",
                             (long long) tv.tv_sec, (long long) tv.tv_usec,
                             (long long) iochan_getfd(i));
+                    fflush(hc->http_server->record_file);
                 }
 #endif
                 http_buf_destroy(hc->http_server, htbuf);
-                fflush(hc->http_server->record_file);
                 http_channel_destroy(i);
                 return;
             }
