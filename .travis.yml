@@ -14,21 +14,8 @@ matrix:
       env:
        - MY_OS=precise
     - os: osx
-      osx_image: beta-xcode6.1
       env:
-       - MY_OS=macos-10.9
-    - os: osx
-      osx_image: xcode7
-      env:
-       - MY_OS=macos-10.10
-    - os: osx
-      osx_image: xcode7.3
-      env:
-       - MY_OS=macos-10.11
-    - os: osx
-      osx_image: xcode8
-      env:
-       - MY_OS=macos-10.11
+       - MY_OS=macos-default
 
 addons:
  apt:

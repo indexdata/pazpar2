@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 #include <yaz/snprintf.h>
 #include <yaz/yaz-util.h>
+#include <yaz/malloc_info.h>
 
 #include "ppmutex.h"
 #include "eventl.h"
@@ -40,41 +41,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "http.h"
 #include "settings.h"
 #include "client.h"
-
-#ifdef HAVE_MALLINFO
-#include <malloc.h>
-
-void print_meminfo(WRBUF wrbuf)
-{
-    struct mallinfo minfo;
-    minfo = mallinfo();
-    wrbuf_printf(wrbuf, " <memory>\n"
-                 "  <arena>%d</arena><!--  Non-mmapped space allocated (bytes) -->\n"
-                 "  <ordblks>%d</ordblks><!--  Number of free chunks -->\n"
-                 "  <smblks>%d</smblks><!--  Number of free fastbin blocks -->\n"
-                 "  <hblks>%d</hblks><!--  Number of mmapped regions -->\n"
-                 "  <hblkhd>%d</hblkhd><!--  Space allocated in mmapped regions (bytes) -->\n"
-                 "  <usmblks>%d</usmblks><!--  Maximum total allocated space (bytes) -->\n"
-                 "  <fsmblks>%d</fsmblks><!--  Space in freed fastbin blocks (bytes) -->\n"
-                 "  <uordblks>%d</uordblks><!--  Total allocated space (bytes) -->\n"
-                 "  <fordblks>%d</fordblks><!--  Total free space (bytes) -->\n"
-                 "  <keepcost>%d</keepcost><!-- Top-most, releasable space (bytes) -->\n"
-                 " </memory>\n",
-                 minfo.arena,
-                 minfo.ordblks,
-                 minfo.smblks,
-                 minfo.hblks,
-                 minfo.hblkhd,
-                 minfo.usmblks,
-                 minfo.fsmblks,
-                 minfo.uordblks,
-                 minfo.fordblks,
-                 minfo.keepcost);
-}
-#else
-#define print_meminfo(x)
-#endif
-
 
 // Update this when the protocol changes
 #define PAZPAR2_PROTOCOL_VERSION "1"
@@ -1483,7 +1449,7 @@ static void cmd_info(struct http_channel *c)
 #endif
     wrbuf_printf(c->wrbuf, " <sessions>%d</sessions>\n", sessions_get_count());
     wrbuf_printf(c->wrbuf, " <clients>%d</clients>\n",   clients_get_count());
-    print_meminfo(c->wrbuf);
+    wrbuf_malloc_info(c->wrbuf);
     info_services(c->server, c->wrbuf);
 
     response_close(c, "info");

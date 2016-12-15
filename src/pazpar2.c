@@ -238,7 +238,6 @@ static int sc_main(
     if (test_mode)
     {
         yaz_log(YLOG_LOG, "Configuration OK");
-        config_destroy(config);
     }
     else
     {
