@@ -1,3 +1,13 @@
+--- 1.12.7 2016/12/22
+
+Log errors, when redis/memcached fails PAZ-1043
+
+Record file log: use only fflush for non-NULL file ptr
+
+Use YAZ' wrbuf_malloc_info rather than using mallinfo
+
+Fix double free https://github.com/indexdata/pazpar2/issues/12
+
 --- 1.12.6 2016/09/13
 
 Continue fetching of records even in case of ingest failures PAZ-1042
