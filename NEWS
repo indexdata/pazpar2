@@ -1,6 +1,8 @@
---- 1.12.7 2016/12/22
+--- 1.12.8 2016/12/22
 
 Log errors, when redis/memcached fails PAZ-1043
+
+--- 1.12.7 2016/12/22
 
 Record file log: use only fflush for non-NULL file ptr
 
