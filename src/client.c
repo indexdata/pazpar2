@@ -959,11 +959,7 @@ int client_start_search(struct client *cl)
     }
     else if (!rc_prep_connection)
     {
-        client_set_diagnostic(cl, 2,
-                              ZOOM_diag_str(2),
-                              "Cannot create connection");
-        client_set_state_nb(cl, Client_Error);
-        return -1;
+        return -1; /* error */
     }
     co = client_get_connection(cl);
     assert(cl);
