@@ -1,3 +1,7 @@
+--- 1.12.9 2016/12/29
+
+Command info also reports NMEM status
+
 --- 1.12.8 2016/12/22
 
 Log errors, when redis/memcached fails PAZ-1043
