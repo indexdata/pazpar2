@@ -1450,8 +1450,12 @@ static void cmd_info(struct http_channel *c)
     wrbuf_printf(c->wrbuf, " <sessions>%d</sessions>\n", sessions_get_count());
     wrbuf_printf(c->wrbuf, " <clients>%d</clients>\n",   clients_get_count());
     wrbuf_malloc_info(c->wrbuf);
+    {
+        char buf[200];
+        if (nmem_get_status(buf, sizeof(buf) - 1) == 0)
+            wrbuf_puts(c->wrbuf, buf);
+    }
     info_services(c->server, c->wrbuf);
-
     response_close(c, "info");
 }
 

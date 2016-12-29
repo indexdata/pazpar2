@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: Adam Dickmeiss <adam@indexdata.dk>
 Build-Depends: debhelper (>= 7),
 	autotools-dev,
-	libyaz5-dev (>= 5.17.0),
+	libyaz5-dev (>= 5.18.0),
 	docbook-xsl
 Standards-Version: 3.7.2
 
