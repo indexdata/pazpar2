@@ -110,7 +110,7 @@ rm -fr ${RPM_BUILD_ROOT}
 
 %files
 %defattr(-,root,root)
-%doc README LICENSE NEWS
+%doc README.md LICENSE NEWS
 %{_sbindir}/pazpar2
 %{_bindir}/pazpar2_play
 %dir %{_sysconfdir}/pazpar2

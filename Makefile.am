@@ -4,7 +4,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = src etc/xsl test js doc
 
-EXTRA_DIST = $(PACKAGE).spec IDMETA README NEWS LICENSE m4/id-config.sh \
+EXTRA_DIST = $(PACKAGE).spec IDMETA README.md NEWS LICENSE m4/id-config.sh \
 	buildconf.sh Doxyfile.in m4/yaz.m4 \
 	win/makefile win/version.nsi win/version.nsi.in win/license.txt
 
