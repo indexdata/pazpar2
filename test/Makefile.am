@@ -1,4 +1,5 @@
 # This file is part of Pazpar2.
+AUTOMAKE_OPTIONS = serial-tests
 
 # These tests require a Solr target
 solr_tests = test_solr.sh test_termlist_block.sh test_limit_limitmap.sh test_sort.sh
