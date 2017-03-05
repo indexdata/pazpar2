@@ -151,7 +151,7 @@ VALGRINDLOG=${PREFIX}_valgrind.log
 
 if test `uname` = "Linux"; then
     sec=0.3
-    maxrounds=20
+    maxrounds=30
 else
     sec=1
     maxrounds=10
