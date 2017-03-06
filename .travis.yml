@@ -8,11 +8,6 @@ matrix:
       compiler: clang
       env:
        - MY_OS=trusty
-    - os: linux
-      dist: precise
-      compiler: gcc
-      env:
-       - MY_OS=precise
     - os: osx
       env:
        - MY_OS=macos-default
