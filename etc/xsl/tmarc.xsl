@@ -626,18 +626,43 @@
         </xsl:if>
       </xsl:for-each>
 
-      <xsl:for-each select="tmarc:d852">
-        <xsl:for-each select="tmarc:sy">
-          <pz:metadata type="publicnote">
-            <xsl:value-of select="." />
+      <xsl:if test="not(ancestor::opacRecord)">
+        <xsl:for-each select="tmarc:d852">
+          <xsl:variable name="vCall">
+            <xsl:for-each select="tmarc:sh | tmarc:si">
+              <xsl:value-of select="concat(.,' ')"/>
+            </xsl:for-each>
+          </xsl:variable>
+          <xsl:variable name="vLocation">
+            <xsl:choose>
+              <xsl:when test="tmarc:sb">
+                <xsl:for-each select="tmarc:sb">
+                  <xsl:value-of select="concat(.,' ')"/>
+                </xsl:for-each>
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="tmarc:sa"/>
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:variable>
+          <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">
+            <xsl:value-of select="normalize-space($vLocation)"/>
           </pz:metadata>
-        </xsl:for-each>
-        <xsl:for-each select="tmarc:sh">
-          <pz:metadata type="callnumber">
-            <xsl:value-of select="." />
+          <pz:metadata type="callnumber" empty="PAZPAR2_NULL_VALUE">
+            <xsl:value-of select="normalize-space($vCall)" />
           </pz:metadata>
+          <xsl:for-each select="tmarc:sy">
+            <pz:metadata type="publicnote">
+              <xsl:choose>
+                <xsl:when test="text() = '1'">Available</xsl:when>
+                <xsl:when test="text() = '0'">Not Available</xsl:when>
+                <xsl:otherwise><xsl:value-of select="." /></xsl:otherwise>
+              </xsl:choose>
+            </pz:metadata>
+          </xsl:for-each>
+          <pz:metadata type="available">PAZPAR2_NULL_VALUE</pz:metadata>
         </xsl:for-each>
-      </xsl:for-each>
+      </xsl:if>
 
       <xsl:for-each select="tmarc:d876">
         <xsl:if test="tmarc:sf">
@@ -741,38 +766,42 @@
         </pz:metadata>
       </xsl:for-each>
 
-      <xsl:for-each select="tmarc:d926">
-        <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">
-	  <xsl:value-of select="tmarc:sa"/>
-	</pz:metadata>
-        <pz:metadata type="callnumber" empty="PAZPAR2_NULL_VALUE">
-	  <xsl:value-of select="tmarc:sc"/>
-	</pz:metadata>
-        <pz:metadata type="available" empty="PAZPAR2_NULL_VALUE">
-	  <xsl:value-of select="tmarc:se"/>
-	</pz:metadata>
-      </xsl:for-each>
+      <xsl:if test="not(ancestor::opacRecord)">
+        <xsl:for-each select="tmarc:d926">
+          <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">
+	    <xsl:value-of select="tmarc:sa"/>
+	  </pz:metadata>
+          <pz:metadata type="callnumber" empty="PAZPAR2_NULL_VALUE">
+	    <xsl:value-of select="tmarc:sc"/>
+	  </pz:metadata>
+          <pz:metadata type="available" empty="PAZPAR2_NULL_VALUE">
+	    <xsl:value-of select="tmarc:se"/>
+	  </pz:metadata>
+        </xsl:for-each>
+      </xsl:if>
 
       <!-- OhioLINK holdings -->
-      <xsl:for-each select="tmarc:d945">
-	<pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">
-	  <xsl:value-of select="tmarc:sa"/>
-	</pz:metadata>
-	<pz:metadata type="callnumber" empty="PAZPAR2_NULL_VALUE">
-	  <xsl:value-of select="tmarc:sb"/>
-	</pz:metadata>
-	<pz:metadata type="publicnote" empty="PAZPAR2_NULL_VALUE">
-	  <xsl:value-of select="tmarc:sc"/>
-	</pz:metadata>
-	<pz:metadata type="available" empty="PAZPAR2_NULL_VALUE">
-          <xsl:choose>
-            <xsl:when test="tmarc:ss = 'N'">Available</xsl:when>
-            <xsl:otherwise>
-	      <xsl:value-of select="tmarc:sd"/>
-	    </xsl:otherwise>
-	  </xsl:choose>
-	</pz:metadata>
-      </xsl:for-each>
+      <xsl:if test="not(ancestor::opacRecord)">
+        <xsl:for-each select="tmarc:d945">
+	  <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">
+	    <xsl:value-of select="tmarc:sa"/>
+	  </pz:metadata>
+	  <pz:metadata type="callnumber" empty="PAZPAR2_NULL_VALUE">
+	    <xsl:value-of select="tmarc:sb"/>
+	  </pz:metadata>
+	  <pz:metadata type="publicnote" empty="PAZPAR2_NULL_VALUE">
+	    <xsl:value-of select="tmarc:sc"/>
+	  </pz:metadata>
+	  <pz:metadata type="available" empty="PAZPAR2_NULL_VALUE">
+            <xsl:choose>
+              <xsl:when test="tmarc:ss = 'N'">Available</xsl:when>
+              <xsl:otherwise>
+	        <xsl:value-of select="tmarc:sd"/>
+	      </xsl:otherwise>
+	    </xsl:choose>
+	  </pz:metadata>
+        </xsl:for-each>
+      </xsl:if>
 
       <xsl:for-each select="tmarc:d948">
         <pz:metadata type="holding">
