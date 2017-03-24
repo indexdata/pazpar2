@@ -50,7 +50,9 @@
 #include <yaz/xmalloc.h>
 #include <yaz/mutex.h>
 #include <yaz/poll.h>
+#if HAVE_GETRLIMIT
 #include <sys/resource.h>
+#endif
 #include "eventl.h"
 #include "sel_thread.h"
 
