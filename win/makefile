@@ -16,7 +16,7 @@ LIBXSLT_DIR=\libxslt-1.1.28.win32
 
 # ICU
 HAVE_ICU=1
-ICU_DIR=c:\icu
+ICU_DIR=c:\icu-56.1-vs2015
 ICU_LIB=$(ICU_DIR)\lib
 ICU_INCLUDE=$(ICU_DIR)\include
 
