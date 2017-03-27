@@ -141,13 +141,14 @@ int match_zurl(const char *zurl, const char *pattern)
 
 // This will be generalized at some point
 static int match_criterion(struct setting **settings,
+                           int num_settings,
                            struct conf_service *service,
                            struct database_criterion *c)
 {
     int offset = settings_lookup_offset(service, c->name);
     struct database_criterion_value *v;
 
-    if (offset < 0)
+    if (offset < 0 || offset >= num_settings)
     {
         yaz_log(YLOG_WARN, "Criterion not found: %s", c->name);
         return 0;
@@ -235,11 +236,12 @@ static struct database_criterion *create_database_criterion(NMEM m,
 }
 
 static int database_match_criteria(struct setting **settings,
+                                   int num_settings,
                                    struct conf_service *service,
                                    struct database_criterion *cl)
 {
     for (; cl; cl = cl->next)
-        if (!match_criterion(settings, service, cl))
+        if (!match_criterion(settings, num_settings, service, cl))
             break;
     if (cl) // one of the criteria failed to match -- skip this db
         return 0;
@@ -263,7 +265,8 @@ int session_grep_databases(struct session *se, const char *filter,
             continue;
         if (!p->settings[PZ_NAME])
             continue;
-        if (database_match_criteria(p->settings, se->service, cl))
+        if (database_match_criteria(p->settings, p->num_settings,
+                                    se->service, cl))
         {
             (*fun)(se, p);
             i++;
@@ -280,7 +283,7 @@ int predef_grep_databases(void *context, struct conf_service *service,
     int i = 0;
 
     for (p = service->databases; p; p = p->next)
-        if (database_match_criteria(p->settings, service, 0))
+        if (database_match_criteria(p->settings, p->num_settings, service, 0))
         {
             (*fun)(context, p);
             i++;
