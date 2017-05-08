@@ -674,9 +674,14 @@
 
       <pz:metadata type="medium">
         <xsl:value-of select="$vmedium" />
-	<xsl:if test="string-length($electronic) and $vmedium != 'electronic'">
-	  <xsl:text> (electronic)</xsl:text>
-	</xsl:if>
+        <xsl:choose>
+	  <xsl:when test="string-length($electronic) and $vmedium != 'electronic'">
+	    <xsl:text> (electronic)</xsl:text>
+	  </xsl:when>
+          <xsl:when test="$vmedium = 'book' and ($form1 = 'd' or ($oclca='t' and $oclcb='b'))">
+            <xsl:text> (large print)</xsl:text>
+          </xsl:when>
+        </xsl:choose>
       </pz:metadata>
 
       <xsl:for-each select="tmarc:d900/tmarc:sa">
