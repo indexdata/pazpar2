@@ -1,3 +1,9 @@
+--- 1.12.12 2017/05/08
+
+Add term for "book (large print)" to medium termlist in tmarc.xsl
+
+Package for Debian Stretch. Stop support for CentOS 5.
+
 --- 1.12.11 2017/03/27
 
 Fix segfault when using filters PAZ-1045
