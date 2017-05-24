@@ -151,10 +151,10 @@ VALGRINDLOG=${PREFIX}_valgrind.log
 
 if test `uname` = "Linux"; then
     sec=0.3
-    maxrounds=30
+    maxrounds=60
 else
     sec=1
-    maxrounds=10
+    maxrounds=20
 fi
 LEVELS=loglevel,fatal,warn,log,debug,zoom,zoomdetails,http,iochan
 if test "$PERF_PROG"; then
