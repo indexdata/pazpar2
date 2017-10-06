@@ -1,3 +1,10 @@
+--- 1.12.13 2017/10/06
+
+Correction for logic in tmarc.xsl regarding medium.
+Fixes PAZ-1048. Also update tmarc3 test case.
+
+Simplify code for dumping configuration PAZ-1047
+
 --- 1.12.12 2017/05/08
 
 Add term for "book (large print)" to medium termlist in tmarc.xsl
