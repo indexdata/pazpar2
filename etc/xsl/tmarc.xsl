@@ -93,7 +93,7 @@
 	<xsl:when test="$form1='a' or $form1='b' or $form1='c'">microform</xsl:when>
 	<xsl:when test="$typeofrec='t'">thesis</xsl:when>
         <!-- <xsl:when test="$journal_title">article</xsl:when> -->
-	<xsl:when test="$typeofrec='a' or $typeofrec='i' and
+	<xsl:when test="($typeofrec='a' or $typeofrec='i') and
 	    ($typeofserial='d' or $typeofserial='w')">web</xsl:when>
 	<xsl:when test="$typeofrec='a' and $biblevel='b'">article</xsl:when>
 	<xsl:when test="$typeofrec='m'">electronic</xsl:when>
