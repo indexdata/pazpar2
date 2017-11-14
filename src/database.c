@@ -47,6 +47,7 @@ struct database_criterion_value {
 };
 
 struct database_criterion {
+    int union_filter;
     char *name;
     enum pazpar2_database_criterion_type type;
     struct database_criterion_value *values;
@@ -190,9 +191,15 @@ static struct database_criterion *create_database_criterion(NMEM m,
     char **values;
     int num;
     int i;
+    int union_filter = 0;
 
     if (!buf || !*buf)
         return 0;
+    if (*buf == '|')
+    {
+        union_filter = 1;
+        buf++;
+    }
     nmem_strsplit(m, ",", buf,  &values, &num);
     for (i = 0; i < num; i++)
     {
@@ -201,6 +208,8 @@ static struct database_criterion *create_database_criterion(NMEM m,
         int subi;
         struct database_criterion *new = nmem_malloc(m, sizeof(*new));
         char *eq;
+
+        new->union_filter = union_filter;
         for (eq = values[i]; *eq; eq++)
             if (*eq == '=')
             {
@@ -240,13 +249,20 @@ static int database_match_criteria(struct setting **settings,
                                    struct conf_service *service,
                                    struct database_criterion *cl)
 {
-    for (; cl; cl = cl->next)
-        if (!match_criterion(settings, num_settings, service, cl))
-            break;
-    if (cl) // one of the criteria failed to match -- skip this db
+    if (cl && cl->union_filter)
+    {
+        for (; cl; cl = cl->next)
+            if (match_criterion(settings, num_settings, service, cl))
+                return 1;
         return 0;
+    }
     else
-        return 1;
+    {
+        for (; cl; cl = cl->next)
+            if (!match_criterion(settings, num_settings, service, cl))
+                return 0;
+    }
+    return 1;
 }
 
 // Cycles through databases, calling a handler function on the ones for
