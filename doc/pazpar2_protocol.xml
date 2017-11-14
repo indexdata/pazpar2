@@ -218,15 +218,21 @@ search.pz?command=settings&session=2044502273&pz:allow[search.com:210/db1]=1
 	Limits the search to a given set of targets specified by the
 	filter. The filter consists of a comma-separated list of
 	<emphasis>setting</emphasis>+<emphasis>operator</emphasis>+<emphasis>args</emphasis>
-	pairs. The <emphasis>setting</emphasis> is a Pazpar2 setting
+	pairs all of which must be satisfied (matched) for Pazpar2 to
+        include the target.
+        The <emphasis>setting</emphasis> is a Pazpar2 setting
 	(such as <literal>pz:id</literal>).
 	The <emphasis>operator</emphasis> is either
 	<literal>=</literal> (string match)
 	or <literal>~</literal> (substring match).
 	The <emphasis>args</emphasis> is a list of values separated
-	by <literal>|</literal> (or , one of the values).
-	The idea is that only targets with a setting matching one of
-	the values given will be included in the search.
+	by <literal>|</literal>. If either of these values match, the
+        key-value pair is matched.
+       </para>
+       <para>
+        For Pazpar2 1.13.0 the filter can be prefixed with vertical bar
+        (<literal>|</literal>) as first character. In this case, if any of the
+        key-value pairs matches, Pazpar2 includes the target. 
        </para>
       </listitem>
      </varlistentry>
