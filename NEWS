@@ -1,3 +1,7 @@
+--- 1.13.0 2017/11/14
+
+Allow OR-matching or filter key-value pairs PAZ-1050
+
 --- 1.12.13 2017/10/06
 
 Correction for logic in tmarc.xsl regarding medium.
