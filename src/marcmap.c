@@ -120,6 +120,7 @@ struct marcmap *marcmap_load(const char *filename, NMEM nmem)
         }
     }
     mm->next = NULL;
+    fclose(fp);
     return mmhead;
 }
 
