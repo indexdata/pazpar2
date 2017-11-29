@@ -742,12 +742,12 @@ static int is_inprogress(void)
 
 static void enable_nonblock(int sock)
 {
-    int flags;
 #ifdef WIN32
-    flags = (flags & CS_FLAGS_BLOCKING) ? 0 : 1;
+    unsigned long flags = 1;
     if (ioctlsocket(sock, FIONBIO, &flags) < 0)
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "ioctlsocket");
 #else
+    int flags;
     if ((flags = fcntl(sock, F_GETFL, 0)) < 0)
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "fcntl");
     if (fcntl(sock, F_SETFL, flags | O_NONBLOCK) < 0)
