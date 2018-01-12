@@ -1,6 +1,6 @@
 ## Pazpar2
 
-Copyright (C) 2006-2017 Index Data.
+Copyright (C) 2006-2018 Index Data.
 See the file LICENSE for details.
 
 Pazpar2 is a high-performance, user interface-independent, data
