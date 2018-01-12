@@ -39,40 +39,25 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 struct marcmap *marcmap_load(const char *filename, NMEM nmem)
 {
-    struct marcmap *mm;
     struct marcmap *mmhead;
+    struct marcmap *mm = 0, **mmp = &mmhead;
     FILE *fp;
     int c;
     char buf[256];
-    int len;
-    int field;
-    int newrec;
+    int len = 0;
+    int field = 0;
 
-    len = 0;
-    field = 0;
-    newrec = 1;
-    mm = NULL;
-    mmhead = NULL;
     fp = fopen(filename, "r");
     if (!fp)
-        return mmhead;
+        return mm;
 
     while ((c = getc(fp) ) != EOF)
     {
         // allocate some space
-        if (newrec)
+        if (!mm)
         {
-            if (mm != NULL)
-            {
-                mm->next = nmem_malloc(nmem, sizeof(struct marcmap));
-                mm = mm->next;
-            }
-            // first one!
-            else
-            { mm = nmem_malloc(nmem, sizeof(struct marcmap));
-                mmhead = mm;
-            }
-            newrec = 0;
+            *mmp = mm = nmem_malloc(nmem, sizeof(struct marcmap));
+            mmp = &mm->next;
         }
 	// whitespace saves and moves on
 	if (c == ' ' || c == '\n' || c == '\t')
@@ -105,7 +90,7 @@ struct marcmap *marcmap_load(const char *filename, NMEM nmem)
             if (c == '\n')
             {
                 field = 0;
-                newrec = 1;
+                mm = 0;
             }
             else
             {
@@ -119,7 +104,8 @@ struct marcmap *marcmap_load(const char *filename, NMEM nmem)
             len++;
         }
     }
-    mm->next = NULL;
+    *mmp = NULL;
+    fclose(fp);
     return mmhead;
 }
 

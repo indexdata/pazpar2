@@ -1346,6 +1346,7 @@ struct conf_config *config_create(const char *fname)
                 fname);
         xmlDocDumpMemory(doc, &buf_out, &len_out);
         yaz_log(YLOG_LOG, "%.*s", len_out, buf_out);
+        xmlFree(buf_out);
         r = parse_config(config, n);
     }
     xmlFreeDoc(doc);
