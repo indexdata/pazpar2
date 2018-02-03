@@ -12,13 +12,15 @@
   <set name="pz:cclmap:date" value="u=dc.date r=r"/>
   <!-- SRU settings -->
   <set name="pz:sru" value="get"/>
-  <set name="pz:sru_version" value="1.2"/>
+  <set name="pz:sru_version" value="2.0"/>
   <!-- Retrieval settings -->
   <set name="pz:elements" value="marcxml"/>
   <set name="pz:maxrecs" value="27"/>
   <!-- Result normalization settings -->
   <set name="pz:nativesyntax" value="xml"/>
   <set name="pz:xslt" value="marc21.xsl"/>
+  <set name="pz:facetmap:author" value="author_exact"/>
+  <set name="pz:extra_args" value="facetLimit=10,10:author_exact"/>
 </settings>
 <!-- Keep this comment at the end of the file
      Local variables:
