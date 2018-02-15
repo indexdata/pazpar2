@@ -544,6 +544,22 @@ search.pz2?session=2044502273&command=stat
       </listitem>
      </varlistentry>
 
+     <varlistentry>
+      <term>version</term>
+      <listitem>
+       <para>
+        If specified and set to 2, enables Pazpar2 to return
+        approximation on hits and counts when doing record
+        filtering using the limit parameter on search and a limitmap
+        with a value of "local:".
+       </para>
+       <para>
+        This facility, "version", appeared in Pazpar2 version
+        1.6.13.
+       </para>
+      </listitem>
+     </varlistentry>
+
     </variablelist>
    </para>
    <para>
@@ -769,6 +785,21 @@ search.pz2?session=605047297&command=record&id=3
        </para>
       </listitem>
      </varlistentry>
+     <varlistentry>
+      <term>version</term>
+      <listitem>
+       <para>
+        If specified and set to 2, enables Pazpar2 to return
+        approximation on hits and counts when doing record
+        filtering using the limit parameter on search and a limitmap
+        with a value of "local:".
+       </para>
+       <para>
+        This facility, "version", appeared in Pazpar2 version
+        1.6.13.
+       </para>
+      </listitem>
+     </varlistentry>
     </variablelist>
    </para>
    <para>
@@ -834,6 +865,21 @@ search.pz2?session=2044502273&command=termlist&name=author,subject
        <para>
 	Session ID
 	</para>
+      </listitem>
+     </varlistentry>
+     <varlistentry>
+      <term>version</term>
+      <listitem>
+       <para>
+        If specified and set to 2, enables Pazpar2 to return
+        approximation on hits and counts when doing record
+        filtering using the limit parameter on search and a limitmap
+        with a value of "local:".
+       </para>
+       <para>
+        This facility, "version", appeared in Pazpar2 version
+        1.6.13.
+       </para>
       </listitem>
      </varlistentry>
     </variablelist>
