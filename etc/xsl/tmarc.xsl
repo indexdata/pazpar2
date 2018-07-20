@@ -634,20 +634,20 @@
             </xsl:for-each>
           </xsl:variable>
           <xsl:variable name="vLocation">
-            <xsl:choose>
-              <xsl:when test="tmarc:sb">
-                <xsl:for-each select="tmarc:sb">
-                  <xsl:value-of select="concat(.,' ')"/>
-                </xsl:for-each>
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of select="tmarc:sa"/>
-              </xsl:otherwise>
-            </xsl:choose>
+            <xsl:for-each select="tmarc:sa | tmarc:sb">
+              <xsl:value-of select="concat(.,': ')"/>
+            </xsl:for-each>
           </xsl:variable>
-          <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">
-            <xsl:value-of select="normalize-space($vLocation)"/>
-          </pz:metadata>
+          <xsl:choose>
+            <xsl:when test="$vLocation = ''">
+              <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE"/>
+            </xsl:when>
+            <xsl:otherwise>
+              <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">
+                <xsl:value-of select="substring($vLocation,1,string-length($vLocation)-2)"/>
+              </pz:metadata>
+            </xsl:otherwise>
+          </xsl:choose>
           <pz:metadata type="callnumber" empty="PAZPAR2_NULL_VALUE">
             <xsl:value-of select="normalize-space($vCall)" />
           </pz:metadata>

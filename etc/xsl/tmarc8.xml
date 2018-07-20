@@ -112,12 +112,16 @@
   <d852 i1=" " i2=" ">
     <sa>DVXL</sa>
     <sb>ELECT-GEN</sb>
+    <sb>Online access</sb>
     <sh>Internet</sh>
   </d852>
   <d852 i1=" " i2=" ">
     <sa>LAGE</sa>
     <sb>in</sb>
     <s3>Online access</s3>
+  </d852>
+  <d852 i1=" " i2=" ">
+    <sh>Only available online</sh>
   </d852>
   <d856 i1="4" i2="0">
     <sz>Restricted to UC campuses</sz>
