@@ -633,10 +633,18 @@
               <xsl:value-of select="concat(.,' ')"/>
             </xsl:for-each>
           </xsl:variable>
-          <xsl:variable name="vLocation">
-            <xsl:for-each select="tmarc:sa | tmarc:sb">
+          <xsl:variable name="vSublocation">
+            <xsl:for-each select="tmarc:sb">
               <xsl:value-of select="concat(.,': ')"/>
             </xsl:for-each>
+          </xsl:variable>
+          <xsl:variable name="vLocation">
+            <xsl:choose>
+              <xsl:when test="tmarc:sa">
+                <xsl:value-of select="concat(tmarc:sa,': ',$vSublocation)"/>
+              </xsl:when>
+              <xsl:otherwise><xsl:value-of select="$vSublocation"/></xsl:otherwise>
+            </xsl:choose>
           </xsl:variable>
           <xsl:choose>
             <xsl:when test="$vLocation = ''">
