@@ -34,17 +34,20 @@
     <pz:metadata type="electronic-url">http://gateway.proquest.com/openurl?ctx_ver=Z39.88-2003&amp;res_id=xri:eebo&amp;rft_val_fmt=&amp;rft_id=xri:eebo:image:16610</pz:metadata>
     <pz:metadata type="electronic-text">Get resource</pz:metadata>
     <pz:metadata type="electronic-note">Restricted to UC campuses</pz:metadata>
-    <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">kmain</pz:metadata>
+    <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">MER: kmain</pz:metadata>
     <pz:metadata type="callnumber" empty="PAZPAR2_NULL_VALUE"/>
     <pz:metadata type="available">PAZPAR2_NULL_VALUE</pz:metadata>
-    <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">nnet</pz:metadata>
+    <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">SCB: nnet</pz:metadata>
     <pz:metadata type="callnumber" empty="PAZPAR2_NULL_VALUE"/>
     <pz:metadata type="available">PAZPAR2_NULL_VALUE</pz:metadata>
-    <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">ELECT-GEN</pz:metadata>
+    <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">DVXL: ELECT-GEN: Online access</pz:metadata>
     <pz:metadata type="callnumber" empty="PAZPAR2_NULL_VALUE">Internet</pz:metadata>
     <pz:metadata type="available">PAZPAR2_NULL_VALUE</pz:metadata>
-    <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">in</pz:metadata>
+    <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE">LAGE: in</pz:metadata>
     <pz:metadata type="callnumber" empty="PAZPAR2_NULL_VALUE"/>
+    <pz:metadata type="available">PAZPAR2_NULL_VALUE</pz:metadata>
+    <pz:metadata type="locallocation" empty="PAZPAR2_NULL_VALUE"/>
+    <pz:metadata type="callnumber" empty="PAZPAR2_NULL_VALUE">Only available online</pz:metadata>
     <pz:metadata type="available">PAZPAR2_NULL_VALUE</pz:metadata>
     <pz:metadata type="medium">book (electronic)</pz:metadata>
     <pz:metadata type="has-fulltext">no</pz:metadata>
