@@ -1,3 +1,16 @@
+--- 1.13.1 2018/07/31
+
+Update documentation for "version=2" parameter for show,
+  termlist, and bytarget PAZ-1052
+
+Improve handling of 852 locations in tmarc.xml stylesheet PAZ-1053
+
+Fix missing close file handle for mmap #22
+
+Fix uinit-var in call to ioctlsocket on Windows #21
+
+Fix closing resources if http binding fails #20
+
 --- 1.13.0 2017/11/14
 
 Allow OR-matching or filter key-value pairs PAZ-1050
