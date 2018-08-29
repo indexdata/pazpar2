@@ -383,6 +383,19 @@
 	    <xsl:value-of select="." />
 	  </pz:metadata>
 	</xsl:for-each>
+        <xsl:variable name="vPubStatement">
+          <xsl:for-each select="tmarc:sa|tmarc:sb|tmarc:sc">
+            <xsl:choose>
+              <xsl:when test="position() = last()"><xsl:value-of select="."/></xsl:when>
+              <xsl:otherwise><xsl:value-of select="."/><xsl:text> </xsl:text></xsl:otherwise>
+            </xsl:choose>
+          </xsl:for-each>
+        </xsl:variable>
+        <xsl:if test="$vPubStatement != ''">
+          <pz:metadata type="publication-statement">
+            <xsl:value-of select="$vPubStatement"/>
+          </pz:metadata>
+        </xsl:if>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d300">
