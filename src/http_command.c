@@ -420,28 +420,32 @@ static void cmd_init(struct http_channel *c)
     unsigned int sesid;
     struct http_session *s;
     struct http_response *rs = c->response;
+    int ignored_content = 0;
     struct conf_service *service = 0; /* no service (yet) */
 
-    if (r->content_len && content_type &&
-        !yaz_strcmp_del("text/xml", content_type, "; "))
+    if (r->content_len && content_type)
     {
-        xmlDoc *doc = xmlParseMemory(r->content_buf, r->content_len);
-        xmlNode *root_n;
-        if (!doc)
+        if (yaz_strcmp_del("text/xml", content_type, "; "))
+            ignored_content = 1;
+        else
         {
-            error(rs, PAZPAR2_MALFORMED_SETTING, 0);
-            return;
-        }
-        root_n = xmlDocGetRootElement(doc);
-        service = service_create(c->server, root_n);
-        xmlFreeDoc(doc);
-        if (!service)
-        {
-            error(rs, PAZPAR2_MALFORMED_SETTING, 0);
-            return;
+            xmlDoc *doc = xmlParseMemory(r->content_buf, r->content_len);
+            xmlNode *root_n;
+            if (!doc)
+            {
+                error(rs, PAZPAR2_MALFORMED_SETTING, 0);
+                return;
+            }
+            root_n = xmlDocGetRootElement(doc);
+            service = service_create(c->server, root_n);
+            xmlFreeDoc(doc);
+            if (!service)
+            {
+                error(rs, PAZPAR2_MALFORMED_SETTING, 0);
+                return;
+            }
         }
     }
-
     if (!service)
     {
         const char *service_name = http_argbyname(c->request, "service");
@@ -455,6 +459,9 @@ static void cmd_init(struct http_channel *c)
     sesid = make_sessionid();
     s = http_session_create(service, c->http_sessions, sesid);
 
+    if (ignored_content)
+        session_log(s->psession, YLOG_WARN,
+                    "Ignoring content (Content-Type must be text/xml)");
     if (!clear || *clear == '0')
         session_init_databases(s->psession);
     else
@@ -497,26 +504,33 @@ static void cmd_settings(struct http_channel *c)
     if (!s)
         return;
 
-    if (rq->content_len && content_type &&
-        !yaz_strcmp_del("text/xml", content_type, "; "))
+    if (rq->content_len && content_type)
     {
-        xmlDoc *doc = xmlParseMemory(rq->content_buf, rq->content_len);
-        xmlNode *root_n;
-        int ret;
-        if (!doc)
+        if (yaz_strcmp_del("text/xml", content_type, "; "))
         {
-            error(rs, PAZPAR2_MALFORMED_SETTING, 0);
-            release_session(c, s);
-            return;
+            session_log(s->psession, YLOG_WARN,
+                        "Ignoring content (Content-Type must be text/xml)");
         }
-        root_n = xmlDocGetRootElement(doc);
-        ret = settings_read_node_x(root_n, s->psession, apply_local_setting);
-        xmlFreeDoc(doc);
-        if (ret)
+        else
         {
-            error(rs, PAZPAR2_MALFORMED_SETTING, 0);
-            release_session(c, s);
-            return;
+            xmlDoc *doc = xmlParseMemory(rq->content_buf, rq->content_len);
+            xmlNode *root_n;
+            int ret;
+            if (!doc)
+            {
+                error(rs, PAZPAR2_MALFORMED_SETTING, 0);
+                release_session(c, s);
+                return;
+            }
+            root_n = xmlDocGetRootElement(doc);
+            ret = settings_read_node_x(root_n, s->psession, apply_local_setting);
+            xmlFreeDoc(doc);
+            if (ret)
+            {
+                error(rs, PAZPAR2_MALFORMED_SETTING, 0);
+                release_session(c, s);
+                return;
+            }
         }
     }
     if (process_settings(s->psession, rq, rs) < 0)
