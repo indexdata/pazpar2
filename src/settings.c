@@ -560,22 +560,54 @@ void init_settings(struct conf_service *service)
     initialize_soft_settings(service);
 }
 
+static void update_1(void *client_data, struct setting *set)
+{
+    if (strstr(set->name, ":term")) {
+        yaz_log(YLOG_LOG, "name=%s value=%s target=%s",
+                set->name, set->value, set->target);
+    }
+    if (set->target && strcmp(set->target, "*"))
+    {
+        prepare_target_dictionary(client_data, set);
+    }
+    else
+    {
+        struct conf_service *service = (struct conf_service *) client_data;
+        int offset = settings_create_offset(service, set->name);
+        update_settings(set, service->settings, offset, service->nmem);
+    }
+}
+
+static void update_2(void *client_data, struct setting *set)
+{
+    if (set->target && strcmp(set->target, "*"))
+        update_databases(client_data, set);
+    /*
+    else
+    {
+        struct conf_service *service = (struct conf_service *) client_data;
+        int offset = settings_create_offset(service, set->name);
+        update_settings(set, service->settings, offset, service->nmem);
+    }
+    */
+}
+
 int settings_read_file(struct conf_service *service, const char *path,
                        int pass)
 {
     if (pass == 1)
-        return read_settings(path, service, prepare_target_dictionary);
+        return read_settings(path, service, update_1);
     else
-        return read_settings(path, service, update_databases);
+        return read_settings(path, service, update_2);
 }
 
 int settings_read_node(struct conf_service *service, xmlNode *n,
                         int pass)
 {
     if (pass == 1)
-        return settings_read_node_x(n, service, prepare_target_dictionary);
+        return settings_read_node_x(n, service, update_1);
     else
-        return settings_read_node_x(n, service, update_databases);
+        return settings_read_node_x(n, service, update_2);
 }
 
 /*
