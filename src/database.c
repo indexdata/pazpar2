@@ -54,10 +54,6 @@ struct database_criterion {
     struct database_criterion *next;
 };
 
-struct database *new_database(const char *id, NMEM nmem)
-{
-    return new_database_inherit_settings(id, nmem, 0);
-}
 struct database *new_database_inherit_settings(const char *id, NMEM nmem, struct settings_array *service_settings)
 {
     struct database *db;
