@@ -15,7 +15,7 @@
   <set name="pz:elements" value="F"/>
   <!-- Result normalization settings -->
   <set name="pz:nativesyntax" value="iso2709"/>
-  <set name="pz:xslt" value="../etc/marc21.xsl"/>
+  <set name="pz:xslt" value="marc21.xsl"/>
   <!-- Other settings -->
   <set name="pz:apdulog" value="0"/>
 </settings>
