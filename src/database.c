@@ -295,11 +295,15 @@ int predef_grep_databases(void *context, struct conf_service *service,
     int i = 0;
 
     for (p = service->databases; p; p = p->next)
+    {
+        yaz_log(YLOG_LOG, "predef_grep_databases id=%s", p->id);
         if (database_match_criteria(p->settings, p->num_settings, service, 0))
         {
+            yaz_log(YLOG_LOG, "calling ..");
             (*fun)(context, p);
             i++;
         }
+    }
     return i;
 }
 
