@@ -273,6 +273,10 @@ int session_grep_databases(struct session *se, const char *filter,
 
     for (p = se->databases; p; p = p->next)
     {
+        if (!strcmp(p->database->id, "default_database")) {
+            yaz_log(YLOG_LOG, "!!!! %s in se->databases", p->database->id);
+            continue;
+        }
         if (p->settings && p->settings[PZ_ALLOW] && *p->settings[PZ_ALLOW]->value == '0')
             continue;
         if (!p->settings[PZ_NAME])
@@ -289,17 +293,24 @@ int session_grep_databases(struct session *se, const char *filter,
 }
 
 int predef_grep_databases(void *context, struct conf_service *service,
-                          void (*fun)(void *context, struct database *db))
+                          void (*fun)(void *context, struct database *db),
+                          int all)
 {
     struct database *p;
     int i = 0;
 
     for (p = service->databases; p; p = p->next)
-        if (database_match_criteria(p->settings, p->num_settings, service, 0))
+    {
+        if (all || strcmp(p->id, "default_database"))
         {
-            (*fun)(context, p);
-            i++;
+            yaz_log(YLOG_LOG, "predef_grep_databases id=%s", p->id);
+            if (database_match_criteria(p->settings, p->num_settings, service, 0))
+            {
+                (*fun)(context, p);
+                i++;
+            }
         }
+    }
     return i;
 }
 

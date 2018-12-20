@@ -428,9 +428,13 @@ static void update_database_fun(void *context, struct database *db)
     struct setting **sp;
     int offset;
 
+    yaz_log(YLOG_LOG, "update_database_fun set name=%s value=%s target=%s", set->name, set->value, set->target);
     // Is this the right database?
     if (!match_zurl(db->id, set->target))
+    {
+        yaz_log(YLOG_LOG, "skipping");
         return;
+    }
 
     offset = settings_create_offset(service, set->name);
     expand_settings_array(&db->settings, &db->num_settings, offset, service->nmem);
@@ -475,6 +479,7 @@ static void update_database_fun(void *context, struct database *db)
         new->value = nmem_strdup(service->nmem, set->value);
         new->next = db->settings[offset];
         db->settings[offset] = new;
+        yaz_log(YLOG_LOG, "store in db=%s", db->id);
     }
 }
 
@@ -486,7 +491,7 @@ static void update_databases(void *client_data, struct setting *set)
     struct update_database_context context;
     context.set = set;
     context.service = service;
-    predef_grep_databases(&context, service, update_database_fun);
+    predef_grep_databases(&context, service, update_database_fun, 1);
 }
 
 // This simply copies the 'hard' (application-specific) settings

@@ -1827,6 +1827,7 @@ const char *client_get_suggestions_xml(struct client *cl, WRBUF wrbuf)
 
 void client_set_database(struct client *cl, struct session_database *db)
 {
+    yaz_log(YLOG_LOG, "client using database = %s", db->database->id);
     cl->database = db;
 }
 

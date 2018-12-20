@@ -30,7 +30,8 @@ struct database *create_database_for_service(const char *id,
 int session_grep_databases(struct session *se, const char *filter,
         void (*fun)(struct session *se, struct session_database *db));
 int predef_grep_databases(void *context, struct conf_service *service,
-			  void (*fun)(void *context, struct database *db));
+			  void (*fun)(void *context, struct database *db),
+			  int all);
 int match_zurl(const char *zurl, const char *pattern);
 struct database *new_database(const char *id, NMEM nmem);
 // inherit values from (service) settings

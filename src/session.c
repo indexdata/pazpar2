@@ -432,6 +432,10 @@ void session_settings_dump(struct session *se,
 // Will be extended to take into account user associated with session
 const char *session_setting_oneval(struct session_database *db, int offset)
 {
+    if (offset == PZ_ELEMENTS) {
+        struct setting *tmp = db->settings[offset];
+        yaz_log(YLOG_LOG, "db->id=%s ELEMENTS=%s", db->database->id, tmp ? tmp->value : "null");
+    }
     if (offset >= db->num_settings || !db->settings[offset])
         return "";
     return db->settings[offset]->value;
@@ -987,12 +991,15 @@ static void session_database_destroy(struct session_database *sdb)
 void session_init_databases(struct session *se)
 {
     se->databases = 0;
-    predef_grep_databases(se, se->service, session_init_databases_fun);
+    predef_grep_databases(se, se->service, session_init_databases_fun, 0);
 }
+
 
 // Probably session_init_databases_fun should be refactored instead of
 // called here.
-static struct session_database *load_session_database(struct session *se,
+
+
+static struct session_database *load_session_database1(struct session *se,
                                                       const char *id)
 {
     struct database *db = new_database_inherit_settings(id, se->session_nmem, se->service->settings);
@@ -1000,6 +1007,27 @@ static struct session_database *load_session_database(struct session *se,
 
     // New sdb is head of se->databases list
     return se->databases;
+}
+
+
+static struct session_database *load_session_database(struct session *se,
+                                                       const char *id)
+{
+    struct database *sdb;
+
+    for (sdb = se->service->databases; sdb; sdb = sdb->next)
+        if (!strcmp(sdb->id, "default_database"))
+        {
+            struct database *db = new_database_inherit_settings(id, se->session_nmem, se->service->settings);
+            session_init_databases_fun(se, sdb);
+
+            struct session_database *new = se->databases;
+            new->database = db;
+            yaz_log(YLOG_LOG, "Loading database %s from %s", db->id, sdb->id);
+            return new;
+        }
+    yaz_log(YLOG_LOG, "load_session_database returning NULL!");
+    return 0;
 }
 
 // Find an existing session database. If not found, load it
@@ -1025,6 +1053,7 @@ void session_apply_setting(struct session *se, const char *dbname,
         struct setting *s;
         int offset = settings_create_offset(service, name);
 
+        yaz_log(YLOG_LOG, "session_apply_setting name=%s dbname=%s", name, dbname);
         expand_settings_array(&sdb->settings, &sdb->num_settings, offset,
                               se->session_nmem);
         // Force later recompute of settings-driven data structures
@@ -1033,8 +1062,7 @@ void session_apply_setting(struct session *se, const char *dbname,
             sdb->map = 0;
         se->settings_modified = 1;
         for (s = sdb->settings[offset]; s; s = s->next)
-            if (!strcmp(s->name, name) &&
-                dbname && s->target && !strcmp(dbname, s->target))
+            if (!strcmp(s->name, name))
                 break;
         if (!s)
         {
