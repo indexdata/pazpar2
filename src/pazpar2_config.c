@@ -153,6 +153,8 @@ struct conf_service *service_init(struct conf_server *server,
             = nmem_malloc(nmem,
                           sizeof(struct conf_sortkey) * service->num_sortkeys);
     service->xml_node = 0;
+    create_database_for_service(DATABASE_DEFAULT, service);
+
     return service;
 }
 

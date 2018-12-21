@@ -102,7 +102,7 @@ else
     wget -q -O ${TMP_DIR}$OF.show.xml "$H?command=show&session=$S&sort=relevance&start=0&num=100&block=1"
 fi
 wget -q -O ${TMP_DIR}$OF.termlist.xml "$H?command=termlist&session=$S"
-wget -q -O ${TMP_DIR}$OF.bytarget.xml "$H?command=bytarget&session=$S"
+wget -q -O ${TMP_DIR}$OF.bytarget.xml "$H?command=bytarget&session=$S&settings=1"
 wget -q -O ${TMP_DIR}$OF.stat.xml "$H?command=stat&session=$S"
 wget -q -O ${TMP_DIR}$OF.info.xml "$H?command=info"
 exit 0

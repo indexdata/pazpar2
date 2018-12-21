@@ -100,6 +100,7 @@ int settings_read_node_x(xmlNode *n,
 void expand_settings_array(struct setting ***set_ar, int *num, int offset,
                            NMEM nmem);
 
+#define DATABASE_DEFAULT "database_default"
 #endif
 
 /*

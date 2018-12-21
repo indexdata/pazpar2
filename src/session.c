@@ -987,19 +987,26 @@ static void session_database_destroy(struct session_database *sdb)
 void session_init_databases(struct session *se)
 {
     se->databases = 0;
-    predef_grep_databases(se, se->service, session_init_databases_fun);
+    predef_grep_databases(se, se->service, session_init_databases_fun, 0);
 }
 
-// Probably session_init_databases_fun should be refactored instead of
-// called here.
 static struct session_database *load_session_database(struct session *se,
-                                                      const char *id)
+                                                       const char *id)
 {
-    struct database *db = new_database_inherit_settings(id, se->session_nmem, se->service->settings);
-    session_init_databases_fun((void*) se, db);
+    struct database *sdb;
 
-    // New sdb is head of se->databases list
-    return se->databases;
+    for (sdb = se->service->databases; sdb; sdb = sdb->next)
+        if (!strcmp(sdb->id, DATABASE_DEFAULT))
+            break;
+    struct database *db = new_database_inherit_settings(id,
+                                                        se->session_nmem,
+                                                        se->service->settings);
+    struct setting *id_set = db->settings[PZ_ID];
+    session_init_databases_fun(se, sdb ? sdb : db);
+    struct session_database *new = se->databases;
+    new->settings[PZ_ID] = id_set;
+    new->database = db;
+    return new;
 }
 
 // Find an existing session database. If not found, load it
@@ -1025,6 +1032,7 @@ void session_apply_setting(struct session *se, const char *dbname,
         struct setting *s;
         int offset = settings_create_offset(service, name);
 
+        yaz_log(YLOG_LOG, "session_apply_setting name=%s dbname=%s", name, dbname);
         expand_settings_array(&sdb->settings, &sdb->num_settings, offset,
                               se->session_nmem);
         // Force later recompute of settings-driven data structures

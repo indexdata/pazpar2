@@ -486,7 +486,7 @@ static void update_databases(void *client_data, struct setting *set)
     struct update_database_context context;
     context.set = set;
     context.service = service;
-    predef_grep_databases(&context, service, update_database_fun);
+    predef_grep_databases(&context, service, update_database_fun, 1);
 }
 
 // This simply copies the 'hard' (application-specific) settings
