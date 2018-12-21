@@ -9,6 +9,7 @@ Options:                  Default values
     [--query=QUERY]       water
     [--service=SERVICE]
     [--settings=SETTINGS]
+    [--settingsfile=SETTINGS]
     [--outfile=OUTFILE]
     [--timed]
 EOF
@@ -44,6 +45,9 @@ while test $# -gt 0; do
 	--settings=*)
 	  SETTINGS="$optarg"
 	  ;;
+	--settingsfile=*)
+	  SETTINGSFILE="$optarg"
+	  ;;
 	--outfile=*)
 	  OF=$optarg
 	  ;;
@@ -74,6 +78,10 @@ if [ "$R" != 0 ]; then
     exit 1
 fi
 S=`xsltproc get_session.xsl $OF.init.xml`
+if [ -n "$SETTINGSFILE" ] ; then
+   curl -HContent-Type:text/xml -XPOST -d@$SETTINGSFILE "$H?command=settings&session=$S"
+fi
+
 if [ -n "$SETTINGS" ] ; then
     if [ "$TIME" != "" ] ; then
 	/usr/bin/time --format "$OF, settings, %e" wget -q -O ${TMP_DIR}$OF.settings.xml "$H?command=settings&session=$S&${SETTINGS}" 2> ${TMP_DIR}$OF.settings.time
