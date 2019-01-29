@@ -351,10 +351,23 @@
 	    <xsl:value-of select="." />
 	  </pz:metadata>
 	</xsl:for-each>
+	<xsl:for-each select="tmarc:sp">
+	  <pz:metadata type="title-parts">
+	    <xsl:value-of select="." />	    
+	  </pz:metadata>
+	</xsl:for-each>
 	<xsl:if test="tmarc:sa">
 	  <pz:metadata type="title-complete">
-	    <xsl:value-of select="tmarc:sa" />
-	    <xsl:if test="tmarc:sb" ><xsl:value-of select="concat(' ', tmarc:sb)" /></xsl:if>
+            <xsl:for-each select="tmarc:sa|tmarc:sb|tmarc:sn|tmarc:sp">
+              <xsl:choose>
+                <xsl:when test="position() = 1">
+                  <xsl:value-of select="."/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="concat(' ',.)"/>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xsl:for-each>
 	  </pz:metadata>
 	</xsl:if>
       </xsl:for-each>
