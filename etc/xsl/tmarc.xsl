@@ -271,7 +271,7 @@
 	</xsl:for-each>
       </xsl:for-each>
 
-      <xsl:for-each select="tmarc:d260">
+      <xsl:for-each select="tmarc:d260|tmarc:d264">
 	<xsl:for-each select="tmarc:sc">
 	  <pz:metadata type="date">
 	    <xsl:value-of select="translate(., 'cp[].', '')" />
@@ -279,7 +279,7 @@
 	</xsl:for-each>
       </xsl:for-each>
 
-      <xsl:if test="string-length($date_008) &gt; 0 and not(tmarc:d260)">
+      <xsl:if test="string-length($date_008) &gt; 0 and not(tmarc:d260 or tmarc:d264)">
         <pz:metadata type="date">
           <xsl:choose>
             <xsl:when test="$date_end_008">
@@ -380,7 +380,7 @@
 	</xsl:for-each>
       </xsl:for-each>
 
-      <xsl:for-each select="tmarc:d260">
+      <xsl:for-each select="tmarc:d260|tmarc:d264">
 	<xsl:for-each select="tmarc:sa">
 	  <pz:metadata type="publication-place">
 	    <xsl:value-of select="." />
@@ -396,6 +396,19 @@
 	    <xsl:value-of select="." />
 	  </pz:metadata>
 	</xsl:for-each>
+        <xsl:variable name="vPubStatement">
+          <xsl:for-each select="tmarc:sa|tmarc:sb|tmarc:sc">
+            <xsl:choose>
+              <xsl:when test="position() = last()"><xsl:value-of select="."/></xsl:when>
+              <xsl:otherwise><xsl:value-of select="."/><xsl:text> </xsl:text></xsl:otherwise>
+            </xsl:choose>
+          </xsl:for-each>
+        </xsl:variable>
+        <xsl:if test="$vPubStatement != ''">
+          <pz:metadata type="publication-statement">
+            <xsl:value-of select="$vPubStatement"/>
+          </pz:metadata>
+        </xsl:if>
       </xsl:for-each>
 
       <xsl:for-each select="tmarc:d300">
