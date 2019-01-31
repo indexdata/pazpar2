@@ -1,3 +1,9 @@
+--- 1.14.0 2019/01/31
+
+Add parsing of MARC 264 to tmarc.xsl  PAZ-1054
+
+Add MARC 245 $n, $p to "title-complete" in tmarc processing PAZ-1056
+
 --- 1.13.1 2018/07/31
 
 Update documentation for "version=2" parameter for show,
