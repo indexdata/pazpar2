@@ -8,10 +8,11 @@ Vendor: Index Data ApS <info@indexdata.dk>
 Source: pazpar2-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libyaz5-devel >= 5.18.0
+BuildRequires: pkgconfig
 Packager: Adam Dickmeiss <adam@indexdata.dk>
 URL: http://www.indexdata.com/pazpar2
 Summary: pazpar2 daemon
-Requires: libyaz5 >= 5.18.0
+Requires: libyaz5 >= 5.29.0
 Requires: pazpar2-xsl
 
 %description
@@ -82,7 +83,7 @@ This package includes documentation for Pazpar2 - the metasearcher.
 
 CFLAGS="$RPM_OPT_FLAGS" \
  ./configure --prefix=%{_prefix} --libdir=%{_libdir} --mandir=%{_mandir} \
-	--with-yaz=/usr/bin
+	--with-yaz=pkg
 %if %{?make_build:1}%{!?make_build:0}
 %make_build
 %else

@@ -8,7 +8,7 @@ override_dh_auto_test:
 	true
 
 override_dh_auto_configure:
-	dh_auto_configure -- --with-yaz=/usr/bin
+	dh_auto_configure -- --with-yaz=pkg
 
 override_dh_strip:
 	dh_strip --dbg-package=pazpar2-dbg
