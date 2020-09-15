@@ -4,7 +4,7 @@
 <term>
 <id>Target-1</id>
 <name>ztest-db1</name>
-<frequency>3</frequency>
+<frequency>8</frequency>
 <state>Client_Idle</state>
 <diagnostic>0</diagnostic>
 </term>
