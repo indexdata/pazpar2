@@ -214,9 +214,9 @@ for f in `cat ${srcdir}/${URLS}`; do
 	fi
 	while test $rounds -gt 0; do
 	    if test -n "${postfile}"; then
-		eval $POST
+		eval $POST >/dev/null
 	    else
-		eval $GET
+		eval $GET >/dev/null
 	    fi
 	    if test ! -f $OUT2; then
 		touch $OUT2
