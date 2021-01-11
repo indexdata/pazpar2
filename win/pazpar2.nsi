@@ -2,32 +2,20 @@
 ; Copyright (C) Index Data
 ; See the file LICENSE for details.
 
+Unicode true
+
 !include version.nsi
-
-; Microsoft runtime CRT 
-; Uncomment exactly ONE of the sections below
-; 1: MSVC 6
-;!define VS_RUNTIME_DLL ""
-;!define VS_RUNTIME_MANIFEST ""
-
-; 2: VS 2003
-; !define VS_RUNTIME_DLL "c:\Program Files\Microsoft Visual Studio .NET 2003\SDK\v1.1\Bin\msvcr71.dll"
-;!define VS_RUNTIME_MANIFEST ""
-
-; 3: VS 2005
-;!define VS_RUNTIME_DLL      "c:\Program Files\Microsoft Visual Studio 8\VC\redist\x86\Microsoft.VC80.CRT\msvcr80.dll"
-;!define VS_RUNTIME_MANIFEST "c:\Program Files\Microsoft Visual Studio 8\VC\redist\x86\Microsoft.VC80.CRT\Microsoft.VC80.CRT.manifest"
-
-; 4: VS 2008
-!define VS_RUNTIME_DLL      "c:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\msvcr90.dll"
-!define VS_RUNTIME_MANIFEST "c:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\Microsoft.VC90.CRT.manifest"
-
 
 !include "MUI.nsh"
 
+Name "Pazpar2"
+
+!include "..\m4\common.nsi"
+
+RequestExecutionLevel admin
+
 SetCompressor bzip2
 
-Name "Pazpar2"
 Caption "Index Data Pazpar2 ${VERSION} Setup"
 OutFile "pazpar2_${VERSION}.exe"
 
@@ -101,8 +89,14 @@ Section "Pazpar2 Runtime" Pazpar2_Runtime
 	ExecWait '"$INSTDIR\bin\pazpar2.exe" -remove'
 Noservice:
 	SetOutPath $INSTDIR\bin
-	; File "${VS_RUNTIME_DLL}"
-	; File "${VS_RUNTIME_MANIFEST}"
+!if "${VS_REDIST_FULL}" != ""
+	File "${VS_REDIST_FULL}"
+	ReadRegDword $1 HKLM "${VS_REDIST_KEY}" "Version"
+	${If} $1 == ""
+	  ExecWait '"$INSTDIR\bin\${VS_REDIST_EXE}" /passive /nostart'
+	${endif}
+	Delete "$INSTDIR\bin\${VS_REDIST_EXE}"
+!endif
 	File ..\bin\*.dll
 	File ..\bin\*.exe
 	SetOutPath $SMPROGRAMS\Pazpar2
@@ -118,12 +112,12 @@ SectionEnd
 Section "Pazpar2 Documentation" Pazpar2_Documentation
 	SectionIn 1 2
 	SetOutPath $INSTDIR\doc
-	File /r ..\doc\*.css
-	File /r ..\doc\*.ent
-	File /r ..\doc\*.html
+	File /nonfatal /r ..\doc\*.css
+	File /nonfatal /r ..\doc\*.ent
+	File /nonfatal /r ..\doc\*.html
 	File /r ..\doc\*.xml
 	File /r ..\doc\*.png
-	File /r ..\doc\*.xsl
+	File /nonfatal /r ..\doc\*.xsl
 	SetOutPath $SMPROGRAMS\Pazpar2
 	CreateShortCut "$SMPROGRAMS\Pazpar2\HTML Documentation.lnk" \
                  "$INSTDIR\doc\index.html"
@@ -137,6 +131,10 @@ Section "Pazpar2 Source" Pazpar2_Source
 	SetOutPath $INSTDIR\win
 	File makefile
 	File *.nsi
+	SetOutPath $INSTDIR\m4
+	File ..\m4\*.m4
+	File ..\m4\*.tcl
+	File ..\m4\*.nsi
 SectionEnd
 
 ; begin uninstall settings/section
