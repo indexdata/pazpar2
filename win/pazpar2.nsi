@@ -26,7 +26,6 @@ ComponentText "This will install Pazpar2 on your computer:"
 InstType "Full (w/ Source)"
 InstType "Lite (w/o Source)"
 
-InstallDir "$PROGRAMFILES\Pazpar2"
 InstallDirRegKey HKLM "SOFTWARE\Index Data\Pazpar2" ""
 
 
@@ -72,7 +71,7 @@ Section "" ; (default section)
 		"$INSTDIR\uninst.exe"
 	SetOutPath $INSTDIR
 	File LICENSE.txt
-	File ..\README
+	File ..\README.md
 	File ..\NEWS
 	SetOutPath $INSTDIR\etc
 	File /r ..\etc\*.xml
