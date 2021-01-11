@@ -5,11 +5,13 @@
 DEBUG=0   # 0 for release, 1 for debug
 BARCH = 32
 
-PACKAGE_NAME=pazpar2
-PACKAGE_VERSION=1.14.0
-
 # YAZ
 YAZ_DIR=..\..\yaz
+
+# TCL is optional - ONLY needed for source straight from Git
+TCL=tclsh
+#TCL="C:\Tcl\bin\tclsh85.exe"
+HAVE_TCL=1
 
 # Libxml2 + libxslt + associates
 LIBXML2_DIR=\libxml2-2.9.2.win$(BARCH)
@@ -242,9 +244,11 @@ dirs: $(OBJDIR) $(WINDIR) $(BINDIR) $(TMPDIR)
 $(OBJDIR) $(WINDIR) $(BINDIR) $(TMPDIR):
 	if not exist "$@/$(NUL)" mkdir "$@"
 
+version.nsi: $(ROOTDIR)/IDMETA
+	$(TCL) $(M4DIR)/mk_version.tcl $(ROOTDIR)/IDMETA version.nsi
+
 yaz: $(YAZ_DLL_TARGET)
 
 $(YAZ_DLL_TARGET) : $(YAZ_DLL_SOURCE)
-#	copy "$(YAZBINDIR)\*.dll.manifest" $(BINDIR)
 	copy "$(YAZBINDIR)\*.dll" $(BINDIR)
 
