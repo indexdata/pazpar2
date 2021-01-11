@@ -3,7 +3,8 @@
 # See the file LICENSE for details.
 
 DEBUG=0   # 0 for release, 1 for debug
-USE_MANIFEST = 0 # Can be enabled Visual Studio 2005/2008
+BARCH = 32
+
 PACKAGE_NAME=pazpar2
 PACKAGE_VERSION=1.14.0
 
@@ -11,14 +12,23 @@ PACKAGE_VERSION=1.14.0
 YAZ_DIR=..\..\yaz
 
 # Libxml2 + libxslt + associates
-LIBXML2_DIR=\libxml2-2.9.2.win32
-LIBXSLT_DIR=\libxslt-1.1.28.win32
+LIBXML2_DIR=\libxml2-2.9.2.win$(BARCH)
+LIBXSLT_DIR=\libxslt-1.1.28.win$(BARCH)
 
 # ICU
 HAVE_ICU=1
-ICU_DIR=c:\icu-56.1-vs2015
-ICU_LIB=$(ICU_DIR)\lib
+ICU_VER=68
+ICU_DIR=c:\icu4c-$(ICU_VER)_2-Win$(BARCH)-MSVC2019
 ICU_INCLUDE=$(ICU_DIR)\include
+!if $(BARCH) == 32
+ICU_LIB=$(ICU_DIR)\lib
+ICN_BIN=$(ICU_DIR)\bin
+!elseif $(BARCH) == 64
+ICU_LIB=$(ICU_DIR)\lib64
+ICN_BIN=$(ICU_DIR)\bin64
+!else
+!error BARCH must be 32 or 64
+!endif
 
 default: all
 
@@ -207,19 +217,11 @@ PAZPAR2_OBJS = \
 	$(CPP) $(COPT) $< 
 
 
-!if $(USE_MANIFEST)
-MT=mt.exe /nologo
-!else
-MT=echo
-!endif
-
-
 LINK_PROGRAM = $(LINK) $(LNKOPT) $(CLIENT_LINK_OPTIONS) $(LINK_LIBS)
 
 
 $(PAZPAR2_EXE) : "$(BINDIR)" $(PAZPAR2_OBJS) $(YAZ_LIB)
 	$(LINK_PROGRAM) $(PAZPAR2_OBJS) /out:$@
-	$(MT) -manifest $@.manifest -outputresource:$@;1
 
 clean:
 	-del $(BINDIR)\*.exe
