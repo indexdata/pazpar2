@@ -34,16 +34,25 @@ default: all
 
 all: dirs yaz libxslt pazpar2
 
-NSIS="c:\program files\nsis\makensis.exe"
+NSIS="c:\program files (x86)\nsis\makensis.exe"
 
-dist: pazpar2.nsi
+dist: pazpar2.nsi distclean
+	nmake DEBUG=0 BARCH=32
+	nmake nsis
+
+dist64: pazpar2.nsi distclean
+	nmake DEBUG=0 BARCH=64
+	nmake nsis64
+
+distclean:
 	nmake DEBUG=1 clean
 	nmake DEBUG=0 clean
-	nmake DEBUG=0
-	$(NSIS) pazpar2.nsi
 
-nsis: all
-	$(NSIS) pazpar2.nsi
+nsis:
+	$(NSIS) /DVSARCH=x86 pazpar2.nsi
+
+nsis64:
+	$(NSIS) /DVSARCH=x64 pazpar2.nsi
 
 nsishelp:
 	$(NSIS)
