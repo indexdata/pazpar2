@@ -51,11 +51,13 @@ struct termlist
 
 struct termlist *termlist_create(NMEM nmem)
 {
-    struct termlist *res = nmem_malloc(nmem, sizeof(struct termlist));
+    unsigned int bucket;
+    struct termlist *res = nmem_malloc(nmem, sizeof(*res));
     res->hash_size = 399;
     res->hashtable =
-        nmem_malloc(nmem, res->hash_size * sizeof(struct termlist_bucket*));
-    memset(res->hashtable, 0, res->hash_size * sizeof(struct termlist_bucket*));
+        nmem_malloc(nmem, res->hash_size * sizeof(*res->hashtable));
+    for (bucket = 0; bucket < res->hash_size; bucket++)
+        res->hashtable[bucket] = 0;
     res->nmem = nmem;
     res->no_entries = 0;
     return res;
@@ -83,8 +85,7 @@ void termlist_insert(struct termlist *tl, const char *display_term,
     }
     if (!*p) // We made it to the end of the bucket without finding match
     {
-        struct termlist_bucket *new = nmem_malloc(tl->nmem,
-                sizeof(struct termlist_bucket));
+        struct termlist_bucket *new = nmem_malloc(tl->nmem, sizeof(*new));
         new->term.norm_term = nmem_strdup(tl->nmem, buf);
         new->term.display_term = *display_term ?
             nmem_strdup(tl->nmem, display_term) : new->term.norm_term;
