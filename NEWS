@@ -1,3 +1,12 @@
+--- 1.14.1 2021/10/01
+
+Update pazpar2-apache Debian package to work with conf-enabled
+system.
+
+nmake updates for ICU 68 + VS 2019
+
+Use pkg-config to link with YAZ
+
 --- 1.14.0 2019/01/31
 
 Add parsing of MARC 264 to tmarc.xsl  PAZ-1054

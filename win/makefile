@@ -6,7 +6,7 @@ DEBUG=0   # 0 for release, 1 for debug
 BARCH = 32
 
 PACKAGE_NAME=pazpar2
-PACKAGE_VERSION=1.14.0
+PACKAGE_VERSION=1.14.1
 
 # YAZ
 YAZ_DIR=..\..\yaz
