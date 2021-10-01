@@ -17,20 +17,26 @@ reload_apache()
 if [ -e /etc/apache2/apache2.conf ]; then
     if [ -d /etc/apache2/conf.d ]; then
 	ln -sf /etc/pazpar2/ap2pazpar2-js.cfg /etc/apache2/conf.d/pazpar2-js
+	ln -sf /etc/pazpar2/ap2pazpar2.cfg /etc/apache2/conf.d/pazpar2
+	
+	if [ -f /etc/apache2/conf.d/ap2pazpar2.cfg ]; then
+	    rm /etc/apache2/conf.d/ap2pazpar2.cfg
+	fi
+    elif [ -d /etc/apache2/conf-available ]; then
+	if test ! -e /etc/apache2/conf-available/pazpar2-js.conf; then
+	    ln -sf /etc/pazpar2/ap2pazpar2-js.cfg /etc/apache2/conf-available/pazpar2-js.conf
+	fi
+	a2enconf pazpar2-js.conf
+	if test ! -d /etc/apache2/conf-available/pazpar2.conf; then
+	    ln -sf /etc/pazpar2/ap2pazpar2.cfg /etc/apache2/conf-available/pazpar2.conf
+	fi
+	a2enconf pazpar2.conf
     fi
 
     if [ ! -f /etc/apache2/mods-enabled/proxy_http.load ]; then
 	a2enmod proxy_http || true
     fi
 
-    if [ -d /etc/apache2/conf.d ]; then
-	ln -sf /etc/pazpar2/ap2pazpar2.cfg /etc/apache2/conf.d/pazpar2
-	
-	if [ -f /etc/apache2/conf.d/ap2pazpar2.cfg ]; then
-	    rm /etc/apache2/conf.d/ap2pazpar2.cfg
-	fi
-    fi
-    
     reload_apache
 fi
 exit 0
