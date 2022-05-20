@@ -1,6 +1,6 @@
 ## Pazpar2
 
-Copyright (C) 2006-2021 Index Data.
+Copyright (C) 2006-2022 Index Data.
 See the file LICENSE for details.
 
 Pazpar2 is a high-performance, user interface-independent, data
@@ -10,6 +10,6 @@ ranking, record sorting, and faceted results.
 Installation instructions and documentation is found in directory 'doc' and
 [online](http://www.indexdata.com/pazpar2/doc) .
 
-To get more information or assistance, send mail to yaz-help@indexdata.dk.
+To get more information or assistance, send mail to info@indexdata.com.
 Even better, sign on to the
 [YAZ mailing list](http://lists.indexdata.dk/cgi-bin/mailman/listinfo/yazlist)

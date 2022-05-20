@@ -7,7 +7,7 @@
 AC_PREREQ(2.60)
 AC_INIT([pazpar2],
 m4_esyscmd([. ./IDMETA; printf $VERSION]),
-[pazpar2-help@indexdata.dk])
+[info@indexdata.com])
 
 AC_CONFIG_HEADERS(src/config.h)
 
