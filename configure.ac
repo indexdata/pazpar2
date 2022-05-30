@@ -4,23 +4,19 @@
 ## Process this file with autoconf to produce a configure script.
 
 # Autoconf and automake setup
-AC_PREREQ(2.60)
-AC_INIT([pazpar2],
-m4_esyscmd([. ./IDMETA; printf $VERSION]),
-[info@indexdata.com])
+AC_PREREQ([2.69])
+AC_INIT([pazpar2],[m4_esyscmd([. ./IDMETA; printf $VERSION])],[info@indexdata.com])
 
-AC_CONFIG_HEADERS(src/config.h)
+AC_CONFIG_HEADERS([src/config.h])
 
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_AUX_DIR([config])
-AC_CANONICAL_SYSTEM
+AC_CANONICAL_TARGET
 
 AM_INIT_AUTOMAKE([1.9])
 
 AC_PROG_CC
 AC_PROG_RANLIB
-
-AC_LANG(C)
 
 AC_C_INLINE
 
@@ -40,7 +36,7 @@ AC_CHECK_HEADERS([sys/time.h sys/socket.h unistd.h netdb.h])
 checkBoth=0
 AC_CHECK_FUNC([connect])
 if test "$ac_cv_func_connect" = "no"; then
-    AC_CHECK_LIB([socket],[main], LIBS="$LIBS -lsocket", checkBoth=1)
+    AC_CHECK_LIB([socket],[main], [LIBS="$LIBS -lsocket"], [checkBoth=1])
 fi
 if test "$checkBoth" = "1"; then
     oldLibs=$LIBS
@@ -57,7 +53,7 @@ else
 fi
 AC_DEFINE_UNQUOTED([PAZPAR2_VERSION_SHA1], ["$sha"], [Git SHA1])
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 	Doxyfile
 	Makefile
 	src/Makefile
@@ -69,10 +65,12 @@ AC_OUTPUT([
 	doc/common/Makefile
 	doc/common/print.dsl
 	win/version.nsi
-],[
+])
+AC_CONFIG_COMMANDS([default],[
 	diff doc/local.ent doc/local0.ent >/dev/null 2>/dev/null \
 	|| cp doc/local0.ent doc/local.ent
-])
+],[])
+AC_OUTPUT
 
 echo \
 "------------------------------------------------------------------------
