@@ -100,20 +100,22 @@ if test "$ztest" = "true" ; then
     YAZ_ZTEST_XML_FETCH=${srcdir}/${PREFIX}.
     export YAZ_ZTEST_XML_FETCH
 
+    F=$YAZ_ZTEST
     oIFS=$IFS
     IFS=:
-    F=''
-    for p in $PATH; do
-	if test -x $p/yaz-ztest -a -x $p/yaz-client; then
-	    VERSION=`$p/yaz-client -V 2>/dev/null|awk '{print $3;}'|awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
-	    if test -n "$VERSION"; then
-		if test $VERSION -ge 4002052; then
-		    F=$p/yaz-ztest
-		    break
+    if test -z "$F"; then
+	for p in $PATH; do
+	    if test -x $p/yaz-ztest -a -x $p/yaz-client; then
+		VERSION=`$p/yaz-client -V 2>/dev/null|awk '{print $3;}'|awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2) * 1000 + $3;}'`
+		if test -n "$VERSION"; then
+		    if test $VERSION -ge 4002052; then
+			F=$p/yaz-ztest
+			break
+		    fi
 		fi
 	    fi
-	fi
-    done
+	done
+    fi
     if test -z "$F"; then
 	for p in ${srcdir}/../../yaz ${srcdir}/../../yaz-*; do
 	    if test -x $p/ztest/yaz-ztest; then

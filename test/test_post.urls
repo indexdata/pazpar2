@@ -6,6 +6,6 @@ gils_service.xml http://localhost:9763/search.pz2?command=init&clear=1
 z3950_indexdata_com_marc.xml http://localhost:9763/search.pz2?session=3&command=settings
 http://localhost:9763/search.pz2?session=3&command=search&query=computer
 w http://localhost:9763/search.pz2?session=1&command=show
-http://localhost:9763/search.pz2?session=2&command=show
+w http://localhost:9763/search.pz2?session=2&command=show
 w http://localhost:9763/search.pz2?session=3&command=show
 http://localhost:9763/search.pz2?session=3&command=bytarget
