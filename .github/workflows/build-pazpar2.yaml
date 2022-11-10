@@ -33,6 +33,6 @@ jobs:
      run: >
       ./configure --with-yaz=yaz --disable-shared --enable-static
    - name: Run make check for pazpar2
-     run: make -j4 check
+     run: YAZ_ZTEST=yaz/ztest/yaz-ztest make -j4 check
    - name: Run make dist for pazpar2
      run: make dist
