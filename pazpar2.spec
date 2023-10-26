@@ -35,15 +35,15 @@ for f in /usr/share/pazpar2/xsl/*.xsl; do
 	fi
 done
 if [ $1 = 1 ]; then
-	/sbin/chkconfig --add pazpar2
-	/sbin/service pazpar2 start > /dev/null 2>&1
+        /usr/bin/systemctl daemon-reload > /dev/null 2>&1
+        /usr/bin/systemctl enable pazpar2 > /dev/null 2>&1
+        /usr/bin/systemctl start pazpar2 > /dev/null 2>&1
 else
-	/sbin/service pazpar2 restart > /dev/null 2>&1
+        /usr/bin/systemctl restart pazpar2 > /dev/null 2>&1
 fi
 %preun
 if [ $1 = 0 ]; then
-	/sbin/service pazpar2 stop > /dev/null 2>&1
-	/sbin/chkconfig --del pazpar2
+        /usr/bin/systemctl stop pazpar2 > /dev/null 2>&1
 fi
 
 %description -n pazpar2-js
@@ -104,8 +104,10 @@ cp etc/settings/*.xml ${RPM_BUILD_ROOT}/etc/pazpar2/settings/
 cp -r etc/settings/mkc ${RPM_BUILD_ROOT}/etc/pazpar2/settings
 mkdir -p ${RPM_BUILD_ROOT}/usr/share/pazpar2/xsl
 cp etc/xsl/*.xsl ${RPM_BUILD_ROOT}/usr/share/pazpar2/xsl
-mkdir -p ${RPM_BUILD_ROOT}/etc/rc.d/init.d
-install -m755 rpm/pazpar2.init ${RPM_BUILD_ROOT}/etc/rc.d/init.d/pazpar2
+mkdir -p ${RPM_BUILD_ROOT}/etc/systemd/system
+install -m755 rpm/pazpar2.service ${RPM_BUILD_ROOT}/etc/systemd/system/pazpar2.service
+mkdir -p ${RPM_BUILD_ROOT}/etc/sysconfig
+install -m644 rpm/pazpar2.sysconfig ${RPM_BUILD_ROOT}/etc/sysconfig/pazpar2
 echo "Alias /pazpar2 /usr/share/pazpar2" >${RPM_BUILD_ROOT}/etc/pazpar2/ap2pazpar2-js.cfg
 mkdir -p ${RPM_BUILD_ROOT}/etc/logrotate.d
 install -m644 rpm/pazpar2.logrotate ${RPM_BUILD_ROOT}/etc/logrotate.d/pazpar2
@@ -127,7 +129,8 @@ rm -fr ${RPM_BUILD_ROOT}
 %config %{_sysconfdir}/pazpar2/settings/*.xml
 %config %{_sysconfdir}/pazpar2/settings/*/*.xml
 %config %{_sysconfdir}/pazpar2/services-available/*.xml
-%config %{_sysconfdir}/rc.d/init.d/pazpar2
+%config %{_sysconfdir}/sysconfig/pazpar2
+%config %{_sysconfdir}/systemd/system/pazpar2.service
 %config(noreplace) /etc/logrotate.d/pazpar2
 %{_mandir}/man1/pazpar2*
 %{_mandir}/man5/pazpar2*
