@@ -2,7 +2,7 @@
 <show><status>OK</status>
 <activeclients>0</activeclients>
 <merged>5</merged>
-<total>12</total>
+<total>11</total>
 <start>0</start>
 <num>5</num>
 <hit>

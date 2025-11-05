@@ -2,7 +2,7 @@
 <show><status>OK</status>
 <activeclients>0</activeclients>
 <merged>1</merged>
-<total>10</total>
+<total>11</total>
 <start>0</start>
 <num>1</num>
 <hit>
@@ -13,7 +13,7 @@
  <md-subject>Railroads</md-subject>
  <md-description>&quot;Contract DOT-UT-10003.&quot;</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="marc" checksum="4007858895">
+    name="marc" checksum="3833666606">
   <md-title>Washington metropolitan area rail computer feasibility study;</md-title>
   <md-title-remainder>final report</md-title-remainder>
   <md-date>1971</md-date>

@@ -1,11 +1,11 @@
 <record xmlns="http://www.loc.gov/MARC21/slim">
-  <leader>00366nam a22001698a 4504</leader>
-  <controlfield tag="001">   11224466 </controlfield>
+  <leader>00366nam a22001698a 4500</leader>
+  <controlfield tag="001">   11224467 </controlfield>
   <controlfield tag="003">DLC</controlfield>
   <controlfield tag="005">00000000000000.0</controlfield>
   <controlfield tag="008">910710c19910701nju           00010 eng  </controlfield>
   <datafield tag="010" ind1=" " ind2=" ">
-    <subfield code="a">   11224466 </subfield>
+    <subfield code="a">   11224467 </subfield>
   </datafield>
   <datafield tag="040" ind1=" " ind2=" ">
     <subfield code="a">DLC</subfield>

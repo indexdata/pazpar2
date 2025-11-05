@@ -8,7 +8,7 @@
 <hit>
  <md-title>SAMPLES ANALYZED FOR PROSPECTORS IN THE NBMG (NMAL) CHEMICAL LABORATORY</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="3641891710">
+    name="Index Data GILS test server" checksum="4164468577">
   <md-title>SAMPLES ANALYZED FOR PROSPECTORS IN THE NBMG (NMAL) CHEMICAL LABORATORY</md-title>
  </location>
  <count>1</count>
@@ -27,7 +27,7 @@ score = relevance(190683);
 <hit>
  <md-title>APPLIED GEOLOGY FILE</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="2074161109">
+    name="Index Data GILS test server" checksum="1088847304">
   <md-title>APPLIED GEOLOGY FILE</md-title>
  </location>
  <count>1</count>
@@ -41,25 +41,9 @@ score = relevance(0);
  <recid>content: title applied geology file author medium book</recid>
 </hit>
 <hit>
- <md-title>BIBLIOGRAPHY OF MAINE GEOLOGY</md-title>
- <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="566270437">
-  <md-title>BIBLIOGRAPHY OF MAINE GEOLOGY</md-title>
- </location>
- <count>1</count>
- <relevance>0</relevance>
- <relevance_info>
-relevance = 0;
-idf[1] = log(((1 + total(23))/termoccur(1));
-the: relevance += 100000 * tf[1](0.000000) * idf[1](3.178054) (0);
-score = relevance(0);
- </relevance_info>
- <recid>content: title bibliography of maine geology author medium book</recid>
-</hit>
-<hit>
  <md-title>CENSUS DATA</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="1088847304">
+    name="Index Data GILS test server" checksum="740462726">
   <md-title>CENSUS DATA</md-title>
  </location>
  <count>1</count>
@@ -73,10 +57,10 @@ score = relevance(0);
  <recid>content: title census data author medium book</recid>
 </hit>
 <hit>
- <md-title>COASTAL MARINE GEOLOGIC ENVIRONMENTS MAP SERIES</md-title>
+ <md-title>COASTAL BOUNDARY</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="4164468577">
-  <md-title>COASTAL MARINE GEOLOGIC ENVIRONMENTS MAP SERIES</md-title>
+    name="Index Data GILS test server" checksum="43693570">
+  <md-title>COASTAL BOUNDARY</md-title>
  </location>
  <count>1</count>
  <relevance>0</relevance>
@@ -86,12 +70,12 @@ idf[1] = log(((1 + total(23))/termoccur(1));
 the: relevance += 100000 * tf[1](0.000000) * idf[1](3.178054) (0);
 score = relevance(0);
  </relevance_info>
- <recid>content: title coastal marine geologic environments map series author medium book</recid>
+ <recid>content: title coastal boundary author medium book</recid>
 </hit>
 <hit>
  <md-title>CORE AND CUTTINGS IN NBMG &apos;LIBRARY&apos;</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="3293507132">
+    name="Index Data GILS test server" checksum="2770930265">
   <md-title>CORE AND CUTTINGS IN NBMG &apos;LIBRARY&apos;</md-title>
  </location>
  <count>1</count>
@@ -107,7 +91,7 @@ score = relevance(0);
 <hit>
  <md-title>ELECTRIC LOG LIBRARY</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="2770930265">
+    name="Index Data GILS test server" checksum="3641891710">
   <md-title>ELECTRIC LOG LIBRARY</md-title>
  </location>
  <count>1</count>
@@ -123,7 +107,7 @@ score = relevance(0);
 <hit>
  <md-title>FRESH WATER WETLANDS MAPS</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="43693570">
+    name="Index Data GILS test server" checksum="3293507132">
   <md-title>FRESH WATER WETLANDS MAPS</md-title>
  </location>
  <count>1</count>
@@ -137,10 +121,10 @@ score = relevance(0);
  <recid>content: title fresh water wetlands maps author medium book</recid>
 </hit>
 <hit>
- <md-title>GROUNDWATER RESOURCE MAPS - COUNTY SERIES</md-title>
+ <md-title>INLAND WETLANDS OF CONNECTICUT</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="3816083999">
-  <md-title>GROUNDWATER RESOURCE MAPS - COUNTY SERIES</md-title>
+    name="Index Data GILS test server" checksum="392078148">
+  <md-title>INLAND WETLANDS OF CONNECTICUT</md-title>
  </location>
  <count>1</count>
  <relevance>0</relevance>
@@ -150,12 +134,12 @@ idf[1] = log(((1 + total(23))/termoccur(1));
 the: relevance += 100000 * tf[1](0.000000) * idf[1](3.178054) (0);
 score = relevance(0);
  </relevance_info>
- <recid>content: title groundwater resource maps county series author medium book</recid>
+ <recid>content: title inland wetlands of connecticut author medium book</recid>
 </hit>
 <hit>
  <md-title>ISOTOPIC DATES OF ROCKS AND MINERALS</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="2945122554">
+    name="Index Data GILS test server" checksum="2248353398">
   <md-title>ISOTOPIC DATES OF ROCKS AND MINERALS</md-title>
  </location>
  <count>1</count>
@@ -171,7 +155,7 @@ score = relevance(0);
 <hit>
  <md-title>MAINE GEOLOGICAL SURVEY BEDROCK WATER WELL INVENTORY</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="740462726">
+    name="Index Data GILS test server" checksum="3816083999">
   <md-title>MAINE GEOLOGICAL SURVEY BEDROCK WATER WELL INVENTORY</md-title>
  </location>
  <count>1</count>
@@ -187,7 +171,7 @@ score = relevance(0);
 <hit>
  <md-title>MINE MAP INDEX</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="2422545687">
+    name="Index Data GILS test server" checksum="3467699421">
   <md-title>MINE MAP INDEX</md-title>
  </location>
  <count>1</count>
@@ -203,7 +187,7 @@ score = relevance(0);
 <hit>
  <md-title>MINERAL OCCURRENCES, DEPOSITS, PROSPECTS, AND MINES</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="3119314843">
+    name="Index Data GILS test server" checksum="1263039593">
   <md-title>MINERAL OCCURRENCES, DEPOSITS, PROSPECTS, AND MINES</md-title>
  </location>
  <count>1</count>
@@ -217,9 +201,25 @@ score = relevance(0);
  <recid>content: title mineral occurrences deposits prospects and mines author medium book</recid>
 </hit>
 <hit>
+ <md-title>PETROLEUM PRODUCT VENDOR REGISTRATION</md-title>
+ <location id="z3950.indexdata.com/gils"
+    name="Index Data GILS test server" checksum="2422545687">
+  <md-title>PETROLEUM PRODUCT VENDOR REGISTRATION</md-title>
+ </location>
+ <count>1</count>
+ <relevance>0</relevance>
+ <relevance_info>
+relevance = 0;
+idf[1] = log(((1 + total(23))/termoccur(1));
+the: relevance += 100000 * tf[1](0.000000) * idf[1](3.178054) (0);
+score = relevance(0);
+ </relevance_info>
+ <recid>content: title petroleum product vendor registration author medium book</recid>
+</hit>
+<hit>
  <md-title>RECONNAISSANCE SURFICIAL GEOLOGIC MAP SERIES</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="3990276288">
+    name="Index Data GILS test server" checksum="1725776531">
   <md-title>RECONNAISSANCE SURFICIAL GEOLOGIC MAP SERIES</md-title>
  </location>
  <count>1</count>
@@ -235,7 +235,7 @@ score = relevance(0);
 <hit>
  <md-title>SAND AND GRAVEL AQUIFER MAPS</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="217885859">
+    name="Index Data GILS test server" checksum="3990276288">
   <md-title>SAND AND GRAVEL AQUIFER MAPS</md-title>
  </location>
  <count>1</count>
@@ -249,25 +249,9 @@ score = relevance(0);
  <recid>content: title sand and gravel aquifer maps author medium book</recid>
 </hit>
 <hit>
- <md-title>SIGNIFICANT AQUIFERS MAP SERIES</md-title>
- <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="392078148">
-  <md-title>SIGNIFICANT AQUIFERS MAP SERIES</md-title>
- </location>
- <count>1</count>
- <relevance>0</relevance>
- <relevance_info>
-relevance = 0;
-idf[1] = log(((1 + total(23))/termoccur(1));
-the: relevance += 100000 * tf[1](0.000000) * idf[1](3.178054) (0);
-score = relevance(0);
- </relevance_info>
- <recid>content: title significant aquifers map series author medium book</recid>
-</hit>
-<hit>
  <md-title>STATEWIDE PLANNING</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="1263039593">
+    name="Index Data GILS test server" checksum="3119314843">
   <md-title>STATEWIDE PLANNING</md-title>
  </location>
  <count>1</count>
@@ -281,9 +265,25 @@ score = relevance(0);
  <recid>content: title statewide planning author medium book</recid>
 </hit>
 <hit>
+ <md-title>STREAM CHANNEL ENCROACHMENT LINE STUDIES</md-title>
+ <location id="z3950.indexdata.com/gils"
+    name="Index Data GILS test server" checksum="914655015">
+  <md-title>STREAM CHANNEL ENCROACHMENT LINE STUDIES</md-title>
+ </location>
+ <count>1</count>
+ <relevance>0</relevance>
+ <relevance_info>
+relevance = 0;
+idf[1] = log(((1 + total(23))/termoccur(1));
+the: relevance += 100000 * tf[1](0.000000) * idf[1](3.178054) (0);
+score = relevance(0);
+ </relevance_info>
+ <recid>content: title stream channel encroachment line studies author medium book</recid>
+</hit>
+<hit>
  <md-title>THESES ON NEVADA GEOLOGY</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="3467699421">
+    name="Index Data GILS test server" checksum="2596737976">
   <md-title>THESES ON NEVADA GEOLOGY</md-title>
  </location>
  <count>1</count>
@@ -297,9 +297,25 @@ score = relevance(0);
  <recid>content: title theses on nevada geology author medium book</recid>
 </hit>
 <hit>
+ <md-title>TIDAL (COASTAL) WETLAND OF CONNECTICUT</md-title>
+ <location id="z3950.indexdata.com/gils"
+    name="Index Data GILS test server" checksum="2074161109">
+  <md-title>TIDAL (COASTAL) WETLAND OF CONNECTICUT</md-title>
+ </location>
+ <count>1</count>
+ <relevance>0</relevance>
+ <relevance_info>
+relevance = 0;
+idf[1] = log(((1 + total(23))/termoccur(1));
+the: relevance += 100000 * tf[1](0.000000) * idf[1](3.178054) (0);
+score = relevance(0);
+ </relevance_info>
+ <recid>content: title tidal coastal wetland of connecticut author medium book</recid>
+</hit>
+<hit>
  <md-title>UTAH CRIB FILE</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="2248353398">
+    name="Index Data GILS test server" checksum="566270437">
   <md-title>UTAH CRIB FILE</md-title>
  </location>
  <count>1</count>
@@ -311,21 +327,5 @@ the: relevance += 100000 * tf[1](0.000000) * idf[1](3.178054) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title utah crib file author medium book</recid>
-</hit>
-<hit>
- <md-title>UTAH EARTHQUAKE EPICENTERS</md-title>
- <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="1725776531">
-  <md-title>UTAH EARTHQUAKE EPICENTERS</md-title>
- </location>
- <count>1</count>
- <relevance>0</relevance>
- <relevance_info>
-relevance = 0;
-idf[1] = log(((1 + total(23))/termoccur(1));
-the: relevance += 100000 * tf[1](0.000000) * idf[1](3.178054) (0);
-score = relevance(0);
- </relevance_info>
- <recid>content: title utah earthquake epicenters author medium book</recid>
 </hit>
 </show>

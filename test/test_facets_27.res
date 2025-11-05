@@ -8,6 +8,13 @@
 <state>Client_Idle</state>
 <diagnostic>0</diagnostic>
 </term>
+<term>
+<id>z3950.indexdata.com/marc</id>
+<name>Index Data MARC test server</name>
+<frequency>1</frequency>
+<state>Client_Idle</state>
+<diagnostic>0</diagnostic>
+</term>
 </list>
 <list name="author">
 <term><name>author0</name><frequency>100</frequency></term>
@@ -20,6 +27,7 @@
 <term><name>author7</name><frequency>30</frequency></term>
 <term><name>author8</name><frequency>20</frequency></term>
 <term><name>author9</name><frequency>10</frequency></term>
+<term><name>Wood, Helen M</name><frequency>1</frequency></term>
 </list>
 <list name="subject">
 <term><name>subject0</name><frequency>100</frequency></term>
@@ -32,6 +40,7 @@
 <term><name>subject7</name><frequency>30</frequency></term>
 <term><name>subject8</name><frequency>20</frequency></term>
 <term><name>subject9</name><frequency>10</frequency></term>
+<term><name>Computers</name><frequency>1</frequency></term>
 </list>
 <list name="date">
 <term><name>date0</name><frequency>100</frequency></term>
@@ -44,6 +53,7 @@
 <term><name>date7</name><frequency>30</frequency></term>
 <term><name>date8</name><frequency>20</frequency></term>
 <term><name>date9</name><frequency>10</frequency></term>
+<term><name>1977</name><frequency>1</frequency></term>
 </list>
 <list name="medium"/>
 </termlist>
