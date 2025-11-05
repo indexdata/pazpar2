@@ -1,0 +1,18 @@
+# Pazpar2 systemd-style configuration
+
+[Unit]
+Description=Pazpar2 Metasearcher
+Documentation=man:pazpar2(8)
+After=network.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/sysconfig/pazpar2
+Restart=on-abort
+KillMode=process
+PIDFile=${PP2_PID_FILE}
+ExecStart=/bin/bash -ce "exec /usr/sbin/pazpar2 ${PP2_OPTIONS}"
+
+[Install]
+WantedBy=multi-user.target
+
