@@ -1,17 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <show><status>OK</status>
 <activeclients>0</activeclients>
-<merged>8</merged>
-<total>10</total>
+<merged>10</merged>
+<total>11</total>
 <start>0</start>
-<num>8</num>
+<num>10</num>
+<hit>
+ <md-title>Internet world</md-title>
+ <md-date>1992</md-date>
+ <md-subject>Internet (Computer network)</md-subject>
+ <md-subject>Computer networks</md-subject>
+ <md-subject>Information networks</md-subject>
+ <md-subject>Computer Systems</md-subject>
+ <md-subject>Online Systems</md-subject>
+ <md-description>Title from caption</md-description>
+ <location id="z3950.indexdata.com/marc"
+    name="marc" checksum="4182051184">
+  <md-title>Internet world</md-title>
+  <md-date>1992</md-date>
+  <md-subject>Internet (Computer network)</md-subject>
+  <md-subject>Computer networks</md-subject>
+  <md-subject>Information networks</md-subject>
+  <md-subject>Computer Systems</md-subject>
+  <md-subject>Online Systems</md-subject>
+  <md-description tag="500">Title from caption</md-description>
+  <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
+  <md-test-usersetting-2>test-usersetting-2 data: 
+        YYYYYYYYY</md-test-usersetting-2>
+ </location>
+ <count>1</count>
+ <relevance>80268</relevance>
+ <relevance_info>
+field=subject content=Internet (Computer network);
+computer: w[1] += w(3) / (1+log2(1+lead_decay(0.000000) * length(1)));
+computer: tf[1] += w[1](3) / length(3) (1.000000);
+field=subject content=Computer networks;
+computer: w[1] += w(3) / (1+log2(1+lead_decay(0.000000) * length(0)));
+computer: tf[1] += w[1](3) / length(2) (2.500000);
+field=subject content=Computer Systems;
+computer: w[1] += w(3) / (1+log2(1+lead_decay(0.000000) * length(0)));
+computer: tf[1] += w[1](3) / length(2) (4.000000);
+relevance = 0;
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * tf[1](4.000000) * idf[1](0.200671) (80268);
+score = relevance(80268);
+ </relevance_info>
+ <recid>content: title internet world author medium book</recid>
+</hit>
 <hit>
  <md-title>Computer science &amp; technology</md-title>
  <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
  <md-date>1977</md-date>
  <md-subject>Optical pattern recognition</md-subject>
  <location id="z3950.indexdata.com/marc"
-    name="marc" checksum="3659474317">
+    name="marc" checksum="3485282028">
   <md-title>Computer science &amp; technology</md-title>
   <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
   <md-date>1977</md-date>
@@ -21,15 +63,15 @@
         YYYYYYYYY</md-test-usersetting-2>
  </location>
  <count>1</count>
- <relevance>50262</relevance>
+ <relevance>40134</relevance>
  <relevance_info>
 field=title content=Computer science &amp;amp; technology :;
 computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
 computer: tf[1] += w[1](6) / length(3) (2.000000);
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(7));
-computer: relevance += 100000 * tf[1](2.000000) * idf[1](0.251314) (50262);
-score = relevance(50262);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * tf[1](2.000000) * idf[1](0.200671) (40134);
+score = relevance(40134);
  </relevance_info>
  <recid>content: title computer science technology author medium book</recid>
 </hit>
@@ -40,7 +82,7 @@ score = relevance(50262);
  <md-subject>Bible</md-subject>
  <md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="marc" checksum="3136897450">
+    name="marc" checksum="2962705161">
   <md-title>The Computer Bible</md-title>
   <md-date>1973-1980</md-date>
   <md-subject>Bible. O.T</md-subject>
@@ -52,17 +94,49 @@ score = relevance(50262);
         YYYYYYYYY</md-test-usersetting-2>
  </location>
  <count>1</count>
- <relevance>50262</relevance>
+ <relevance>40134</relevance>
  <relevance_info>
 field=title content=The Computer Bible /;
 computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(1)));
 computer: tf[1] += w[1](6) / length(3) (2.000000);
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(7));
-computer: relevance += 100000 * tf[1](2.000000) * idf[1](0.251314) (50262);
-score = relevance(50262);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * tf[1](2.000000) * idf[1](0.200671) (40134);
+score = relevance(40134);
  </relevance_info>
  <recid>content: title the computer bible author medium book</recid>
+</hit>
+<hit>
+ <md-title>Internet</md-title>
+ <md-title-remainder>mailing lists</md-title-remainder>
+ <md-date>1993</md-date>
+ <md-subject>Internet (Computer network)</md-subject>
+ <md-subject>Mailing lists</md-subject>
+ <md-description>Includes index</md-description>
+ <location id="z3950.indexdata.com/marc"
+    name="marc" checksum="61276177">
+  <md-title>Internet</md-title>
+  <md-title-remainder>mailing lists</md-title-remainder>
+  <md-date>1993</md-date>
+  <md-subject>Internet (Computer network)</md-subject>
+  <md-subject>Mailing lists</md-subject>
+  <md-description tag="500">Includes index</md-description>
+  <md-test-usersetting>XXXXXXXXXX</md-test-usersetting>
+  <md-test-usersetting-2>test-usersetting-2 data: 
+        YYYYYYYYY</md-test-usersetting-2>
+ </location>
+ <count>1</count>
+ <relevance>20067</relevance>
+ <relevance_info>
+field=subject content=Internet (Computer network);
+computer: w[1] += w(3) / (1+log2(1+lead_decay(0.000000) * length(1)));
+computer: tf[1] += w[1](3) / length(3) (1.000000);
+relevance = 0;
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * tf[1](1.000000) * idf[1](0.200671) (20067);
+score = relevance(20067);
+ </relevance_info>
+ <recid>content: title internet author medium book</recid>
 </hit>
 <hit>
  <md-title>A plan for community college computer development</md-title>
@@ -71,7 +145,7 @@ score = relevance(50262);
  <md-subject>Community colleges</md-subject>
  <md-description>Cover title</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="marc" checksum="4182051184">
+    name="marc" checksum="4007858895">
   <md-title>A plan for community college computer development</md-title>
   <md-date>1971</md-date>
   <md-subject>Universities and colleges</md-subject>
@@ -82,15 +156,15 @@ score = relevance(50262);
         YYYYYYYYY</md-test-usersetting-2>
  </location>
  <count>1</count>
- <relevance>21541</relevance>
+ <relevance>17200</relevance>
  <relevance_info>
 field=title content=A plan for community college computer development.;
 computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(5)));
 computer: tf[1] += w[1](6) / length(7) (0.857143);
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(7));
-computer: relevance += 100000 * tf[1](0.857143) * idf[1](0.251314) (21541);
-score = relevance(21541);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * tf[1](0.857143) * idf[1](0.200671) (17200);
+score = relevance(17200);
  </relevance_info>
  <recid>content: title a plan for community college computer development author medium book</recid>
 </hit>
@@ -102,7 +176,7 @@ score = relevance(21541);
  <md-subject>Railroads</md-subject>
  <md-description>&quot;Contract DOT-UT-10003.&quot;</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="marc" checksum="4007858895">
+    name="marc" checksum="3833666606">
   <md-title>Washington metropolitan area rail computer feasibility study;</md-title>
   <md-title-remainder>final report</md-title-remainder>
   <md-date>1971</md-date>
@@ -114,15 +188,15 @@ score = relevance(21541);
         YYYYYYYYY</md-test-usersetting-2>
  </location>
  <count>1</count>
- <relevance>21541</relevance>
+ <relevance>17200</relevance>
  <relevance_info>
 field=title content=Washington metropolitan area rail computer feasib ...;
 computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(4)));
 computer: tf[1] += w[1](6) / length(7) (0.857143);
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(7));
-computer: relevance += 100000 * tf[1](0.857143) * idf[1](0.251314) (21541);
-score = relevance(21541);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * tf[1](0.857143) * idf[1](0.200671) (17200);
+score = relevance(17200);
  </relevance_info>
  <recid>content: title washington metropolitan area rail computer feasibility study author englund carl r medium book</recid>
 </hit>
@@ -135,7 +209,7 @@ score = relevance(21541);
  <md-subject>Puget Sound region (Wash.)</md-subject>
  <md-description>Scale of maps ca. 1:1,000,000</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="marc" checksum="3311089739">
+    name="marc" checksum="3136897450">
   <md-title>The Puget Sound Region</md-title>
   <md-title-remainder>a portfolio of thematic computer maps</md-title-remainder>
   <md-date>1974</md-date>
@@ -149,15 +223,15 @@ score = relevance(21541);
         YYYYYYYYY</md-test-usersetting-2>
  </location>
  <count>1</count>
- <relevance>20942</relevance>
+ <relevance>16722</relevance>
  <relevance_info>
 field=title-remainder content=a portfolio of thematic computer maps /;
 computer: w[1] += w(5) / (1+log2(1+lead_decay(0.000000) * length(4)));
 computer: tf[1] += w[1](5) / length(6) (0.833333);
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(7));
-computer: relevance += 100000 * tf[1](0.833333) * idf[1](0.251314) (20942);
-score = relevance(20942);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * tf[1](0.833333) * idf[1](0.200671) (16722);
+score = relevance(16722);
  </relevance_info>
  <recid>content: title the puget sound region author mairs john w medium book</recid>
 </hit>
@@ -170,7 +244,7 @@ score = relevance(20942);
  <md-subject>Imaging systems in medicine</md-subject>
  <md-description>Includes bibliographical references and index</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="marc" checksum="2962705161">
+    name="marc" checksum="2788512872">
   <md-title>Computer processing of dynamic images from an Anger scintillation camera</md-title>
   <md-title-remainder>the proceedings of a workshop</md-title-remainder>
   <md-date>1974</md-date>
@@ -183,15 +257,15 @@ score = relevance(20942);
         YYYYYYYYY</md-test-usersetting-2>
  </location>
  <count>1</count>
- <relevance>15078</relevance>
+ <relevance>12040</relevance>
  <relevance_info>
 field=title content=Computer processing of dynamic images from an Ang ...;
 computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(0)));
 computer: tf[1] += w[1](6) / length(10) (0.600000);
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(7));
-computer: relevance += 100000 * tf[1](0.600000) * idf[1](0.251314) (15078);
-score = relevance(15078);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * tf[1](0.600000) * idf[1](0.200671) (12040);
+score = relevance(12040);
  </relevance_info>
  <recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
@@ -201,7 +275,7 @@ score = relevance(15078);
  <md-author>Wood, Helen M</md-author>
  <md-subject>Computers</md-subject>
  <location id="z3950.indexdata.com/marc"
-    name="marc" checksum="3833666606">
+    name="marc" checksum="3659474317">
   <md-title>The use of passwords for controlled access to computer resources</md-title>
   <md-date>1977</md-date>
   <md-author>Wood, Helen M</md-author>
@@ -211,15 +285,15 @@ score = relevance(15078);
         YYYYYYYYY</md-test-usersetting-2>
  </location>
  <count>1</count>
- <relevance>15078</relevance>
+ <relevance>12040</relevance>
  <relevance_info>
 field=title content=The use of passwords for controlled access to com ...;
 computer: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(8)));
 computer: tf[1] += w[1](6) / length(10) (0.600000);
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(7));
-computer: relevance += 100000 * tf[1](0.600000) * idf[1](0.251314) (15078);
-score = relevance(15078);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * tf[1](0.600000) * idf[1](0.200671) (12040);
+score = relevance(12040);
  </relevance_info>
  <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
@@ -230,7 +304,7 @@ score = relevance(15078);
  <md-subject>Tomography</md-subject>
  <md-description>Includes bibliographical references and index</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="marc" checksum="3485282028">
+    name="marc" checksum="3311089739">
   <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
   <md-title-remainder>proceedings of the workshop</md-title-remainder>
   <md-date>1977</md-date>
@@ -244,8 +318,8 @@ score = relevance(15078);
  <relevance>0</relevance>
  <relevance_info>
 relevance = 0;
-idf[1] = log(((1 + total(8))/termoccur(7));
-computer: relevance += 100000 * tf[1](0.000000) * idf[1](0.251314) (0);
+idf[1] = log(((1 + total(10))/termoccur(9));
+computer: relevance += 100000 * tf[1](0.000000) * idf[1](0.200671) (0);
 score = relevance(0);
  </relevance_info>
  <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>

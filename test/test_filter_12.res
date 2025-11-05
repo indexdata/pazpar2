@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <show><status>OK</status>
 <activeclients>0</activeclients>
-<merged>12</merged>
-<total>12</total>
+<merged>11</merged>
+<total>11</total>
 <start>0</start>
-<num>12</num>
+<num>11</num>
 <hit>
  <md-title>The late shift</md-title>
  <md-title-remainder>Letterman, Leno, and the network battle for the night</md-title-remainder>
@@ -28,7 +28,7 @@
   <md-description tag="500">Includes index</md-description>
  </location>
  <count>1</count>
- <relevance>51972</relevance>
+ <relevance>56722</relevance>
  <recid>content: title the late shift author carter bill medium book</recid>
 </hit>
 <hit>
@@ -47,7 +47,7 @@
   <md-description tag="500">Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
  </location>
  <count>1</count>
- <relevance>33410</relevance>
+ <relevance>36464</relevance>
  <recid>content: title the computer bible author medium book</recid>
 </hit>
 <hit>
@@ -70,7 +70,7 @@
   <md-description tag="504">Includes bibliographical references</md-description>
  </location>
  <count>1</count>
- <relevance>29158</relevance>
+ <relevance>31823</relevance>
  <recid>content: title the religious teachers of greece author adam james medium book</recid>
 </hit>
 <hit>
@@ -93,7 +93,7 @@
   <md-description tag="504">Bibliography: p. 4</md-description>
  </location>
  <count>1</count>
- <relevance>25058</relevance>
+ <relevance>27348</relevance>
  <recid>content: title the puget sound region author mairs john w medium book</recid>
 </hit>
 <hit>
@@ -111,7 +111,7 @@
   <md-description tag="504">Includes bibliographical references and index</md-description>
  </location>
  <count>1</count>
- <relevance>20881</relevance>
+ <relevance>22790</relevance>
  <recid>content: title reconstruction tomography in diagnostic radiology and nuclear medicine author medium book</recid>
 </hit>
 <hit>
@@ -133,7 +133,7 @@
   <md-description tag="504">Includes bibliographical references and index</md-description>
  </location>
  <count>1</count>
- <relevance>16705</relevance>
+ <relevance>18232</relevance>
  <recid>content: title computer processing of dynamic images from an anger scintillation camera author medium book</recid>
 </hit>
 <hit>
@@ -144,7 +144,7 @@
  <md-subject>Dropouts</md-subject>
  <md-description>Distributed to depository libraries in microfiche</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="61276177">
+    name="Index Data MARC test server" checksum="4182051184">
   <md-title>Dealing with dropouts</md-title>
   <md-title-remainder>the urban superintendents&apos; call to action</md-title-remainder>
   <md-date>1987</md-date>
@@ -154,7 +154,7 @@
   <md-description tag="500">Distributed to depository libraries in microfiche</md-description>
  </location>
  <count>1</count>
- <relevance>13921</relevance>
+ <relevance>15193</relevance>
  <recid>content: title dealing with dropouts author paulu nancy medium</recid>
 </hit>
 <hit>
@@ -165,7 +165,7 @@
  <md-subject>Handicapped children</md-subject>
  <md-description>Distributed to depository libraries in microfiche</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="235468466">
+    name="Index Data MARC test server" checksum="61276177">
   <md-title>National dissemination model for the I&apos;M SPECIAL Program of Physical Education for the Handicapped, 1983-1986</md-title>
   <md-title-remainder>final report, I&apos;M SPECIAL network</md-title-remainder>
   <md-date>1986</md-date>
@@ -175,7 +175,7 @@
   <md-description tag="500">Distributed to depository libraries in microfiche</md-description>
  </location>
  <count>1</count>
- <relevance>13364</relevance>
+ <relevance>14585</relevance>
  <recid>content: title national dissemination model for the i m special program of physical education for the handicapped author medium</recid>
 </hit>
 <hit>
@@ -191,7 +191,7 @@
   <md-subject>Computers</md-subject>
  </location>
  <count>1</count>
- <relevance>10023</relevance>
+ <relevance>10939</relevance>
  <recid>content: title the use of passwords for controlled access to computer resources author wood helen m medium book</recid>
 </hit>
 <hit>
@@ -207,32 +207,8 @@
   <md-subject>Optical pattern recognition</md-subject>
  </location>
  <count>1</count>
- <relevance>5966</relevance>
+ <relevance>6511</relevance>
  <recid>content: title computer science technology author medium book</recid>
-</hit>
-<hit>
- <md-title>Technology programs that work</md-title>
- <md-date>1984</md-date>
- <md-subject>United States</md-subject>
- <md-subject>Educational technology</md-subject>
- <md-subject>Federal aid to education</md-subject>
- <md-description>&quot;This directory was developed by the Technology for the National Diffusion Network Project, Teachers College, Columbia University pursuant to contract number OE-300-83-0253, U.S. Department of Education&quot;--T.p. verso</md-description>
- <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="4007858895">
-  <md-title>Technology programs that work</md-title>
-  <md-date>1984</md-date>
-  <md-subject>United States</md-subject>
-  <md-subject>Educational technology</md-subject>
-  <md-subject>Federal aid to education</md-subject>
-  <md-description tag="500">&quot;Spons agency Office of Educational Research and Improvement&quot;--Doc. resume</md-description>
-  <md-description tag="500">&quot;This directory was developed by the Technology for the National Diffusion Network Project, Teachers College, Columbia University pursuant to contract number OE-300-83-0253, U.S. Department of Education&quot;--T.p. verso</md-description>
-  <md-description tag="500">Distributed to depository libraries in microfiche</md-description>
-  <md-description tag="500">&quot;December 1984.&quot;</md-description>
-  <md-description tag="500">Includes indexes</md-description>
- </location>
- <count>1</count>
- <relevance>3341</relevance>
- <recid>content: title technology programs that work author medium book</recid>
 </hit>
 <hit>
  <md-title>Check this out</md-title>
@@ -246,7 +222,7 @@
  <md-subject>Public libraries</md-subject>
  <md-description>Distributed to depository libraries in microfiche</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="Index Data MARC test server" checksum="4182051184">
+    name="Index Data MARC test server" checksum="4007858895">
   <md-title>Check this out</md-title>
   <md-title-remainder>library program models</md-title-remainder>
   <md-date>1987</md-date>

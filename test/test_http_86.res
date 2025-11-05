@@ -1,5 +1,5 @@
 <record xmlns="http://www.loc.gov/MARC21/slim">
-  <leader>00888nam a2200265   4504</leader>
+  <leader>00888pam a2200265   4500</leader>
   <controlfield tag="001">   72002565 </controlfield>
   <controlfield tag="003">DLC</controlfield>
   <controlfield tag="005">19730409000000.0</controlfield>

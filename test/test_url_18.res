@@ -30,28 +30,28 @@
  <recid>content: title water well data author medium book</recid>
 </hit>
 <hit>
- <md-title>UTAH GEOLOGICAL AND MINERAL SURVEY PUBLICATIONS</md-title>
- <md-description>Publications of the Utah Geological and Mineral Survey include reports of investigation, special studies, bulletins, open-file reports, geologic map of Utah, publications of geological societies, geologic and oil and mineral maps, coal monographs, circulars, water resource bulletins, and reprints of articles</md-description>
- <location id="my"
-    name="marcserver" checksum="4291493253">
-  <md-title>UTAH GEOLOGICAL AND MINERAL SURVEY PUBLICATIONS</md-title>
-  <md-description tag="520">Publications of the Utah Geological and Mineral Survey include reports of investigation, special studies, bulletins, open-file reports, geologic map of Utah, publications of geological societies, geologic and oil and mineral maps, coal monographs, circulars, water resource bulletins, and reprints of articles</md-description>
-  <md-description tag="513">-PRESENT</md-description>
- </location>
- <count>1</count>
- <recid>content: title utah geological and mineral survey publications author medium book</recid>
-</hit>
-<hit>
  <md-title>COAL SAMPLE BANK</md-title>
  <md-description>This data set contains methane data, chemical analysis data, and petrographic analysis data on core samples in Utah</md-description>
  <location id="my"
-    name="marcserver" checksum="4287955038">
+    name="marcserver" checksum="4291493253">
   <md-title>COAL SAMPLE BANK</md-title>
   <md-description tag="520">This data set contains methane data, chemical analysis data, and petrographic analysis data on core samples in Utah</md-description>
   <md-description tag="513">-PRESENT</md-description>
  </location>
  <count>1</count>
  <recid>content: title coal sample bank author medium book</recid>
+</hit>
+<hit>
+ <md-title>UTAH GEOLOGICAL AND MINERAL SURVEY PUBLICATIONS</md-title>
+ <md-description>Publications of the Utah Geological and Mineral Survey include reports of investigation, special studies, bulletins, open-file reports, geologic map of Utah, publications of geological societies, geologic and oil and mineral maps, coal monographs, circulars, water resource bulletins, and reprints of articles</md-description>
+ <location id="my"
+    name="marcserver" checksum="4287955038">
+  <md-title>UTAH GEOLOGICAL AND MINERAL SURVEY PUBLICATIONS</md-title>
+  <md-description tag="520">Publications of the Utah Geological and Mineral Survey include reports of investigation, special studies, bulletins, open-file reports, geologic map of Utah, publications of geological societies, geologic and oil and mineral maps, coal monographs, circulars, water resource bulletins, and reprints of articles</md-description>
+  <md-description tag="513">-PRESENT</md-description>
+ </location>
+ <count>1</count>
+ <recid>content: title utah geological and mineral survey publications author medium book</recid>
 </hit>
 <hit>
  <md-title>FRESH WATER WETLANDS MAPS</md-title>
@@ -77,10 +77,22 @@
  <recid>content: title maine geological survey bedrock water well inventory author medium book</recid>
 </hit>
 <hit>
+ <md-title>TIDAL (COASTAL) WETLAND OF CONNECTICUT</md-title>
+ <md-description>Tidal wetlands, as defined by State statute, which are delineated by engineering survey at a scale of 1:24,000 comprise this data set</md-description>
+ <location id="my"
+    name="marcserver" checksum="4277340393">
+  <md-title>TIDAL (COASTAL) WETLAND OF CONNECTICUT</md-title>
+  <md-description tag="520">Tidal wetlands, as defined by State statute, which are delineated by engineering survey at a scale of 1:24,000 comprise this data set</md-description>
+  <md-description tag="513">1972-PRESENT</md-description>
+ </location>
+ <count>1</count>
+ <recid>content: title tidal coastal wetland of connecticut author medium book</recid>
+</hit>
+<hit>
  <md-title>INLAND WETLANDS OF CONNECTICUT</md-title>
  <md-description>This data set contains inland wetlands, as defined by State statute, which are delineated at a scale of 1:12,000, based predominantly on location of wet soils</md-description>
  <location id="my"
-    name="marcserver" checksum="4277340393">
+    name="marcserver" checksum="4273802178">
   <md-title>INLAND WETLANDS OF CONNECTICUT</md-title>
   <md-description tag="520">This data set contains inland wetlands, as defined by State statute, which are delineated at a scale of 1:12,000, based predominantly on location of wet soils</md-description>
   <md-description tag="513">1972-PRESENT</md-description>
@@ -92,7 +104,7 @@
  <md-title>STREAM CHANNEL ENCROACHMENT LINE STUDIES</md-title>
  <md-description>Detailed engineering studies and large-scale mapping delineating high flow zones for regulation by the State are contained in this data set</md-description>
  <location id="my"
-    name="marcserver" checksum="4273802178">
+    name="marcserver" checksum="4270263963">
   <md-title>STREAM CHANNEL ENCROACHMENT LINE STUDIES</md-title>
   <md-description tag="520">Detailed engineering studies and large-scale mapping delineating high flow zones for regulation by the State are contained in this data set</md-description>
  </location>
@@ -103,24 +115,12 @@
  <md-title>DAM INVENTORY</md-title>
  <md-description>The inventory delineates the following:  dam name, drainage basin, water course, inspection record, safety status, ownership, and other information</md-description>
  <location id="my"
-    name="marcserver" checksum="4270263963">
+    name="marcserver" checksum="4266725748">
   <md-title>DAM INVENTORY</md-title>
   <md-description tag="520">The inventory delineates the following:  dam name, drainage basin, water course, inspection record, safety status, ownership, and other information</md-description>
   <md-description tag="513">-PRESENT</md-description>
  </location>
  <count>1</count>
  <recid>content: title dam inventory author medium book</recid>
-</hit>
-<hit>
- <md-title>TIDAL (COASTAL) WETLAND OF CONNECTICUT</md-title>
- <md-description>Tidal wetlands, as defined by State statute, which are delineated by engineering survey at a scale of 1:24,000 comprise this data set</md-description>
- <location id="my"
-    name="marcserver" checksum="4266725748">
-  <md-title>TIDAL (COASTAL) WETLAND OF CONNECTICUT</md-title>
-  <md-description tag="520">Tidal wetlands, as defined by State statute, which are delineated by engineering survey at a scale of 1:24,000 comprise this data set</md-description>
-  <md-description tag="513">1972-PRESENT</md-description>
- </location>
- <count>1</count>
- <recid>content: title tidal coastal wetland of connecticut author medium book</recid>
 </hit>
 </show>

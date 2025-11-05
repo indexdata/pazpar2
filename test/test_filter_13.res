@@ -15,7 +15,6 @@
 <term><name>1972</name><frequency>1</frequency></term>
 <term><name>1973</name><frequency>1</frequency></term>
 <term><name>1980</name><frequency>1</frequency></term>
-<term><name>1984</name><frequency>1</frequency></term>
 <term><name>1986</name><frequency>1</frequency></term>
 <term><name>1993</name><frequency>1</frequency></term>
 </list>
@@ -25,8 +24,6 @@
 <term><name>Cartography</name><frequency>1</frequency></term>
 <term><name>Computers</name><frequency>1</frequency></term>
 <term><name>Dropouts</name><frequency>1</frequency></term>
-<term><name>Educational technology</name><frequency>1</frequency></term>
-<term><name>Federal aid to education</name><frequency>1</frequency></term>
 <term><name>Greece</name><frequency>1</frequency></term>
 <term><name>Greek literature</name><frequency>1</frequency></term>
 <term><name>Handicapped children</name><frequency>1</frequency></term>
@@ -35,12 +32,14 @@
 <term><name>Leno, Jay</name><frequency>1</frequency></term>
 <term><name>Letterman, David</name><frequency>1</frequency></term>
 <term><name>Libraries and community</name><frequency>1</frequency></term>
+<term><name>Libraries and education</name><frequency>1</frequency></term>
+<term><name>Optical pattern recognition</name><frequency>1</frequency></term>
 </list>
 <list name="xtargets">
 <term>
 <id>z3950.indexdata.com/marc</id>
 <name>Index Data MARC test server</name>
-<frequency>12</frequency>
+<frequency>11</frequency>
 <state>Client_Idle</state>
 <diagnostic>0</diagnostic>
 </term>
