@@ -2,7 +2,7 @@
 <show><status>OK</status>
 <activeclients>0</activeclients>
 <merged>4</merged>
-<total>10</total>
+<total>11</total>
 <start>0</start>
 <num>4</num>
 <hit>
@@ -11,7 +11,7 @@
  <md-date>1977</md-date>
  <md-subject>Optical pattern recognition</md-subject>
  <location id="z3950.indexdata.com/marc"
-    name="marc" checksum="3659474317">
+    name="marc" checksum="3485282028">
   <md-title>Computer science &amp; technology</md-title>
   <md-title-remainder>proceedings of a workshop held at the National Bureau of Standards, Gaithersburg, MD, June 3-4, 1976</md-title-remainder>
   <md-date>1977</md-date>
@@ -40,7 +40,7 @@ score = relevance(102165);
  <md-subject>Bible</md-subject>
  <md-description>Vols. 2, 8: Missoula, Mont. : Published by Scholars Press for Biblical Research Associates</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="marc" checksum="3136897450">
+    name="marc" checksum="2962705161">
   <md-title>The Computer Bible</md-title>
   <md-date>1973-1980</md-date>
   <md-subject>Bible. O.T</md-subject>
@@ -70,7 +70,7 @@ score = relevance(102165);
  <md-author>Wood, Helen M</md-author>
  <md-subject>Computers</md-subject>
  <location id="z3950.indexdata.com/marc"
-    name="marc" checksum="3833666606">
+    name="marc" checksum="3659474317">
   <md-title>The use of passwords for controlled access to computer resources</md-title>
   <md-date>1977</md-date>
   <md-author>Wood, Helen M</md-author>
@@ -99,7 +99,7 @@ score = relevance(30649);
  <md-subject>Tomography</md-subject>
  <md-description>Includes bibliographical references and index</md-description>
  <location id="z3950.indexdata.com/marc"
-    name="marc" checksum="3485282028">
+    name="marc" checksum="3311089739">
   <md-title>Reconstruction tomography in diagnostic radiology and nuclear medicine</md-title>
   <md-title-remainder>proceedings of the workshop</md-title-remainder>
   <md-date>1977</md-date>

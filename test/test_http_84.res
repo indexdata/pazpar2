@@ -2,7 +2,7 @@
 <show><status>OK</status>
 <activeclients>0</activeclients>
 <merged>1</merged>
-<total>2</total>
+<total>1</total>
 <start>0</start>
 <num>1</num>
 <hit>
@@ -28,15 +28,15 @@
         YYYYYYYYY</md-test-usersetting-2>
  </location>
  <count>1</count>
- <relevance>48655</relevance>
+ <relevance>83177</relevance>
  <relevance_info>
 field=title content=The religious teachers of Greece.;
 teachers: w[1] += w(6) / (1+log2(1+lead_decay(0.000000) * length(2)));
 teachers: tf[1] += w[1](6) / length(5) (1.200000);
 relevance = 0;
-idf[1] = log(((1 + total(2))/termoccur(2));
-teachers: relevance += 100000 * tf[1](1.200000) * idf[1](0.405465) (48655);
-score = relevance(48655);
+idf[1] = log(((1 + total(1))/termoccur(1));
+teachers: relevance += 100000 * tf[1](1.200000) * idf[1](0.693147) (83177);
+score = relevance(83177);
  </relevance_info>
  <recid>content: title the religious teachers of greece author adam james medium book</recid>
 </hit>

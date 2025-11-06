@@ -8,7 +8,7 @@
 <hit>
  <md-title>UTAH GEOCHROMOMETRY</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="2074161109">
+    name="Index Data GILS test server" checksum="1725776531">
   <md-title>UTAH GEOCHROMOMETRY</md-title>
  </location>
  <count>1</count>
@@ -27,7 +27,7 @@ score = relevance(207944);
 <hit>
  <md-title>UTAH CRIB FILE</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="2596737976">
+    name="Index Data GILS test server" checksum="3293507132">
   <md-title>UTAH CRIB FILE</md-title>
  </location>
  <count>1</count>
@@ -46,7 +46,7 @@ score = relevance(138629);
 <hit>
  <md-title>UTAH EARTHQUAKE EPICENTERS</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="1725776531">
+    name="Index Data GILS test server" checksum="2074161109">
   <md-title>UTAH EARTHQUAKE EPICENTERS</md-title>
  </location>
  <count>1</count>
@@ -65,7 +65,7 @@ score = relevance(138629);
 <hit>
  <md-title>BIBLIOGRAPHY OF UTAH GEOLOGY</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="43693570">
+    name="Index Data GILS test server" checksum="3816083999">
   <md-title>BIBLIOGRAPHY OF UTAH GEOLOGY</md-title>
  </location>
  <count>1</count>
@@ -84,7 +84,7 @@ score = relevance(103972);
 <hit>
  <md-title>UTAH GEOLOGIC MAP BIBLIOGRAPHY</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="3119314843">
+    name="Index Data GILS test server" checksum="1899968820">
   <md-title>UTAH GEOLOGIC MAP BIBLIOGRAPHY</md-title>
  </location>
  <count>1</count>
@@ -103,7 +103,7 @@ score = relevance(103972);
 <hit>
  <md-title>UTAH GEOLOGICAL ASSOCIATION PUBLICATIONS</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="3816083999">
+    name="Index Data GILS test server" checksum="2770930265">
   <md-title>UTAH GEOLOGICAL ASSOCIATION PUBLICATIONS</md-title>
  </location>
  <count>1</count>
@@ -122,7 +122,7 @@ score = relevance(103972);
 <hit>
  <md-title>UTAH GEOLOGICAL SOCIETY PUBLICATIONS</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="3467699421">
+    name="Index Data GILS test server" checksum="217885859">
   <md-title>UTAH GEOLOGICAL SOCIETY PUBLICATIONS</md-title>
  </location>
  <count>1</count>
@@ -141,7 +141,7 @@ score = relevance(103972);
 <hit>
  <md-title>UTAH OIL FIELD FILE</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="2248353398">
+    name="Index Data GILS test server" checksum="4164468577">
   <md-title>UTAH OIL FIELD FILE</md-title>
  </location>
  <count>1</count>
@@ -160,7 +160,7 @@ score = relevance(103972);
 <hit>
  <md-title>UTAH GEOLOGICAL AND MINERAL SURVEY PUBLICATIONS</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="1899968820">
+    name="Index Data GILS test server" checksum="2945122554">
   <md-title>UTAH GEOLOGICAL AND MINERAL SURVEY PUBLICATIONS</md-title>
  </location>
  <count>1</count>
@@ -179,7 +179,7 @@ score = relevance(69314);
 <hit>
  <md-title>APPLIED GEOLOGY FILE</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="2422545687">
+    name="Index Data GILS test server" checksum="3641891710">
   <md-title>APPLIED GEOLOGY FILE</md-title>
  </location>
  <count>1</count>
@@ -195,7 +195,7 @@ score = relevance(0);
 <hit>
  <md-title>COAL SAMPLE BANK</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="2945122554">
+    name="Index Data GILS test server" checksum="2596737976">
   <md-title>COAL SAMPLE BANK</md-title>
  </location>
  <count>1</count>
@@ -211,7 +211,7 @@ score = relevance(0);
 <hit>
  <md-title>ELECTRIC LOG LIBRARY</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="3990276288">
+    name="Index Data GILS test server" checksum="2422545687">
   <md-title>ELECTRIC LOG LIBRARY</md-title>
  </location>
  <count>1</count>
@@ -227,7 +227,7 @@ score = relevance(0);
 <hit>
  <md-title>INTERMOUNTAIN ASSOCIATION OF PETROLEUM GEOLOGISTS/GEOLOGISTS PUBLICATIONS</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="3641891710">
+    name="Index Data GILS test server" checksum="3990276288">
   <md-title>INTERMOUNTAIN ASSOCIATION OF PETROLEUM GEOLOGISTS/GEOLOGISTS PUBLICATIONS</md-title>
  </location>
  <count>1</count>
@@ -243,7 +243,7 @@ score = relevance(0);
 <hit>
  <md-title>MEASURED GEOLOGIC SECTIONS</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="3293507132">
+    name="Index Data GILS test server" checksum="3467699421">
   <md-title>MEASURED GEOLOGIC SECTIONS</md-title>
  </location>
  <count>1</count>
@@ -259,7 +259,7 @@ score = relevance(0);
 <hit>
  <md-title>MINE MAP INDEX</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="2770930265">
+    name="Index Data GILS test server" checksum="2248353398">
   <md-title>MINE MAP INDEX</md-title>
  </location>
  <count>1</count>
@@ -275,7 +275,7 @@ score = relevance(0);
 <hit>
  <md-title>OIL IMPREGNATED ROCK DEPOSITS</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="217885859">
+    name="Index Data GILS test server" checksum="3119314843">
   <md-title>OIL IMPREGNATED ROCK DEPOSITS</md-title>
  </location>
  <count>1</count>
@@ -291,7 +291,7 @@ score = relevance(0);
 <hit>
  <md-title>WELL SAMPLE LIBRARY</md-title>
  <location id="z3950.indexdata.com/gils"
-    name="Index Data GILS test server" checksum="4164468577">
+    name="Index Data GILS test server" checksum="43693570">
   <md-title>WELL SAMPLE LIBRARY</md-title>
  </location>
  <count>1</count>

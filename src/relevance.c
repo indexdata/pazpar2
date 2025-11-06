@@ -359,10 +359,9 @@ int relevance_snippet(struct relevance *r,
     {
         size_t org_start, org_len;
         struct word_entry *entries = r->entries;
-        int i;
 
         pp2_get_org(r->prt, &org_start, &org_len);
-        for (; entries; entries = entries->next, i++)
+        for (; entries; entries = entries->next)
         {
             if (*norm_str && !strcmp(norm_str, entries->norm_str))
                 break;

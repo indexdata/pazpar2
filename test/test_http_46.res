@@ -1,5 +1,5 @@
 <r xmlns="http://www.indexdata.com/turbomarc">
-  <l>01369nam a2200265 i 4504</l>
+  <l>01369cam a2200265 i 4500</l>
   <c001>   73090924 //r82</c001>
   <c003>DLC</c003>
   <c005>19820524000000.0</c005>

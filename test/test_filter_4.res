@@ -16,7 +16,6 @@
 <term><name>1972</name><frequency>1</frequency></term>
 <term><name>1973</name><frequency>1</frequency></term>
 <term><name>1980</name><frequency>1</frequency></term>
-<term><name>1984</name><frequency>1</frequency></term>
 <term><name>1986</name><frequency>1</frequency></term>
 <term><name>1991</name><frequency>1</frequency></term>
 <term><name>1992</name><frequency>1</frequency></term>
@@ -30,19 +29,19 @@
 <term><name>Computer networks</name><frequency>1</frequency></term>
 <term><name>Computers</name><frequency>1</frequency></term>
 <term><name>Dropouts</name><frequency>1</frequency></term>
-<term><name>Educational technology</name><frequency>1</frequency></term>
-<term><name>Federal aid to education</name><frequency>1</frequency></term>
 <term><name>Greece</name><frequency>1</frequency></term>
 <term><name>Greek literature</name><frequency>1</frequency></term>
 <term><name>Handicapped children</name><frequency>1</frequency></term>
 <term><name>Imaging systems in medicine</name><frequency>1</frequency></term>
 <term><name>Information networks</name><frequency>1</frequency></term>
+<term><name>Instructional materials centers</name><frequency>1</frequency></term>
+<term><name>Leno, Jay</name><frequency>1</frequency></term>
 </list>
 <list name="xtargets">
 <term>
 <id>z3950.indexdata.com/marc</id>
 <name>Index Data MARC test server</name>
-<frequency>15</frequency>
+<frequency>14</frequency>
 <state>Client_Idle</state>
 <diagnostic>0</diagnostic>
 </term>
