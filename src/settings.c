@@ -167,7 +167,7 @@ static int isdir(const char *path)
         yaz_log(YLOG_FATAL|YLOG_ERRNO, "stat %s", path);
         exit(1);
     }
-    return st.st_mode & S_IFDIR;
+    return S_ISDIR(st.st_mode);
 }
 
 // Read settings from an XML file, calling handler function for each setting

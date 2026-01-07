@@ -429,7 +429,7 @@ static void cmd_init(struct http_channel *c)
             ignored_content = 1;
         else
         {
-            xmlDoc *doc = xmlParseMemory(r->content_buf, r->content_len);
+            xmlDoc *doc = xmlReadMemory(r->content_buf, r->content_len, 0, 0, 0);
             xmlNode *root_n;
             if (!doc)
             {
@@ -513,7 +513,7 @@ static void cmd_settings(struct http_channel *c)
         }
         else
         {
-            xmlDoc *doc = xmlParseMemory(rq->content_buf, rq->content_len);
+            xmlDoc *doc = xmlReadMemory(rq->content_buf, rq->content_len, 0, 0, 0);
             xmlNode *root_n;
             int ret;
             if (!doc)
