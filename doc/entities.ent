@@ -1,5 +1,5 @@
 <!-- Manually edited stuff used for all package documentation -->
-<!ENTITY copyright-year "2006-2022">
+<!ENTITY copyright-year "2006-2026">
 <!ENTITY manref SYSTEM "manref.xml">
 <!ENTITY sect-ajaxdev SYSTEM "ajaxdev.xml">
 <!ENTITY gpl2 SYSTEM "gpl-2.0.xml">
