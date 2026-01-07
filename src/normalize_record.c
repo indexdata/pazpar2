@@ -62,7 +62,7 @@ normalize_record_t normalize_record_create(struct conf_service *service,
 
     if (embed)
     {
-        xmlDoc *xsp_doc = xmlParseMemory(spec, strlen(spec));
+        xmlDoc *xsp_doc = xmlReadMemory(spec, strlen(spec), 0, 0, 0);
 
         if (!xsp_doc)
             no_errors++;

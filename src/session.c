@@ -237,7 +237,7 @@ const char *session_lookup_id_facet(struct session *s, struct client *cl,
 {
     char *retval = 0;
     struct facet_id *t = s->facet_id_list;
-    for (; t; t = t->next) 
+    for (; t; t = t->next)
     {
         if (!strcmp(client_get_id(cl), t->client_id) &&  !strcmp(t->type, type) )
         {
@@ -301,8 +301,7 @@ static xmlDoc *record_to_xml(struct session *se,
     struct database *db = sdb->database;
     xmlDoc *rdoc = 0;
 
-    rdoc = xmlParseMemory(rec, strlen(rec));
-
+    rdoc = xmlReadMemory(rec, strlen(rec), 0, 0, XML_PARSE_NSCLEAN + XML_PARSE_DTDLOAD);
     if (!rdoc)
     {
         session_log(se, YLOG_WARN, "Non-wellformed XML");
@@ -1704,7 +1703,7 @@ static int get_mergekey_from_doc(xmlDoc *doc, xmlNode *root, const char *name,
     return no_found;
 }
 
-static const char *get_mergekey(xmlDoc *doc, xmlNode *root, 
+static const char *get_mergekey(xmlDoc *doc, xmlNode *root,
                                 struct client *cl, int record_no,
                                 struct conf_service *service, NMEM nmem,
                                 const char *session_mergekey)

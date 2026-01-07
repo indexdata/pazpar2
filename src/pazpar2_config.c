@@ -805,7 +805,7 @@ static struct conf_service *service_create_static(struct conf_server *server,
         xmlBufferPtr buf = xmlBufferCreate();
         xmlNodeDump(buf, node->doc, node, 0, 0);
         service->xml_node =
-            nmem_strdupn(service->nmem, (const char *) buf->content, buf->use);
+            nmem_strdupn(service->nmem, (const char *) xmlBufferContent(buf), xmlBufferLength(buf));
         xmlBufferFree(buf);
     }
     return service;
@@ -1289,18 +1289,13 @@ static int parse_config(struct conf_config *config, xmlNode *root)
 
 struct conf_config *config_create(const char *fname)
 {
-    xmlDoc *doc = xmlReadFile(fname,
-                              NULL,
-                              XML_PARSE_XINCLUDE
-                              + XML_PARSE_NSCLEAN + XML_PARSE_NONET);
+    xmlDoc *doc = xmlReadFile(fname, 0, XML_PARSE_XINCLUDE + XML_PARSE_NSCLEAN + XML_PARSE_DTDLOAD);
     xmlNode *n;
     const char *p;
     int r;
     NMEM nmem = nmem_create();
     struct conf_config *config = nmem_malloc(nmem, sizeof(struct conf_config));
 
-    xmlSubstituteEntitiesDefault(1);
-    xmlLoadExtDtdDefaultValue = 1;
     if (!doc)
     {
         yaz_log(YLOG_FATAL, "Failed to read %s", fname);

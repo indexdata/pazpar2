@@ -67,11 +67,6 @@ typedef int socklen_t;
 
 #define MAX_HTTP_HEADER 4096
 
-#ifdef WIN32
-#define strncasecmp _strnicmp
-#define strcasecmp _stricmp
-#endif
-
 struct http_buf
 {
 #define HTTP_BUF_SIZE 4096
@@ -120,7 +115,7 @@ const char *http_lookup_header(struct http_header *header,
                                const char *name)
 {
     for (; header; header = header->next)
-        if (!strcasecmp(name, header->name))
+        if (!yaz_strcasecmp(name, header->name))
             return header->value;
     return 0;
 }
@@ -363,7 +358,7 @@ static int package_check(const char *buf, int sz)
         }
         buf = b;
         // following first skip of \r\n so that we don't consider Method
-        if (!strncasecmp(buf, "Content-Length:", 15))
+        if (!yaz_strncasecmp(buf, "Content-Length:", 15))
         {
             const char *cp = buf+15;
             while (*cp == ' ')
@@ -634,7 +629,7 @@ static struct http_buf *http_serialize_response(struct http_channel *c,
         wrbuf_printf(c->wrbuf, "Content-Type: %s\r\n", r->content_type);
         if (!strcmp(r->content_type, "text/xml"))
         {
-            xmlDoc *doc = xmlParseMemory(r->payload, strlen(r->payload));
+            xmlDoc *doc = xmlReadMemory(r->payload, strlen(r->payload), 0, 0, 0);
             if (doc)
             {
                 xmlFreeDoc(doc);
