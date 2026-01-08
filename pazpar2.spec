@@ -35,15 +35,15 @@ for f in /usr/share/pazpar2/xsl/*.xsl; do
 	fi
 done
 if [ $1 = 1 ]; then
-        /usr/bin/systemctl daemon-reload > /dev/null 2>&1
-        /usr/bin/systemctl enable pazpar2 > /dev/null 2>&1
-        /usr/bin/systemctl start pazpar2 > /dev/null 2>&1
+	/usr/bin/systemctl daemon-reload > /dev/null 2>&1
+	/usr/bin/systemctl enable pazpar2 > /dev/null 2>&1
+	/usr/bin/systemctl start pazpar2 > /dev/null 2>&1
 else
-        /usr/bin/systemctl restart pazpar2 > /dev/null 2>&1
+	/usr/bin/systemctl restart pazpar2 > /dev/null 2>&1
 fi
 %preun
 if [ $1 = 0 ]; then
-        /usr/bin/systemctl stop pazpar2 > /dev/null 2>&1
+	/usr/bin/systemctl stop pazpar2 > /dev/null 2>&1
 fi
 
 %description -n pazpar2-js
