@@ -7,7 +7,7 @@
 	notifempty
 	postrotate
 		if [ -f /var/run/pazpar2.pid ]; then
-			/user/bin/systemctl restart pazpar2 > /dev/null
+			/usr/bin/systemctl restart pazpar2 > /dev/null
 		fi
 	endscript
 }
