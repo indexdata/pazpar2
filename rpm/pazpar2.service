@@ -10,7 +10,6 @@ Type=simple
 EnvironmentFile=/etc/sysconfig/pazpar2
 Restart=on-abort
 KillMode=process
-PIDFile=${PP2_PID_FILE}
 ExecStart=/bin/bash -ce "exec /usr/sbin/pazpar2 ${PP2_OPTIONS}"
 
 [Install]

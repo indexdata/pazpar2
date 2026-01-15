@@ -9,21 +9,49 @@ Source: pazpar2-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 BuildRequires: libyaz5-devel >= 5.18.0
 BuildRequires: pkgconfig
+%if 0%{?rhel} >= 9
+BuildRequires: systemd-rpm-macros
+%else
+BuildRequires: systemd
+%endif
 Packager: Adam Dickmeiss <adam@indexdata.dk>
-URL: http://www.indexdata.com/pazpar2
+URL: https://www.indexdata.com/pazpar2
 Summary: pazpar2 daemon
 Requires: libyaz5 >= 5.29.0
 Requires: pazpar2-xsl
+
+# Use systemd macros for safe scriptlets
+%{?systemd_requires}
+
+%package -n pazpar2-xsl
+Summary: XSLTs for converting to pz2 format
+Group: Data
+
+%package -n pazpar2-js
+Summary: pazpar2 JS
+Group: Data
+Requires: pazpar2
+
+%package -n pazpar2-doc
+Summary: pazpar2 documentation
+Group: Data
 
 %description
 Pazpar2 is a high-performance, user interface-independent, data
 model-independent metasearching middleware featuring merging, relevance
 ranking, record sorting, and faceted results.
 
-%package -n pazpar2-js
-Summary: pazpar2 JS
-Group: Data
-Requires: pazpar2
+%description -n pazpar2-xsl
+This package includes XSLTs for converting from various input XML formats
+to Pazpar2's internal XML format.
+
+%description -n pazpar2-js
+This package includes the Java Script library pz2.js. It also adds an
+Alias for Apache2 so that this library and other demo portals are
+available.
+
+%description -n pazpar2-doc
+This package includes documentation for Pazpar2 - the metasearcher.
 
 %post
 for f in /usr/share/pazpar2/xsl/*.xsl; do
@@ -34,53 +62,31 @@ for f in /usr/share/pazpar2/xsl/*.xsl; do
 		fi
 	fi
 done
-if [ $1 = 1 ]; then
-	/usr/bin/systemctl daemon-reload > /dev/null 2>&1
-	/usr/bin/systemctl enable pazpar2 > /dev/null 2>&1
-	/usr/bin/systemctl start pazpar2 > /dev/null 2>&1
-else
-	/usr/bin/systemctl restart pazpar2 > /dev/null 2>&1
-fi
-%preun
-if [ $1 = 0 ]; then
-	/usr/bin/systemctl stop pazpar2 > /dev/null 2>&1
-fi
+%systemd_post pazpar2.service
 
-%description -n pazpar2-js
-This package includes the Java Script library pz2.js. It also adds an
-Alias for Apache2 so that this library and other demo portals are
-available.
+%postun
+%systemd_postun_with_restart pazpar2.service
 
 %posttrans -n pazpar2-js
 if [ -d /etc/httpd/conf.d ]; then
 	ln -sf /etc/pazpar2/ap2pazpar2-js.cfg /etc/httpd/conf.d/pazpar2-js.conf
 fi
+
+%preun
+%systemd_preun pazpar2.service
+
 %preun -n pazpar2-js
 if [ $1 = 0 ]; then
 	if [ -L /etc/httpd/conf.d/pazpar2-js.conf ]; then
 		rm /etc/httpd/conf.d/pazpar2-js.conf
 	fi
 fi
-%package -n pazpar2-xsl
-Summary: XSLTs for converting to pz2 format
-Group: Data
-
-%description -n pazpar2-xsl
-This package includes XSLTs for converting from various input XML formats
-to Pazpar2's internal XML format.
-
-%package -n pazpar2-doc
-Summary: pazpar2 documentation
-Group: Data
-
-%description -n pazpar2-doc
-This package includes documentation for Pazpar2 - the metasearcher.
 
 %prep
+
 %setup
 
 %build
-
 CFLAGS="$RPM_OPT_FLAGS" \
  ./configure --prefix=%{_prefix} --libdir=%{_libdir} --mandir=%{_mandir} \
 	--with-yaz=pkg
@@ -104,8 +110,8 @@ cp etc/settings/*.xml ${RPM_BUILD_ROOT}/etc/pazpar2/settings/
 cp -r etc/settings/mkc ${RPM_BUILD_ROOT}/etc/pazpar2/settings
 mkdir -p ${RPM_BUILD_ROOT}/usr/share/pazpar2/xsl
 cp etc/xsl/*.xsl ${RPM_BUILD_ROOT}/usr/share/pazpar2/xsl
-mkdir -p ${RPM_BUILD_ROOT}/etc/systemd/system
-install -m755 rpm/pazpar2.service ${RPM_BUILD_ROOT}/etc/systemd/system/pazpar2.service
+mkdir -p ${RPM_BUILD_ROOT}/usr/lib/systemd/system
+install -m644 rpm/pazpar2.service ${RPM_BUILD_ROOT}/usr/lib/systemd/system/pazpar2.service
 mkdir -p ${RPM_BUILD_ROOT}/etc/sysconfig
 install -m644 rpm/pazpar2.sysconfig ${RPM_BUILD_ROOT}/etc/sysconfig/pazpar2
 echo "Alias /pazpar2 /usr/share/pazpar2" >${RPM_BUILD_ROOT}/etc/pazpar2/ap2pazpar2-js.cfg
@@ -130,8 +136,8 @@ rm -fr ${RPM_BUILD_ROOT}
 %config %{_sysconfdir}/pazpar2/settings/*/*.xml
 %config %{_sysconfdir}/pazpar2/services-available/*.xml
 %config %{_sysconfdir}/sysconfig/pazpar2
-%config %{_sysconfdir}/systemd/system/pazpar2.service
 %config(noreplace) /etc/logrotate.d/pazpar2
+/usr/lib/systemd/system/pazpar2.service
 %{_mandir}/man1/pazpar2*
 %{_mandir}/man5/pazpar2*
 %{_mandir}/man7/pazpar2*

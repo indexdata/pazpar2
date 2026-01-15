@@ -1,4 +1,4 @@
 PP2_USER=nobody
-PP2_LOG=/var/log/pazpar2
-PP2_PID_FILE=/var/run/pazpar2.pid
-PP2_OPTIONS="-u ${PP2_USER} -l ${PP2_LOG} -f /etc/pazpar2/server.xml -p $PP2_PID_FILE"
+PP2_LOG=/var/log/pazpar2.log
+PP2_PID_FILE=/run/pazpar2.pid
+PP2_OPTIONS="-u ${PP2_USER} -l ${PP2_LOG} -p ${PP2_PID_FILE} -f /etc/pazpar2/server.xml"
