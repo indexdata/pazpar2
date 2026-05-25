@@ -1,7 +1,7 @@
 # This file is part of Pazpar2.
 SUBDIRS = common
 
-SUFFIXES=.1 .5 .7 .8 .pdf .esp .xml 
+SUFFIXES=.1 .5 .7 .8 .pdf .esp .xml
 
 XMLFILES = book.xml ajaxdev.xml manref.xml gpl-2.0.xml local.ent
 
@@ -51,7 +51,7 @@ jade-check: $(XMLFILES)
 manref.xml: $(XMLMAN) $(srcdir)/common/stripref.xsl local.ent
 	rm -f manref.xml
 	for i in $(XMLMAN); do \
-		xsltproc $(srcdir)/common/stripref.xsl $(srcdir)/$$i | sed 1d >> manref.xml; \
+		$(XSLTPROC_COMPILE) $(srcdir)/common/stripref.xsl $(srcdir)/$$i | sed 1d >> manref.xml; \
 	done
 
 clean-data-hook:

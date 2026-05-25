@@ -20,12 +20,12 @@
   <manvolnum>8</manvolnum>
   <refmiscinfo class="manual">System management commands</refmiscinfo>
  </refmeta>
- 
+
  <refnamediv>
   <refname>pazpar2</refname>
   <refpurpose>Metasearch daemon.</refpurpose>
  </refnamediv>
- 
+
  <refsynopsisdiv>
   <cmdsynopsis>
    <command>pazpar2</command>
@@ -47,7 +47,7 @@
    <arg choice="opt"><option>-remove</option></arg>
   </cmdsynopsis>
  </refsynopsisdiv>
- 
+
  <refsect1>
   <title>DESCRIPTION</title>
   <para>
@@ -61,10 +61,10 @@
    <option>-f</option>.
   </para>
  </refsect1>
- 
+
  <refsect1>
   <title>OPTIONS</title>
-  
+
   <variablelist>
    <varlistentry>
     <term><option>-d</option></term>
@@ -124,7 +124,7 @@
      Sets the format of time-stamps for logging.
      Refer to the
        <ulink
-	   url="http://pubs.opengroup.org/onlinepubs/009695399/functions/strftime.html">
+	   url="https://pubs.opengroup.org/onlinepubs/009695399/functions/strftime.html">
        strftime(3)</ulink>
        man page for the format.
     </para></listitem>
@@ -252,16 +252,16 @@
    </varlistentry>
 
   </variablelist>
-  
+
  </refsect1>
- 
+
  <refsect1>
   <title>EXAMPLES</title>
   <para>The Debian package of pazpar2 starts the server with:
    <screen>
     pazpar2 -D -f /etc/pazpar2/pazpar2.cfg -l /var/log/pazpar2.log -p /var/run/pazpar2.pid -u nobody
    </screen>
-   (one line). 
+   (one line).
   </para>
   <para>
    This will put pazpar2 in the background (-D), read config from from
@@ -284,17 +284,17 @@
     (gdb) run -X -f ../etc/pazpar2.cfg
    </screen>
   </para>
- </refsect1> 
- 
+ </refsect1>
+
  <refsect1>
   <title>FILES</title>
   <para><filename>/usr/sbin/pazpar2</filename>: pazpar2 daemon</para>
-  
+
   <para><filename>/usr/share/pazpar2</filename>: pazpar2 shared files</para>
-  
+
   <para><filename>/etc/pazpar2</filename>: pazpar2 config area</para>
  </refsect1>
- 
+
  <refsect1>
   <title>SEE ALSO</title>
   <para>
