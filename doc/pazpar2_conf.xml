@@ -648,7 +648,7 @@
 	  'name' and 'value' respectively. Refer to possible list of names
 	  in the
 	  <ulink
-	      url="http://www.indexdata.com/yaz/doc/tools.html#ccl.directives.table">
+	      url="https://www.indexdata.com/yaz/doc/tools.html#ccl.directives.table">
 	   YAZ manual
 	   </ulink>.
 	 </para>

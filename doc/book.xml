@@ -427,7 +427,7 @@
    <para>
     Apache 2 has a
     <ulink
-	url="http://httpd.apache.org/docs/2.2/mod/mod_proxy.html">
+	url="https://httpd.apache.org/docs/2.2/mod/mod_proxy.html">
      proxy module
     </ulink>
     which allows Pazpar2 to become a backend to an Apache 2
@@ -448,7 +448,7 @@
     <literal>/search.pz2</literal>.
     The
     <ulink
-	url="http://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypass">
+	url="https://httpd.apache.org/docs/2.2/mod/mod_proxy.html#proxypass">
     ProxyPass
     </ulink>
     directive of Apache must be used to map a URL path
@@ -681,7 +681,7 @@
     search. You start a new search using the 'search' command. Once the
     search has been started, you can follow its progress using the
     'stat', 'bytarget', 'termlist', or 'show' commands. Detailed records
-    can be fetched using the 'record' command. 
+    can be fetched using the 'record' command.
    </para>
   </section>
 
@@ -723,7 +723,7 @@
      requests to Pazpar2, this set up can be easily extended to include
      load balancing capabilites.
      To do so, you need to enable the
-     <ulink url="http://httpd.apache.org/docs/2.2/mod/mod_proxy_balancer.html">
+     <ulink url="https://httpd.apache.org/docs/2.2/mod/mod_proxy_balancer.html">
       mod_proxy_balance
      </ulink>
      module in your Apache2 installation.
@@ -866,7 +866,7 @@
        ]]></screen>
    <para>
     For controlling the ranking parameters, refer to the
-    <link linkend="service-rank">rank</link> element of the 
+    <link linkend="service-rank">rank</link> element of the
     service definition.
     Refer to the <link linkend="metadata-rank">rank</link> attribute
     of the metadata element for how to control ranking for individual
