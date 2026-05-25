@@ -290,7 +290,7 @@ static int read_settings(const char *path,
     int ret = 0;
     DIR *d;
     struct dirent *de;
-    char *dot;
+    const char *dot;
 
     if (isdir(path))
     {
