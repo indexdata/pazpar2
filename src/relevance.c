@@ -322,9 +322,8 @@ static struct word_entry *word_entry_match(struct relevance *r,
                                            const char *norm_str,
                                            const char *rank, int *weight)
 {
-    int i = 1;
     struct word_entry *entries = r->entries;
-    for (; entries; entries = entries->next, i++)
+    for (; entries; entries = entries->next)
     {
         if (*norm_str && !strcmp(norm_str, entries->norm_str))
         {

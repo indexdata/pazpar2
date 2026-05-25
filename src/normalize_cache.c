@@ -17,15 +17,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 */
 
+#if HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #include <string.h>
 
 #include <yaz/yaz-util.h>
 #include <yaz/mutex.h>
 #include <yaz/nmem.h>
-
-#if HAVE_CONFIG_H
-#include <config.h>
-#endif
 
 #include "ppmutex.h"
 #include "normalize_cache.h"
