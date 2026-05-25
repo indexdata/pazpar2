@@ -795,7 +795,7 @@ static const char *get_strategy_plus_sort(struct client *l, const char *field)
 
     for (s = sdb->settings[PZ_SORTMAP]; s; s = s->next)
     {
-        char *p = strchr(s->name + 3, ':');
+        const char *p = strchr(s->name + 3, ':');
         if (!p)
         {
             yaz_log(YLOG_WARN, "Malformed sortmap name: %s", s->name);
@@ -1209,7 +1209,7 @@ static CCL_bibset prepare_cclmap(struct client *cl, CCL_bibset base_bibset)
     for (s = sdb->settings[PZ_CCLMAP]; s; s = s->next)
     {
         const char *addinfo = 0;
-        char *p = strchr(s->name + 3, ':');
+        const char *p = strchr(s->name + 3, ':');
         if (!p)
         {
             WRBUF w = wrbuf_alloc();
