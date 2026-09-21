@@ -26,8 +26,8 @@ if test -z "$YAZLIB"; then
 	AC_MSG_ERROR([YAZ development libraries missing])
 fi
 case $YAZINC in
-  *YAZ_HAVE_XSLT=1*) ;;
-  *) AC_MSG_ERROR([YAZ not compiled with Libxslt support]) ;;
+	*YAZ_HAVE_XSLT=1*) ;;
+	*) AC_MSG_ERROR([YAZ not compiled with Libxslt support]) ;;
 esac
 
 YAZ_DOC
@@ -37,12 +37,12 @@ AC_CHECK_HEADERS([sys/time.h sys/socket.h unistd.h netdb.h])
 checkBoth=0
 AC_CHECK_FUNC([connect])
 if test "$ac_cv_func_connect" = "no"; then
-    AC_CHECK_LIB([socket],[main], [LIBS="$LIBS -lsocket"], [checkBoth=1])
+	AC_CHECK_LIB([socket],[main], [LIBS="$LIBS -lsocket"], [checkBoth=1])
 fi
 if test "$checkBoth" = "1"; then
-    oldLibs=$LIBS
-    LIBS="$LIBS -lsocket -lnsl"
-    AC_CHECK_FUNC([accept], , [LIBS=$oldLibs])
+	oldLibs=$LIBS
+	LIBS="$LIBS -lsocket -lnsl"
+	AC_CHECK_FUNC([accept], , [LIBS=$oldLibs])
 fi
 AC_CHECK_FUNC([gethostbyname], ,[AC_CHECK_LIB(nsl, main, [LIBS="$LIBS -lnsl"])])
 AC_CHECK_FUNCS([getaddrinfo getrlimit])
@@ -93,9 +93,3 @@ echo \
   Bugreport:                  ${PACKAGE_BUGREPORT}
 
 ------------------------------------------------------------------------"
-
-dnl Local Variables:
-dnl mode:shell-script
-dnl sh-indentation:2
-dnl sh-basic-offset: 4
-dnl End:
