@@ -11,4 +11,4 @@ Installation instructions and documentation is found in directory [doc](doc) and
 [online](https://www.indexdata.com/pazpar2/doc) .
 
 To get more information or assistance, send mail to info@indexdata.com or
-use [GitHub discussions](http://github.com/indexdata/pazpar2/discussions)
+use [GitHub discussions](https://github.com/indexdata/pazpar2/discussions)
