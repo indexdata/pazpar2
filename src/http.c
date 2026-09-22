@@ -726,13 +726,12 @@ struct http_header * http_header_append(struct http_channel *ch,
 static int is_inprogress(void)
 {
 #ifdef WIN32
-    if (WSAGetLastError() == WSAEWOULDBLOCK)
-        return 1;
+    return WSAGetLastError() == WSAEWOULDBLOCK;
 #else
-    if (errno == EINPROGRESS || errno == EAGAIN)
-        return 1;
+    return errno == EINPROGRESS ||
+        errno == EWOULDBLOCK ||
+        errno == EAGAIN;
 #endif
-    return 0;
 }
 
 static void enable_nonblock(int sock)
