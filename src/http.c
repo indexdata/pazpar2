@@ -726,13 +726,12 @@ struct http_header * http_header_append(struct http_channel *ch,
 static int is_inprogress(void)
 {
 #ifdef WIN32
-    if (WSAGetLastError() == WSAEWOULDBLOCK)
-        return 1;
+    return WSAGetLastError() == WSAEWOULDBLOCK;
 #else
-    if (errno == EINPROGRESS)
-        return 1;
+    return errno == EINPROGRESS ||
+        errno == EWOULDBLOCK ||
+        errno == EAGAIN;
 #endif
-    return 0;
 }
 
 static void enable_nonblock(int sock)
@@ -894,7 +893,7 @@ static void http_io(IOCHAN i, int event)
 
             htbuf = http_buf_create(hc->http_server);
             res = recv(iochan_getfd(i), htbuf->buf, HTTP_BUF_SIZE -1, 0);
-            if (res == -1 && errno == EAGAIN)
+            if (res == -1 && is_inprogress())
             {
                 http_buf_destroy(hc->http_server, htbuf);
                 return;
@@ -1052,13 +1051,17 @@ static void proxy_io(IOCHAN pi, int event)
         case EVENT_INPUT:
             htbuf = http_buf_create(hc->http_server);
             res = recv(iochan_getfd(pi), htbuf->buf, HTTP_BUF_SIZE -1, 0);
-            if (res == 0 || (res < 0 && !is_inprogress()))
+            if (res == -1 && is_inprogress())
             {
+                http_buf_destroy(hc->http_server, htbuf);
+                return;
+            }
+            if (res <= 0)
+            {
+                http_buf_destroy(hc->http_server, htbuf);
                 if (hc->oqueue)
                 {
-                    yaz_log(YLOG_WARN, "Proxy read came up short");
                     // Close channel and alert client HTTP channel that we're gone
-                    http_buf_destroy(hc->http_server, htbuf);
                     CLOSESOCKET(iochan_getfd(pi));
                     iochan_destroy(pi);
                     pc->iochan = 0;
@@ -1066,18 +1069,15 @@ static void proxy_io(IOCHAN pi, int event)
                 else
                 {
                     http_channel_destroy(hc->iochan);
-                    return;
                 }
+                return;
             }
-            else
-            {
-                htbuf->buf[res] = '\0';
-                htbuf->offset = 0;
-                htbuf->len = res;
-                // Write any remaining payload
-                if (htbuf->len - htbuf->offset > 0)
-                    http_buf_enqueue(&hc->oqueue, htbuf);
-            }
+            htbuf->buf[res] = '\0';
+            htbuf->offset = 0;
+            htbuf->len = res;
+            // Write any remaining payload
+            if (htbuf->len - htbuf->offset > 0)
+                http_buf_enqueue(&hc->oqueue, htbuf);
             iochan_setflag(hc->iochan, EVENT_OUTPUT);
             break;
         case EVENT_OUTPUT:

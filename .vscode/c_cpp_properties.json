@@ -4,6 +4,7 @@
             "name": "Linux",
             "includePath": [
                 "${default}",
+                "${workspaceFolder}/src",
                 "${workspaceFolder}/include",
                 "/usr/include/libxml2"
             ],
