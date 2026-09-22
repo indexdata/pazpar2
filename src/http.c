@@ -729,7 +729,7 @@ static int is_inprogress(void)
     if (WSAGetLastError() == WSAEWOULDBLOCK)
         return 1;
 #else
-    if (errno == EINPROGRESS)
+    if (errno == EINPROGRESS || errno == EAGAIN)
         return 1;
 #endif
     return 0;
@@ -894,7 +894,7 @@ static void http_io(IOCHAN i, int event)
 
             htbuf = http_buf_create(hc->http_server);
             res = recv(iochan_getfd(i), htbuf->buf, HTTP_BUF_SIZE -1, 0);
-            if (res == -1 && errno == EAGAIN)
+            if (res == -1 && is_inprogress())
             {
                 http_buf_destroy(hc->http_server, htbuf);
                 return;
@@ -1052,20 +1052,14 @@ static void proxy_io(IOCHAN pi, int event)
         case EVENT_INPUT:
             htbuf = http_buf_create(hc->http_server);
             res = recv(iochan_getfd(pi), htbuf->buf, HTTP_BUF_SIZE -1, 0);
-            if (res > 0)
-            {
-                htbuf->buf[res] = '\0';
-                htbuf->offset = 0;
-                htbuf->len = res;
-                // Write any remaining payload
-                if (htbuf->len - htbuf->offset > 0)
-                    http_buf_enqueue(&hc->oqueue, htbuf);
-            }
-            else
+            if (res == -1 && is_inprogress())
             {
                 http_buf_destroy(hc->http_server, htbuf);
-                if (res < 0 && errno == EAGAIN)
-                    return;
+                return;
+            }
+            if (res <= 0)
+            {
+                http_buf_destroy(hc->http_server, htbuf);
                 if (hc->oqueue)
                 {
                     // Close channel and alert client HTTP channel that we're gone
@@ -1076,9 +1070,15 @@ static void proxy_io(IOCHAN pi, int event)
                 else
                 {
                     http_channel_destroy(hc->iochan);
-                    return;
                 }
+                return;
             }
+            htbuf->buf[res] = '\0';
+            htbuf->offset = 0;
+            htbuf->len = res;
+            // Write any remaining payload
+            if (htbuf->len - htbuf->offset > 0)
+                http_buf_enqueue(&hc->oqueue, htbuf);
             iochan_setflag(hc->iochan, EVENT_OUTPUT);
             break;
         case EVENT_OUTPUT:
