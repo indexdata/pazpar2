@@ -1064,7 +1064,7 @@ static void proxy_io(IOCHAN pi, int event)
             else
             {
                 http_buf_destroy(hc->http_server, htbuf);
-                if (res < 0 && is_inprogress())
+                if (res < 0 && errno == EAGAIN)
                     return;
                 if (hc->oqueue)
                 {
