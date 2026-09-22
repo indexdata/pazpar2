@@ -1052,7 +1052,16 @@ static void proxy_io(IOCHAN pi, int event)
         case EVENT_INPUT:
             htbuf = http_buf_create(hc->http_server);
             res = recv(iochan_getfd(pi), htbuf->buf, HTTP_BUF_SIZE -1, 0);
-            if (res == 0 || (res < 0 && !is_inprogress()))
+            if (res > 0)
+            {
+                htbuf->buf[res] = '\0';
+                htbuf->offset = 0;
+                htbuf->len = res;
+                // Write any remaining payload
+                if (htbuf->len - htbuf->offset > 0)
+                    http_buf_enqueue(&hc->oqueue, htbuf);
+            }
+            else if (res == 0 || (res < 0 && !is_inprogress()))
             {
                 if (hc->oqueue)
                 {
@@ -1068,15 +1077,6 @@ static void proxy_io(IOCHAN pi, int event)
                     http_channel_destroy(hc->iochan);
                     return;
                 }
-            }
-            else
-            {
-                htbuf->buf[res] = '\0';
-                htbuf->offset = 0;
-                htbuf->len = res;
-                // Write any remaining payload
-                if (htbuf->len - htbuf->offset > 0)
-                    http_buf_enqueue(&hc->oqueue, htbuf);
             }
             iochan_setflag(hc->iochan, EVENT_OUTPUT);
             break;
