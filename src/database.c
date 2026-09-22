@@ -109,13 +109,11 @@ struct database *create_database_for_service(const char *id,
 
 int match_zurl(const char *zurl, const char *pattern)
 {
-    int len;
+    size_t len = strlen(pattern);
 
-    if (!strcmp(pattern, "*"))
-        return 1;
-    else if (!strncmp(pattern, "*/", 2))   // host wildcard.. what the heck is that for?
+    if (!strncmp(pattern, "*/", 2))   // host wildcard.. what the heck is that for?
     {
-        char *db = strchr(zurl, '/');
+        const char *db = strchr(zurl, '/');
         if (!db)
             return 0;
         if (!strcmp(pattern + 2, db))
@@ -123,9 +121,9 @@ int match_zurl(const char *zurl, const char *pattern)
         else
             return 0;
     }
-    else if (*(pattern + (len = strlen(pattern) - 1)) == '*')  // db wildcard
+    else if (len > 0 && pattern[len - 1] == '*')  // db wildcard
     {
-        if (!strncmp(pattern, zurl, len))
+        if (!strncmp(pattern, zurl, len - 1))
             return 1;
         else
             return 0;
