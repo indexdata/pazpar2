@@ -1061,13 +1061,14 @@ static void proxy_io(IOCHAN pi, int event)
                 if (htbuf->len - htbuf->offset > 0)
                     http_buf_enqueue(&hc->oqueue, htbuf);
             }
-            else if (res == 0 || (res < 0 && !is_inprogress()))
+            else
             {
+                http_buf_destroy(hc->http_server, htbuf);
+                if (res < 0 && is_inprogress())
+                    return;
                 if (hc->oqueue)
                 {
-                    yaz_log(YLOG_WARN, "Proxy read came up short");
                     // Close channel and alert client HTTP channel that we're gone
-                    http_buf_destroy(hc->http_server, htbuf);
                     CLOSESOCKET(iochan_getfd(pi));
                     iochan_destroy(pi);
                     pc->iochan = 0;
