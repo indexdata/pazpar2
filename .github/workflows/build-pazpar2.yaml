@@ -1,40 +1,59 @@
 # Build pazpar2
 name: Build pazpar2
-on: [push, pull_request]
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
- build:
-  runs-on: ubuntu-latest
-  steps:
-   - uses: actions/checkout@v6
-     with:
-      fetch-depth: 1
-   - name: clone yaz
-     uses: actions/checkout@v6
-     with:
-      repository: indexdata/yaz
-      path: yaz
-      ref: master
-   - name: Update packages
-     run: sudo apt update
-   - name: Install required and optional dependencies
-     run: >
-      sudo apt install autoconf automake libtool gcc make bison
-      tclsh xsltproc docbook docbook-xml docbook-xsl
-      pkg-config libxslt1-dev libgnutls28-dev libicu-dev
-      libhiredis-dev libmemcached-dev
-   - name: Run buildconf for YAZ
-     run: cd yaz && ./buildconf.sh
-   - name: Run configure for YAZ
-     run: >
-      cd yaz && ./configure --disable-shared --enable-static
-   - name: Run make for YAZ
-     run: cd yaz && make -j4
-   - name: Run buildconf for pazpar2
-     run: ./buildconf.sh
-   - name: Run configure for pazpar2
-     run: >
-      ./configure --with-yaz=yaz --disable-shared --enable-static
-   - name: Run make check for pazpar2
-     run: YAZ_ZTEST=`pwd`/yaz/ztest/yaz-ztest make -j4 check
-   - name: Run make dist for pazpar2
-     run: make dist
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      YAZ_ZTEST: ${{ github.workspace }}/yaz/ztest/yaz-ztest
+    steps:
+      - name: Check out pazpar2
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+      - name: Check out YAZ
+        uses: actions/checkout@v6
+        with:
+          repository: indexdata/yaz
+          path: yaz
+          ref: master
+          submodules: recursive
+      - name: Install required and optional dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf automake libtool gcc make bison \
+            tclsh xsltproc docbook docbook-xml docbook-xsl \
+            pkg-config libxslt1-dev libgnutls28-dev libicu-dev \
+            libhiredis-dev libmemcached-dev libstemmer-dev
+      - name: Run buildconf for YAZ
+        working-directory: yaz
+        run: ./buildconf.sh
+      - name: Run configure for YAZ
+        working-directory: yaz
+        run: ./configure --disable-shared --enable-static
+      - name: Run make for YAZ
+        working-directory: yaz
+        run: make -j"$(nproc)"
+      - name: Run buildconf for pazpar2
+        run: ./buildconf.sh
+      - name: Run configure for pazpar2
+        run: ./configure --with-yaz="${{ github.workspace }}/yaz" --disable-shared --enable-static
+      - name: Run make check for pazpar2
+        run: make -j"$(nproc)" check
+      - name: Run make distcheck for pazpar2
+        run: >-
+          make -j"$(nproc)" distcheck
+          DISTCHECK_CONFIGURE_FLAGS="--with-yaz=${{ github.workspace }}/yaz --disable-shared --enable-static"
